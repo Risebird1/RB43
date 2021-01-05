@@ -1,0 +1,1437 @@
+﻿@*@model IEnumerable<Risebird.Entities.ViewModel.Candidate>*@
+@using Risebird.Entities.Enum
+@model X.PagedList.IPagedList<Risebird.Entities.ViewModel.Candidate>
+@using X.PagedList.Mvc.Core;
+@{
+    ViewData["Title"] = "Candidates";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=11" />
+<input type="hidden" value="@ViewBag.Profile" id="hidprofile" />
+<input type="hidden" value="@ViewBag.IRFName" id="hidirfname" />
+<input type="hidden" value="@ViewBag.IRFId" id="hidirfid" />
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Candidates for <strong>@ViewBag.IRFName</strong></a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Candidates for <strong>'@ViewBag.IRFName'</strong></h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div>
+
+                        @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates</font></span>
+        </button>*@
+
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add a Candidate." onclick="location.href='@Url.Action("Add", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidate</font></span>
+                        </button>
+
+
+
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Candidate List" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Candidate</font></span>
+                        </button>
+
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span data-toggle="tooltip" data-placement="top" title="Back to List" onclick="location.href='@Url.Action("Index", "IRF")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back to List</font></span>
+                        </button>
+
+                        @*@Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })*@
+
+                        <div id="meeting_filter" class="dataTables_filter pull-right mt-20" style="margin-left:10px;">
+
+                            <div class="searchCon">
+
+                                <button onclick="searchResult()" type="button" id="search">&nbsp</button>
+                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.Searchvalue">
+
+
+
+                                <button style="display:none;" type="button" id="x">x</button>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="content client candidate">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+
+                            <div>
+
+
+
+                                <div id="tableID">
+                                    <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-12 nopad">
+                                            <div class="table-responsive">
+
+                                                <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="border-right: 0px !important;"></th>
+
+                                                            <th>Candidate Email</th>
+                                                            <th>RB Attempts</th>
+                                                            <th>Resume</th>
+                                                            <th>Coded Resume</th>
+                                                            <th>Invite Sent</th>
+                                                            <th>Confirmation</th>
+
+                                                            <th>Joinability</th>
+                                                            <th>Selectability</th>
+                                                            <th> Actions </th>
+                                                            <th style="text-align:center">Call</th>
+
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th style="border-right: 0px !important;"></th>
+                                                            <th>Candidate Email</th>
+                                                            <th>RB Attempts</th>
+                                                            <th>Resume</th>
+                                                            <th>Coded Resume</th>
+                                                            <th>Invite Sent</th>
+                                                            <th>Confirmation</th>
+                                                            <th>Joinability</th>
+                                                            <th>Selectability </th>
+                                                            <th> Actions </th>
+                                                            <th style="text-align:center">Call</th>
+
+                                                        </tr>
+                                                    </tfoot>
+                                                    <tbody id="tblbodyCandidate">
+
+                                                        @foreach (var item in Model)
+                                                        {
+                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+                                                            string joinabilityColor;
+                                                            string selectabilityColor;
+                                                            if (item.JoinabilityScore >= 70)
+                                                            {
+                                                                joinabilityColor = "green";
+                                                            }
+                                                            else if (item.JoinabilityScore >= 40 && item.JoinabilityScore < 70)
+                                                            {
+                                                                joinabilityColor = "orange";
+                                                            }
+                                                            else
+                                                            {
+                                                                joinabilityColor = "red";
+                                                            }
+                                                            if (item.SelectabilityScore >= 70)
+                                                            {
+                                                                selectabilityColor = "green";
+                                                            }
+                                                            else if (item.SelectabilityScore >= 40 && item.SelectabilityScore < 70)
+                                                            {
+                                                                selectabilityColor = "orange";
+                                                            }
+                                                            else
+                                                            {
+                                                                selectabilityColor = "red";
+                                                            }
+                                                            <tr id="@item.id" data-changes="1">
+                                                                <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+
+
+
+
+                                                                @if (item.EmailId.Length > 20)
+                                                                {
+
+
+                                                                    <td class="cadEmail">
+                                                                        <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0, 20)... </a>
+                                                                    </td>
+                                                                }
+
+
+                                                                else
+                                                                {
+                                                                    <td class="cadEmail">
+                                                                        <a onclick=""> @item.EmailId </a>
+                                                                    </td>
+                                                                }
+
+                                                                <td class="text-center">@item.AttemptsCount</td>
+                                                                @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                                {
+                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No Resume</td>
+                                                                }
+                                                                @if (item.EncodedResumeLink != null && item.EncodedResumeLink != "")
+                                                                {
+                                                                    <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=@item.EncodedResumeLink>Coded Resume</a> </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No Coded Resume</td>
+                                                                }
+
+
+                                                                <td class="text-center">@item.TotalInvites</td>
+                                                                <td class="text-center">@item.InviteConfirmation</td>
+
+
+                                                                <td class="text-center" style="color:@joinabilityColor;">
+                                                                    <b>@item.JoinabilityScore</b>
+                                                                </td>
+                                                                <td class="text-center" style="color:@selectabilityColor; ">
+                                                                    <b>@item.SelectabilityScore</b>
+                                                                </td>
+
+
+
+
+                                                                @*<td>@item.Phone</td>*@
+
+
+
+
+
+
+                                                                <td class="text-right action">
+
+                                                                    @if (ViewBag.Profile != "Recruiter")
+
+                                                                    {
+
+                                                                        if (!string.IsNullOrEmpty(item.ClientHRAttemptContact))
+                                                                        {
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Send Invite">
+                                                                                <span onclick="location.href = '@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })'" title="Send Invite" class="mdc-fab__icon material-icons">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                                </span>
+                                                                            </button>
+                                                                        }
+
+                                                                        else
+                                                                        {
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Kindly enter Client HR's EmailId to send invite!">
+                                                                                <span title="Kindly enter Client HR's EmailId to send invite!" class="mdc-fab__icon material-icons">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                                </span>
+                                                                            </button>
+
+                                                                        }
+
+
+
+
+                                                                        <span onclick="location.href = '@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })'" title="Cancel Invite" class="mdc-fab app-fab--absolute trash-btn">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
+                                                                        </span>
+
+
+                                                                        @if (ViewBag.profile != "Client")
+                                                                        {
+                                                                            <button class="mdc-fab app-fab--absolute mdc-fab-secondary" aria-label="Audio files">
+                                                                                <span onclick="location.href = '@Url.Action("UploadAudio", "Candidate", new { candidateId = item.CandidateMasterId, irfId= item.IRFId, rfName=ViewBag.IRFName})'" title="Audio files" class="mdc-fab__icon material-icons">
+
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>
+                                                                                </span>
+                                                                            </button>}
+
+
+                                                                    }
+
+
+
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                        <span onclick="location.href = '@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                                                                        </span>
+                                                                    </button>
+
+                                                                    @if (ViewBag.profile != "Client")
+                                                                    {
+                                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                                            <span onclick="javascript:DeleteCandidate('@item.id');" title="Delete" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    }
+
+                                                                    @if (ViewBag.profile != "Client")
+                                                                    {
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                            <span onclick="location.href = '@Url.Action("Report", "Candidate", new { candidateId = item.CandidateMasterId, irfId = item.IRFId, rfName = item.IRFName })'" title="Report" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    }
+
+                                                                    @if (ViewBag.profile != "Client")
+                                                                    {
+
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
+                                                                            <span onclick="location.href = '@Url.Action("StatusList", "Candidate", new { irfId= item.IRFId, candidateId = item.CandidateMasterId,  irfName=ViewBag.IRFName, candidateName=item.Name})'" title="Candidate Status" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    }
+
+                                                                </td>
+                                                                <td>
+                                                                    @if (item.Phone != null && item.Phone != string.Empty)
+                                                                    {
+
+
+                                                                        <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick(@jsonObject,1)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
+
+                                                                    }
+
+                                                                </td>
+
+
+
+
+
+                                                            </tr>
+
+                                                            <tr class="collapse @item.id">
+
+                                                                <td colspan="999" class="child-section">
+                                                                    <table class="table table-striped table-responsive">
+                                                                        <tr>
+                                                                            <th style="border-left: 0px !important;">Candidate Name</th>
+                                                                            <th>Client HR</th>
+                                                                            <th>Type</th>
+                                                                            <th>Location(Applied for)</th>
+                                                                            @*<th>Skill</th>*@
+                                                                            <th>Work Auth</th>
+                                                                            <th>Current Location</th>
+                                                                            <th>Current Employer</th>
+                                                                            <th>Total Experience</th>
+                                                                            <th>Current Salary</th>
+                                                                            <th>Expected Salary</th>
+                                                                            <th>Notice</th>
+                                                                            <th>Confirmation Status</th>
+                                                                            <th>Video Link</th>
+                                                                            <th>Meeting Status</th>
+                                                                            <th>Interview Status</th>
+                                                                            <th>Interview Date</th>
+                                                                            <th>Cost Estimate</th>
+                                                                            <th>Profile Type</th>
+                                                                            <th>Available for Full-time</th>
+                                                                            <th>Available for Freelancing</th>
+                                                                        </tr>
+                                                                        <tr>
+
+                                                                            @if (item.Name.Length > 20)
+                                                                            {
+
+
+                                                                                <td class="cadName">
+                                                                                    <a onclick="" data-tooltip="@item.Name"> @item.Name.Substring(0, 20)... </a>
+                                                                                </td>
+                                                                            }
+
+
+                                                                            else
+                                                                            {
+                                                                                <td class="cadName">
+                                                                                    <a onclick=""> @item.Name </a>
+                                                                                </td>
+                                                                            }
+                                                                            @if (item.ClientHRAttemptContact != null && item.ClientHRAttemptContact.Length > 13)
+                                                                            {
+                                                                                <td class="text-center">@item.ClientHRAttemptContact.Substring(0, 13)... </td>
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+                                                                            }
+
+
+
+                                                                            <td>@item.Type</td>
+
+                                                                            <td>@item.Location</td>
+                                                                            @*<td>@item.Skill</td>*@
+
+                                                                            <td>@item.WorkAuth</td>
+                                                                            <td>@item.CurrentLocation</td>
+                                                                            <td>@item.CurrentEmployer</td>
+                                                                            <td>@item.TotalExperience</td>
+                                                                            <td>@item.CurrentSalary</td>
+                                                                            <td>@item.ExpectedSalary</td>
+                                                                            <td>@item.Notice</td>
+                                                                            @if (item.confirmationStatusDesc != "0")
+                                                                            {
+                                                                                <td>@item.confirmationStatusDesc</td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+                                                                            }
+                                                                            @if (item.VideoLink != null && item.VideoLink != "")
+                                                                            {
+                                                                                <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td>No Video</td>
+                                                                            }
+                                                                            @if (item.MeetingStatusDesc != "0")
+                                                                            {
+                                                                                <td>@item.MeetingStatusDesc</td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+                                                                            }
+                                                                            @if (item.InterviewStatusDesc != "0")
+                                                                            {
+                                                                                <td>@item.InterviewStatusDesc</td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+                                                                            }
+
+
+
+
+                                                                            @if (item.interviewDate != null)
+                                                                            {
+                                                                                <td>@item.interviewDate</td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+                                                                            }
+                                                                            @if (item.CostEstimate != null)
+                                                                            {
+                                                                                <td>@item.CostEstimate</td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+                                                                            }
+                                                                            <td>@item.HeuristicsscoreDesc</td>
+                                                                            @if (item.AvailableFullTime)
+                                                                            {
+                                                                                <td>Yes</td>
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td>No</td>
+
+
+                                                                            }
+                                                                            @if (item.AvailableFreeLancing)
+                                                                            {
+                                                                                <td>Yes</td>
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td>No</td>
+                                                                            }
+
+                                                                        </tr>
+                                                                    </table>
+
+                                                                </td>
+                                                            </tr>
+
+
+
+
+
+
+
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+
+
+
+                                        <div class="col-sm-12 col-md-5 pull-left" id="divmeetingentries">
+                                            Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
+                                        </div>
+
+                                        <div class="col-sm-12 col-md-7 dataTables_paginate pull-right " id="divmeetingpages">
+                                            @Html.PagedListPager(Model, Page => Url.Action("GetCandidates", new {id= ViewBag.IRFId, irfName = ViewBag.IRFName, Page = Page, searchValue = ViewBag.Searchvalue }))
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <!-- end content-->
+                    </div>
+                    <!--  end card  -->
+                </div>
+
+                <!-- end col-md-12 -->
+            </div>
+
+            <div id="myModal" class="modal">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+
+
+
+                            <div class="filheader">
+                                <div class="filavatar">
+                                    <span class="publicsharing-icon">
+
+
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg>
+                                    </span>
+                                </div>
+                                <h5 class="modal-title pull-left"> Import Candidates</h5>
+                            </div>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true" id="importPopUp" style="cursor:pointer;">&times;</span>
+                            </button>
+
+
+
+
+
+                            <div class="modal-body">
+                                <div class="form-group text-center">
+                                    <h5 style="font-size:20px;"> Download the template  <span onclick="location.href='@Url.Action("DownloadTemplate", "IRF")'"><svg style="fill:#53a5f5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg></span></h5>
+
+                                    <!-- <button class="btn default" onclick="location.href='@Url.Action("DownloadTemplate", "IRF")'">Download Template</button-->
+
+                                </div>
+
+                                @using (Html.BeginForm("ImportCandidates", "IRF", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                {
+                                    <div class="form-group">
+
+                                        <!--   <label class="uploadfile" for="UploadedFile">
+                                            <b>
+                                                <i class="fas fa-file"></i>
+                                                Click here to choose file
+                                            </b>
+                                        </label>-->
+
+
+                                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" for="UploadedFile" style="margin:0px auto; display:block;">
+
+                                            <span class="mdc-button__label"><span class="fa fa-file"><font style=" font-family: Roboto, sans-serif; font-size:12px;">   Click here to choose file</font></span></span>
+                                            <div class="mdc-button__ripple"></div>
+                                        </button>
+
+
+
+
+
+
+
+                                        <input type="file" accept=".xls, .xlsx" name="UploadedFile" />
+                                    </div>
+                                    <div class="">
+                                        <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;
+    display: block;" id="btnImport" value="Import">
+                                    </div>
+                                    <input type="hidden" id="IRFId" name="IRFId" value='@ViewBag.IRFId'>
+                                    <input type="hidden" id="IRFName" name="IRFName" value='@ViewBag.IRFName'>
+
+                                }
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="myCallModal" class="modal modal-wrap modal-bg">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+
+
+
+
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon">
+
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                                </span>
+                            </div>
+                            <h5 class="modal-title pull-left"> Call Candidate !</h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
+
+
+
+
+                        <div class="modal-body">
+
+                            <h5 class="modal-title text-center" id="callingLabel"></h5>
+
+                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
+    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div id="statusModal" class="modal modal-bg">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+
+
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon fas fa-question fa-2x"></span>
+                            </div>
+                            <h5 class="modal-title pull-left" id="statusHeading"> Filter</h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" id="statusPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
+
+
+                        <div class="modal-body">
+
+                            <div class="col-md-12 col-sm-12 ">
+                                <div class="form-group">
+
+                                    <label class="control-labeled">
+                                        Status
+                                    </label>
+
+                                    <select class="select-css form-control" id="statusDrpDwn" asp-items="Html.GetEnumSelectList<CandidateStatusOptions>()"></select>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+                                <div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <input type="button" onclick="SaveStatusPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- end row -->
+        </div>
+
+    </div>
+
+    @if (ViewBag.Message != null)
+    {
+        <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.toLowerCase().includes("success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        //window.location.href = '/IRF/Index';
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        //location.reload(true);
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function ()
+                    {
+                        //window.location.href = '/IRF/Index';
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        //location.reload(true);
+
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+        </script>
+
+    }
+
+
+
+
+    <script type="text/javascript">
+        //// script for loader starts here
+        $(".dataloading").hide();
+        $("#meeting").hide();
+        var loader;
+        function ShowProgress() {
+            $(".dataloading").hide();
+            $("#meeting").hide();
+            loader = document.getElementsByClassName("loader")[0];
+            loader.style.display = "block";
+            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+            loader.style.top = top + "px";
+            loader.style.left = left + "px";
+        };
+        ShowProgress();
+
+        window.onload = function () {
+            setTimeout(function () {
+                loader.style.display = "none";
+                $(".dataloading").show();
+                $("#meeting").show();
+            }, 2000);
+        };
+        //// script for loader ends here
+    </script>
+    <script>
+
+        function FilterInterviews(filterValue) {
+
+            $.ajax({
+                type: "GET",
+                url: "/Interview/GetFilteredInterviews",
+                data: { 'filterValue': filterValue },
+                success: function (data) {
+
+                    if (data == '' && filterValue == 'seven') {
+                        $('#tableID').html('');
+                        $('#tableID').html('No interviews for the next seven days.');
+                        $('#tableID').css("margin-left", "452px");
+                        return;
+                    }
+                    if (data == '' && filterValue == 'all') {
+                        $('#tableID').html('');
+                        $('#tableID').html('No interviews.');
+                        $('#tableID').css("margin-left", "452px");
+                        return;
+                    }
+                    if (data == '') {
+                        $('#tableID').html('');
+                        $('#tableID').html('No interviews for ' + filterValue + '.');
+                        $('#tableID').css("margin-left", "452px");
+                        return;
+                    }
+                    $('#tableID').css("margin-left", "");
+                    $('#tableID').html('');
+                    $('#tableID').html(data);
+
+                    $('#meeting').DataTable({
+                        "pagingType": "full_numbers",
+                        "lengthMenu": [
+                            [10, 25, 50, -1],
+                            [10, 25, 50, "All"]
+                        ],
+                        responsive: false,
+                        language: {
+                            search: "_INPUT_",
+                            searchPlaceholder: "Search records",
+                        }
+
+                    });
+                    var table = $('#meeting').DataTable();
+
+
+
+                },
+                error: function (err) {
+                    alert(err.responseText);
+                }
+            });
+        }
+    </script>
+
+    <script>
+        var span = document.getElementById("importPopUp");
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
+        var closeStatus = document.getElementById("statusPopUp");
+        // When the user clicks on <span> (x), close the modal
+        closeStatus.onclick = function () {
+            var modal = document.getElementById("statusModal");
+            modal.style.display = "none";
+        }
+        var candidateId;
+        var irfId;
+    </script>
+    <script>
+        function ModalButtonClick() {
+
+            // Get the modal
+            var modal = document.getElementById("myModal");
+
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+
+        }
+
+        function OpenStatusModal(id, name, status) {
+            candidateId = id;
+            // Get the modal
+            var modal = document.getElementById("statusModal");
+
+            document.getElementById("statusHeading").innerHTML = "Status for " + name;
+
+            if (status != null && status != "") {
+                $("#statusDrpDwn").val(status);
+            }
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+
+
+        }
+        function SaveStatusPopUp() {
+            var statusValue = document.getElementById("statusDrpDwn").value;
+
+            $.ajax({
+                type: "GET",
+                url: "/IRF/SaveCandidateStatus",
+                data: { 'candidateId': candidateId, 'statusValue': statusValue },
+                success: function (data) {
+
+                    location.reload(true);
+
+                }
+            });
+        }
+
+    </script>
+    <script>
+    function DeleteCandidate(id) {
+
+        //var IdIRF = dataID;
+        var irfName = '@ViewBag.IRFName';
+        var irfId = '@ViewBag.IRFId';
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The candidate will be permanently deleted!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    //var IdIRF = dataID;
+                    $.ajax({
+                        url: '/Candidate/Delete?id=' + id + '&irfId=' + irfId + '&IRFName=' + irfName,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deleted!',
+                    type: 'success',
+                    html: '<p>The candidate has been deleted.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    location.reload(true);
+                    //window.location = "/IRF/Candidates?id=" + irfId + '&irfName=' + irfName;
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Your file has been not deleted :)',
+                    'error'
+                )
+            }
+        })
+    }
+    </script>
+    <script>
+        function changeicon(id) {
+            if ($("#" + id).attr("data-changes") == "1") {
+                $("#" + id).addClass("shows");
+                $("#" + id).attr("data-changes", "2");
+            }
+            else {
+                $("#" + id).removeClass("shows");
+                $("#" + id).attr("data-changes", "1");
+            }
+        }
+        $(document).ready(function () {
+
+            $(".dataTables_filter").keyup(function (e) {
+
+                if ($('#txtmeeting_filter').val() == "") {
+                    $("#x").hide();
+                }
+                else {
+                    $("#x").show();
+                }
+            });
+            $("#x").click(function (e) {
+                $(".dataTables_filter input").val('');
+                $(this).hide();
+                searchResult();
+            });
+
+
+
+
+        });
+        function CallButtonClickjson(item) {
+            var obj = list[item];
+            CallButtonClick(obj, 0);
+        }
+
+
+        var list;
+        function searchResult() {
+            $.ajax({
+                type: "POST",
+                url: "/Candidate/CandidatesJson",
+                data: { 'searchValue': $('#txtmeeting_filter').val() },
+                success: function (data) {
+                    if (data != "failed") {
+                        list = data.result;
+                        bindtableData(data.result);
+                        bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
+                    }
+                }
+            });
+        }
+
+
+        function bindtableData(data) {
+
+            var profile = $("#hidprofile").val();
+            var irfname = $("#hidirfname").val();
+            var irfid = $("#hidirfid").val();
+            var html = '';
+            if (data.length == 0) {
+                html += '  <tr>';
+                html += ' <td colspan="9" class="text-center">No data available in table</td>';
+                html += ' </tr>';
+            }
+            for (var i = 0; i < data.length; i++) {
+
+                var joinabilityColor;
+                var selectabilityColor;
+                if (data[i].joinabilityScore >= 70) {
+                    joinabilityColor = "green";
+                }
+                else if (data[i].joinabilityScore >= 40 && data[i].joinabilityScore < 70) {
+                    joinabilityColor = "orange";
+                }
+                else {
+                    joinabilityColor = "red";
+                }
+                if (data[i].selectabilityScore >= 70) {
+                    selectabilityColor = "green";
+                }
+                else if (data[i].selectabilityScore >= 40 && data[i].selectabilityScore < 70) {
+                    selectabilityColor = "orange";
+                }
+                else {
+                    selectabilityColor = "red";
+                }
+
+                html += '  <tr id="' + data[i].id + '" data-changes="1">   ';
+                html += ' <td style="width:10px;" data-toggle="collapse" id="' + data[i].id + '" data-target=".' + data[i].id + '" class="detail-row" onclick="changeicon(' + data[i].id + ')">&nbsp;</td>';
+
+
+
+
+
+
+                if (data[i].emailId.length > 20) {
+
+                    html += '  <td class="cadEmail">';
+                    html += ' <a onclick="" data-tooltip="' + data[i].emailId + '"> ' + data[i].emailId.substring(0, 20) + '... </a>';
+                    html += '   </td>';
+                }
+
+                else {
+                    html += '   <td class="cadEmail">';
+                    html += '  <a onclick=""> ' + data[i].emailId + ' </a>';
+                    html += ' </td>';
+                }
+
+                html += ' <td class="text-center"' + data[i].attemptsCount + '</td>';
+
+
+                if (data[i].resumeLink != null && data[i].resumeLink != "") {
+                    html += '   <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a> </td>';
+                }
+                else {
+                    html += '   <td>No Resume</td>';
+                }
+
+                if (data[i].encodedResumeLink != null && data[i].encodedResumeLink != "") {
+                    html += '    <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=' + data[i].encodedResumeLink + '>Coded Resume</a> </td>';
+                }
+                else {
+                    html += '   <td>No Coded Resume</td>';
+                }
+                html += '  <td class="text-center">' + data[i].totalInvites + '</td>';
+
+                html += ' <td class="text-center">' + data[i].inviteConfirmation + '</td>';
+
+
+
+
+
+                html += '  <td class="text-center" style="color:' + joinabilityColor + ';">';
+                html += '  <b>' + data[i].joinabilityScore + '</b>';
+                html += '   </td>';
+                html += '  <td class="text-center" style="color:' + selectabilityColor + '; ">';
+                html += '  <b>' + data[i].selectabilityScore + '</b>';
+                html += ' </td>';
+
+                html += '    <td class="text-right action">';
+
+                if (profile != "Recruiter") {
+
+                    if (data[i].clientHRAttemptContact != null && data[i].clientHRAttemptContact != "") {
+                        html += '    <button class="mdc-fab app-fab--absolute" aria-label="Send Invite">';
+                        html += '   <a href = "/Candidate/SendInvite?IRFName=' + irfname + '&irfId=' + irfid + '&emailId=' + data[i].emailId + '&endDate=' + data[i].endDate + '" title="Send Invite" class="mdc-fab__icon material-icons">';
+                        html += '        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>';
+                        html += '  </a></button>';
+
+                    }
+
+                    else {
+                        html += '   <button class="mdc-fab app-fab--absolute" aria-label="Kindly enter Client HRs EmailId to send invite!">';
+                        html += '  <span title="Kindly enter Client HRs EmailId to send invite!" class="mdc-fab__icon material-icons">';
+                        html += '   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>';
+                        html += '</span></button>';
+
+
+
+                    }
+
+
+
+
+                    html += '  <a href = "/Candidate/CancelInvite?IRFName=' + irfname + '&irfId=' + irfid + '&emailId=' + data[i].emailId + '" title="Cancel Invite" class="mdc-fab app-fab--absolute trash-btn">';
+                    html += '  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>';
+                    html += ' </a>';
+
+                    if (profile != "Client") {
+
+                        html += ' <button class="mdc-fab app-fab--absolute mdc-fab-secondary" aria-label="Audio files">';
+                        html += '   <a href = "/IRF/UploadAudio?candidateId=' + data[i].candidateMasterId + '&irfId=' + data[i].irfId + '&irfName=' + irfname + '" title="Audio files" class="mdc-fab__icon material-icons">';
+                        html += '    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>';
+                        html += '  </a> </button>';
+                    }
+
+
+                }
+
+
+
+
+                html += '  <button class="mdc-fab app-fab--absolute" aria-label="Edit">';
+                html += '<a style="color:#fff;" href = "/Candidate/Edit?id=' + data[i].id + '&irfName=' + irfname + '&irfId=' + irfid + '" title="Edit" class="mdc-fab__icon material-icons">';
+                html += '  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>';
+                html += '   </a></button>';
+
+
+
+                if (profile != "Client") {
+                    html += ' <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">';
+                    html += ' <span onclick="javascript:DeleteCandidate(' + data[i].id + ');" title="Delete" class="mdc-fab__icon material-icons">';
+                    html += '  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>';
+                    html += '  </span> </button>';
+                }
+
+
+
+                if (profile != "Client") {
+                    html += '   <button class="mdc-fab app-fab--absolute" aria-label="Report">';
+                    html += '  <a style="color:#fff;" href = "/IRF/CandidateReport?candidateId=' + data[i].candidateMasterId + '&irfId=' + data[i].irfId + '" title="Report" class="mdc-fab__icon material-icons">';
+                    html += ' <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>';
+                    html += ' </a ></button>';
+                }
+
+                if (profile != "Client") {
+                    html += ' <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">';
+                    html += '  <a style="color:#fff;" href = "/IRF/CandidateStatusList?irfId=' + data[i].irfId + '&candidateId=' + data[i].candidateMasterId + '&irfName=' + irfname + '&candidateName=' + data[i].name + '" title="Candidate Status" class="mdc-fab__icon material-icons">';
+                    html += '  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>';
+                    html += '  </a>  </button>';
+                }
+
+                html += '  </td>';
+                html += '<td>';
+                if (data[i].phone != null && data[i].phone != "") {
+
+
+                    html += '   <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClickjson(' + i + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>';
+
+                }
+
+                html += '    </td>';
+
+
+
+
+
+                html += '</tr>';
+
+                html += '  <tr class="collapse ' + data[i].id + '">';
+
+                html += '  <td colspan="999" class="child-section">';
+                html += '  <table class="table table-striped table-responsive">';
+                html += '  <tr>';
+                html += '   <th>Candidate Name</th>';
+                html += '   <th>Client HR</th>';
+                html += '     <th>Type</th>';
+                html += '     <th>Location(Applied for)</th>';
+                //html += '    <th>Skill</th>';
+                html += '    <th>Work Auth</th>';
+                html += '    <th>Current Location</th>';
+                html += '   <th>Current Employer</th>';
+                html += '  <th>Total Experience</th>';
+                html += '  <th>Current Salary</th>';
+                html += ' <th>Expected Salary</th>';
+                html += ' <th>Notice</th>';
+                html += ' <th>Confirmation Status</th>';
+                html += ' <th>Video Link</th>';
+                html += ' <th>Meeting Status</th>';
+                html += ' <th>Interview Status</th>';
+                html += ' <th>Interview Date</th>';
+                html += ' <th>Cost Estimate</th>';
+                html += ' <th>Profile Type</th>';
+                html += ' <th>Available for Full-time</th>';
+                html += ' <th>Available for Freelancing</th>';
+                html += ' </tr>';
+                html += '<tr>';
+
+                if (data[i].name.length > 20) {
+                    html += '  <td class="cadName">';
+                    html += '  <a onclick="" data-tooltip="' + data[i].name + '"> ' + data[i].name.substring(0, 20) + '... </a>';
+                    html += '  </td>';
+                } else {
+                    html += '<td class="cadName">';
+                    html += '   <a onclick=""> ' + data[i].name + ' </a>';
+                    html += '   </td>';
+                }
+
+
+
+
+                if (data[i].clientHRAttemptContact != null) {
+                    html += '  <td class="text-center">' + data[i].clientHRAttemptContact + '</td>';
+
+                }
+                else {
+                    html += '    <td></td>';
+                }
+                if (data[i].type == null) {
+                    html += ' <td></td>';
+                }
+                else { html += ' <td>' + data[i].type + '</td>'; }
+
+
+                if (data[i].location == null) {
+                    html += ' <td></td>';
+                }
+                else { html += ' <td>' + data[i].location + '</td>'; }
+                //html += '  <td>' + data[i].skill + '</td>';
+
+                if (data[i].workAuth == null) {
+                    html += ' <td></td>';
+                }
+                else { html += ' <td>' + data[i].workAuth + '</td>'; }
+
+                if (data[i].currentLocation == null) {
+                    html += ' <td></td>';
+                }
+                else { html += ' <td>' + data[i].currentLocation + '</td>'; }
+                if (data[i].currentEmployer == null) {
+                    html += ' <td></td>';
+                }
+                else { html += ' <td>' + data[i].currentEmployer + '</td>'; }
+
+                html += '  <td>' + data[i].totalExperience + '</td>';
+                html += '  <td>' + data[i].currentSalary + '</td>';
+                html += '  <td>' + data[i].expectedSalary + '</td>';
+                html += '  <td>' + data[i].notice + '</td>';
+
+                if (data[i].confirmationStatusDesc != "0") {
+                    html += '  <td>' + data[i].confirmationStatusDesc + '</td>';
+                }
+                else {
+                    html += ' <td></td>';
+                }
+                if (data[i].videoLink != null && data[i].videoLink != "") {
+                    html += '    <td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>';
+                }
+                else {
+                    html += '  <td>No Video</td>';
+                }
+                if (data[i].meetingStatusDesc != "0") {
+                    html += '  <td>' + data[i].meetingStatusDesc + '</td>';
+                }
+                else {
+                    html += '    <td></td>';
+                }
+                if (data[i].interviewStatusDesc != "0") {
+                    html += '   <td>' + data[i].interviewStatusDesc + '</td>';
+                }
+                else {
+                    html += '   <td></td>';
+                }
+                if (data[i].interviewDate != null) {
+                    html += '   <td>' + data[i].interviewDate + '</td>';
+                }
+                else {
+                    html += '     <td></td>';
+                }
+                if (data[i].costEstimate != null) {
+                    html += '       <td>' + data[i].costEstimate + '</td>';
+                }
+                else {
+                    html += '   <td></td>';
+                }
+                html += '   <td>' + data[i].heuristicsscoreDesc + '</td>';
+                if (data[i].availableFullTime) {
+                    html += '  <td>Yes</td>';
+
+                }
+                else {
+                    html += '  <td>No</td>';
+
+
+                }
+                if (data[i].availableFreeLancing) {
+                    html += '    <td>Yes</td>';
+
+                }
+                else {
+                    html += '  <td>No</td>';
+                }
+
+                html += '    </tr>';
+                html += '  </table>';
+
+                html += '  </td>';
+                html += '   </tr>';
+
+
+
+            }
+            $("#tblbodyCandidate").empty().html(html);
+        }
+        function bindPages(pagecount, startpage, endpage, totalcount) {
+            var html = '';
+            html += '<div class="pagination-container">';
+            html += '<ul class="pagination">';
+            for (var i = 1; i <= pagecount; i++) {
+                if (i == 1) {
+                    html += '   <li class="active"><span>1</span></li>';
+                } else if (i <= 10) {
+                    html += '<li><a href="/Candidate/GetCandidates?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+                } else if (i == 11) {
+                    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                    html += '<li class="PagedList-skipToNext"><a href="/Candidate/GetCandidates?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                    html += '<li class="PagedList-skipToLast"><a href="/Candidate/GetCandidates?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                } else {
+                    break;
+                }
+                if (pagecount <= 10 && i == pagecount) {
+                    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                    html += '<li class="PagedList-skipToNext"><a href="/Candidate/GetCandidates?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                    html += '<li class="PagedList-skipToLast"><a href="/Candidate/GetCandidates?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                }
+            }
+            html += '</ul>';
+            html += '</div>';
+            $("#divmeetingpages").empty().html(html);
+            var pagestartdetails = '';
+            pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
+            $("#divmeetingentries").empty().html(pagestartdetails);
+
+        }
+    </script>
+
+    <script>
+        var candidate = "";
+        var span = document.getElementById("callPopUp");
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            hangUp();
+            var modal = document.getElementById("myCallModal");
+            modal.style.display = "none";
+        }
+        $(document).ready(function () {
+            $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+                // Set up the Twilio Client Device with the token
+                Twilio.Device.setup(data.token);
+            });
+        });
+
+        /* Callback to let us know Twilio Client is ready */
+        Twilio.Device.ready(function (device) {
+
+        });
+
+        function callCandidate(phoneNumber) {
+            var params = { "phoneNumber": phoneNumber };
+            Twilio.Device.connect(params);
+        }
+        function hangUp() {
+            Twilio.Device.disconnectAll();
+        }
+
+        Twilio.Device.connect(function (connection) {
+            var appendText = "In call with " + "<b>" + candidate + "</b>";
+            document.getElementById("callingLabel").innerHTML = appendText;
+        });
+
+        function afterTimeOut() {
+            var modal = document.getElementById("myCallModal");
+            modal.style.display = "none";
+        }
+
+        Twilio.Device.disconnect(function (connection) {
+            var appendText = "Call disconnected! ";
+            document.getElementById("callingLabel").innerHTML = appendText;
+            setTimeout(afterTimeOut, 2000);
+
+        });
+
+        function CallButtonClick(candidateObj, indexid) {
+            if (indexid == 1) {
+                candidate = candidateObj.Name;
+            }
+            else {
+                candidate = candidateObj.name;
+            }
+            // Get the modal
+            var modal = document.getElementById("myCallModal");
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+            var appendText = "Calling... " + "<b>" + candidate + "</b>";
+            document.getElementById("callingLabel").innerHTML = appendText;
+            if (indexid == 1) {
+                callCandidate(candidateObj.Phone);
+            }
+
+            else {
+                callCandidate(candidateObj.phone);
+            }
+        }
+        function closeCallPopUp() {
+            hangUp();
+            var modal = document.getElementById("myCallModal");
+            modal.style.display = "none";
+        }
+
+
+    </script>

@@ -457,15 +457,15 @@ namespace Risebird.Business
                 {
                     //call Edit Feedbackform method
                     reportModel = interviewReport.FirstOrDefault();
-                    EditInterviewReport(reportModel, irfId);
+                    await EditInterviewReport(reportModel, irfId);
                 }
                 else
                 {
                     var model = interviewReport.Any() ? interviewReport.FirstOrDefault() : new InterviewReport();
                     model.IsEdited = model.InterviewId > 0;
                     //get all values from database
-                    var levelTech = _meetingRespository.GetLevelTech();// replacement
-                    var skills = _meetingRespository.GetSkills();// use transskill table
+                    var levelTech = await _meetingRespository.GetLevelTech();// replacement
+                    var skills = await _meetingRespository.GetSkills();// use transskill table
                     //var questionDetails = _meetingRespository.GetTechSkillComments(irfId);
                     var techSkillsDetails = _interviewerRepository.GetSkillsbyIRFid(irfId);//use
                     //var skillGeneralDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);//use
@@ -541,7 +541,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        private InterviewReport EditInterviewReport(InterviewReport model, int irfid)
+        private async Task<InterviewReport> EditInterviewReport(InterviewReport model, int irfid)
         {
             var techReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
 
@@ -549,8 +549,8 @@ namespace Risebird.Business
             {
                 var techSkillsDetails = _interviewerRepository.GetSkillsbyIRFid(irfid);
                 var techSkillList = new List<TechSkillReport>();
-                var levelTech = _meetingRespository.GetLevelTech();
-                var skills = _meetingRespository.GetSkills();
+                var levelTech = await _meetingRespository.GetLevelTech();
+                var skills = await _meetingRespository.GetSkills();
 
                 //assign values to model
                 foreach (var item in techSkillsDetails)

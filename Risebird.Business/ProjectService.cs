@@ -280,7 +280,7 @@ namespace Risebird.Business
             }
         }
 
-        public ProjectFunnel GetFunnelData(int id)
+        public async Task<ProjectFunnel> GetFunnelData(int id)
         {
             try
             {
@@ -293,7 +293,7 @@ namespace Risebird.Business
                 foreach (var irfId in irfList)
                 {
                     var irfName = _irfRepository.GetIRFNameBasedOnId(irfId);
-                    var candidates = _irfRepository.GetIRFCandidates(irfId);
+                    var candidates = await _irfRepository.GetIRFCandidates(irfId);
                     if (!candidates.Any())
                     {
                         //get candidates from Meeting table by passing IRFId
@@ -353,7 +353,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
 

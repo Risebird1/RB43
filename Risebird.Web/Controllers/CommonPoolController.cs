@@ -471,7 +471,7 @@ namespace Risebird.Web.Controllers
                         }
                         //End:Save View counts of vedio
 
-                        MeetingVM model = _meetingService.GetMeetingbyid(id, emailId);
+                        MeetingVM model = await _meetingService.GetMeetingbyid(id, emailId);
                         if (model == null)
                         {
                             model = new MeetingVM();
@@ -645,7 +645,7 @@ namespace Risebird.Web.Controllers
                 {
                     //Start: Share button functionaly
                     ViewBag.ResultStatus = "VideoPresent";
-                    MeetingVM model = _meetingService.GetMeetingbyid(id, "");
+                    MeetingVM model = await _meetingService.GetMeetingbyid(id, "");
                     var status = String.IsNullOrEmpty(model.IsShared) ? "" : model.IsShared;
                     if (status == "Public")
                     {
@@ -863,7 +863,7 @@ namespace Risebird.Web.Controllers
                             modelList = await _meetingService.GetCPMeetings(ClientId, profileName, emailId);
                         }
 
-                        MeetingVM model = _meetingService.GetMeetingbyid(id, emailId);
+                        MeetingVM model = await _meetingService.GetMeetingbyid(id, emailId);
                         //MeetingVM model = modelList.Where(a => a.imid == id).FirstOrDefault();
                         modelList = modelList.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
                         var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;

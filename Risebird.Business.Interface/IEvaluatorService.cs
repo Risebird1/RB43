@@ -22,10 +22,10 @@ namespace Risebird.Business.Interface
         Task<IList<TechSkillEvaluatorReport>> GetTechReport(int candidateId, int irfId);
         Task<IList<SkillGeneralEvaluatorReport>> GetSkillGeneralReport(int candidateId, int irfId);
         List<CandidateRecruiter> GetRecruiterCandidates(string emailId, string profile);
-        CandidateAudio GetCandidate(int id, int irfId);
+        Task<CandidateAudio> GetCandidate(int id, int irfId);
         Task<bool> AddCandidateAudio(CandidateAudio obj, string emailId, string profile);
         Task<IList<CandidateAudio>> GetCandidateAudios(int candidateId, int irfId);
         string EnrollCandidate(IList<CandidateAudio> candidateList);
-        IEnumerable<Phrase> GetPhrases();
+        Task<IEnumerable<Phrase>> GetPhrases();
     }
 }

@@ -17,7 +17,7 @@ namespace Risebird.Business.Interface
         IEnumerable<Client> GetClients();
         IEnumerable<ProjectIRFMapping> GetProjectCluster(int id);
         Task<bool> UnArchiveProject(int id);
-        ProjectFunnel GetFunnelData(int id);
+        Task<ProjectFunnel> GetFunnelData(int id);
         Project GetProjectEdit(int id);
     }
 }

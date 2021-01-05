@@ -700,7 +700,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult UploadAudio(int candidateId, int irfId, string actMethod = "")
+        public async Task<IActionResult> UploadAudio(int candidateId, int irfId, string actMethod = "")
         {
             try
             {
@@ -709,7 +709,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "ResumeEvaluator" || profileName == "HR" || profileName == "Recruiter")
                 {
-                    var model = _evaluatorService.GetCandidate(candidateId, irfId);
+                    var model = await _evaluatorService.GetCandidate(candidateId, irfId);
                     TempData["actMethod"] = actMethod;
                     ViewBag.BackMethod = actMethod;
                     var list = new SelectList(new[]
@@ -733,7 +733,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction(actMethod);
             }
         }

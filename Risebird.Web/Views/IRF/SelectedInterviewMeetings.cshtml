@@ -158,21 +158,13 @@
                                                                             </td>
                                                                         }
 
-                                                                        else
-                                                                        {
-                                                                            <td class="cadName">
-                                                                                <a onclick=""><span class="dot"></span> @item.candidateName </a>
-                                                                            </td>
-                                                                        }
+                                                                    else
+                                                                    {
+                                                                        <td class="cadName">
+                                                                            <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                        </td>
                                                                     }
-
                                                                 }
-                                                                else
-                                                                {
-                                                                    <td></td>
-                                                                }
-
-
                                                                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new { interviewId = item.imid, irfId = ViewBag.IRFintId, IsSelected = true })'>Report</a> </td>
                                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                                 {
@@ -183,47 +175,42 @@
                                                                     <td>No Resume</td>
                                                                 }
 
-                                                                @if (item.ClientHrContact != null && item.ClientHrContact != "")
+
+                                                                @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 15)
                                                                 {
-                                                                    @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 15)
-                                                                    {
-                                                                        <td>
-                                                                            <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact.Substring(0, 15)... </a>
-                                                                        </td>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <td>
-                                                                            <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
-                                                                        </td>
-                                                                    }
+                                                                    <td>
+                                                                        <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact.Substring(0, 15)... </a>
+                                                                    </td>
                                                                 }
                                                                 else
                                                                 {
-                                                                    <td></td>
-}
+                                                                    <td>
+                                                                        <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
+                                                                    </td>
+                                                                }
+
 
                                                                 <td> @item.confirmationStatus</td>
                                                                 <td> @item.MeetingStatusStatusDesc </td>
                                                                 <td> @item.intervieweStatusStatDesc </td>
 
-                                                                <td class="text-right action">
-                                                                    @if (ViewBag.ProfileName == "client")
-                                                                    {
-                                                                        <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_" + item.imid)" class="btn-call"><i class="fa fa-thumbs-up"></i></span>
-                                                                    }
-                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                    {
-                                                                        <span onclick="callCandidate(@item.MobileNumber)" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>
-                                                                        <span onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone"></i></span>
+                                                            <td class="text-right action">
+                                                                @if (ViewBag.ProfileName == "client")
+                                                                {
+                                                                    <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_" + item.imid)" class="btn-call"><i class="fa fa-thumbs-up"></i></span>
+                                                                }
+                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                {
+                                                                    <span onclick="callCandidate(@item.MobileNumber)" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>
+                                                                    <span onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone"></i></span>
 
-                                                                    }
-                                                                </td>
-
-
+                                                                }
+                                                            </td>
 
 
-                                                            </tr>
+
+
+                                                        </tr>
 
 
                                                             <tr class="collapse @item.imid">
@@ -305,12 +292,8 @@
                                                                             <td>
                                                                                 @item.FinalSelectionStat
                                                                             </td>
-
-
-
-
-
                                                                             <td class="interview-com">
+
                                                                                 <div id="section">
                                                                                     @if (item.FinalComments != null && item.FinalComments != "")
                                                                                     {
