@@ -1,0 +1,59 @@
+﻿@{
+    ViewBag.Title = "Upload Video";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm())
+{
+    <div class="form-group">
+        <label for="selectFile">Select Video File</label>
+        <input type="file" id="selectFile" accept=".mp4,.avi" />
+    </div>
+
+    <div class="form-group">
+        <input type="button" id="fileUpload" name="fileUpload" value="Upload" class="btn" onclick="beginUpload()" />
+    </div>
+
+    <div class="form-group">
+        <div id="progressBar" style="background-color: grey"></div>
+    </div>
+
+    <div class="form-group">
+        <label id="statusMessage" style="color:red;font-size: 50px;"></label>
+    </div>
+
+    <div class="form-group">
+        <label>Video Url:</label>
+        <label id="videourl"></label>
+    </div>
+}
+
+@section scripts{
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+}
+<script>
+    function beginUpload() {
+        var fileControl = document.getElementById("selectFile");
+        var fileChunk = new FormData();
+        if (fileControl.files.length > 0) {
+            for (var i = 0; i < fileControl.files.length; i++) {
+                fileChunk.append('file', fileControl.files[i]);
+            }
+        }
+        $("#fileUpload").hide();
+        $.ajax({
+            type: "POST",
+            url: "/Home/UploadFiles",
+            data: fileChunk,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            processData: false,
+            success: function (data) {
+                $("#videourl").text(data);
+            }
+        });
+        //ajax call
+    }
+</script>
