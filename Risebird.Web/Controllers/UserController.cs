@@ -2427,10 +2427,7 @@ namespace Risebird.Web.Controllers
                 int totalcount = model.Count;
                 int Pagestart = 0;
                 int Pageend = 0;
-                if (String.IsNullOrEmpty(searchValue))
-                {
-                    searchValue = searchValue.ToUpper();
-                }
+              
                 ViewBag.Searchvalue = searchValue;
                 if (!String.IsNullOrEmpty(searchValue))
                 {
@@ -2465,7 +2462,6 @@ namespace Risebird.Web.Controllers
                    Pagestart = 0;
                     Pageend = 0;
                 }
-                _modelDetails = model;
            
                 return Json(new { result = model.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count });
             }

@@ -490,9 +490,9 @@
             html += '<td class="interview-com">';
             html += ' <div id="section">';
             if (data[i].primarySkill.length > 35) {
-                html += '                                                   <div class="article">';
-                html += '                                              <p style="margin-bottom:0px;">' + data[i].primarySkill.substring(0, 35) + '</p>';
-                html += '                   <p class="moretext_' + data[i].id + ' moretext">' + data[i].primarySkill.substring(35, data[i].primarySkill.length - 35) + '</p>';
+                html += '  <div class="article">';
+                html += '  <p style="margin-bottom:0px;">' + data[i].primarySkill.substring(0, 35) + '</p>';
+                html += '   <p class="moretext_' + data[i].id + ' moretext">' + data[i].primarySkill.substring(35, data[i].primarySkill.length - 35) + '</p>';
                 html += '</div>';
             }
             else {
@@ -506,24 +506,23 @@
             html += '   <td class="text-center"><a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a></td>';
 
             if (data[i].isApproved == true) {
-                html += '    <td>Approved</td>';
+                html += '<td>Approved</td>';
             }
             else {
-                html += '   <td>Not Approved</td>';
+                html += ' <td>Not Approved</td>';
             }
 
             html += ' <td class="text-center">' + data[i].noOfInterview + '</td>';
             html += '  <td class="text-center">' + data[i].successRate + '</td>';
             html += '   <td class="text-center action">';
-
             html += ' <button class="mdc-fab app-fab--absolute" aria-label="Edit">';
-            html += ' <span onclick="location.href = "/User/EditInterviewer?id =' + data[i].id + '" title="Click here to edit interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>';
+            html += ' <span onclick="location.href = "/User/EditInterviewer?id=' + data[i].id + '" title="Click here to edit interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>';
             html += '  </button>';
             html += ' <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">';
-            html += '  <span onclick="javascript:DeleteEntityfromEnvironment(' + data[i].id + ',' + data[i].emailId + ');" title="Click here to delete interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
+            html += '  <span onclick="javascript:DeleteEntityfromEnvironment(' + data[i].id + ',' + data[i].emailId + ');" title="Click here to delete interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>';
             html += ' </button>';
             html += '  <button class="mdc-fab app-fab--absolute" aria-label="Edit">';
-            html += ' <span onclick="location.href = "/User/AssessmentForApproval?EmailAddress = ' + data[i].emailId + ' , id = ' + data[i].id + '" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></span>';
+            html += ' <span onclick="location.href = "/User/AssessmentForApproval?EmailAddress= '+ data[i].emailId + '&id= ' + data[i].id + '" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></span>';
             html += '  </button>';
             html += '</td>';
             html += ' <td>';
@@ -536,7 +535,7 @@ html += ' </td>';
 html += '  </tr>';
 
 
-html += '   <tr class="collapse ' + data[i].id + '">';
+html += '   <tr class="collapse '+ data[i].id + '">';
 
 html += ' <td colspan="999" class="child-section">';
 html += ' <table class="table table-striped">';
