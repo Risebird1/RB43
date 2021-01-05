@@ -14,7 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using X.PagedList;
 namespace Risebird.Web.Controllers
 {
     [Authorize]
@@ -26,6 +26,8 @@ namespace Risebird.Web.Controllers
         private IAzureStorageHelper _azureStorageHelper;
         private ISkillService _skillService;
         private IProfileService _profileService;
+        private static List<InterviewerVM> _modelDetails;
+        private static string Searchvalue;
         public UserController(IUserService userService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
                                 ISkillService skillService, IProfileService profileService)
 
@@ -494,11 +496,11 @@ namespace Risebird.Web.Controllers
 
         #region Interviewer Functions
 
-        public IActionResult Interviewers()
+        public IActionResult Interviewers(int? Page, string searchValue)
         {
             try
             {
-                
+
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
@@ -510,7 +512,45 @@ namespace Risebird.Web.Controllers
 
                     }
                     ViewBag.Profile = profileName;
-                    return View(_userService.GetInterviewers());
+                    var model = _userService.GetInterviewers();
+
+                 
+                    if (!String.IsNullOrEmpty(searchValue))
+                    {
+                        searchValue = searchValue.ToUpper();
+                        model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+
+                    }
+                    ViewBag.TotalCount = model.Count;
+
+                    ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                    int a = model.Count / 10;
+                    if (model.Count % 10 == 0)
+                    {
+                        ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                    }
+                    else
+                    {
+                        a = a + 1;
+                        if (a == Page)
+                        {
+                            ViewBag.PageEndCount = model.Count;
+                        }
+                        else
+                        {
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                        }
+
+                    }
+                    if (model.Count == 0)
+                    {
+                        ViewBag.PageStartCount = 0;
+                        ViewBag.PageEndCount = 0;
+                    }
+                    _modelDetails = model;
+                    return View(model.ToPagedList(Page ?? 1, 10));
+                    //return View(_userService.GetInterviewers());
                 }
                 else
                 {
@@ -533,7 +573,7 @@ namespace Risebird.Web.Controllers
                     var model = new InterviewerVM();
                     model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
                     var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
-                                          select new { ID = (int)s, Name = s.GetDescription() };
+                                     select new { ID = (int)s, Name = s.GetDescription() };
                     model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                     return View("AddInterviewer", model);
                 }
@@ -810,7 +850,7 @@ namespace Risebird.Web.Controllers
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_All_Interviewers" + ".xlsx";
             try
             {
-               
+
                 var interviewers = _userService.GetInterviewers();
 
                 Sheet.Cells["A1:K1"].Style.Font.Bold = true;
@@ -1588,7 +1628,8 @@ namespace Risebird.Web.Controllers
                 Date = "4",
                 Day = "Monday"
             });
-            b.Add(new TimelineStatus {
+            b.Add(new TimelineStatus
+            {
                 Status = "Pending",
                 StatusDate = "May 2020",
                 Date = "7",
@@ -1603,7 +1644,7 @@ namespace Risebird.Web.Controllers
                 Day = "Thursday"
             });
 
-          
+
             var c = new List<TimelineStatus>();
             c.Add(new TimelineStatus
             {
@@ -1652,7 +1693,7 @@ namespace Risebird.Web.Controllers
             });
 
 
-        
+
 
 
             var e = new List<TimelineStatus>();
@@ -1675,13 +1716,13 @@ namespace Risebird.Web.Controllers
 
 
             var f = new List<TimelineStatus>();
-           f.Add(new TimelineStatus
+            f.Add(new TimelineStatus
             {
                 Status = "NoShow",
                 StatusDate = "May 2020",
-               Date = "12",
-               Day = "Monday"
-           });
+                Date = "12",
+                Day = "Monday"
+            });
 
             f.Add(new TimelineStatus
             {
@@ -1721,7 +1762,7 @@ namespace Risebird.Web.Controllers
 
 
             var h = new List<TimelineStatus>();
-        
+
 
             h.Add(new TimelineStatus
             {
@@ -1764,7 +1805,7 @@ namespace Risebird.Web.Controllers
             });
 
 
-           j.Add(new TimelineStatus
+            j.Add(new TimelineStatus
             {
                 Status = "First Attempt",
                 StatusDate = "April 2020",
@@ -1831,7 +1872,7 @@ namespace Risebird.Web.Controllers
 
 
 
-         
+
 
 
 
@@ -1854,7 +1895,7 @@ namespace Risebird.Web.Controllers
                 Day = "Wednesday"
             });
 
-           m.Add(new TimelineStatus
+            m.Add(new TimelineStatus
             {
                 Status = "Second Attempt",
                 StatusDate = "April 2020",
@@ -1863,7 +1904,7 @@ namespace Risebird.Web.Controllers
             });
 
 
-           m.Add(new TimelineStatus
+            m.Add(new TimelineStatus
             {
                 Status = "Third Attempt",
                 StatusDate = "April 2020",
@@ -1885,7 +1926,7 @@ namespace Risebird.Web.Controllers
 
             var n = new List<TimelineStatus>();
 
-          
+
             n.Add(new TimelineStatus
             {
                 Status = "Schedule",
@@ -1915,7 +1956,7 @@ namespace Risebird.Web.Controllers
                 Day = "Monday"
             });
 
-           o.Add(new TimelineStatus
+            o.Add(new TimelineStatus
             {
                 Status = "BorderLine",
                 StatusDate = "May 2020",
@@ -2364,9 +2405,76 @@ namespace Risebird.Web.Controllers
 
         }
 
+
+
+
+
+
+
+
+
+
+
+
+        [HttpPost]
+        public JsonResult InterviewersJson(string searchValue)
+        {
+            try
+            {
+                int Page = 1;
+                var model = _modelDetails;
+                Searchvalue = searchValue;
+                int totalcount = model.Count;
+                int Pagestart = 0;
+                int Pageend = 0;
+              
+                ViewBag.Searchvalue = searchValue;
+                if (!String.IsNullOrEmpty(searchValue))
+                {
+                    searchValue = searchValue.ToUpper();
+                    model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+
+                }
+                ViewBag.TotalCount = model.Count;
+
+                Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                int a = model.Count / 10;
+                if (model.Count % 10 == 0)
+                {
+                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                }
+                else
+                {
+                    a = a + 1;
+                    if (a == Page)
+                    {
+                        Pageend = model.Count;
+                    }
+                    else
+                    {
+                        Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                    }
+
+                }
+                if (model.Count == 0)
+                {
+                   Pagestart = 0;
+                    Pageend = 0;
+                }
+           
+                return Json(new { result = model.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count });
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("failed");
+            }
+        }
+
     }
 
-    
+
 }
 
 

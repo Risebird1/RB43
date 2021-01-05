@@ -239,7 +239,7 @@ input[type='radio']:checked:after {
 #codedresumeId {
     border: 1px #fdcfc1 solid;
     color: #584d4d;
-    padding: 5px 10px;
+    padding: 5px 5px;
     border-radius: 16px;
     background: #fdcfc1;
 }

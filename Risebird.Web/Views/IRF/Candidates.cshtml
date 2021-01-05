@@ -9,7 +9,7 @@
 
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=11" />
-<input type="hidden" value="@ViewBag.Profile" id="hidprofile"/>
+<input type="hidden" value="@ViewBag.Profile" id="hidprofile" />
 <input type="hidden" value="@ViewBag.IRFName" id="hidirfname" />
 <input type="hidden" value="@ViewBag.IRFId" id="hidirfid" />
 <div class="main-panel" id="main-panel">
@@ -172,51 +172,47 @@
                                                             {
                                                                 selectabilityColor = "red";
                                                             }
-                                                        <tr id="@item.id" data-changes="1">
-                                                            <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                                                            <tr id="@item.id" data-changes="1">
+                                                                <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
 
 
 
-                                                            @if (item.EmailId != null && item.EmailId != "")
+                                                                @if (item.EmailId != null && item.EmailId != "")
+                                                                {
+                                                                    @if (item.EmailId.Length > 20)
+                                                                    {
+
+
+                                                                <td class="cadEmail">
+                                                                    <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0, 20)... </a>
+                                                                </td>
+                                                            }
+
+
+                                                            else
                                                             {
-                                                                @if (item.EmailId.Length > 20)
-                                                                {
+                                                                <td class="cadEmail">
+                                                                    <a onclick=""> @item.EmailId </a>
+                                                                </td>
+                                                            }
 
-
-                                                                    <td class="cadEmail">
-                                                                        <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0, 20)... </a>
-                                                                    </td>
-                                                                }
-
-
-                                                                else
-                                                                {
-                                                                    <td class="cadEmail">
-                                                                        <a onclick=""> @item.EmailId </a>
-                                                                    </td>
-                                                                }
+                                                            <td class="text-center">@item.AttemptsCount</td>
+                                                            @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                            {
+                                                                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
                                                             }
                                                             else
                                                             {
-                                                                <td></td>
+                                                                <td>No Resume</td>
                                                             }
-                                                                <td class="text-center">@item.AttemptsCount</td>
-                                                                @if (item.ResumeLink != null && item.ResumeLink != "")
-                                                                {
-                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>No Resume</td>
-                                                                }
-                                                                @if (item.EncodedResumeLink != null && item.EncodedResumeLink != "")
-                                                                {
-                                                                    <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=@item.EncodedResumeLink>Coded Resume</a> </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>No Coded Resume</td>
-                                                                }
+                                                            @if (item.EncodedResumeLink != null && item.EncodedResumeLink != "")
+                                                            {
+                                                                <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=@item.EncodedResumeLink>Coded Resume</a> </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Coded Resume</td>
+                                                            }
 
 
                                                                 <td class="text-center">@item.TotalInvites</td>
@@ -379,27 +375,22 @@
                                                                                 }
 
 
-                                                                                else
-                                                                                {
-                                                                                    <td class="cadName">
-                                                                                        <a onclick=""> @item.Name </a>
-                                                                                    </td>
-                                                                                }
+                                                                            else
+                                                                            {
+                                                                                <td class="cadName">
+                                                                                    <a onclick=""> @item.Name </a>
+                                                                                </td>
                                                                             }
+                                                                            @if (item.ClientHRAttemptContact != null && item.ClientHRAttemptContact.Length > 13)
+                                                                            {
+                                                                                <td class="text-center">@item.ClientHRAttemptContact.Substring(0, 13)... </td>
 
-                                                                            else { 
+                                                                            }
+                                                                            else
+                                                                            {
                                                                                 <td></td>
                                                                             }
-                                                                                @if (item.ClientHRAttemptContact != null && item.ClientHRAttemptContact.Length > 13)
-                                                                                {
-                                                                                    <td class="text-center">@item.ClientHRAttemptContact.Substring(0, 13)... </td>
-
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <td></td>
-                                                                                }
-
+                                                                            
 
 
                                                                                 <td>@item.Type</td>
@@ -447,26 +438,29 @@
                                                                                     <td></td>
                                                                                 }
 
-                                                                                @if (item.interviewDate != null)
-                                                                                {
-                                                                                    <td>@item.interviewDate</td>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <td></td>
-                                                                                }
-                                                                                @if (item.CostEstimate != null)
-                                                                                {
-                                                                                    <td>@item.CostEstimate</td>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <td></td>
-                                                                                }
-                                                                                <td>@item.HeuristicsscoreDesc</td>
-                                                                                @if (item.AvailableFullTime)
-                                                                                {
-                                                                                    <td>Yes</td>
+
+
+
+                                                                            @if (item.interviewDate != null)
+                                                                            {
+                                                                                <td>@item.interviewDate</td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+                                                                            }
+                                                                            @if (item.CostEstimate != null)
+                                                                            {
+                                                                                <td>@item.CostEstimate</td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+                                                                            }
+                                                                            <td>@item.HeuristicsscoreDesc</td>
+                                                                            @if (item.AvailableFullTime)
+                                                                            {
+                                                                                <td>Yes</td>
 
                                                                                 }
                                                                                 else
@@ -1058,16 +1052,13 @@
                         html += '   </td>';
                     }
 
-                    else {
-                        html += '   <td class="cadEmail">';
-                        html += '  <a onclick=""> ' + data[i].emailId + ' </a>';
-                        html += ' </td>';
-                    }
-                }
                 else {
-                    html += '<td></td>';
+                    html += '   <td class="cadEmail">';
+                    html += '  <a onclick=""> ' + data[i].emailId + ' </a>';
+                    html += ' </td>';
                 }
-                     html += ' <td class="text-center"' + data[i].attemptsCount + '</td>';
+
+                html += ' <td class="text-center"' + data[i].attemptsCount + '</td>';
 
 
                      if (data[i].resumeLink != null && data[i].resumeLink != "") {
@@ -1085,14 +1076,18 @@
                      }
                      html += '  <td class="text-center">' + data[i].totalInvites + '</td>';
 
-                     html += ' <td class="text-center">' + data[i].inviteConfirmation + '</td>';
+                html += ' <td class="text-center">' + data[i].inviteConfirmation + '</td>';
+               
 
-                     html += '  <td class="text-center" style="color:' + joinabilityColor + ';">';
-                     html += '  <b>' + data[i].joinabilityScore + '</b>';
-                     html += '   </td>';
-                     html += '  <td class="text-center" style="color:' + selectabilityColor + '; ">';
-                     html += '  <b>' + data[i].selectabilityScore + '</b>';
-                     html += ' </td>';
+
+
+
+                html += '  <td class="text-center" style="color:' + joinabilityColor + ';">';
+                html += '  <b>' + data[i].joinabilityScore + '</b>';
+                html += '   </td>';
+                html += '  <td class="text-center" style="color:' + selectabilityColor + '; ">';
+                html += '  <b>' + data[i].selectabilityScore + '</b>';
+                html += ' </td>';
 
                      html += '    <td class="text-right action">';
 
@@ -1186,59 +1181,57 @@
 
                      html += '  <tr class="collapse ' + data[i].id + '">';
 
-                     html += '  <td colspan="999" class="child-section">';
-                     html += '  <table class="table table-striped table-responsive">';
-                     html += '  <tr>';
-                     html += '   <th>Candidate Name</th>';
-                     html += '   <th>Client HR</th>';
-                     html += '     <th>Type</th>';
-                     html += '     <th>Location(Applied for)</th>';
-                     //html += '    <th>Skill</th>';
-                     html += '    <th>Work Auth</th>';
-                     html += '    <th>Current Location</th>';
-                     html += '   <th>Current Employer</th>';
-                     html += '  <th>Total Experience</th>';
-                     html += '  <th>Current Salary</th>';
-                     html += ' <th>Expected Salary</th>';
-                     html += ' <th>Notice</th>';
-                     html += ' <th>Confirmation Status</th>';
-                     html += ' <th>Video Link</th>';
-                     html += ' <th>Meeting Status</th>';
-                     html += ' <th>Interview Status</th>';
-                     html += ' <th>Interview Date</th>';
-                     html += ' <th>Cost Estimate</th>';
-                     html += ' <th>Profile Type</th>';
-                     html += ' <th>Available for Full-time</th>';
-                     html += ' <th>Available for Freelancing</th>';
-                     html += ' </tr>';
-                     html += '<tr>';
-                if (data[i].name != null && data[i].name != "") {
-                    if (data[i].name.length > 20) {
-                        html += '  <td class="cadName">';
-                        html += '  <a onclick="" data-tooltip="' + data[i].name + '"> ' + data[i].name.substring(0, 20) + '... </a>';
-                        html += '  </td>';
-                    } else {
-                        html += '<td class="cadName">';
-                        html += '   <a onclick=""> ' + data[i].name + ' </a>';
-                        html += '   </td>';
-                    }
+                html += '  <td colspan="999" class="child-section">';
+                html += '  <table class="table table-striped table-responsive">';
+                html += '  <tr>';
+                html += '   <th>Candidate Name</th>';
+                html += '   <th>Client HR</th>';
+                html += '     <th>Type</th>';
+                html += '     <th>Location(Applied for)</th>';
+                //html += '    <th>Skill</th>';
+                html += '    <th>Work Auth</th>';
+                html += '    <th>Current Location</th>';
+                html += '   <th>Current Employer</th>';
+                html += '  <th>Total Experience</th>';
+                html += '  <th>Current Salary</th>';
+                html += ' <th>Expected Salary</th>';
+                html += ' <th>Notice</th>';
+                html += ' <th>Confirmation Status</th>';
+                html += ' <th>Video Link</th>';
+                html += ' <th>Meeting Status</th>';
+                html += ' <th>Interview Status</th>';
+                html += ' <th>Interview Date</th>';
+                html += ' <th>Cost Estimate</th>';
+                html += ' <th>Profile Type</th>';
+                html += ' <th>Available for Full-time</th>';
+                html += ' <th>Available for Freelancing</th>';
+                html += ' </tr>';
+                html += '<tr>';
 
+                if (data[i].name.length > 20) {
+                    html += '  <td class="cadName">';
+                    html += '  <a onclick="" data-tooltip="' + data[i].name + '"> ' + data[i].name.substring(0, 20) + '... </a>';
+                    html += '  </td>';
+                } else {
+                    html += '<td class="cadName">';
+                    html += '   <a onclick=""> ' + data[i].name + ' </a>';
+                    html += '   </td>';
                 }
 
+
+
+
+                if (data[i].clientHRAttemptContact != null) {
+                    html += '  <td class="text-center">' + data[i].clientHRAttemptContact + '</td>';
+
+                }
                 else {
-                    html += '<td></td>';
+                    html += '    <td></td>';
                 }
-                     if (data[i].clientHRAttemptContact != null) {
-                         html += '  <td class="text-center">' + data[i].clientHRAttemptContact + '</td>';
-
-                     }
-                     else {
-                         html += '    <td></td>';
-                     }
-                     if (data[i].type == null) {
-                         html += ' <td></td>';
-                     }
-                     else { html += ' <td>' + data[i].type + '</td>';}
+                if (data[i].type == null) {
+                    html += ' <td></td>';
+                }
+                else { html += ' <td>' + data[i].type + '</td>';}
 
 
                      if (data[i].location == null) {
@@ -1252,19 +1245,19 @@
                      }
                      else { html += ' <td>' + data[i].workAuth + '</td>'; }
 
-                     if (data[i].currentLocation == null) {
-                         html += ' <td></td>';
-                     }
-                     else { html += ' <td>' + data[i].currentLocation + '</td>'; }
-                     if (data[i].currentEmployer == null) {
-                         html += ' <td></td>';
-                     }
-                     else { html += ' <td>' + data[i].currentEmployer + '</td>'; }
-
-                     html += '  <td>' + data[i].totalExperience + '</td>';
-                     html += '  <td>' + data[i].currentSalary + '</td>';
-                     html += '  <td>' + data[i].expectedSalary + '</td>';
-                     html += '  <td>' + data[i].notice + '</td>';
+                if (data[i].currentLocation == null) {
+                    html += ' <td></td>';
+                }
+                else { html += ' <td>' + data[i].currentLocation + '</td>'; }
+                if (data[i].currentEmployer == null) {
+                    html += ' <td></td>';
+                }
+                else { html += ' <td>' + data[i].currentEmployer + '</td>'; }
+          
+                html += '  <td>' + data[i].totalExperience + '</td>';
+                html += '  <td>' + data[i].currentSalary + '</td>';
+                html += '  <td>' + data[i].expectedSalary + '</td>';
+                html += '  <td>' + data[i].notice + '</td>';
 
                      if (data[i].confirmationStatusDesc != "0") {
                          html += '  <td>' + data[i].confirmationStatusDesc + '</td>';

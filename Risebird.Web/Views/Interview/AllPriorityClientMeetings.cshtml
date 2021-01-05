@@ -472,98 +472,83 @@
                                                         }
                                                         @foreach (var item in Model)
                                                         {
-                                                    <tr id="@item.imid" data-changes="1">
-                                                        <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
-                                                        <td> @item.interviewDate </td>
+                                                            <tr id="@item.imid" data-changes="1">
+                                                                <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
+                                                                <td> @item.interviewDate </td>
 
-                                                        @if (item.candidateName != null && item.candidateName != "")
-                                                        {
+                                                                @if (item.candidateName != null && item.candidateName != "")
+                                                                {
 
-                                                            @if (item.IsOnline == 1 && item.candidateName.Length > 18)
-                                                            {
-                                                                <td>
-                                                                    <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>  @item.candidateName.Substring(0, 20)... </a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
+                                                                    @if (item.IsOnline == 1 && item.candidateName.Length > 18)
+                                                                    {
+                                                                        <td>
+                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>  @item.candidateName.Substring(0, 20)... </a>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
 
-                                                                @if (item.candidateName.Length > 18)
+                                                                        @if (item.candidateName.Length > 18)
+                                                                        {
+
+
+                                                                        <td class="cadName">
+                                                                            <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 22)...  </a>
+                                                                        </td>
+                                                                    }
+
+
+                                                                    else
+                                                                    {
+                                                                        <td class="cadName">
+                                                                            <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                        </td>
+                                                                    }
+
+
+                                                                }
+
+
+
+
+
+                                                                @if (item.candidateEmail.Length > 25)
                                                                 {
 
 
-                                                                    <td class="cadName">
-                                                                        <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 18)...  </a>
+                                                                    <td class="cadEmail">
+                                                                        <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 25)... </a>
                                                                     </td>
                                                                 }
 
 
                                                                 else
                                                                 {
-                                                                    <td class="cadName">
-                                                                        <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                    <td class="cadEmail">
+                                                                        <a onclick=""> @item.candidateEmail </a>
                                                                     </td>
                                                                 }
-                                                          
+
+                                                                @if (item.JDTiltle.Split("|")[0].Length > 18)
+                                                                {
 
 
-                                                        }
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-
-                                                        @if (item.candidateEmail != null && item.candidateEmail != "")
-                                                        {
-
-                                                            @if (item.candidateEmail.Length > 23)
-                                                            {
+                                                                    <td class="cadSkill">
+                                                                        <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0].Substring(0, 18)... </a>
+                                                                    </td>
+                                                                }
 
 
-                                                                <td class="cadEmail">
-                                                                    <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 23)... </a>
-                                                                </td>
-                                                            }
+                                                                else
+                                                                {
+                                                                    <td class="cadSkill">
+                                                                        <a onclick=""> @item.JDTiltle.Split("|")[0] </a>
+                                                                    </td>
+                                                                }
 
-
-                                                            else
-                                                            {
-                                                                <td class="cadEmail">
-                                                                    <a onclick=""> @item.candidateEmail </a>
-                                                                </td>
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                        @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
-                                                        {
-
-
-                                                            @if (item.JDTiltle.Split("|")[0].Length > 18)
-                                                            {
-
-
-                                                                <td class="cadSkill">
-                                                                    <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0].Substring(0, 18)... </a>
-                                                                </td>
-                                                            }
-
-
-                                                            else
-                                                            {
-                                                                <td class="cadSkill">
-                                                                    <a onclick=""> @item.JDTiltle.Split("|")[0] </a>
-                                                                </td>
-                                                            }
-                                                        }
-
-                                                        else { <td></td>}
-                                                        @if (item.confirmationStatus.Trim() == "Cancelled")
-                                                        {
-                                                            <td class="text-center">
+                                                                @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                                {
+                                                                    <td class="text-center">
 
                                                                 <a><span class="status-cancel"> @item.confirmationStatus</span></a>
                                                             </td>

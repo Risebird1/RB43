@@ -45,7 +45,7 @@
 
                 <div class="pull-right">
                     <div>
-                        
+
                         <div id="meeting_filter" class="dataTables_filter pull-left mt-20" style="margin-right:10px;">
 
                             <div class="searchCon">
@@ -125,96 +125,85 @@
                                                     <tbody id="tblbodyInterviewMeeting">
                                                         @foreach (var item in Model)
                                                         {
-                                                        <tr id="@item.imid" data-changes="1">
-                                                            <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
-                                                            <td> @item.interviewDate </td>
-                                                            @if (item.candidateName != null && item.candidateName != "")
-                                                            {
-                                                                @if (item.IsOnline == 1 && item.candidateName.Length > 18)
+                                                            <tr id="@item.imid" data-changes="1">
+                                                                <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
+                                                                <td> @item.interviewDate </td>
+                                                                @if (item.candidateName != null && item.candidateName != "")
                                                                 {
-                                                                    <td>
-                                                                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName.Substring(0, 18)...  </a>
-                                                                    </td>
-                                                                }
-                                                                else
-                                                                {
-
-                                                                    @if (item.candidateName.Length > 20)
+                                                                    @if (item.IsOnline == 1 && item.candidateName.Length > 18)
                                                                     {
-
-
-
-                                                                        <td class="cadName">
-                                                                            <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 20)... </a>
+                                                                        <td>
+                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName.Substring(0, 18)...  </a>
                                                                         </td>
                                                                     }
-
                                                                     else
                                                                     {
-                                                                        <td class="cadName">
-                                                                            <a onclick=""><span class="dot"></span> @item.candidateName </a>
-                                                                        </td>
-                                                                    }
 
+
+
+                                                                    <td class="cadName">
+                                                                        <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 20)... </a>
+                                                                    </td>
                                                                 }
 
+                                                                else
+                                                                {
+                                                                    <td class="cadName">
+                                                                        <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                    </td>
+                                                                }
+                                                        }
+
+                                                            @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                            {
+                                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Report</td>
+                                                            }
+                                                            @if (item.resumeLink != null && item.resumeLink != "")
+                                                            {
+                                                                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Resume</td>
                                                             }
 
-                                                            else { <td></td>}
-                                                                @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                                                                {
-                                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>No Report</td>
-                                                                }
-                                                                @if (item.resumeLink != null && item.resumeLink != "")
-                                                                {
-                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>No Resume</td>
-                                                                }
-                                                                @if (item.ClientHrContact != null && item.ClientHrContact != "")
-                                                                {
-                                                                    @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 20)
-                                                                    {
-                                                                        <td>
-                                                                            <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact.Substring(0, 20)... </a>
-                                                                        </td>
+                                                            @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 20)
+                                                            {
+                                                                <td>
+                                                                    <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact.Substring(0, 20)... </a>
+                                                                </td>
 
 
                                                                     }
                                                                     else
                                                                     {
 
-                                                                        <td>
-                                                                            <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
-                                                                        </td>
-                                                                    }
-                                                                }
-
-                                                                else { <td></td>}
-                                                                @if (item.confirmationStatus.Trim() == "Cancelled")
-                                                                {
-                                                                    <td class="text-center">
-                                                                        <a style="color:red"> @item.confirmationStatus</a>
-                                                                    </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td class="text-center"> @item.confirmationStatus</td>
-                                                                }
-                                                                @if (item.zoomLink != null && item.zoomLink != "")
-                                                                {
-                                                                    <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>No Interview Link</td>
-                                                                }
+                                                                <td>
+                                                                    <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
+                                                                </td>
+                                                            }
+                                                            @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                            {
+                                                                <td class="text-center">
+                                                                    <a style="color:red"> @item.confirmationStatus</a>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td class="text-center"> @item.confirmationStatus</td>
+                                                            }
+                                                            @if (item.zoomLink != null && item.zoomLink != "")
+                                                            {
+                                                                <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Interview Link</td>
+                                                            }
 
                                                                 <td> @item.MeetingStatusStatusDesc </td>
                                                                 @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
@@ -406,140 +395,143 @@
         for (var i = 0; i < data.length; i++) {
             html += '  <tr id="' + data[i].imid + '" data-changes="1">';
             html += '  <td style="width:10px;" data-toggle="collapse" id="'+ data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
-            html += '  <td> ' + data[i].interviewDate + ' </td>';
-            if (data[i].candidateName != null && data[i].candidateName != "") { 
-
-                    if (data[i].isOnline == 1 && data[i].candidateName.Length > 20) {
-                        html += '   <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName.substring(0, 20) + '...  </a></td>';
-                    }
-                    else {
-                        if (data[i].candidateName.length > 20) {
-
-                            html += '  <td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 20) + '... </a> </td>';
+            html += '  <td> ' + data[i].interviewDate+' </td>';
+            if (data[i].isOnline == 1 && data[i].candidateName.Length > 20)
+                                                            {
+                html += '   <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName.substring(0, 20) +'...  </a></td>';
 
 
-                        }
+                                                            }
+                                                            else
+            {
+                if (data[i].candidateName.length > 20)
+                                                                {
 
-                        else {
-                            html += ' <td class="cadName"> <a onclick=""><span class="dot"></span> ' + data[i].candidateName + ' </a> </td>';
 
-                        }
-                    }
-                }
+
+                    html += '  <td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 20) + '... </a> </td>';
+
+
+                                                                }
+
+                                                                else
+                                                                {
+                    html += ' <td class="cadName"> <a onclick=""><span class="dot"></span> ' + data[i].candidateName + ' </a> </td>';
+
+                                                                }
+                                                        }
+
+
+
+            if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2)))
+                                                                {
+                html += '  <td> <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId =' + data[i].imid + '&irfId=' +irfid+'"}>Report</a></td>';
+                                                                }
+                                                                else
+                                                                {
+                html += '   <td>No Report</td>';
+                                                                }
+            if (data[i].resumeLink != null && data[i].resumeLink != "")
+                                                                {
+                html += '      <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink+'>Resume</a> </td>';
+                                                                }
+                                                                else
+                                                                {
+                html += '    <td>No Resume</td>';
+                                                                }
+
+            if (data[i].isHrOnline == 1 && data[i].clientHrContact.length > 20)
+                                                                {
+                if (data[i].clientHrContact != null) {
+                    html += '   <td>  <a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span> ' + data[i].clientHrContact.substring(0, 20 )+ '... </a></td>';
+                                                                    }
+
+
+                                                                    else {
+                                                                        html += ' <td></td>';}
+
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (data[i].clientHrContact != null) {
+                                                                        html += '   <td>  <a onclick=""><span class="dot"></span>' + data[i].clientHrContact + ' </a></td>';
+                                                                    }
+                                                                    else { html += ' <td></td>';}
+
+
+                                                                }
+            if (data[i].confirmationStatus.trim() == "Cancelled")
+                                                                {
+                html += '    <td class="text-center"> <a style="color:red">' + data[i].confirmationStatus+'</a></td>';
+
+
+                                                                }
+                                                                else
+                                                                {
+                html += '  <td class="text-center">'+data[i].confirmationStatus+'</td>';
+                                                                }
+            if (data[i].zoomLink != null && data[i].zoomLink != "")
+                                                                {
+                html += '<td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=' + data[i].zoomLink+'>Interview Link</a></td>';
+                                                                }
+                                                                else
+                                                                {
+                html += '    <td>No Interview Link</td>';
+                                                                }
+            if (data[i].meetingStatusStatusDesc != null) {
+                html += '   <td>' + data[i].meetingStatusStatusDesc + ' </td>';
+            }
             else {
-                    html += '<td></td>';
-                }
+                html += '  <td></td>';
+            }
+            if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
+                if (data[i].intervieweStatusStatDesc != null) {
 
-
-                if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2)))
-                {
-                    html += '  <td> <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId =' + data[i].imid + '&irfId=' +irfid+'"}>Report</a></td>';
-                }
-                else
-                {
-                    html += '   <td>No Report</td>';
-                }
-                if (data[i].resumeLink != null && data[i].resumeLink != "")
-                {
-                    html += '      <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink+'>Resume</a> </td>';
-                }
-                else
-                {
-                    html += '    <td>No Resume</td>';
-                }
-
-                if (data[i].isHrOnline == 1 && data[i].clientHrContact.length > 20)
-                {
-                    if (data[i].clientHrContact != null) {
-                        html += '   <td>  <a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span> ' + data[i].clientHrContact.substring(0, 20 )+ '... </a></td>';
-                    }
-
-
-                    else {
-                        html += ' <td></td>';}
-
-
-                }
-                else
-                {
-                    if (data[i].clientHrContact != null) {
-                        html += '   <td>  <a onclick=""><span class="dot"></span>' + data[i].clientHrContact + ' </a></td>';
-                    }
-                    else { html += ' <td></td>';}
-
-
-                }
-                if (data[i].confirmationStatus.trim() == "Cancelled")
-                {
-                    html += '    <td class="text-center"> <a style="color:red">' + data[i].confirmationStatus+'</a></td>';
-
-
-                }
-                else
-                {
-                    html += '  <td class="text-center">'+data[i].confirmationStatus+'</td>';
-                }
-                if (data[i].zoomLink != null && data[i].zoomLink != "")
-                {
-                    html += '<td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=' + data[i].zoomLink+'>Interview Link</a></td>';
-                }
-                else
-                {
-                    html += '    <td>No Interview Link</td>';
-                }
-                if (data[i].meetingStatusStatusDesc != null) {
-                    html += '   <td>' + data[i].meetingStatusStatusDesc + ' </td>';
+                    html += '    <td> ' + data[i].intervieweStatusStatDesc + ' </td>';
                 }
                 else {
-                    html += '  <td></td>';
+                    html += '<td></td>';
                 }
-                if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
-                    if (data[i].intervieweStatusStatDesc != null) {
+            }
+                                                              
+                                                                else
+                                                                {
+                                                                    html += '    <td></td>';
+                                                                }
 
-                        html += '    <td> ' + data[i].intervieweStatusStatDesc + ' </td>';
-                    }
-                    else {
-                        html += '<td></td>';
-                    }
-                }
-
-                else
-                {
-                    html += '    <td></td>';
-                }
-
-                html += '  </tr>';
+                                                                html += '  </tr>';
 
                 html += '    <tr class="collapse ' + data[i].imid + '">';
 
-                html += '    <td colspan="999" class="child-section">';
-                html += '   <table class="table table-striped ">';
-                html += '     <tr>';
-                html += '     <th>Candidate Contact</th>';
-                html += '    <th>Current Employer</th>';
-                html += '   <th>Expected Salary</th>';
-                html += '   <th>Expected Joining Time</th>';
-                html += '    <th>Preferred Location</th>';
-                html += '    <th>Staffing Agency</th>';
-                html += ' </tr>';
-                html += '    <tr>';
-                if (data[i].mobileNumber != null)
-                {
-                    html += '  <td>' + data[i].mobileNumber+'</td>';
+            html += '    <td colspan="999" class="child-section">';
+            html += '   <table class="table table-striped ">';
+            html += '     <tr>';
+            html += '     <th>Candidate Contact</th>';
+            html += '    <th>Current Employer</th>';
+            html += '   <th>Expected Salary</th>';
+            html += '   <th>Expected Joining Time</th>';
+            html += '    <th>Preferred Location</th>';
+            html += '    <th>Staffing Agency</th>';
+            html += ' </tr>';
+            html += '    <tr>';
+            if (data[i].mobileNumber != null)
+                                                                            {
+                html += '  <td>' + data[i].mobileNumber+'</td>';
 
-                }
-                else
-                {
-                    html += '  <td>No Contact</td>';
-                }
+                                                                            }
+                                                                            else
+                                                                            {
+                html += '  <td>No Contact</td>';
+                                                                            }
 
 
-                html += '  <td> '+ data[i].currentEmployerName+'</td>';
-                html += ' <td> '+ data[i].expectedPerHourRate+' </td>';
-                html += '  <td> '+ data[i].joiningTime+' </td>';
-                html += '  <td> '+ data[i].preferredLocation+' </td>';
-                html += ' <td>'+ data[i].staffingAgency+'</td>';
-                html += '  </tr>';
+            html += '  <td> '+ data[i].currentEmployerName+'</td>';
+            html += ' <td> '+ data[i].expectedPerHourRate+' </td>';
+            html += '  <td> '+ data[i].joiningTime+' </td>';
+            html += '  <td> '+ data[i].preferredLocation+' </td>';
+            html += ' <td>'+ data[i].staffingAgency+'</td>';
+            html += '  </tr>';
 
                 html += '  </table>';
                 html += '   </td>';
@@ -547,7 +539,7 @@
             }
 
         $("#tblbodyInterviewMeeting").empty().html(html);
-        }
+    }
 
 
     function bindPages(pagecount, startpage, endpage, totalcount) {

@@ -47,7 +47,7 @@
 
                 <div class="pull-right">
                     <div class="selectedmeeting">
-                       
+
                         @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
                         <div id="meeting_filter" class="dataTables_filter pull-left mt-20" style="margin-right:10px;">
 
@@ -135,28 +135,28 @@
                                                         {
                                                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-                                                        <tr id="@item.imid" data-changes="1">
-                                                            <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
-                                                            <td> @item.interviewDate </td>
-                                                            @if (item.candidateName != null && item.candidateName != "")
-                                                            {
-                                                                @if (item.IsOnline == 1 && item.candidateName.Length > 25)
+                                                            <tr id="@item.imid" data-changes="1">
+                                                                <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
+                                                                <td> @item.interviewDate </td>
+                                                                @if (item.candidateName != null && item.candidateName != "")
                                                                 {
-                                                                    <td>
-                                                                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName.Substring(0, 25)...  </a>
-                                                                    </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    @if (item.candidateName.Length > 25)
+                                                                    @if (item.IsOnline == 1 && item.candidateName.Length > 25)
                                                                     {
-
-
-
-                                                                        <td class="cadName">
-                                                                            <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 25)... </a>
+                                                                        <td>
+                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName.Substring(0, 25)...  </a>
                                                                         </td>
                                                                     }
+                                                                    else
+                                                                    {
+                                                                        @if (item.candidateName.Length > 25)
+                                                                        {
+
+
+
+                                                                            <td class="cadName">
+                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 25)... </a>
+                                                                            </td>
+                                                                        }
 
                                                                     else
                                                                     {
@@ -165,26 +165,17 @@
                                                                         </td>
                                                                     }
                                                                 }
+                                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new { interviewId = item.imid, irfId = ViewBag.IRFintId, IsSelected = true })'>Report</a> </td>
+                                                                @if (item.resumeLink != null && item.resumeLink != "")
+                                                                {
+                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No Resume</td>
+                                                                }
 
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-}
 
-
-                                                            <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new { interviewId = item.imid, irfId = ViewBag.IRFintId, IsSelected = true })'>Report</a> </td>
-                                                            @if (item.resumeLink != null && item.resumeLink != "")
-                                                            {
-                                                                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No Resume</td>
-                                                            }
-
-                                                            @if (item.ClientHrContact != null && item.ClientHrContact != "")
-                                                            {
                                                                 @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 15)
                                                                 {
                                                                     <td>
@@ -197,12 +188,11 @@
                                                                         <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
                                                                     </td>
                                                                 }
-                                                            }
-                                                            else {<td></td> }
 
-                                                            <td> @item.confirmationStatus</td>
-                                                            <td> @item.MeetingStatusStatusDesc </td>
-                                                            <td> @item.intervieweStatusStatDesc </td>
+
+                                                                <td> @item.confirmationStatus</td>
+                                                                <td> @item.MeetingStatusStatusDesc </td>
+                                                                <td> @item.intervieweStatusStatDesc </td>
 
                                                             <td class="text-right action">
                                                                 @if (ViewBag.ProfileName == "client")
@@ -302,12 +292,8 @@
                                                                             <td>
                                                                                 @item.FinalSelectionStat
                                                                             </td>
-                                                                            
-
-
-
-
                                                                             <td class="interview-com">
+
                                                                                 <div id="section">
                                                                                     @if (item.FinalComments != null && item.FinalComments != "")
                                                                                     {
@@ -654,7 +640,8 @@
                 }
                 else { html += ' <td></td>'; }
             }
-            
+
+
 
             html += '    <td> ' + data[i].confirmationStatus + '</td>';
             html += '  <td> ' + data[i].meetingStatusStatusDesc + ' </td>';
@@ -671,7 +658,7 @@
                 html += ' <span onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone"></i></span>';
                 html += '     </td>';
             }
-            
+
             html += '     </tr>';
             html += '   <tr class="collapse ' + data[i].imid + '">';
             html += '  <td colspan="999" class="child-section">';
