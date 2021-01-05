@@ -163,7 +163,7 @@ namespace Risebird.Repository
 
         }
 
-        public IEnumerable<TransSelectability> GetTransSelectability(int id)
+        public async Task<IEnumerable<TransSelectability>> GetTransSelectability(int id)
         {
             try
             {
@@ -172,19 +172,19 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<TransSelectability>(query, dynamicParameters);
+                    var results = await con.QueryAsync<TransSelectability>(query, dynamicParameters);
                     return results;
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
 
-        public Candidate GetCandidate(int id)
+        public async Task<Candidate> GetCandidate(int id)
         {
             try
             {
@@ -193,17 +193,18 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<Candidate>(query, dynamicParameters);
+                    var results = await con.QueryAsync<Candidate>(query, dynamicParameters);
                     return results.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-        public string GetSelectabilityComments(int irfId, string emailId)
+
+        public async Task<string> GetSelectabilityComments(int irfId, string emailId)
         {
             try
             {
@@ -213,18 +214,18 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@EmailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<string>(query, dynamicParameters);
+                    var results = await con.QueryAsync<string>(query, dynamicParameters);
                     return results.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
 
-        public string GetJoinabilityComments(int irfId, string emailId)
+        public async Task<string> GetJoinabilityComments(int irfId, string emailId)
         {
             try
             {
@@ -235,18 +236,18 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@EmailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<string>(query, dynamicParameters);
+                    var results = await con.QueryAsync<string>(query, dynamicParameters);
                     return results.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
 
-        public string GetTechComments(int irfId, int candidateId)
+        public async Task<string> GetTechComments(int irfId, int candidateId)
         {
             try
             {
@@ -256,17 +257,17 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@candidateId", candidateId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<string>(query, dynamicParameters);
+                    var results = await con.QueryAsync<string>(query, dynamicParameters);
                     return results.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-        public string GetGeneralSkillComments(int irfId, int candidateId)
+        public async Task<string> GetGeneralSkillComments(int irfId, int candidateId)
         {
             try
             {
@@ -277,19 +278,19 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@candidateId", candidateId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<string>(query, dynamicParameters);
+                    var results = await con.QueryAsync<string>(query, dynamicParameters);
                     return results.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
 
 
-        public IEnumerable<LevelTech> GetLevelTech()
+        public async Task<IEnumerable<LevelTech>> GetLevelTech()
         {
             try
             {
@@ -297,18 +298,18 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<LevelTech>(query);
+                    var results = await con.QueryAsync<LevelTech>(query);
                     return results;
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
-        public IEnumerable<SelectabilityEvaluatorReport> GetSelectabilityReport(int id, int irfId)
+        public async Task<IEnumerable<SelectabilityEvaluatorReport>> GetSelectabilityReport(int id, int irfId)
         {
             try
             {
@@ -318,19 +319,19 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<SelectabilityEvaluatorReport>(query, dynamicParameters);
+                    var results = await con.QueryAsync<SelectabilityEvaluatorReport>(query, dynamicParameters);
                     return results;
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
 
-        public IEnumerable<JoinabilityHRReport> GetJoinabilityReport(int id, int irfId)
+        public async Task<IEnumerable<JoinabilityHRReport>> GetJoinabilityReport(int id, int irfId)
         {
             try
             {
@@ -340,19 +341,19 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<JoinabilityHRReport>(query, dynamicParameters);
+                    var results = await con.QueryAsync<JoinabilityHRReport>(query, dynamicParameters);
                     return results;
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
 
-        public IEnumerable<TechSkillEvaluatorReport> GetTechReport(int candidateId, int irfId)
+        public async Task<IEnumerable<TechSkillEvaluatorReport>> GetTechReport(int candidateId, int irfId)
         {
             try
             {
@@ -362,19 +363,19 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<TechSkillEvaluatorReport>(query, dynamicParameters);
+                    var results = await con.QueryAsync<TechSkillEvaluatorReport>(query, dynamicParameters);
                     return results;
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
 
-        public IEnumerable<SkillGeneralEvaluatorReport> GetSkillGeneralReport(int candidateId, int irfId)
+        public async Task<IEnumerable<SkillGeneralEvaluatorReport>> GetSkillGeneralReport(int candidateId, int irfId)
         {
             try
             {
@@ -384,14 +385,14 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<SkillGeneralEvaluatorReport>(query, dynamicParameters);
+                    var results = await con.QueryAsync<SkillGeneralEvaluatorReport>(query, dynamicParameters);
                     return results;
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -830,7 +831,7 @@ namespace Risebird.Repository
 
         }
 
-        public CandidateAudio GetCandidate(int id, int irfId)
+        public async Task<CandidateAudio> GetCandidate(int id, int irfId)
         {
             try
             {
@@ -840,13 +841,13 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<CandidateAudio>(query, dynamicParameters);
+                    var results = await con.QueryAsync<CandidateAudio>(query, dynamicParameters);
                     return results.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -896,7 +897,7 @@ namespace Risebird.Repository
             }
         }
 
-        public IEnumerable<CandidateAudio> GetCandidateAudios(int candidateId, int irfId)
+        public async Task<IEnumerable<CandidateAudio>> GetCandidateAudios(int candidateId, int irfId)
         {
             try
             {
@@ -905,18 +906,18 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@CandidateId", candidateId);
                     parameters.Add("@IRFId", irfId);
-                    return SqlMapper.Query<CandidateAudio>(con, "usp_GetCandidateAudios", parameters,
+                    return await SqlMapper.QueryAsync<CandidateAudio>(con, "usp_GetCandidateAudios", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -970,25 +971,25 @@ namespace Risebird.Repository
             }
         }
 
-        public IEnumerable<Phrase> GetPhrases()
+        public async Task<IEnumerable<Phrase>> GetPhrases()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
 
-                    return SqlMapper.Query<Phrase>(con, "usp_GetPhrases", commandType: CommandType.StoredProcedure);
+                    return await SqlMapper.QueryAsync<Phrase>(con, "usp_GetPhrases", commandType: CommandType.StoredProcedure);
 
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }

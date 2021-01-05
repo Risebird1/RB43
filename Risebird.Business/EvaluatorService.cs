@@ -106,10 +106,10 @@ namespace Risebird.Business
                 //    return null;
                 //}
                 // check whether a feedback for the interviewId has already been submitted
-                var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(candidateId, irfId);
+                var selectabilityReport = await _evaluatorRespository.GetSelectabilityReport(candidateId, irfId);
 
                 var model = new EvaluatorReport();
-                var levels = _meetingRespository.GetLevels();
+                var levels = await _meetingRespository.GetLevels();
 
                 if (selectabilityReport != null && selectabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
@@ -121,7 +121,7 @@ namespace Risebird.Business
                 {
                     model.IsEdited = false;
 
-                    var selectabilityDetails = _evaluatorRespository.GetTransSelectability(irfId);
+                    var selectabilityDetails = await _evaluatorRespository.GetTransSelectability(irfId);
                     var selectabilityList = new List<SelectabilityEvaluatorReport>();
                     foreach (var item in selectabilityDetails)
                     {
@@ -144,21 +144,21 @@ namespace Risebird.Business
                 //get all values from database
 
 
-                var candidateDetails = _evaluatorRespository.GetCandidate(candidateId);
+                var candidateDetails = await _evaluatorRespository.GetCandidate(candidateId);
 
 
                 model.CandidateName = candidateDetails.Name;
                 model.ResumeLink = candidateDetails.ResumeLink;
                 model.IRFId = irfId;
-                model.IRFName = _meetingRespository.GetIRFName(irfId).FirstOrDefault();
+                model.IRFName = (await _meetingRespository.GetIRFName(irfId)).FirstOrDefault();
                 model.currentEmployerName = candidateDetails.CurrentEmployer;
                 model.PreferredLocation = candidateDetails.Location;
                 model.CandidateEmailId = candidateDetails.EmailId;
-                model.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, candidateDetails.EmailId);
-                model.TechSkillComments = _evaluatorRespository.GetTechComments(irfId, candidateId);
-                model.SkillGeneralComments = _evaluatorRespository.GetGeneralSkillComments(irfId, candidateId);
+                model.SelectabilityComments = await _evaluatorRespository.GetSelectabilityComments(irfId, candidateDetails.EmailId);
+                model.TechSkillComments = await _evaluatorRespository.GetTechComments(irfId, candidateId);
+                model.SkillGeneralComments = await _evaluatorRespository.GetGeneralSkillComments(irfId, candidateId);
                 model.Level = new SelectList(levels, "id", "Name");
-                model.LevelTech = new SelectList(_evaluatorRespository.GetLevelTech(), "id", "Name");
+                model.LevelTech = new SelectList(await _evaluatorRespository.GetLevelTech(), "id", "Name");
                 return model;
 
             }
@@ -176,14 +176,14 @@ namespace Risebird.Business
             {
 
                 // check whether a feedback for the interviewId has already been submitted
-                var techReport = (IList<TechSkillEvaluatorReport>)_evaluatorRespository.GetTechReport(candidateId, irfId);
+                var techReport =  (IList<TechSkillEvaluatorReport>)(await _evaluatorRespository.GetTechReport(candidateId, irfId));
 
                 if (techReport == null || !techReport.Any())
                 {
-                    var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(irfId);
+                    var techSkillsDetails = await _meetingRespository.GetSkillsbyIRFid(irfId);
                     var techSkillList = new List<TechSkillEvaluatorReport>();
-                    var levelTech = _meetingRespository.GetLevelTech();
-                    var skills = _meetingRespository.GetSkills();
+                    var levelTech = await _meetingRespository.GetLevelTech();
+                    var skills = await _meetingRespository.GetSkills();
 
                     //assign values to model
                     foreach (var item in techSkillsDetails)
@@ -205,7 +205,6 @@ namespace Risebird.Business
                 }
 
                 return techReport;
-                //get all values from database
 
 
             }
@@ -222,13 +221,13 @@ namespace Risebird.Business
             {
 
                 // check whether a feedback for the interviewId has already been submitted
-                var skillGeneralReport = (IList<SkillGeneralEvaluatorReport>)_evaluatorRespository.GetSkillGeneralReport(candidateId, irfId);
+                var skillGeneralReport = (IList<SkillGeneralEvaluatorReport>)(await _evaluatorRespository.GetSkillGeneralReport(candidateId, irfId));
 
                 if (skillGeneralReport == null || !skillGeneralReport.Any())
                 {
-                    var genSkillsDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
+                    var genSkillsDetails = await _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
                     var genSkillList = new List<SkillGeneralEvaluatorReport>();
-                    var levelTech = _meetingRespository.GetLevelTech();
+                    var levelTech = await _meetingRespository.GetLevelTech();
 
                     //assign values to model
                     foreach (var item in genSkillsDetails)
@@ -250,7 +249,6 @@ namespace Risebird.Business
                 }
 
                 return skillGeneralReport;
-                //get all values from database
 
 
             }
@@ -346,10 +344,10 @@ namespace Risebird.Business
                 //    return null;
                 //}
                 // check whether a feedback for the interviewId has already been submitted
-                var joinabilityReport = _evaluatorRespository.GetJoinabilityReport(candidateId, irfId);
+                var joinabilityReport = await _evaluatorRespository.GetJoinabilityReport(candidateId, irfId);
 
                 var model = new HRReport();
-                var levels = _meetingRespository.GetLevels();
+                var levels = await _meetingRespository.GetLevels();
 
                 if (joinabilityReport != null && joinabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
@@ -361,7 +359,7 @@ namespace Risebird.Business
                 {
                     model.IsEdited = false;
 
-                    var joinabilityDetails = _meetingRespository.GetTransJoinability(irfId);
+                    var joinabilityDetails = await _meetingRespository.GetTransJoinability(irfId);
                     var joinabilityList = new List<JoinabilityHRReport>();
                     foreach (var item in joinabilityDetails)
                     {
@@ -383,20 +381,20 @@ namespace Risebird.Business
 
                 //get all values from database
 
-                var candidateDetails = _evaluatorRespository.GetCandidate(candidateId);
+                var candidateDetails = await _evaluatorRespository.GetCandidate(candidateId);
 
                 model.CandidateName = candidateDetails.Name;
                 model.ResumeLink = candidateDetails.ResumeLink;
                 model.IRFId = irfId;
-                model.IRFName = _meetingRespository.GetIRFName(irfId).FirstOrDefault();
+                model.IRFName = (await _meetingRespository.GetIRFName(irfId)).FirstOrDefault();
                 model.currentEmployerName = candidateDetails.CurrentEmployer;
                 model.PreferredLocation = candidateDetails.Location;
                 model.CandidateEmailId = candidateDetails.EmailId;
-                model.JoinabilityComments = _evaluatorRespository.GetJoinabilityComments(irfId, candidateDetails.EmailId);
-                model.TechSkillComments = _evaluatorRespository.GetTechComments(irfId, candidateId);
-                model.SkillGeneralComments = _evaluatorRespository.GetGeneralSkillComments(irfId, candidateId);
+                model.JoinabilityComments = await _evaluatorRespository.GetJoinabilityComments(irfId, candidateDetails.EmailId);
+                model.TechSkillComments = await _evaluatorRespository.GetTechComments(irfId, candidateId);
+                model.SkillGeneralComments = await _evaluatorRespository.GetGeneralSkillComments(irfId, candidateId);
                 model.Level = new SelectList(levels, "id", "Name");
-                model.LevelTech = new SelectList(_evaluatorRespository.GetLevelTech(), "id", "Name");
+                model.LevelTech = new SelectList(await _evaluatorRespository.GetLevelTech(), "id", "Name");
 
                 return model;
 
@@ -454,27 +452,27 @@ namespace Risebird.Business
             }
         }
 
-        public CandidateAudio GetCandidate(int id, int irfId)
+        public async Task<CandidateAudio> GetCandidate(int id, int irfId)
         {
             try
             {
-                return _evaluatorRespository.GetCandidate(id, irfId);
+                return await _evaluatorRespository.GetCandidate(id, irfId);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-        public IEnumerable<Phrase> GetPhrases()
+        public async Task<IEnumerable<Phrase>> GetPhrases()
         {
             try
             {
-                return _evaluatorRespository.GetPhrases();
+                return await _evaluatorRespository.GetPhrases();
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -502,7 +500,7 @@ namespace Risebird.Business
         {
             try
             {
-                var candidateAudios = (IList<CandidateAudio>)_evaluatorRespository.GetCandidateAudios(candidateId, irfId);
+                var candidateAudios = (IList<CandidateAudio>)(await _evaluatorRespository.GetCandidateAudios(candidateId, irfId));
                 return candidateAudios;
             }
 
