@@ -357,12 +357,12 @@ namespace Risebird.Business
         }
 
 
-        public List<MeetingVM> GetIRFInterviewMeetings(int id, string profileName, string email)
+        public async Task<List<MeetingVM>> GetIRFInterviewMeetings(int id, string profileName, string email)
         {
             try
             {
                 int role = 0;
-                var result = _irfRepository.GetIRFInterviewMeetings(id).OrderByDescending(x => x.interviewDate).ToList();
+                var result = (await _irfRepository.GetIRFInterviewMeetings(id)).OrderByDescending(x => x.interviewDate).ToList();
 
                 if (email != string.Empty && profileName == "Client")
                 {
@@ -604,26 +604,26 @@ namespace Risebird.Business
             }
 
         }
-        public InterviewPlanner GetInterviewPlanner(int id)
+        public async Task<InterviewPlanner> GetInterviewPlanner(int id)
         {
             try
             {
-                return _irfRepository.GetInterviewPlanner(id);
+                return await _irfRepository.GetInterviewPlanner(id);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
 
         }
-        public InvoiceModel GetInvoiceModel(int irfId, DateTime startDate, DateTime endDate, string srNumber, string poNumber, string reqNumber, string currencyCode, string projectCode, bool isGST, string discount, string clientAddress)
+        public async Task<InvoiceModel> GetInvoiceModel(int irfId, DateTime startDate, DateTime endDate, string srNumber, string poNumber, string reqNumber, string currencyCode, string projectCode, bool isGST, string discount, string clientAddress)
         {
             try
             {
                 var irfDetails = _irfRepository.GetIRFbyId(irfId);
                 var currentMonth = DateTime.Now.Month;
-                var interviewDetails = _irfRepository.GetIRFInterviewMeetings(irfId).Where(x => x.MeetingStatus.HasValue && (x.MeetingStatus == 4 || x.MeetingStatus == 2) && x.interviewDate.Date <= endDate.Date && x.interviewDate.Date >= startDate.Date).ToList();// && x.interviewDate.Month ==currentMonth).ToList();
+                var interviewDetails = (await _irfRepository.GetIRFInterviewMeetings(irfId)).Where(x => x.MeetingStatus.HasValue && (x.MeetingStatus == 4 || x.MeetingStatus == 2) && x.interviewDate.Date <= endDate.Date && x.interviewDate.Date >= startDate.Date).ToList();// && x.interviewDate.Month ==currentMonth).ToList();
                 var invoiceModel = new InvoiceModel();
                 if (irfDetails != null && invoiceModel != null)
                 {
@@ -691,34 +691,34 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
 
         }
-        public IEnumerable<Candidate> GetIRFCandidates(int id)
+        public async Task<IEnumerable<Candidate>> GetIRFCandidates(int id)
         {
             try
             {
-                return _irfRepository.GetIRFCandidates(id);
+                return await _irfRepository.GetIRFCandidates(id);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
 
         }
 
-        public IEnumerable<Candidate> GetCandidateIRFInvites(string emailId)
+        public async Task<IEnumerable<Candidate>> GetCandidateIRFInvites(string emailId)
         {
             try
             {
-                return _irfRepository.GetCandidateIRFInvites(emailId);//.Where(x=> x.EndDate.Date <= DateTime.Now.Date);
+                return await _irfRepository.GetCandidateIRFInvites(emailId);//.Where(x=> x.EndDate.Date <= DateTime.Now.Date);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
 
@@ -728,7 +728,7 @@ namespace Risebird.Business
             try
             {
                 //check if the candidate email exists for the IRFId
-                var duplicate = _irfRepository.GetIRFCandidates(obj.IRFId).Where(x => x.EmailId.ToLower() == obj.EmailId?.Trim().ToLower());
+                var duplicate =(await _irfRepository.GetIRFCandidates(obj.IRFId)).Where(x => x.EmailId.ToLower() == obj.EmailId?.Trim().ToLower());
                 if (duplicate != null && duplicate.Any())
                 {
                     return "Sorry! Candidate already exists for the IRF.";
@@ -766,7 +766,7 @@ namespace Risebird.Business
         {
             try
             {
-                var candidates = _irfRepository.GetIRFCandidates(candidateList.FirstOrDefault().IRFId);
+                var candidates = await _irfRepository.GetIRFCandidates(candidateList.FirstOrDefault().IRFId);
                 foreach (var candidate in candidateList ?? new List<Candidate>())
                 {
                     //check if the candidate email exists for the IRFId
@@ -786,17 +786,17 @@ namespace Risebird.Business
                 return "Sorry! Could not import candidates.";
             }
         }
-        public Candidate GetCandidate(int id, int irfId)
+        public async Task<Candidate> GetCandidate(int id, int irfId)
         {
             try
             {
-                var candidate = _irfRepository.GetIRFCandidates(irfId).FirstOrDefault(x => x.id == id);
+                var candidate = (await _irfRepository.GetIRFCandidates(irfId)).FirstOrDefault(x => x.id == id);
                 return candidate;
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -829,7 +829,7 @@ namespace Risebird.Business
                 var irf = _irfRepository.GetIRFbyId(irfId);
                 var inviteCount = irf.TotalInvites;
                 var calendlyLink = irf.CalendlyLink;
-                var candidate = _irfRepository.GetIRFCandidates(irfId).FirstOrDefault(x => x.EmailId == email);
+                var candidate =(await _irfRepository.GetIRFCandidates(irfId)).FirstOrDefault(x => x.EmailId == email);
                 //var candidateInviteCount = candidate.TotalInvites;
                 if (email != null && calendlyLink != null)
                 {
@@ -871,7 +871,7 @@ namespace Risebird.Business
             }
         }
 
-        public bool CancelInvite(int irfId, string email)
+        public async Task<bool> CancelInvite(int irfId, string email)
         {
             try
             {
@@ -879,7 +879,7 @@ namespace Risebird.Business
                 var irf = _irfRepository.GetIRFbyId(irfId);
                 //var inviteCount = irf.TotalInvites;
                 //var calendlyLink = irf.CalendlyLink;
-                var candidate = _irfRepository.GetIRFCandidates(irfId).FirstOrDefault(x => x.EmailId == email);
+                var candidate = (await _irfRepository.GetIRFCandidates(irfId)).FirstOrDefault(x => x.EmailId == email);
                 //var candidateInviteCount = candidate.TotalInvites;
                 if (email != null)
                 {
@@ -897,7 +897,7 @@ namespace Risebird.Business
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
@@ -915,7 +915,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public IRFFunnel GetFunnelData(int irfId, string irfName)
+        public async Task<IRFFunnel> GetFunnelData(int irfId, string irfName)
         {
             try
             {
@@ -993,7 +993,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
 
@@ -1463,5 +1463,7 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        
     }
 }
