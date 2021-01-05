@@ -446,50 +446,59 @@
                                                                 else
                                                                 {
 
-                                                                @if (item.candidateName.Length > 35)
+                                                                    @if (item.candidateName.Length > 30)
+                                                                    {
+
+
+                                                                        <td class="cadName">
+                                                                            <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 30)... </a>
+                                                                        </td>
+                                                                    }
+
+
+                                                                    else
+                                                                    {
+                                                                        <td class="cadName">
+                                                                            <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                        </td>
+                                                                    }
+
+
+                                                                }
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
+
+
+                                                            @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
+                                                            {
+
+                                                                @if (item.JDTiltle.Split("|")[0].Length > 35)
                                                                 {
 
 
-                                                                    <td class="cadName">
-                                                                        <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 35)... </a>
+                                                                    <td class="cadSkill">
+                                                                        <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0].Substring(0, 35)... </a>
                                                                     </td>
                                                                 }
 
 
                                                                 else
                                                                 {
-                                                                    <td class="cadName">
-                                                                        <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                    <td class="cadSkill">
+                                                                        <a onclick=""> @item.JDTiltle.Split("|")[0] </a>
                                                                     </td>
                                                                 }
 
                                                             }
 
-
-
-
-
-
-                                                            @if (item.JDTiltle.Split("|")[0].Length > 35)
-                                                            {
-
-
-                                                                <td class="cadSkill">
-                                                                    <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0].Substring(0, 35)... </a>
-                                                                </td>
-                                                            }
-
-
                                                             else
                                                             {
-                                                                <td class="cadSkill">
-                                                                    <a onclick=""> @item.JDTiltle.Split("|")[0] </a>
-                                                                </td>
+                                                                <td></td>
                                                             }
-
-
-
-
 
 
 
@@ -503,91 +512,98 @@
                                                             {
                                                                 <td>No Video</td>
                                                             }
-                                                            @*<td class="interview-com">
-                                                                    <div class="talk-bubble tri-right  right-in ">
-                                                                        <div class="talktext">
-                                                                            <a href="#" data-tooltip="@item.InterviewerComment"><textarea>@item.InterviewerComment</textarea></a>
-                                                                        </div>
-                                                                    </div>
 
 
                                                             <td class="interview-com">
                                                                 <div id="section">
-                                                                    @if (item.InterviewerComment.Length > 40)
+                                                                    @if (item.InterviewerComment != null && item.InterviewerComment != "")
                                                                     {
-                                                                        <div class="article">
-                                                                            <p style="margin-bottom:0px;">
-                                                                                @item.InterviewerComment.Substring(0, 40)
-                                                                            </p>
-                                                                            <p class="moretext_@item.imid moretext">
-                                                                                @item.InterviewerComment.Substring(40, @item.InterviewerComment.Length - 40)
-                                                                            </p>
-                                                                        </div>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <div class="article">
+                                                                        @if (item.InterviewerComment.Length > 40)
+                                                                        {
+                                                                            <div class="article">
+                                                                                <p style="margin-bottom:0px;">
+                                                                                    @item.InterviewerComment.Substring(0, 40)
+                                                                                </p>
+                                                                                <p class="moretext_@item.imid moretext">
+                                                                                    @item.InterviewerComment.Substring(40, @item.InterviewerComment.Length - 40)
+                                                                                </p>
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <div class="article">
 
-                                                                            <p>
-                                                                                @item.InterviewerComment.Substring(0, @item.InterviewerComment.Length - 1)
-                                                                            </p>
-                                                                        </div>}
+                                                                                <p>
+                                                                                    @item.InterviewerComment.Substring(0, @item.InterviewerComment.Length - 1)
+                                                                                </p>
+                                                                            </div>
+                                                                        }}
+                                                                    else
+                                                                    { <div></div>}
+
+
+
+
+
+
 
                                                                     <a onclick="moreless(@item.imid)" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
+
+
                                                                 </div>
 
-                                                        </td>
-
-                                                        @if ((item.MeetingStatus == 4) && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && item.MeetingStatus == 4 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                                                        {
-                                                            <td>
-                                                                <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a>
                                                             </td>
-                                                        }
 
-                                                        else
-                                                        {
-                                                            <td>No Report</td>
-                                                        }
-                                                        <td class="text-center action">
-
-
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">
-                                                                <span onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                            </button>
-
-                                                            @if (item.IsBiometricEnabled)
+                                                            @if ((item.MeetingStatus == 4) && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && item.MeetingStatus == 4 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                                                             {
+                                                                <td>
+                                                                    <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a>
+                                                                </td>
+                                                            }
 
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Verify">
-                                                                    <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Interview", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                                                            else
+                                                            {
+                                                                <td>No Report</td>
+                                                            }
+                                                            <td class="text-center action">
+
+
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">
+                                                                    <span onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                                 </button>
 
+                                                                @if (item.IsBiometricEnabled)
+                                                                {
 
-
-
-
-                                                            }
-                                                        </td>
-                                                        <td>
-
-
-
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                            {
-                                                                <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
-
-
-                                                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Verify">
+                                                                        <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Interview", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                                                                    </button>
 
 
 
 
 
-                                                            }
+                                                                }
+                                                            </td>
+                                                            <td>
 
-                                                        </td>
-                                                    </tr>
+
+
+                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                {
+                                                                    <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
+
+
+                                                                    <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
+
+
+
+
+
+                                                                }
+
+                                                            </td>
+                                                        </tr>
 
                                                         <tr class="collapse @item.imid">
 
@@ -1475,11 +1491,18 @@
             else {
                 html += '<td></td>';
             }
-            if (data[i].jdTiltle.split("|")[0].length > 35) {
-                html += '   <td class="cadSkill"><a onclick="" data-tooltip="' + data[i].jdTiltle.split("|")[0] + '"> ' + data[i].jdTiltle.split("|")[0].substring(0, 35) + '... </a></td>';
+
+
+            if (data[i].jdTiltle.split("|")[0] != null && data[i].jdTiltle.split("|")[0] != "") {
+                if (data[i].jdTiltle.split("|")[0].length > 35) {
+                    html += '   <td class="cadSkill"><a onclick="" data-tooltip="' + data[i].jdTiltle.split("|")[0] + '"> ' + data[i].jdTiltle.split("|")[0].substring(0, 35) + '... </a></td>';
+                }
+                else {
+                    html += '     <td class="cadSkill"><a onclick=""> ' + data[i].jdTiltle.split("|")[0] + ' </a></td>';
+                }
             }
             else {
-                html += '     <td class="cadSkill"><a onclick=""> ' + data[i].jdTiltle.split("|")[0] + ' </a></td>';
+                html += '<td></td>';
             }
             if ((data[i].meetingStatus == 4) && data[i].videoLink != null && data[i].videoLink != "") {
                 html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>';
@@ -1488,102 +1511,106 @@
                 html += '<td>No Video</td>';
             }
             html += '<td class="interview-com">';
-            html += '                                           <div id="section">';
-            if (data[i].interviewerComment.length > 35) {
-                html += '                                                   <div class="article">';
-                html += '                                              <p style="margin-bottom:0px;">' + data[i].interviewerComment.substring(0, 35) + '</p>';
-                html += '                   <p class="moretext_' + data[i].imid + ' moretext">' + data[i].interviewerComment.substring(35, data[i].interviewerComment.length - 35) + '</p>';
-                html += '</div>';
+            html += ' <div id="section">';
+            if (data[i].interviewerComment != null && data[i].interviewerComment != "") {
+                if (data[i].interviewerComment.length > 35) {
+                    html += '                                                   <div class="article">';
+                    html += '                                              <p style="margin-bottom:0px;">' + data[i].interviewerComment.substring(0, 35) + '</p>';
+                    html += '                   <p class="moretext_' + data[i].imid + ' moretext">' + data[i].interviewerComment.substring(35, data[i].interviewerComment.length - 35) + '</p>';
+                    html += '</div>';
+                }
+                else {
+                    html += '<div class="article"><p>' + data[i].interviewerComment.substring(0, data[i].interviewerComment.length - 1) + '</p></div>';
+                }
             }
             else {
-                html += '<div class="article"><p>' + data[i].interviewerComment.substring(0, data[i].interviewerComment.length - 1) + '</p></div>';
+                html += '<div></div>';
             }
-
             html += ' <a onclick="moreless(' + data[i].imid + ')" class="moreless-button" value="Readmore" id="read_' + data[i].imid + '" href="#">Read more</a>';
             html += '</div>';
             html += ' </td>';
 
-                 if ((data[i].meetingStatus == 4) && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && data[i].meetingStatus == 4 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
-                     html += '<td>  <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + data[i].irfIntId + '&isClient= true">Report</a></td>';
-                 }
-                 else {
-                     html += '   <td>No Report</td>';
-                 }
-                 html += '   <td class="text-center action">';
-                 html += '   <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">';
-                 html += ' <span onclick="ModalButtonClickjson(' + i + ')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>';
-                 html += '                                                     </button>';
+            if ((data[i].meetingStatus == 4) && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && data[i].meetingStatus == 4 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
+                html += '<td>  <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + data[i].irfIntId + '&isClient= true">Report</a></td>';
+            }
+            else {
+                html += '   <td>No Report</td>';
+            }
+            html += '   <td class="text-center action">';
+            html += '   <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">';
+            html += ' <span onclick="ModalButtonClickjson(' + i + ')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>';
+            html += '                                                     </button>';
 
-                 if (data[i].isBiometricEnabled) {
-                     html += ' <button class="mdc-fab app-fab--absolute" aria-label="Verify">';
-                     html += '  <span onclick="location.href ="/Interview/VerifyJoiningAudio?candidateId = ' + data[i].candidateId + '&CandidateName=' + data[i].candidateName + '&irfId=' + data[i].irfIntId + '&meetingId=' + data[i].imid + '" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>';
-                     html += '  </button>';
-                 }
-                 html += '</td>';
-                 html += '                                                <td>';
-                 if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
-                     html += '    <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClickjson(' + data[i].imid + ',' + data[i].mobileNumber + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>';
-                 }
-                 html += '</td>';
-                 html += '                                            </tr>';
+            if (data[i].isBiometricEnabled) {
+                html += ' <button class="mdc-fab app-fab--absolute" aria-label="Verify">';
+                html += '  <span onclick="location.href ="/Interview/VerifyJoiningAudio?candidateId = ' + data[i].candidateId + '&CandidateName=' + data[i].candidateName + '&irfId=' + data[i].irfIntId + '&meetingId=' + data[i].imid + '" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>';
+                html += '  </button>';
+            }
+            html += '</td>';
+            html += '                                                <td>';
+            if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
+                html += '    <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClickjson(' + data[i].imid + ',' + data[i].mobileNumber + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>';
+            }
+            html += '</td>';
+            html += '                                            </tr>';
 
-                 html += '                                               <tr class="collapse ' + data[i].imid + '">';
-                 html += '                                       <td colspan="999" class="child-section">';
-                 html += '                                           <table class="table table-striped">';
-                 html += '                                               <tr>';
-                 html += '                                                   <th>Client HR</th>';
-                 html += '                                                   <th>End Client Name</th>';
-                 html += '                                                   <th>Aadhar Link</th>';
-                 html += '                                                   <th>Approval Status</th>';
-                 html += '                                                   <th>Final Selection Status</th>';
-                 html += '                                                   <th>Offer Status</th>';
-                 html += '                                                   <th>Joining Status</th>';
-                 html += '                                               </tr>';
-                 html += '         <tr>';
-                 if (data[i].isHrOnline == 1) {
-                     html += '   <td><a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span>     ' + data[i].clientHrContact + ' </a></td>';
-                 }
-                 else {
-                     html += '<td> <a onclick=""><span class="dot"></span> ' + data[i].clientHrContact + ' </a></td>';
-                 }
-                 html += '<td> ' + data[i].clientName + ' </td>';
-                 if (data[i].aadharFileLink != null && data[i].aadharFileLink != "") {
-                     html += '<td>    <a id="aadharLinkId" target="_blank" title="Aadhar" href=' + data[i].aadharFileLink.tostring().replace(" ", "%20") + '>Aadhar</a></td>';
-                 }
-                 else {
-                     html += '<td>No document</td>';
-                 }
-                 if (data[i].nextLevelApprovalStat != null && data[i].nextLevelApprovalStat != "") {
-                     html += '   <td>    ' + data[i].nextLevelApprovalStat + '</td></td>';
-                 }
-                 else {
-                     html += ' <td>No document</td>';
-                 }
-                 if (data[i].finalSelectionStat != null && data[i].finalSelectionStat != "") {
-                     html += '<td>' + data[i].finalSelectionStat + ' </td>';
-                 }
-                 else {
-                     html += '                                                   <td>No document</td>';
-                 }
+            html += '                                               <tr class="collapse ' + data[i].imid + '">';
+            html += '                                       <td colspan="999" class="child-section">';
+            html += '                                           <table class="table table-striped">';
+            html += '                                               <tr>';
+            html += '                                                   <th>Client HR</th>';
+            html += '                                                   <th>End Client Name</th>';
+            html += '                                                   <th>Aadhar Link</th>';
+            html += '                                                   <th>Approval Status</th>';
+            html += '                                                   <th>Final Selection Status</th>';
+            html += '                                                   <th>Offer Status</th>';
+            html += '                                                   <th>Joining Status</th>';
+            html += '                                               </tr>';
+            html += '         <tr>';
+            if (data[i].isHrOnline == 1) {
+                html += '   <td><a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span>     ' + data[i].clientHrContact + ' </a></td>';
+            }
+            else {
+                html += '<td> <a onclick=""><span class="dot"></span> ' + data[i].clientHrContact + ' </a></td>';
+            }
+            html += '<td> ' + data[i].clientName + ' </td>';
+            if (data[i].aadharFileLink != null && data[i].aadharFileLink != "") {
+                html += '<td>    <a id="aadharLinkId" target="_blank" title="Aadhar" href=' + data[i].aadharFileLink.tostring().replace(" ", "%20") + '>Aadhar</a></td>';
+            }
+            else {
+                html += '<td>No document</td>';
+            }
+            if (data[i].nextLevelApprovalStat != null && data[i].nextLevelApprovalStat != "") {
+                html += '   <td>    ' + data[i].nextLevelApprovalStat + '</td></td>';
+            }
+            else {
+                html += ' <td>No document</td>';
+            }
+            if (data[i].finalSelectionStat != null && data[i].finalSelectionStat != "") {
+                html += '<td>' + data[i].finalSelectionStat + ' </td>';
+            }
+            else {
+                html += '                                                   <td>No document</td>';
+            }
 
-                 if (data[i].offerStatusStatDesc != null && data[i].offerStatusStatDesc != "") {
-                     html += ' <td>' + data[i].offerStatusStatDesc + '</td>';
-                 }
-                 else {
-                     html += '<td>No document</td>';
-                 }
+            if (data[i].offerStatusStatDesc != null && data[i].offerStatusStatDesc != "") {
+                html += ' <td>' + data[i].offerStatusStatDesc + '</td>';
+            }
+            else {
+                html += '<td>No document</td>';
+            }
 
-                 if (data[i].joiningStatusStatDesc != null && data[i].joiningStatusStatDesc != "") {
-                     html += '   <td>' + data[i].joiningStatusStatDesc + '</td>';
-                 }
-                 else {
-                     html += '<td>No document</td>';
-                 }
-                 html += '                                                                    </tr>';
-                 html += '</table>';
-                 html += '                                       </td>';
-                 html += '                         </tr>';
-             }
+            if (data[i].joiningStatusStatDesc != null && data[i].joiningStatusStatDesc != "") {
+                html += '   <td>' + data[i].joiningStatusStatDesc + '</td>';
+            }
+            else {
+                html += '<td>No document</td>';
+            }
+            html += '                                                                    </tr>';
+            html += '</table>';
+            html += '                                       </td>';
+            html += '                         </tr>';
+        }
         $("#tblbodySelect").empty().html(html);
     }
     function bindPages(pagecount, startpage, endpage, totalcount) {
@@ -1602,7 +1629,7 @@
             } else {
                 break;
             }
-            if (pagecount <= 10 && i == pagecount) {
+            if (pagecount <= 10 && i == pagecount && i != 1) {
                 html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
                 html += '<li class="PagedList-skipToNext"><a href="/Interview/SelectedPriorityClientMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                 html += '<li class="PagedList-skipToLast"><a href="/Interview/SelectedPriorityClientMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
