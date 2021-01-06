@@ -83,6 +83,7 @@ namespace AzureVideoUpload.Controllers
         {
             CloudBlockBlob blob;
             blob = GetCloudBlockBlobClient(containerName, filename);
+            blob.Properties.ContentType = "video/mp4";
             using (var fileStream = blobFile.OpenReadStream())
             {
                 await blob.UploadFromStreamAsync(fileStream).ConfigureAwait(false);
