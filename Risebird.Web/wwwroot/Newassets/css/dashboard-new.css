@@ -130,11 +130,11 @@ body {
     white-space: initial;
 }
 table.journey td.cadName, table.journey td.cadEmail {
-    width: 200px;
+    max-width: 200px;
 }
 
 table.journey td.cadSkill {
-    width: 150px;
+    max-width: 150px;
 }
 
 .label-num {
@@ -1154,23 +1154,31 @@ table.journey td.cadSkill {
     border-radius: 5px;
 }
 
-
+.table-bordered.interviewertable td, .table-bordered.interviewertable th, .table-bordered.journey td, .table-bordered.journey th {
+    border: 1px solid #dee2e6!important;
+}
+table {
+    border-collapse: inherit;
+}
+.table.interviewertable td, .table.journey td {
+    border-top: 1px solid #dee2e6!important;
+}
 .interviewer-comment .talk-bubble [data-tooltip]:before {
-    width: 400px;
+    max-width: 400px;
 }
 table.interviewertable td.cadName {
-    width: 200px;
+    max-width: 200px;
 }
 table.interviewertable td.cadLast {
-    width: 100px;
+    max-width: 150px;
 }
 
 table.interviewertable td.cadEmail {
-    width: 100px;
+    max-width: 170px;
 }
 
 .interviewertable td.interview-com {
-    width: 200px;
+    max-width: 280px;
 }
 .interviewertable .action a{color:#fff}
 table.journey th, table.journey td {
@@ -3009,38 +3017,38 @@ button.btn {
 
 @media (min-width: 992px) and (max-width: 1199px) {
     table.journey td.cadName, table.journey td.cadEmail {
-        width: 200px;
+        max-width: 200px;
     }
 
     table.journey td.cadSkill {
-        width: 150px;
+        max-width: 150px;
     }
     .candidate table.journey td.cadEmail {
-        width: 160px;
+        max-width: 160px;
     }
     .selected-priority table.journey td.cadName {
-       width: 250px;
+        max-width: 250px;
     }
 
     .selected-priority table.journey td.cadSkill {
-       width: 235px;
+        max-width: 235px;
     }
 }
 .selected-priority table.journey td.interviewdate {
-   width: 160px;
+    max-width: 160px;
 }
 
 
 .selected-priority .journey td.interview-com, .journey td.interview-com {
-    width: 300px;
+    max-width: 300px;
 }
 
 .selected-priority table.journey td.cadName {
-    width: 250px;
+    max-width: 250px;
 }
 
 .selected-priority table.journey td.cadSkill {
-   width: 235px;
+   max-width: 235px;
 }
 
 }
@@ -3048,29 +3056,29 @@ button.btn {
 
 @media (min-width: 768px) and (max-width: 991px) {
     table.journey td.cadName, table.journey td.cadEmail {
-        width: 200px;
+        max-width: 200px;
     }
     .candidate table.journey td.cadEmail {
-        width: 160px;
+        max-width: 160px;
     }
     table.journey td.cadSkill {
-        width: 150px;
+        max-width: 150px;
     }
 
     .selected-priority table.journey td.cadName {
-       width: 250px;
+        max-width: 250px;
     }
 
     .selected-priority table.journey td.cadSkill {
-        width: 235px;
+        max-width: 235px;
     }
 
     .selected-priority table.journey td.interviewdate {
-        width: 160px;
+        max-width: 160px;
     }
 
     .selected-priority table.journey td.interviewdate {
-        width: 270px;
+        max-width: 270px;
     }
 }
 
@@ -3208,6 +3216,7 @@ input[type='radio'] {
 .content.client {
     margin-top: 0px;
     padding: 0px 10px 0px;
+    clear:both;
 }
 
 .pt30 {
@@ -7927,24 +7936,24 @@ div.tagsinput {
     }
 
      .selected-priority table.journey td.cadName {
-       width: 250px;
+       max-width: 250px;
     }
 
     .selected-priority table.journey td.cadSkill {
-        width: 235px;
+        max-width: 235px;
     }
 
     .selected-priority table.journey td.interviewdate {
-        width: 160px;
+        max-width: 160px;
     }
 
     .selected-priority table.journey td.interviewdate {
-        width: 270px;
+        max-width: 270px;
     }
 
 
     .selected-priority .journey td.interview-com {
-        width:300px;
+        max-width: 300px;
     }
 }
 
@@ -8060,28 +8069,28 @@ div.tagsinput {
         padding-top: 0px;
     }
     table.journey td.cadName, table.journey td.cadEmail {
-        width: 200px;
+        max-width: 200px;
     }
     .candidate table.journey td.cadEmail {
-        width: 160px;
+        max-width: 160px;
     }
 
     table.journey td.cadSkill {
-        width: 150px;
+        max-width: 150px;
     }
     .selected-priority table.journey td.cadName {
-       width: 250px;
+        max-width: 250px;
     }
 
     .selected-priority table.journey td.cadSkill {
-       width: 235px;
+        max-width: 235px;
     }
 
     .selected-priority .journey td.interview-com {
-       width: 300px;
+        max-width: 300px;
     }
     .selected-priority table.journey td.interviewdate {
-        width: 160px;
+        max-width: 160px;
     }
 
         .x-navigation {
@@ -8186,15 +8195,15 @@ div.tagsinput {
 
 @media only screen and (max-width: 1400px) {
     table.journey td.cadName, table.journey td.cadEmail {
-        width: 120px;
+        max-width: 120px;
     }
 
     table.journey td.cadSkill {
-        width: 150px;
+        max-width: 150px;
     }
 
     .candidate table.journey td.cadEmail {
-        width: 133px;
+        max-width: 133px;
     }
 
 }
