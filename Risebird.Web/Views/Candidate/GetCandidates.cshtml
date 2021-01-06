@@ -184,12 +184,12 @@
 
 
 
-                                                                @if (item.EmailId.Length > 20)
+                                                                @if (item.EmailId.Length > 18)
                                                                 {
 
 
                                                                     <td class="cadEmail">
-                                                                        <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0, 20)... </a>
+                                                                        <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0, 18)... </a>
                                                                     </td>
                                                                 }
 
@@ -1049,10 +1049,10 @@
 
 
 
-                if (data[i].emailId.length > 20) {
+                if (data[i].emailId.length > 18) {
 
                     html += '  <td class="cadEmail">';
-                    html += ' <a onclick="" data-tooltip="' + data[i].emailId + '"> ' + data[i].emailId.substring(0, 20) + '... </a>';
+                    html += ' <a onclick="" data-tooltip="' + data[i].emailId + '"> ' + data[i].emailId.substring(0, 18) + '... </a>';
                     html += '   </td>';
                 }
 
@@ -1062,9 +1062,8 @@
                     html += ' </td>';
                 }
 
-                html += ' <td class="text-center"' + data[i].attemptsCount + '</td>';
-
-
+                html += ' <td class="text-center">' + data[i].attemptsCount + '</td>';
+               
                 if (data[i].resumeLink != null && data[i].resumeLink != "") {
                     html += '   <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a> </td>';
                 }
