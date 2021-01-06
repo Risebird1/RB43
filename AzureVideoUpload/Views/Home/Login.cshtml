@@ -4,19 +4,25 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Login</h2>
 
-<div class="form-group">
-    <label>User Name</label>
-    <input type="text" id="txtUser" class="form-control" />
+
+
+<div class="login">
+    <div class="login-triangle"></div>
+
+    <h2 class="login-header">Log in</h2>
+
+    <form class="login-container">
+        <p>  <input type="text" id="txtUser" placeholder="User" /></p>
+        <p>    <input type="password" id="txtPassword"  placeholder="Pasword"  /></p>
+        <p><input type="button" id="btnLogin" value="Log in" onclick="login()" /></p>
+    </form>
 </div>
-<div class="form-group">
-    <label>Password</label>
-    <input type="password" id="txtPassword" class="form-control" />
-</div>
-<div class="form-group">
-    <input type="button" id="btnLogin" value="Login" onclick="login()" />
-</div>
+
+
+
+
+
 <script>
     function login() {
         var username = $("#txtUser").val();
