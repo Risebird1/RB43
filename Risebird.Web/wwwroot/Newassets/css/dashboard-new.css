@@ -1176,7 +1176,13 @@ table.interviewertable td.cadLast {
 table.interviewertable td.cadEmail {
     max-width: 170px;
 }
+#interviewerMemberModal{z-index:1000}
 
+
+    #interviewerMemberModal .table > thead > tr > th, #interviewerMemberModal .table > tfoot > tr > th {
+        padding: 1px;
+        font-weight: normal !important;
+    }
 .interviewertable td.interview-com {
     max-width: 280px;
 }
