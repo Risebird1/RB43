@@ -143,27 +143,20 @@
                                                                         {
 
 
-
-                                                                            <td class="cadName">
-                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 20)... </a>
-                                                                            </td>
-                                                                        }
-
-                                                                        else
-                                                                        {
-                                                                            <td class="cadName">
-                                                                                <a onclick=""><span class="dot"></span> @item.candidateName </a>
-                                                                            </td>
-                                                                        }
-
-                                                                    }
-
+                                                                    <td class="cadName">
+                                                                        <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 20)... </a>
+                                                                    </td>
                                                                 }
 
                                                                 else
                                                                 {
-                                                                    <td></td>
-}
+                                                                    <td class="cadName">
+                                                                        <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                    </td>
+                                                                }
+                                                        }
+
+                                                                }
                                                                 @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                                                                 {
                                                                     <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
@@ -180,29 +173,22 @@
                                                                 {
                                                                     <td>No Resume</td>
                                                                 }
-                                                                @if (item.ClientHrContact != null && item.ClientHrContact != "")
+
+                                                                @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 20)
                                                                 {
-                                                                    @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 20)
-                                                                    {
-                                                                        <td>
-                                                                            <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact.Substring(0, 20)... </a>
-                                                                        </td>
+                                                                    <td>
+                                                                        <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact.Substring(0, 20)... </a>
+                                                                    </td>
 
 
-                                                                    }
-                                                                    else
-                                                                    {
-
-                                                                        <td>
-                                                                            <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
-                                                                        </td>
-                                                                    }
                                                                 }
-
                                                                 else
                                                                 {
-                                                                    <td></td>
-}
+
+                                                                    <td>
+                                                                        <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
+                                                                    </td>
+                                                                }
                                                                 @if (item.confirmationStatus.Trim() == "Cancelled")
                                                                 {
                                                                     <td class="text-center">

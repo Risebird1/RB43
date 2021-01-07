@@ -1196,7 +1196,9 @@ table.interviewertable th, table.interviewertable td {
     vertical-align: top !important;
     padding: 5px 0px;
 }
-
+.scroller-payment {
+    height: 270px;
+}
 .video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
     position: absolute;
     bottom: 100%;

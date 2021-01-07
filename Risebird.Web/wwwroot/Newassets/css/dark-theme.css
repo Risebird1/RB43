@@ -14,13 +14,19 @@ body {
 
     color: #9a9a9a !important
 }
+table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead > th, table.journey th {
+    background: transparent !important;
+}
+
 .table-striped > tbody > tr:nth-of-type(odd) {
     background-color:transparent!important;
 }
 td.detail-row {
     background-color: #2f2e2e;
 }
-
+#myQueryModel textarea {
+    background: #181818
+}
 .can-details a, .callatag {
     color: #9a9a9a !important;
 }

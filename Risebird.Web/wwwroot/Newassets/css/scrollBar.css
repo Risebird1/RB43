@@ -15,6 +15,11 @@
     font-size: 13px;
     padding: 5px 5px;
 }
+
+.sb-container #divDetailedView .table > tbody > tr > td {
+    font-size: 14px;
+    padding: 5px 5px;
+}
 .table-h {
     height: 200px;
     overflow-y: hidden;

@@ -9,6 +9,8 @@
 
         public string PrimarySkill { get; set; }
         public string EmailId { get; set; }
+        public int PerSuccessRate { get; set; }
+
     }
     //public class QualityController
     //{

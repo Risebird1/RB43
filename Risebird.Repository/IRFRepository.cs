@@ -918,10 +918,11 @@ namespace Risebird.Repository
                     DataTable interviewerDt = new DataTable();
                     interviewerDt.Columns.Add("IRFId", typeof(int));
                     interviewerDt.Columns.Add("UserId", typeof(int));
-
+                    interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+                    
                     foreach (var item in irfDetails.InterviewerCollection)
                     {
-                        interviewerDt.Rows.Add(irfID, item.UserId);
+                        interviewerDt.Rows.Add(irfID, item.UserId,item.PerSuccessRate);
                     }
 
                     SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
@@ -939,10 +940,11 @@ namespace Risebird.Repository
                     DataTable emergencyInterviewerDt = new DataTable();
                     emergencyInterviewerDt.Columns.Add("IRFId", typeof(int));
                     emergencyInterviewerDt.Columns.Add("UserId", typeof(int));
+                    emergencyInterviewerDt.Columns.Add("PerSuccessRate", typeof(int));
 
                     foreach (var item in irfDetails.EmergencyInterviewerCollection)
                     {
-                        emergencyInterviewerDt.Rows.Add(irfID, item.UserId);
+                        emergencyInterviewerDt.Rows.Add(irfID, item.UserId,item.PerSuccessRate);
                     }
 
                     SqlCommand cmdEmergencyInterviewer = new SqlCommand("usp_EmergencyInterviewerBulkInsert", con);
@@ -982,10 +984,11 @@ namespace Risebird.Repository
                     DataTable qualityControllerDt = new DataTable();
                     qualityControllerDt.Columns.Add("IRFId", typeof(int));
                     qualityControllerDt.Columns.Add("UserId", typeof(int));
+                    qualityControllerDt.Columns.Add("PerSuccessRate", typeof(int));
 
                     foreach (var item in irfDetails.QualityController)
                     {
-                        qualityControllerDt.Rows.Add(irfID, item.UserId);
+                        qualityControllerDt.Rows.Add(irfID, item.UserId,item.PerSuccessRate);
                     }
 
                     SqlCommand cmdQualityController = new SqlCommand("usp_QCBulkInsert", con);
@@ -1251,10 +1254,11 @@ namespace Risebird.Repository
                     DataTable interviewerDt = new DataTable();
                     interviewerDt.Columns.Add("IRFId", typeof(int));
                     interviewerDt.Columns.Add("UserId", typeof(int));
+                    interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
 
                     foreach (var item in irfDetails.InterviewerCollection)
                     {
-                        interviewerDt.Rows.Add(irfDetails.id, item.UserId);
+                        interviewerDt.Rows.Add(irfDetails.id, item.UserId,item.PerSuccessRate);
                     }
 
                     SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
@@ -1285,10 +1289,11 @@ namespace Risebird.Repository
                     DataTable emergencyInterviewerDt = new DataTable();
                     emergencyInterviewerDt.Columns.Add("IRFId", typeof(int));
                     emergencyInterviewerDt.Columns.Add("UserId", typeof(int));
+                    emergencyInterviewerDt.Columns.Add("PerSuccessRate", typeof(int));
 
                     foreach (var item in irfDetails.EmergencyInterviewerCollection)
                     {
-                        emergencyInterviewerDt.Rows.Add(irfDetails.id, item.UserId);
+                        emergencyInterviewerDt.Rows.Add(irfDetails.id, item.UserId,item.PerSuccessRate);
                     }
 
                     SqlCommand cmdEmergencyInterviewer = new SqlCommand("usp_EmergencyInterviewerBulkInsert", con);
@@ -1359,10 +1364,11 @@ namespace Risebird.Repository
                     DataTable qualityControllerDt = new DataTable();
                     qualityControllerDt.Columns.Add("IRFId", typeof(int));
                     qualityControllerDt.Columns.Add("UserId", typeof(int));
+                    qualityControllerDt.Columns.Add("PerSuccessRate", typeof(int));
 
                     foreach (var item in irfDetails.QualityController)
                     {
-                        qualityControllerDt.Rows.Add(irfDetails.id, item.UserId);
+                        qualityControllerDt.Rows.Add(irfDetails.id, item.UserId,item.PerSuccessRate);
                     }
 
                     SqlCommand cmdQualityController = new SqlCommand("usp_QCBulkInsert", con);

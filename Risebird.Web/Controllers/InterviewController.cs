@@ -2992,7 +2992,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.ClientHRList = _meetingService.GetClientHRContactList(emailid, meetings);
                         ViewBag.ClientNameList = _meetingService.GetEndClientList(emailid, meetings);
                         ViewBag.IRFList = _meetingService.GetIRFList(emailid, meetings);
-                        if(String.IsNullOrEmpty(searchValue))
+                        if (String.IsNullOrEmpty(searchValue))
                         {
                             searchValue = Searchvalueproiprity;
                         }
@@ -4047,6 +4047,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    model.UserDetails = emailid;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
@@ -7260,7 +7261,7 @@ namespace Risebird.Web.Controllers
                 int totalcount = selectedMeeting.Count;
                 int Pagestart = 0;
                 int Pageend = 0;
-                
+
                 Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
                 int a = selectedMeeting.Count / 10;
                 if (selectedMeeting.Count % 10 == 0)
@@ -7366,11 +7367,11 @@ namespace Risebird.Web.Controllers
 
                     var tableEntries = _azureStorageHelper.GetAllEntities<SpeechToTextServiceModel>("SpeechToTextTbl");
                     var requiredEntry = new SpeechToTextServiceModel();
-                    if(tableEntries!=null && tableEntries.Count()!=0)
+                    if (tableEntries != null && tableEntries.Count() != 0)
                     {
                         requiredEntry = tableEntries.Where(x => x.PartitionKey == interviewId.ToString()).FirstOrDefault();
                     }
-                    if(requiredEntry!=null)
+                    if (requiredEntry != null)
                     {
                         model.UploadedAudioFileUrl = requiredEntry.AudioFileUrl;
                         model.ConvertedText = requiredEntry.ConvertedText;

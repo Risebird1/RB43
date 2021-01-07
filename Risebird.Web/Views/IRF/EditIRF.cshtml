@@ -672,7 +672,8 @@
                                             <thead>
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
-                                                    <th width="70%" class="table_heading">Skills</th>
+                                                    <th width="50%" class="table_heading">Skills</th>
+                                                    <th width="20%" class="table_heading">Per Interviewer Rate</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
@@ -688,7 +689,10 @@
                                                             @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
 
                                                         </td>
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
 
+                                                        </td>
                                                         <td class="action text-center">
 
                                                             <div>
@@ -721,7 +725,8 @@
                                             <thead>
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
-                                                    <th width="70%" class="table_heading">Skills</th>
+                                                    <th width="50%" class="table_heading">Skills</th>
+                                                    <th width="20%" class="table_heading">Per QC Rate</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
@@ -737,7 +742,10 @@
                                                             @Html.TextBox("QualityController[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                         </td>
+                                                        <td>
 
+                                                            @Html.TextBox("QualityController[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                        </td>
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                             <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
@@ -756,6 +764,10 @@
 
                                                             <td>
                                                                 @Html.TextBoxFor(m => m.QualityController[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.QualityController[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
 
                                                             </td>
                                                             <td class="action text-center">
@@ -788,7 +800,8 @@
                                             <thead>
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
-                                                    <th width="70%" class="table_heading">Skills</th>
+                                                    <th width="50%" class="table_heading">Skills</th>
+                                                    <th width="20%" class="table_heading">Per EI Rate</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
@@ -806,7 +819,11 @@
                                                             @Html.TextBox("EmergencyInterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                         </td>
+                                                        <td>
 
+                                                            @Html.TextBox("EmergencyInterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+
+                                                        </td>
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                             <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
@@ -828,7 +845,10 @@
                                                                 @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
 
                                                             </td>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
 
+                                                            </td>
                                                             <td class="action text-center">
 
                                                                 <div>
@@ -1103,7 +1123,7 @@
     function IRFNameChanged() {
 
         var name = document.getElementById("IRFId").value;
-      
+
         var element = document.getElementById("btnUploadSaveAs");
 
         if (name != irfName) {
@@ -1208,7 +1228,51 @@
             }
 
         }
-
+        var message = "";
+        var newflag = false;
+        var table = document.getElementById("InterviewerTable");
+        var rowCount = table.rows.length;
+        for (var i = 0; i < rowCount; i++) {
+            if ($("#InterviewerCollection_" + i + "__PerInterviewerRate").val() == "" || $("#InterviewerCollection_" + i + "__PerInterviewerRate").val() == "0") {
+                if (message == "") {
+                    message = "Per Interviewer Rate should not be blank";
+                } else {
+                    message = message + ",Per Interviewer Rate should not be blank";
+                }
+                newflag = true;
+                break;
+            }
+        }
+        var emetable = document.getElementById("EmergencyInterviewerTable");
+        var emerowCount = emetable.rows.length;
+        for (var i = 0; i < emerowCount; i++) {
+            if ($("#EmergencyInterviewerCollection_" + i + "__PerEIRate").val() == "" || $("#EmergencyInterviewerCollection_" + i + "__PerEIRate").val() == "0") {
+                if (message == "") {
+                    message = "Per Emergency Interviewer Rate should not be blank";
+                } else {
+                    message = message + ", Per Emergency Interviewer Rate should not be blank";
+                }
+                newflag = true;
+                break;
+            }
+        }
+        var qctable = document.getElementById("EmergencyInterviewerTable");
+        var qcrowCount = qctable.rows.length;
+        for (var i = 0; i < qcrowCount; i++) {
+            if ($("#QualityController_" + i + "__PerQCRate").val() == "" || $("#QualityController_" + i + "__PerQCRate").val() == "0") {
+                if (message == "") {
+                    message = "Per QC Rate should not be blank";
+                } else {
+                    message = message + ", Per QC Rate should not be blank";
+                }
+                newflag = true;
+                break;
+            }
+        }
+        if (newflag == true) {
+            alert(message);
+            return false;
+        }
         if (inCorrectCount == 0) {
             // check interviewers list InterviewerCollection_  InterviewerId
             var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
@@ -1459,7 +1523,7 @@
 
         var table = document.getElementById("SkillTable");
         var rowCount = table.rows.length;
-       
+
 
         var $ttc = $("#SkillTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -1792,7 +1856,7 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
- 
+
 
     }
 

@@ -5,7 +5,8 @@ BEGIN
 
 CREATE TYPE [dbo].[TransEmergencyInterviewer_TableType] AS TABLE(
 	[IRFId] [int] NOT NULL,
-	[UserId] [int] NULL
+	[UserId] [int] NULL,
+	[PerSuccessRate] [int] NULL
 )
 
 END
