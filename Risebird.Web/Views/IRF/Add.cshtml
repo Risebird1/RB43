@@ -267,7 +267,7 @@
                                         @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
 
                                     </div>
-                                    
+
                                 </div>
                                 <div class="col-md-4 col-sm-4 pl-1">
 
@@ -276,7 +276,7 @@
 
 
 
-                                        @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1" } })
+                                        @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1", @onchange = "PerMinRateInterviewer()" } })
                                         @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @class = "text-danger" })
                                         <div class="spinner">
                                             <button type="button" class="up-2 button">&rsaquo;</button>
@@ -644,7 +644,8 @@
                                             <thead>
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
-                                                    <th width="70%" class="table_heading">Skills</th>
+                                                    <th width="50%" class="table_heading">Skills</th>
+                                                    <th width="20%" class="table_heading">Per Interviewer Rate</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
@@ -660,7 +661,10 @@
                                                         @Html.TextBox("InterviewerCollection[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                     </td>
+                                                    <td>
 
+                                                        @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                    </td>
                                                     <td class="action text-center">
                                                         <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'SkillId')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
@@ -691,7 +695,8 @@
                                             <thead>
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
-                                                    <th width="70%" class="table_heading">Skills</th>
+                                                    <th width="50%" class="table_heading">Skills</th>
+                                                    <th width="20%" class="table_heading">Per QC Rate</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
@@ -706,7 +711,10 @@
                                                         @Html.TextBox("QualityController[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                     </td>
+                                                    <td>
 
+                                                        @Html.TextBox("QualityController[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                    </td>
                                                     <td class="action text-center">
                                                         <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
@@ -732,7 +740,8 @@
                                             <thead>
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
-                                                    <th width="70%" class="table_heading">Skills</th>
+                                                    <th width="50%" class="table_heading">Skills</th>
+                                                    <th width="20%" class="table_heading">Per EI Rate</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
@@ -748,7 +757,11 @@
                                                         @Html.TextBox("EmergencyInterviewerCollection[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                     </td>
+                                                    <td>
 
+                                                        @Html.TextBox("EmergencyInterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                       
+                                                    </td>
                                                     <td class="action text-center">
 
                                                         <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
@@ -1013,7 +1026,51 @@
             }
 
         }
-
+        var message = "";
+        var newflag = false;
+        var table = document.getElementById("InterviewerTable");
+        var rowCount = table.rows.length;
+        for (var i = 0; i < rowCount; i++) {
+            if ($("#InterviewerCollection_" + i + "__PerInterviewerRate").val() == "") {
+                if (message == "") {
+                    message = "Per Interviewer Rate should not be blank";
+                } else {
+                    message = message + ",Per Interviewer Rate should not be blank";
+                }
+                newflag = true;
+                break;
+            }
+        }
+        var emetable = document.getElementById("EmergencyInterviewerTable");
+        var emerowCount = emetable.rows.length;
+        for (var i = 0; i < emerowCount; i++) {
+            if ($("#EmergencyInterviewerCollection_" + i + "__PerEIRate").val() == "") {
+                if (message == "") {
+                    message = "Per Emergency Interviewer Rate should not be blank";
+                } else {
+                    message = message + ", Per Emergency Interviewer Rate should not be blank";
+                }
+                newflag = true;
+                break;
+            }
+        }
+        var qctable = document.getElementById("EmergencyInterviewerTable");
+        var qcrowCount = qctable.rows.length;
+        for (var i = 0; i < qcrowCount; i++) {
+            if ($("#QualityController_" + i + "__PerQCRate").val() == "") {
+                if (message == "") {
+                    message = "Per QC Rate should not be blank";
+                } else {
+                    message = message + ", Per QC Rate should not be blank";
+                }
+                newflag = true;
+                break;
+            }
+        }
+        if (newflag == true) {
+            alert(message);
+            return false;
+        }
         if (inCorrectCount == 0) {
             // check interviewers list InterviewerCollection_  UserId
             var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
@@ -1603,7 +1660,6 @@
 
         var table = document.getElementById("InterviewerTable");
         var rowCount = table.rows.length;
-
 
         var $ttc = $("#InterviewerTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -2266,7 +2322,9 @@
         spinner3.value = value;
     };
 
-
+    function PerMinRateInterviewer() {
+        $("#InterviewerCollection_0__PerInterviewerRate").val($("#PerMintuteRate").val());
+    }
 
 
 </script>

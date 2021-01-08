@@ -27,6 +27,8 @@ namespace Risebird.Web.Controllers
         private ISkillService _skillService;
         private IProfileService _profileService;
         private static List<InterviewerVM> _modelDetails;
+        private static List<Recruiter> _modelDetail;
+        private static List<ResumeEvaluator> _modelDl;
         private static string Searchvalue;
         public UserController(IUserService userService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
                                 ISkillService skillService, IProfileService profileService)
@@ -1192,8 +1194,10 @@ namespace Risebird.Web.Controllers
 
         #region Resume Evaluator functions
 
-        public IActionResult ResumeEvaluators()
+        public IActionResult ResumeEvaluators(int? Page, string searchValue)
+       
         {
+         
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -1205,7 +1209,44 @@ namespace Risebird.Web.Controllers
 
                     }
 
-                    return View(_userService.GetResumeEvaluators());
+                    var model = _userService.GetResumeEvaluators();
+                    if (!String.IsNullOrEmpty(searchValue))
+                    {
+                        searchValue = searchValue.ToUpper();
+                        model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+
+                    }
+                    ViewBag.TotalCount = model.Count;
+
+                    ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                    int a = model.Count / 10;
+                    if (model.Count % 10 == 0)
+                    {
+                        ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                    }
+                    else
+                    {
+                        a = a + 1;
+                        if (a == Page)
+                        {
+                            ViewBag.PageEndCount = model.Count;
+                        }
+                        else
+                        {
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                        }
+
+                    }
+                    if (model.Count == 0)
+                    {
+                        ViewBag.PageStartCount = 0;
+                        ViewBag.PageEndCount = 0;
+                    }
+                    _modelDl = model;
+                    return View(model.ToPagedList(Page ?? 1, 10));
+
+                  //  return View(_userService.GetResumeEvaluators());
                 }
                 else
                 {
@@ -1365,7 +1406,7 @@ namespace Risebird.Web.Controllers
 
         #region Recruiter functions
 
-        public IActionResult Recruiters()
+        public IActionResult Recruiters(int? Page, string searchValue)
         {
             try
             {
@@ -1377,8 +1418,44 @@ namespace Risebird.Web.Controllers
                         TempData.Remove("SuccessErrorMessageRecruiter");
 
                     }
+                    var model = _userService.GetRecruiters();
+                    if (!String.IsNullOrEmpty(searchValue))
+                    {
+                        searchValue = searchValue.ToUpper();
+                        model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
-                    return View(_userService.GetRecruiters());
+                    }
+                    ViewBag.TotalCount = model.Count;
+
+                    ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                    int a = model.Count / 10;
+                    if (model.Count % 10 == 0)
+                    {
+                        ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                    }
+                    else
+                    {
+                        a = a + 1;
+                        if (a == Page)
+                        {
+                            ViewBag.PageEndCount = model.Count;
+                        }
+                        else
+                        {
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                        }
+
+                    }
+                    if (model.Count == 0)
+                    {
+                        ViewBag.PageStartCount = 0;
+                        ViewBag.PageEndCount = 0;
+                    }
+                    _modelDetail = model;
+                    return View(model.ToPagedList(Page ?? 1, 10));
+
+                    //return View(_userService.GetRecruiters());
                 }
                 else
                 {
@@ -2471,6 +2548,126 @@ namespace Risebird.Web.Controllers
                 return Json("failed");
             }
         }
+
+        [HttpPost]
+        public JsonResult RecruitersJson(string searchValue)
+        {
+            try
+            {
+                int Page = 1;
+                var model = _modelDetail;
+                Searchvalue = searchValue;
+                int totalcount = model.Count;
+                int Pagestart = 0;
+                int Pageend = 0;
+
+                ViewBag.Searchvalue = searchValue;
+                if (!String.IsNullOrEmpty(searchValue))
+                {
+                    searchValue = searchValue.ToUpper();
+                    model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+
+                }
+                ViewBag.TotalCount = model.Count;
+
+                Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                int a = model.Count / 10;
+                if (model.Count % 10 == 0)
+                {
+                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                }
+                else
+                {
+                    a = a + 1;
+                    if (a == Page)
+                    {
+                        Pageend = model.Count;
+                    }
+                    else
+                    {
+                        Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                    }
+
+                }
+                if (model.Count == 0)
+                {
+                    Pagestart = 0;
+                    Pageend = 0;
+                }
+
+                return Json(new { result = model.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count });
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("failed");
+            }
+        }
+
+
+        [HttpPost]
+        public JsonResult ResumeEvaluatorsJson(string searchValue)
+        {
+            try
+            {
+                int Page = 1;
+                var model = _modelDl;
+                Searchvalue = searchValue;
+                int totalcount = model.Count;
+                int Pagestart = 0;
+                int Pageend = 0;
+
+                ViewBag.Searchvalue = searchValue;
+                if (!String.IsNullOrEmpty(searchValue))
+                {
+                    searchValue = searchValue.ToUpper();
+                    model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+
+                }
+                ViewBag.TotalCount = model.Count;
+
+                Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                int a = model.Count / 10;
+                if (model.Count % 10 == 0)
+                {
+                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                }
+                else
+                {
+                    a = a + 1;
+                    if (a == Page)
+                    {
+                        Pageend = model.Count;
+                    }
+                    else
+                    {
+                        Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                    }
+
+                }
+                if (model.Count == 0)
+                {
+                    Pagestart = 0;
+                    Pageend = 0;
+                }
+
+                return Json(new { result = model.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count });
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("failed");
+            }
+        }
+
+
+
+
+
+
+
 
     }
 

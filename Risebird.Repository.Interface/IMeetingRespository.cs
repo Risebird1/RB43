@@ -125,11 +125,11 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern, string profileName = null);
         Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsForCuratedUserByIRF(string EmailId, string actionStatus, int irfId);
         SurveyCandidateInterviewer FetchCanddiateInterviewer(int interviewid);
-        string CandidateSuitableJd(int id, string email, string Comment,int Clientjdid);
+        string CandidateSuitableJd(int id, string email, string Comment, int Clientjdid);
         Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsPaged(string profile, string Emailid, int Page, string searchValue = null, int clientId = 0, bool IsClientCurated = false);
         Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetingsPaged(int page, string searchValue = null, string profileName = null);
         Task<int> GetSharedIndexMeetingsCount(string searchValue = null, string profileName = null);
-       
+
         IEnumerable<SurveyDetails> FetchSurveyInterviewer(List<SurveyDetails> _lst);
         Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetingsForClientPagedFiltered(int page, string primarySkills, string heuristicLevels, string searchValue = null);
         Task<int> GetSharedIndexMeetingsCountforClientFiltered(string primarySkills, string heuristicLevels, string searchValue = null);
@@ -138,5 +138,14 @@ namespace Risebird.Repository.Interface
         Task<int> GetRisetubeIndexMeetingsCount(string profile, string Emailid, string searchValue = null, int clientId = 0, bool IsClientCurated = false);
         Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsPagedFiltered(string profile, string Emailid, int Page, DateTime startDate, DateTime endDate, string searchValue = null, int clientId = 0);
         Task<int> GetRisetubeIndexMeetingsFilteredCount(string profile, string Emailid, DateTime startDate, DateTime endDate, string searchValue = null, int clientId = 0);
+        Task<List<RBInterviewDetails>> RBDetails(string EmailId);
+        Task<string> RBUpdateStatusDetails(string EmailId);
+        Task<List<RBInterviewDetails>> FetchFNDetails(string EmailId);
+        Task<List<RBInterviewDetails>> RBInterviewerDetails(int interviewerid,int flag);
+        Task<string> RBAddPoints(int interviewerid, int Points, string Comment);
+        Task<string> RBConfirmPayment(int interviewerid,int index);
+        Task<List<string>> FetchInterviewerList(string searchterm);
+        Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount);
+        Task<List<RBInterviewDetails>> FNGenerateInvoiceDetails(DateTime st, DateTime se);
     }
 }

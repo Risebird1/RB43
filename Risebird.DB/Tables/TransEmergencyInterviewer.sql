@@ -15,7 +15,15 @@ CREATE TABLE [dbo].[TransEmergencyInterviewer](
 	[Id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PerSuccessRate')
+      AND Object_ID = Object_ID(N'TransEmergencyInterviewer'))
+BEGIN
+    ALTER TABLE TransEmergencyInterviewer
+    Add PerSuccessRate INT
+END
 End
 GO
 

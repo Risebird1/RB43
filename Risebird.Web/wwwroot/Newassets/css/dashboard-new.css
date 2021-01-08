@@ -70,6 +70,7 @@ body {
     border-radius: 3px;
 }
 
+
 .collapsed {
     display: block !important
 }
@@ -1176,7 +1177,13 @@ table.interviewertable td.cadLast {
 table.interviewertable td.cadEmail {
     max-width: 170px;
 }
+#interviewerMemberModal{z-index:1000}
 
+
+    #interviewerMemberModal .table > thead > tr > th, #interviewerMemberModal .table > tfoot > tr > th {
+        padding: 1px;
+        font-weight: normal !important;
+    }
 .interviewertable td.interview-com {
     max-width: 280px;
 }
@@ -1190,7 +1197,9 @@ table.interviewertable th, table.interviewertable td {
     vertical-align: top !important;
     padding: 5px 0px;
 }
-
+.scroller-payment {
+    height: 270px;
+}
 .video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
     position: absolute;
     bottom: 100%;
