@@ -6345,7 +6345,7 @@ namespace Risebird.Web.Controllers
                         var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
                         if (HttpContext.Session.GetString("HRfilters") != null)
                         {
-                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("Interviewfilters"));
+                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("HRfilters"));
 
                             if (filter.StartDate != null && filter.EndDate != null)
                             {
