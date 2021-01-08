@@ -1464,6 +1464,32 @@ namespace Risebird.Business
             }
         }
 
-        
+        public IEnumerable<Level> GetLevels()
+        {
+            try
+            {
+                return _irfRepository.GetLevels();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public IEnumerable<LevelTech> GetLevelTech()
+        {
+            try
+            {
+                return _irfRepository.GetLevelTech();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

@@ -20,7 +20,7 @@ textarea::-webkit-scrollbar-thumb {
     margin: 2px;
     border-radius: 2px;
 }
-
+.selected-priority #myModal{z-index:1000}
 .selected-priority .talk-bubble {
     z-index: 1
 }

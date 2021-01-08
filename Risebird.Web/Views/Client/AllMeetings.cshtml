@@ -6,7 +6,7 @@
 @using Risebird.Entities.ViewModel
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "All Interview Priority View";
+    ViewData["Title"] = "All Interviews";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
     string strtDte = String.Empty;
@@ -61,7 +61,7 @@
 
                 </div>
                 <a class="navbar-brand first">
-                    All Interview Priority View
+                    All Interviews
                 </a>
 
             </div>
@@ -78,7 +78,7 @@
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title">All Interview Priority View</h4></div>
+                    <div class="mobile-view"> <h4 class="card-title">All Interviews</h4></div>
                 </div>
 
                 <div class="pull-right">
@@ -93,7 +93,7 @@
 
 
 
-                        <i type="submit" class="fa fa-file-excel-o excel-file export five  card-title-space pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("AllPriorityExporttoExcel", "Interview")'"></i>
+                        <i type="submit" class="fa fa-file-excel-o excel-file export five  card-title-space pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("AllPriorityExporttoExcel", "Client")'"></i>
 
 
 
@@ -149,7 +149,7 @@
                                             <span aria-hidden="true">&times;</span>
                                         </button>
 
-                                        <form action="@Url.Action("AllPriorityClientMeetings","Interview")" method="post" id="form">
+                                        <form action="@Url.Action("AllMeetings","Client")" method="post" id="form">
 
                                             <div class="modal-body">
                                                 <div class="row">
@@ -482,7 +482,7 @@
                                                                     @if (item.IsOnline == 1 && item.candidateName.Length > 18)
                                                                     {
                                                                         <td>
-                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>  @item.candidateName.Substring(0, 20)... </a>
+                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>  @item.candidateName.Substring(0, 18)... </a>
                                                                         </td>
                                                                     }
                                                                     else
@@ -517,12 +517,12 @@
                                                                 @if (item.candidateEmail != null && item.candidateEmail != "")
                                                                 {
 
-                                                                    @if (item.candidateEmail.Length > 23)
+                                                                    @if (item.candidateEmail.Length > 15)
                                                                     {
 
 
                                                                         <td class="cadEmail">
-                                                                            <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 23)... </a>
+                                                                            <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 15)... </a>
                                                                         </td>
                                                                     }
 
@@ -594,7 +594,7 @@
                                                                 @if ((item.MeetingStatus == 4) && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                                                                 {
 
-                                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+                                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
                                                                 }
                                                                 else
                                                                 {
@@ -730,7 +730,7 @@
                                         </div>
 
                                         <div class="col-sm-12 col-md-7 dataTables_paginate pull-right " id="divmeetingpages">
-                                            @Html.PagedListPager(Model, Page => Url.Action("AllPriorityClientMeetings", new { Page = Page }))
+                                            @Html.PagedListPager(Model, Page => Url.Action("AllMeetings", new { Page = Page }))
                                         </div>
 
 
@@ -868,7 +868,7 @@
     function searchResult() {
         $.ajax({
             type: "POST",
-            url: "/Interview/AllPriorityClientMeetingsJson",
+            url: "/Client/AllPriorityClientMeetingsJson",
             data: { 'searchValue': $('#txtmeeting_filter').val() },
             success: function (data) {
                 if (data != "failed") {
@@ -889,7 +889,7 @@
         for (var i = 0; i < data.length; i++) {
             html += '  <tr id="' + data[i].imid + '" data-changes="1">';
             html += ' <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
-            html += ' <td> ' + data[i].interviewDate + ' </td>';
+            html += ' <td> ' + new Date(data[i].interviewDate).toLocaleString()+ ' </td>';
             if (data[i].candidateName != null && data[i].candidateName != "") {
                 if (data[i].IsOnline == 1 && data[i].candidateName.length > 18) {
                     html += ' <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>    ' + data[i].candidateName.substring(0, 18) + '...</a> </td>';
@@ -911,8 +911,8 @@
             }
 
             if (data[i].candidateEmail != null && data[i].candidateEmail != "") {
-                if (data[i].candidateEmail.length > 23) {
-                    html += '<td title="' + + data[i].candidateEmail + '">' + data[i].candidateEmail.substring(0, 23) + '...</td>';
+                if (data[i].candidateEmail.length > 15) {
+                    html += '<td title="' + + data[i].candidateEmail + '">' + data[i].candidateEmail.substring(0, 15) + '...</td>';
                 } else {
                     html += '<td>' + data[i].candidateEmail + '</td>';
                 }
@@ -957,8 +957,8 @@
             } else {
                 html += '<td></td>';
             }
-            if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
-                html += '<td></td>';
+            if ((data[i].meetingStatus == 4) && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
+                html += '<td> <a id="reportId" target="_blank" title="Report Link" href="/Client/Report?interviewId='+data[i].imid +'&irfId='+ data[i].irfIntId+'&isClient = true">Report</a></td>';
             } else {
                 html += '<td>No Report</td>';
             }
@@ -1039,18 +1039,18 @@
             if (i == 1) {
                 html += '   <li class="active"><span>1</span></li>';
             } else if (i <= 10) {
-                html += '<li><a href="/Interview/AllPriorityClientMeetings?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+                html += '<li><a href="/Client/AllMeetings?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
             } else if (i == 11) {
                 html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/Interview/AllPriorityClientMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/Interview/AllPriorityClientMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Client/AllMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Client/AllMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
             } else {
                 break;
             }
             if (pagecount <= 10 && i == pagecount && i != 1) {
                 html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/Interview/AllPriorityClientMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/Interview/AllPriorityClientMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Client/AllMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Client/AllMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
             }
         }
         html += '</ul>';
@@ -1062,7 +1062,7 @@
 
     }
     function ResetFilter() {
-       window.location.href = "/Interview/ResetAllPriorityClientMeetingsFilter";
+        window.location.href = "/Client/ResetAllPriorityClientMeetingsFilter";
 
     }
         function ApplySessionFilter() {
