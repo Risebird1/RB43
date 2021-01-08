@@ -178,12 +178,14 @@
                                                             {
                                                                 selectabilityColor = "red";
                                                             }
-                                                            <tr id="@item.id" data-changes="1">
-                                                                <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                                                        <tr id="@item.id" data-changes="1">
+                                                            <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
 
 
 
 
+                                                            @if (item.EmailId != null && item.EmailId != "")
+                                                            {
                                                                 @if (item.EmailId.Length > 18)
                                                                 {
 
@@ -200,8 +202,16 @@
                                                                         <a onclick=""> @item.EmailId </a>
                                                                     </td>
                                                                 }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
 
-                                                                <td class="text-center">@item.AttemptsCount</td>
+                                                            <td class="text-center">@item.AttemptsCount</td>
+
+                                                            @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                            {
                                                                 @if (item.ResumeLink != null && item.ResumeLink != "")
                                                                 {
                                                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
@@ -210,6 +220,10 @@
                                                                 {
                                                                     <td>No Resume</td>
                                                                 }
+                                                            }
+                                                            else { <td></td>}
+
+
                                                                 @if (item.EncodedResumeLink != null && item.EncodedResumeLink != "")
                                                                 {
                                                                     <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=@item.EncodedResumeLink>Coded Resume</a> </td>
@@ -368,122 +382,125 @@
                                                                             <th>Available for Freelancing</th>
                                                                         </tr>
                                                                         <tr>
-
-                                                                            @if (item.Name.Length > 20)
+                                                                            @if (item.Name != null && item.Name != "")
                                                                             {
-
-
-                                                                                <td class="cadName">
-                                                                                    <a onclick="" data-tooltip="@item.Name"> @item.Name.Substring(0, 20)... </a>
-                                                                                </td>
-                                                                            }
+                                                                                @if (item.Name.Length > 20)
+                                                                                {
 
 
-                                                                            else
-                                                                            {
-                                                                                <td class="cadName">
-                                                                                    <a onclick=""> @item.Name </a>
-                                                                                </td>
-                                                                            }
-                                                                            @if (item.ClientHRAttemptContact != null && item.ClientHRAttemptContact.Length > 13)
-                                                                            {
-                                                                                <td class="text-center">@item.ClientHRAttemptContact.Substring(0, 13)... </td>
-
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }
+                                                                                    <td class="cadName">
+                                                                                        <a onclick="" data-tooltip="@item.Name"> @item.Name.Substring(0, 20)... </a>
+                                                                                    </td>
+                                                                                }
 
 
+                                                                                else
+                                                                                {
+                                                                                    <td class="cadName">
+                                                                                        <a onclick=""> @item.Name </a>
+                                                                                    </td>
+                                                                                }
+                                                                            }
+                                                                            else { <td></td>}
+                                                                                @if (item.ClientHRAttemptContact != null && item.ClientHRAttemptContact.Length > 13)
+                                                                                {
+                                                                                    <td class="text-center">@item.ClientHRAttemptContact.Substring(0, 13)... </td>
 
-                                                                            <td>@item.Type</td>
-
-                                                                            <td>@item.Location</td>
-                                                                            @*<td>@item.Skill</td>*@
-
-                                                                            <td>@item.WorkAuth</td>
-                                                                            <td>@item.CurrentLocation</td>
-                                                                            <td>@item.CurrentEmployer</td>
-                                                                            <td>@item.TotalExperience</td>
-                                                                            <td>@item.CurrentSalary</td>
-                                                                            <td>@item.ExpectedSalary</td>
-                                                                            <td>@item.Notice</td>
-                                                                            @if (item.confirmationStatusDesc != "0")
-                                                                            {
-                                                                                <td>@item.confirmationStatusDesc</td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }
-                                                                            @if (item.VideoLink != null && item.VideoLink != "")
-                                                                            {
-                                                                                <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td>No Video</td>
-                                                                            }
-                                                                            @if (item.MeetingStatusDesc != "0")
-                                                                            {
-                                                                                <td>@item.MeetingStatusDesc</td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }
-                                                                            @if (item.InterviewStatusDesc != "0")
-                                                                            {
-                                                                                <td>@item.InterviewStatusDesc</td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td></td>
+                                                                                }
 
 
 
+                                                                                <td>@item.Type</td>
 
-                                                                            @if (item.interviewDate != null)
-                                                                            {
-                                                                                <td>@item.interviewDate</td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }
-                                                                            @if (item.CostEstimate != null)
-                                                                            {
-                                                                                <td>@item.CostEstimate</td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }
-                                                                            <td>@item.HeuristicsscoreDesc</td>
-                                                                            @if (item.AvailableFullTime)
-                                                                            {
-                                                                                <td>Yes</td>
+                                                                                <td>@item.Location</td>
+                                                                                @*<td>@item.Skill</td>*@
 
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td>No</td>
+                                                                                <td>@item.WorkAuth</td>
+                                                                                <td>@item.CurrentLocation</td>
+                                                                                <td>@item.CurrentEmployer</td>
+                                                                                <td>@item.TotalExperience</td>
+                                                                                <td>@item.CurrentSalary</td>
+                                                                                <td>@item.ExpectedSalary</td>
+                                                                                <td>@item.Notice</td>
+                                                                                @if (item.confirmationStatusDesc != "0")
+                                                                                {
+                                                                                    <td>@item.confirmationStatusDesc</td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td></td>
+                                                                                }
+                                                                                @if (item.VideoLink != null && item.VideoLink != "")
+                                                                                {
+                                                                                    <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td>No Video</td>
+                                                                                }
+                                                                                @if (item.MeetingStatusDesc != "0")
+                                                                                {
+                                                                                    <td>@item.MeetingStatusDesc</td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td></td>
+                                                                                }
+                                                                                @if (item.InterviewStatusDesc != "0")
+                                                                                {
+                                                                                    <td>@item.InterviewStatusDesc</td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td></td>
+                                                                                }
 
 
-                                                                            }
-                                                                            @if (item.AvailableFreeLancing)
-                                                                            {
-                                                                                <td>Yes</td>
 
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td>No</td>
-                                                                            }
 
-                                                                        </tr>
+                                                                                @if (item.interviewDate != null)
+                                                                                {
+                                                                                    <td>@item.interviewDate</td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td></td>
+                                                                                }
+                                                                                @if (item.CostEstimate != null)
+                                                                                {
+                                                                                    <td>@item.CostEstimate</td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td></td>
+                                                                                }
+                                                                                <td>@item.HeuristicsscoreDesc</td>
+                                                                                @if (item.AvailableFullTime)
+                                                                                {
+                                                                                    <td>Yes</td>
+
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td>No</td>
+
+
+                                                                                }
+                                                                                @if (item.AvailableFreeLancing)
+                                                                                {
+                                                                                    <td>Yes</td>
+
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td>No</td>
+                                                                                }
+
+                                                                            </tr>
                                                                     </table>
 
                                                                 </td>
@@ -1044,23 +1061,21 @@
                 html += '  <tr id="' + data[i].id + '" data-changes="1">   ';
                 html += ' <td style="width:10px;" data-toggle="collapse" id="' + data[i].id + '" data-target=".' + data[i].id + '" class="detail-row" onclick="changeicon(' + data[i].id + ')">&nbsp;</td>';
 
+                if (data[i].emailId != null && data[i].emailId != "") {
+                    if (data[i].emailId.length > 18) {
 
+                        html += '  <td class="cadEmail">';
+                        html += ' <a onclick="" data-tooltip="' + data[i].emailId + '"> ' + data[i].emailId.substring(0, 18) + '... </a>';
+                        html += '   </td>';
+                    }
 
-
-
-
-                if (data[i].emailId.length > 18) {
-
-                    html += '  <td class="cadEmail">';
-                    html += ' <a onclick="" data-tooltip="' + data[i].emailId + '"> ' + data[i].emailId.substring(0, 18) + '... </a>';
-                    html += '   </td>';
+                    else {
+                        html += '   <td class="cadEmail">';
+                        html += '  <a onclick=""> ' + data[i].emailId + ' </a>';
+                        html += ' </td>';
+                    }
                 }
-
-                else {
-                    html += '   <td class="cadEmail">';
-                    html += '  <a onclick=""> ' + data[i].emailId + ' </a>';
-                    html += ' </td>';
-                }
+                else {<td></td>}
 
                 html += ' <td class="text-center">' + data[i].attemptsCount + '</td>';
                
@@ -1210,17 +1225,18 @@
                 html += ' <th>Available for Freelancing</th>';
                 html += ' </tr>';
                 html += '<tr>';
-
-                if (data[i].name.length > 20) {
-                    html += '  <td class="cadName">';
-                    html += '  <a onclick="" data-tooltip="' + data[i].name + '"> ' + data[i].name.substring(0, 20) + '... </a>';
-                    html += '  </td>';
-                } else {
-                    html += '<td class="cadName">';
-                    html += '   <a onclick=""> ' + data[i].name + ' </a>';
-                    html += '   </td>';
+                if (data[i].name != null && data[i].name != "") {
+                    if (data[i].name.length > 20) {
+                        html += '  <td class="cadName">';
+                        html += '  <a onclick="" data-tooltip="' + data[i].name + '"> ' + data[i].name.substring(0, 20) + '... </a>';
+                        html += '  </td>';
+                    } else {
+                        html += '<td class="cadName">';
+                        html += '   <a onclick=""> ' + data[i].name + ' </a>';
+                        html += '   </td>';
+                    }
                 }
-
+                else {<td></td>}
 
 
 
@@ -1343,7 +1359,7 @@
                 } else {
                     break;
                 }
-                if (pagecount <= 10 && i == pagecount) {
+                if (pagecount <= 10 && i == pagecount && i != 1) {
                     html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
                     html += '<li class="PagedList-skipToNext"><a href="/Candidate/GetCandidates?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a href="/Candidate/GetCandidates?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
