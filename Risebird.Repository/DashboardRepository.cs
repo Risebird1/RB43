@@ -356,5 +356,225 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<List<ChannelManagementVM>> FetchChannelRequests()
+        {
+            try
+            {
+                var query = "Select * from ChannelManagement";
+                var dynamicParameters = new DynamicParameters();
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<ChannelManagementVM>(query, null);
+                    return (List<ChannelManagementVM>)result;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<ChannelVM> FetchChannelRequestsByid(int id)
+        {
+            try
+            {
+                var query = "Select * from ChannelManagement where id=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<ChannelVM>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<string> AddChannelRequest(ChannelVM request)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    if (!request.isEditable)
+                    {
+                        var CreatedBy = 0;
+                        string query = "Select id from UserList where Emailid=@Emailid";
+                        var dynamicParameters = new DynamicParameters();
+                        dynamicParameters.Add("@Emailid", request.CreatedBy);
+                        var result = await con.QueryAsync<int>(query, dynamicParameters);
+                        CreatedBy = result.FirstOrDefault();
+                        var CreatedDate = DateTime.Now;
+                        var Status = "Open";
+                        string sqlInsertReport = "INSERT INTO ChannelManagement (Client,Recruiter,PrimarySkill,EndClient,Location,ExpectedVolume,JdLink,CreatedBy,CreatedDate,Status,RequesterEmailid,RequesterMobile) Values (@Client,@Recruiter,@PrimarySkill,@EndClient,@Location,@ExpectedVolume,@JdLink,@CreatedBy,@CreatedDate,@Status,@RequesterEmailid,@RequesterMobile);";
+                        var affectedRows = con.ExecuteAsync(sqlInsertReport, new
+                        {
+                            request.Client,
+                            request.Recruiter,
+                            request.PrimarySkill,
+                            request.EndClient,
+                            request.Location,
+                            request.ExpectedVolume,
+                            request.JdLink,
+                            CreatedBy,
+                            CreatedDate,
+                            Status,
+                            request.RequesterEmailid,
+                            request.RequesterMobile
+
+                        }).Result;
+                    }
+                    else
+                    {
+                        var updatequery = "Update ChannelManagement set Client=@Client,Recruiter=@Recruiter,PrimarySkill=@PrimarySkill,EndClient=@EndClient,Location=@Location,ExpectedVolume=@ExpectedVolume,JdLink=@JdLink,WeekendDrive=@WeekendDrive,POGenerated=@POGenerated,IPSCreated=@IPSCreated,CalendlyLinkCreated=@CalendlyLinkCreated,CandidateSourcing=@CandidateSourcing,AdditionalComment=@AdditionalComment,HRCoordinator=@HRCoordinator,ProgramManager=@ProgramManager,IRFID=@IRFID,IRFIDs=@IRFIDs,Priority=@Priority,RequesterEmailid=@RequesterEmailid,RequesterMobile=@RequesterMobile where id=@id;";
+                        var updatedynamicParameters = new DynamicParameters();
+                        updatedynamicParameters.Add("@id", request.id);
+                        updatedynamicParameters.Add("@Client", request.Client);
+                        updatedynamicParameters.Add("@Recruiter", request.Recruiter);
+                        updatedynamicParameters.Add("@PrimarySkill", request.PrimarySkill);
+                        updatedynamicParameters.Add("@EndClient", request.EndClient);
+                        updatedynamicParameters.Add("@Location", request.Location);
+                        updatedynamicParameters.Add("@ExpectedVolume", request.ExpectedVolume);
+                        updatedynamicParameters.Add("@JdLink", request.JdLink);
+                        updatedynamicParameters.Add("@WeekendDrive", request.WeekendDrive);
+                        updatedynamicParameters.Add("@POGenerated", request.POGenerated);
+                        updatedynamicParameters.Add("@IPSCreated", request.IPSCreated);
+                        updatedynamicParameters.Add("@CalendlyLinkCreated", request.CalendlyLinkCreated);
+                        updatedynamicParameters.Add("@CandidateSourcing", request.CandidateSourcing);
+                        updatedynamicParameters.Add("@AdditionalComment", request.AdditionalComment);
+                        updatedynamicParameters.Add("@HRCoordinator", request.HRCoordinator);
+                        updatedynamicParameters.Add("@ProgramManager", request.ProgramManager);
+                        updatedynamicParameters.Add("@IRFID", request.IRFID);
+                        updatedynamicParameters.Add("@IRFIDs", request.IRFIDs);
+                        updatedynamicParameters.Add("@Priority", request.Priority);
+                        updatedynamicParameters.Add("@RequesterEmailid", request.RequesterEmailid);
+                        updatedynamicParameters.Add("@RequesterMobile", request.RequesterMobile);
+                        var results = await con.QueryAsync(updatequery, updatedynamicParameters);
+                    }
+                    return "Success";
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
+        public async Task<List<string>> FetchAdminandHRList()
+        {
+            try
+            {
+                var query = "Select Emailid from UserList where idProfile in(1,2)";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<string>(query, null);
+                    return (List<string>)result;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<string> AddChannelInterviewer(ChannelInterviewerVM request)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var CreatedBy = 0;
+                    string query = "Select id from UserList where Emailid=@Emailid";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@Emailid", request.CreatedBy);
+                    var result = await con.QueryAsync<int>(query, dynamicParameters);
+                    CreatedBy = result.FirstOrDefault();
+                    var ProcessedDate = DateTime.Now;
+                    string sqlInsertReport = "INSERT INTO ChannelMInterviewer (ProcessedDate,Name,EmailAddress,Mobile,CVLink,CodedCVLink,PrimarySKill,Role,Priority,Comment,Approved,DMCallAvailability,AddedoverPortal,AddedoverSKillChannel,QC,Emergency,Training,AdvancePayment,CallAttended,Channelid,CreatedBy) Values (@ProcessedDate,@Name,@EmailAddress,@Mobile,@CVLink,@CodedCVLink,@PrimarySKill,@Role,@Priority,@Comment,@Approved,@DMCallAvailability,@AddedoverPortal,@AddedoverSKillChannel,@QC,@Emergency,@Training,@AdvancePayment,@CallAttended,@Channelid,@CreatedBy);";
+                    var affectedRows = con.ExecuteAsync(sqlInsertReport, new
+                    {
+                        ProcessedDate,
+                        request.Name,
+                        request.EmailAddress,
+                        request.Mobile,
+                        request.CVLink,
+                        request.CodedCVLink,
+                        request.PrimarySKill,
+                        request.Role,
+                        request.Priority,
+                        request.Comment,
+                        request.Approved,
+                        request.DMCallAvailability,
+                        request.AddedoverPortal,
+                        request.AddedoverSKillChannel,
+                        request.QC,
+                        request.Emergency,
+                        request.Training,
+                        request.AdvancePayment,
+                        request.CallAttended,
+                        request.Channelid,
+                        CreatedBy
+                    }).Result;
+                    return "Success";
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
+        public async Task<List<ChannelInterviewerVM>> FetchInterviewerBychannelid(int id)
+        {
+            try
+            {
+                var query = "Select *,ul.Emailid as CreatedBy  from ChannelMInterviewer cm join UserList ul on ul.id=cm.CreatedBy where Channelid=@channelid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@channelid", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<ChannelInterviewerVM>(query, dynamicParameters);
+                    return (List<ChannelInterviewerVM>)result;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

@@ -1,0 +1,444 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.ChannelManagementVM>
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Channel Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = String.Empty;
+    string endDte = String.Empty;
+    string[] primarySkills = new string[] { };
+    string[] RFID = new string[] { };
+    string[] ArchiveStatus = new string[] { };
+    string[] ClientName = new string[] { };
+    string[] SubscriptionStatus = new string[] { };
+    string[] ClientRole = new string[] { };
+    string[] PrimarySkill = new string[] { };
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<IRFFilter>
+(HttpContextAccessor.HttpContext.Session.GetString("IRFfilters"));
+    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
+    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
+    RFID = filter.RFID != null ? filter.RFID : new string[] { };
+    ArchiveStatus = filter.ArchiveStatus != null ? filter.ArchiveStatus : new string[] { };
+    SubscriptionStatus = filter.SubscriptionStatus != null ? filter.SubscriptionStatus : new string[] { };
+    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
+    ClientRole = filter.ClientRole != null ? filter.ClientRole : new string[] { };
+    PrimarySkill = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
+
+}
+<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">
+                    Channel Management
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <!--  <div class="panel-header panel-header-sm"></div>-->
+
+
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Channel Management</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div>
+
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter card-title-space" data-toggle="modal" data-target="#filterModal">
+
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
+
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Channel" onclick="location.href='@Url.Action("AddRequirement", "DashBoard")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Channel</font></span>
+                        </button>
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card  bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+
+
+                        <div class="modal   fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="filheader">
+                                        <div class="filavatar">
+                                            <span class="fa fa-filter"></span>
+                                        </div>
+                                        <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                    </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+
+
+
+                                    <form action="@Url.Action("Index","IRF")" method="post" id="form">
+
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                            Start Date
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                            End Date
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @*<div class="col-md-6 col-sm-6 border-rv">
+
+                                                        @if (!Model.IsClientUser && Model.Profile != "CuratedUser")
+                                                        {
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">Client Name</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.IRFList.Select(x => x.ClientCompName).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        }
+
+                                                        @if (Model.Profile == "CuratedUser")
+                                                        {
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="SubscriptionStatus">Subscription Status</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="SubscriptionStatus" name="SubscriptionStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.IRFList.Select(x => x.SubscriptionStatus).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        }
+
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">PrimarySkill</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.IRFList.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+
+                                                            <div>
+                                                                <div class="col-md-12 col-sm-12">
+
+
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
+
+
+
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
+
+
+
+                                                                </div>
+
+                                                            </div>
+
+
+
+                                                        </div>
+                                                    </div>*@
+
+
+
+
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- end content-->
+                        <!--  end card  -->
+                        <!-- end col-md-12 -->
+                        <!-- Start Card -->
+
+                        <div class="row">
+                            @foreach (var item in Model)
+                            {
+                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
+                                    <div class="card-content-holder border card-blue">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class=" col-md-5 col-sm-5 first">
+                                                    <h6> @item.CreatedDate.ToString("dd_MM")_@item.Client _@item.PrimarySkill</h6>
+                                                </div>
+
+                                                <div class="col-md-7 col-sm-7 card-header-buttons action">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- irf body-->
+                                        <div class="card-body">
+                                            <div class="row">
+                                                @*<div class="statusImg">
+                                                        <img id="statusImage" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
+                                                    </div>*@
+                                                <div class="statusInfo" style="padding:0px 50px">
+                                                    <div class="group inner list-group-item-text">
+                                                        <div class="row second">
+                                                            <div class="client-field"> Interview Count:</div>  <div class="clientName">@item.InterviewCount</div>
+                                                        </div> <br />
+
+                                                        <div class="row three"> <span>IRFID:</span><a href="#">@item.IRFIDs</a></div> <br />
+
+                                                        <div class="row four">
+                                                            <span>Status:</span> @item.Status
+                                                        </div> <br />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="card-footer action">
+                                            <div class="row">
+
+                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 " id="irf-card-footer">
+
+
+                                                </div>
+
+                                                <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 ">
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                        <span onclick="location.href='@Url.Action("EditRequirement","DashBoard",new { id=item.id})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                    </button>
+                                                    <button class="mdc-fab app-fab--absolute allcur" aria-label="All">
+                                                        <span onclick="location.href='@Url.Action("Interviewer", "DashBoard",new { id=item.id})'" title="Interviewer" class="mdc-fab__icon material-icons">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- End Card-->
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        location.reload();
+                    }
+                )
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+                },
+                    function ()
+                    {
+                        location.reload();
+                    }
+                )
+            }
+        }
+        window.onload = my_code();
+    </script>
+}
+
+
+<script>
+        $(document).ready(function () {
+            $("#stDateInvoice").val("");
+            $("#EndDateInvoice").val("");
+            $("#srNumberId").val("");
+            $("#poNumberId").val("");
+            $("#requestNumberId").val("");
+            $("#currencyCodeId").val("");
+            $("#projectCodeId").val("");
+            $("#discountId").val("");
+            $("#clientAddressId").val("");
+            document.getElementById("gstCheckId").checked = false;
+            $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+            }
+
+            $("#RFID").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#ClientName").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#ArchiveStatus").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#SubscriptionStatus").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#ClientRole").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+             $("#PrimarySkill").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                 buttonWidth: '100%',
+                maxHeight: 200
+            });
+        });
+
+        function ResetFilter() {
+            window.location.href = "/IRF/ResetIRFFilter";
+        }
+        function ApplySessionFilter() {
+            var strtDte = '@strtDte';
+            var endDte = '@endDte';
+            var rFID =  @Html.Raw(Json.Serialize(RFID));
+            var clientName =  @Html.Raw(Json.Serialize(ClientName));
+            var archiveStatus =  @Html.Raw(Json.Serialize(ArchiveStatus));
+            var subscriptionStatus =  @Html.Raw(Json.Serialize(SubscriptionStatus));
+            var clientRole =  @Html.Raw(Json.Serialize(ClientRole));
+            var primarySkill= @Html.Raw(Json.Serialize(PrimarySkill));
+
+            $('input[name=StartDate]').val(strtDte);
+            $('input[name=EndDate]').val(endDte);
+            $("#RFID").val(rFID);
+            $("#ClientName").val(clientName);
+            $("#ArchiveStatus").val(archiveStatus);
+            $("#SubscriptionStatus").val(subscriptionStatus);
+            $("#ClientRole").val(clientRole);
+            $("#PrimarySkill").val(primarySkill);
+
+            var form = $("#form").serialize();
+
+        }
+
+</script>
+
+
+
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
+
+
+

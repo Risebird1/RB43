@@ -21,10 +21,14 @@ namespace Risebird.Web.Controllers
     {
         private readonly IDashboardService _dashboardService;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger)
+        private readonly INotificationHelper _notificationHelper;
+        private readonly IAzureStorageHelper _azureStorageHelper;
+        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper)
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
+            _notificationHelper = notificationHelper;
+            _azureStorageHelper = azureStorageHelper;
         }
 
         public async Task<IActionResult> Index()
@@ -288,5 +292,265 @@ namespace Risebird.Web.Controllers
             var result = _dashboardService.FetchActivityDetails(id, idprogess);
             return Json(result);
         }
+
+        #region ChannelManagement
+        public async Task<IActionResult> RequirementManagement()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+
+                if (profileName == "Admin")
+                {
+                    var model = await _dashboardService.FetchChannelRequests();
+                    if (TempData["SuccessErrorMessageInterview"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                        TempData.Remove("SuccessErrorMessageInterview");
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        public ActionResult AddRequirement()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+
+                if (profileName == "Admin")
+                {
+                    var model = new ChannelVM();
+                    model.isEditable = false;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public async Task<ActionResult> AddRequirement(ChannelVM model)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                model.CreatedBy = emailid;
+                if (profileName == "Admin")
+                {
+                    if (!ModelState.IsValid)
+                    {
+                        return View(model);
+                    }
+                    if (model.Jdfile == null && (model.JdLink == null))
+                    {
+                        ModelState.AddModelError(String.Empty, "Please upload a Jd.");
+                        return View(model);
+                    }
+                    if (model.Jdfile != null)
+                    {
+                        await _azureStorageHelper.InsertBlob(model.Jdfile.FileName, "resumes", model.Jdfile);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        var blob = containerRef.GetBlockBlobReference(model.Jdfile.FileName);
+                        model.JdLink = blob.Uri.ToString();
+                    }
+
+                    if (model.isEditable)
+                    {
+                        var result = await _dashboardService.AddChannelRequest(model);
+                        if (result == "Success")
+                        {
+                            TempData["SuccessErrorMessageInterview"] = "Channel Request updated Successfully.";
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageInterview"] = "Fail to update channel request.";
+                        }
+                        return RedirectToAction("RequirementManagement");
+                    }
+                    else
+                    {
+                        var result = await _dashboardService.AddChannelRequest(model);
+                        if (result == "Success")
+                        {
+                            var Emailds = await _dashboardService.FetchAdminandHRList();
+                            string Emailaddress = string.Join(";", Emailds);
+                            Mail _mail = new Mail
+                            {
+                                TO = Emailaddress,
+                                Subject = $"Risebird: a new Channel request is created for " + model.Client
+                            };
+                            var resultset = _notificationHelper.ChannelRequestNotification(_mail, model.Client, model.PrimarySkill, model.Recruiter);
+                            TempData["SuccessErrorMessageInterview"] = "Channel Request added Successfully.";
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageInterview"] = "Fail to add channel request.";
+                        }
+                        return RedirectToAction("RequirementManagement");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        public async Task<IActionResult> EditRequirement(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin")
+                {
+                    var model = await _dashboardService.FetchChannelRequestsByid(id);
+                    model.isEditable = true;
+                    var Priority = from Prioritylevels s in Enum.GetValues(typeof(Prioritylevels))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+                    model.Prioritylist = new SelectList(Priority, "ID", "Name");
+                    return View("AddRequirement", model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        public async Task<IActionResult> Interviewer(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin")
+                {
+                    var model = await _dashboardService.FetchInterviewerBychannelid(id);
+                    ViewBag.channelid = id;
+                    if (TempData["SuccessErrorMessageInterview"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                        TempData.Remove("SuccessErrorMessageInterview");
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        public ActionResult AddInterviewer(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin")
+                {
+                    var model = new ChannelInterviewerVM();
+                    model.Channelid = id;
+                    var Priority = from Prioritylevels s in Enum.GetValues(typeof(Prioritylevels))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+                    model.Prioritylist = new SelectList(Priority, "ID", "Name");
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddInterviewer(ChannelInterviewerVM model)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                model.CreatedBy = emailid;
+                if (profileName == "Admin")
+                {
+                    if (!ModelState.IsValid)
+                    {
+                        return View(model);
+                    }
+                    if (model.CV == null && (model.CVLink == null))
+                    {
+                        ModelState.AddModelError(String.Empty, "Please upload a CV.");
+                        return View(model);
+                    }
+                    if (model.CV != null)
+                    {
+                        await _azureStorageHelper.InsertBlob(model.CV.FileName, "resumes", model.CV);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        var blob = containerRef.GetBlockBlobReference(model.CV.FileName);
+                        model.CVLink = blob.Uri.ToString();
+                    }
+                    if (model.CodedCV != null)
+                    {
+                        await _azureStorageHelper.InsertBlob(model.CodedCV.FileName, "resumes", model.CodedCV);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        var blob = containerRef.GetBlockBlobReference(model.CodedCV.FileName);
+                        model.CodedCVLink = blob.Uri.ToString();
+                    }
+                    var result = await _dashboardService.AddChannelInterviewer(model);
+                    if (result == "Success")
+                    {
+                        TempData["SuccessErrorMessageInterview"] = "Interviewer added Successfully.";
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageInterview"] = "Fail to add interviewer.";
+                    }
+                    return RedirectToAction("Interviewer", "DashBoard", new { id = model.Channelid });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        #endregion
     }
 }

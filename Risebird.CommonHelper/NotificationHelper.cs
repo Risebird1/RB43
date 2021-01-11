@@ -232,11 +232,13 @@ namespace Risebird.CommonHelper
                 mailMessage.From = new MailAddress(clientHREmail.Trim(), clientHREmail.Split("@").First());
                 mailMessage.To.Add(new MailAddress(emailId.ToLower(), emailId.Split("@").First()));
 
-                if(clientUsers!= null && clientUsers.Count > 0)
-                {foreach (var clientUser in clientUsers)
+                if (clientUsers != null && clientUsers.Count > 0)
                 {
-                    mailMessage.CC.Add(new MailAddress(clientUser.EmailId.ToLower(), clientUser.EmailId.Split("@").First()));
-                }}
+                    foreach (var clientUser in clientUsers)
+                    {
+                        mailMessage.CC.Add(new MailAddress(clientUser.EmailId.ToLower(), clientUser.EmailId.Split("@").First()));
+                    }
+                }
                 else
                 {
                     mailMessage.CC.Add(new MailAddress(clientHREmail.ToLower(), clientHREmail.Split("@").First()));
@@ -1077,7 +1079,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
-        public string CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany,int score)
+        public string CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany, int score)
         {
             try
             {
@@ -1144,7 +1146,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL= null)
+        public string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null)
         {
             try
             {
@@ -1169,6 +1171,41 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+        public string ChannelRequestNotification(Mail model, string client, string Skill, string Recruiter)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                var toMails = model.TO.Split(";");
+                foreach (var mails in toMails)
+                {
+                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                }
+                //var ccMails = model.CC.Split(";");
+                //foreach (var mails in ccMails)
+                //{
+                //    mailMessage.CC.Add(new MailAddress(mails.ToLower(), null));
+                //}
+                object[] parameters = new object[] { client, Skill, Recruiter };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ChannelManagementNotification.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.Subject = model.Subject;
                 mailMessage.IsBodyHtml = true;
                 mailMessage.Body = msgBody;
                 SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));

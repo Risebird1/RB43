@@ -1,0 +1,318 @@
+﻿@model Risebird.Entities.ViewModel.ChannelVM
+
+@{
+    ViewData["Title"] = "Add Skills Channel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+<div class="main-panel " id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                @if (!Model.isEditable)
+                {
+                    <a class="navbar-brand">Channel Request</a>
+                }
+                else
+                {
+                    <a class="navbar-brand">Edit Channel Request</a>
+                }
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="mt50">
+    </div>
+    <div class="content client ">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+
+                    <div class="mdc-card-wrapper__text-section">
+
+                        @using (Html.BeginForm("AddRequirement", "DashBoard", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onclick = "return checkeditvalues();" }))
+                        {
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="row">
+                            <div class="col-md-12">
+                                @if (!Model.isEditable)
+                                {
+                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Channel Request</h4></div>
+                                }
+                                else
+                                {
+                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Edit Channel Request</h4></div>
+
+                                }
+                            </div>
+
+                            <div style="width: 100%;">&nbsp;</div>
+                            @Html.HiddenFor(model => model.isEditable)
+                            @Html.HiddenFor(model => model.id)
+                            <div class="col-md-3 col-sm-3 pr-1">
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    @Html.LabelFor(model => model.Client, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.Client, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                    @Html.ValidationMessageFor(model => model.Client, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 px-1">
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    @Html.LabelFor(model => model.Recruiter, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.Recruiter, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                    @Html.ValidationMessageFor(model => model.Recruiter, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 px-1">
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.PrimarySkill, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.PrimarySkill, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-3 pl-1">
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 pl-1">
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    @Html.LabelFor(model => model.EndClient, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.EndClient, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.EndClient, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 pl-1">
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    @Html.LabelFor(model => model.ExpectedVolume, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.ExpectedVolume, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
+                                    @Html.ValidationMessageFor(model => model.ExpectedVolume, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 pl-1">
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    @Html.LabelFor(model => model.RequesterEmailid, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.RequesterEmailid, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.RequesterEmailid, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 pl-1">
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    @Html.LabelFor(model => model.RequesterMobile, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.RequesterMobile, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
+                                    @Html.ValidationMessageFor(model => model.RequesterMobile, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-3 pl-1">
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    <input type="radio" name="Jd" id="Jdlink" value="Upload" onclick="RadioChanged('Upload')" /> Upload File
+                                    <input type="radio" name="Jd" id="Jdlink" value="Filelink" checked onclick="RadioChanged('Filelink')" /> File Link
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 pl-1">
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    <div id="uploadDiv" style="display:none">
+                                        @Html.LabelFor(model => model.Jdfile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                        @Html.TextBoxFor(model => model.Jdfile, new { type = "file", @class = "form-control btn ", @accept = ".mp4" })
+                                    </div>
+                                    <div id="linkDiv">
+                                        @Html.LabelFor(model => model.JdLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.JdLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                            @if (Model.isEditable)
+                            {
+                                <div class="row" style="padding-top:20px">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Set Details</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 col-sm-3 pl-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.Priority, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.DropDownListFor(m => m.Priority, new SelectList(Model.Prioritylist, "Value", "Text"), new { @id = "select", @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Priority, "", new { @class = "text-danger" })
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 pl-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.AdditionalComment, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.AdditionalComment, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.AdditionalComment, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 pl-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.HRCoordinator, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.HRCoordinator, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.HRCoordinator, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 pl-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.ProgramManager, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.ProgramManager, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.ProgramManager, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 pl-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.WeekendDrive, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.RadioButtonFor(model => model.WeekendDrive, 1) <span class="radio-field">Yes</span>
+                                            @Html.RadioButtonFor(model => model.WeekendDrive, 0)<span class="radio-field">No</span>
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 pl-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.POGenerated, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.RadioButtonFor(model => model.POGenerated, 1) <span class="radio-field">Yes</span>
+                                            @Html.RadioButtonFor(model => model.POGenerated, 0)<span class="radio-field">No</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 pl-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.IPSCreated, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.RadioButtonFor(model => model.IPSCreated, 1) <span class="radio-field">Yes</span>
+                                            @Html.RadioButtonFor(model => model.IPSCreated, 0)<span class="radio-field">No</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 pl-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.CalendlyLinkCreated, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.RadioButtonFor(model => model.CalendlyLinkCreated, 1) <span class="radio-field">Yes</span>
+                                            @Html.RadioButtonFor(model => model.CalendlyLinkCreated, 0)<span class="radio-field">No</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 pl-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.CandidateSourcing, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.RadioButtonFor(model => model.CandidateSourcing, 1) <span class="radio-field">Yes</span>
+                                            @Html.RadioButtonFor(model => model.CandidateSourcing, 0)<span class="radio-field">No</span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-3 pl-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.IRFID, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.RadioButtonFor(model => model.IRFID, 1, new { @onclick = "RadioIRFID('Yes')" }) <span class="radio-field">Yes</span>
+                                            @Html.RadioButtonFor(model => model.IRFID, 0, new { @onclick = "RadioIRFID('No')" })<span class="radio-field">No</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 pl-1">
+                                        <input type="hidden" value="@Model.IRFID" id="txtirfid" />
+                                        <div id="divirfid" style="display:none">
+                                            @Html.LabelFor(model => model.IRFIDs, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.IRFIDs, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="card-footer ">
+                                <div class="row">
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "RequirementManagement", "DashBoard", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        }
+                        @*</form>*@
+
+                    </div>
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+
+</div>
+<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("JDLink").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("JDFile").value = '';
+
+        }
+
+    }
+    function RadioIRFID(val) {
+        if (val == 'Yes') {
+            document.getElementById("divirfid").style.display = "block";
+        }
+        else {
+            document.getElementById("divirfid").style.display = "none";
+        }
+    }
+    if ($("#txtirfid").val() == 1) {
+        RadioIRFID('Yes');
+    }
+    function checkeditvalues() {
+        // check valididate for values which are required
+        return true;
+    }
+</script>
+
+

@@ -21,6 +21,12 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<ClientDailySlotsStatus>> GetDateWiseClientMeetingsSlots(DateTime date, string emailId);
         Task<CandidatesCount> GetClientCandidatesCount(string emailId);
         Task<MeetingResultCount> GetClientMeetingsResults(string emailId);
-        IRF FetchActivityDetails(int id,int idprogess);
+        IRF FetchActivityDetails(int id, int idprogess);
+        Task<List<ChannelManagementVM>> FetchChannelRequests();
+        Task<ChannelVM> FetchChannelRequestsByid(int id);
+        Task<string> AddChannelRequest(ChannelVM request);
+        Task<List<string>> FetchAdminandHRList();
+        Task<string> AddChannelInterviewer(ChannelInterviewerVM request);
+        Task<List<ChannelInterviewerVM>> FetchInterviewerBychannelid(int id);
     }
 }
