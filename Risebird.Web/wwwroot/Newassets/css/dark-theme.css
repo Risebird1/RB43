@@ -684,15 +684,23 @@ div.dataTables_wrapper div.dataTables_info {
     color: #9A9A9A;
 }
 
+
+
 .talk-bubble {
-    background: #181818;
+    background-color: #181818;
     border: 1px #77737359 solid !important;
 }
 
-    .talk-bubble textarea {
-        background: #181818;
-        color: #9A9A9A;
+    .talk-bubble textarea, talk-bubble textarea:focus {
+        background-color: #181818 !important;
+        border: 0px !important;
     }
+.talk-bubble textarea::-webkit-scrollbar {
+    background-color: #77737359;
+}
+.talk-bubble textarea::-webkit-scrollbar-track {
+    background-color: #77737359;
+}
 
 .moadl .desp-label {
     color: #fff

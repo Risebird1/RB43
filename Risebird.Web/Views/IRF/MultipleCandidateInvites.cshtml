@@ -355,7 +355,7 @@
                 }
             }
             else { html += '<td></td>'; }
-            html += '  <td>' + data[i].interviewDate + ' </td>';
+            html += '  <td>' + new Date(data[i].interviewDate).toLocaleString() + ' </td>';
             if (data[i].jdTiltle.split("|")[0] != null && data[i].jdTiltle.split("|")[0] != "") {
                 if (data[i].jdTiltle.split("|")[0].length > 30) {
                     html += '  <td>' + data[i].jdTiltle.split("|")[0].substring(0, 30) + '... </td>';

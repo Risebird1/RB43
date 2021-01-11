@@ -78,5 +78,7 @@ namespace Risebird.Business.Interface
         Task<CandidateStatus> GetCandidateStatusById(int id);
         Task<bool> EditCandidateStatus(CandidateStatus model);
         Task<bool> DeleteCandidateStatus(int id);
+        IEnumerable<Level> GetLevels();
+        IEnumerable<LevelTech> GetLevelTech();
     }
 }

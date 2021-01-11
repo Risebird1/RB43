@@ -120,7 +120,9 @@ namespace Risebird.Entities.ViewModel
         public List<InterviewerIds> InterviewerIds { get; set; }
         public string Type { get; set; }
         [DisplayName("Primary Skill")]
+        [Required]
         public string PrimarySkillInvite { get; set; }
+        public bool IsClone { get; set; }
 
     }
     public class InterviewerIds

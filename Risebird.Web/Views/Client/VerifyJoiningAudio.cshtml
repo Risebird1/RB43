@@ -38,7 +38,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card">
                     <div class="mdc-card-wrapper__text-section">
-                        <form action="/Interview/VerifyJoiningAudio" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
+                        <form action="/Client/VerifyJoiningAudio" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -167,7 +167,7 @@
 
                                         <div class="col-md-12 mc-button-area text-right">
 
-                                            @Html.ActionLink("Back to List", "SelectedPriorityClientMeetings", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                            @Html.ActionLink("Back to List", "SelectedMeetings", "Client", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                             <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Verify</button>
 
 
