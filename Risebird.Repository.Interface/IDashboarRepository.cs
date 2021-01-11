@@ -29,5 +29,6 @@ namespace Risebird.Repository.Interface
         Task<List<string>> FetchAdminandHRList();
         Task<string> AddChannelInterviewer(ChannelInterviewerVM request);
         Task<List<ChannelInterviewerVM>> FetchInterviewerBychannelid(int id);
+        Task<string> DeleteChannelInterviewerByid(int id, int channelid);
     }
 }

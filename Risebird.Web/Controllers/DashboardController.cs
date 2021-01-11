@@ -551,6 +551,19 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> DeleteInterviewer(int id, int channelid)
+        {
+            var result = await _dashboardService.DeleteChannelInterviewerByid(id, channelid);
+            if (result == "Success")
+            {
+                return Json("Success");
+            }
+            else
+            {
+                return Json("fail");
+            }
+        }
         #endregion
     }
 }

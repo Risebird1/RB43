@@ -89,6 +89,7 @@
                                                     <th>Training</th>
                                                     <th>Advance Payment</th>
                                                     <th>Call Attended</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -113,6 +114,7 @@
                                                     <th>Training Mail Sent</th>
                                                     <th>Advance Payment</th>
                                                     <th>Call Attended</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -217,6 +219,11 @@
                                                         {
                                                             <td>No</td>
                                                         }
+                                                        <td>
+                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client">
+                                                                <span onclick="javascript:DeleteCandidateFromTest(@item.id,@item.Channelid);" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                            </button>
+                                                        </td>
                                                     </tr>
                                                 }
                                             </tbody>
@@ -329,5 +336,54 @@
         };
     })();
 </script>
-
+<script>
+    function DeleteCandidateFromTest(id, channelid) {
+        swal.fire({
+            title: 'Are you sure you want to delete Interviewer?',
+            text: "It will be permanently deleted !",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/DashBoard/DeleteInterviewer',
+                        data: { 'id': id, 'channelid': channelid },
+                        type: 'POST',
+                        success: function (result) {
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deleted!',
+                    type: 'success',
+                    html: '<p>Interviewer has been deleted.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/DashBoard/Interviewer/" + channelid;
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Not deleted!',
+                    'error'
+                )
+            }
+        })
+    }
+</script>
 

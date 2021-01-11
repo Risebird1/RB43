@@ -236,7 +236,7 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "";
             }
-        } 
+        }
         public async Task<List<string>> FetchAdminandHRList()
         {
             try
@@ -271,6 +271,18 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        public async Task<string> DeleteChannelInterviewerByid(int id, int channelid)
+        {
+            try
+            {
+                return await _dashboardRespository.DeleteChannelInterviewerByid(id,channelid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
             }
         }
     }

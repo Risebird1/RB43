@@ -556,7 +556,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select *,ul.Emailid as CreatedBy  from ChannelMInterviewer cm join UserList ul on ul.id=cm.CreatedBy where Channelid=@channelid";
+                var query = "Select cm.*,ul.Emailid as CreatedBy  from ChannelMInterviewer cm join UserList ul on ul.id=cm.CreatedBy where Channelid=@channelid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@channelid", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -574,6 +574,31 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public async Task<string> DeleteChannelInterviewerByid(int id, int channelid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string query = "Delete from ChannelMInterviewer where id=@id and Channelid=@Channelid";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@id", id);
+                    dynamicParameters.Add("@Channelid", channelid);
+                    var result = await con.QueryAsync(query, dynamicParameters);
+                    return "Success";
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
             }
         }
     }
