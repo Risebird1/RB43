@@ -202,14 +202,14 @@
     font-weight:normal;
 }
 textarea::-webkit-scrollbar {
-    width: 2px;
+    width:6px;
     height: 6px;
     
 }
 
 textarea::-webkit-scrollbar-thumb {
 
-    margin: 2px;
+    margin: 6px;
     border-radius: 2px;
 }
 

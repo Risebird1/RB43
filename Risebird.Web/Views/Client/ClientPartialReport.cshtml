@@ -138,7 +138,13 @@
 
                                         </div>
                                     </div>
-
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
 
                                 </div>
 
@@ -305,11 +311,7 @@
 
                                                         </span>
                                                     </div>
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                        @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                        @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
-                                                    </div>
+                                                   
 
                                                     <div class="form-group">
                                                         @Html.LabelFor(model => model.ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
