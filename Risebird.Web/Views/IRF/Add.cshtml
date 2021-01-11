@@ -667,7 +667,7 @@
                                                     </td>
                                                     <td class="action text-center">
                                                         <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'SkillId')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'SkillId','PerSuccessRate')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
 
 
@@ -718,7 +718,7 @@
                                                     <td class="action text-center">
                                                         <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-                                                        <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'SkillId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'SkillId', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
                                                     </td>
                                                 </tr>
@@ -765,7 +765,7 @@
                                                     <td class="action text-center">
 
                                                         <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'SkillId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'SkillId', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
 
                                                     </td>
@@ -2133,7 +2133,7 @@
 
 
 
-    function DeleteRow(element, collectionName, tdOne, tdTwo) {
+    function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree) {
         if ($(element).parents('tbody').find('tr').length === 1) {
 
             alert('Must have atleast one Row');
@@ -2165,6 +2165,11 @@
                         elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
                         elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
                         elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+                    }
+                    if (tdThree != null && tdThree != "") {
+                        elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
                     }
 
 

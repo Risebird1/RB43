@@ -1387,11 +1387,17 @@
 </script>
 <script>
     function SubmitForm() {
+        //disable button
+        document.getElementById("btnUpload").disabled = true;
         if (CheckConditions()) {
             document.getElementById("reportForm").submit();
         }
-        else
+        else {
+            //enable button
+            document.getElementById("btnUpload").disabled = false;
             return;
+
+        }
     }
 </script>
 

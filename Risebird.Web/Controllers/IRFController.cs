@@ -1346,7 +1346,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult EditIRF(string id)
+        public IActionResult EditIRF(string id, bool isClone=false)
         {
             try
             {
@@ -1412,6 +1412,7 @@ namespace Risebird.Web.Controllers
                     {
                         model.Type = "B2B";
                     }
+                    model.IsClone = isClone;
                     return View(model);
                 }
                 else
@@ -1484,7 +1485,7 @@ namespace Risebird.Web.Controllers
                         {
                             if (!(_irfService.CheckUniqueness(model.IRFId)))
                             {
-                                TempData["SuccessErrorMessage"] = "Sorry! Skills Channel with this name already exits!";
+                                TempData["SuccessErrorMessage"] = "Sorry! Skills Channel with this name already exists!";
                                 return RedirectToAction("Index");
                             }
                             if (_irfService.AddIRFDetails(model).Result)

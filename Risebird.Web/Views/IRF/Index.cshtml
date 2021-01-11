@@ -32,8 +32,8 @@
     PrimarySkill = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
 
 }
-<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+<link href="~/Newassets/css/irf.css?v=123456" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=123456" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -263,11 +263,11 @@
                                     <div class="card-content-holder border card-blue">
                                         <div class="card-header">
                                             <div class="row">
-                                                <div class=" col-md-5 col-sm-5 first">
+                                                <div class=" col-md-4 col-sm-4 first">
                                                     <h6> @item.IRFId <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0])</span></h6>
                                                 </div>
 
-                                                <div class="col-md-7 col-sm-7 card-header-buttons action">
+                                                <div class="col-md-8 col-sm-8 card-header-buttons action">
                                                     @if (!@item.IsClientUser && Model.Profile != "Recruiter" && Model.Profile != "CuratedUser")
                                                     {
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Edit">
@@ -298,6 +298,15 @@
                                                                 <span onclick="javascript:UnArchiveIRF('@item.id');" title="UnArchive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
                                                             </button>
                                                         }
+                                                    }
+                                                    @if (Model.Profile=="Admin")
+                                                    {
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel" style=" top: -3px;">
+                                                            <span onclick="location.href='@Url.Action("EditIRF", "IRF", new { id = item.id, isClone = true })'" title="Clone the Skills Channel" class="mdc-fab__icon material-icons">
+                                                                <i style="font-size:14px;"  class="fa fa-clone"></i>
+                                                              
+                                                            </span>
+                                                        </button>
                                                     }
 
                                                 </div>
