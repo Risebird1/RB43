@@ -1633,8 +1633,24 @@ top:3px;
             margin: 0px !important;
         }
 
-        
+        .addInterviewer .px-1 {
+            padding-right: .25rem !important;
+            padding-left: 15px!important
+        }
     }
+
+
+@media screen and (max-width: 768px) {
+    .filebox {
+        padding: 0px !important
+    }
+  
+
+    .pr-1.mobpad, .pl-1.mobpad {
+        padding: 0px !important
+    }
+}
+
 
     @media screen and (max-width: 767px) {
         .skill .table-responsive, .daily-interview .table-responsive {
