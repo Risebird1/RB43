@@ -87,8 +87,11 @@ namespace Risebird.Entities.ViewModel
         public string Priority { get; set; }
         public string Comment { get; set; }
         public int Approved { get; set; }
+        [Display(Name= "DM Call Availability")]
         public int DMCallAvailability { get; set; }
+        [Display(Name = "Added over Portal")]
         public int AddedoverPortal { get; set; }
+        [Display(Name = "Added over SKill Channel")]
         public int AddedoverSKillChannel { get; set; }
         public int QC { get; set; }
         public int Emergency { get; set; }
