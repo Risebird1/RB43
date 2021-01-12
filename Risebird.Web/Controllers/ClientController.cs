@@ -1656,11 +1656,13 @@ namespace Risebird.Web.Controllers
                         }
                         ViewBag.ClientHRList = _meetingService.GetClientHRContactList(emailid, selectedMeeting);
                         ViewBag.ClientNameList = _meetingService.GetEndClientList(emailid, selectedMeeting);
+
                         if (String.IsNullOrEmpty(searchValue) && Page > 1)
                         {
                             searchValue = Searchvalueproiprity;
                         }
                         Searchvalueproiprity = searchValue;
+
                         ViewBag.Searchvalue = searchValue;
                         if (!String.IsNullOrEmpty(searchValue))
                         {
