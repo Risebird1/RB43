@@ -212,9 +212,32 @@ textarea::-webkit-scrollbar-thumb {
     margin: 2px;
     border-radius: 2px;
 }
+.mt15{margin-top:15px}
 
-.mt15{margin-top:15px;}
 
+.radiobox input[type='radio']{
+    position:relative;
+    top:3px;
+}
+
+#uploadDiv input[type=file], #codeduploadDiv input[type=file] {
+    opacity: 1;
+    height: 45px;
+}
+
+
+.filebox {
+    margin-top: 15px;
+}
+    .filebox input[type='radio'] {
+        position: relative;
+        top: 3px;
+    }
+.radiobox {
+    background: #f5f5f5;
+    padding: 8px 0px;
+    margin-top: 15px;
+}
 .mdc-card .modal .modal-content .modal-body {
     padding: 10px 0px;
     margin: 0px 10px 10px 10px;
@@ -1617,8 +1640,21 @@ top:3px;
         .skill .table-responsive, .daily-interview .table-responsive {
             border: 0px;
         }
-        .mobpad{padding:0px;}
-        .callno{min-height:auto;}
+        .radiobox .control-label {
+            padding: 0px 8px;
+        }
+        .filebox {
+            padding: 0px !important
+        }
+        .mobpad {
+            padding: 0px;
+        }
+        .pr-1.mobpad, .pl-1.mobpad {
+            padding: 0px !important
+        }
+        .callno {
+            min-height: auto;
+        }
         .daily-interview .table-responsive {
             margin-bottom: 2px;
         }
