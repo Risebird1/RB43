@@ -27,6 +27,8 @@ textarea::-webkit-scrollbar-thumb {
 .selected-priority .interview-com .talk-bubble {
     width: 100%
 }
+
+#hrCommentModal{z-index:1000}
 .wrapper {
     height: auto !important;
 }

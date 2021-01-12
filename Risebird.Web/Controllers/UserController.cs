@@ -30,6 +30,7 @@ namespace Risebird.Web.Controllers
         private static List<Recruiter> _modelDetail;
         private static List<ResumeEvaluator> _modelDl;
         private static string Searchvalue;
+                private static string Searchvalueproiprity;
         public UserController(IUserService userService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
                                 ISkillService skillService, IProfileService profileService)
 
@@ -515,8 +516,12 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.Profile = profileName;
                     var model = _userService.GetInterviewers();
-
-                 
+                    if (String.IsNullOrEmpty(searchValue) && Page > 1)
+                    {
+                        searchValue = Searchvalueproiprity;
+                    }
+                    Searchvalueproiprity = searchValue;
+                    ViewBag.Searchvalue = searchValue;
                     if (!String.IsNullOrEmpty(searchValue))
                     {
                         searchValue = searchValue.ToUpper();
@@ -2482,17 +2487,6 @@ namespace Risebird.Web.Controllers
 
         }
 
-
-
-
-
-
-
-
-
-
-
-
         [HttpPost]
         public JsonResult InterviewersJson(string searchValue)
         {
@@ -2504,8 +2498,8 @@ namespace Risebird.Web.Controllers
                 int totalcount = model.Count;
                 int Pagestart = 0;
                 int Pageend = 0;
+                Searchvalueproiprity = searchValue;
               
-                ViewBag.Searchvalue = searchValue;
                 if (!String.IsNullOrEmpty(searchValue))
                 {
                     searchValue = searchValue.ToUpper();

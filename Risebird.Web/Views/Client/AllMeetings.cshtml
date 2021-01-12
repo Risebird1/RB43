@@ -852,8 +852,13 @@
         });
 
 
+     
 
+    });
 
+    $(document).on('click', '#txtmeeting_filter', function () {
+        $('input[data-type="search"]').val('');
+        $('input[data-type="search"]').trigger("keyup");
     });
     function changeicon(id) {
         if ($("#" + id).attr("data-changes") == "1") {
