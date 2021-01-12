@@ -77,7 +77,7 @@ namespace Risebird.Web.Controllers
 
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
                     {
                         if (TempData["SuccessErrorMessageInterview"] != null)
                         {
@@ -4901,7 +4901,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
                     {
                         var model = new BroadcastModel
                         {
