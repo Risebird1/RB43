@@ -17,6 +17,11 @@
     .clearfix:after {
         clear: both;
     }
+
+.ch-btn {
+    width: 220px;
+    margin-right:10px;
+}
 .multiple_row > h2 {
     font-size: 18px;
     padding: 8px 10px;
