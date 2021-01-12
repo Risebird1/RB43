@@ -72,6 +72,8 @@ namespace Risebird.Web.Controllers
                         var Assassination = from AssassinationStatus s in Enum.GetValues(typeof(AssassinationStatus))
                                             select new { ID = (int)s, Name = s.GetDescription() };
                         model.AssassinationList = new SelectList(Assassination, "ID", "Name");
+                        var channelrequest = await _dashboardService.FetchChannelRequests();
+                        model.ChannelRequest = channelrequest.Where(x => x.CreatedDate == DateTime.Now).ToList();
                         return View(model);
                     }
                     else
@@ -300,21 +302,13 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-
-                if (profileName == "Admin")
+                var model = await _dashboardService.FetchChannelRequests();
+                if (TempData["SuccessErrorMessageInterview"] != null)
                 {
-                    var model = await _dashboardService.FetchChannelRequests();
-                    if (TempData["SuccessErrorMessageInterview"] != null)
-                    {
-                        ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
-                        TempData.Remove("SuccessErrorMessageInterview");
-                    }
-                    return View(model);
+                    ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                    TempData.Remove("SuccessErrorMessageInterview");
                 }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
+                return View(model);
             }
             else
             {
@@ -562,6 +556,23 @@ namespace Risebird.Web.Controllers
             else
             {
                 return Json("fail");
+            }
+        }
+        public async Task<IActionResult> GetDateWiseChannelrequestProgress(DateTime date)
+        {
+            try
+            {
+                var model = new DashboardVM();
+                var channelrequest = await _dashboardService.FetchChannelRequests();
+                model.ChannelRequest = channelrequest.Where(x => x.CreatedDate >= date).ToList();
+                model.ChannelrequestDate = date;
+                TempData["ChannelrequestDate"] = date;
+                return PartialView("ChannelRequestPartial", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
         #endregion

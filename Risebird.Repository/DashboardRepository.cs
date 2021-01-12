@@ -513,7 +513,7 @@ namespace Risebird.Repository
                     var result = await con.QueryAsync<int>(query, dynamicParameters);
                     CreatedBy = result.FirstOrDefault();
                     var ProcessedDate = DateTime.Now;
-                    string sqlInsertReport = "INSERT INTO ChannelMInterviewer (ProcessedDate,Name,EmailAddress,Mobile,CVLink,CodedCVLink,PrimarySKill,Role,Priority,Comment,Approved,DMCallAvailability,AddedoverPortal,AddedoverSKillChannel,QC,Emergency,Training,AdvancePayment,CallAttended,Channelid,CreatedBy) Values (@ProcessedDate,@Name,@EmailAddress,@Mobile,@CVLink,@CodedCVLink,@PrimarySKill,@Role,@Priority,@Comment,@Approved,@DMCallAvailability,@AddedoverPortal,@AddedoverSKillChannel,@QC,@Emergency,@Training,@AdvancePayment,@CallAttended,@Channelid,@CreatedBy);";
+                    string sqlInsertReport = "INSERT INTO ChannelMInterviewer (ProcessedDate,Name,EmailAddress,Mobile,CVLink,CodedCVLink,PrimarySKill,Role,Priority,Comment,Approved,DMCallAvailability,AddedoverPortal,AddedoverSKillChannel,QC,Emergency,Training,AdvancePayment,CallAttended,Channelid,CreatedBy,Trainingmailsend,PerInterviewrate,TrainingTime) Values (@ProcessedDate,@Name,@EmailAddress,@Mobile,@CVLink,@CodedCVLink,@PrimarySKill,@Role,@Priority,@Comment,@Approved,@DMCallAvailability,@AddedoverPortal,@AddedoverSKillChannel,@QC,@Emergency,@Training,@AdvancePayment,@CallAttended,@Channelid,@CreatedBy,@Trainingmailsend,@PerInterviewrate,@TrainingTime);";
                     var affectedRows = con.ExecuteAsync(sqlInsertReport, new
                     {
                         ProcessedDate,
@@ -536,7 +536,10 @@ namespace Risebird.Repository
                         request.AdvancePayment,
                         request.CallAttended,
                         request.Channelid,
-                        CreatedBy
+                        CreatedBy,
+                        request.Trainingmailsend,
+                        request.PerInterviewrate,
+                        request.TrainingTime
                     }).Result;
                     return "Success";
                 }

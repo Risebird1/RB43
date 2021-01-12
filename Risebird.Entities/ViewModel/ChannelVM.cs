@@ -77,14 +77,18 @@ namespace Risebird.Entities.ViewModel
         [Required]
         [EmailAddress]
         public string EmailAddress { get; set; }
+        [Required]
         public string Mobile { get; set; }
         public IFormFile CV { get; set; }
         public string CVLink { get; set; }
         public IFormFile CodedCV { get; set; }
         public string CodedCVLink { get; set; }
+        [Required]
         public string PrimarySKill { get; set; }
+        [Required]
         public string Role { get; set; }
         public string Priority { get; set; }
+        [Required]
         public string Comment { get; set; }
         public int Approved { get; set; }
         [Display(Name = "DM Call Availability")]
@@ -105,5 +109,7 @@ namespace Risebird.Entities.ViewModel
         public int PerInterviewrate { get; set; }
         [Display(Name = "Training mail send")]
         public int Trainingmailsend { get; set; }
+        [Display(Name = "Training Time(in min.)")]
+        public int TrainingTime { get; set; }
     }
 }
