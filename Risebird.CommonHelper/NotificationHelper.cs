@@ -1185,7 +1185,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
-        public string RBPayNotification(Mail model,string emailid)
+        public string RBPayNotification(Mail model, string emailid)
         {
             try
             {
@@ -1241,6 +1241,14 @@ namespace Risebird.CommonHelper
                 SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
                 System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
                 smtpClient.Credentials = credentials;
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
         public string ChannelRequestNotification(Mail model, string client, string Skill, string Recruiter)
         {
             try
@@ -1277,13 +1285,6 @@ namespace Risebird.CommonHelper
             }
         }
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
-            }
-            catch (Exception)
-            {
-                return "Failed to send mail. Please check all filled and try again.";
-            }
-        }
+
     }
 }
