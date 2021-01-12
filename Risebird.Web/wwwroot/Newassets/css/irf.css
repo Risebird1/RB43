@@ -100,7 +100,7 @@ table td {
 
 table th {
     color: #000000e0;
-    background: #fff;
+  
 }
 
 
@@ -737,7 +737,7 @@ input[type=number] {
 
 .pskill {
     display: inline-block;
-    width: 160px;
+    width: 120px;
     white-space: nowrap;
     overflow: hidden !important;
     text-overflow: ellipsis;

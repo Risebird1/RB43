@@ -49,8 +49,8 @@
                     <div>
 
                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates</font></span>
-        </button>*@
+                                <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates</font></span>
+                            </button>*@
 
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add a Candidate." onclick="location.href='@Url.Action("Add", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidate</font></span>
@@ -184,32 +184,49 @@
 
 
 
-                                                                @if (item.EmailId.Length > 18)
+                                                                @if (item.EmailId != null && item.EmailId != "")
                                                                 {
+                                                                    @if (item.EmailId.Length > 18)
+                                                                    {
 
 
-                                                                    <td class="cadEmail">
-                                                                        <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0, 18)... </a>
-                                                                    </td>
+                                                                        <td class="cadEmail">
+                                                                            <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0, 18)... </a>
+                                                                        </td>
+                                                                    }
+
+
+                                                                    else
+                                                                    {
+                                                                        <td class="cadEmail">
+                                                                            <a onclick=""> @item.EmailId </a>
+                                                                        </td>
+                                                                    }
                                                                 }
-
-
                                                                 else
                                                                 {
-                                                                    <td class="cadEmail">
-                                                                        <a onclick=""> @item.EmailId </a>
-                                                                    </td>
+                                                                    <td></td>
                                                                 }
 
                                                                 <td class="text-center">@item.AttemptsCount</td>
+
                                                                 @if (item.ResumeLink != null && item.ResumeLink != "")
                                                                 {
-                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
+                                                                    @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                                    {
+                                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>No Resume</td>
+                                                                    }
                                                                 }
                                                                 else
                                                                 {
-                                                                    <td>No Resume</td>
-                                                                }
+                                                                    <td></td>
+}
+
+
                                                                 @if (item.EncodedResumeLink != null && item.EncodedResumeLink != "")
                                                                 {
                                                                     <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=@item.EncodedResumeLink>Coded Resume</a> </td>
@@ -368,23 +385,29 @@
                                                                             <th>Available for Freelancing</th>
                                                                         </tr>
                                                                         <tr>
-
-                                                                            @if (item.Name.Length > 20)
+                                                                            @if (item.Name != null && item.Name != "")
                                                                             {
+                                                                                @if (item.Name.Length > 20)
+                                                                                {
 
 
-                                                                                <td class="cadName">
-                                                                                    <a onclick="" data-tooltip="@item.Name"> @item.Name.Substring(0, 20)... </a>
-                                                                                </td>
+                                                                                    <td class="cadName">
+                                                                                        <a onclick="" data-tooltip="@item.Name"> @item.Name.Substring(0, 20)... </a>
+                                                                                    </td>
+                                                                                }
+
+
+                                                                                else
+                                                                                {
+                                                                                    <td class="cadName">
+                                                                                        <a onclick=""> @item.Name </a>
+                                                                                    </td>
+                                                                                }
                                                                             }
-
-
                                                                             else
                                                                             {
-                                                                                <td class="cadName">
-                                                                                    <a onclick=""> @item.Name </a>
-                                                                                </td>
-                                                                            }
+                                                                                <td></td>
+}
                                                                             @if (item.ClientHRAttemptContact != null && item.ClientHRAttemptContact.Length > 13)
                                                                             {
                                                                                 <td class="text-center">@item.ClientHRAttemptContact.Substring(0, 13)... </td>
@@ -509,7 +532,7 @@
                                         </div>
 
                                         <div class="col-sm-12 col-md-7 dataTables_paginate pull-right " id="divmeetingpages">
-                                            @Html.PagedListPager(Model, Page => Url.Action("GetCandidates", new {id= ViewBag.IRFId, irfName = ViewBag.IRFName, Page = Page, searchValue = ViewBag.Searchvalue }))
+                                            @Html.PagedListPager(Model, Page => Url.Action("GetCandidates", new { id = ViewBag.IRFId, irfName = ViewBag.IRFName, Page = Page, searchValue = ViewBag.Searchvalue }))
                                         </div>
 
                                     </div>
@@ -1044,26 +1067,25 @@
                 html += '  <tr id="' + data[i].id + '" data-changes="1">   ';
                 html += ' <td style="width:10px;" data-toggle="collapse" id="' + data[i].id + '" data-target=".' + data[i].id + '" class="detail-row" onclick="changeicon(' + data[i].id + ')">&nbsp;</td>';
 
+                if (data[i].emailId != null && data[i].emailId != "") {
+                    if (data[i].emailId.length > 18) {
 
+                        html += '  <td class="cadEmail">';
+                        html += ' <a onclick="" data-tooltip="' + data[i].emailId + '"> ' + data[i].emailId.substring(0, 18) + '... </a>';
+                        html += '   </td>';
+                    }
 
-
-
-
-                if (data[i].emailId.length > 18) {
-
-                    html += '  <td class="cadEmail">';
-                    html += ' <a onclick="" data-tooltip="' + data[i].emailId + '"> ' + data[i].emailId.substring(0, 18) + '... </a>';
-                    html += '   </td>';
+                    else {
+                        html += '   <td class="cadEmail">';
+                        html += '  <a onclick=""> ' + data[i].emailId + ' </a>';
+                        html += ' </td>';
+                    }
                 }
-
                 else {
-                    html += '   <td class="cadEmail">';
-                    html += '  <a onclick=""> ' + data[i].emailId + ' </a>';
-                    html += ' </td>';
-                }
+                    html += '   <td></td>'; }
 
                 html += ' <td class="text-center">' + data[i].attemptsCount + '</td>';
-               
+
                 if (data[i].resumeLink != null && data[i].resumeLink != "") {
                     html += '   <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a> </td>';
                 }
@@ -1081,10 +1103,6 @@
 
                 html += ' <td class="text-center">' + data[i].inviteConfirmation + '</td>';
 
-
-
-
-
                 html += '  <td class="text-center" style="color:' + joinabilityColor + ';">';
                 html += '  <b>' + data[i].joinabilityScore + '</b>';
                 html += '   </td>';
@@ -1099,7 +1117,7 @@
                     if (data[i].clientHRAttemptContact != null && data[i].clientHRAttemptContact != "") {
                         html += '    <button class="mdc-fab app-fab--absolute" aria-label="Send Invite">';
                         html += '   <a href = "/Candidate/SendInvite?IRFName=' + irfname + '&irfId=' + irfid + '&emailId=' + data[i].emailId + '&endDate=' + data[i].endDate + '" title="Send Invite" class="mdc-fab__icon material-icons">';
-                        html += '        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>';
+                        html += '        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>';
                         html += '  </a></button>';
 
                     }
@@ -1210,17 +1228,19 @@
                 html += ' <th>Available for Freelancing</th>';
                 html += ' </tr>';
                 html += '<tr>';
-
-                if (data[i].name.length > 20) {
-                    html += '  <td class="cadName">';
-                    html += '  <a onclick="" data-tooltip="' + data[i].name + '"> ' + data[i].name.substring(0, 20) + '... </a>';
-                    html += '  </td>';
-                } else {
-                    html += '<td class="cadName">';
-                    html += '   <a onclick=""> ' + data[i].name + ' </a>';
-                    html += '   </td>';
+                if (data[i].name != null && data[i].name != "") {
+                    if (data[i].name.length > 20) {
+                        html += '  <td class="cadName">';
+                        html += '  <a onclick="" data-tooltip="' + data[i].name + '"> ' + data[i].name.substring(0, 20) + '... </a>';
+                        html += '  </td>';
+                    } else {
+                        html += '<td class="cadName">';
+                        html += '   <a onclick=""> ' + data[i].name + ' </a>';
+                        html += '   </td>';
+                    }
                 }
-
+                else {
+                    html += '<td></td>'; }
 
 
 
@@ -1343,7 +1363,7 @@
                 } else {
                     break;
                 }
-                if (pagecount <= 10 && i == pagecount) {
+                if (pagecount <= 10 && i == pagecount && i != 1) {
                     html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
                     html += '<li class="PagedList-skipToNext"><a href="/Candidate/GetCandidates?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a href="/Candidate/GetCandidates?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';

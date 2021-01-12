@@ -52,7 +52,7 @@
                                 <div class="col-md-3 col-sm-3 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(m => m.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "IRFNameChanged()" } })
+                                        @Html.EditorFor(m => m.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         <label class="text-danger" id="uniqueMsg" style="color:red; position:absolute;"></label>
                                         @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
 
@@ -387,35 +387,62 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @for (int i = 0; i < Model.SkillCollection.Count(); i++)
+                                                @if (Model.SkillCollection == null || Model.SkillCollection.Count() == 0)
                                                 {
                                                     <tr>
-
                                                         <td>
-
-                                                            @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
+                                                            @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, new { @class = "select-css form-control " })
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control", @onchange = "TechSkillChanged()" })
+                                                            @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "select-css form-control ", @onchange = "TechSkillChanged()" })
                                                         </td>
-
                                                         <td>
-                                                            @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
-
+                                                            <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
                                                         </td>
-
                                                         <td class="action text-center">
-                                                            <div>
 
-                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','', 'TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','', 'TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                            </div>
+
                                                         </td>
                                                     </tr>
-
                                                 }
+
+                                                else
+                                                {
+                                                    for (int i = 0; i < Model.SkillCollection.Count(); i++)
+                                                    {
+                                                        <tr>
+
+                                                            <td>
+
+                                                                @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control", @onchange = "TechSkillChanged()" })
+                                                            </td>
+
+                                                            <td>
+                                                                @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+
+                                                            </td>
+
+                                                            <td class="action text-center">
+                                                                <div>
+
+                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','', 'TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+
+                                                    }
+                                                }
+
                                             </tbody>
                                         </table>
                                         <label class="text-danger" id="SkillCollection_WeightageError" style="color:red; margin-left:807px"></label>
@@ -449,36 +476,69 @@
 
 
                                             <tbody>
-
-                                                @for (int i = 0; i < Model.Joinability.Count(); i++)
+                                                @if (Model.Joinability == null || Model.Joinability.Count() == 0)
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.Joinability[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css " })
+                                                            @Html.DropDownList("Joinability[0].LevelId", (SelectList)ViewBag.Level, new { @class = "select-css form-control " })
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.Joinability[i].Type, (SelectList)Model.JoinabilityTypeList, new { @class = "form-control select-css " })
+                                                            @Html.DropDownList("Joinability[0].Type", (SelectList)Model.JoinabilityTypeList, new { @class = "select-css form-control " })
+
 
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Joinability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
-
+                                                            <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="text" value="">
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Joinability[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
-
+                                                            <input class="form-control text-box single-line" id="Joinability_0__Weightage" name="Joinability[0].Weightage" type="number" max="100" min="1" value="100">
                                                         </td>
+
                                                         <td class="action text-center">
 
-                                                            <div>
-                                                                <span id="btnPlus" onclick="AddJoinabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnPlus" onclick="AddJoinabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                            </div>
+
+
                                                         </td>
                                                     </tr>
                                                 }
+                                                else
+                                                {
+                                                    for (int i = 0; i < Model.Joinability.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.Joinability[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css " })
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.Joinability[i].Type, (SelectList)Model.JoinabilityTypeList, new { @class = "form-control select-css " })
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.EditorFor(m => m.Joinability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.EditorFor(m => m.Joinability[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+
+                                                            </td>
+                                                            <td class="action text-center">
+
+                                                                <div>
+                                                                    <span id="btnPlus" onclick="AddJoinabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+
+
 
                                             </tbody>
                                         </table>
@@ -512,35 +572,66 @@
 
 
                                             <tbody>
-
-                                                @for (int i = 0; i < Model.Selectability.Count(); i++)
+                                                @if (Model.Selectability == null || Model.Selectability.Count() == 0)
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.Selectability[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css " })
+                                                            @Html.DropDownList("Selectability[0].LevelId", (SelectList)ViewBag.Level, new { @class = "select-css form-control " })
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.Selectability[i].Type, (SelectList)Model.SelectabilityTypeList, new { @class = "form-control select-css " })
+                                                            @Html.DropDownList("Selectability[0].Type", (SelectList)Model.SelectabilityTypeList, new { @class = "select-css form-control  " })
 
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Selectability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
-
+                                                            <input class="form-control text-box single-line" id="Selectability_0__Value" name="Selectability[0].Value" type="text" value="">
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Selectability[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+                                                            <input class="form-control text-box single-line" id="Selectability_0__Weightage" name="Selectability[0].Weightage" type="number" max="100" min="1" value="100">
                                                         </td>
+
                                                         <td class="action text-center">
-                                                            <div>
 
-                                                                <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                            </div>
+
                                                         </td>
                                                     </tr>
                                                 }
+                                                else
+                                                {
+                                                    for (int i = 0; i < Model.Selectability.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.Selectability[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css " })
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.Selectability[i].Type, (SelectList)Model.SelectabilityTypeList, new { @class = "form-control select-css " })
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.EditorFor(m => m.Selectability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.EditorFor(m => m.Selectability[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+                                                            </td>
+                                                            <td class="action text-center">
+                                                                <div>
+
+                                                                    <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+
+
 
                                             </tbody>
                                         </table>
@@ -572,37 +663,69 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @for (int i = 0; i < Model.SkillGeneral.Count(); i++)
+                                                @if (Model.SkillGeneral == null || Model.SkillGeneral.Count() == 0)
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.SkillGeneral[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css " })
+                                                            @Html.DropDownList("SkillGeneral[0].LevelId", (SelectList)ViewBag.Level, new { @class = "select-css form-control " })
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.SkillGeneral[i].Type, (SelectList)Model.SkillGeneralTypeList, new { @class = "form-control select-css " })
+                                                            @Html.DropDownList("SkillGeneral[0].Type", (SelectList)Model.SkillGeneralTypeList, new { @class = "select-css form-control " })
 
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.SkillGeneral[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
-
+                                                            <input class="form-control text-box single-line" id="SkillGeneral_0__Value" name="SkillGeneral[0].Value" type="text" value="">
                                                         </td>
 
                                                         <td>
-                                                            @Html.EditorFor(m => m.SkillGeneral[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
-
+                                                            <input class="form-control text-box single-line" id="SkillGeneral_0__Weightage" name="SkillGeneral[0].Weightage" type="number" max="100" min="1" value="100">
                                                         </td>
 
                                                         <td class="action text-center">
+                                                            <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                            <div>
-                                                                <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-                                                            </div>
                                                         </td>
                                                     </tr>
                                                 }
+                                                else
+                                                {
+                                                    for (int i = 0; i < Model.SkillGeneral.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.SkillGeneral[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css " })
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.SkillGeneral[i].Type, (SelectList)Model.SkillGeneralTypeList, new { @class = "form-control select-css " })
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.EditorFor(m => m.SkillGeneral[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
+
+                                                            </td>
+
+                                                            <td>
+                                                                @Html.EditorFor(m => m.SkillGeneral[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+
+                                                            </td>
+
+                                                            <td class="action text-center">
+
+                                                                <div>
+                                                                    <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+
+
+
 
                                             </tbody>
                                         </table>
@@ -629,18 +752,15 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-
-
-
-                                                @for (int i = 0; i < Model.ClientCollection.Count(); i++)
+                                                @if (Model.ClientCollection == null || Model.ClientCollection.Count() == 0)
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.ClientCollection[i].ClientUserId, (SelectList)ViewBag.ClientUser, new { @class = "form-control select-css ", @onchange = "ClientUserChanged(this.value, this.id)" })
+                                                            @Html.DropDownList("ClientCollection[0].ClientUserId", (SelectList)ViewBag.ClientUser, new { @class = "select-css form-control ", @onchange = "ClientUserChanged(this.value, this.id)" })
                                                         </td>
                                                         <td>
 
-                                                            @Html.TextBoxFor(m => m.ClientCollection[i].Role, new { @class = "form-control", @readonly = "readonly" })
+                                                            @Html.TextBox("ClientCollection[0].ClientRoleId", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                         </td>
 
@@ -648,10 +768,38 @@
                                                             <span id="btnPlus" onclick="AddRowClient()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                             <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'Role')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
+
+
+
                                                         </td>
                                                     </tr>
-
                                                 }
+                                                else
+                                                {
+                                                    for (int i = 0; i < Model.ClientCollection.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.ClientCollection[i].ClientUserId, (SelectList)ViewBag.ClientUser, new { @class = "form-control select-css ", @onchange = "ClientUserChanged(this.value, this.id)" })
+                                                            </td>
+                                                            <td>
+
+                                                                @Html.TextBoxFor(m => m.ClientCollection[i].Role, new { @class = "form-control", @readonly = "readonly" })
+
+                                                            </td>
+
+                                                            <td class="action text-center">
+                                                                <span id="btnPlus" onclick="AddRowClient()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'Role')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                            </td>
+                                                        </tr>
+
+                                                    }
+                                                }
+
+
+
 
 
                                             </tbody>
@@ -672,34 +820,69 @@
                                             <thead>
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
-                                                    <th width="70%" class="table_heading">Skills</th>
+                                                    <th width="50%" class="table_heading">Skills</th>
+                                                    <th width="20%" class="table_heading">Per Interviewer Rate</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @for (int i = 0; i < Model.InterviewerCollection.Count(); i++)
+                                                @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                            @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                         </td>
 
                                                         <td>
-                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+
+                                                            @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                         </td>
+                                                        <td>
 
+                                                            @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                        </td>
                                                         <td class="action text-center">
-
-                                                            <div>
-                                                                <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
 
-                                                            </div>
+
+
                                                         </td>
                                                     </tr>
                                                 }
+                                                else
+                                                {
+                                                    for (int i = 0; i < Model.InterviewerCollection.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                            </td>
+
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+
+                                                            </td>
+                                                            <td class="action text-center">
+
+                                                                <div>
+                                                                    <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    }
+
+                                                }
+
 
 
                                             </tbody>
@@ -721,7 +904,8 @@
                                             <thead>
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
-                                                    <th width="70%" class="table_heading">Skills</th>
+                                                    <th width="50%" class="table_heading">Skills</th>
+                                                    <th width="20%" class="table_heading">Per QC Rate</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
@@ -737,10 +921,13 @@
                                                             @Html.TextBox("QualityController[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                         </td>
+                                                        <td>
 
+                                                            @Html.TextBox("QualityController[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                        </td>
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
                                                         </td>
                                                     </tr>
@@ -758,10 +945,14 @@
                                                                 @Html.TextBoxFor(m => m.QualityController[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
 
                                                             </td>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.QualityController[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+
+                                                            </td>
                                                             <td class="action text-center">
                                                                 <div>
                                                                     <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
                                                                 </div>
                                                             </td>
@@ -788,7 +979,8 @@
                                             <thead>
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
-                                                    <th width="70%" class="table_heading">Skills</th>
+                                                    <th width="50%" class="table_heading">Skills</th>
+                                                    <th width="20%" class="table_heading">Per EI Rate</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
@@ -806,10 +998,14 @@
                                                             @Html.TextBox("EmergencyInterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                         </td>
+                                                        <td>
 
+                                                            @Html.TextBox("EmergencyInterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+
+                                                        </td>
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
                                                         </td>
                                                     </tr>
@@ -828,13 +1024,16 @@
                                                                 @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
 
                                                             </td>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
 
+                                                            </td>
                                                             <td class="action text-center">
 
                                                                 <div>
 
                                                                     <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill','PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
                                                                 </div>
                                                             </td>
@@ -1062,11 +1261,7 @@
                                         @if (ViewBag.IsClientUser == false)
                                         {
                                             <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>
-                                            if (Model.LoggedEmail == "kamini@risebird.io")
-                                            {
-                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUploadSaveAs" value="Save">Save As</button>
-                                            }
-
+                                           
                                         }
                                     </div>
                                 </div>
@@ -1097,33 +1292,46 @@
 
 
 </script>
-<script>
 
-    var irfName = document.getElementById("IRFId").value;
-    function IRFNameChanged() {
-
-        var name = document.getElementById("IRFId").value;
-      
-        var element = document.getElementById("btnUploadSaveAs");
-
-        if (name != irfName) {
-            document.getElementById("btnUpload").disabled = true;
-            if (element != null) {
-                element.disabled = false;
-            }
-
-        }
-        else {
-            document.getElementById("btnUpload").disabled = false;
-            if (element != null) {
-                element.disabled = true;
-            }
-        }
-    }
-
-</script>
 <script>
     $(document).ready(function () {
+        
+        if ('@Model.IsClone'=='True') {
+            document.getElementById("IRFId").value = '';
+            document.getElementById("CalendlyLink").value = '';
+            document.getElementById("JDTiltle").value = '';
+            document.getElementById("ClientName").value = '';
+            document.getElementById("JobCountry").value = '';
+            document.getElementById("JDTiltle").value = '';
+            document.getElementById("StartDate").value = '';
+            document.getElementById("EndDate").value = '';
+            document.getElementById("NoOfPosition").value = '';
+            document.getElementById("NoOfIntterview").value = '';
+            document.getElementById("PerMintuteRate").value = '';
+            document.getElementById("TotalBudget").value = '';
+            document.getElementById("PrimarySkillInvite").value = '';
+
+
+            var jdLinkElement = document.getElementById("JDLink");
+            if (jdLinkElement != null) {
+                jdLinkElement.value = '';
+            }
+            var jdFileElement = document.getElementById("JDFile");
+            if (jdFileElement != null) {
+                jdFileElement.value = '';
+            }
+            //CompanyDetails
+            var companyDetFileElement = document.getElementById("CompanyDetailFile");
+            if (companyDetFileElement != null) {
+                companyDetFileElement.value = '';
+            }
+            var companyDetLinkElement = document.getElementById("CompanyDetails");
+            if (companyDetLinkElement != null) {
+                companyDetLinkElement.value = '';
+            }
+
+
+        }
 
         var inputs = document.getElementsByTagName("input");
         for (i = 0; i <= inputs.length - 1; i++) {
@@ -1135,6 +1343,7 @@
 
 </script>
 <script>
+    
 
     function RadioChanged(val) {
         if (val == 'Upload') {
@@ -1208,7 +1417,51 @@
             }
 
         }
-
+        var message = "";
+        var newflag = false;
+        var table = document.getElementById("InterviewerTable");
+        var rowCount = table.rows.length;
+        for (var i = 0; i < rowCount; i++) {
+            if ($("#InterviewerCollection_" + i + "__PerInterviewerRate").val() == "" || $("#InterviewerCollection_" + i + "__PerInterviewerRate").val() == "0") {
+                if (message == "") {
+                    message = "Per Interviewer Rate should not be blank";
+                } else {
+                    message = message + ",Per Interviewer Rate should not be blank";
+                }
+                newflag = true;
+                break;
+            }
+        }
+        var emetable = document.getElementById("EmergencyInterviewerTable");
+        var emerowCount = emetable.rows.length;
+        for (var i = 0; i < emerowCount; i++) {
+            if ($("#EmergencyInterviewerCollection_" + i + "__PerEIRate").val() == "" || $("#EmergencyInterviewerCollection_" + i + "__PerEIRate").val() == "0") {
+                if (message == "") {
+                    message = "Per Emergency Interviewer Rate should not be blank";
+                } else {
+                    message = message + ", Per Emergency Interviewer Rate should not be blank";
+                }
+                newflag = true;
+                break;
+            }
+        }
+        var qctable = document.getElementById("EmergencyInterviewerTable");
+        var qcrowCount = qctable.rows.length;
+        for (var i = 0; i < qcrowCount; i++) {
+            if ($("#QualityController_" + i + "__PerQCRate").val() == "" || $("#QualityController_" + i + "__PerQCRate").val() == "0") {
+                if (message == "") {
+                    message = "Per QC Rate should not be blank";
+                } else {
+                    message = message + ", Per QC Rate should not be blank";
+                }
+                newflag = true;
+                break;
+            }
+        }
+        if (newflag == true) {
+            alert(message);
+            return false;
+        }
         if (inCorrectCount == 0) {
             // check interviewers list InterviewerCollection_  InterviewerId
             var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
@@ -1459,7 +1712,7 @@
 
         var table = document.getElementById("SkillTable");
         var rowCount = table.rows.length;
-       
+
 
         var $ttc = $("#SkillTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -1792,7 +2045,7 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
- 
+
 
     }
 
@@ -2144,7 +2397,7 @@
     }
 
 
-    function DeleteRow(element, collectionName, tdOne, tdTwo) {
+    function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree) {
 
         if ($(element).parents('tbody').find('tr').length === 1) {
 
@@ -2177,6 +2430,11 @@
                         elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
                         elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
                         elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+                    }
+                    if (tdThree != null && tdThree != "") {
+                        elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
                     }
 
 

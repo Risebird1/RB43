@@ -5,11 +5,11 @@ var site_settings = '<div class="ts-button">'
     + '<div class="ts-title">Color Themes</div>'
     + '<div class="ts-title-label clearfix"><span class="pull-left">Light </span> <span class="pull-right">Dark </span></div>'
         +'<div class="ts-themes">'
-    +'<a href="#"  data-theme="../../Newassets/css/blue-theme.css?v=9"><img  src="../../Newassets/img/default.jpg"/></a>'            
-    +'<a href="#" data-theme="../../Newassets/css/grey-theme.css?v=9"><img  src="../../Newassets/img/grey.png"/></a>'
-    +'<a href="#" data-theme="../../Newassets/css/orange-theme.css?v=9"><img src="../../Newassets/img/orange.png"/></a>'                        
+    +'<a href="#"  data-theme="../../Newassets/css/blue-theme.css?v=123456"><img  src="../../Newassets/img/default.jpg"/></a>'            
+    +'<a href="#" data-theme="../../Newassets/css/grey-theme.css?v=123456"><img  src="../../Newassets/img/grey.png"/></a>'
+    +'<a href="#" data-theme="../../Newassets/css/orange-theme.css?v=123456"><img src="../../Newassets/img/orange.png"/></a>'                        
            
-    +'<a href="#" data-theme="../../Newassets/css/dark-theme.css?v=9"><img src="../../Newassets/img/dark.png"/></a>'
+    +'<a href="#" data-theme="../../Newassets/css/dark-theme.css?v=123456"><img src="../../Newassets/img/dark.png"/></a>'
         +'</div>'
 	
         

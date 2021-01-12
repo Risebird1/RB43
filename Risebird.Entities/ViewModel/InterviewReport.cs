@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -242,7 +243,25 @@ namespace Risebird.Entities.ViewModel
         public int? OldInterviewStatus { get; set; }
         public int? OldMeetingStatus { get; set; }
         public string OldconfirmationStatus { get; set; }
+        public string UserDetails { get; set; }
 
-
+        
+        
+    }
+    public class RBInterviewDetails
+    {
+        public int Points { get; set; }
+        public string Type { get; set; }
+        public int id { get; set; }
+        public int InterviewId { get; set; }
+        public string Comment { get; set; }
+        public string Status { get; set; }
+        public DateTime Date { get; set; }
+        public string PreferredLocation { get; set; }
+        public int MeetingStatus { get; set; }
+        public string MeetingStatusDetails { get; set; }
+        public int InterviewStatus { get; set; }
+        public string InterviewStatusDetails { get; set; }
+        public int Rate { get; set; }
     }
 }

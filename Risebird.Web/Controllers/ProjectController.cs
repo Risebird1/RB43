@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-
+using X.PagedList;
 namespace Risebird.Web.Controllers
 {
     public class ProjectController : Controller
@@ -24,7 +24,8 @@ namespace Risebird.Web.Controllers
         private IIRFService _irfService;
         private IApplicationErrorLogger _applicationErrorLogger;
         private IProjectService _projectService;
-
+        private static List<MeetingVM> _modelDetails;
+        private static string Searchvalue;
         public ProjectController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IIRFService irfService, IIRFRepository irfRepository)
         {
             _applicationErrorLogger = applicationErrorLogger;
@@ -548,7 +549,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> ProjectInterviewMeetings(int id)
+        public async Task<IActionResult> ProjectInterviewMeetings(int id, int? Page, string searchValue)
         {
             try
             {
@@ -628,7 +629,45 @@ namespace Risebird.Web.Controllers
                     ViewData["list"] = list;
                     ViewBag.ProjectName = irfList.FirstOrDefault().ProjectName;
 
-                    return View(meetings);
+
+
+
+                    if (!String.IsNullOrEmpty(searchValue))
+                    {
+                        searchValue = searchValue.ToUpper();
+                        meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")||(!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")||(!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")).ToList();
+
+                    }
+                    ViewBag.TotalCount = meetings.Count();
+
+                    ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                    int a = meetings.Count() / 10;
+                    if (meetings.Count() % 10 == 0)
+                    {
+                        ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                    }
+                    else
+                    {
+                        a = a + 1;
+                        if (a == Page)
+                        {
+                            ViewBag.PageEndCount = meetings.Count();
+                        }
+                        else
+                        {
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                        }
+
+                    }
+                    if (meetings.Count() == 0)
+                    {
+                        ViewBag.PageStartCount = 0;
+                        ViewBag.PageEndCount = 0;
+                    }
+                    _modelDetails = meetings;
+                    return View(meetings.ToPagedList(Page ?? 1, 10));
+                   // return View(meetings);
 
                 }
                 else
@@ -1178,5 +1217,60 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+
+
+        [HttpPost]
+        public JsonResult ProjectInterviewMeetingsJson(string searchValue)
+        {
+            try
+            {
+                int Page = 1;
+                var meetings = _modelDetails;
+                Searchvalue = searchValue;
+                if (!String.IsNullOrEmpty(searchValue))
+                {
+                    searchValue = searchValue.ToUpper();
+                    meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")).ToList();
+
+                }
+                int totalcount = meetings.Count;
+                int Pagestart = 0;
+                int Pageend = 0;
+
+                Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                int a = meetings.Count / 10;
+                if (meetings.Count % 10 == 0)
+                {
+                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                }
+                else
+                {
+                    a = a + 1;
+                    if (a == Page)
+                    {
+                        Pageend = meetings.Count;
+                    }
+                    else
+                    {
+                        Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                    }
+                }
+                if (meetings.Count == 0)
+                {
+                    Pagestart = 0;
+                    Pageend = 0;
+                }
+                return Json(new { result = meetings.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = meetings.Count });
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("failed");
+            }
+        }
+
+
+
     }
 }

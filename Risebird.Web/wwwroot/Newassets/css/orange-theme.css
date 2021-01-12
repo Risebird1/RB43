@@ -4,14 +4,17 @@ body {
 }
 
 .main-panel {
-     background: #ebecf1;
+    background: #ebecf1;
 }
+
 .bl-bg {
     background: #ebecf1;
 }
+
 td.detail-row {
     background-color: #fff;
 }
+
 .child-section {
     background: #e5e5e5;
 }
@@ -30,33 +33,39 @@ td.detail-row {
     .child-section .table-striped tbody tr:nth-of-type(even) {
         background: #fff;
     }
+
 .pagination .page-item.active > .page-link,
 .pagination .page-item.active > .page-link:focus,
 .pagination .page-item.active > .page-link:hover, .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
     background: #e96b28 !important;
     color: #fff !important;
 }
-table.dataTable > thead > tr {
-    background: #f0f0f0;
+
+table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead > th, table.journey th {
+    background: #f0f0f0 !important;
 }
 
-    table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
+    table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > tfoot > tr > th {
         padding: 7px;
         font-weight: 600 !important;
         color: #676767;
         font-weight: normal;
     }
+
 .client .mdc-card {
     background: #ebecf1;
 }
+
 .child-section table th {
     color: #676767;
     padding: 7px 7px !important;
     background: #f0f0f0;
 }
+
 table.dataTable thead .sorting:after {
     color: transparent
 }
+
 .navbar.navbar-transparent.btn-primary:hover, .navbar.navbar-transparent.btn-primary:focus {
     background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
 }
@@ -70,13 +79,16 @@ table.dataTable thead .sorting:after {
 textarea::-webkit-scrollbar {
     background-color: var(#acacad, #565656) !important;
 }
+
 .table-bordered {
     border: 1px solid #dee2e6 !important;
 }
+
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
     background: whitesmoke;
     color: #888 !important;
 }
+
 #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
     background: url("../../img/audio-button-set-4-transparent.png") #f5f5f5;
     background-size: 25px;
@@ -84,6 +96,7 @@ textarea::-webkit-scrollbar {
     background-position: 45%;
     z-index: 1000;
 }
+
 .icon-svg svg {
     fill: rgb(233, 110, 40);
 }
@@ -93,6 +106,7 @@ textarea::-webkit-scrollbar {
     color: #fff !important;
     text-transform: uppercase;
 }
+
 .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover, .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
     color: #FFFFFF;
     BACKGROUND: #ea6b26;
@@ -103,6 +117,7 @@ textarea::-webkit-scrollbar {
     color: #ea6b26;
     text-decoration: underline;
 }
+
 .razorpay_details table th {
     background: #dfe0e5;
     padding: 8px;
@@ -159,6 +174,7 @@ textarea::-webkit-scrollbar {
         border: 1px #e96e28 solid !important;
         color: rgb(255, 255, 255);
     }
+
 .tabs-wrap .nav-tabs > li.active > a, .tabs-wrap .nav-tabs > li.active > a:focus, .tabs-wrap .nav-tabs > li.active > a:hover {
     background: #ea6e24;
     border: 0px;
@@ -174,13 +190,16 @@ textarea::-webkit-scrollbar {
     border: 1px #ea6e24 solid;
     color: #ea6e24;
 }
+
 .border-db {
     border-right: 1px #ddd solid !important
 }
+
 .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
     background-color: whitesmoke !important;
     border-bottom: 1px solid #aaa !important;
 }
+
 .qc-feedback .card-footer .upload-label {
     background: #e2e2e2;
 }
@@ -188,6 +207,7 @@ textarea::-webkit-scrollbar {
 .qc-feedback .mdc-form-field > label, .qc-feedback label {
     color: #000;
 }
+
 .assessment h1 {
     color: #e96b28 !important
 }
@@ -195,21 +215,36 @@ textarea::-webkit-scrollbar {
 .assessment-blk {
     border: 1px #e2e2e2 solid;
 }
+
 .assessment-blk-h {
     border: 1px #e2e2e2 solid;
 }
+
 .assesment .card .card-body p {
     color: #484848;
 }
+
 .table-grey thead {
     background: #5f5f5f;
 }
+
 .assessment-grp {
     color: #da6025;
 }
-    .main-panel {
+
+.main-panel {
     background: #ebecf1;
 }
+
+.talk-bubble {
+    background-color: #fcfcfc;
+    border: 0px;
+}
+
+    .talk-bubble textarea, talk-bubble textarea:focus {
+        background-color: #fcfcfc!important;
+        border: 0px!important;
+    }
 textarea::-webkit-scrollbar-thumb {
     background-color: #acacad !important;
     border: 1px solid #acacad !important;
@@ -224,9 +259,11 @@ input[type='radio']:checked:after {
     background-color: #ea6e24 !important;
     top: -1px !important;
 }
+
 .edit-share {
     background: url('../../img/editicon-orange.png') #fff no-repeat !important;
 }
+
 .can-details a, .callatag {
     color: #ea6e24 !important;
     background: #f1e5e1;
@@ -236,6 +273,7 @@ input[type='radio']:checked:after {
     .can-details a:focus {
         color: #ea6e24 !important;
     }
+
 #codedresumeId {
     border: 1px #fdcfc1 solid;
     color: #584d4d;
@@ -243,16 +281,19 @@ input[type='radio']:checked:after {
     border-radius: 16px;
     background: #fdcfc1;
 }
+
 .btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .show > .btn-primary.dropdown-toggle, .show > .btn-primary.dropdown-toggle:focus, .show > .btn-primary.dropdown-toggle:hover {
     background: #ea6e24 !important;
 }
 
 .mcq-dnbutton {
     color: #fff !important;
-    background: #ea6e24 !important; border-radius: 3px;
+    background: #ea6e24 !important;
+    border-radius: 3px;
     padding: 5px;
     background: #42a5f5;
 }
+
 table.journey {
     color: #504e4e;
 }
@@ -260,6 +301,7 @@ table.journey {
     table.journey th {
         color: #000;
     }
+
 .trash-btn .mdc-fab__icon {
     fill: #fff !important;
 }
@@ -344,6 +386,7 @@ table.journey {
 .card-blue .card-header h6 {
     color: #ea6e24 !important;
 }
+
 .video-card {
     background-color: #fff !important;
     box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12) !important;
@@ -353,32 +396,41 @@ table.journey {
     box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12) !important;
     background-color: #ececec !important;
 }
+
 .video-info span {
     color: #606060;
 }
+
 .video-title .video-title .video-title a, .video-title .candidate {
     color: #000;
 }
+
 .single-video-right .video-card-image {
     border: 2px #ccc solid;
 }
+
 #myForm input[type=email], #myForm input[type=text], #myForm input[type=email]:focus, #myForm input[type=text]:focus {
     background: #fff !important;
     box-shadow: none !important;
     border-color: #dcdfdf !important;
 }
+
 .bg-w {
-    background: #fff!important;
+    background: #fff !important;
 }
+
 .client .row.bg-white {
     background-color: #fff !important;
 }
+
 .nav svg {
     fill: #fff;
 }
+
 .control-label, .control-labeled {
     color: #5f5c5c !important;
 }
+
 .show-interest {
     color: #000;
 }
@@ -387,15 +439,19 @@ table.journey {
     background: #e96b28 !important;
     border-color: #e96b28 !important;
 }
+
 .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
     background: #ffb23630 !important;
 }
+
 .bl-bg {
     background: #ebecf1;
 }
+
 .card-header.bg-w {
     background: #fff !important;
 }
+
 .click {
     color: #ea6e24 !important;
     text-decoration: underline !important;
@@ -413,6 +469,7 @@ table.journey {
     background: #f5f5f5 url(../img/orange-timdate.png) 94% 50% no-repeat !important;
     background-size: 5% !important;
 }
+
 .btnmeeting, .btnmeeting:hover {
     background: #ea6e28;
     border: 2px #ea6e2894 double;
@@ -435,6 +492,7 @@ table.journey {
     background-size: 7% !important;
     padding: 10px !important;
 }
+
 .skill [type="datetime-local"] {
     background: #fff url(../img/orange-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 6% !important;
@@ -455,23 +513,26 @@ table.journey {
     background: #fbad7f;
     color: #fff;
 }
+
 .related-title {
     margin: 0px 0px 3px 0px !important;
     color: #000;
 }
+
 .active-video {
     border: 5px #9a9a9abd solid !important;
 }
+
 .count-bg span {
     color: #fff !important;
     position: relative;
     top: -4px;
 }
-.talk-bubble {
-    background-color: #f5f5f5;
-}
+
+
+
 .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
-    border: 0px!important;
+    border: 0px !important;
     border-bottom: 2px #ea6e24 solid !important;
 }
 
@@ -590,10 +651,12 @@ input[type="radio"]:checked {
     border-right: 7px solid white !important;
     border-left: 7px solid white !important;
 }
+
 .jd-title [data-tooltip]:after {
     border-right: 5px solid white !important;
     border-left: 5px solid white !important;
 }
+
 @media only screen and (max-width: 767px) {
 
     .razorpay_btn button.form-control {

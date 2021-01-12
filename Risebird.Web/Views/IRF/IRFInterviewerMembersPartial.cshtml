@@ -42,7 +42,7 @@
                         <td class="text-center">
                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                             {
-                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CallButtonClick('@item.EmailId','@item.MobileNumber','myCallModal','callingLabel')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt">Call</span></span>
+                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CallButtonClick('@item.EmailId','@item.MobileNumber','myCallModal','callingLabel')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
                             }
 
                         </td>
@@ -78,7 +78,7 @@ else
 }
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css?v=6" />
 <script src="~/Newassets/js/scrollBar.js"></script>
-<script src="~/js/CallTwilio.js"></script>
+@*<script src="~/js/CallTwilio.js"></script>*@
 <script type="text/javascript">
     $(".sb-container").scrollBox();
 </script>

@@ -60,6 +60,8 @@ namespace AzureVideoUpload.Controllers
             return View();
         }
         [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
         public async Task<JsonResult> UploadFiles()
         {
             if (Request.Form.Files.Count() > 0)

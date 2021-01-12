@@ -131,7 +131,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsPaged(string profile, string Emailid, int Page, string searchValue = null, int clientId=0, bool IsClientCurated = false)
+        public async Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsPaged(string profile, string Emailid, int Page, string searchValue = null, int clientId = 0, bool IsClientCurated = false)
         {
             try
             {
@@ -149,7 +149,7 @@ namespace Risebird.Repository
                                  commandType: CommandType.StoredProcedure);
                     }
                 }
-                
+
                 else
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
@@ -164,7 +164,7 @@ namespace Risebird.Repository
                             commandType: CommandType.StoredProcedure);
                     }
                 }
-                
+
             }
             catch (SqlException ex)
             {
@@ -1216,6 +1216,29 @@ namespace Risebird.Repository
                     parameters.Add("@videolink", reportDetails.VideoLink);
                     parameters.Add("@ThumbnailImage", reportDetails.ThumbnailImage);
                     parameters.Add("@FeedbackAudioLink", reportDetails.FeedbackAudioLink);
+                    DynamicParameters parametersPoints = new DynamicParameters();
+                    if (reportDetails.MeetingStatus == 4)
+                    {
+                        parametersPoints.Add("@Points", 100);
+                    }
+                    else if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)
+                    {
+                        parametersPoints.Add("@Points", 33);
+                    }
+                    else
+                    {
+                        parametersPoints.Add("@Points", 0);
+                    }
+                    parametersPoints.Add("@interviewId", reportDetails.InterviewId);
+                    parametersPoints.Add("@UserEmail", reportDetails.UserDetails);
+                    if (reportDetails.IsQC == true)
+                    {
+                        parametersPoints.Add("@Type", "Quality Controller");
+                    }
+                    else
+                    {
+                        parametersPoints.Add("@Type", "Interview");
+                    }
                     if (reportDetails.IsEdited)
                     {
                         var result = SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,
@@ -1350,7 +1373,15 @@ namespace Risebird.Repository
 
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewReportComments", parameters,
                             commandType: CommandType.StoredProcedure);
+                    try
+                    {
+                        SqlMapper.Query(con, "usp_InterviewAddPoints", parametersPoints,
+                                commandType: CommandType.StoredProcedure);
+                    }
+                    catch (Exception ex)
+                    {
 
+                    }
                     return true;
                 }
 
@@ -2986,11 +3017,11 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetingsPaged(int page, string searchValue = null, string profileName=null)
+        public async Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetingsPaged(int page, string searchValue = null, string profileName = null)
         {
             try
             {
-                if(profileName!=null && profileName=="Client")
+                if (profileName != null && profileName == "Client")
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
@@ -3014,7 +3045,7 @@ namespace Risebird.Repository
                                  commandType: CommandType.StoredProcedure);
                     }
                 }
-                
+
             }
             catch (SqlException ex)
             {
@@ -3208,7 +3239,7 @@ namespace Risebird.Repository
 
         }
 
-        public async Task<int> GetRisetubeIndexMeetingsCount(string profile, string Emailid, string searchValue=null, int clientId=0, bool IsClientCurated = false)
+        public async Task<int> GetRisetubeIndexMeetingsCount(string profile, string Emailid, string searchValue = null, int clientId = 0, bool IsClientCurated = false)
         {
             try
             {
@@ -3224,7 +3255,7 @@ namespace Risebird.Repository
                         return result.FirstOrDefault();
                     }
                 }
-                
+
                 else
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
@@ -3238,7 +3269,7 @@ namespace Risebird.Repository
                         return result.FirstOrDefault();
                     }
                 }
-                
+
 
             }
             catch (SqlException ex)
@@ -3295,12 +3326,12 @@ namespace Risebird.Repository
         }
 
 
-        public async Task<int> GetSharedIndexMeetingsCount(string searchValue = null, string profileName=null)
+        public async Task<int> GetSharedIndexMeetingsCount(string searchValue = null, string profileName = null)
         {
             try
             {
                 //usp_GetSharedIndexMeetingsCountforClient
-                if(profileName!=null && profileName=="Client")
+                if (profileName != null && profileName == "Client")
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
@@ -3322,7 +3353,7 @@ namespace Risebird.Repository
                         return result.FirstOrDefault();
                     }
                 }
-                
+
 
             }
             catch (SqlException ex)
@@ -3330,7 +3361,7 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return 0;
             }
-            
+
         }
 
         public async Task<int> GetSharedIndexMeetingsCountforClientFiltered(string primarySkills, string heuristicLevels, string searchValue = null)
@@ -3441,6 +3472,277 @@ namespace Risebird.Repository
                 return null;
             }
 
+        }
+        public async Task<List<RBInterviewDetails>> RBDetails(string EmailId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", EmailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<RBInterviewDetails>(con, "Usp_FetchInterviewPayDetails", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return (List<RBInterviewDetails>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<string> RBUpdateStatusDetails(string EmailId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", EmailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "Usp_UpdateRBPayableStatus", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return "";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<RBInterviewDetails>> FetchFNDetails(string EmailId)
+        {
+            try
+            {
+                List<RBInterviewDetails> _list = new List<RBInterviewDetails>();
+                var query = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid where ip.Status='Submitted' group by ul.EmailId,ul.id";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<RBInterviewDetails>(query, null);
+                    _list = (List<RBInterviewDetails>)results;
+                }
+                var queryad = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid where ip.Status='Advance' group by ul.EmailId,ul.id";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<RBInterviewDetails>(queryad, null);
+                    var resultset = (from c in _list
+                                     join p in results on c.id equals p.id into ps
+                                     from p in ps.DefaultIfEmpty()
+                                     select new RBInterviewDetails
+                                     {
+                                         id = c.id,
+                                         Points = p == null ? c.Points : c.Points - p.Points,
+                                         Comment = c.Comment
+                                     }).ToList();
+                    return resultset.Where(x => x.Points > 0).ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<RBInterviewDetails>> RBInterviewerDetails(int interviewerid, int flag)
+        {
+            try
+            {
+                var query = "";
+                if (flag == 2)
+                {
+                    query = "Select ip.id,ip.InterviewId,ip.Type,ip.Comment,ip.Status,ip.Points,isNull(im.interviewdate,ip.Date) as Date,ic.MeetingStatus,ir.JobCountry as  PreferredLocation,ic.InterviewStatus,IsNull(IsNull(ISNULL(ti.PerSuccessRate,tei.PerSuccessRate),tqi.PerSuccessRate),ip.Points) as Rate from InterviewPoints ip left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.InterviewId=im.id left join IRF ir on ir.IRFId=im.IRFId left join TransInterviewer ti on ti.IRFId=ir.id and ti.UserId=@UserId left join TransEmergencyInterviewer tei on tei.IRFId=ir.id and tei.UserId=@UserId left join TransQualityController tqi on tqi.IRFId=ir.id and tqi.UserId=@UserId where ip.userid = @Userid and (ip.Status='Submitted' or ip.Status='Pending' or ip.Status='Advance')";
+                }
+                else
+                {
+                    query = "Select ip.id,ip.InterviewId,ip.Type,ip.Comment,ip.Status,ip.Points,isNull(im.interviewdate,ip.Date) as Date,ic.MeetingStatus,ir.JobCountry as  PreferredLocation,ic.InterviewStatus,IsNull(IsNull(ISNULL(ti.PerSuccessRate,tei.PerSuccessRate),tqi.PerSuccessRate),ip.Points) as Rate from InterviewPoints ip left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.InterviewId=im.id left join IRF ir on ir.IRFId=im.IRFId left join TransInterviewer ti on ti.IRFId=ir.id and ti.UserId=@UserId left join TransEmergencyInterviewer tei on tei.IRFId=ir.id and tei.UserId=@UserId left join TransQualityController tqi on tqi.IRFId=ir.id and tqi.UserId=@UserId where ip.userid = @Userid and (ip.Status='Submitted' or ip.Status='Advance')";
+                }
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Userid", interviewerid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<RBInterviewDetails>(query, dynamicParameters);
+                    return (List<RBInterviewDetails>)results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<string> RBAddPoints(int interviewerid, int Points, string Comment)
+        {
+            try
+            {
+                int interviewid = 0;
+                var status = "Submitted";
+                var Type = "Admin";
+                var date = DateTime.Now;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date ) Values (@interviewid, @interviewerid, @Points, @Type, @Comment, @status, @date);";
+                    var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
+                    {
+                        interviewid,
+                        interviewerid,
+                        Points,
+                        Type,
+                        Comment,
+                        status,
+                        date
+
+                    });
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+        public async Task<string> RBConfirmPayment(int interviewerid, int index)
+        {
+            try
+            {
+                var query = "";
+                if (index == 2)
+                {
+                    query = "Update InterviewPoints set Status='Paid' where userid=@Userid and (status='Submitted' or status='Pending' or status='Advance')";
+                }
+                else
+                {
+                    query = "Update InterviewPoints set Status='Paid' where userid=@Userid and (status='Submitted' or status='Advance')";
+                }
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Userid", interviewerid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync(query, dynamicParameters);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+        public async Task<List<string>> FetchInterviewerList(string searchterm)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@term", searchterm);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "Usp_FetchInterviewerList", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return (List<string>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount)
+        {
+            try
+            {
+                int userid = 0;
+                int Interviewerpresent = 0;
+                var query = "Select id from UserList where Emailid=@Emailid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", Interviewer);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<int>(query, dynamicParameters);
+                    userid = results.FirstOrDefault();
+                }
+                var querycheck = "Select idProfile from UserList where id=@Userid";
+                var dynamicParameterscheck = new DynamicParameters();
+                dynamicParameterscheck.Add("@Userid", userid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<int>(querycheck, dynamicParameterscheck);
+                    Interviewerpresent = results.FirstOrDefault();
+                }
+                if (Interviewerpresent != 3)
+                {
+                    return "Failed";
+                }
+                int interviewid = 0;
+                string Type = "Finance";
+                string status = "Advance";
+                var date = DateTime.Now;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date ) Values (@interviewid, @userid, @Amount, @Type, @Comment, @status, @date);";
+                    var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
+                    {
+                        interviewid,
+                        userid,
+                        Amount,
+                        Type,
+                        Comment,
+                        status,
+                        date
+
+                    });
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+        public async Task<List<RBInterviewDetails>> FNGenerateInvoiceDetails(DateTime st, DateTime se)
+        {
+            try
+            {
+                List<RBInterviewDetails> _list = new List<RBInterviewDetails>();
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@st", st);
+                dynamicParameters.Add("@se", se);
+                var query = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<RBInterviewDetails>(query, dynamicParameters);
+                    _list = (List<RBInterviewDetails>)results;
+                }
+                if (_list.Count > 0)
+                {
+                    var queryad = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where ip.Status='Advance' and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id";
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = await con.QueryAsync<RBInterviewDetails>(queryad, dynamicParameters);
+                        var resultset = (from c in _list
+                                         join p in results on c.id equals p.id into ps
+                                         from p in ps.DefaultIfEmpty()
+                                         select new RBInterviewDetails
+                                         {
+                                             id = c.id,
+                                             Points = p == null ? c.Points : c.Points - p.Points,
+                                             Comment = c.Comment
+                                         }).ToList();
+                        return resultset.Where(x => x.Points > 0).ToList();
+                    }
+                }
+                else
+                {
+                    return _list.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 }

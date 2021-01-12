@@ -140,21 +140,21 @@
                                                                 <td> @item.interviewDate </td>
                                                                 @if (item.candidateName != null && item.candidateName != "")
                                                                 {
-                                                                    @if (item.IsOnline == 1 && item.candidateName.Length > 25)
+                                                                    @if (item.IsOnline == 1 && item.candidateName.Length > 20)
                                                                     {
                                                                         <td>
-                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName.Substring(0, 25)...  </a>
+                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName.Substring(0, 20)...  </a>
                                                                         </td>
                                                                     }
                                                                     else
                                                                     {
-                                                                        @if (item.candidateName.Length > 25)
+                                                                        @if (item.candidateName.Length > 20)
                                                                         {
 
 
 
                                                                             <td class="cadName">
-                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 25)... </a>
+                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 20)... </a>
                                                                             </td>
                                                                         }
 
@@ -618,14 +618,14 @@
         for (var i = 0; i < data.length; i++) {
             html += ' <tr id="' + data[i].imid + '" data-changes="1">';
             html += '  <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
-            html += '  <td> ' + data[i].interviewDate + ' </td>';
+            html += '  <td> ' + new Date(data[i].interviewDate).toLocaleString() + ' </td>';
             if (data[i].candidateName != null && data[i].candidateName != "") {
-                if (data[i].isOnline == 1 && data[i].candidateName.length > 25) {
-                    html += '   <td> <a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>    ' + data[i].candidateName.substring(0, 25) + '...  </a></td> ';
+                if (data[i].isOnline == 1 && data[i].candidateName.length > 20) {
+                    html += '   <td> <a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>    ' + data[i].candidateName.substring(0, 20) + '...  </a></td> ';
                 }
                 else {
-                    if (data[i].candidateName.length > 25) {
-                        html += '  <td class="cadName"> <a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span>' + data[i].candidateName.substring(0, 25) + '... </a></td>';
+                    if (data[i].candidateName.length > 20) {
+                        html += '  <td class="cadName"> <a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span>' + data[i].candidateName.substring(0, 20) + '... </a></td>';
                     }
 
                     else {

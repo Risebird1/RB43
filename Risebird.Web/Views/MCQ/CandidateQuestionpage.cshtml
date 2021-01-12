@@ -81,9 +81,14 @@
     <div class="container">
 
         <div class="row">
-            <div class="loader text-center col-md-8 offset-md-2" style="position:absolute">
-                <img src="~/Newassets/img/lazyload.gif" />
-            </div>
+         
+                <div class="loader text-center" style="        position: absolute;
+       display:block;
+        width: 1000px;
+">
+                    <img style="margin: 0px 15%; width: auto" src="~/Newassets/img/lazyload.gif" />
+                </div>
+            
             <div class="col-md-8 offset-md-2" id="divMCQSetdetails">
 
 
@@ -283,9 +288,13 @@
             success: function (data) {
                 $(".loader").hide();
                 if ($("#zquestion_final").val() == "true") {
-                    document.getElementById("divfeedback").style.display = "block";
-                    document.getElementById("divMCQSetdetails").style.display = "none";
-                    clearInterval(myVar);
+                    if (window.confirm("Are you sure, do you want to submit the test?")) {
+                        document.getElementById("divfeedback").style.display = "block";
+                        document.getElementById("divMCQSetdetails").style.display = "none";
+                        clearInterval(myVar);
+                    } else {
+                        binddata(data);
+                    }
                 } else {
                     if (data == "TestSubmit") {
                         window.location.href = "/MCQ/TestComplete?status=" + data;
