@@ -97,7 +97,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-3 pl-1">
+                            <div class="col-md-3 col-sm-3 pr-1">
                                 <div class="form-group" style="margin-bottom:0px;">
                                     @Html.LabelFor(model => model.EndClient, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                     @Html.EditorFor(model => model.EndClient, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
@@ -105,7 +105,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-3 pl-1">
+                            <div class="col-md-3 col-sm-3 px-1">
                                 <div class="form-group" style="margin-bottom:0px;">
                                     @Html.LabelFor(model => model.ExpectedVolume, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                     @Html.EditorFor(model => model.ExpectedVolume, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
@@ -113,7 +113,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-3 pl-1">
+                            <div class="col-md-3 col-sm-3 px-1">
                                 <div class="form-group" style="margin-bottom:0px;">
                                     @Html.LabelFor(model => model.RequesterEmailid, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                     @Html.EditorFor(model => model.RequesterEmailid, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
@@ -130,13 +130,13 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3 col-sm-3 pl-1">
+                            <div class="col-md-6 col-sm-6">
                                 <div class="form-group" style="margin-bottom:0px;">
                                     <input type="radio" name="Jd" id="Jdlink" value="Upload" onclick="RadioChanged('Upload')" /> Upload File
                                     <input type="radio" name="Jd" id="Jdlink" value="Filelink" checked onclick="RadioChanged('Filelink')" /> File Link
                                 </div>
-                            </div>
-                            <div class="col-md-3 col-sm-3 pl-1">
+
+
                                 <div class="form-group" style="margin-bottom:0px;">
                                     <div id="uploadDiv" style="display:none">
                                         @Html.LabelFor(model => model.Jdfile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -148,7 +148,10 @@
                                     </div>
 
                                 </div>
+
+
                             </div>
+                        
 
                         </div>
 
@@ -162,7 +165,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-3 col-sm-3 pl-1">
+                                    <div class="col-md-3 col-sm-3 pr-1">
                                         <div class="form-group" style="margin-bottom:0px;">
                                             @Html.LabelFor(model => model.Priority, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.DropDownListFor(m => m.Priority, new SelectList(Model.Prioritylist, "Value", "Text"), new { @id = "select", @class = "form-control" })
@@ -171,7 +174,7 @@
 
                                         </div>
                                     </div>
-                                    <div class="col-md-3 col-sm-3 pl-1">
+                                    <div class="col-md-3 col-sm-3 px-1">
                                         <div class="form-group" style="margin-bottom:0px;">
                                             @Html.LabelFor(model => model.AdditionalComment, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.EditorFor(model => model.AdditionalComment, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
@@ -179,7 +182,7 @@
 
                                         </div>
                                     </div>
-                                    <div class="col-md-3 col-sm-3 pl-1">
+                                    <div class="col-md-3 col-sm-3 px-1">
                                         <div class="form-group" style="margin-bottom:0px;">
                                             @Html.LabelFor(model => model.HRCoordinator, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.EditorFor(model => model.HRCoordinator, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
@@ -195,41 +198,41 @@
 
                                         </div>
                                     </div>
-                                    <div class="col-md-3 col-sm-3 pl-1">
-                                        <div class="form-group" style="margin-bottom:0px;">
-                                            @Html.LabelFor(model => model.WeekendDrive, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    <div class="col-md-3 col-sm-3 pr-1">
+                                        <div class="form-group mt15">
+                                            @Html.LabelFor(model => model.WeekendDrive, htmlAttributes: new { @class = "control-label  col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label" })
                                             @Html.RadioButtonFor(model => model.WeekendDrive, 1) <span class="radio-field">Yes</span>
                                             @Html.RadioButtonFor(model => model.WeekendDrive, 0)<span class="radio-field">No</span>
 
 
                                         </div>
                                     </div>
-                                    <div class="col-md-3 col-sm-3 pl-1">
-                                        <div class="form-group" style="margin-bottom:0px;">
-                                            @Html.LabelFor(model => model.POGenerated, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    <div class="col-md-3 col-sm-3 px-1">
+                                        <div class="form-group mt15">
+                                            @Html.LabelFor(model => model.POGenerated, htmlAttributes: new { @class = "control-label  col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label" })
                                             @Html.RadioButtonFor(model => model.POGenerated, 1) <span class="radio-field">Yes</span>
                                             @Html.RadioButtonFor(model => model.POGenerated, 0)<span class="radio-field">No</span>
 
                                         </div>
                                     </div>
-                                    <div class="col-md-3 col-sm-3 pl-1">
-                                        <div class="form-group" style="margin-bottom:0px;">
-                                            @Html.LabelFor(model => model.IPSCreated, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    <div class="col-md-3 col-sm-3 px-1">
+                                        <div class="form-group mt15">
+                                            @Html.LabelFor(model => model.IPSCreated, htmlAttributes: new { @class = "control-label  col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label" })
                                             @Html.RadioButtonFor(model => model.IPSCreated, 1) <span class="radio-field">Yes</span>
                                             @Html.RadioButtonFor(model => model.IPSCreated, 0)<span class="radio-field">No</span>
 
                                         </div>
                                     </div>
                                     <div class="col-md-3 col-sm-3 pl-1">
-                                        <div class="form-group" style="margin-bottom:0px;">
-                                            @Html.LabelFor(model => model.CalendlyLinkCreated, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        <div class="form-group mt15">
+                                            @Html.LabelFor(model => model.CalendlyLinkCreated, htmlAttributes: new { @class = "control-label  col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label" })
                                             @Html.RadioButtonFor(model => model.CalendlyLinkCreated, 1) <span class="radio-field">Yes</span>
                                             @Html.RadioButtonFor(model => model.CalendlyLinkCreated, 0)<span class="radio-field">No</span>
 
                                         </div>
                                     </div>
-                                    <div class="col-md-3 col-sm-3 pl-1">
-                                        <div class="form-group" style="margin-bottom:0px;">
+                                    <div class="col-md-3 col-sm-3 pr-1">
+                                        <div class="form-group mt15">
                                             @Html.LabelFor(model => model.CandidateSourcing, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.RadioButtonFor(model => model.CandidateSourcing, 1) <span class="radio-field">Yes</span>
                                             @Html.RadioButtonFor(model => model.CandidateSourcing, 0)<span class="radio-field">No</span>
@@ -237,14 +240,14 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-3 col-sm-3 pl-1">
-                                        <div class="form-group" style="margin-bottom:0px;">
-                                            @Html.LabelFor(model => model.IRFID, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    <div class="col-md-3 col-sm-3 px-1">
+                                        <div class="form-group mt15">
+                                            @Html.LabelFor(model => model.IRFID, htmlAttributes: new { @class = "control-label  col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label" })
                                             @Html.RadioButtonFor(model => model.IRFID, 1, new { @onclick = "RadioIRFID('Yes')" }) <span class="radio-field">Yes</span>
                                             @Html.RadioButtonFor(model => model.IRFID, 0, new { @onclick = "RadioIRFID('No')" })<span class="radio-field">No</span>
                                         </div>
                                     </div>
-                                    <div class="col-md-3 col-sm-3 pl-1">
+                                    <div class="col-md-3 col-sm-3 px-1">
                                         <input type="hidden" value="@Model.IRFID" id="txtirfid" />
                                         <div id="divirfid" style="display:none">
                                             @Html.LabelFor(model => model.IRFIDs, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
