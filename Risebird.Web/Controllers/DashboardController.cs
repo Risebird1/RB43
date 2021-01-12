@@ -73,7 +73,7 @@ namespace Risebird.Web.Controllers
                                             select new { ID = (int)s, Name = s.GetDescription() };
                         model.AssassinationList = new SelectList(Assassination, "ID", "Name");
                         var channelrequest = await _dashboardService.FetchChannelRequests();
-                        model.ChannelRequest = channelrequest.Where(x => x.CreatedDate == DateTime.Now).ToList();
+                        model.ChannelRequest = channelrequest.Where(x => x.CreatedDate >= DateTime.Now).ToList();
                         return View(model);
                     }
                     else
