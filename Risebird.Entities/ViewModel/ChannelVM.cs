@@ -87,7 +87,7 @@ namespace Risebird.Entities.ViewModel
         public string Priority { get; set; }
         public string Comment { get; set; }
         public int Approved { get; set; }
-        [Display(Name= "DM Call Availability")]
+        [Display(Name = "DM Call Availability")]
         public int DMCallAvailability { get; set; }
         [Display(Name = "Added over Portal")]
         public int AddedoverPortal { get; set; }
@@ -95,12 +95,15 @@ namespace Risebird.Entities.ViewModel
         public int AddedoverSKillChannel { get; set; }
         public int QC { get; set; }
         public int Emergency { get; set; }
-        [Display(Name= "Training Mail Sent")]
         public int Training { get; set; }
         public int AdvancePayment { get; set; }
         public int CallAttended { get; set; }
         public int Channelid { get; set; }
         public SelectList Prioritylist { get; set; }
         public string CreatedBy { get; set; }
+        [Display(Name = "Per Interview Rate")]
+        public int PerInterviewrate { get; set; }
+        [Display(Name = "Training mail send")]
+        public int Trainingmailsend { get; set; }
     }
 }
