@@ -48,112 +48,120 @@
                         @using (Html.BeginForm("AddRequirement", "DashBoard", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onclick = "return checkeditvalues();" }))
                         {
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                        <div class="row addIntr ">
-                            <div class="col-md-12">
-                                @if (!Model.isEditable)
-                                {
-                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Channel Request</h4></div>
-                                }
-                                else
-                                {
-                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Edit Channel Request</h4></div>
+                            <div class="row addIntr ">
+                                <div class="col-md-12">
+                                    @if (!Model.isEditable)
+                                    {
+                                        <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Channel Request</h4></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Edit Channel Request</h4></div>
 
-                                }
-                            </div>
-
-                            <div style="width: 100%;">&nbsp;</div>
-                            @Html.HiddenFor(model => model.isEditable)
-                            @Html.HiddenFor(model => model.id)
-                            <div class="col-lg-3 col-md-6 col-sm-6 pr-1">
-                                <div class="form-group" style="margin-bottom:0px;">
-                                    @Html.LabelFor(model => model.Client, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.Client, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                    @Html.ValidationMessageFor(model => model.Client, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-6 px-1">
-                                <div class="form-group" style="margin-bottom:0px;">
-                                    @Html.LabelFor(model => model.Recruiter, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.Recruiter, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                    @Html.ValidationMessageFor(model => model.Recruiter, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-6 px-1">
-                                <div class="form-group" style="margin-bottom:0px;">
-                                    @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.PrimarySkill, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.PrimarySkill, "", new { @class = "text-danger" })
-
-                                </div>
-                            </div>
-
-                            <div class="col-lg-3 col-md-6 col-sm-6 pl-1">
-                                <div class="form-group" style="margin-bottom:0px;">
-                                    @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
-
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-6 pr-1">
-                                <div class="form-group" style="margin-bottom:0px;">
-                                    @Html.LabelFor(model => model.EndClient, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.EndClient, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.EndClient, "", new { @class = "text-danger" })
-
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-6 px-1">
-                                <div class="form-group" style="margin-bottom:0px;">
-                                    @Html.LabelFor(model => model.ExpectedVolume, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.ExpectedVolume, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
-                                    @Html.ValidationMessageFor(model => model.ExpectedVolume, "", new { @class = "text-danger" })
-
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-6 px-1">
-                                <div class="form-group" style="margin-bottom:0px;">
-                                    @Html.LabelFor(model => model.RequesterEmailid, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.RequesterEmailid, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.RequesterEmailid, "", new { @class = "text-danger" })
-
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-6 pl-1">
-                                <div class="form-group" style="margin-bottom:0px;">
-                                    @Html.LabelFor(model => model.RequesterMobile, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.RequesterMobile, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
-                                    @Html.ValidationMessageFor(model => model.RequesterMobile, "", new { @class = "text-danger" })
-
-                                </div>
-                            </div>
-
-                            <div class="col-lg-6 col-md-6 col-sm-6 pr-1">
-                                <div class="form-group col-md-12 filebox">
-                                    <input type="radio" name="Jd" id="Jdlink" value="Upload" onclick="RadioChanged('Upload')" /> Upload File
-                                    <input type="radio" name="Jd" id="Jdlink" value="Filelink" checked onclick="RadioChanged('Filelink')" /> File Link
+                                    }
                                 </div>
 
-
-                                <div class="form-group" style="height:50PX;">
-                                    <div id="uploadDiv" style="display:none">
-                                        @Html.LabelFor(model => model.Jdfile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                        @Html.TextBoxFor(model => model.Jdfile, new { type = "file", @class = "form-control btn ", @accept = ".mp4" })
+                                <div style="width: 100%;">&nbsp;</div>
+                                @Html.HiddenFor(model => model.isEditable)
+                                @Html.HiddenFor(model => model.id)
+                                <div class="col-lg-3 col-md-6 col-sm-6 pr-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.Client, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.Client, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                        @Html.ValidationMessageFor(model => model.Client, "", new { @class = "text-danger" })
                                     </div>
-                                    <div id="linkDiv">
-                                
-                                        @Html.EditorFor(model => model.JdLink, new { htmlAttributes = new { @class = "form-control text-box single-line" ,@placeholder="JD Link" } })
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-6 px-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.Recruiter, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.Recruiter, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                        @Html.ValidationMessageFor(model => model.Recruiter, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-6 px-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.PrimarySkill, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.PrimarySkill, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-3 col-md-6 col-sm-6 pl-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-6 pr-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.EndClient, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.EndClient, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.EndClient, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-6 px-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.ExpectedVolume, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.ExpectedVolume, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "10" } })
+                                        @Html.ValidationMessageFor(model => model.ExpectedVolume, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-6 px-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.RequesterEmailid, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.RequesterEmailid, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.RequesterEmailid, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-6 pl-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.RequesterMobile, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.RequesterMobile, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
+                                        @Html.ValidationMessageFor(model => model.RequesterMobile, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 col-md-6 col-sm-6 pr-1">
+                                    <div class="form-group col-md-12 filebox">
+                                        <input type="radio" name="Jd" id="Jdlink" value="Upload" onclick="RadioChanged('Upload')" /> Upload File
+                                        <input type="radio" name="Jd" id="Jdlink" value="Filelink" checked onclick="RadioChanged('Filelink')" /> File Link
                                     </div>
 
-                                </div>
 
+                                    <div class="form-group" style="height:50PX;">
+                                        <div id="uploadDiv" style="display:none">
+                                            @Html.LabelFor(model => model.Jdfile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.TextBoxFor(model => model.Jdfile, new { type = "file", @class = "form-control btn ", @accept = ".mp4" })
+                                        </div>
+                                        <div id="linkDiv">
+
+                                            @Html.EditorFor(model => model.JdLink, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "JD Link" } })
+                                        </div>
+
+                                    </div>
+                                </div>
+                                @if (ViewBag.type == "no")
+                                {
+                                    <div class="col-lg-3 col-md-6 col-sm-6 pr-1" style="margin-top:28px">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.CreatedBy, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.CreatedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                            @Html.ValidationMessageFor(model => model.CreatedBy, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                }
 
                             </div>
-                        
-
-                        </div>
 
                             @if (Model.isEditable)
                             {
@@ -261,7 +269,10 @@
                             <div class="card-footer ">
                                 <div class="row">
                                     <div class="col-md-12 mc-button-area">
-                                        @Html.ActionLink("Back to List", "RequirementManagement", "DashBoard", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        @if (ViewBag.type == "back")
+                                        {
+                                            @Html.ActionLink("Back to List", "RequirementManagement", "DashBoard", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        }
                                         <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
                                     </div>
                                 </div>
@@ -318,4 +329,39 @@
     }
 </script>
 
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
 
+                },
+                    function (value) //confirm
+                    {
+                        location.reload();
+                    }
+                )
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+                },
+                    function ()
+                    {
+                        location.reload();
+                    }
+                )
+            }
+        }
+        window.onload = my_code();
+    </script>
+}

@@ -321,22 +321,15 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-
-                if (profileName == "Admin")
-                {
-                    var model = new ChannelVM();
-                    model.isEditable = false;
-                    return View(model);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
+                ViewBag.type = "back";
             }
             else
             {
-                return RedirectToAction("SignOut", "Session");
+                ViewBag.type = "no";
             }
+            var model = new ChannelVM();
+            model.isEditable = false;
+            return View(model);
         }
         [HttpPost]
         public async Task<ActionResult> AddRequirement(ChannelVM model)
@@ -348,68 +341,63 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 model.CreatedBy = emailid;
-                if (profileName == "Admin")
-                {
-                    if (!ModelState.IsValid)
-                    {
-                        return View(model);
-                    }
-                    if (model.Jdfile == null && (model.JdLink == null))
-                    {
-                        ModelState.AddModelError(String.Empty, "Please upload a Jd.");
-                        return View(model);
-                    }
-                    if (model.Jdfile != null)
-                    {
-                        await _azureStorageHelper.InsertBlob(model.Jdfile.FileName, "resumes", model.Jdfile);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(model.Jdfile.FileName);
-                        model.JdLink = blob.Uri.ToString();
-                    }
+            }
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            if (model.Jdfile == null && (model.JdLink == null))
+            {
+                ModelState.AddModelError(String.Empty, "Please upload a Jd.");
+                return View(model);
+            }
+            if (model.Jdfile != null)
+            {
+                await _azureStorageHelper.InsertBlob(model.Jdfile.FileName, "resumes", model.Jdfile);
+                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                var blob = containerRef.GetBlockBlobReference(model.Jdfile.FileName);
+                model.JdLink = blob.Uri.ToString();
+            }
 
-                    if (model.isEditable)
-                    {
-                        var result = await _dashboardService.AddChannelRequest(model);
-                        if (result == "Success")
-                        {
-                            TempData["SuccessErrorMessageInterview"] = "Channel Request updated Successfully.";
-                        }
-                        else
-                        {
-                            TempData["SuccessErrorMessageInterview"] = "Fail to update channel request.";
-                        }
-                        return RedirectToAction("RequirementManagement");
-                    }
-                    else
-                    {
-                        var result = await _dashboardService.AddChannelRequest(model);
-                        if (result == "Success")
-                        {
-                            var Emailds = await _dashboardService.FetchAdminandHRList();
-                            string Emailaddress = string.Join(";", Emailds);
-                            Mail _mail = new Mail
-                            {
-                                TO = Emailaddress,
-                                Subject = $"Risebird: a new Channel request is created for " + model.Client
-                            };
-                            var resultset = _notificationHelper.ChannelRequestNotification(_mail, model.Client, model.PrimarySkill, model.Recruiter);
-                            TempData["SuccessErrorMessageInterview"] = "Channel Request added Successfully.";
-                        }
-                        else
-                        {
-                            TempData["SuccessErrorMessageInterview"] = "Fail to add channel request.";
-                        }
-                        return RedirectToAction("RequirementManagement");
-                    }
+            if (model.isEditable)
+            {
+                var result = await _dashboardService.AddChannelRequest(model);
+                if (result == "Success")
+                {
+                    TempData["SuccessErrorMessageInterview"] = "Channel Request updated Successfully.";
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Session");
+                    TempData["SuccessErrorMessageInterview"] = "Fail to update channel request.";
                 }
+                return RedirectToAction("RequirementManagement");
             }
             else
             {
-                return RedirectToAction("SignOut", "Session");
+                var result = await _dashboardService.AddChannelRequest(model);
+                if (result == "Success")
+                {
+                    var Emailds = await _dashboardService.FetchAdminandHRList();
+                    string Emailaddress = string.Join(";", Emailds);
+                    Mail _mail = new Mail
+                    {
+                        TO = Emailaddress,
+                        Subject = $"Risebird: a new Channel request is created for " + model.Client
+                    };
+                    var resultset = _notificationHelper.ChannelRequestNotification(_mail, model.Client, model.PrimarySkill, model.Recruiter);
+                    TempData["SuccessErrorMessageInterview"] = "Channel Request added Successfully.";
+                    ViewBag.Message = "Channel Request updated Successfully.";
+                }
+                else
+                {
+                    TempData["SuccessErrorMessageInterview"] = "Fail to add channel request.";
+                    ViewBag.Message = "Fail to add channel request.";
+                }
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                {
+                    return View();
+                }
+                return RedirectToAction("RequirementManagement");
             }
         }
         public async Task<IActionResult> EditRequirement(int id)
@@ -420,6 +408,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin")
                 {
+                    ViewBag.type = "back";
                     var model = await _dashboardService.FetchChannelRequestsByid(id);
                     model.isEditable = true;
                     var Priority = from Prioritylevels s in Enum.GetValues(typeof(Prioritylevels))

@@ -411,12 +411,12 @@ namespace Risebird.Repository
                 {
                     if (!request.isEditable)
                     {
-                        var CreatedBy = 0;
-                        string query = "Select id from UserList where Emailid=@Emailid";
-                        var dynamicParameters = new DynamicParameters();
-                        dynamicParameters.Add("@Emailid", request.CreatedBy);
-                        var result = await con.QueryAsync<int>(query, dynamicParameters);
-                        CreatedBy = result.FirstOrDefault();
+                        //var CreatedBy = 0;
+                        //string query = "Select id from UserList where Emailid=@Emailid";
+                        //var dynamicParameters = new DynamicParameters();
+                        //dynamicParameters.Add("@Emailid", request.CreatedBy);
+                        //var result = await con.QueryAsync<int>(query, dynamicParameters);
+                        //CreatedBy = result.FirstOrDefault();
                         var CreatedDate = DateTime.Now;
                         var Status = "Open";
                         string sqlInsertReport = "INSERT INTO ChannelManagement (Client,Recruiter,PrimarySkill,EndClient,Location,ExpectedVolume,JdLink,CreatedBy,CreatedDate,Status,RequesterEmailid,RequesterMobile) Values (@Client,@Recruiter,@PrimarySkill,@EndClient,@Location,@ExpectedVolume,@JdLink,@CreatedBy,@CreatedDate,@Status,@RequesterEmailid,@RequesterMobile);";
@@ -429,7 +429,7 @@ namespace Risebird.Repository
                             request.Location,
                             request.ExpectedVolume,
                             request.JdLink,
-                            CreatedBy,
+                            request.CreatedBy,
                             CreatedDate,
                             Status,
                             request.RequesterEmailid,

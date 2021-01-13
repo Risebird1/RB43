@@ -49,6 +49,7 @@ namespace Risebird.Entities.ViewModel
         public string IRFIDs { get; set; }
         public string Priority { get; set; }
         public SelectList Prioritylist { get; set; }
+        [Display(Name ="Your Email Adress")]
         public string CreatedBy { get; set; }
         public int id { get; set; }
         [Required]
