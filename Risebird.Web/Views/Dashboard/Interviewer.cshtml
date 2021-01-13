@@ -83,8 +83,9 @@
                                                     <th>Role</th>
                                                     <th>Approved</th>
                                                     <th>Priroty</th>
+                                                    <th>Per Interview Rate</th>
                                                     <th>Comment</th>
-                                                    <th>DM Call Availability</th>
+                                                    <th>DM Call Completed</th>
                                                     <th>Added over Portal</th>
                                                     <th>Added over SKill Channel</th>
                                                     <th>QC</th>
@@ -108,8 +109,9 @@
                                                     <th>Role</th>
                                                     <th>Approved</th>
                                                     <th>Priroty</th>
+                                                    <th>Per Interview Rate</th>
                                                     <th>Comment</th>
-                                                    <th>DM Call Avaiality</th>
+                                                    <th>DM Call Completed</th>
                                                     <th>Added over Portal</th>
                                                     <th>Added over SKill Channel</th>
                                                     <th>QC</th>
@@ -157,7 +159,23 @@
                                                         {
                                                             <td>No</td>
                                                         }
-                                                        <td>@item.Priority</td>
+                                                        @if (item.Priority == "3")
+                                                        {
+                                                            <td>Very High</td>
+                                                        }
+                                                        else if (item.Priority == "1")
+                                                        {
+                                                            <td>Medium</td>
+                                                        }
+                                                        else if (item.Priority == "2")
+                                                        {
+                                                            <td>High</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>Low</td>
+                                                        }
+                                                        <td>@item.PerInterviewrate</td>
                                                         <td>@item.Comment</td>
                                                         @if (item.DMCallAvailability == 1)
                                                         {

@@ -91,7 +91,7 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string Comment { get; set; }
         public int Approved { get; set; }
-        [Display(Name = "DM Call Availability")]
+        [Display(Name = "DM Call Completed")]
         public int DMCallAvailability { get; set; }
         [Display(Name = "Added over Portal")]
         public int AddedoverPortal { get; set; }
@@ -109,7 +109,9 @@ namespace Risebird.Entities.ViewModel
         public int PerInterviewrate { get; set; }
         [Display(Name = "Training mail send")]
         public int Trainingmailsend { get; set; }
-        [Display(Name = "Training Time(in min.)")]
-        public int TrainingTime { get; set; }
+        [Display(Name = "Training Time")]
+        public DateTime TrainingTime { get; set; }
+        [Display(Name = "Call Time")]
+        public DateTime CallTime { get; set; }
     }
 }
