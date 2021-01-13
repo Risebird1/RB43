@@ -93,6 +93,7 @@
                                                     <th>Training</th>
                                                     <th>Advance Payment</th>
                                                     <th>Call Attended</th>
+                                                    <th>Call Time</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -119,6 +120,7 @@
                                                     <th>Training Mail Sent</th>
                                                     <th>Advance Payment</th>
                                                     <th>Call Attended</th>
+                                                    <th>Call Time</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </tfoot>
@@ -239,6 +241,14 @@
                                                         else
                                                         {
                                                             <td>No</td>
+                                                        }
+                                                        @if (item.CallAttended == 1)
+                                                        {
+                                                            <td>@item.CallTime</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
                                                         }
                                                         <td>
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Edit">
