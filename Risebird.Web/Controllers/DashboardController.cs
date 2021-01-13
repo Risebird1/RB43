@@ -16,7 +16,7 @@ using Risebird.CommonHelper;
 
 namespace Risebird.Web.Controllers
 {
-    [Authorize]
+    
     public class DashboardController : Controller
     {
         private readonly IDashboardService _dashboardService;
@@ -30,7 +30,7 @@ namespace Risebird.Web.Controllers
             _notificationHelper = notificationHelper;
             _azureStorageHelper = azureStorageHelper;
         }
-
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             try
@@ -93,7 +93,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [Authorize]
         public static void AddProperty(ExpandoObject expando, string propertyName, object propertyValue)
         {
             // ExpandoObject supports IDictionary so we can extend it like this
@@ -103,7 +103,7 @@ namespace Risebird.Web.Controllers
             else
                 expandoDict.Add(propertyName, propertyValue);
         }
-
+        [Authorize]
         public DashboardVM GetDateWiseInterviews(DateTime date)
         {
             try
@@ -136,7 +136,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [Authorize]
         public IActionResult GetDateWiseInterviewStatus(DateTime date)
         {
             try
@@ -152,7 +152,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [Authorize]
         public IActionResult GetDateWiseMeetingsSlots(DateTime date)
         {
             try
@@ -167,7 +167,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> UpdateIRFProgress(DashboardVM model)
         {
@@ -182,6 +182,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        [Authorize]
         public async Task<IActionResult> GetDateWiseIRFProgress(DateTime date)
         {
             try
@@ -199,7 +200,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [Authorize]
         public async Task<IActionResult> ClientIndex()
         {
             try
@@ -240,7 +241,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [Authorize]
         public ClientDashboardVM GetDateWiseClientInterviews(DateTime date, string emailId)
         {
             try
@@ -273,7 +274,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [Authorize]
         public IActionResult GetDateWiseClientMeetingsSlots(DateTime date, string emailId)
         {
             try
@@ -288,7 +289,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [Authorize]
         public JsonResult FetchActivityDetails(int id, int idprogess)
         {
             var result = _dashboardService.FetchActivityDetails(id, idprogess);
@@ -315,6 +316,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [Authorize]
         public ActionResult AddRequirement()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -331,6 +333,7 @@ namespace Risebird.Web.Controllers
             model.isEditable = false;
             return View(model);
         }
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> AddRequirement(ChannelVM model)
         {
@@ -400,6 +403,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("RequirementManagement");
             }
         }
+        [Authorize]
         public async Task<IActionResult> EditRequirement(int id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -426,6 +430,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [Authorize]
         public async Task<IActionResult> Interviewer(int id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -453,6 +459,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [Authorize]
         public ActionResult AddInterviewer(int id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -478,6 +486,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddInterviewer(ChannelInterviewerVM model)
         {
@@ -534,6 +543,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [Authorize]
         [HttpPost]
         public async Task<JsonResult> DeleteInterviewer(int id, int channelid)
         {
@@ -547,6 +558,7 @@ namespace Risebird.Web.Controllers
                 return Json("fail");
             }
         }
+        [Authorize]
         public async Task<ActionResult> EditInterviewer(int id, int channelid)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
