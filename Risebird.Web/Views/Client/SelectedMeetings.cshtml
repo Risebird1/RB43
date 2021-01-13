@@ -80,7 +80,7 @@
                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three card-title-space pull-left" data-toggle="modal" data-target="#filterModal">
 
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="modal" data-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                            <div class="mdc-button__ripple"></div>
+
                         </button>
 
 
@@ -576,11 +576,11 @@
                                                                 {
 
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Verify">
-<<<<<<< HEAD:Risebird.Web/Views/Client/SelectedMeetings.cshtml
-                                                                        <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Client", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
-=======
-                                                                        <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Client", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill ="rgb(255, 255, 255)"  d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
->>>>>>> developmentMaster:Risebird.Web/Views/Interview/SelectedPriorityClientMeetings.cshtml
+
+                                                                        @*<span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Client", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>*@
+
+                                                                        <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Client", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+
                                                                     </button>
 
 
@@ -1084,7 +1084,7 @@
             function ResetFilter() {
                 window.location.href = "/Client/ResetSelectedPriorityClientMeetingsfilters";
 
-               
+
             }
             function ApplySessionFilter() {
                 var strtDte = '@strtDte';
@@ -1114,7 +1114,7 @@
                 $("#OfferStatus").val(offerStatus);
 
                 var form = $("#form").serialize();
-               
+
             }
 </script>
 
@@ -1413,7 +1413,7 @@
     function CallButtonClickjson(imid) {
         var candidate = $("#hidcandidate_" + imid).val();
         var mobile = $("#hidmobile" + imid).val();
-        
+
         // Get the modal
         CallButtonClick(candidate, mobile);
 
@@ -1454,7 +1454,7 @@
         }
 
         for (var i = 0; i < data.length; i++) {
-          
+
             html += '<tr id=' + data[i].imid + ' data-changes="1">';
             html += ' <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
             html += '                                       <td class="interviewdate"> ' + new Date(data[i].interviewDate).toLocaleString() + '<input type="hidden" id="hidcandidate_' + data[i].imid + '" value="' + data[i].candidateName + '"/> </td>';
@@ -1529,17 +1529,16 @@
 
             if (data[i].isBiometricEnabled) {
                 html += ' <button class="mdc-fab app-fab--absolute" aria-label="Verify">';
-<<<<<<< HEAD:Risebird.Web/Views/Client/SelectedMeetings.cshtml
-                html += '  <a href ="/Client/VerifyJoiningAudio?candidateId = ' + data[i].candidateId + '&CandidateName=' + data[i].candidateName + '&irfId=' + data[i].irfIntId + '&meetingId=' + data[i].imid + '" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255) d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></a>';
-=======
+
+
                 html += '  <a href ="/Client/VerifyJoiningAudio?candidateId = ' + data[i].candidateId + '&CandidateName=' + data[i].candidateName + '&irfId=' + data[i].irfIntId + '&meetingId=' + data[i].imid + '" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></a>';
->>>>>>> developmentMaster:Risebird.Web/Views/Interview/SelectedPriorityClientMeetings.cshtml
+
                 html += '  </button>';
             }
             html += '</td>';
             html += '<td>';
             if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
-                html += '<input type="hidden" id="hidmobile' + data[i].id + '" value="' + data[i].mobileNumber+'"/><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClickjson(' + data[i].imid + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>';
+                html += '<input type="hidden" id="hidmobile' + data[i].id + '" value="' + data[i].mobileNumber + '"/><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClickjson(' + data[i].imid + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>';
             }
             html += '</td>';
             html += '                                            </tr>';
