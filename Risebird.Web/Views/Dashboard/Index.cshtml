@@ -102,17 +102,6 @@
                                     <h3>Channel Request</h3>
 
                                 </div>
-                                <ul class="panel-controls" style="margin-top: 2px;">
-                                    <li>
-                                        <div class="col-md-12 col-sm-12 nopad interview-date">
-                                            <input id="ChannelrequestDate" name="ChannelrequestDate" type="date" class="form-control">
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <button onclick="getChannelRequestProgress()" class="panel-fullscreen"><span class="fa fa-eye"></span></button>
-                                    </li>
-                                </ul>
-
                             </div>
 
                             <div id="channelrequestTableId">
@@ -143,7 +132,7 @@
                                             </div>
                                         </div>
                                     }
-                                    @Html.HiddenFor(model => model.ChannelrequestDate)
+
                                 </div>
                             </div>
 
@@ -537,7 +526,6 @@
         //document.getElementById('statusTrackingDate').value = today;
         document.getElementById('interviewSlotsDate').value = today;
         document.getElementById('ProgressDate').value = today;
-        document.getElementById('ChannelrequestDate').value = today;
         //document.getElementById('progressTrackingDate').value = today;
     }
 
@@ -730,20 +718,6 @@
             success: function (data) {
                 $('#slotsId').html('');
                 $('#slotsId').html(data);
-
-
-            }
-        });
-    }
-    function getChannelRequestProgress() {
-        var date = document.getElementById('ChannelrequestDate').value;
-        $.ajax({
-            url: '/Dashboard/GetDateWiseChannelrequestProgress',
-            data: { 'date': date },
-            success: function (data) {
-
-                $('#channelrequestTableId').html('');
-                $('#channelrequestTableId').html(data);
 
 
             }

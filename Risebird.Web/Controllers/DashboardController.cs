@@ -73,7 +73,7 @@ namespace Risebird.Web.Controllers
                                             select new { ID = (int)s, Name = s.GetDescription() };
                         model.AssassinationList = new SelectList(Assassination, "ID", "Name");
                         var channelrequest = await _dashboardService.FetchChannelRequests();
-                        model.ChannelRequest = channelrequest.Where(x => x.CreatedDate >= DateTime.Now).ToList();
+                        model.ChannelRequest = channelrequest;
                         return View(model);
                     }
                     else
@@ -556,23 +556,6 @@ namespace Risebird.Web.Controllers
             else
             {
                 return Json("fail");
-            }
-        }
-        public async Task<IActionResult> GetDateWiseChannelrequestProgress(DateTime date)
-        {
-            try
-            {
-                var model = new DashboardVM();
-                var channelrequest = await _dashboardService.FetchChannelRequests();
-                model.ChannelRequest = channelrequest.Where(x => x.CreatedDate >= date).ToList();
-                model.ChannelrequestDate = date;
-                TempData["ChannelrequestDate"] = date;
-                return PartialView("ChannelRequestPartial", model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
             }
         }
         public async Task<ActionResult> EditInterviewer(int id, int channelid)
