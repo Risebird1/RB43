@@ -1620,9 +1620,18 @@ top:3px;
     border: 0;
     border-top: 1px #eeeeee73 solid;
 }
+.radiobox .control-label {
+    padding: 0px 10px;
+}
 
-    @media screen and (max-width:991px) {
-        #ProctoringTable .label-type {
+.tp25{margin-top:25px!important}
+.call-time {
+    position: relative;
+    left: -10px;
+}
+
+@media screen and (max-width:991px) {
+    #ProctoringTable .label-type {
             white-space: normal;
         }
         .main-panel > .content {
@@ -1646,15 +1655,23 @@ top:3px;
         .pr-1.mobpad, .pl-1.mobpad {
             padding: 0px !important
         }
+  
     }
 
 
 @media screen and (max-width: 768px) {
-  
+
 }
 
 
     @media screen and (max-width: 767px) {
+        .tp25 {
+            margin-top: 0px !important
+        }
+        .call-time {
+            margin: 0px 0px 0px 0px !important;
+            left:0px!important;
+        }
         .skill .table-responsive, .daily-interview .table-responsive {
             border: 0px;
         }
