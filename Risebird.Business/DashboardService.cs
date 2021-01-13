@@ -201,5 +201,101 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<ChannelManagementVM>> FetchChannelRequests()
+        {
+            try
+            {
+                return await _dashboardRespository.FetchChannelRequests();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<ChannelVM> FetchChannelRequestsByid(int id)
+        {
+            try
+            {
+                return await _dashboardRespository.FetchChannelRequestsByid(id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<string> AddChannelRequest(ChannelVM request)
+        {
+            try
+            {
+                return await _dashboardRespository.AddChannelRequest(request);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+        public async Task<List<string>> FetchAdminandHRList()
+        {
+            try
+            {
+                return await _dashboardRespository.FetchAdminandHRList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<string> AddChannelInterviewer(ChannelInterviewerVM request)
+        {
+            try
+            {
+                return await _dashboardRespository.AddChannelInterviewer(request);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+        public async Task<List<ChannelInterviewerVM>> FetchInterviewerBychannelid(int id)
+        {
+            try
+            {
+                return await _dashboardRespository.FetchInterviewerBychannelid(id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<string> DeleteChannelInterviewerByid(int id, int channelid)
+        {
+            try
+            {
+                return await _dashboardRespository.DeleteChannelInterviewerByid(id, channelid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+        public async Task<ChannelInterviewerVM> FecthInterviewerById(int id)
+        {
+            try
+            {
+                return await _dashboardRespository.FecthInterviewerById(id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

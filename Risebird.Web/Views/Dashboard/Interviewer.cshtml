@@ -1,0 +1,423 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.ChannelInterviewerVM>
+@using Risebird.Entities
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@{
+    ViewData["Title"] = "Interviewer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Interviewer</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Interviewer</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-backward" data-toggle="tooltip" data-placement="top" title="Back to List" onclick="location.href='@Url.Action("RequirementManagement","DashBoard",new { id=ViewBag.channelid})'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Back to List</font></span>
+                        </button>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add an interviewer" onclick="location.href='@Url.Action("AddInterviewer","DashBoard",new { id=ViewBag.channelid})'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add Interviewer</font></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content interview client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+                            <div class="toolbar">
+
+                                <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+
+                                    <div id="tableID" class="second">
+                                        <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th id='start'>Processed Date</th>
+                                                    <th>Recruiter</th>
+                                                    <th>Name</th>
+                                                    <th>Email Address</th>
+                                                    <th>Mobile</th>
+                                                    <th>CV</th>
+                                                    <th>Coded CV</th>
+                                                    <th>Primary SKill</th>
+                                                    <th>Role</th>
+                                                    <th>Approved</th>
+                                                    <th>Priroty</th>
+                                                    <th>Per Interview Rate</th>
+                                                    <th>Comment</th>
+                                                    <th>DM Call Completed</th>
+                                                    <th>Added over Portal</th>
+                                                    <th>Added over SKill Channel</th>
+                                                    <th>QC</th>
+                                                    <th>Emergency</th>
+                                                    <th>Training</th>
+                                                    <th>Advance Payment</th>
+                                                    <th>Call Attended</th>
+                                                    <th>Call Time</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Processed Date</th>
+                                                    <th>Recruiter</th>
+                                                    <th>Name</th>
+                                                    <th>Email Address</th>
+                                                    <th>Mobile</th>
+                                                    <th>CV</th>
+                                                    <th>Coded CV</th>
+                                                    <th>Primary SKill</th>
+                                                    <th>Role</th>
+                                                    <th>Approved</th>
+                                                    <th>Priroty</th>
+                                                    <th>Per Interview Rate</th>
+                                                    <th>Comment</th>
+                                                    <th>DM Call Completed</th>
+                                                    <th>Added over Portal</th>
+                                                    <th>Added over SKill Channel</th>
+                                                    <th>QC</th>
+                                                    <th>Emergency</th>
+                                                    <th>Training Mail Sent</th>
+                                                    <th>Advance Payment</th>
+                                                    <th>Call Attended</th>
+                                                    <th>Call Time</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                @foreach (var item in Model)
+                                                {
+                                                    var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+
+                                                    <tr id=@item.id>
+                                                        <td> @item.ProcessedDate </td>
+                                                        <td>@item.CreatedBy</td>
+                                                        <td> @item.Name </td>
+                                                        <td>@item.EmailAddress</td>
+                                                        <td> @item.Mobile</td>
+                                                        @if (!String.IsNullOrEmpty(item.CVLink))
+                                                        {
+                                                            <td> <a target="_blank" href=@item.CVLink>Resume</a></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
+                                                        @if (!String.IsNullOrEmpty(item.CodedCVLink))
+                                                        {
+                                                            <td> <a target="_blank" href=@item.CodedCVLink>Resume</a></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
+                                                        <td class="text-center"> @item.PrimarySKill</td>
+                                                        <td>@item.Role</td>
+                                                        @if (item.Approved == 1)
+                                                        {
+                                                            <td>Yes</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No</td>
+                                                        }
+                                                        @if (item.Priority == "3")
+                                                        {
+                                                            <td>Very High</td>
+                                                        }
+                                                        else if (item.Priority == "1")
+                                                        {
+                                                            <td>Medium</td>
+                                                        }
+                                                        else if (item.Priority == "2")
+                                                        {
+                                                            <td>High</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>Low</td>
+                                                        }
+                                                        <td>@item.PerInterviewrate</td>
+                                                        <td>@item.Comment</td>
+                                                        @if (item.DMCallAvailability == 1)
+                                                        {
+                                                            <td>Yes</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No</td>
+                                                        }
+                                                        @if (item.AddedoverPortal == 1)
+                                                        {
+                                                            <td>Yes</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No</td>
+                                                        }
+                                                        @if (item.AddedoverSKillChannel == 1)
+                                                        {
+                                                            <td>Yes</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No</td>
+                                                        }
+                                                        @if (item.QC == 1)
+                                                        {
+                                                            <td>Yes</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No</td>
+                                                        }
+                                                        @if (item.Emergency == 1)
+                                                        {
+                                                            <td>Yes</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No</td>
+                                                        }
+                                                        @if (item.Training == 1)
+                                                        {
+                                                            <td>Yes</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No</td>
+                                                        }
+                                                        @if (item.AdvancePayment == 1)
+                                                        {
+                                                            <td>Yes</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No</td>
+                                                        } @if (item.CallAttended == 1)
+                                                        {
+                                                            <td>Yes</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No</td>
+                                                        }
+                                                        @if (item.CallAttended == 1)
+                                                        {
+                                                            <td>@item.CallTime</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
+                                                        <td>
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                <span onclick="location.href='@Url.Action("EditInterviewer","DashBoard",new {id=item.id,channelid=item.Channelid })'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete interviewer">
+                                                                <span onclick="javascript:DeleteCandidateFromTest(@item.id,@item.Channelid);" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <!-- end content-->
+                        </div>
+
+                        <!-- end col-md-12 -->
+                    </div>
+                    <!-- end row -->
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        location.reload();
+                    }
+                )
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+                },
+                    function ()
+                    {
+                        location.reload();
+                    }
+                )
+            }
+        }
+        window.onload = my_code();
+    </script>
+
+}
+
+
+<script>
+    $(document).ready(function () {
+        $('#meeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").hide();
+
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+
+        });
+        var table = $('#meeting').DataTable();
+    });
+
+    $(document).ready(function () {
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+    });
+    (function () {
+        var searchForm = document.getElementById('meeting'),
+            clearBtn = textInput.nextSibling;
+        textInput.onkeyup = function () {
+            clearBtn.style.visibility = (this.value.length) ? "visible" : "hidden";
+        };
+        clearBtn.onclick = function () {
+            this.style.visibility = "hidden";
+            textInput.value = "";
+        };
+    })();
+</script>
+<script>
+    function DeleteCandidateFromTest(id, channelid) {
+        swal.fire({
+            title: 'Are you sure you want to delete Interviewer?',
+            text: "It will be permanently deleted !",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/DashBoard/DeleteInterviewer',
+                        data: { 'id': id, 'channelid': channelid },
+                        type: 'POST',
+                        success: function (result) {
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deleted!',
+                    type: 'success',
+                    html: '<p>Interviewer has been deleted.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/DashBoard/Interviewer/" + channelid;
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Not deleted!',
+                    'error'
+                )
+            }
+        })
+    }
+</script>
+
