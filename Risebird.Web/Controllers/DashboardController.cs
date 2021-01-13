@@ -575,6 +575,24 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        public async Task<ActionResult> EditInterviewer(int id, int channelid)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var model = await _dashboardService.FecthInterviewerById(id);
+                model.Channelid = channelid;
+                var Priority = from Prioritylevels s in Enum.GetValues(typeof(Prioritylevels))
+                               select new { ID = (int)s, Name = s.GetDescription() };
+                model.Prioritylist = new SelectList(Priority, "ID", "Name");
+                return View("AddInterviewer", model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
         #endregion
     }
 }

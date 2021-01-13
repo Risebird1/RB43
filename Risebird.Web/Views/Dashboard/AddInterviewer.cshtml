@@ -250,12 +250,14 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-md-6 col-sm-6 px-1">
-                                    <input type="hidden" value="@Model.TrainingTime" id="txttrainingtime" />
+                                    <input type="hidden" value="@Model.Training" id="txttrainingtime" />
                                     <div id="divtraingtime" style="display:none">
-                                        @Html.LabelFor(model => model.TrainingTime, htmlAttributes: new { @class = "control-label  col-lg-4 col-md-4 col-sm-12 col-xs-12 desp-label pull-left nopad tp25"})
-                                        @Html.EditorFor(model => model.TrainingTime, new { htmlAttributes = new { @class = "col-md-8 pull-left form-control text-box single-line", @type = "datetime", @style = "margin-top: 18px!important;" } })
+                                        @Html.LabelFor(model => model.TrainingTime, htmlAttributes: new { @class = "control-label  col-lg-4 col-md-4 col-sm-12 col-xs-12 desp-label pull-left nopad tp25" })
+                                        @Html.EditorFor(model => model.TrainingTime, new { htmlAttributes = new { @class = "col-md-8 pull-left form-control text-box single-line", @type = "datetime-local", @style = "margin-top: 18px!important;" } })
                                     </div>
-
+                                    <div id="divtraingtime1" class="tp25">
+                                       No Timing
+                                    </div>
                                 </div>
                                 <div class="col-lg-3 col-md-6 col-sm-6 px-1">
                                     <div class="form-group radiobox">
@@ -266,12 +268,14 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-md-6 col-sm-6 px-1">
-                                    <input type="hidden" value="@Model.CallTime" id="txtcalltime" />
+                                    <input type="hidden" value="@Model.CallAttended" id="txtcalltime" />
                                     <div id="divcalltime" style="display:none">
                                         @Html.LabelFor(model => model.CallTime, htmlAttributes: new { @class = "control-label  col-lg-4 col-md-4 col-sm-12 col-xs-12 desp-label pull-left nopad tp25" })
-                                        @Html.EditorFor(model => model.CallTime, new { htmlAttributes = new { @class = "form-control text-box single-line col-md-8 pull-left form-control text-box single-line call-time", @type = "datetime", @style="margin-top:18px!important;"} })
+                                        @Html.EditorFor(model => model.CallTime, new { htmlAttributes = new { @class = "form-control text-box single-line col-md-8 pull-left form-control text-box single-line call-time", @type = "datetime-local", @style = "margin-top:18px!important;" } })
                                     </div>
-
+                                    <div id="divcalltime1" class="tp25">
+                                        No Call time
+                                    </div>
                                 </div>
                             </div>
 
@@ -337,20 +341,24 @@
     function RadioTraining(val) {
         if (val == 'Yes') {
             document.getElementById("divtraingtime").style.display = "block";
+            document.getElementById("divtraingtime1").style.display = "none";
             $("#txttrainingtime").val('1');
         }
         else {
             document.getElementById("divtraingtime").style.display = "none";
+            document.getElementById("divtraingtime1").style.display = "block";
             $("#txttrainingtime").val('0');
         }
     }
     function Radiocall(val) {
         if (val == 'Yes') {
             document.getElementById("divcalltime").style.display = "block";
+            document.getElementById("divcalltime1").style.display = "none";
             $("#txtcalltime").val('1');
         }
         else {
             document.getElementById("divcalltime").style.display = "none";
+            document.getElementById("divcalltime1").style.display = "block";
             $("#txtcalltime").val('0');
         }
     }

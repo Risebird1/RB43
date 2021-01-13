@@ -29,5 +29,6 @@ namespace Risebird.Business.Interface
         Task<string> AddChannelInterviewer(ChannelInterviewerVM request);
         Task<List<ChannelInterviewerVM>> FetchInterviewerBychannelid(int id);
         Task<string> DeleteChannelInterviewerByid(int id, int channelid);
+        Task<ChannelInterviewerVM> FecthInterviewerById(int id);
     }
 }

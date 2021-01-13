@@ -513,7 +513,7 @@ namespace Risebird.Repository
                     var result = await con.QueryAsync<int>(query, dynamicParameters);
                     CreatedBy = result.FirstOrDefault();
                     var ProcessedDate = DateTime.Now;
-                    string sqlInsertReport = "INSERT INTO ChannelMInterviewer (ProcessedDate,Name,EmailAddress,Mobile,CVLink,CodedCVLink,PrimarySKill,Role,Priority,Comment,Approved,DMCallAvailability,AddedoverPortal,AddedoverSKillChannel,QC,Emergency,Training,AdvancePayment,CallAttended,Channelid,CreatedBy,Trainingmailsend,PerInterviewrate,TrainingTime) Values (@ProcessedDate,@Name,@EmailAddress,@Mobile,@CVLink,@CodedCVLink,@PrimarySKill,@Role,@Priority,@Comment,@Approved,@DMCallAvailability,@AddedoverPortal,@AddedoverSKillChannel,@QC,@Emergency,@Training,@AdvancePayment,@CallAttended,@Channelid,@CreatedBy,@Trainingmailsend,@PerInterviewrate,@TrainingTime);";
+                    string sqlInsertReport = "INSERT INTO ChannelMInterviewer (ProcessedDate,Name,EmailAddress,Mobile,CVLink,CodedCVLink,PrimarySKill,Role,Priority,Comment,Approved,DMCallAvailability,AddedoverPortal,AddedoverSKillChannel,QC,Emergency,Training,AdvancePayment,CallAttended,Channelid,CreatedBy,Trainingmailsend,PerInterviewrate,TrainingTime,CallTime) Values (@ProcessedDate,@Name,@EmailAddress,@Mobile,@CVLink,@CodedCVLink,@PrimarySKill,@Role,@Priority,@Comment,@Approved,@DMCallAvailability,@AddedoverPortal,@AddedoverSKillChannel,@QC,@Emergency,@Training,@AdvancePayment,@CallAttended,@Channelid,@CreatedBy,@Trainingmailsend,@PerInterviewrate,@TrainingTime,@CallTime);";
                     var affectedRows = con.ExecuteAsync(sqlInsertReport, new
                     {
                         ProcessedDate,
@@ -539,7 +539,8 @@ namespace Risebird.Repository
                         CreatedBy,
                         request.Trainingmailsend,
                         request.PerInterviewrate,
-                        request.TrainingTime
+                        request.TrainingTime,
+                        request.CallTime
                     }).Result;
                     return "Success";
                 }
@@ -602,6 +603,30 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "";
+            }
+        }
+        public async Task<ChannelInterviewerVM> FecthInterviewerById(int id)
+        {
+            try
+            {
+                var query = "Select * from ChannelMInterviewer where id=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<ChannelInterviewerVM>(query, dynamicParameters);
+                    return (ChannelInterviewerVM)result.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
     }

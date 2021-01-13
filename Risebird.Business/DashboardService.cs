@@ -277,12 +277,24 @@ namespace Risebird.Business
         {
             try
             {
-                return await _dashboardRespository.DeleteChannelInterviewerByid(id,channelid);
+                return await _dashboardRespository.DeleteChannelInterviewerByid(id, channelid);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "";
+            }
+        }
+        public async Task<ChannelInterviewerVM> FecthInterviewerById(int id)
+        {
+            try
+            {
+                return await _dashboardRespository.FecthInterviewerById(id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }
