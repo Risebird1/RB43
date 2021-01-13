@@ -16,7 +16,7 @@ using Risebird.CommonHelper;
 
 namespace Risebird.Web.Controllers
 {
-    [Authorize]
+    
     public class DashboardController : Controller
     {
         private readonly IDashboardService _dashboardService;
@@ -30,7 +30,7 @@ namespace Risebird.Web.Controllers
             _notificationHelper = notificationHelper;
             _azureStorageHelper = azureStorageHelper;
         }
-
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             try
@@ -93,7 +93,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [Authorize]
         public static void AddProperty(ExpandoObject expando, string propertyName, object propertyValue)
         {
             // ExpandoObject supports IDictionary so we can extend it like this
@@ -103,7 +103,7 @@ namespace Risebird.Web.Controllers
             else
                 expandoDict.Add(propertyName, propertyValue);
         }
-
+        [Authorize]
         public DashboardVM GetDateWiseInterviews(DateTime date)
         {
             try
@@ -136,7 +136,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [Authorize]
         public IActionResult GetDateWiseInterviewStatus(DateTime date)
         {
             try
@@ -152,7 +152,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [Authorize]
         public IActionResult GetDateWiseMeetingsSlots(DateTime date)
         {
             try
@@ -167,7 +167,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> UpdateIRFProgress(DashboardVM model)
         {
@@ -182,6 +182,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        [Authorize]
         public async Task<IActionResult> GetDateWiseIRFProgress(DateTime date)
         {
             try
@@ -199,7 +200,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [Authorize]
         public async Task<IActionResult> ClientIndex()
         {
             try
@@ -240,7 +241,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [Authorize]
         public ClientDashboardVM GetDateWiseClientInterviews(DateTime date, string emailId)
         {
             try
@@ -273,7 +274,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [Authorize]
         public IActionResult GetDateWiseClientMeetingsSlots(DateTime date, string emailId)
         {
             try
@@ -288,7 +289,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        [Authorize]
         public JsonResult FetchActivityDetails(int id, int idprogess)
         {
             var result = _dashboardService.FetchActivityDetails(id, idprogess);
