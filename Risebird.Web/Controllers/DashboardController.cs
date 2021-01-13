@@ -40,7 +40,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
 
-                    if (profileName == "Admin")
+                    if (profileName == "Admin" || profileName == "HR")
                     {
                         var model = new DashboardVM();
 
@@ -410,7 +410,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin")
+                if (profileName == "Admin" || profileName == "HR")
                 {
                     ViewBag.type = "back";
                     var model = await _dashboardService.FetchChannelRequestsByid(id);
@@ -438,7 +438,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin")
+                if (profileName == "Admin" || profileName == "HR")
                 {
                     var model = await _dashboardService.FetchInterviewerBychannelid(id);
                     ViewBag.channelid = id;
@@ -467,7 +467,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin")
+                if (profileName == "Admin" || profileName == "HR")
                 {
                     var model = new ChannelInterviewerVM();
                     model.Channelid = id;
@@ -497,7 +497,7 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 model.CreatedBy = emailid;
-                if (profileName == "Admin")
+                if (profileName == "Admin" || profileName == "HR")
                 {
                     if (!ModelState.IsValid)
                     {
