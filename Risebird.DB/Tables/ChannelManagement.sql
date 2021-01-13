@@ -1,0 +1,37 @@
+IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_NAME = N'ChannelManagement')
+BEGIN  
+CREATE TABLE [dbo].[ChannelManagement](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[Client] [varchar](100) NULL,
+	[Recruiter] [varchar](150) NULL,
+	[PrimarySkill] [varchar](50) NULL,
+	[EndClient] [varchar](100) NULL,
+	[Location] [varchar](200) NULL,
+	[ExpectedVolume] [int] NULL,
+	[JdLink] [varchar](max) NULL,
+	[WeekendDrive] [bit] NULL,
+	[POGenerated] [bit] NULL,
+	[IPSCreated] [bit] NULL,
+	[CalendlyLinkCreated] [bit] NULL,
+	[CandidateSourcing] [bit] NULL,
+	[AdditionalComment] [varchar](max) NULL,
+	[HRCoordinator] [varchar](150) NULL,
+	[ProgramManager] [varchar](150) NULL,
+	[IRFID] [bit] NULL,
+	[IRFIDs] [varchar](200) NULL,
+	[Priority] [varchar](5) NULL,
+	[CreatedBy] [varchar](150) NULL,
+	[CreatedDate] [datetime] NULL,
+	[Status] [varchar](10) NULL,
+	[RequesterEmailid] [varchar](150) NULL,
+	[RequesterMobile] [varchar](14) NULL,
+ CONSTRAINT [PK_ChannelManagement] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+END
+GO
+
+
