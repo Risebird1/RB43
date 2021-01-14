@@ -72,7 +72,7 @@ namespace Risebird.Business.Interface
         string HRAssignYourself(int meetingid, string hrMailId);
         IEnumerable<Meeting> GetHRAssignedInterviews(string emailID);
         bool HRUnassignYourself(int meetingid);
-        bool SaveHRComment(int id, string comment);
+        Task<bool> SaveHRComment(int id, string comment, string imageFileURL, string performedBy, string candidateNameEmail);
         Task<List<MeetingVM>> GetCPMeetings(int clientId, string profile, string Emailid);
         IEnumerable<int> GetCuratedGroupIRFs(int curatedGroupId);
         Task<string> AddSharedVideoDetails(InterviewReport reportModel);

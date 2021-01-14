@@ -33,6 +33,18 @@ textarea::-webkit-scrollbar-thumb {
         background-color: #fcfcfc!important;
         border: 0px!important;
     }
+.file-upload .file-select {
+    display: block;
+    border: 2px solid #dce4ec;
+}
+
+    .file-upload .file-select .file-select-button {
+        background: #e4e2e2;
+    }
+.click-btn, .click-btn:hover {
+    background: #b1aeae;
+    color: #fff !important;
+}
 .table-bordered {
     border: 1px solid #dee2e6 !important;
 

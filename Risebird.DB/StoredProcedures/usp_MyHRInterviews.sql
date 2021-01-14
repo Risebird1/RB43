@@ -17,7 +17,7 @@ AS
 BEGIN      
 select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact, ulc.MobileNumber as ClientHrMobile,im.staffingAgency, uls.MobileNumber as StaffingAgencyMobile,
 im.confirmationStatus, im.interviewer, im.candidateName, im.QCInterviewer, ca.Phone as MobileNumber,
-ca.ResumeLink as resumeLink ,irf.JDLink, ca.CandidateMasterId, uli.MobileNumber as InterviewerPhone, im.HRComment, IRF.JDTiltle, IRF.id as irfIntId from InterviewMeetings im   
+ca.ResumeLink as resumeLink ,irf.JDLink, ca.CandidateMasterId, uli.MobileNumber as InterviewerPhone, im.HRComment, IRF.JDTiltle, IRF.id as irfIntId, im.HRImageFileURL, im.candidateEmail, ul.FirstName as candidateName from InterviewMeetings im   
 inner join IRF  irf on im.IRFId=irf.IRFId
 left join UserList ul on ul.EmailId = im.candidateEmail
 join  CandidatesMaster cm on ul.id=cm.UserId
@@ -25,9 +25,8 @@ join Candidate ca on irf.id=ca.IRFId and cm.id = ca.CandidateMasterId
 left join UserList uli on uli.EmailId = im.interviewer
 left join UserList ulc on ulc.EmailId = im.ClientHrContact
 left join UserList uls on uls.EmailId = im.staffingAgency
-where HRCoordinatorEmailId =@emailID and confirmationStatus = 1          
-      
-END
+where HRCoordinatorEmailId =@emailID and confirmationStatus = 1 
+End
 GO
 
 

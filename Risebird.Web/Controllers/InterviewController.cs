@@ -5366,18 +5366,82 @@ namespace Risebird.Web.Controllers
         }
         #endregion
         [Authorize]
-        public bool SaveHRComment(int id, string comment)
+        [HttpPost]
+        public async Task<bool> SaveHRComment()
         {
-            var result = _meetingService.SaveHRComment(id, comment);
-            if (result)
+            try
             {
-                TempData["SuccessErrorMessageHR"] = "HR comments saved Successfully!";
+                var loggedInUser = HttpContext.Session.GetString("email");
+                loggedInUser = loggedInUser.Replace("\"", "").Trim();
+                
+                var nvc = Request.Form;
+                string comment = string.Empty;
+                string candidateDetails = string.Empty;
+                int id = 0;
+                if (!string.IsNullOrEmpty(nvc["id"]))
+                {
+                    id = Convert.ToInt32(nvc["id"]);
+                }
 
+                if (!string.IsNullOrEmpty(nvc["comment"]))
+                {
+                    comment = nvc["comment"];
+                }
+                if (!string.IsNullOrEmpty(nvc["candidateDetails"]))
+                {
+                    candidateDetails = nvc["candidateDetails"];
+                }
+
+                string uploadedFileURL = string.Empty;
+
+                if (id != 0 && !string.IsNullOrEmpty(comment))
+                {
+                    if (Request.Form.Files.Count() > 0)
+                    {
+                        var imageFile = Request.Form.Files[0];
+                        await _azureStorageHelper.InsertBlob(imageFile.FileName, "images", imageFile);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("images");
+                        var blob = containerRef.GetBlockBlobReference(imageFile.FileName);
+                        uploadedFileURL = blob.Uri.ToString();
+                        if (string.IsNullOrEmpty(uploadedFileURL))
+                        {
+                            TempData["SuccessErrorMessageHR"] = "Error uploading the image!";
+                            return false;
+                        }
+
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(nvc["uploadedFileURL"]))
+                        {
+                            uploadedFileURL = nvc["uploadedFileURL"];
+                        }
+                    }
+                    var result = await _meetingService.SaveHRComment(id, comment, uploadedFileURL, loggedInUser, candidateDetails);
+                    if (result)
+                    {
+                        TempData["SuccessErrorMessageHR"] = "HR comments saved Successfully!";
+
+                    }
+                    else
+                        TempData["SuccessErrorMessageHR"] = "Failed to save HR comments!";
+
+                    return result;
+                }
+                else
+                {
+                    TempData["SuccessErrorMessageHR"] = "Failed to save HR comments!";
+                    return false;
+                }
             }
-            else
-                TempData["SuccessErrorMessageHR"] = "Failed to save HR comments!";
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
 
-            return result;
+
+            
 
         }
 

@@ -24,6 +24,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
 	[IsEmergency] [bit] NOT NULL,
     HRCoordinatorEmailId VARCHAR(100),
     HRComment VARCHAR(max),
+    HRImageFileURL VARCHAR(max),
 	[InterviewBiometryScore] [decimal](10, 2) NULL,
 	[JoiningBiometryScore] [decimal](10, 2) NULL,
 	[sCreatedBy] [varchar](100) NOT NULL CONSTRAINT [DF_InterviewMeetings_sCreatedBy]  DEFAULT ('NA'),	
@@ -133,6 +134,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewMeetings
     Add HRComment VARCHAR(max)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'HRImageFileURL')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add HRImageFileURL VARCHAR(max)
 END
 
 END

@@ -23,7 +23,8 @@ namespace Risebird.Business
         private readonly IEvaluatorRepository _evaluatorRespository;
         private readonly IVoiceItRepository _voiceItRepository;
         private readonly ISupportRepository _supportRespository;
-        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository)
+        private readonly IActivityTrackerRepository _activityTrackerRepository;
+        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -34,6 +35,7 @@ namespace Risebird.Business
             _evaluatorRespository = evaluatorRespository;
             _voiceItRepository = voiceItRepository;
             _supportRespository = supportRespository;
+            _activityTrackerRepository = activityTrackerRepository;
         }
 
         public List<MeetingVM> GetMeetingList()
@@ -1499,16 +1501,25 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public bool SaveHRComment(int id, string comment)
+        public async Task<bool> SaveHRComment(int id, string comment, string imageFileURL, string performedBy, string candidateNameEmail)
         {
             try
             {
-                return _meetingRespository.SaveHRComment(id, comment);
+                var result = await _meetingRespository.SaveHRComment(id, comment, imageFileURL);
+                var activityTrackerModel = new ActivityTrackerVM();
+                activityTrackerModel.ActivityType = (int)ActivityTypes.HRComment;
+                activityTrackerModel.Name = candidateNameEmail;
+                activityTrackerModel.PerformedBy = performedBy;
+                activityTrackerModel.FileUrl = imageFileURL;
+                activityTrackerModel.Summary = comment;
+
+                await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                return result;
 
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
