@@ -23,12 +23,14 @@ namespace Risebird.Web.Controllers
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
         private readonly IAzureStorageHelper _azureStorageHelper;
-        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper)
+        private readonly IUserService _userService;
+        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IUserService userService)
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
             _azureStorageHelper = azureStorageHelper;
+            _userService = userService;
         }
         [Authorize]
         public async Task<IActionResult> Index()
@@ -328,6 +330,12 @@ namespace Risebird.Web.Controllers
             else
             {
                 ViewBag.type = "no";
+                var menus = _userService.GetMenuBasedOnUserEmailld("Admin").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (menus != null)
+                {
+                    menus = menus.Where(x => x.functionName == "Support").ToList();
+                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                }
             }
             var model = new ChannelVM();
             model.isEditable = false;
@@ -398,6 +406,12 @@ namespace Risebird.Web.Controllers
                 }
                 if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
                 {
+                    var menus = _userService.GetMenuBasedOnUserEmailld("Admin").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                    if (menus != null)
+                    {
+                        menus = menus.Where(x => x.functionName == "Support").ToList();
+                        HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                    }
                     return View();
                 }
                 return RedirectToAction("RequirementManagement");
