@@ -37,9 +37,7 @@
     JoiningStatus = filter.JoiningStatus != null ? filter.JoiningStatus : new string[] { };
     OfferStatus = filter.OfferStatus != null ? filter.OfferStatus : new string[] { };
 }
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=345678" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=234567" />
 <div class="main-panel" id="main-panel">
@@ -576,11 +574,7 @@
                                                                 {
 
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Verify">
-
-                                                                        @*<span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Client", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>*@
-
-                                                                        <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Client", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
-
+                                                                        <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Client", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
                                                                     </button>
 
 
@@ -1529,10 +1523,7 @@
 
             if (data[i].isBiometricEnabled) {
                 html += ' <button class="mdc-fab app-fab--absolute" aria-label="Verify">';
-
-
-                html += '  <a href ="/Client/VerifyJoiningAudio?candidateId = ' + data[i].candidateId + '&CandidateName=' + data[i].candidateName + '&irfId=' + data[i].irfIntId + '&meetingId=' + data[i].imid + '" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></a>';
-
+                html += '  <a href ="/Client/VerifyJoiningAudio?candidateId = ' + data[i].candidateId + '&CandidateName=' + data[i].candidateName + '&irfId=' + data[i].irfIntId + '&meetingId=' + data[i].imid + '" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255) d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></a>';
                 html += '  </button>';
             }
             html += '</td>';
