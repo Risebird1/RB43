@@ -10,8 +10,8 @@
 
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css?v=1" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css?v=1" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=14567" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=14567" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css?v=1" defer>
 <!-- END PLUGINS -->
 <!-- START THIS PAGE PLUGINS-->
@@ -91,7 +91,7 @@
                 </div>
                 <!-- END DASHBOARD CHART -->
                 <!--Start channel Management-->
-                <div class="row" style="padding-bottom:30px">
+                <div class="row" style="padding-bottom:5px">
 
                     <div class="skill">
 
@@ -146,7 +146,7 @@
                     <div class="daily-interview">
 
                         <!-- START IRF BLOCK -->
-                        <div class="panel panel-default">
+                        <div class="panel panel-default" style="margin-bottom:0px;">
                             <div class="panel-heading">
                                 <div class="panel-title-box">
                                     <h3>Daily Interview Stats</h3>
@@ -247,18 +247,22 @@
                                     }
                                 </div>
                             </div>
+
+
                         </div>
                         <!-- END IRF BLOCK -->
+                        
 
+                       
                     </div>
 
 
                 </div>
                 <!--End Channel Management-->
 
-                <div class="row" style="padding-bottom:30px">
+                <div class="row" style="padding-bottom:5px">
 
-                    <div class="skill">
+                    <div class="col-md-12">
 
                         <!-- START INTERVIEW BLOCK -->
                         <div class="panel panel-default">
@@ -291,8 +295,8 @@
                                                 <table class="table table-bordered table-striped">
                                                     <thead>
                                                         <tr>
-                                                            <th width="50%">Skill Channel</th>
-                                                            <th width="20%">Status</th>
+                                                            <th width="40%">Skill Channel</th>
+                                                            <th width="30%">Status</th>
                                                             <th width="30%">Activity</th>
                                                         </tr>
                                                     </thead>
@@ -424,8 +428,9 @@
                         <!-- END INTERVIEW BLOCK -->
 
                     </div>
-
-                    <div class="daily-interview">
+                </div>
+                <div class="row">
+                    <div class="col-md-12 nopad">
                         <div class="col-lg-4 col-md-4 col-sm-4">
 
                             <div class="card">
@@ -461,11 +466,12 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
 
-                <!-- START WIDGETS -->
-                @*<div class="row">
+            </div>
+
+            <!-- START WIDGETS -->
+            @*<div class="row">
 
 
                     <div class="col-lg-4 col-md-4 col-sm-4">
@@ -503,20 +509,15 @@
                         </div>
                     </div>
                 </div>*@
-                <!-- END WIDGETS -->
+            <!-- END WIDGETS -->
 
 
-            </div>
-            <!-- END PAGE CONTENT WRAPPER -->
         </div>
-        <!-- END PAGE CONTENT -->
+        <!-- END PAGE CONTENT WRAPPER -->
     </div>
-    <!-- END PAGE CONTAINER -->
-
-
-
-
-
+    <!-- END PAGE CONTENT -->
+</div>
+<!-- END PAGE CONTAINER -->
 </div>
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -610,15 +611,15 @@
 
         var chart = new CanvasJS.Chart("interviewers", {
            theme: "light2",
-            width: 180,//in pixels
-            height: 140,//in pixels
+            width: 350,//in pixels
+            height: 200,//in pixels
             animationEnabled: true,
             title: null,
             data: [{
                 type: "pie",
                 startAngle: 60,
                 innerRadius: 55,
-                indexLabelFontSize: 8,
+                indexLabelFontSize: 15,
                 indexLabelFontColor: "#9a9a9a",
                 indexLabel: "{label}  {y}",
                 toolTipContent: "<b>{label} </b>({y})",
@@ -641,15 +642,15 @@
 
         var chart = new CanvasJS.Chart("meetingsCountId", {
            theme: "light2",
-            width: 180,//in pixels
-            height: 140,//in pixels
+            width: 350,//in pixels
+            height: 200,//in pixels
             animationEnabled: true,
             title: null,
             data: [{
                 type: "pie",
                 startAngle: 60,
                 innerRadius: 55,
-                indexLabelFontSize: 8,
+                indexLabelFontSize: 15,
                 indexLabelFontColor: "#9a9a9a",
                 indexLabel: "{label}  {y}",
                 toolTipContent: "<b>{label} </b>({y})",
@@ -672,15 +673,15 @@
 
         var chart = new CanvasJS.Chart("candidatesPieId", {
            theme: "light2",
-            width: 180,//in pixels
-            height: 140,//in pixels
+            width: 350,//in pixels
+            height: 200,//in pixels
             animationEnabled: true,
             title: null,
             data: [{
                 type: "pie",
                 startAngle: 60,
-                innerRadius: 45,
-                indexLabelFontSize: 8,
+                innerRadius: 55,
+                indexLabelFontSize: 15,
                 indexLabelFontColor: "#9a9a9a",
                 indexLabel: "{label}  {y}",
                 toolTipContent: "<b>{label} </b>({y})",
