@@ -369,7 +369,7 @@
                                         </div>
 
                                         <div class="col-sm-12 col-md-7 dataTables_paginate pull-right " id="divmeetingpages">
-                                            @Html.PagedListPager(Model, Page => Url.Action("InterviewMeetings", new { Page = Page }))
+                                            @Html.PagedListPager(Model, Page => Url.Action("SelectedInterviewMeetings", new { Page = Page }))
                                         </div>
                                     </div>
                                 </div>

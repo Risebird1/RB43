@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+﻿@*@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>*@
+@model X.PagedList.IPagedList<Risebird.Entities.ViewModel.MeetingVM>
+@using X.PagedList.Mvc.Core;
 @{
     ViewData["Title"] = "Project Selected Candidate";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -6,6 +8,7 @@
 
 <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=6" />
+<input type="hidden" value="@ViewBag.IRFId" id="hidirfid" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -27,173 +30,303 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <div class="desktop-view">
+                        <h4 class="card-title">     Selected Candidate list for <b>@ViewBag.ProjectName</b></h4>
+                    </div>
+                    <div class="mobile-view"><h4 class="card-title">     Selected Candidate list for <b>@ViewBag.ProjectName</b></h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div class="selectedmeeting">
+
+                        @Html.ActionLink("Back", "Index", "Project", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                        <div id="meeting_filter" class="dataTables_filter pull-left mt-20" style="margin-right:10px;">
+
+                            <div class="searchCon">
+
+                                <button onclick="searchResult()" type="button" id="search">&nbsp</button>
+                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.searchValue">
+
+
+
+                                <button style="display:none;" type="button" id="x">x</button>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="content selectedinterview">
-        <div class="row">
+
+    <div class="content client">
+        <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
 
                     <div class="mdc-card-wrapper__text-section">
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
-                            <div class="toolbar" style="margin-bottom:10px;">
-                                <div class="row">
-                                    <div class="card-header">
-                                        <div class="pull-left">
-                                            <h4 class="card-title">
-                                                Selected Candidate list for <b>@ViewBag.ProjectName</b>
-                                            </h4>
+
+
+                            <div>
+                                <div id="tableID">
+                                    <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-12 nopad">
+                                            <div class="table-responsive">
+                                                <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="border-right: 0px !important;"></th>
+                                                            <th id='start' style="border-right: 0px !important;">Interview Date</th>
+                                                            <th>IRF</th>
+                                                            <th>Candidate Name</th>
+                                                            <th>Report</th>
+                                                            <th>Resume</th>
+                                                            <th>Contact</th>
+                                                            <th>Client HR</th>
+                                                            <th>Confirmation Status</th>
+                                                            <th>Meeting Status</th>
+                                                            <th>Selection Status</th>
+
+                                                            @if (ViewBag.ProfileName == "client")
+                                                            {
+
+                                                                <th>Action</th>
+                                                            }
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th style="border-right: 0px !important;"></th>
+                                                            <th style="border-left: 0px !important;">Interview Date</th>
+                                                            <th>IRF</th>
+                                                            <th>Candidate Name</th>
+                                                            <th>Report</th>
+                                                            <th>Resume</th>
+                                                            <th>Contact</th>
+                                                            <th>Client HR</th>
+                                                            <th>Confirmation Status</th>
+                                                            <th>Meeting Status</th>
+                                                            <th>Selection Status</th>
+
+
+                                                            @if (ViewBag.ProfileName == "client")
+                                                            {
+                                                                <th>Action</th>
+                                                            }
+                                                        </tr>
+                                                    </tfoot>
+                                                    <tbody id="tbProjectSelectedInterviewMeeting">
+
+
+                                                        @foreach (var item in Model)
+                                                        {
+                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+
+                                                            <tr id="@item.imid" data-changes="1">
+                                                                <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
+                                                                <td> @item.interviewDate </td>
+                                                                <td> @item.IRFId </td>
+
+                                                                @if (item.candidateName != null && item.candidateName != "")
+                                                                {
+
+                                                                    @if (item.candidateName.Length > 18)
+                                                                    {
+
+
+                                                                        <td class="cadName">
+                                                                            <a onclick="" data-tooltip="@item.candidateName"> @item.candidateName.Substring(0, 18)... </a>
+                                                                        </td>
+                                                                    }
+
+
+                                                                    else
+                                                                    {
+                                                                        <td class="cadName">
+                                                                            <a onclick=""> @item.candidateName </a>
+                                                                        </td>
+                                                                    }
+
+                                                                }
+
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+
+                                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId=item.irfIntId, IsSelected = true})'>Report</a> </td>
+                                                                @if (item.resumeLink != null && item.resumeLink != "")
+                                                                {
+                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No Resume</td>
+                                                                }
+
+                                                                @if (item.MobileNumber != null && item.MobileNumber != "")
+                                                                {
+                                                                    <td>@item.MobileNumber</td>
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No Contact</td>
+                                                                }
+
+
+                                                                @if (item.ClientHrContact != null && item.ClientHrContact != "")
+                                                                {
+
+                                                                    @if (item.ClientHrContact.Length > 15)
+                                                                    {
+
+
+                                                                        <td class="cadEmail">
+                                                                            <a onclick="" data-tooltip="@item.ClientHrContact"> @item.ClientHrContact.Substring(0, 15)... </a>
+                                                                        </td>
+                                                                    }
+
+
+                                                                    else
+                                                                    {
+                                                                        <td class="cadEmail">
+                                                                            <a onclick=""> @item.ClientHrContact </a>
+                                                                        </td>
+                                                                    }
+
+                                                                }
+
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+                                                                @if (item.confirmationStatus != null && item.confirmationStatus != "")
+                                                                {
+                                                                    <td> @item.confirmationStatus</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+                                                                @if (item.MeetingStatusStatusDesc != null && item.MeetingStatusStatusDesc != "")
+                                                                {
+                                                                    <td> @item.MeetingStatusStatusDesc </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+                                                                @if (item.intervieweStatusStatDesc != null && item.intervieweStatusStatDesc != "")
+                                                                {
+
+                                                                    <td> @item.intervieweStatusStatDesc </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+                                                                @if (ViewBag.ProfileName == "client")
+                                                                {
+
+                                                                    <td class="text-right">
+                                                                        <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_" + item.imid)" class="mdc-fab app-fab--absolute"><i class="fa fa-thumbs-up"></i></span>
+                                                                    </td>
+                                                                }
+                                                            </tr>
+
+
+                                                            <tr class="collapse @item.imid">
+                                                                <td colspan="999" class="child-section">
+                                                                    <table class="table table-striped table-responsive">
+                                                                        <tr>
+                                                                            <th>Current Employer</th>
+                                                                            <th>Expected Salary</th>
+                                                                            <th>Expected Joining Time</th>
+                                                                            <th>Preferred Location</th>
+                                                                            <th>Staffing Agency</th>
+                                                                            <th>Approval Status</th>
+                                                                            <th>Approval Comments</th>
+                                                                            <th>Final Selection Status</th>
+                                                                            <th>Final Selection Comments</th>
+                                                                        </tr>
+                                                                        <tr>
+
+
+                                                                            <td> @item.currentEmployerName </td>
+                                                                            <td> @item.expectedPerHourRate </td>
+                                                                            <td> @item.joiningTime </td>
+                                                                            <td> @item.preferredLocation </td>
+                                                                            <td>@item.staffingAgency</td>
+                                                                            <td class="text-center">
+                                                                                @item.NextLevelApprovalStat
+                                                                            </td>
+
+
+
+
+                                                                            <td style="padding: 4px 5px;">
+                                                                                <div class="talk-bubble tri-right border-bubble right-in ">
+                                                                                    <div class="talktext">
+                                                                                        <textarea class="scrollbar" style="height: 40px; width:100%;">@item.ApprovalComments</textarea>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+
+
+                                                                            <td class="text-center">
+                                                                                @item.FinalSelectionStat
+                                                                            </td>
+
+
+
+                                                                            <td style="padding: 4px 5px;">
+                                                                                <div class="talk-bubble tri-right border-bubble right-in ">
+                                                                                    <div class="talktext">
+                                                                                        <textarea class="scrollbar" style="height: 40px; width:100%;">@item.FinalComments</textarea>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+
+
+
+
+
+                                                                        </tr>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+
+
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
 
-                                        <div class="pull-right">
-                                            @Html.ActionLink("Back", "Index", "Project", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+
+                                        <div class="col-sm-12 col-md-5 pull-left" id="divmeetingentries">
+                                            Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
+                                        </div>
+
+                                        <div class="col-sm-12 col-md-7 dataTables_paginate pull-right " id="divmeetingpages">
+                                            @Html.PagedListPager(Model, Page => Url.Action("SelectedInterviewMeetings", new { Page = Page }))
                                         </div>
                                     </div>
-
-
                                 </div>
-
-                            </div>
-
-                            <div style="overflow-x:scroll" class="scrollbar" id="style-2">
-                                <div id="tableID">
-                                    <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <th id='start'>Interview Date</th>
-                                                <th>IRF</th>
-                                                <th>Candidate Name</th>
-                                                <th>Report Link</th>
-                                                <th>Resume</th>
-                                                <th>Candidate Contact</th>
-                                                <th>Client HR</th>
-                                                <th>Confirmation Status</th>
-                                                <th>Meeting Status</th>
-                                                <th>Selection Status</th>
-                                                <th>Current Employer</th>
-                                                <th>Expected Salary</th>
-                                                <th>Expected Joining Time</th>
-                                                <th>Preferred Location</th>
-                                                <th>Staffing Agency</th>
-                                                <th>Approval Status</th>
-                                                <th>Approval Comments</th>
-                                               
-                                                <th>Final Selection Status</th>
-                                                <th>Final Selection Comments</th>
-                                               
-                                                @if (ViewBag.ProfileName == "client")
-                                                {
-                                                    <th>Action</th>
-
-                                                }
-                                            </tr>
-                                        </thead>
-                                        <tfoot>
-                                            <tr>
-                                                <th>Interview Date</th>
-                                                <th>IRF</th>
-                                                <th>Candidate Name</th>
-                                                <th>Report Link</th>
-                                                <th>Resume</th>
-                                                <th>Candidate Contact</th>
-                                                <th>Client HR</th>
-                                                <th>Confirmation Status</th>
-                                                <th>Meeting Status</th>
-                                                <th>Selection Status</th>
-                                                <th>Current Employer</th>
-                                                <th>Expected Salary</th>
-                                                <th>Expected Joining Time</th>
-                                                <th>Preferred Location</th>
-                                                <th>Staffing Agency</th>
-                                                <th>Approval Status</th>
-                                                <th>Approval Comments</th>
-                                                
-                                                <th>Final Selection Status</th>
-                                                <th>Final Selection Comments</th>
-                                                
-                                                @if (ViewBag.ProfileName == "client")
-                                                {
-                                                    <th>Action</th>
-                                                }
-                                            </tr>
-                                        </tfoot>
-                                        <tbody>
-
-
-                                            @foreach (var item in Model)
-                                            {
-                                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-
-                                            <tr id=@item.imid>
-                                                <td> @item.interviewDate </td>
-                                                <td> @item.IRFId </td>
-                                                <td> @item.candidateName </td>
-                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId=item.irfIntId, IsSelected = true})'>Report</a> </td>
-                                                @if (item.resumeLink != null && item.resumeLink != "")
-                                                {
-                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Resume</td>
-                                                }
-
-                                                @if (item.MobileNumber != null)
-                                                {
-                                                    <td>@item.MobileNumber</td>
-
-                                                }
-                                                else
-                                                {
-                                                    <td>No Contact</td>
-                                                }
-                                                <td> @item.ClientHrContact </td>
-                                                <td> @item.confirmationStatus</td>
-                                                <td> @item.MeetingStatusStatusDesc </td>
-                                                <td> @item.intervieweStatusStatDesc </td>
-                                                <td> @item.currentEmployerName </td>
-                                                <td> @item.expectedPerHourRate </td>
-                                                <td> @item.joiningTime </td>
-                                                <td> @item.preferredLocation </td>
-                                                <td>@item.staffingAgency</td>
-                                                <td class="text-center">
-                                                    @item.NextLevelApprovalStat
-                                                </td>
-                                                <td>
-                                                    <div class="talk-bubble tri-right border-bubble right-in ">
-                                                        <div class="talktext">
-                                                            <textarea class="scrollbar" style="height: 40px; width:100%;">@item.ApprovalComments</textarea>
-                                                        </div>
-                                                    </div>
-                                                </td>
-
-
-                                                <td class="text-center">
-                                                    @item.FinalSelectionStat
-                                                </td>
-                                                <td>
-                                                    <div class="talk-bubble tri-right border-bubble right-in ">
-                                                        <div class="talktext">
-                                                            <textarea class="scrollbar" style="height: 40px; width:100%;">@item.FinalComments</textarea>
-                                                        </div>
-                                                    </div>
-                                                </td>
-
-                                                @if (ViewBag.ProfileName == "client")
-                                                {
-                                                    <td class="text-right">
-                                                        <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
-                                                    </td>
-                                                }
-                                            </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-
                             </div>
 
                         </div>
@@ -229,77 +362,89 @@
 
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-md-6 col-sm-6 pr-1">
+                            <div class="col-md-6 col-sm-6 border-rv">
                                 <div class="form-group">
-                                    <label for="approveDropdown"><b>Approved For Next Round</b></label>
-                                    <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="approveDropdown">Approved For Next Round</label>
+                                    <div class="col-md-12 col-sm-12">
+                                        <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                                    </div>
                                 </div>
 
                             </div>
 
-                            <div class="col-md-6 col-sm-6 pr-1">
-                                <div id="approvalComments" class="form-group">
-                                    <label>Approval Comments</label>
-                                    <textarea name="appComments" class="form-control text-box single-line" id="appComments" style="margin-left:6px;border: 1px solid black;height:46px"></textarea><br>
-
+                            <div class="col-md-6 col-sm-6 ">
+                                <div id="approvalComments">
+                                    <label class="control-label col-md-12 col-sm-12 desp-label">Approval Comments</label>
+                                    <div class="col-md-12 col-sm-12">
+                                        <textarea name="appComments" class="form-control text-box single-line" id="appComments" style="margin-left:6px;height:53px"></textarea><br>
+                                    </div>
                                 </div>
                             </div>
 
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6 col-sm-6 pr-1">
+                            <div class="col-md-6 col-sm-6 border-rv">
                                 <div class="form-group">
-                                    <label for="selectionDropdown"><b>Final Selection</b></label>
-                                    <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
+                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="selectionDropdown">Final Selection</label>
+                                    <div class="col-md-12 col-sm-12">
+                                        <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 col-sm-6 pr-1">
-                                <div id="selectionComments" class="form-group">
-                                    <label>Final Comments</label>
+                            <div class="col-md-6 col-sm-6 ">
+                                <div id="selectionComments">
+                                    <label class="control-label col-md-12 col-sm-12 desp-label">Final Comments</label>
+                                    <div class="col-md-12 col-sm-12">
+                                        <textarea name="selecComments" class="form-control text-box single-line" id="selecComments" style="margin-left:6px;height:53px"></textarea><br>
 
-                                    <textarea name="selecComments" class="form-control text-box single-line" id="selecComments" style="margin-left:6px;border: 1px solid black;height:46px"></textarea><br>
-
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6 col-sm-6 pr-1">
+                            <div class="col-md-6 col-sm-6 border-rv">
                                 <div class="form-group">
 
-                                    <label for="offerDropdown"><b>Offer Status</b></label>
-                                    <select class="form-control" id="offerDropdown" name="offerDropdown"></select>
+                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="offerDropdown">Offer Status</label>
+                                    <div class="col-md-12 col-sm-12">
+                                        <select class="form-control" id="offerDropdown" name="offerDropdown"></select>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 col-sm-6 pr-1">
-                                <div id="offerComments" class="form-group">
-                                    <label>Offer Comments</label>
-                                    <textarea name="offComments" class="form-control text-box single-line" id="offComments" style="margin-left:6px;border: 1px solid black;height:46px"></textarea><br>
-
+                            <div class="col-md-6 col-sm-6 ">
+                                <div id="offerComments">
+                                    <label class="control-label col-md-12 col-sm-12 desp-label">Offer Comments</label>
+                                    <div class="col-md-12 col-sm-12">
+                                        <textarea name="offComments" class="form-control text-box single-line" id="offComments" style="margin-left:6px;height:53px"></textarea><br>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6 col-sm-6 pr-1">
+                            <div class="col-md-6 col-sm-6 border-rv">
                                 <div class="form-group">
 
-                                    <label for="joiningDropdown"><b>Joining Status</b></label>
-                                    <select class="form-control" id="joiningDropdown" name="joiningDropdown"></select>
+                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="joiningDropdown">Joining Status</label>
+                                    <div class="col-md-12 col-sm-12">
+                                        <select class="form-control" id="joiningDropdown" name="joiningDropdown"></select>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 col-sm-6 pr-1">
-                                <div id="joiningComments" class="form-group">
-                                    <label>Joining Comments</label>
-                                    <textarea name="joinComments" class="form-control text-box single-line" id="joinComments" style="margin-left:6px;border: 1px solid black;height:46px"></textarea><br>
-
+                            <div class="col-md-6 col-sm-6">
+                                <div id="joiningComments">
+                                    <label class="control-label col-md-12 col-sm-12 desp-label">Joining Comments</label>
+                                    <div class="col-md-12 col-sm-12">
+                                        <textarea name="joinComments" class="form-control text-box single-line" id="joinComments" style="margin-left:6px;height:53px"></textarea><br>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="">
-                            <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Save">
+                        <div class="col-md-12">
+                            <input type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
                         </div>
                     </div>
 
@@ -316,23 +461,241 @@
 
 
 <script>
+    function changeicon(id) {
+        if ($("#" + id).attr("data-changes") == "1") {
+            $("#" + id).addClass("shows");
+            $("#" + id).attr("data-changes", "2");
+        }
+        else {
+            $("#" + id).removeClass("shows");
+            $("#" + id).attr("data-changes", "1");
+        }
+    }
     $(document).ready(function () {
-        //FilterInterviews("All");// on page load default dropdownlist value set
-        $('#meeting').DataTable({
-            "pagingType": "full_numbers",
-            "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
-            ],
-            responsive: true,
-            language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Search records",
+
+        $(".dataTables_filter").keyup(function (e) {
+
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            searchResult();
+        });
+    });
+    var list;
+
+    function searchResult() {
+        $.ajax({
+            type: "POST",
+            url: "/Project/SelectedInterviewMeetingsJson",
+            data: { 'searchValue': $('#txtmeeting_filter').val() },
+            success: function (data) {
+                if (data != "failed") {
+                    list = data.result;
+                    bindtableData(data.result);
+                    bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
+                }
+            }
+        });
+    }
+
+    function bindtableData(data) {
+        var profile = $("#hidprofile").val();
+        var irfid = $("#hidirfid").val();
+        var html = '';
+        if (data.length == 0) {
+            html += '  <tr>';
+            html += ' <td colspan="10" class="text-center">No data available in table</td>';
+            html += ' </tr>';
+        }
+        for (var i = 0; i < data.length; i++) {
+            html += ' <tr id="' + data[i].imid + '" data-changes="1">';
+            html += '  <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
+            html += '  <td> ' + new Date(data[i].interviewDate).toLocaleString() + ' </td>';
+            html += '  <td>' + data[i].irfId + ' </td>';
+
+            if (data[i].candidateName != null && data[i].candidateName != "") {
+
+                if (data[i].candidateName.length > 18) {
+
+
+                    html += '   <td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '">' + data[i].candidateName.substring(0, 18) + '...  </a></td>';
+
+                }
+
+
+                else {
+                    html += '<td class="cadName">  <a onclick=""> ' + data[i].candidateName + '</a></td>';
+
+
+                }
+
             }
 
-        });
-        var table = $('#meeting').DataTable();
-    });
+            else {
+                html += '  <td></td>';
+            }
+            html += '  <td> <a id="reportId" target="_blank" title="Report Link" href="/IRF/AddReport?interviewId=' + data[i].imid + '&irfId=' + irfid + ',IsSelected = true">Report</a></td>';
+
+            if (data[i].resumeLink != null && data[i].resumeLink != "") {
+                html += '      <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a> </td>';
+            }
+            else {
+                html += '    <td>No Resume</td>';
+            }
+
+
+            if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
+                html += '    <td>' + data[i].mobileNumber + '</td>';
+
+            }
+            else {
+                html += '     <td>No Contact</td>';
+            }
+
+
+            if (data[i].clientHrContact != null && data[i].clientHrContact != "") {
+
+                if (data[i].clientHrContact.length > 15) {
+
+
+                    html += '    <td class="cadEmail"> <a onclick="" data-tooltip="' + data[i].clientHrContact + '"> ' + data[i].clientHrContact.substring(0, 15) + '...   </a></td>';
+
+
+                }
+
+
+                else {
+                    html += '   <td class="cadEmail">   <a onclick="">' + data[i].clientHrContact + '</a> </td>';
+
+
+                }
+
+            }
+
+            else {
+                html += '    <td></td>';
+            }
+            if (data[i].confirmationStatus != null && data[i].confirmationStatus != "") {
+                html += '     <td>' + data[i].confirmationStatus + '</td>';
+            }
+            else {
+                html += '   <td></td>';
+            }
+            if (data[i].meetingStatusStatusDesc != null && data[i].meetingStatusStatusDesc != "") {
+                html += '  <td>' + data[i].meetingStatusStatusDesc + ' </td>';
+            }
+            else {
+                html += '   <td></td>';
+            }
+            if (data[i].intervieweStatusStatDesc != null && data[i].intervieweStatusStatDesc != "") {
+
+                html += '  <td>' + data[i].intervieweStatusStatDesc + '</td>';
+            }
+            else {
+                html += '   <td></td>';
+            }
+            if (profile == "client") {
+                html += '    <td class="text-right action">';
+                html += '    <span title="Client Feedback" onclick="ModalButtonClickjson(' + i + ')" id="myBtn_' + data[i].imid + '" class="btn-call"><i class="fa fa-thumbs-up"></i></span>';
+                html += '     </td>';
+            }
+            html += '   </tr>';
+
+
+            html += '   <tr class="collapse ' + data[i].imid + '">';
+            html += '  <td colspan="999" class="child-section">';
+            html += ' <table class="table table-striped table-responsive">';
+            html += '    <tr>';
+            html += ' <th>Current Employer</th>';
+            html += '  <th>Expected Salary</th>';
+            html += '  <th>Expected Joining Time</th>';
+            html += '   <th>Preferred Location</th>';
+            html += '   <th>Staffing Agency</th>';
+            html += '   <th>Approval Status</th>';
+            html += '   <th>Approval Comments</th>';
+            html += '   <th>Final Selection Status</th>';
+            html += '   <th>Final Selection Comments</th>';
+            html += '  </tr>';
+            html += '    <tr>';
+
+
+            html += '   <td> ' + data[i].currentEmployerName + ' </td>';
+            html += '   <td> ' + data[i].expectedPerHourRate + '</td>';
+
+            html += '  <td> ' + data[i].joiningTime + ' </td>';
+            html += '   <td> ' + data[i].preferredLocation + '</td>';
+            html += '   <td>' + data[i].staffingAgency + '</td>';
+            html += '    <td class="text-center">  ' + data[i].nextLevelApprovalStat + ' </td>';
+
+
+
+
+            html += ' <td style="padding: 4px 5px;">';
+            html += '  <div class="talk-bubble tri-right border-bubble right-in">';
+            html += ' <div class="talktext"><textarea class="scrollbar" style="height: 40px; width:100%;">' + data[i].approvalComments + '</textarea>  </div>';
+            html += '  </div>';
+            html += '   </td>';
+
+            html += '   <td> ' + data[i].finalSelectionStat + '</td>';
+
+
+
+            html += ' <td style="padding: 4px 5px;">';
+            html += '   <div class="talk-bubble tri-right border-bubble right-in">';
+
+            html += '  <div class="talktext"><textarea class="scrollbar" style="height: 40px; width:100%;">' + data[i].finalComments + '</textarea></div>';
+
+            html += '  </div>';
+            html += '   </td>';
+            html += ' </tr>';
+            html += ' </table>';
+            html += ' </td>';
+            html += '  </tr>';
+
+
+        }
+        $("#tbProjectSelectedInterviewMeeting").empty().html(html);
+    }
+
+
+
+    function bindPages(pagecount, startpage, endpage, totalcount) {
+        var html = '';
+        html += '<div class="pagination-container">';
+        html += '<ul class="pagination">';
+        for (var i = 1; i <= pagecount; i++) {
+            if (i == 1) {
+                html += '   <li class="active"><span>1</span></li>';
+            } else if (i <= 10) {
+                html += '<li><a href="/Project/SelectedInterviewMeetings?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+            } else if (i == 11) {
+                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Project/SelectedInterviewMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Project/SelectedInterviewMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            } else {
+                break;
+            }
+            if (pagecount <= 10 && i == pagecount && i != 1) {
+                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Project/SelectedInterviewMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Project/SelectedInterviewMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            }
+        }
+        html += '</ul>';
+        html += '</div>';
+        $("#divmeetingpages").empty().html(html);
+        var pagestartdetails = '';
+        pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
+        $("#divmeetingentries").empty().html(pagestartdetails);
+
+    }
 </script>
 
 <script>
@@ -354,6 +717,10 @@
     //}
 </script>
 <script>
+    function ModalButtonClickjson(item) {
+        var obj = list[item];
+        ModalButtonClick(obj);
+    }
     function ModalButtonClick(item) {
         imid = item.imid;
 
@@ -629,7 +996,22 @@
 </script>
 
 <!-- Keep the Page Content Here.-->
+<script>
 
+
+    function moreless(id) {
+
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
+
+</script>
 <loading></loading>
 
 <!-- PAGE CONTENT WRAPPER -->
