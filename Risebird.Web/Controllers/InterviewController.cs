@@ -3388,7 +3388,8 @@ namespace Risebird.Web.Controllers
                         if (model.VideoFile != null)
                         {
                             AzureCall _call = new AzureCall(_configuration);
-                            var resulttype = _call.CallApi(model.VideoFile, model.VideoFile.FileName, model.VideoFile.Length);
+                            //var resulttype = _call.CallApi(model.VideoFile, model.VideoFile.FileName, model.VideoFile.Length);
+                            var resulttype = _call.CallApiUpload(model.VideoFile);
                             resulttype = resulttype.Replace("\"", "");
                             uploadedvideoFileURL = resulttype;
 
