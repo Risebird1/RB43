@@ -58,6 +58,8 @@ namespace Risebird.WebAPI.Controllers
         }
         [Route("api/Upload")]
         [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
         public async Task<string> Post(IList<IFormFile> files)
         {
             var model = files[0];

@@ -42,6 +42,11 @@ namespace Risebird.Web
 
             var configOptions = new ConfigurationOptions();
             Configuration.Bind(configOptions);
+            services.Configure<FormOptions>(x =>
+            {
+                x.ValueLengthLimit = int.MaxValue;
+                x.MultipartBodyLengthLimit = int.MaxValue; // In case of multipart
+            });
             //Configure session state
             services.AddDistributedRedisCache(options =>
             {

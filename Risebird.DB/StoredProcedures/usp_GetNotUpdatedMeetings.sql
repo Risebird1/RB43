@@ -1,7 +1,7 @@
 /****** Object:  StoredProcedure [dbo].[usp_GetNotUpdatedMeetings]    Script Date: 15-01-2021 4.53.33 PM ******/
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetNotUpdatedMeetings'))
 BEGIN
-    DROP PROCEDURE dbo.usp_GetNotUpdatedMeetings
+    DROP PROCEDURE dbo.usp_GetNotUpdatedMeetings 
 END
 SET ANSI_NULLS ON
 GO
@@ -16,10 +16,11 @@ AS
 Begin 
 select * from InterviewMeetings im 
 left join InterviewComments ic on im.id=ic.InterviewId
-where confirmationStatus=1 and ((interviewer is null) or 
-(ic.MeetingStatus is null and DATEDIFF(MINUTE, interviewDate, @timeNow)>15)
-or (ic.InterviewStatus is null and DATEDIFF(MINUTE, interviewDate, @timeNow)>15) 
-or (ic.InterviewerComment is null and DATEDIFF(MINUTE, interviewDate, @timeNow)>15))
+where confirmationStatus=1 and DATEDIFF(DAY, interviewDate, GETDATE())<10 
+and ((interviewer is null) or 
+(ic.MeetingStatus is null )
+or (ic.InterviewStatus is null ) 
+or (ic.InterviewerComment is null))
 order by interviewDate desc
 
 

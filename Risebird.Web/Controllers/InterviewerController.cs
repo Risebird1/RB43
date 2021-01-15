@@ -1156,8 +1156,10 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+       
         [HttpPost]
-        [DisableRequestSizeLimit]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddReport(InterviewReport model)
         {
