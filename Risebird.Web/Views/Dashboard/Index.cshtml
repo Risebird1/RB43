@@ -166,7 +166,7 @@
                                 </ul>
                             </div>
                             <div id="slotsId">
-                                <div class="panel-body panel-body-table">
+                                <div class="panel-body panel-body-table" >
                                     @if (Model.DailyInterviewSlots != null && Model.DailyInterviewSlots.Count() > 0)
                                     {
                                         <div class="sb-container scroller">
@@ -251,9 +251,77 @@
 
                         </div>
                         <!-- END IRF BLOCK -->
-                        
+                        <div class="table-responsive" style="margin-bottom:0px">
+                            <table class="table table-bordered table-striped" style="margin-bottom:0px">
+                                
+                                <tbody>
+                                    <tr>
 
-                       
+                                        <td style="border:0px;padding:0px;">
+                                            <table>
+                                                <tr>
+
+                                                    <td width="30%" class="text-left un-left"><strong>Unassigned<br />  Interview Count</strong></td>
+                                                    <td  width="10%" class="un-right">
+                                                        <span class="label-num-unassigned"><strong title="Unassigned Interview Count: 0">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</strong></span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+
+                                        <td style="border:0px;padding:0px;">
+                                            <table >
+                                                <tr>
+
+                                                    <td width="30%" class="text-left un-left"><strong>Unfilled Meeting <br />  Status Count</strong></td>
+                                                    <td width="10%" class="un-right">
+                                                        <span class="label-num-unassigned"><strong title="Unassigned Interview Count: 0">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</strong></span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+
+                                        <td style="border:0px;padding:0px;">
+                                            <table>
+                                                <tr>
+
+                                                    <td width="30%" class="text-left un-left"><strong>Unfilled Interview <br />Status  Count</strong></td>
+                                                    <td width="10%" class="un-right">
+                                                        <span class="label-num-unassigned"><strong title="Unassigned Interview Count: 0">@Model.NotUpdatedMeetingsObj.UnfilledInterviewStatusCount</strong></span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+
+
+                                        <td style="border:0px;padding:0px;">
+
+
+                                            <table>
+                                                <tr>
+
+
+                                                    <td width="30%" class="text-left un-left"><strong>Unfilled Comment<br /> Count</strong></td>
+                                                    <td width="10%" class="un-right">
+                                                        <span class="label-num-unassigned"><strong title="Unassigned Interview Count: 0">@Model.NotUpdatedMeetingsObj.UnfilledCommentsCount</strong></span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+
+
+
+
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+
+
+                        </div>
+
+                        <a class="view-unassigned" href="/Dashboard/UnassignedInterviews"><i class="fa fa-arrow-circle-right"></i> View Unassigned Interviews</a> 
                     </div>
 
 
@@ -428,45 +496,45 @@
                         <!-- END INTERVIEW BLOCK -->
 
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12 nopad">
-                        <div class="col-lg-4 col-md-4 col-sm-4">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 nopad">
+                            <div class="col-lg-4 col-md-4 col-sm-4">
 
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="card-text">Total Candidates : <span><strong>@Model.CandidatesCountObj.TotalCandidates</strong></span></p>
-                                    <div>
-                                        <div id="candidatesPieId" class="PieId"></div>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <p class="card-text">Total Candidates : <span><strong>@Model.CandidatesCountObj.TotalCandidates</strong></span></p>
+                                        <div>
+                                            <div id="candidatesPieId" class="PieId"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            <div class="col-lg-4 col-md-4 col-sm-4">
 
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="card-text">Total Interviewers : <span><strong>@Model.InterviewerCountObj.InterviewerCount</strong></span></p>
-                                    <div>
-                                        <div id="interviewers" class="PieId"></div>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <p class="card-text">Total Interviewers : <span><strong>@Model.InterviewerCountObj.InterviewerCount</strong></span></p>
+                                        <div>
+                                            <div id="interviewers" class="PieId"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            <div class="col-lg-4 col-md-4 col-sm-4">
 
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="card-text">Total Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
-                                    <div>
-                                        <div id="meetingsCountId" class="PieId"></div>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <p class="card-text">Total Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
+                                        <div>
+                                            <div id="meetingsCountId" class="PieId"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
             </div>
 

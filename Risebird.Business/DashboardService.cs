@@ -167,7 +167,6 @@ namespace Risebird.Business
             try
             {
                 var countObj = await _dashboardRespository.GetClientCandidatesCount(emailId);
-                countObj.TotalCandidates = (countObj.Selected + countObj.Rejected + countObj.BorderLine + countObj.Proxy + countObj.NoShowCount + countObj.DroppedCount + countObj.ScheduledCount + countObj.QCPending);
                 return countObj;
             }
             catch (Exception ex)
@@ -290,6 +289,31 @@ namespace Risebird.Business
             try
             {
                 return await _dashboardRespository.FecthInterviewerById(id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCount()
+        {
+            try
+            {
+                return await _dashboardRespository.GetNotUpdatedMeetingsCount();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<MeetingVM>> GetNotUpdatedMeetings()
+        {
+            try
+            {
+                return await _dashboardRespository.GetNotUpdatedMeetings();
             }
             catch (Exception ex)
             {

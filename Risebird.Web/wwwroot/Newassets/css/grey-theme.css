@@ -23,7 +23,13 @@ textarea::-webkit-scrollbar-thumb {
     background-color: #acacad !important;
     border: 1px solid #acacad !important;
 }
+.un-left {
+    background: #eaeaea;
+}
 
+.un-right {
+    background: #f3f3f3;
+}
 .talk-bubble {
     background-color: #fcfcfc;
     border: 0px;

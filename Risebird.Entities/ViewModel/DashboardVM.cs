@@ -26,5 +26,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime ChannelrequestDate { get; set; }
         public SelectList AssassinationList { get; set; }
         public IList<ChannelManagementVM> ChannelRequest { get; set; }
+        public NotUpdatedMeetings NotUpdatedMeetingsObj { get; set; }
+
     }
 }

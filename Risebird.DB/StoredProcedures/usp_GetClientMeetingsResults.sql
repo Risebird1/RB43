@@ -24,6 +24,7 @@ if(@roleId=1)
 		declare @commonClientHRTable table (imid int, icid int, InterviewStatus int, MeetingStatus int, QCStatus int)
 				insert into @commonClientHRTable 
 				select inm.id, inc.id, inc.InterviewStatus, inc.MeetingStatus, qcf.QCStatus from InterviewMeetings inm 
+				join IRF on inm.IRFId=irf.IRFId join UserList ul on ul.EmailId=inm.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id)
 				left join InterviewComments inc on inc.InterviewId= inm.id
 				left join QCFeedbackReport qcf on qcf.InterviewId=inm.id
 				where inm.confirmationStatus=1 and inm.ClientHrContact=@emailId
@@ -45,6 +46,7 @@ else if(@roleId=4)
 		declare @commonStaffiingAgencyTable table (imid int, icid int, InterviewStatus int, MeetingStatus int, QCStatus int)
 				insert into @commonStaffiingAgencyTable 
 				select inm.id, inc.id, inc.InterviewStatus, inc.MeetingStatus, qcf.QCStatus from InterviewMeetings inm 
+				join IRF on inm.IRFId=irf.IRFId join UserList ul on ul.EmailId=inm.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id)
 				left join InterviewComments inc on inc.InterviewId= inm.id
 				left join QCFeedbackReport qcf on qcf.InterviewId=inm.id
 				where inm.confirmationStatus=1 and inm.staffingAgency=@emailId
@@ -67,6 +69,7 @@ else
 			declare @commonTable table (imid int, icid int, InterviewStatus int, MeetingStatus int, QCStatus int)
 				insert into @commonTable 
 				select inm.id, inc.id, inc.InterviewStatus, inc.MeetingStatus, qcf.QCStatus from InterviewMeetings inm join IRF on irf.IRFId=inm.IRFId join TransClientUser tcu on tcu.IRFId = irf.id
+				join UserList ul on ul.EmailId=inm.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id)
 				left join InterviewComments inc on inc.InterviewId= inm.id
 				left join QCFeedbackReport qcf on qcf.InterviewId=inm.id
 				where tcu.ClientUserId = @userId and inm.confirmationStatus=1

@@ -29,14 +29,15 @@ if(@roleId=1)
 
 		declare @TotalHRCompletedMeetings table (id int, MeetingStatus int, InterviewStatus int, IsApproved int, IsSelected int, OfferStatus int, JoiningStatus int);
 		insert into @TotalHRCompletedMeetings select im.id, ic.MeetingStatus, ic.InterviewStatus, ic.IsApproved, ic.IsSelected, ic.OfferStatus, ic.JoiningStatus from InterviewMeetings im 
+		join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id)
 		left join InterviewComments ic on ic.InterviewId=im.id
 		where ClientHrContact=@emailId and confirmationStatus=1 and ic.MeetingStatus=4
 
 			select
 
-			(select count(distinct candidateEmail) from InterviewMeetings im where im.ClientHrContact=@emailId and im.confirmationStatus=1) as TotalCandidates,
+			(select count(distinct candidateEmail) from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id) where im.ClientHrContact=@emailId and im.confirmationStatus=1) as TotalCandidates,
 			
-			(select count(id) from InterviewMeetings where ClientHrContact=@emailId and confirmationStatus=1) as TotalConfirmations,
+			(select count(im.id) from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id) where im.ClientHrContact=@emailId and im.confirmationStatus=1) as TotalConfirmations,
 
 			(select count(id) from @TotalHRCompletedMeetings) as TotalCompleted,
 
@@ -57,14 +58,15 @@ else if(@roleId=4)
 
 		declare @TotalStaffingCompletedMeetings table (id int, MeetingStatus int, InterviewStatus int, IsApproved int, IsSelected int, OfferStatus int, JoiningStatus int);
 		insert into @TotalStaffingCompletedMeetings select im.id, ic.MeetingStatus, ic.InterviewStatus, ic.IsApproved, ic.IsSelected, ic.OfferStatus, ic.JoiningStatus from InterviewMeetings im 
+		join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id)
 		left join InterviewComments ic on ic.InterviewId=im.id
 		where staffingAgency=@emailId and confirmationStatus=1 and ic.MeetingStatus=4
 
 			select
 
-			(select count(distinct candidateEmail) from InterviewMeetings im where im.staffingAgency=@emailId and im.confirmationStatus=1) as TotalCandidates,
+			(select count(distinct candidateEmail) from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id) where im.staffingAgency=@emailId and im.confirmationStatus=1) as TotalCandidates,
 			
-			(select count(id) from InterviewMeetings where staffingAgency=@emailId and confirmationStatus=1) as TotalConfirmations,
+			(select count(im.id) from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id) where staffingAgency=@emailId and confirmationStatus=1) as TotalConfirmations,
 
 			(select count(id) from @TotalStaffingCompletedMeetings) as TotalCompleted,
 
@@ -91,8 +93,9 @@ else
 			
 			declare @TotalCompletedMeetings table (id int, MeetingStatus int, InterviewStatus int, IsApproved int, IsSelected int, OfferStatus int, JoiningStatus int);
 					insert into @TotalCompletedMeetings select im.id, ic.MeetingStatus, ic.InterviewStatus, ic.IsApproved, ic.IsSelected, ic.OfferStatus, ic.JoiningStatus from InterviewMeetings im 
+					join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id)
 					left join InterviewComments ic on ic.InterviewId=im.id
-					where IRFId in (select id from @listofIRF) and confirmationStatus=1 and ic.MeetingStatus=4
+					where im.IRFId in (select id from @listofIRF) and confirmationStatus=1 and ic.MeetingStatus=4
 			select
 
 			
@@ -100,7 +103,7 @@ else
 				join Candidate ca on ca.IRFId=irf.id join CandidatesMaster cm on cm.id=ca.CandidateMasterId
 				where tcu.ClientUserId=@userId) as TotalCandidates,
 			
-			(select count(id) from InterviewMeetings where IRFId in (select id from @listofIRF) and confirmationStatus=1) as TotalConfirmations,
+			(select count(im.id) from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id) where im.IRFId in (select id from @listofIRF) and confirmationStatus=1) as TotalConfirmations,
 
 			(select count(id) from @TotalCompletedMeetings) as TotalCompleted,
 
