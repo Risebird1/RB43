@@ -27,8 +27,8 @@
 
 }
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=9876534" />
-
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=679876534" />
+<script type="text/javascript" src="https//code.jquery.com/jquery-1.10.2.min.js"></script>
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -467,7 +467,7 @@
                                                                     <span onclick="javascript:UnAssignInterviewer('@item.id');" title="UnAssign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
                                                                 </button>
                                                                 <button class="mdc-fab app-fab--absolute itemques" aria-label="Co-ordinating HR Comments">
-                                                                    <span onclick="OpenCommentModal('@item.id','@item.interviewDate', '@item.HRComment')" title="Co-ordinating HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
+                                                                    <span onclick="OpenCommentModal('@item.id','@item.interviewDate', '@item.HRComment', '@item.HRImageFileURL', '@item.candidateEmail', '@item.candidateName')" title="Co-ordinating HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
                                                                 </button>
 
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
@@ -702,7 +702,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
                                 </span>
                             </div>
-                            <h5 class="modal-title pull-left" id="hrCommentHeading">Interested </h5>
+                            <h5 class="modal-title pull-left" id="hrCommentHeading" style="font-size:20.5px!important;"></h5>
                         </div>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true" id="hrCommentPopUp" style="cursor:pointer;">&times;</span>
@@ -711,26 +711,69 @@
 
 
                         <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-12 col-sm-12 ">
-                                    <div class="form-group">
-                                        <label class="control-label  desp-label">Comment</label>
-                                        <div>
-                                            <div class="text-areadiv1">
-                                                <textarea class="scrollbar" style="width:100%;" id="hrCommentValue"></textarea>
-                                            </div>
-                                        </div>
 
+                            <div class="col-md-12 col-sm-12 ">
+                                <div class="form-group">
+                                    <label class="control-label  desp-label">Comment</label>
+                                    <div>
+                                        <div class="text-areadiv1">
+                                            <textarea class="scrollbar" style="width:100%;" id="hrCommentValue"></textarea>
+                                        </div>
                                     </div>
 
                                 </div>
+                                <div class="form-group clearfix">
+
+                                    <div class="col-md-3 nopad pull-left">
+                                        <label class="control-label  desp-label"><i class="fa fa-cloud-upload upload-btn"></i>Upload Image</label>
+                                    </div>
+                                    <div class="col-md-9 nopad pull-left ">
+
+                                        <div class="file-upload">
+                                            <div class="file-select">
+                                                <div class="file-select-button" id="fileName">Choose File</div>
+                                                <div class="file-select-name" id="noFile">No file chosen...</div>
+                                                <input type="file" name="chooseFile" id="idHRImageFile" accept=".jpg, .png, .jpeg">
+                                            </div>
+                                        </div>
+
+
+
+                                        <!--<input type="file"--> @*style="width:100%;"*@ <!--id="idHRImageFile" accept=".jpg, .png, .jpeg">-->
+                                    </div>
+                                </div>
+
+                                <div class="clearfix">
+                                    <div id="id_UploadedImageDiv">
+                                        <label class="control-label  desp-label">Uploaded Image URL</label>
+                                        <div class="pull-left">
+                                            <a class="click-btn" id="idHRImageFileURL">Click here</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="text-danger" id="hrErrorMessage" style="color:red"></label>
+
+                                </div>
+
+
+
 
                             </div>
 
-                            <div class="text-center" style="margin:0px 0px 10px 0px;">
+
+
+                        </div>
+
+                        <div class="card-footer">
+                            <div class="col-md-12 form-group text-center">
                                 <input type="button" onclick="SaveHRCommentPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
                             </div>
                         </div>
+
+
+                    </div>
 
                     </div>
 
@@ -943,7 +986,7 @@
             html += '  <span onclick="javascript:UnAssignInterviewer(' + data[i].id + ');" title="UnAssign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>';
             html += '  </button>';
             html += ' <button class="mdc-fab app-fab--absolute itemques" aria-label="Co-ordinating HR Comments">';
-            html += '  <span onclick="OpenCommentModal(' + data[i].id + ',' + data[i].interviewDate + ', ' + data[i].hrComment + ')" title="Co-ordinating HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>';
+            html += '  <span onclick="OpenCommentModal(' + data[i].id + ',' + data[i].interviewDate + ', ' + data[i].hrComment + ',' + data[i].hRImageFileURL + ',' + data[i].candidateEmail + ',' + data[i].candidateName + ')" title="Co-ordinating HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>';
             html += '</button>';
 
             html += ' <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">';
@@ -1365,7 +1408,7 @@ $("#divmeetingentries").empty().html(pagestartdetails);
 }
 <script>
     var meetingId;
-
+        var candidateDetails;
     var spanComment = document.getElementById("hrCommentPopUp");
     // When the user clicks on <span> (x), close the modal
     spanComment.onclick = function () {
@@ -1373,8 +1416,9 @@ $("#divmeetingentries").empty().html(pagestartdetails);
         modal.style.display = "none";
     }
 
-    function OpenCommentModal(id, date, commentVal) {
+    function OpenCommentModal(id, date, commentVal, imageURL, candidateEmail, candidateName) {
         meetingId = id;
+        candidateDetails = candidateEmail + '(' + candidateName + ')';
         // Get the modal
         var modal = document.getElementById("hrCommentModal");
 
@@ -1383,22 +1427,51 @@ $("#divmeetingentries").empty().html(pagestartdetails);
         if (commentVal != null && commentVal != "") {
             $("#hrCommentValue").val(commentVal);
         }
+
+        if (imageURL != null && imageURL != "") {
+            document.getElementById("idHRImageFileURL").href = imageURL;
+            //document.getElementById("idHRImageFileURL").target = '_blank';
+        }
+        else {
+            document.getElementById('id_UploadedImageDiv').style.display = "none";
+        }
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
 
     }
-    function SaveHRCommentPopUp() {
+        function SaveHRCommentPopUp() {
         var comment = document.getElementById("hrCommentValue").value;
+        var image_file = $("#idHRImageFile")[0].files[0];
+            var uploadedFileURL;
+        var uploadedImageURLElement = document.getElementById("idHRImageFileURL");
+        if (uploadedImageURLElement != null) {
+            var uploadedFileURL = uploadedImageURLElement.href;
+        }
+            if (comment == null || comment == '' || (image_file == null && (uploadedFileURL == null || uploadedFileURL == ""))) {
+                document.getElementById("hrErrorMessage").innerHTML = "Both the fields are required.";
+                return;
+        }
+        else {
+            document.getElementById("hrErrorMessage").innerHTML = "";
+
+            }
+         
+            var formdata = new FormData();
+            formdata.append('id', meetingId);
+            formdata.append('comment', comment);
+            formdata.append('imageFile', image_file);
+            formdata.append('uploadedFileURL', uploadedFileURL);
+            formdata.append('candidateDetails', candidateDetails);
 
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "/Interview/SaveHRComment",
-            data: { id: meetingId, 'comment': comment },
+            contentType: false,
+            processData: false,
+            data: formdata,
             success: function (data) {
-
                 location.reload(true);
-
             }
         });
     }
@@ -1461,6 +1534,19 @@ $("#divmeetingentries").empty().html(pagestartdetails);
             $("#" + id).attr("data-changes", "1");
         }
     }
+</script>
+<script>
+        $('#idHRImageFile').bind('change', function () {
+            var filename = $("#idHRImageFile").val();
+            if (/^\s*$/.test(filename)) {
+                $(".file-upload").removeClass('active');
+                $("#noFile").text("No file chosen...");
+            }
+            else {
+                $(".file-upload").addClass('active');
+                $("#noFile").text(filename.replace("C:\\fakepath\\", ""));
+            }
+        });
 </script>
 
 <!-- PAGE CONTENT WRAPPER -->

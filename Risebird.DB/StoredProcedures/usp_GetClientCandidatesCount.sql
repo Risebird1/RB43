@@ -24,70 +24,77 @@ declare @profileId int, @roleId int, @userId int;
 if(@roleId=1)
 	Begin
 		
-		declare @commonHRTable table (EmailId varchar(100),imid int, icid int, MeetingStatus int, InterviewStatus int, QCStatus int);
+		declare @commonHRTable table (EmailId varchar(100),imid int, icid int, MeetingStatus int, InterviewStatus int, QCStatus int, confirmationStatus int);
 		insert into @commonHRTable 
-		select EmailId,im.id, ic.id,ic.MeetingStatus, ic.InterviewStatus, qcf.QCStatus 
-		from CandidatesMaster cm join UserList ul on ul.id=cm.UserId join InterviewMeetings im on im.candidateEmail=ul.EmailId 
+		select EmailId,im.id, ic.id,ic.MeetingStatus, ic.InterviewStatus, qcf.QCStatus, im.confirmationStatus 
+		from CandidatesMaster cm join UserList ul on ul.id=cm.UserId left join InterviewMeetings im on im.candidateEmail=ul.EmailId 
+		join IRF on im.IRFId=IRF.IRFId 
+		join Candidate ca on ca.IRFId=irf.id
 		left join InterviewComments ic on ic.InterviewId=im.id
 		left join QCFeedbackReport qcf on qcf.InterviewId = im.id
-		where confirmationStatus=1 and ClientHrContact=@emailId
+		where ClientHrContact=@emailId
 
 		select
-		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus=1) as Proxy,
-		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus=2 and QCStatus=1) as Selected,
-		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus=3 or (InterviewStatus=2 and QCStatus=2)) as Rejected,
-		(select count(distinct(EmailId)) from @commonHRTable where (InterviewStatus=2 and QCStatus is null) or (InterviewStatus is null and MeetingStatus=4)) as QCPending,
-		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus=4) as BorderLine,
-		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus is null and MeetingStatus=1) as NoShowCount,
-		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
-		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus is null and MeetingStatus=3) as DroppedCount
+		(select count(distinct(EmailId)) from @commonHRTable where confirmationStatus=1 and InterviewStatus=1) as Proxy,
+		(select count(distinct(EmailId)) from @commonHRTable where confirmationStatus=1 and InterviewStatus=2 and QCStatus=1) as Selected,
+		(select count(distinct(EmailId)) from @commonHRTable where confirmationStatus=1 and (InterviewStatus=3 or (InterviewStatus=2 and QCStatus=2))) as Rejected,
+		(select count(distinct(EmailId)) from @commonHRTable where confirmationStatus=1 and ((InterviewStatus=2 and QCStatus is null) or (InterviewStatus is null and MeetingStatus=4)) ) as QCPending,
+		(select count(distinct(EmailId)) from @commonHRTable where confirmationStatus=1 and InterviewStatus=4) as BorderLine,
+		(select count(distinct(EmailId)) from @commonHRTable where confirmationStatus=1 and InterviewStatus is null and MeetingStatus=1) as NoShowCount,
+		(select count(distinct(EmailId)) from @commonHRTable where confirmationStatus=1 and InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
+		(select count(distinct(EmailId)) from @commonHRTable where confirmationStatus=1 and InterviewStatus is null and MeetingStatus=3) as DroppedCount,
+		(select count(distinct(EmailId)) from @commonHRTable) as TotalCandidates
 
 	End
 else if(@roleId=4)
 	Begin
 		
-		declare @commonStaffingTable table (EmailId varchar(100),imid int, icid int, MeetingStatus int, InterviewStatus int, QCStatus int);
+		declare @commonStaffingTable table (EmailId varchar(100),imid int, icid int, MeetingStatus int, InterviewStatus int, QCStatus int, confirmationStatus int);
 		insert into @commonStaffingTable 
-		select EmailId,im.id, ic.id,ic.MeetingStatus, ic.InterviewStatus, qcf.QCStatus 
-		from CandidatesMaster cm join UserList ul on ul.id=cm.UserId join InterviewMeetings im on im.candidateEmail=ul.EmailId 
+		select EmailId,im.id, ic.id,ic.MeetingStatus, ic.InterviewStatus, qcf.QCStatus , im.confirmationStatus
+		from CandidatesMaster cm join UserList ul on ul.id=cm.UserId left join InterviewMeetings im on im.candidateEmail=ul.EmailId 
+		join IRF on im.IRFId=IRF.IRFId 
+		join Candidate ca on ca.IRFId=irf.id
 		left join InterviewComments ic on ic.InterviewId=im.id
 		left join QCFeedbackReport qcf on qcf.InterviewId = im.id
-		where confirmationStatus=1 and staffingAgency=@emailId
+		where staffingAgency=@emailId
 
 		select
-		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus=1) as Proxy,
-		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus=2 and QCStatus=1) as Selected,
-		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus=3 or (InterviewStatus=2 and QCStatus=2)) as Rejected,
-		(select count(distinct(EmailId)) from @commonStaffingTable where (InterviewStatus=2 and QCStatus is null) or (InterviewStatus is null and MeetingStatus=4)) as QCPending,
-		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus=4) as BorderLine,
-		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus is null and MeetingStatus=1) as NoShowCount,
-		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
-		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus is null and MeetingStatus=3) as DroppedCount
+		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus=1 and confirmationStatus=1) as Proxy,
+		(select count(distinct(EmailId)) from @commonStaffingTable where confirmationStatus=1 and InterviewStatus=2 and QCStatus=1) as Selected,
+		(select count(distinct(EmailId)) from @commonStaffingTable where confirmationStatus=1 and (InterviewStatus=3 or (InterviewStatus=2 and QCStatus=2))) as Rejected,
+		(select count(distinct(EmailId)) from @commonStaffingTable where confirmationStatus=1 and ((InterviewStatus=2 and QCStatus is null) or (InterviewStatus is null and MeetingStatus=4))) as QCPending,
+		(select count(distinct(EmailId)) from @commonStaffingTable where confirmationStatus=1 and InterviewStatus=4) as BorderLine,
+		(select count(distinct(EmailId)) from @commonStaffingTable where confirmationStatus=1 and InterviewStatus is null and MeetingStatus=1) as NoShowCount,
+		(select count(distinct(EmailId)) from @commonStaffingTable where confirmationStatus=1 and InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
+		(select count(distinct(EmailId)) from @commonStaffingTable where confirmationStatus=1 and InterviewStatus is null and MeetingStatus=3) as DroppedCount,
+		(select count(distinct(EmailId)) from @commonStaffingTable) as TotalCandidates
 
 	End
 	
 else
 	Begin
 
-		declare @commonTable table (EmailId varchar(100),imid int, icid int, MeetingStatus int, InterviewStatus int, QCStatus int);
+		declare @commonTable table (EmailId varchar(100),imid int, icid int, MeetingStatus int, InterviewStatus int, QCStatus int, confirmationStatus int);
 			insert into @commonTable 
-			select EmailId,im.id, ic.id,ic.MeetingStatus, ic.InterviewStatus , qcf.QCStatus
+			select EmailId,im.id, ic.id,ic.MeetingStatus, ic.InterviewStatus , qcf.QCStatus, im.confirmationStatus
 			from TransClientUser tcu join irf on tcu.IRFId = irf.id join Candidate ca on ca.IRFId=irf.id
-			join CandidatesMaster cm on cm.id = ca.CandidateMasterId join UserList ul on ul.id=cm.UserId join InterviewMeetings im on im.candidateEmail=ul.EmailId 
+			join CandidatesMaster cm on cm.id = ca.CandidateMasterId join UserList ul on ul.id=cm.UserId left join InterviewMeetings im on im.candidateEmail=ul.EmailId 
 			left join InterviewComments ic on ic.InterviewId=im.id
 			left join QCFeedbackReport qcf on qcf.InterviewId = im.id
-			where confirmationStatus=1 and tcu.ClientUserId=@userId
+			where tcu.ClientUserId=@userId
 
 
 			select
-			(select count(distinct(EmailId)) from @commonTable where InterviewStatus=1) as Proxy,
-			(select count(distinct(EmailId)) from @commonTable where InterviewStatus=2 and QCStatus=1) as Selected,
-			(select count(distinct(EmailId)) from @commonTable where InterviewStatus=3 or (InterviewStatus=2 and QCStatus=2)) as Rejected,
-			(select count(distinct(EmailId)) from @commonTable where (InterviewStatus=2 and QCStatus is null) or (InterviewStatus is null and MeetingStatus=4)) as QCPending,
-			(select count(distinct(EmailId)) from @commonTable where InterviewStatus=4) as BorderLine,
-			(select count(distinct(EmailId)) from @commonTable where InterviewStatus is null and MeetingStatus=1) as NoShowCount,
-			(select count(distinct(EmailId)) from @commonTable where InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
-			(select count(distinct(EmailId)) from @commonTable where InterviewStatus is null and MeetingStatus=3) as DroppedCount
+			(select count(distinct(EmailId)) from @commonTable where InterviewStatus=1 and confirmationStatus=1) as Proxy,
+			(select count(distinct(EmailId)) from @commonTable where InterviewStatus=2 and QCStatus=1 and confirmationStatus=1) as Selected,
+			(select count(distinct(EmailId)) from @commonTable where confirmationStatus=1 and (InterviewStatus=3 or (InterviewStatus=2 and QCStatus=2))) as Rejected,
+			(select count(distinct(EmailId)) from @commonTable where confirmationStatus=1 and ((InterviewStatus=2 and QCStatus is null) or (InterviewStatus is null and MeetingStatus=4))) as QCPending,
+			(select count(distinct(EmailId)) from @commonTable where confirmationStatus=1 and InterviewStatus=4) as BorderLine,
+			(select count(distinct(EmailId)) from @commonTable where confirmationStatus=1 and InterviewStatus is null and MeetingStatus=1) as NoShowCount,
+			(select count(distinct(EmailId)) from @commonTable where confirmationStatus=1 and InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
+			(select count(distinct(EmailId)) from @commonTable where confirmationStatus=1 and InterviewStatus is null and MeetingStatus=3) as DroppedCount,
+			(select count(distinct(EmailId)) from @commonTable) as TotalCandidates
 
 		
 	End

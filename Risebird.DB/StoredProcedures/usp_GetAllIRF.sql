@@ -25,6 +25,9 @@ DECLARE @tbl_ConfirmedMeetings TABLE (
 INSERT INTO @tbl_ConfirmedMeetings
 select IRF.id as IRFId, count(im.confirmationStatus) as ConfirmedMeetings 
 from IRF left join InterviewMeetings im on IRF.IRFId = im.IRFId 
+inner join UserList ul on ul.EmailId = im.candidateEmail 
+inner join CandidatesMaster cm on ul.id =cm.UserId
+inner join Candidate ca on cm.id=ca.CandidateMasterId
 where im.confirmationStatus=1 group by IRF.id
 
 DECLARE @tbl_TotalMeetings TABLE (
@@ -34,7 +37,9 @@ DECLARE @tbl_TotalMeetings TABLE (
 INSERT INTO @tbl_TotalMeetings
 select IRF.id as IRFId, count(im.id) as TotalMeetings
 from IRF inner join InterviewMeetings im on IRF.IRFId = im.IRFId  
-inner join InterviewComments ic on im.id= ic.InterviewId
+inner join UserList ul on ul.EmailId = im.candidateEmail 
+inner join CandidatesMaster cm on ul.id =cm.UserId
+inner join Candidate ca on cm.id=ca.CandidateMasterId
 where im.confirmationStatus=1
 group by IRF.id
 
@@ -47,6 +52,9 @@ select irf.id as IRFId, count(im.id) as SelectedMeetings
 from irf left join InterviewMeetings im on irf.IRFId= im.IRFId 
 left join InterviewComments ic on im.id= ic.InterviewId
 left join QCFeedbackReport qcf on qcf.InterviewId = im.id
+inner join UserList ul on ul.EmailId = im.candidateEmail 
+inner join CandidatesMaster cm on ul.id =cm.UserId
+inner join Candidate ca on cm.id=ca.CandidateMasterId
 where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and qcf.InterviewId is not null
 group by irf.id
 
@@ -58,6 +66,9 @@ INSERT INTO @tbl_ScheduledMeetings
 select irf.id as IRFId, count(im.id) as ScheduledMeetings 
 from irf left join InterviewMeetings im on irf.IRFId = im.IRFId 
 left join InterviewComments ic on ic.InterviewId= im.id 
+inner join UserList ul on ul.EmailId = im.candidateEmail 
+inner join CandidatesMaster cm on ul.id =cm.UserId
+inner join Candidate ca on cm.id=ca.CandidateMasterId
 where ic.MeetingStatus is null and im.confirmationStatus=1 and im.interviewDate>= @timeNow
 group by irf.id
 

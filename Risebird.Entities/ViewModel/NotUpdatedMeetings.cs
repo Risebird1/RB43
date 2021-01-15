@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Risebird.Entities.ViewModel
+{
+    public class NotUpdatedMeetings
+    {
+        public int UnassignedInterviewsCount { get; set; }
+        public int UnfilledMeetingStatusCount { get; set; }
+        public int UnfilledInterviewStatusCount { get; set; }
+        public int UnfilledCommentsCount { get; set; }
+
+    }
+}

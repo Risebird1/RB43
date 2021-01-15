@@ -10,8 +10,8 @@
 
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css?v=1" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css?v=1" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=14567" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=14567" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css?v=1" defer>
 <!-- END PLUGINS -->
 <!-- START THIS PAGE PLUGINS-->
@@ -49,6 +49,16 @@
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space ch-btn">
                             <span class="fa fa-tasks" onclick="location.href='@Url.Action("RequirementManagement", "DashBoard")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Channel Management</font></span>
                         </button>
+
+                    </div>
+                </div>
+                <div class="pull-right" style="margin-right:3%;margin-bottom:20px">
+                    <div>
+
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space ch-btn">
+                            <span onclick="location.href='@Url.Action("Index", "ActivityTracker")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M19.07 4.93l-1.41 1.41C19.1 7.79 20 9.79 20 12c0 4.42-3.58 8-8 8s-8-3.58-8-8c0-4.08 3.05-7.44 7-7.93v2.02C8.16 6.57 6 9.03 6 12c0 3.31 2.69 6 6 6s6-2.69 6-6c0-1.66-.67-3.16-1.76-4.24l-1.41 1.41C15.55 9.9 16 10.9 16 12c0 2.21-1.79 4-4 4s-4-1.79-4-4c0-1.86 1.28-3.41 3-3.86v2.14c-.6.35-1 .98-1 1.72 0 1.1.9 2 2 2s2-.9 2-2c0-.74-.4-1.38-1-1.72V2h-1C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10c0-2.76-1.12-5.26-2.93-7.07z" /></svg><font style="font-family:arial;">ActivityTracker</font></span>
+                        </button>
+
                     </div>
                 </div>
             </nav>
@@ -91,7 +101,7 @@
                 </div>
                 <!-- END DASHBOARD CHART -->
                 <!--Start channel Management-->
-                <div class="row" style="padding-bottom:30px">
+                <div class="row" style="padding-bottom:5px">
 
                     <div class="skill">
 
@@ -146,7 +156,7 @@
                     <div class="daily-interview">
 
                         <!-- START IRF BLOCK -->
-                        <div class="panel panel-default">
+                        <div class="panel panel-default" style="margin-bottom:0px;">
                             <div class="panel-heading">
                                 <div class="panel-title-box">
                                     <h3>Daily Interview Stats</h3>
@@ -166,7 +176,7 @@
                                 </ul>
                             </div>
                             <div id="slotsId">
-                                <div class="panel-body panel-body-table">
+                                <div class="panel-body panel-body-table" >
                                     @if (Model.DailyInterviewSlots != null && Model.DailyInterviewSlots.Count() > 0)
                                     {
                                         <div class="sb-container scroller">
@@ -247,18 +257,90 @@
                                     }
                                 </div>
                             </div>
+
+
                         </div>
                         <!-- END IRF BLOCK -->
+                        <div class="table-responsive" style="margin-bottom:0px">
+                            <table class="table table-bordered table-striped" style="margin-bottom:0px">
+                                
+                                <tbody>
+                                    <tr>
 
+                                        <td style="border:0px;padding:0px;">
+                                            <table>
+                                                <tr>
+
+                                                    <td width="30%" class="text-left un-left"><strong>Unassigned Interview Count</strong></td>
+                                                    <td  width="10%" class="un-right">
+                                                        <span class="label-num-unassigned"><strong title="Unassigned Interview Count" style="color: red">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</strong></span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+
+                                        <td style="border:0px;padding:0px;">
+                                            <table >
+                                                <tr>
+
+                                                    <td width="30%" class="text-left un-left"><strong>Unfilled Meeting Status Count</strong></td>
+                                                    <td width="10%" class="un-right">
+                                                        <span class="label-num-unassigned"><strong title="Unassigned Interview Count" style="color: red">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</strong></span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+
+                                        @*<td style="border:0px;padding:0px;">
+                                            <table>
+                                                <tr>
+
+                                                    <td width="30%" class="text-left un-left"><strong>Unfilled Interview <br />Status  Count</strong></td>
+                                                    <td width="10%" class="un-right">
+                                                        <span class="label-num-unassigned"><strong title="Unassigned Interview Count: 0">@Model.NotUpdatedMeetingsObj.UnfilledInterviewStatusCount</strong></span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+
+
+                                        <td style="border:0px;padding:0px;">
+
+
+                                            <table>
+                                                <tr>
+
+
+                                                    <td width="30%" class="text-left un-left"><strong>Unfilled Comment<br /> Count</strong></td>
+                                                    <td width="10%" class="un-right">
+                                                        <span class="label-num-unassigned"><strong title="Unassigned Interview Count: 0">@Model.NotUpdatedMeetingsObj.UnfilledCommentsCount</strong></span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>*@
+
+
+
+
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+
+
+                        </div>
+
+                        <a class="view-unassigned" href="/Dashboard/UnassignedInterviews"><i class="fa fa-arrow-circle-right"></i> View Unassigned Interviews</a> 
                     </div>
 
 
                 </div>
                 <!--End Channel Management-->
 
-                <div class="row" style="padding-bottom:30px">
+                <div class="row" style="padding-bottom:5px">
 
-                    <div class="skill">
+                    <div class="col-md-12">
 
                         <!-- START INTERVIEW BLOCK -->
                         <div class="panel panel-default">
@@ -291,8 +373,8 @@
                                                 <table class="table table-bordered table-striped">
                                                     <thead>
                                                         <tr>
-                                                            <th width="50%">Skill Channel</th>
-                                                            <th width="20%">Status</th>
+                                                            <th width="40%">Skill Channel</th>
+                                                            <th width="30%">Status</th>
                                                             <th width="30%">Activity</th>
                                                         </tr>
                                                     </thead>
@@ -424,48 +506,50 @@
                         <!-- END INTERVIEW BLOCK -->
 
                     </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 nopad">
+                            <div class="col-lg-4 col-md-4 col-sm-4">
 
-                    <div class="daily-interview">
-                        <div class="col-lg-4 col-md-4 col-sm-4">
-
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="card-text">Total Candidates : <span><strong>@Model.CandidatesCountObj.TotalCandidates</strong></span></p>
-                                    <div>
-                                        <div id="candidatesPieId" class="PieId"></div>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <p class="card-text">Total Candidates : <span><strong>@Model.CandidatesCountObj.TotalCandidates</strong></span></p>
+                                        <div>
+                                            <div id="candidatesPieId" class="PieId"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            <div class="col-lg-4 col-md-4 col-sm-4">
 
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="card-text">Total Interviewers : <span><strong>@Model.InterviewerCountObj.InterviewerCount</strong></span></p>
-                                    <div>
-                                        <div id="interviewers" class="PieId"></div>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <p class="card-text">Total Interviewers : <span><strong>@Model.InterviewerCountObj.InterviewerCount</strong></span></p>
+                                        <div>
+                                            <div id="interviewers" class="PieId"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            <div class="col-lg-4 col-md-4 col-sm-4">
 
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="card-text">Total Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
-                                    <div>
-                                        <div id="meetingsCountId" class="PieId"></div>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <p class="card-text">Total Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
+                                        <div>
+                                            <div id="meetingsCountId" class="PieId"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                </div>
+            </div>
 
-                <!-- START WIDGETS -->
-                @*<div class="row">
+            <!-- START WIDGETS -->
+            @*<div class="row">
 
 
                     <div class="col-lg-4 col-md-4 col-sm-4">
@@ -503,20 +587,15 @@
                         </div>
                     </div>
                 </div>*@
-                <!-- END WIDGETS -->
+            <!-- END WIDGETS -->
 
 
-            </div>
-            <!-- END PAGE CONTENT WRAPPER -->
         </div>
-        <!-- END PAGE CONTENT -->
+        <!-- END PAGE CONTENT WRAPPER -->
     </div>
-    <!-- END PAGE CONTAINER -->
-
-
-
-
-
+    <!-- END PAGE CONTENT -->
+</div>
+<!-- END PAGE CONTAINER -->
 </div>
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -610,15 +689,15 @@
 
         var chart = new CanvasJS.Chart("interviewers", {
            theme: "light2",
-            width: 180,//in pixels
-            height: 140,//in pixels
+            width: 350,//in pixels
+            height: 200,//in pixels
             animationEnabled: true,
             title: null,
             data: [{
                 type: "pie",
                 startAngle: 60,
                 innerRadius: 55,
-                indexLabelFontSize: 8,
+                indexLabelFontSize: 15,
                 indexLabelFontColor: "#9a9a9a",
                 indexLabel: "{label}  {y}",
                 toolTipContent: "<b>{label} </b>({y})",
@@ -641,15 +720,15 @@
 
         var chart = new CanvasJS.Chart("meetingsCountId", {
            theme: "light2",
-            width: 180,//in pixels
-            height: 140,//in pixels
+            width: 350,//in pixels
+            height: 200,//in pixels
             animationEnabled: true,
             title: null,
             data: [{
                 type: "pie",
                 startAngle: 60,
                 innerRadius: 55,
-                indexLabelFontSize: 8,
+                indexLabelFontSize: 15,
                 indexLabelFontColor: "#9a9a9a",
                 indexLabel: "{label}  {y}",
                 toolTipContent: "<b>{label} </b>({y})",
@@ -672,15 +751,15 @@
 
         var chart = new CanvasJS.Chart("candidatesPieId", {
            theme: "light2",
-            width: 180,//in pixels
-            height: 140,//in pixels
+            width: 350,//in pixels
+            height: 200,//in pixels
             animationEnabled: true,
             title: null,
             data: [{
                 type: "pie",
                 startAngle: 60,
-                innerRadius: 45,
-                indexLabelFontSize: 8,
+                innerRadius: 55,
+                indexLabelFontSize: 15,
                 indexLabelFontColor: "#9a9a9a",
                 indexLabel: "{label}  {y}",
                 toolTipContent: "<b>{label} </b>({y})",

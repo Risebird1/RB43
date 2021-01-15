@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using Risebird.Business.Interface;
@@ -11,6 +12,7 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -34,8 +36,8 @@ namespace Risebird.Web.Controllers
         private static List<Candidate> _modelDetails;
         private static List<MeetingVM> _modelDetail;
         private static List<MeetingVM> _modelDetle;
-
-        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService)
+        private IConfiguration _configuration;
+        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -45,6 +47,7 @@ namespace Risebird.Web.Controllers
             _azureStorageHelper = azureStorageHelper;
             _evaluatorService = evaluatorService;
             _skillService = skillService;
+            _configuration = configuration;
         }
 
 
@@ -1637,10 +1640,15 @@ namespace Risebird.Web.Controllers
                         {
                             // byte[] videofileData = new byte[model.VideoFile.Length];
                             // string uploadedvideoFileURL = _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", videofileData);
-                            await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", model.VideoFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                            var blob = containerRef.GetBlockBlobReference(model.VideoFile.FileName);
-                            string uploadedvideoFileURL = blob.Uri.ToString();
+                            //await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", model.VideoFile);
+                            //var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                            //var blob = containerRef.GetBlockBlobReference(model.VideoFile.FileName);
+                            //string uploadedvideoFileURL = blob.Uri.ToString();
+                            AzureCall _call = new AzureCall(_configuration);
+                            //var resulttype = _call.CallApi(model.VideoFile, model.VideoFile.FileName, model.VideoFile.Length);
+                            var resulttype = _call.CallApiUpload(model.VideoFile);
+                            resulttype = resulttype.Replace("\"", "");
+                            var uploadedvideoFileURL = resulttype;
                             if (uploadedvideoFileURL == null)
                             {
                                 ModelState.AddModelError(String.Empty, "Video Upload is failed.");

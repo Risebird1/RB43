@@ -14,6 +14,20 @@ body {
 
     color: #9a9a9a !important
 }
+.click-btn, .click-btn:hover {
+    background: #2f2e2e;
+}
+.file-upload .file-select {
+    display: block;
+    border: 2px solid #565555;
+    background: transparent !important;
+}
+.file-select-name {
+    color: #cec9c9 !important;
+}
+.file-upload .file-select .file-select-button {
+    background: #1d1d1d;
+}
 table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead > th, table.journey th {
     background: transparent !important;
 }

@@ -20,8 +20,9 @@
 
 .ch-btn {
     width: 220px;
-    margin-right:10px;
+    margin-right: 10px;
 }
+
 .multiple_row > h2 {
     font-size: 18px;
     padding: 8px 10px;
@@ -30,6 +31,7 @@
     margin-top: 0px;
     margin-bottom: 10px;
 }
+
 .background-colorful {
     background: linear-gradient(left, #E04B4A 0%, #1caf9a 50%, #95b75d 100%);
     background: -o-linear-gradient(left, #E04B4A 0%, #1caf9a 50%, #95b75d 100%);
@@ -127,6 +129,7 @@ body {
 .priority svg {
     transform: rotate(180deg);
 }
+
 #sections {
     word-wrap: break-word;
 }
@@ -135,6 +138,7 @@ body {
     display: none;
     white-space: initial;
 }
+
 table.journey td.cadName, table.journey td.cadEmail {
     max-width: 200px;
 }
@@ -1078,64 +1082,70 @@ table.journey td.cadSkill {
 .candidate .cadEmail [data-tooltip]:before {
     margin-left: -25px;
 }
+
 #tblbodyCandidate .action .mdc-fab {
     width: 29px !important;
     height: 30px !important;
 }
-    #tblbodyCandidate .action{width:235px}
+
+#tblbodyCandidate .action {
+    width: 235px
+}
 /* Position tooltip above the element */
 .selected-priority .talk-bubble [data-tooltip]:before, .selected-priority .cadName [data-tooltip]:before, .selected-priority .cadSkill [data-tooltip]:before, .selected-priority .cadEmail [data-tooltip]:before,
 .cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
     bottom: 72%;
 }
 
-    .talk-bubble [data-tooltip]:before {
-        position: absolute;
-        bottom: 150%;
-        left: 10%;
-        margin-bottom: 5px;
-        margin-left: -80px;
-        font-weight: 300;
-        padding: 7px;
-        width: 300px;
-        font-size: 13px;
-        height: auto;
-        -webkit-border-radius: 3px;
-        -moz-border-radius: 3px;
-        border-radius: 3px;
-        box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
-        content: attr(data-tooltip);
-        text-align: center;
-        /* font-size: 14px; */
-        line-height: 1.3;
-        white-space: normal;
-        border-radius: 5px;
-    }
+.talk-bubble [data-tooltip]:before {
+    position: absolute;
+    bottom: 150%;
+    left: 10%;
+    margin-bottom: 5px;
+    margin-left: -80px;
+    font-weight: 300;
+    padding: 7px;
+    width: 300px;
+    font-size: 13px;
+    height: auto;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
+    content: attr(data-tooltip);
+    text-align: center;
+    /* font-size: 14px; */
+    line-height: 1.3;
+    white-space: normal;
+    border-radius: 5px;
+}
+
 .candidate .cadName [data-tooltip]:before {
     left: 50%;
 }
-    .cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
-        position: absolute;
-        bottom: 90%;
-        left: 10%;
-        margin-bottom: 5px;
-        margin-left: -80px;
-        font-weight: 300;
-        padding: 7px;
-        width: 200px;
-        font-size: 13px;
-        height: auto;
-        -webkit-border-radius: 3px;
-        -moz-border-radius: 3px;
-        border-radius: 3px;
-        box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
-        content: attr(data-tooltip);
-        text-align: center;
-        /* font-size: 14px; */
-        line-height: 1.3;
-        white-space: normal;
-        border-radius: 5px;
-    }
+
+.cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
+    position: absolute;
+    bottom: 90%;
+    left: 10%;
+    margin-bottom: 5px;
+    margin-left: -80px;
+    font-weight: 300;
+    padding: 7px;
+    width: 200px;
+    font-size: 13px;
+    height: auto;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
+    content: attr(data-tooltip);
+    text-align: center;
+    /* font-size: 14px; */
+    line-height: 1.3;
+    white-space: normal;
+    border-radius: 5px;
+}
 
 .cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
     position: absolute;
@@ -1161,20 +1171,25 @@ table.journey td.cadSkill {
 }
 
 .table-bordered.interviewertable td, .table-bordered.interviewertable th, .table-bordered.journey td, .table-bordered.journey th {
-    border: 1px solid #dee2e6!important;
+    border: 1px solid #dee2e6 !important;
 }
+
 table {
     border-collapse: inherit;
 }
+
 .table.interviewertable td, .table.journey td {
-    border-top: 1px solid #dee2e6!important;
+    border-top: 1px solid #dee2e6 !important;
 }
+
 .interviewer-comment .talk-bubble [data-tooltip]:before {
     max-width: 400px;
 }
+
 table.interviewertable td.cadName {
     max-width: 200px;
 }
+
 table.interviewertable td.cadLast {
     max-width: 150px;
 }
@@ -1182,29 +1197,40 @@ table.interviewertable td.cadLast {
 table.interviewertable td.cadEmail {
     max-width: 170px;
 }
-#interviewerMemberModal{z-index:1000}
+
+#interviewerMemberModal {
+    z-index: 1000
+}
 
 
     #interviewerMemberModal .table > thead > tr > th, #interviewerMemberModal .table > tfoot > tr > th {
         padding: 1px;
         font-weight: normal !important;
     }
+
 .interviewertable td.interview-com {
     max-width: 280px;
 }
-.interviewertable .action a{color:#fff}
+
+.interviewertable .action a {
+    color: #fff
+}
+
 table.journey th, table.journey td {
     border-right: 1px solid #dee2e6 !important;
     max-width: 187px;
     vertical-align: top !important;
 }
+
 table.interviewertable th, table.interviewertable td {
     vertical-align: top !important;
     padding: 5px 0px;
 }
+
 .scroller-payment {
     height: 270px;
 }
+
 .video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
     position: absolute;
     bottom: 100%;
@@ -1921,7 +1947,7 @@ a.list-group-item:focus {
     }
 
     .panel .panel-heading {
-        padding: 10px;
+        padding: 7px;
     }
 
         .panel .panel-heading .panel-title-image {
@@ -2453,6 +2479,36 @@ ul.panel-controls > li > .dropdown-menu {
     background: url(../img/jquery/resize-icon.png) left top no-repeat;
 }
 /* EOF XNAV PANEL */
+
+.label-num-unassigned {
+    background: #d4cfcf;
+    width: 30px;
+    border-radius: 100%;
+    padding: 6px;
+    display: inline-table;
+    font-size: 12px;
+    line-height: 30px;
+    color: #423f3f;
+    text-align: center;
+    position: relative;
+    top: 4px;
+}
+
+.view-unassigned .fa {
+    font-size: 20px;
+    position: relative;
+    top: 2px;
+}
+
+.view-unassigned {
+    margin: 0px 10px 20px;
+    display: block;
+    float: right;
+    /* text-decoration: underline; */
+    font-size: 15px;
+    color: #636363d1 !important;
+    font-weight: 600;
+}
 
 /* BUTTONS */
 .btn {
@@ -3037,9 +3093,11 @@ button.btn {
     table.journey td.cadSkill {
         max-width: 150px;
     }
+
     .candidate table.journey td.cadEmail {
         max-width: 160px;
     }
+
     .selected-priority table.journey td.cadName {
         max-width: 250px;
     }
@@ -3048,6 +3106,7 @@ button.btn {
         max-width: 235px;
     }
 }
+
 .selected-priority table.journey td.interviewdate {
     max-width: 160px;
 }
@@ -3062,7 +3121,7 @@ button.btn {
 }
 
 .selected-priority table.journey td.cadSkill {
-   max-width: 235px;
+    max-width: 235px;
 }
 
 }
@@ -3072,9 +3131,11 @@ button.btn {
     table.journey td.cadName, table.journey td.cadEmail {
         max-width: 200px;
     }
+
     .candidate table.journey td.cadEmail {
         max-width: 160px;
     }
+
     table.journey td.cadSkill {
         max-width: 150px;
     }
@@ -3230,7 +3291,7 @@ input[type='radio'] {
 .content.client {
     margin-top: 0px;
     padding: 0px 10px 0px;
-    clear:both;
+    clear: both;
 }
 
 .pt30 {
@@ -3240,9 +3301,11 @@ input[type='radio'] {
 .mt50 {
     margin-top: 55px;
 }
+
 .mt-20 {
     margin-top: 20px;
 }
+
 .mdc-radio .mdc-radio__native-control:enabled:not(:checked) + .mdc-radio__background .mdc-radio__outer-circle {
     border-color: rgb(146, 146, 146);
 }
@@ -3721,6 +3784,7 @@ blockquote {
     line-height: 30px;
 }
 /* EOF HELPERS */
+
 /* PROGRESS BARS */
 .progress.progress-small {
     height: 5px;
@@ -6069,7 +6133,7 @@ button.close {
 .excel-file {
     margin-right: 5px;
     color: green;
-    font-size: 35px!important;
+    font-size: 35px !important;
     margin-left: 5px;
     border: 0;
 }
@@ -6244,7 +6308,6 @@ tbody.collapse.in {
 
 .searchCon {
     position: relative;
-    
 }
 
 .dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
@@ -7949,8 +8012,8 @@ div.tagsinput {
         display: none;
     }
 
-     .selected-priority table.journey td.cadName {
-       max-width: 250px;
+    .selected-priority table.journey td.cadName {
+        max-width: 250px;
     }
 
     .selected-priority table.journey td.cadSkill {
@@ -8082,9 +8145,11 @@ div.tagsinput {
     .page-container.page-navigation-top-fixed .page-content {
         padding-top: 0px;
     }
+
     table.journey td.cadName, table.journey td.cadEmail {
         max-width: 200px;
     }
+
     .candidate table.journey td.cadEmail {
         max-width: 160px;
     }
@@ -8092,6 +8157,7 @@ div.tagsinput {
     table.journey td.cadSkill {
         max-width: 150px;
     }
+
     .selected-priority table.journey td.cadName {
         max-width: 250px;
     }
@@ -8103,11 +8169,12 @@ div.tagsinput {
     .selected-priority .journey td.interview-com {
         max-width: 300px;
     }
+
     .selected-priority table.journey td.interviewdate {
         max-width: 160px;
     }
 
-        .x-navigation {
+    .x-navigation {
         max-height: 50px;
         overflow: hidden;
         background: #1b1e24;
@@ -8219,10 +8286,9 @@ div.tagsinput {
     .candidate table.journey td.cadEmail {
         max-width: 133px;
     }
-
 }
 
 
-    .x-navigation-minimized .xn-logo {
-        display: none;
-    }
+.x-navigation-minimized .xn-logo {
+    display: none;
+}

@@ -1,0 +1,366 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@using Risebird.Entities
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.Data
+@*@inject IHttpContextAccessor HttpContextAccessor*@
+
+@{
+    ViewData["Title"] = "Unassigned Interviews";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+}
+
+
+
+
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Unassigned Interviews</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Unassigned Interviews</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div>
+
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Index", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back to List</font></span>
+                        </button>
+                      
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content interview client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+                            <div class="toolbar">
+
+                               
+                                <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+
+                                    <div id="tableID" class="second">
+                                        <table id="meetingTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th id='start'>IRF ID</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Candidate Name</th>
+                                                    <th>Candidate Email</th>
+                                                   
+                                                    <th>Interviewer</th>
+                                                   
+                                                    <th>Meeting Status</th>
+                                                    <th>Interview Status</th>
+                                                    
+                                                    <th>Client HR</th>
+                                                    <th>End Client Name</th>
+                                                   
+                                                    <th>QC Interviewer</th>
+                                                    <th>QC Status</th>
+                                                    <th>Co-ordinating HR</th>
+                                                   
+                                                  
+
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th id='start'>IRF ID</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Candidate Name</th>
+                                                    <th>Candidate Email</th>
+                                                  
+                                                    <th>Interviewer</th>
+                                                   
+                                                    <th>Meeting Status</th>
+                                                    <th>Interview Status</th>
+                                                   
+                                                    <th>Client HR</th>
+                                                    <th>End Client Name</th>
+                                                    
+                                                    <th>QC Interviewer</th>
+                                                    <th>QC Status</th>
+                                                   
+                                                    <th>HR Comments</th>
+                                                    
+
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                @foreach (var item in Model)
+                                                {
+
+                                                <tr id=@item.imid>
+                                                    <td title=@item.IRFId> @item.IRFId </td>
+                                                    <td> @item.interviewDate </td>
+                                                    <td>@item.candidateName</td>
+
+
+                                                    <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
+
+
+                                                  
+                                                    @if (@item.interviewer != null || @item.interviewer != "")
+                                                    {
+                                                        <td>
+                                                            @item.interviewer
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+
+                                                    
+
+                                                    @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
+                                                    {
+                                                        <td>Scheduled</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td> @item.MeetingStatusStatusDesc</td>
+                                                    }
+                                                    <td> @item.intervieweStatusStatDesc</td>
+                                            
+                                                 
+
+                                                    @if (item.IsHrOnline == 1)
+                                                    {
+                                                        <td>
+                                                            <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact </a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            @item.ClientHrContact
+                                                        </td>
+                                                    }
+                                                    <td> @item.ClientName </td>
+
+                                                   
+                                                    <td>@item.QCInterviewer</td>
+                                                    @if (!(string.IsNullOrEmpty(item.QCStatusStatusDesc)))
+                                                    {
+                                                        <td>@item.QCStatusStatusDesc</td>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+
+                                                    }
+                                                    <td>@item.HRCoordinatorEmailId</td>
+                                                    
+                                                </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <!-- end content-->
+                        </div>
+
+                        <!-- end col-md-12 -->
+                    </div>
+
+
+
+
+                    <!-- end row -->
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+
+
+
+
+
+@*<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+
+        if ('@filter' != "") {
+
+            ApplySessionFilter();
+        }
+        $("#ActivityType").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+
+        $("#PerformedBy").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+
+
+    });
+
+    function ResetFilter() {
+        window.location.href = "/ActivityTracker/ResetActivityTrackerFilter";
+
+    }
+    function ApplySessionFilter() {
+
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var performedByArr = @Html.Raw(Json.Serialize(performedBy));
+        var activityTypeArr =  @Html.Raw(Json.Serialize(activityType));
+
+
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        $("#PerformedBy").val(performedByArr);
+        $("#ActivityType").val(activityTypeArr);
+
+        var form = $("#form").serialize();
+
+    }
+
+
+
+
+</script>*@
+
+
+<script>
+    $(document).ready(function () {
+        $('#meetingTable').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").hide();
+
+                    }
+                    else { $("#x").hide(); }
+                });
+            }
+
+        });
+
+
+        var table = $('#meetingTable').DataTable();
+
+
+    });
+
+
+
+
+
+
+
+    $(document).ready(function () {
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#meetingTable").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#meetingTable").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meetingTable").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>

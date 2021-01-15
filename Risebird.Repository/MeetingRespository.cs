@@ -2448,25 +2448,26 @@ namespace Risebird.Repository
 
         }
 
-        public bool SaveHRComment(int id, string comment)
+        public async Task<bool> SaveHRComment(int id, string comment, string imageFileURL)
         {
             try
             {
-                var query = "update InterviewMeetings set HRComment = @comment where id=@id";
+                var query = "update InterviewMeetings set HRComment = @comment, HRImageFileURL=@imageFileURL where id=@id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@comment", comment);
+                dynamicParameters.Add("@imageFileURL", imageFileURL);
                 dynamicParameters.Add("@id", id);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query(query, dynamicParameters);
+                    var results = await  con.QueryAsync(query, dynamicParameters);
                     return true;
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
 

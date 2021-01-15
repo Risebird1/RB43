@@ -51,6 +51,7 @@ namespace Risebird.Web.Controllers
                         //daily interview tracking slots
                         model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now);
                         model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
+                        model.NotUpdatedMeetingsObj = await _dashboardService.GetNotUpdatedMeetingsCount();
                         var progressDate = TempData.Peek("ProgressDate")?.ToString();
                         if (!string.IsNullOrEmpty(progressDate))
                         {
@@ -592,5 +593,39 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+
+        [Authorize]
+        public async Task<IActionResult> UnassignedInterviews()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        var model = await _dashboardService.GetNotUpdatedMeetings();
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
     }
 }

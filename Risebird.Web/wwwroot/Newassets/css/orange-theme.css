@@ -240,11 +240,30 @@ textarea::-webkit-scrollbar {
     background-color: #fcfcfc;
     border: 0px;
 }
+.click-btn, .click-btn:hover {
+    background: #b1aeae;
+    color: #fff !important;
+}
+.file-upload .file-select {
+    display: block;
+    border: 2px solid #dce4ec;
+}
 
+    .file-upload .file-select .file-select-button {
+        background: #e4e2e2;
+    }
     .talk-bubble textarea, talk-bubble textarea:focus {
         background-color: #fcfcfc!important;
         border: 0px!important;
     }
+
+.un-left {
+    background: #eaeaea;
+}
+
+.un-right {
+    background: #f3f3f3;
+}
 textarea::-webkit-scrollbar-thumb {
     background-color: #acacad !important;
     border: 1px solid #acacad !important;

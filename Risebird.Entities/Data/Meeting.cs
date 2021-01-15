@@ -93,6 +93,7 @@ namespace Risebird.Entities.Data
         public int CandidateAvailable { get; set; }
         public string ClientHrMobile { get; set; }
         public string StaffingAgencyMobile { get; set; }
+        public string HRImageFileURL { get; set; }
 
     }
 }

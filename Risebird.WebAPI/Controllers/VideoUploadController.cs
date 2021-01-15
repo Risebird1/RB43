@@ -56,6 +56,20 @@ namespace Risebird.WebAPI.Controllers
             })
             .ToArray();
         }
+        [Route("api/Upload")]
+        [HttpPost]
+        public async Task<string> Post(IList<IFormFile> files)
+        {
+            var model = files[0];
+            string outputFileName = model.FileName;
+            await InsertBlob(model.FileName, "newvideo", model);
+            var containerImageRef = GetCloudBlobContainer("newvideo");
+            var imageblob = containerImageRef.GetBlockBlobReference(outputFileName);
+            string uploadedImageFileURL = imageblob.Uri.ToString();
+            var sas = CreateSasUrl();
+            var sasurl = uploadedImageFileURL + "?" + sas.Result;
+            return sasurl.ToString();
+        }
 
         public async Task InsertBlob(string filename, string containerName, IFormFile blobFile)
         {

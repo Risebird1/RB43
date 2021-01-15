@@ -79,6 +79,27 @@ namespace Risebird.Web.Controllers.AzureMediaservice
 
             return "";
         }
+        public string CallApiUpload(IFormFile file)
+        {
+            var baseurl = _configuration["Azure:ApiCall"];
+            var username = _configuration["Azure:UserName"];
+            var Password = _configuration["Azure:Password"];
+            string path = Path.Combine(baseurl, "Files", file.FileName);
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+            string UserDetails = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(username + ":" + Password));
+            RestClient _client = new RestClient(baseurl);
+            var request1 = new RestRequest("api/Azure", Method.POST) { RequestFormat = DataFormat.Json };
+            request1.AddHeader("Authorization", "Basic " + UserDetails);
+            request1.AddFile("files", path);
+            request1.AddHeader("content-type", "application/json");
+            var response = _client.Execute(request1);
+            System.IO.File.Delete(path);
+            return response.Content;
+
+        }
     }
     public class Reservation
     {
@@ -89,4 +110,5 @@ namespace Risebird.Web.Controllers.AzureMediaservice
         public int id { get; set; }
 
     }
+
 }
