@@ -165,8 +165,8 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
                 }
-                mailMessage.To.Add(new MailAddress("interview@risebird.io", "Interview"));
-                mailMessage.To.Add(new MailAddress("kamini@risebird.io", "Job"));
+              
+                mailMessage.To.Add(new MailAddress("kamini@risebird.io", "Kamini"));
                 mailMessage.Subject = "HR Alert!!! " + interviewer + " Interviewer has unassigned interview for candidate " + candidateEmail + " scheduled on " + meetingDate;
                 StringBuilder msgBody = new StringBuilder("Dear HR,");
                 msgBody.Append("\n");
@@ -229,7 +229,8 @@ namespace Risebird.CommonHelper
             {
                 var mailMessage = new MailMessage();
                 //mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
-                mailMessage.From = new MailAddress(clientHREmail.Trim(), clientHREmail.Split("@").First());
+                // mailMessage.From = new MailAddress(clientHREmail.Trim(), clientHREmail.Split("@").First());
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
                 mailMessage.To.Add(new MailAddress(emailId.ToLower(), emailId.Split("@").First()));
 
                 if (clientUsers != null && clientUsers.Count > 0)

@@ -15,7 +15,7 @@ AS
 BEGIN
 select ul.id,ul.idprofile,ul.FirstName,ul.LastName,ul.EmailId,ul.MobileNumber,ul.isactive from [dbo].[UserList] ul
 join [dbo].[Profile] pf on ul.idprofile = pf.id
-where pf.Name in('Admin','HR') and ul.isactive=1
+where pf.Name in('Admin','HR','Finance') and ul.isactive=1
 
 END
 GO 
