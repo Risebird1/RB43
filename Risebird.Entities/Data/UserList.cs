@@ -33,5 +33,6 @@ namespace Risebird.Entities.Data
         [Display(Name = "User Profile")]
         public SelectList UserProfiles { get; set; }
         public string Name { get; set; }
+        public string ProfileName { get; set; }
     }
 }

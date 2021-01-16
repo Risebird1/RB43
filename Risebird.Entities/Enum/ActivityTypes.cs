@@ -7,7 +7,7 @@ namespace Risebird.Entities.Enum
 {
     public enum ActivityTypes
     {
-        [Description("HR Comment")]
+        [Description("Interview Management")]
         HRComment = 1,
         [Description("Add Skills Channel")]
         AddSkillsChannel = 2
