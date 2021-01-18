@@ -636,9 +636,8 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@timeNow", DateTime.Now);
-                    var result = await SqlMapper.QueryAsync<NotUpdatedMeetings>(con, "usp_GetNotUpdatedMeetingsCount", parameters,
+            
+                    var result = await SqlMapper.QueryAsync<NotUpdatedMeetings>(con, "usp_GetNotUpdatedMeetingsCount",
                         commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
@@ -657,9 +656,8 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@timeNow", DateTime.Now);
-                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetNotUpdatedMeetings", parameters,
+             
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetNotUpdatedMeetings",
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }

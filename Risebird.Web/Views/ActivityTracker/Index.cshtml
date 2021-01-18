@@ -13,7 +13,7 @@
     string endDte = String.Empty;
     string[] activityType = new string[] { };
     string[] performedBy = new string[] { };
-    
+
 }
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("ActivityTrackerFilters") != null)
@@ -78,7 +78,7 @@
             </div>
         </div>
     </div>
-    <div class="content interview client">
+    <div class="content  client">
         <div class="row bl-bg">
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
@@ -149,7 +149,7 @@
 
                                                                 </div>
                                                             </div>
-                                                            
+
 
                                                         </div>
                                                         <div class="col-md-6 col-sm-6">
@@ -212,7 +212,7 @@
                                                     <th>Performed At</th>
                                                     <th>Performed By</th>
                                                     <th>Uploaded File</th>
-                                                    
+
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -230,28 +230,70 @@
                                                 @foreach (var item in Model)
                                                 {
 
-                                                <tr>
-                                                    <td> @item.ActivityTypeDesc </td>
-                                                    <td> @item.Name </td>
-                                                    <td> @item.Summary </td>
-                                                    <td> @item.PerformedAt </td>
-                                                    <td> @item.PerformedBy </td>
-                                                    @if (item.FileUrl != null && item.FileUrl != "")
-                                                    {
-                                                        <td>
+                                                    <tr>
+                                                        <td> @item.ActivityTypeDesc </td>
+                                                        <td> @item.Name </td>
+                                                        <td> @item.Summary </td>
+                                                        <td> @item.PerformedAt </td>
+                                                        <td> @item.PerformedBy </td>
+                                                        @if (item.FileUrl != null && item.FileUrl != "")
+                                                        {
+                                                            <td>
 
-                                                            <a id="FileUrlId" target="_blank" title="Uploaded File" href=@item.FileUrl>Uploaded File</a>
-                                                        </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td></td>
-                                                    }
+                                                                <a data-toggle="modal" data-target="#FileUrlId_@item.id" target="_blank" title="Uploaded File" href=@item.FileUrl>Uploaded File</a>
 
-                                                </tr>
+
+                                                                <div class="modal modal-wrap fade" id="FileUrlId_@item.id" tabindex="-1" role="dialog" aria-labelledby="FileUrlIdModalLabel" aria-hidden="true">
+                                                                    <div class="modal-dialog modal-lg" role="document">
+                                                                        <div class="modal-content">
+
+
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="z-index: 100;position: absolute;top: 26px; right: 26px;">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+
+
+                                                                            <div class="modal-body">
+                                                                                <div class="row">
+                                                                                    <div class="col-md-12 col-sm-12">
+                                                                                        <div class="form-group">
+                                                                                            <img src="@item.FileUrl" />
+
+
+
+                                                                                        </div>
+                                                                                    </div>
+
+
+
+
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
+
+                                                    </tr>
+
+
                                                 }
                                             </tbody>
+
                                         </table>
+
+
+
+
+
                                     </div>
                                 </div>
 
@@ -263,7 +305,7 @@
                         <!-- end col-md-12 -->
                     </div>
 
-                    
+
 
 
                     <!-- end row -->
@@ -275,8 +317,6 @@
 
     </div>
 </div>
-
-
 
 
 
@@ -321,15 +361,15 @@
         var endDte = '@endDte';
         var performedByArr = @Html.Raw(Json.Serialize(performedBy));
         var activityTypeArr =  @Html.Raw(Json.Serialize(activityType));
-           
+
 
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
         $("#PerformedBy").val(performedByArr);
         $("#ActivityType").val(activityTypeArr);
-           
+
         var form = $("#form").serialize();
-            
+
     }
 
 
@@ -392,7 +432,7 @@
 <script type="text/javascript">
     //// script for loader starts here
     $(".dataloading").hide();
-        $("#activityTable").hide();
+    $("#activityTable").hide();
     var loader;
     function ShowProgress() {
         $(".dataloading").hide();
