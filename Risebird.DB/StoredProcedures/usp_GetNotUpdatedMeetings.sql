@@ -11,12 +11,13 @@ GO
 
 
 CREATE PROCEDURE [dbo].[usp_GetNotUpdatedMeetings]  
-@timeNow datetime
+
 AS  
 Begin 
-select * from InterviewMeetings im 
+select im.id as imid, im.IRFId, im.interviewDate, im.candidateName, im.candidateEmail, im.interviewer, ic.MeetingStatus, ic.InterviewStatus, im.HRCoordinatorEmailId, ic.InterviewerComment, im.confirmationStatus  from InterviewMeetings im 
 left join InterviewComments ic on im.id=ic.InterviewId
-where confirmationStatus=1 and DATEDIFF(DAY, interviewDate, GETDATE())<10 
+left join QCFeedbackReport qcfr on im.id =qcfr.InterviewId
+where confirmationStatus=1 and DATEDIFF(DAY, interviewDate, GETDATE())<=7 
 and ((interviewer is null) or 
 (ic.MeetingStatus is null )
 or (ic.InterviewStatus is null ) 

@@ -603,12 +603,52 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
+                    
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        var model = await _dashboardService.GetNotUpdatedMeetings();
-                        return View(model);
+                        var modelList = await _dashboardService.GetNotUpdatedMeetings();
+
+
+                        if (HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<UnassignedInterviewsFilter>(HttpContext.Session.GetString("UnassignedInterviewsFilters"));
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                modelList = modelList.Where(x => x.interviewDate >= filter.StartDate && x.interviewDate <= filter.EndDate);
+                            }
+                            modelList = modelList.Select(x =>
+                            {
+                                x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
+                                return x;
+                            }).ToList();
+
+                           
+                            if (filter.Status.Contains(UnassignedInterviewsTypes.Unassigned.GetDescription()))
+                            {
+                                modelList = modelList.Where(x => string.IsNullOrEmpty(x.interviewer));
+                            }
+                            if (filter.Status.Contains(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription()))
+                            {
+                                modelList = modelList.Where(x => x.MeetingStatus == null);
+                            }
+                            if (filter.Status.Contains(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription()))
+                            {
+                                modelList = modelList.Where(x => x.InterviewStatus == null);
+                            }
+                            if (filter.Status.Contains(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription()))
+                            {
+                                modelList = modelList.Where(x => string.IsNullOrEmpty(x.InterviewerComment));
+                            }
+
+
+                        }
+                        else
+                        {
+
+                            modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
+                        }
+
+                        return View(modelList);
                     }
                     else
                     {
@@ -626,6 +666,94 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> UnassignedInterviews(UnassignedInterviewsFilter filter)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+
+                        if (filter != null)
+                        {
+                            HttpContext.Session.SetString("UnassignedInterviewsFilters", JsonConvert.SerializeObject(filter));
+                        }
+                        var modelList = await _dashboardService.GetNotUpdatedMeetings();
+
+                        if (filter.StartDate != null && filter.EndDate != null)
+                        {
+                            modelList = modelList.Where(x => x.interviewDate >= filter.StartDate && x.interviewDate <= filter.EndDate);
+                        }
+                        modelList = modelList.Select(x =>
+                        {
+                            x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
+                            return x;
+                        }).ToList();
+
+                        if (filter.Status.Contains(UnassignedInterviewsTypes.Unassigned.GetDescription()))
+                        {
+                            modelList = modelList.Where(x => string.IsNullOrEmpty(x.interviewer));
+                        }
+                        if (filter.Status.Contains(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription()))
+                        {
+                            modelList = modelList.Where(x => x.MeetingStatus == null);
+                        }
+                        if (filter.Status.Contains(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription()))
+                        {
+                            modelList = modelList.Where(x => x.InterviewStatus == null);
+                        }
+                        if (filter.Status.Contains(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription()))
+                        {
+                            modelList = modelList.Where(x => string.IsNullOrEmpty(x.InterviewerComment));
+                        }
+
+                            return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        [Authorize]
+        public async Task<IActionResult> ResetUnassignedInterviewsFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("UnassignedInterviewsFilters");
+                    return RedirectToAction("UnassignedInterviews");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("UnassignedInterviews");
+            }
+
         }
     }
 }

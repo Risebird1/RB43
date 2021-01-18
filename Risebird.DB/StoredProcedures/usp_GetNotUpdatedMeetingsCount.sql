@@ -12,14 +12,13 @@ GO
 
 
 CREATE PROCEDURE [dbo].[usp_GetNotUpdatedMeetingsCount]  
-@timeNow datetime
 AS  
 Begin 
 
-select (select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<10 ) as UnassignedInterviewsCount,
-(select Count(im.id) from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<10 ) as UnfilledMeetingStatusCount,
-(select Count(im.id) from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.InterviewStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<10 ) as UnfilledInterviewStatusCount,
-(select Count(im.id) from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.InterviewerComment is null and DATEDIFF(DAY, interviewDate, GETDATE())<10 ) as UnfilledCommentsCount
+select (select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<7 ) as UnassignedInterviewsCount,
+(select Count(im.id) from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7 ) as UnfilledMeetingStatusCount,
+(select Count(im.id) from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus=4 and ic.InterviewStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7 ) as UnfilledInterviewStatusCount,
+(select Count(im.id) from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus=4 and ic.InterviewerComment is null and DATEDIFF(DAY, interviewDate, GETDATE())<7 ) as UnfilledCommentsCount
 
 End
 
