@@ -12,9 +12,8 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string Client { get; set; }
         [Required]
-        [EmailAddress]
-        [Display(Name = "Recruiter Email Address")]
-        public string Recruiter { get; set; }
+        [Display(Name = "Requester Name")]
+        public string Requester { get; set; }
         [Display(Name = "Primary Skill")]
         [Required]
         public string PrimarySkill { get; set; }
@@ -24,7 +23,6 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string Location { get; set; }
         [Display(Name = "Expected Volume")]
-        [Required]
         public int ExpectedVolume { get; set; }
         public IFormFile Jdfile { get; set; }
         public string JdLink { get; set; }
@@ -45,11 +43,13 @@ namespace Risebird.Entities.ViewModel
         public string HRCoordinator { get; set; }
         [Display(Name = "Program Manager")]
         public string ProgramManager { get; set; }
+        [Display(Name = "Skill Channel")]
         public int IRFID { get; set; }
+        [Display(Name = "IRFID")]
         public string IRFIDs { get; set; }
         public string Priority { get; set; }
         public SelectList Prioritylist { get; set; }
-        [Display(Name ="Your Email Adress")]
+        [Display(Name = "Your Email Adress")]
         public string CreatedBy { get; set; }
         public int id { get; set; }
         [Required]
@@ -58,16 +58,45 @@ namespace Risebird.Entities.ViewModel
         [Required]
         [Display(Name = "Requester Mobile Number")]
         public string RequesterMobile { get; set; }
+        [Required]
+        public string Title { get; set; }
+        [Required]
+        [Display(Name = "Seniority Level")]
+        public string SeniorityLevel { get; set; }
+        [Required]
+        [Display(Name = "Turn Around Time in days")]
+        public string TurnAroundTimeindays { get; set; }
+        [Required]
+        public string Comments { get; set; }
+        [Required]
+        [Display(Name = "Number of Interviews")]
+        public int NumberofInterviews { get; set; }
+        public string Origin { get; set; }
+        public SelectList Originlist { get; set; }
+        [Display(Name = " Engagement Type")]
+        public string EngagementType { get; set; }
+        public SelectList EngagementTypelist { get; set; }
+        public string Stage { get; set; }
+        public SelectList stagelist { get; set; }
+        [Display(Name = "Expected Price")]
+        public int ExpectedPrice { get; set; }
+        [Display(Name = "Expected revenue")]
+        public int Expectedrevenue { get; set; }
+        public string PaymentStatus { get; set; }
+        public SelectList PaymentStatuslist { get; set; }
+        public string ConfirmationStatus { get; set; }
+        public SelectList ConfirmationStatuslist { get; set; }
     }
     public class ChannelManagementVM
     {
         public int id { get; set; }
         public string Client { get; set; }
         public string Status { get; set; }
-        public int InterviewCount { get; set; }
+        public int InterviewerCount { get; set; }
         public string IRFIDs { get; set; }
         public string PrimarySkill { get; set; }
         public DateTime CreatedDate { get; set; }
+        public string Title { get; set; }
     }
     public class ChannelInterviewerVM
     {

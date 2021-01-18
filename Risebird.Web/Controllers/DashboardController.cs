@@ -16,7 +16,7 @@ using Risebird.CommonHelper;
 
 namespace Risebird.Web.Controllers
 {
-    
+
     public class DashboardController : Controller
     {
         private readonly IDashboardService _dashboardService;
@@ -396,7 +396,7 @@ namespace Risebird.Web.Controllers
                         TO = Emailaddress,
                         Subject = $"Risebird: a new Channel request is created for " + model.Client
                     };
-                    var resultset = _notificationHelper.ChannelRequestNotification(_mail, model.Client, model.PrimarySkill, model.Recruiter);
+                    var resultset = _notificationHelper.ChannelRequestNotification(_mail, model.Client, model.PrimarySkill, model.Requester);
                     TempData["SuccessErrorMessageInterview"] = "Channel Request added Successfully.";
                     ViewBag.Message = "Channel Request updated Successfully.";
                 }
@@ -433,6 +433,21 @@ namespace Risebird.Web.Controllers
                     var Priority = from Prioritylevels s in Enum.GetValues(typeof(Prioritylevels))
                                    select new { ID = (int)s, Name = s.GetDescription() };
                     model.Prioritylist = new SelectList(Priority, "ID", "Name");
+                    var Origin = from Originlevel s in Enum.GetValues(typeof(Originlevel))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+                    model.Originlist = new SelectList(Origin, "ID", "Name");
+                    var Engagementtype = from Engagementtypelevel s in Enum.GetValues(typeof(Engagementtypelevel))
+                                         select new { ID = (int)s, Name = s.GetDescription() };
+                    model.EngagementTypelist = new SelectList(Engagementtype, "ID", "Name");
+                    var stage = from stagelevel s in Enum.GetValues(typeof(stagelevel))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+                    model.stagelist = new SelectList(stage, "ID", "Name");
+                    var paymentstatus = from paymentstatuslevel s in Enum.GetValues(typeof(paymentstatuslevel))
+                                        select new { ID = (int)s, Name = s.GetDescription() };
+                    model.PaymentStatuslist = new SelectList(paymentstatus, "ID", "Name");
+                    var confirmationstatus = from ConfirmationStatuslevel s in Enum.GetValues(typeof(ConfirmationStatuslevel))
+                                             select new { ID = (int)s, Name = s.GetDescription() };
+                    model.ConfirmationStatuslist = new SelectList(confirmationstatus, "ID", "Name");
                     return View("AddRequirement", model);
                 }
                 else
@@ -591,6 +606,13 @@ namespace Risebird.Web.Controllers
             {
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+        [HttpPost]
+        [HttpPost]
+        public async Task<JsonResult> FetchHR(string term)
+        {
+            var model = await _dashboardService.FetchHRList(term);
+            return Json(model);
         }
         #endregion
 

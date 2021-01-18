@@ -1250,7 +1250,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
-        public string ChannelRequestNotification(Mail model, string client, string Skill, string Recruiter)
+        public string ChannelRequestNotification(Mail model, string client, string Skill, string Requester)
         {
             try
             {
@@ -1266,7 +1266,7 @@ namespace Risebird.CommonHelper
                 //{
                 //    mailMessage.CC.Add(new MailAddress(mails.ToLower(), null));
                 //}
-                object[] parameters = new object[] { client, Skill, Recruiter };
+                object[] parameters = new object[] { client, Skill, Requester };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ChannelManagementNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
