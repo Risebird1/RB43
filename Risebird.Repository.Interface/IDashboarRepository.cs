@@ -33,5 +33,6 @@ namespace Risebird.Repository.Interface
         Task<ChannelInterviewerVM> FecthInterviewerById(int id);
         Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCount();
         Task<IEnumerable<MeetingVM>> GetNotUpdatedMeetings();
+        Task<List<string>> FetchHRList(string searchterm);
     }
 }

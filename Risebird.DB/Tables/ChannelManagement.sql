@@ -4,7 +4,6 @@ BEGIN
 CREATE TABLE [dbo].[ChannelManagement](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[Client] [varchar](100) NULL,
-	[Recruiter] [varchar](150) NULL,
 	[PrimarySkill] [varchar](50) NULL,
 	[EndClient] [varchar](100) NULL,
 	[Location] [varchar](200) NULL,
@@ -26,11 +25,25 @@ CREATE TABLE [dbo].[ChannelManagement](
 	[Status] [varchar](10) NULL,
 	[RequesterEmailid] [varchar](150) NULL,
 	[RequesterMobile] [varchar](14) NULL,
+	[Requester] [varchar](100) NULL,
+	[Title] [varchar](50) NULL,
+	[SeniorityLevel] [varchar](50) NULL,
+	[TurnAroundTimeindays] [varchar](50) NULL,
+	[Comments] [varchar](max) NULL,
+	[NumberofInterviews] [int] NULL,
+	[Origin] [varchar](5) NULL,
+	[EngagementType] [varchar](5) NULL,
+	[Stage] [varchar](5) NULL,
+	[ExpectedPrice] [int] NULL,
+	[Expectedrevenue] [int] NULL,
+	[PaymentStatus] [varchar](5) NULL,
+	[ConfirmationStatus] [varchar](5) NULL,
  CONSTRAINT [PK_ChannelManagement] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
 END
 GO
 

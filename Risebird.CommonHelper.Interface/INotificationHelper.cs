@@ -46,7 +46,7 @@ namespace Risebird.CommonHelper.Interface
         string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null);
         string RBPayNotification(Mail model,string emailid);
         string RBFNQueryNotification(Mail model, string query);
-        string ChannelRequestNotification(Mail model, string client, string Skill, string Recruiter);
+        string ChannelRequestNotification(Mail model, string client, string Skill, string Requester);
         string RBFNPaymentConfirmationNotification(Mail model, string amount,string fileName);
     }
 }

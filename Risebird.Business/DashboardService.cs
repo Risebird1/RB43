@@ -321,5 +321,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<string>> FetchHRList(string searchterm)
+        {
+            try
+            {
+                var result = _dashboardRespository.FetchHRList(searchterm);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

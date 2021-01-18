@@ -6,6 +6,7 @@
 }
 <link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 <link href="~/Newassets/css/interview.css?v=134556" rel="stylesheet" />
+<link href="~/Autocomplete/jquery-ui.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=134556" />
 <div class="main-panel " id="main-panel">
     <!-- Navbar -->
@@ -72,14 +73,15 @@
                                         @Html.ValidationMessageFor(model => model.Client, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-md-6 col-sm-6 px-1">
+                                <div class="col-lg-3 col-md-6 col-sm-6 pr-1">
                                     <div class="form-group" style="margin-bottom:0px;">
-                                        @Html.LabelFor(model => model.Recruiter, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.Recruiter, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                        @Html.ValidationMessageFor(model => model.Recruiter, "", new { @class = "text-danger" })
+                                        @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
+
                                 <div class="col-lg-3 col-md-6 col-sm-6 px-1">
                                     <div class="form-group" style="margin-bottom:0px;">
                                         @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -105,12 +107,13 @@
 
                                     </div>
                                 </div>
+
                                 <div class="col-lg-3 col-md-6 col-sm-6 px-1">
                                     <div class="form-group" style="margin-bottom:0px;">
-                                        @Html.LabelFor(model => model.ExpectedVolume, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.ExpectedVolume, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "10" } })
-                                        @Html.ValidationMessageFor(model => model.ExpectedVolume, "", new { @class = "text-danger" })
-
+                                        @Html.LabelFor(model => model.Requester, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.Requester, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                        @Html.ValidationMessageFor(model => model.Requester, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-md-6 col-sm-6 px-1">
@@ -129,7 +132,38 @@
 
                                     </div>
                                 </div>
+                                <div class="col-lg-3 col-md-6 col-sm-6 px-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.SeniorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.SeniorityLevel, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.SeniorityLevel, "", new { @class = "text-danger" })
 
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-6 px-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.NumberofInterviews, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.NumberofInterviews, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "10" } })
+                                        @Html.ValidationMessageFor(model => model.NumberofInterviews, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-6 px-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.TurnAroundTimeindays, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.TurnAroundTimeindays, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.TurnAroundTimeindays, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-6 px-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.Comments, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.Comments, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
                                 <div class="col-lg-6 col-md-6 col-sm-6 pr-1">
                                     <div class="form-group col-md-12 filebox">
                                         <input type="radio" name="Jd" id="Jdlink" value="Upload" onclick="RadioChanged('Upload')" /> Upload File
@@ -140,7 +174,7 @@
                                     <div class="form-group" style="height:50PX;">
                                         <div id="uploadDiv" style="display:none">
                                             @Html.LabelFor(model => model.Jdfile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @Html.TextBoxFor(model => model.Jdfile, new { type = "file", @class = "form-control btn ", @accept = ".mp4" })
+                                            @Html.TextBoxFor(model => model.Jdfile, new { type = "file", @class = "form-control btn " })
                                         </div>
                                         <div id="linkDiv">
 
@@ -193,7 +227,7 @@
                                     <div class="col-lg-3 col-md-6 col-sm-6 px-1">
                                         <div class="form-group" style="margin-bottom:0px;">
                                             @Html.LabelFor(model => model.HRCoordinator, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.EditorFor(model => model.HRCoordinator, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.EditorFor(model => model.HRCoordinator, new { htmlAttributes = new { @class = "form-control text-box single-line autofillHr" } })
                                             @Html.ValidationMessageFor(model => model.HRCoordinator, "", new { @class = "text-danger" })
 
                                         </div>
@@ -201,9 +235,68 @@
                                     <div class="col-lg-3 col-md-6 col-sm-6 pl-1">
                                         <div class="form-group" style="margin-bottom:0px;">
                                             @Html.LabelFor(model => model.ProgramManager, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.EditorFor(model => model.ProgramManager, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.EditorFor(model => model.ProgramManager, new { htmlAttributes = new { @class = "form-control text-box single-line autofillHr" } })
                                             @Html.ValidationMessageFor(model => model.ProgramManager, "", new { @class = "text-danger" })
 
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-sm-6 px-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.ExpectedVolume, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.ExpectedVolume, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "10" } })
+                                            @Html.ValidationMessageFor(model => model.ExpectedVolume, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-sm-6 px-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.ExpectedPrice, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.ExpectedPrice, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
+                                            @Html.ValidationMessageFor(model => model.ExpectedPrice, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-sm-6 px-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.Expectedrevenue, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.Expectedrevenue, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
+                                            @Html.ValidationMessageFor(model => model.Expectedrevenue, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-sm-6 pr-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.Origin, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.DropDownListFor(m => m.Origin, new SelectList(Model.Originlist, "Value", "Text"), new { @id = "select", @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Origin, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-sm-6 pr-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.EngagementType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.DropDownListFor(m => m.EngagementType, new SelectList(Model.EngagementTypelist, "Value", "Text"), new { @id = "select", @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.EngagementType, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-sm-6 pr-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.Stage, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.DropDownListFor(m => m.Stage, new SelectList(Model.stagelist, "Value", "Text"), new { @id = "select", @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Stage, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-sm-6 pr-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.PaymentStatus, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.DropDownListFor(m => m.PaymentStatus, new SelectList(Model.PaymentStatuslist, "Value", "Text"), new { @id = "select", @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.PaymentStatus, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-sm-6 pr-1">
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            @Html.LabelFor(model => model.ConfirmationStatus, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.DropDownListFor(m => m.ConfirmationStatus, new SelectList(Model.ConfirmationStatuslist, "Value", "Text"), new { @id = "select", @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.ConfirmationStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-sm-6 pr-1">
@@ -231,6 +324,7 @@
 
                                         </div>
                                     </div>
+
                                     <div class="col-lg-3 col-md-6 col-sm-6 pl-1">
                                         <div class="form-group radiobox">
                                             @Html.LabelFor(model => model.CalendlyLinkCreated, htmlAttributes: new { @class = "control-label desp-label" })
@@ -365,3 +459,33 @@
         window.onload = my_code();
     </script>
 }
+
+<script src="~/Autocomplete/jquery-ui.min.js"></script>
+<script>
+    var Generateinvoiceflag = 1;
+    $(document).ready(function () {
+        $(".autofillHr").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/DashBoard/FetchHR",
+                    type: "POST",
+                    data: { term: request.term },
+                    dataType: 'json',
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return item;
+                        }))
+                    },
+                    error: function (err) {
+                        Swal.fire(err);
+                    }
+                });
+            },
+            select: function () {
+
+            },
+            minLength: 1
+        });
+        document.getElementById("ui-id-1").style.zIndex = "10000";
+    });
+</script>

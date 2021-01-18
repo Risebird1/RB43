@@ -360,7 +360,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from ChannelManagement";
+                var query = "Select cm.id,cm.Client,cm.Status,cm.IRFIDs,cm.PrimarySkill,cm.CreatedDate,cm.Title,count(cn.id) as InterviewerCount from ChannelManagement cm left join ChannelMInterviewer cn on cm.id=cn.channelid group by cm.id,cm.Client,cm.Status,cm.IRFIDs,cm.PrimarySkill,cm.CreatedDate,cm.Title";
                 var dynamicParameters = new DynamicParameters();
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -419,31 +419,34 @@ namespace Risebird.Repository
                         //CreatedBy = result.FirstOrDefault();
                         var CreatedDate = DateTime.Now;
                         var Status = "Open";
-                        string sqlInsertReport = "INSERT INTO ChannelManagement (Client,Recruiter,PrimarySkill,EndClient,Location,ExpectedVolume,JdLink,CreatedBy,CreatedDate,Status,RequesterEmailid,RequesterMobile) Values (@Client,@Recruiter,@PrimarySkill,@EndClient,@Location,@ExpectedVolume,@JdLink,@CreatedBy,@CreatedDate,@Status,@RequesterEmailid,@RequesterMobile);";
+                        string sqlInsertReport = "INSERT INTO ChannelManagement (Client,Requester,PrimarySkill,EndClient,Location,JdLink,CreatedBy,CreatedDate,Status,RequesterEmailid,RequesterMobile,Title,SeniorityLevel,TurnAroundTimeindays,Comments,NumberofInterviews) Values (@Client,@Requester,@PrimarySkill,@EndClient,@Location,@JdLink,@CreatedBy,@CreatedDate,@Status,@RequesterEmailid,@RequesterMobile,@Title,@SeniorityLevel,@TurnAroundTimeindays,@Comments,@NumberofInterviews);";
                         var affectedRows = con.ExecuteAsync(sqlInsertReport, new
                         {
                             request.Client,
-                            request.Recruiter,
+                            request.Requester,
                             request.PrimarySkill,
                             request.EndClient,
                             request.Location,
-                            request.ExpectedVolume,
                             request.JdLink,
                             request.CreatedBy,
                             CreatedDate,
                             Status,
                             request.RequesterEmailid,
-                            request.RequesterMobile
-
+                            request.RequesterMobile,
+                            request.Title,
+                            request.SeniorityLevel,
+                            request.TurnAroundTimeindays,
+                            request.Comments,
+                            request.NumberofInterviews
                         }).Result;
                     }
                     else
                     {
-                        var updatequery = "Update ChannelManagement set Client=@Client,Recruiter=@Recruiter,PrimarySkill=@PrimarySkill,EndClient=@EndClient,Location=@Location,ExpectedVolume=@ExpectedVolume,JdLink=@JdLink,WeekendDrive=@WeekendDrive,POGenerated=@POGenerated,IPSCreated=@IPSCreated,CalendlyLinkCreated=@CalendlyLinkCreated,CandidateSourcing=@CandidateSourcing,AdditionalComment=@AdditionalComment,HRCoordinator=@HRCoordinator,ProgramManager=@ProgramManager,IRFID=@IRFID,IRFIDs=@IRFIDs,Priority=@Priority,RequesterEmailid=@RequesterEmailid,RequesterMobile=@RequesterMobile where id=@id;";
+                        var updatequery = "Update ChannelManagement set Client=@Client,Requester=@Requester,PrimarySkill=@PrimarySkill,EndClient=@EndClient,Location=@Location,ExpectedVolume=@ExpectedVolume,JdLink=@JdLink,WeekendDrive=@WeekendDrive,POGenerated=@POGenerated,IPSCreated=@IPSCreated,CalendlyLinkCreated=@CalendlyLinkCreated,CandidateSourcing=@CandidateSourcing,AdditionalComment=@AdditionalComment,HRCoordinator=@HRCoordinator,ProgramManager=@ProgramManager,IRFID=@IRFID,IRFIDs=@IRFIDs,Priority=@Priority,RequesterEmailid=@RequesterEmailid,RequesterMobile=@RequesterMobile,Title=@Title,SeniorityLevel=@SeniorityLevel,TurnAroundTimeindays=@TurnAroundTimeindays,Comments=@Comments,NumberofInterviews=@NumberofInterviews,Origin=@Origin,EngagementType=@EngagementType,Stage=@Stage,ExpectedPrice=@ExpectedPrice,Expectedrevenue=@Expectedrevenue,PaymentStatus=@PaymentStatus,ConfirmationStatus=@ConfirmationStatus where id=@id;";
                         var updatedynamicParameters = new DynamicParameters();
                         updatedynamicParameters.Add("@id", request.id);
                         updatedynamicParameters.Add("@Client", request.Client);
-                        updatedynamicParameters.Add("@Recruiter", request.Recruiter);
+                        updatedynamicParameters.Add("@Requester", request.Requester);
                         updatedynamicParameters.Add("@PrimarySkill", request.PrimarySkill);
                         updatedynamicParameters.Add("@EndClient", request.EndClient);
                         updatedynamicParameters.Add("@Location", request.Location);
@@ -462,6 +465,18 @@ namespace Risebird.Repository
                         updatedynamicParameters.Add("@Priority", request.Priority);
                         updatedynamicParameters.Add("@RequesterEmailid", request.RequesterEmailid);
                         updatedynamicParameters.Add("@RequesterMobile", request.RequesterMobile);
+                        updatedynamicParameters.Add("@Title", request.Title);
+                        updatedynamicParameters.Add("@SeniorityLevel", request.SeniorityLevel);
+                        updatedynamicParameters.Add("@TurnAroundTimeindays", request.TurnAroundTimeindays);
+                        updatedynamicParameters.Add("@Comments", request.Comments);
+                        updatedynamicParameters.Add("@NumberofInterviews", request.NumberofInterviews);
+                        updatedynamicParameters.Add("@Origin", request.Origin);
+                        updatedynamicParameters.Add("@EngagementType", request.EngagementType);
+                        updatedynamicParameters.Add("@Stage", request.Stage);
+                        updatedynamicParameters.Add("@ExpectedPrice", request.ExpectedPrice);
+                        updatedynamicParameters.Add("@Expectedrevenue", request.Expectedrevenue);
+                        updatedynamicParameters.Add("@PaymentStatus", request.PaymentStatus);
+                        updatedynamicParameters.Add("@ConfirmationStatus", request.ConfirmationStatus);
                         var results = await con.QueryAsync(updatequery, updatedynamicParameters);
                     }
                     return "Success";
@@ -667,6 +682,25 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<List<string>> FetchHRList(string searchterm)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@term", searchterm);
+                string query = "Select Emailid from  Userlist where Emailid like @term+'%' and idProfile=2";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<string>(query, dynamicParameters);
+                    return (List<string>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 }
