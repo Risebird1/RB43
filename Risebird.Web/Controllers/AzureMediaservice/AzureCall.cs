@@ -84,16 +84,27 @@ namespace Risebird.Web.Controllers.AzureMediaservice
             var baseurl = _configuration["Azure:ApiCall"];
             var username = _configuration["Azure:UserName"];
             var Password = _configuration["Azure:Password"];
-            string path = Path.Combine(baseurl, "Files", file.FileName);
+            Reservation reservation = new Reservation();
+            reservation.filename = file.FileName;
+            //byte[] chunk = new byte[file.Length];
+            //MemoryStream stream;
+            //using (stream = new MemoryStream())
+            //{
+            //    file.CopyToAsync(stream);
+            //    chunk = stream.ToArray();
+            //}
+            //reservation.chunk = chunk;
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Files", file.FileName);
             using (var stream = new FileStream(path, FileMode.Create))
             {
                 file.CopyTo(stream);
             }
+            reservation.filename = path;
             string UserDetails = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(username + ":" + Password));
             RestClient _client = new RestClient(baseurl);
-            var request1 = new RestRequest("api/Azure", Method.POST) { RequestFormat = DataFormat.Json };
-            request1.AddHeader("Authorization", "Basic " + UserDetails);
-            request1.AddFile("files", path);
+            var request1 = new RestRequest("VideoUpload/api/Upload", Method.POST) { RequestFormat = DataFormat.Json };
+            request1.AddBody(reservation);
+            //request1.AddFile("files", path);
             request1.AddHeader("content-type", "application/json");
             var response = _client.Execute(request1);
             System.IO.File.Delete(path);

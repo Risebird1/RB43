@@ -47,5 +47,6 @@ namespace Risebird.CommonHelper.Interface
         string RBPayNotification(Mail model,string emailid);
         string RBFNQueryNotification(Mail model, string query);
         string ChannelRequestNotification(Mail model, string client, string Skill, string Recruiter);
+        string RBFNPaymentConfirmationNotification(Mail model, string amount,string fileName);
     }
 }

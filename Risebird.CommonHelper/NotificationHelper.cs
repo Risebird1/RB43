@@ -165,7 +165,7 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
                 }
-              
+
                 mailMessage.To.Add(new MailAddress("kamini@risebird.io", "Kamini"));
                 mailMessage.Subject = "HR Alert!!! " + interviewer + " Interviewer has unassigned interview for candidate " + candidateEmail + " scheduled on " + meetingDate;
                 StringBuilder msgBody = new StringBuilder("Dear HR,");
@@ -1285,7 +1285,44 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
+        public string RBFNPaymentConfirmationNotification(Mail model, string amount, string fileName)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                var toMails = model.TO.Split(";");
+                foreach (var mails in toMails)
+                {
+                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                }
+                var ccMails = model.CC.Split(";");
+                foreach (var mails in toMails)
+                {
+                    mailMessage.CC.Add(new MailAddress(mails.ToLower(), null));
+                }
+                if (!String.IsNullOrEmpty(fileName))
+                {
+                    mailMessage.Attachments.Add(new Attachment(System.IO.File.OpenRead(fileName), fileName));
+                }
+                object[] parameters = new object[] { amount };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RBFNPaymentConfirmationNotification.html");
+                string msgBody = string.Format(rawEmail, parameters);
 
+                mailMessage.Subject = model.Subject;
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception ex)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
 
     }
 }

@@ -60,11 +60,13 @@ namespace Risebird.WebAPI.Controllers
         [HttpPost]
         [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
         [RequestSizeLimit(1048576000)]
-        public async Task<string> Post(IList<IFormFile> files)
+        //public string Post([FromBody] Reservation reservation)
+        public string Post([FromBody] Reservation reservation)
         {
-            var model = files[0];
-            string outputFileName = model.FileName;
-            await InsertBlob(model.FileName, "newvideo", model);
+            string filename = reservation.filename;
+            InsertBlobfile("newvideo", filename);
+            string outputFileName = filename.Split("\\")[filename.Split("\\").Length - 1];
+            //InsertBlob(model.FileName, "newvideo", model);
             var containerImageRef = GetCloudBlobContainer("newvideo");
             var imageblob = containerImageRef.GetBlockBlobReference(outputFileName);
             string uploadedImageFileURL = imageblob.Uri.ToString();
@@ -72,7 +74,16 @@ namespace Risebird.WebAPI.Controllers
             var sasurl = uploadedImageFileURL + "?" + sas.Result;
             return sasurl.ToString();
         }
-
+        
+        public async Task InsertBlobfile(string containerName, string path)
+        {
+            var bytes = System.IO.File.ReadAllBytes(path);
+            var filename = path.Split("\\")[path.Split("\\").Length - 1];
+            CloudBlockBlob blob;
+            blob = GetCloudBlockBlobClient(containerName, filename);
+            blob.Properties.ContentType = "video/mp4";
+            await blob.UploadFromByteArrayAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+        }
         public async Task InsertBlob(string filename, string containerName, IFormFile blobFile)
         {
             CloudBlockBlob blob;
@@ -155,5 +166,17 @@ namespace Risebird.WebAPI.Controllers
                 return null;
             }
         }
+    }
+    public class filesfrom
+    {
+        public IFormFile file { get; set; }
+    }
+    public class Reservation
+    {
+        public byte[] chunk { get; set; }
+        public string filename { get; set; }
+        public long fileSize { get; set; }
+        public int noofblocks { get; set; }
+        public int id { get; set; }
     }
 }

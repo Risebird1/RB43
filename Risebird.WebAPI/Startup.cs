@@ -60,6 +60,7 @@ namespace Risebird.WebAPI
                     name: "default",
                     pattern: "{controller=Home}/{action=Login}/{id?}");
             });
+
         }
     }
 }

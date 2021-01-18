@@ -13,6 +13,10 @@ using Risebird.Repository.Interface;
 using OfficeOpenXml;
 using Risebird.Entities.Enum;
 using X.PagedList;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
+using System.IO;
+
 namespace Risebird.Web.Controllers
 {
     public class FinanceController : Controller
@@ -325,9 +329,49 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<IActionResult> ConfirmPayment(int id, int index)
+        public async Task<IActionResult> ConfirmPayment(int id, int index, string email, string amount)
         {
+            var resultset = await _meetingService.RBInterviewerDetails(id, index);
+            //Start: Create PDF File
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_RBpayment.pdf";
+            Document doc = new Document(iTextSharp.text.PageSize.A4, 10, 10, 42, 35);
+            PdfWriter wri = PdfWriter.GetInstance(doc, new FileStream(fileName, FileMode.Create));
+            doc.Open();
+            PdfPTable table = new PdfPTable(5);
+            PdfPCell cell = new PdfPCell();
+            table.AddCell("Date");
+            table.AddCell("Comment");
+            table.AddCell("Type");
+            table.AddCell("Status");
+            table.AddCell("Amount");
+            foreach (var item in resultset)
+            {
+                item.MeetingStatusDetails = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                item.InterviewStatusDetails = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
+                table.AddCell(item.Date.ToString());
+                table.AddCell(item.Comment);
+                table.AddCell(item.Type);
+                table.AddCell(item.Status);
+                table.AddCell(item.Points.ToString());
+            }
+            doc.Add(table);
+            doc.Close();
+            //End: Create PDF File
             var model = await _meetingService.RBConfirmPayment(id, index);
+            //Start:Send email to Interviewer
+            Mail _mail = new Mail
+            {
+                TO = email,
+                CC = "finance@risebird.io",
+                Subject = "RiseBird: Finance Team has done payment"
+            };
+            var emailsend = _notificationHelper.RBFNPaymentConfirmationNotification(_mail, amount, fileName);
+            //End:Send email to Interviewer
+            if (emailsend == "Mail sent successfully.")
+            {
+
+            }
+            System.IO.File.Delete(fileName);
             return RedirectToAction("FNPayment");
         }
         /// <summary>
@@ -410,6 +454,13 @@ namespace Risebird.Web.Controllers
             if (model == "Success")
             {
                 result = "Advance Payment is done successfully.";
+                Mail _mail = new Mail
+                {
+                    TO = Interviewer,
+                    CC = "finance@risebird.io",
+                    Subject = "RiseBird: Finance Team done advance payment"
+                };
+                var emailsend = _notificationHelper.RBFNPaymentConfirmationNotification(_mail, Amount.ToString(), "");
             }
             else if (model == "Failed")
             {
