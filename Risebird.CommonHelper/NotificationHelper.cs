@@ -165,7 +165,7 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
                 }
-
+              
                 mailMessage.To.Add(new MailAddress("kamini@risebird.io", "Kamini"));
                 mailMessage.Subject = "HR Alert!!! " + interviewer + " Interviewer has unassigned interview for candidate " + candidateEmail + " scheduled on " + meetingDate;
                 StringBuilder msgBody = new StringBuilder("Dear HR,");
