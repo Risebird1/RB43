@@ -4,6 +4,7 @@ using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -93,14 +94,16 @@ namespace Risebird.Functions
             try
             {
                 var mailFrom = "notification@risebird.io";
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
+                var masg = new SendGridMessage();
+
+                masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
                 foreach (var hrEmail in hrEmails)
                 {
-                    mailMessage.Bcc.Add(new MailAddress(hrEmail, null));
+                    if (!string.IsNullOrEmpty(hrEmail))
+                    {
+                        masg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(hrEmail, null));
+                    }
                 }
-
 
 
                 DataTable dt = new DataTable();
@@ -139,20 +142,14 @@ namespace Risebird.Functions
                 //Table end.
                 sb.Append("</table>");
 
-
-
                 object[] parameters = new object[] { irfName, client, primarySkill, sb };
-                mailMessage.Subject = "Interview scheduled for today " + DateTime.Now.ToString("dd MMMM yyyy");
+                masg.Subject = "Interview scheduled for today " + DateTime.Now.ToString("dd MMMM yyyy");
                 string rawEmail = GetBlobData("mailtemplate", "HRScheduledTodayReminder.html");//HRScheduledTodayReminder.html
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
+                masg.HtmlContent = msgBody;
+                CommonSendMail _common = new CommonSendMail();
+                _common.SendMail(masg);
             }
             catch (Exception)
             {

@@ -4,6 +4,7 @@ using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -86,23 +87,18 @@ namespace Risebird.Functions
             try
             {
                 var mailFrom = "notification@risebird.io";
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
-                mailMessage.Bcc.Add(new MailAddress(candidateEmail, null));
-                mailMessage.Bcc.Add(new MailAddress(interviewerEmail, null));
+                var masg = new SendGridMessage();
+                masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+                masg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(candidateEmail, null));
+                masg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(interviewerEmail, null));
                 object[] parameters = new object[] { interviewDate };
-                mailMessage.Subject = "System set up reminder for your meeting on " + interviewDate;
+                masg.Subject = "System set up reminder for your meeting on " + interviewDate;
                 string rawEmail = GetBlobData("mailtemplate", "SetUpReminderTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
+                masg.HtmlContent = msgBody;
+                CommonSendMail _common = new CommonSendMail();
+                _common.SendMail(masg);
             }
             catch (Exception)
             {

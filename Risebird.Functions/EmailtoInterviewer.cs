@@ -1,6 +1,7 @@
 using Dapper;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -36,18 +37,17 @@ namespace Risebird.Functions
                 {
                     try
                     {
-                        var mailMessage = new MailMessage();
-                        mailMessage.From = new MailAddress("notification@risebird.io", "Risebird Notification");
-
-                        mailMessage.To.Add(new MailAddress("notification@risebird.io", "Risebird"));
+                        var masg = new SendGridMessage();
+                        masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
                         foreach (var mail in mails)
                         {
                             if (!string.IsNullOrEmpty(mail))
                             {
-                                mailMessage.Bcc.Add(new MailAddress(mail, null));
+                                masg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                             }
                         }
-                        mailMessage.Subject = "Urgent Alert!! Your video based interview meeting in the next 30 minutes";
+                        masg.Subject = "Urgent Alert!! Your video based interview meeting in the next 30 minutes";
+
 
                         StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
                         msgBody.Append("\n");
@@ -61,12 +61,9 @@ namespace Risebird.Functions
                         msgBody.Append("\n");
                         msgBody.AppendLine("Thank You, Team Risebird");
 
-                        mailMessage.Body = msgBody.ToString();
-                        SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                        System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
-                        smtpClient.Credentials = credentials;
-
-                        smtpClient.Send(mailMessage);
+                        masg.PlainTextContent = msgBody.ToString();
+                        CommonSendMail _common = new CommonSendMail();
+                        _common.SendMail(masg);
                         log.Info("Interview schedule mail sent to interviewer.");
 
                     }

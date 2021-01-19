@@ -1038,6 +1038,7 @@ namespace Risebird.Business
                                 mailIds.Add(item.EmailId);
                             }
                         }
+                        
                         _notificationHelper.SendQCInterviewerMail(mailIds, reportModel.interviewDate);
 
                         if (reportModel.InterviewStatus.Value == 2)
