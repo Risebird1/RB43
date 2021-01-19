@@ -486,6 +486,8 @@
                                                                             <th>Primary Skill</th>
                                                                             <th>Resume</th>
                                                                             <th>JD Link</th>
+                                                                            <th>Interviewer Mobile</th>
+                                                                            <th>Candidate Mobile</th>
                                                                             <th style="text-align:center">Call Client HR</th>
                                                                             <th style="text-align:center">Call Staffing Agency</th>
                                                                             <th>Quality Controller</th>
@@ -496,30 +498,6 @@
 
                                                                         <tr>
 
-
-
-
-
-
-
-
-                                                                            @if (item.resumeLink != null && item.resumeLink != "")
-                                                                            {
-                                                                                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td>No Resume</td>
-                                                                            }
-
-                                                                            @if (item.JDLink != null && item.JDLink != "")
-                                                                            {
-                                                                                <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td>No JD</td>
-                                                                            }
 
 
                                                                             @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
@@ -548,6 +526,48 @@
                                                                             {
                                                                                 <td></td>
                                                                             }
+
+
+
+
+
+                                                                            @if (item.resumeLink != null && item.resumeLink != "")
+                                                                            {
+                                                                                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td>No Resume</td>
+                                                                            }
+
+                                                                            @if (item.JDLink != null && item.JDLink != "")
+                                                                            {
+                                                                                <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td>No JD</td>
+                                                                            }
+                                                                            <td style="text-align: center">
+                                                                                @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
+                                                                                {
+
+                                                                                   @item.InterviewerPhone
+
+
+                                                                                }
+
+                                                                            </td>
+                                                                            <td style="text-align: center">
+                                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                {
+
+                                                                                   @item.MobileNumber
+
+                                                                                }
+
+                                                                            </td>
+
 
                                                                             <td style="text-align: center">
                                                                                 @if (item.ClientHrMobile != null && item.ClientHrMobile != string.Empty)
