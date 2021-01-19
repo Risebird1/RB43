@@ -527,36 +527,36 @@ namespace Risebird.Repository
                     dynamicParameters.Add("@Emailid", request.CreatedBy);
                     var result = await con.QueryAsync<int>(query, dynamicParameters);
                     CreatedBy = result.FirstOrDefault();
-                    var ProcessedDate = DateTime.Now;
-                    string sqlInsertReport = "INSERT INTO ChannelMInterviewer (ProcessedDate,Name,EmailAddress,Mobile,CVLink,CodedCVLink,PrimarySKill,Role,Priority,Comment,Approved,DMCallAvailability,AddedoverPortal,AddedoverSKillChannel,QC,Emergency,Training,AdvancePayment,CallAttended,Channelid,CreatedBy,Trainingmailsend,PerInterviewrate,TrainingTime,CallTime) Values (@ProcessedDate,@Name,@EmailAddress,@Mobile,@CVLink,@CodedCVLink,@PrimarySKill,@Role,@Priority,@Comment,@Approved,@DMCallAvailability,@AddedoverPortal,@AddedoverSKillChannel,@QC,@Emergency,@Training,@AdvancePayment,@CallAttended,@Channelid,@CreatedBy,@Trainingmailsend,@PerInterviewrate,@TrainingTime,@CallTime);";
-                    var affectedRows = con.ExecuteAsync(sqlInsertReport, new
-                    {
-                        ProcessedDate,
-                        request.Name,
-                        request.EmailAddress,
-                        request.Mobile,
-                        request.CVLink,
-                        request.CodedCVLink,
-                        request.PrimarySKill,
-                        request.Role,
-                        request.Priority,
-                        request.Comment,
-                        request.Approved,
-                        request.DMCallAvailability,
-                        request.AddedoverPortal,
-                        request.AddedoverSKillChannel,
-                        request.QC,
-                        request.Emergency,
-                        request.Training,
-                        request.AdvancePayment,
-                        request.CallAttended,
-                        request.Channelid,
-                        CreatedBy,
-                        request.Trainingmailsend,
-                        request.PerInterviewrate,
-                        request.TrainingTime,
-                        request.CallTime
-                    }).Result;
+                    var ProcessedDate = DateTime.Now.ToString("MM-dd-yyyy");
+                    var TrainingTime = request.TrainingTime.ToString();
+                    var CallTime = request.CallTime.ToString();
+                    string sqlInsertReport = "INSERT INTO ChannelMInterviewer (ProcessedDate,Name,EmailAddress,Mobile,CVLink,CodedCVLink,PrimarySKill,Role,Priority,Comment,Approved,DMCallAvailability,AddedoverPortal,AddedoverSKillChannel,QC,Emergency,Training,AdvancePayment,CallAttended,Channelid,CreatedBy,Trainingmailsend,PerInterviewrate,TrainingTime,CallTime) Values (GETDATE(),@Name,@EmailAddress,@Mobile,@CVLink,@CodedCVLink,@PrimarySKill,@Role,@Priority,@Comment,@Approved,@DMCallAvailability,@AddedoverPortal,@AddedoverSKillChannel,@QC,@Emergency,@Training,@AdvancePayment,@CallAttended,@Channelid,@CreatedBy,@Trainingmailsend,@PerInterviewrate,@TrainingTime,@CallTime);";
+                    var insertdynamicParameters = new DynamicParameters();
+                    insertdynamicParameters.Add("@Name", request.Name);
+                    insertdynamicParameters.Add("@EmailAddress", request.EmailAddress);
+                    insertdynamicParameters.Add("@Mobile", request.Mobile);
+                    insertdynamicParameters.Add("@CVLink", request.CVLink);
+                    insertdynamicParameters.Add("@CodedCVLink", request.CodedCVLink);
+                    insertdynamicParameters.Add("@PrimarySKill", request.PrimarySKill);
+                    insertdynamicParameters.Add("@Role", request.Role);
+                    insertdynamicParameters.Add("@Priority", request.Priority);
+                    insertdynamicParameters.Add("@Comment", request.Comment);
+                    insertdynamicParameters.Add("@Approved", request.Approved);
+                    insertdynamicParameters.Add("@DMCallAvailability", request.DMCallAvailability);
+                    insertdynamicParameters.Add("@AddedoverPortal", request.AddedoverPortal);
+                    insertdynamicParameters.Add("@AddedoverSKillChannel", request.AddedoverSKillChannel);
+                    insertdynamicParameters.Add("@QC", request.QC);
+                    insertdynamicParameters.Add("@Emergency", request.Emergency);
+                    insertdynamicParameters.Add("@Training", request.Training);
+                    insertdynamicParameters.Add("@AdvancePayment", request.AdvancePayment);
+                    insertdynamicParameters.Add("@CallAttended", request.CallAttended);
+                    insertdynamicParameters.Add("@Channelid", request.Channelid);
+                    insertdynamicParameters.Add("@CreatedBy", CreatedBy);
+                    insertdynamicParameters.Add("@Trainingmailsend", request.Trainingmailsend);
+                    insertdynamicParameters.Add("@PerInterviewrate", request.PerInterviewrate);
+                    insertdynamicParameters.Add("@TrainingTime", TrainingTime);
+                    insertdynamicParameters.Add("@CallTime", CallTime);
+                    var results = await con.QueryAsync(sqlInsertReport, insertdynamicParameters);
                     return "Success";
                 }
             }
