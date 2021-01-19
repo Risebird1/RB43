@@ -3,6 +3,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Configuration;
 using System.Data;
@@ -235,8 +236,7 @@ namespace Risebird.Functions
             {
                 try
                 {
-                    var mailMessage = new MailMessage();
-                    mailMessage.From = new MailAddress("notification@risebird.io", "Risebird Notification");
+                    var masg = new SendGridMessage();
                     using (SqlConnection conn = new SqlConnection(str))
                     {
                         conn.Open();
@@ -245,12 +245,12 @@ namespace Risebird.Functions
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
                         var reader = cmd.ExecuteReader();
-                        mailMessage.To.Add(new MailAddress("notification@risebird.io", "Risebird"));
+                        masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
                         while (reader.Read())
                         {
-                            mailMessage.Bcc.Add(new MailAddress(reader.GetString(0), null));
+                            masg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(reader.GetString(0), null));
                         }
-                        mailMessage.Subject = "New Interview has been scheduled on date: " + interviewDate;
+                        masg.Subject = "New Interview has been scheduled on date: " + interviewDate;
 
                         StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
                         msgBody.Append("\n");
@@ -264,12 +264,9 @@ namespace Risebird.Functions
                         msgBody.Append("\n");
                         msgBody.AppendLine("Thank You, Team Risebird");
 
-                        mailMessage.Body = msgBody.ToString();
-                        SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                        System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
-                        smtpClient.Credentials = credentials;
-
-                        smtpClient.Send(mailMessage);
+                        masg.PlainTextContent = msgBody.ToString();
+                        CommonSendMail _common = new CommonSendMail();
+                        _common.SendMail(masg);
                         log.Info("Interview schedule mail sent to interviewer.");
                     }
                 }
@@ -279,8 +276,7 @@ namespace Risebird.Functions
                 }
                 try
                 {
-                    var mailMessage = new MailMessage();
-                    mailMessage.From = new MailAddress("notification@risebird.io", "Risebird Notification");
+                    var masg = new SendGridMessage();
                     using (SqlConnection conn = new SqlConnection(str))
                     {
                         conn.Open();
@@ -289,12 +285,12 @@ namespace Risebird.Functions
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         var reader = cmd.ExecuteReader();
-                        mailMessage.To.Add(new MailAddress("notification@risebird.io", "Risebird"));
+                        masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
                         while (reader.Read())
                         {
-                            mailMessage.Bcc.Add(new MailAddress(reader.GetString(0), null));
+                            masg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(reader.GetString(0), null));
                         }
-                        mailMessage.Subject = "New Interview has been scheduled on date: " + interviewDate;
+                        masg.Subject = "New Interview has been scheduled on date: " + interviewDate;
 
                         StringBuilder msgBody = new StringBuilder("Dear Hr,");
                         msgBody.Append("\n");
@@ -308,12 +304,9 @@ namespace Risebird.Functions
                         msgBody.Append("\n");
                         msgBody.AppendLine("Thank You, Team Risebird");
 
-                        mailMessage.Body = msgBody.ToString();
-                        SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                        System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
-                        smtpClient.Credentials = credentials;
-
-                        smtpClient.Send(mailMessage);
+                        masg.PlainTextContent = msgBody.ToString();
+                        CommonSendMail _common = new CommonSendMail();
+                        _common.SendMail(masg);
                         log.Info("Interview schedule mail sent to HR.");
                     }
                 }
@@ -323,8 +316,7 @@ namespace Risebird.Functions
                 }
                 try
                 {
-                    var mailMessage = new MailMessage();
-                    mailMessage.From = new MailAddress("notification@risebird.io", "Interview Schedule Alert");
+                    var masg = new SendGridMessage();
                     using (SqlConnection conn = new SqlConnection(str))
                     {
                         conn.Open();
@@ -333,12 +325,12 @@ namespace Risebird.Functions
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
                         var reader = cmd.ExecuteReader();
-                        mailMessage.To.Add(new MailAddress("notification@risebird.io", "Risebird"));
+                        masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
                         while (reader.Read())
                         {
-                            mailMessage.CC.Add(new MailAddress(reader.GetString(0), null));
+                            masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(reader.GetString(0), null));
                         }
-                        mailMessage.Subject = candidateName + " has scheduled their interview on date: " + interviewDate;
+                        masg.Subject = candidateName + " has scheduled their interview on date: " + interviewDate;
 
                         StringBuilder msgBody = new StringBuilder("Dear Clients,");
                         msgBody.Append("\n");
@@ -352,12 +344,9 @@ namespace Risebird.Functions
                         msgBody.Append("\n");
                         msgBody.AppendLine("Thank You, Team Risebird");
 
-                        mailMessage.Body = msgBody.ToString();
-                        SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                        System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
-                        smtpClient.Credentials = credentials;
-
-                        smtpClient.Send(mailMessage);
+                        masg.PlainTextContent = msgBody.ToString();
+                        CommonSendMail _common = new CommonSendMail();
+                        _common.SendMail(masg);
                         log.Info("Interview schedule mail sent to interviewer.");
                     }
                 }
@@ -370,8 +359,7 @@ namespace Risebird.Functions
             {
                 try
                 {
-                    var mailMessage = new MailMessage();
-                    mailMessage.From = new MailAddress("notification@risebird.io", "Risebird Notification");
+                    var masg = new SendGridMessage();
                     using (SqlConnection conn = new SqlConnection(str))
                     {
                         conn.Open();
@@ -381,12 +369,12 @@ namespace Risebird.Functions
                         cmd.Parameters.Add(new SqlParameter("@candidateEmail", candidateEmail));
                         cmd.Parameters.Add(new SqlParameter("@interviewDate", interviewDate));
                         var reader = cmd.ExecuteReader();
-                        mailMessage.To.Add(new MailAddress("notification@risebird.io", "Risebird"));
+                        masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
                         while (reader.Read())
                         {
-                            mailMessage.Bcc.Add(new MailAddress(reader.GetString(0), null));
+                            masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(reader.GetString(0), null));
                         }
-                        mailMessage.Subject = "Interview has been Cancelled on date: " + interviewDate;
+                        masg.Subject = "Interview has been Cancelled on date: " + interviewDate;
 
                         StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
                         msgBody.Append("\n");
@@ -398,12 +386,9 @@ namespace Risebird.Functions
                         msgBody.Append("\n");
                         msgBody.AppendLine("Thank You, Team Risebird");
 
-                        mailMessage.Body = msgBody.ToString();
-                        SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                        System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
-                        smtpClient.Credentials = credentials;
-
-                        smtpClient.Send(mailMessage);
+                        masg.PlainTextContent = msgBody.ToString();
+                        CommonSendMail _common = new CommonSendMail();
+                        _common.SendMail(masg);
                         log.Info("Interview cancelled mail sent to interviewer.");
                     }
                 }

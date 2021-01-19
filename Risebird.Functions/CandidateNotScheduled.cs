@@ -4,6 +4,7 @@ using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -57,7 +58,7 @@ namespace Risebird.Functions
                 }
                 if (candidates != null && candidates.Count() != 0)
                 {
-                   
+
                     foreach (var candidate in candidates)
                     {
 
@@ -112,27 +113,23 @@ namespace Risebird.Functions
         {
             try
             {
-                var mailFrom = "notification@risebird.io";
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
-                mailMessage.To.Add(new MailAddress(obj.EmailId, "Candidate"));
+
                 string primarySkill = string.Empty;
                 primarySkill = obj.PrimarySkillInvite != null ? obj.PrimarySkillInvite : obj.JDTiltle.Split('|')[0];
 
+                var msg = new SendGridMessage();
+                msg.Subject = "Schedule Pending Alert!";
+
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(obj.EmailId, "Candidate"));
 
                 object[] parameters = new object[] { obj.Name, obj.Client, primarySkill, obj.JDLink };
-                mailMessage.Subject = "Schedule Pending Alert!";
                 string rawEmail = GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123"); smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
+                msg.HtmlContent = msgBody;
+                CommonSendMail _common = new CommonSendMail();
+                _common.SendMail(msg);
                 return;
-                
             }
             catch (Exception)
             {

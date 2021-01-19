@@ -40,7 +40,7 @@ namespace Risebird.Web
             return Json(new { result = alltimezones, current = currenttimezone });
         }
         [HttpPost]
-        public async Task<JsonResult> SendMeetingInvite(string Subject, string candidateEmailId, DateTime startdate, DateTime enddate, string Message, string TimeZoneDetails, string AdditionalUser)
+        public async Task<JsonResult> SendMeetingInvite(string Subject, string candidateEmailId, DateTime startdate, DateTime enddate, string Message, string TimeZoneDetails, string AdditionalUser, string irfId=null)
         {
             try
             {

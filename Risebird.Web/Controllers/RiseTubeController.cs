@@ -717,6 +717,7 @@ namespace Risebird.Web.Controllers
                         NewModel.Comments = comments;
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
+                        NewModel.irfIntId = model.irfIntId;
                         if (IRListModel != null)
                         {
                             GetStatusList(IRListModel, model.irfIntId);

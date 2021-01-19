@@ -1,10 +1,15 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
 using System.Text;
 
@@ -18,8 +23,9 @@ namespace Risebird.CommonHelper
         private readonly string sendGridPassword = string.Empty;
         private readonly string mailFrom = string.Empty;
         private readonly IConfiguration _configuration;
+        private readonly string _sendGridClientKey = string.Empty;
 
-        public NotificationHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration)
+        public NotificationHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger)
         {
             //_errorLogger = errorLogger;
             _configuration = configuration;
@@ -27,36 +33,34 @@ namespace Risebird.CommonHelper
             sendGridUserName = _configuration["SendGridKeySettings:UserName"];
             sendGridPassword = _configuration["SendGridKeySettings:Password"];
             mailFrom = _configuration["SendGridKeySettings:MailFrom"];
+            _sendGridClientKey = _configuration["SendGridKeySettings:ApiKey"];
+            _errorLogger = errorLogger;
         }
 
         public string SendHelpsupportMail(Mail model)
         {
             try
             {
-                object[] parameters = new object[] { model.Body };
-                var mailMessage = new MailMessage();
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
 
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
 
-                mailMessage.Subject = model.Subject;
-                string msgBody = string.Format(model.Body);
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
+                object[] parameters = new object[] { model.Body };
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                string msgBody = string.Format(model.Body);
+                msg.HtmlContent = msgBody;
+
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -87,7 +91,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -96,30 +100,27 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "New Interview has been scheduled on date: " + meetingDate;
+
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
                 foreach (var mails in interviwers)
                 {
-                    mailMessage.Bcc.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mails, null));
                 }
+
                 object[] parameters = new object[] { meetingDate };
-                mailMessage.Subject = "New Interview has been scheduled on date: " + meetingDate;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewMailTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody;
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -127,30 +128,26 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "Interview dated: " + meetingDate + " submitted for quality check.";
+
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
                 foreach (var mails in interviwers)
                 {
-                    mailMessage.Bcc.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mails, null));
                 }
+
                 object[] parameters = new object[] { meetingDate };
-                mailMessage.Subject = "Interview dated: " + meetingDate + " submitted for quality check.";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "QCInterviewMailTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -158,16 +155,17 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
-                foreach (var mails in hrs)
+
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "HR Alert!!! " + interviewer + " Interviewer has unassigned interview for candidate " + candidateEmail + " scheduled on " + meetingDate;
+
+                foreach (var mail in hrs)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-              
-                mailMessage.To.Add(new MailAddress("kamini@risebird.io", "Kamini"));
-                mailMessage.Subject = "HR Alert!!! " + interviewer + " Interviewer has unassigned interview for candidate " + candidateEmail + " scheduled on " + meetingDate;
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("kamini@risebird.io", "Kamini"));
+
                 StringBuilder msgBody = new StringBuilder("Dear HR,");
                 msgBody.Append("\n");
                 msgBody.AppendLine(
@@ -181,45 +179,38 @@ namespace Risebird.CommonHelper
                 msgBody.Append("\n");
                 msgBody.AppendLine("Thank You, Team Risebird");
 
-                mailMessage.Body = msgBody.ToString();
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody.ToString();
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string SendInterviewerMailOnAssinment(string interviwers, string meetingDate)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
 
-                mailMessage.To.Add(new MailAddress(interviwers.ToLower(), null));
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "New Interview has been assigned on date: " + meetingDate;
+
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviwers, null));
 
                 object[] parameters = new object[] { meetingDate };
-                mailMessage.Subject = "New Interview has been assigned on date: " + meetingDate;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewAssingmentMailTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                msg.HtmlContent = msgBody;
+
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -227,41 +218,35 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                //mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
-                // mailMessage.From = new MailAddress(clientHREmail.Trim(), clientHREmail.Split("@").First());
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(emailId.ToLower(), emailId.Split("@").First()));
 
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = ClientName + " - Video Interview - " + primarySkill;
+
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(emailId, emailId.Split("@").First()));
                 if (clientUsers != null && clientUsers.Count > 0)
                 {
                     foreach (var clientUser in clientUsers)
                     {
-                        mailMessage.CC.Add(new MailAddress(clientUser.EmailId.ToLower(), clientUser.EmailId.Split("@").First()));
+                        msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientUser.EmailId, clientUser.EmailId.Split("@").First()));
                     }
                 }
                 else
                 {
-                    mailMessage.CC.Add(new MailAddress(clientHREmail.ToLower(), clientHREmail.Split("@").First()));
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
                 }
 
                 object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink };
-                mailMessage.Subject = ClientName + " - Video Interview - " + primarySkill;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody;
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -270,31 +255,26 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "No more vacancies!");
-                mailMessage.To.Add(new MailAddress(emailId.ToLower(), "Candidate"));
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "No more vacancies!");
+                msg.Subject = ClientName + " Video Interview " + primarySkill;
 
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(emailId.ToLower(), "Candidate"));
                 foreach (var clientUser in clientUsers)
                 {
-                    mailMessage.CC.Add(new MailAddress(clientUser.EmailId.ToLower(), null));
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientUser.EmailId, null));
                 }
+
                 object[] parameters = new object[] { ClientName, primarySkill };
-                mailMessage.Subject = ClientName + " Video Interview " + primarySkill;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CancelInviteCandidateTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -302,14 +282,15 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
-                foreach (var mails in interviewers)
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
+
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+                foreach (var mail in interviewers)
                 {
-                    mailMessage.Bcc.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                mailMessage.Subject = "Interview has been Cancelled for the date: " + interviewDate;
 
                 StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
                 msgBody.Append("\n");
@@ -321,17 +302,13 @@ namespace Risebird.CommonHelper
                 msgBody.Append("\n");
                 msgBody.AppendLine("Thank You, Team Risebird");
 
-                mailMessage.Body = msgBody.ToString();
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody.ToString();
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -339,32 +316,26 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                //var mailsq = new List<string>();
-                //mailsq.Add("harshitjajoo95@gmail.com");
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
-                foreach (var mails in mailIds)
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "New Candidate has been onboarded on: " + DateTime.Now.ToString("dd MMM yyyy");
+
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+                foreach (var mail in mailIds)
                 {
-                    mailMessage.Bcc.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
+
                 object[] parameters = new object[] { evaluator, candidateName, irfName };
-                mailMessage.Subject = "New Candidate has been onboarded on: " + DateTime.Now.ToString("dd MMM yyyy");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ResumeEvaluationReminderTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -372,12 +343,12 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
-                mailMessage.To.Add(new MailAddress(interviewer, "Risebird"));
-                //mailMessage.Bcc.Add(new MailAddress(interviewer, null));
-                mailMessage.Subject = "Interview has been Cancelled for the date: " + interviewDate;
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewer, "Risebird"));
+
 
                 StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
                 msgBody.Append("\n");
@@ -389,17 +360,13 @@ namespace Risebird.CommonHelper
                 msgBody.Append("\n");
                 msgBody.AppendLine("Thank You, Team Risebird");
 
-                mailMessage.Body = msgBody.ToString();
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody.ToString();
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -407,14 +374,11 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
-                mailMessage.To.Add(new MailAddress(candidateMail, "Risebird"));
-                //mailMessage.Bcc.Add(new MailAddress(candidateMail, null));
-                // mailMessage.CC.Add(new MailAddress(clientHRMail, null));
-
-                mailMessage.Subject = "Interview has been Cancelled for the date: " + interviewDate;
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(candidateMail, "Risebird"));
 
                 StringBuilder msgBody = new StringBuilder("Dear Candidate,");
                 msgBody.Append("\n");
@@ -426,48 +390,40 @@ namespace Risebird.CommonHelper
                 msgBody.Append("\n");
                 msgBody.AppendLine("Thank You, Team Risebird");
 
-                mailMessage.Body = msgBody.ToString();
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody.ToString();
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string CuretatedNotification(Mail model, string UserType, string EmailParameter)
         {
             try
             {
-                var mailMessage = new MailMessage();
-
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+
                 }
+
                 object[] parameters = new object[] { UserType, EmailParameter };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmailNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody;
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -475,30 +431,27 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
-                foreach (var mails in curatedUsers)
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "New candidate selected!";
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+
+                foreach (var mail in curatedUsers)
                 {
-                    mailMessage.Bcc.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+
                 }
+
                 object[] parameters = new object[] { irf, primarySkill, codedName, meetingDate };
-                mailMessage.Subject = "New candidate selected!";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CuratedUserSelectedMail.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                msg.HtmlContent = msgBody;
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -506,125 +459,116 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                var UserType = "Dear";
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.CC.Add(new MailAddress(model.CC.ToLower(), null));
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+
                 }
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+
+
                 object[] parameters = new object[] { UrlDetails, skills };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InternalUserSharingTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
-
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                msg.HtmlContent = msgBody;
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string SharedVideoNofiticationExternal(Mail model, string UrlDetails, string url)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.CC.Add(new MailAddress(model.CC.ToLower(), null));
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+
                 }
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+
+
                 object[] parameters = new object[] { UrlDetails, url };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ExternalUserSharingTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody;
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string SharedVideoNofiticationExternal(Mail model, string name, string url, string comment, string resumeLink)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.CC.Add(new MailAddress(model.CC.ToLower(), null));
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+
                 }
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+
+
                 var anchrTag = "<a href=" + url + ">Please Click to see the video</a>";
                 object[] parameters = new object[] { name, anchrTag, comment, resumeLink };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ExternalUserSharingTemplateNew.html");
                 string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string SendBroadcastMail(List<string> receivers, List<string> supportEmails, BroadcastModel model)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                //mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
-                foreach (var email in receivers)
-                {
-                    mailMessage.Bcc.Add(new MailAddress(email, null));
-                }
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+
                 foreach (var supportEmail in supportEmails)
                 {
-                    mailMessage.To.Add(new MailAddress(supportEmail, null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(supportEmail, null));
+
                 }
+                foreach (var email in receivers)
+                {
+                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(email, null));
+
+                }
+
                 object[] parameters = new object[] { model.BroadcastReciever, model.Message };
-                mailMessage.Subject = model.Subject;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "BroadcastTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
 
-                smtpClient.Send(mailMessage);
-                return "Broadcast mail sent Successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
@@ -635,29 +579,24 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Discussion Invite");
-                mailMessage.To.Add(new MailAddress(interviewerMailId, "Interviewer"));
-                mailMessage.CC.Add(new MailAddress(hrEmailId, null));
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Discussion Invite");
+                msg.Subject = "Discussion invitation";
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerMailId, "Interviewer"));
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(hrEmailId, null));
+
 
 
                 object[] parameters = new object[] { iscName, primarySkill, calendlyLink };
-                mailMessage.Subject = "Discussion invitation";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteInterviewerTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -665,29 +604,24 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Discussion cancelled!");
-                mailMessage.To.Add(new MailAddress(interviewerMailId, "Interviewer"));
-                mailMessage.CC.Add(new MailAddress(hrEmailId, null));
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Discussion cancelled!");
+                msg.Subject = "Discussion Cancelled";
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerMailId, "Interviewer"));
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(hrEmailId, null));
 
 
                 object[] parameters = new object[] { iscName, primarySkill };
-                mailMessage.Subject = "Discussion Cancelled";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CancelInviteInterviewerTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody;
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -695,208 +629,162 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "New Candidate added to Common Pool";
                 foreach (var email in clientUsers)
                 {
-                    mailMessage.To.Add(new MailAddress(email, null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(email, null));
+
                 }
 
-                mailMessage.CC.Add(new MailAddress(clientEmailId, null));
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientEmailId, null));
+
 
 
                 object[] parameters = new object[] { candidateDetails.Name, (candidateDetails.Skill != null ? candidateDetails.Skill : string.Empty) };
-                mailMessage.Subject = "New Candidate added to Common Pool";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CommonPoolTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
-                return "Mail sent Successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Broadcast failed.";
+                return "Failed";
             }
         }
         public string MeetingInvite(DateTime startTime, DateTime endTime, string TimeZone, string accountMail, string accountPass, string Message, string subject, string sender, string candidateMail, string additionalMail, string meetingURL)
         {
             try
             {
-                //var mailMessage = new MailMessage();
-                //mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                //mailMessage.To.Add(new MailAddress(candidateMail, null));
-                //mailMessage.To.Add(new MailAddress(sender, null));
-                //if (!String.IsNullOrEmpty(additionalMail))
-                //{
-                //    mailMessage.To.Add(new MailAddress(additionalMail, null));
-                //}
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = $"Confidential: Team Meeting Account detail for meeting schedule at {startTime} with {candidateMail}";
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(sender, null));
 
-                //object[] parameters = new object[] { Message, TimeZone, startTime, endTime, meetingURL };
-                //mailMessage.Subject = subject;
-                //string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "MeetingInvite.html");
-                //string msgBody = string.Format(rawEmail, parameters);
-
-                //mailMessage.IsBodyHtml = true;
-                //mailMessage.Body = msgBody;
-                //SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                //System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                //smtpClient.Credentials = credentials;
-
-                //smtpClient.Send(mailMessage);
-
-
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(sender, null));
                 object[] parameters = new object[] { accountMail, accountPass };
-                mailMessage.Subject = $"Confidential: Team Meeting Account detail for meeting schedule at {startTime} with {candidateMail}";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "MeetingAccountDetail.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody;
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent Successfully.";
+                return SendMail(msg);
 
             }
             catch (Exception)
             {
-                return "Mail sent failed.";
+                return "Failed! Could not send the Email.";
             }
         }
         public string VideoAccessRequest(Mail model, string url, string Emailid)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
+
+
                 var anchrTag = "<a href=" + url + ">Candidate Interview Video</a>";
                 object[] parameters = new object[] { Emailid, anchrTag };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RequestForAccess.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody;
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string ShowIntrestInterview(Mail model, string Email, string videoURL)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.CC.Add(new MailAddress(model.CC.ToLower(), null));
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+
                 object[] parameters = new object[] { Email, "<a href=" + videoURL + ">" };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewInterestShown.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody;
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string SendAssessmentNotification(Mail model, string emailid)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
+
                 object[] parameters = new object[] { emailid };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "AssessmentNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody;
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string SendAssessmentNotificationComments(Mail model, string assessment, string comments)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
 
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
+
+
                 object[] parameters = new object[] { assessment, comments };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "AssessmentNotificationComment.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody;
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -904,28 +792,22 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "Virtual Machine Running!";
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(obj.PerformedBy, "Risebird"));
 
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(obj.PerformedBy, "Risebird"));
 
                 object[] parameters = new object[] { obj.Name };
-                mailMessage.Subject = "Virtual Machine Running!";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "StopVMNotifier.html");
                 string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -933,186 +815,162 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.CC.Add(new MailAddress(model.CC.ToLower(), null));
+
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+
+
                 object[] parameters = new object[] { candidateCount, JDName };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateJDScoreNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string SurveyNotification(Mail model, string UrlDetails)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
+
+
                 object[] parameters = new object[] { UrlDetails };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "SurveyNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody;
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string FeedbackSubmitNotification(Mail model, string candidate)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
+
                 object[] parameters = new object[] { candidate };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "FeedbackSubmitNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string InsuficientBalancNotifiaction(Mail model)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                //mailMessage.CC.Add(new MailAddress(model.CC.ToLower(), null));
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
+
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InsuficientBalanceNotification.html");
                 string msgBody = string.Format(rawEmail);
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody;
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string SharedTestLink(Mail model, string title, string timeduration, string url, string ClientName)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
+
                 object[] parameters = new object[] { title, timeduration, url, ClientName };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateInvitationTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany, int score)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
                 var ccMails = model.CC.Split(";");
-                foreach (var mails in ccMails)
+                foreach (var mail in ccMails)
                 {
-                    mailMessage.CC.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
+
                 object[] parameters = new object[] { CandidateEmail, ApplyingCompany, score };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateCompleteTest.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody;
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
 
@@ -1120,30 +978,25 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "Candidate selected!";
+
                 foreach (var email in clients)
                 {
-                    mailMessage.CC.Add(new MailAddress(email, email.Split("@").First()));
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(email, email.Split("@").First()));
                 }
 
                 object[] parameters = new object[] { interviewDate, candidateEmail, primarySkill, interviewStatus };
-                mailMessage.Subject = "Candidate selected!";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "QCPassedNotificationTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
-                return "Mail sent Successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Broadcast failed.";
+                return "Failed.";
             }
         }
 
@@ -1151,178 +1004,231 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(clientHREmail.Trim(), clientHREmail.Split("@").First());
+                msg.Subject = ClientName + " - Video Interview - " + primarySkill;
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(emailId, "Candidate"));
+
+                foreach (var clientUser in clientUsers)
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientUser.EmailId, null));
+                }
+
+
                 string companyLogoLink = string.Empty;
                 string companyURL = string.Empty;
                 companyLogoLink = clientLogo != null ? clientLogo : _configuration["RisebirdDetails:RisebirdLogo"];
                 companyURL = clientURL != null ? clientURL : _configuration["RisebirdDetails:RisebirdURL"];
-                var mailMessage = new MailMessage();
 
-                //mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
-
-                mailMessage.From = new MailAddress(clientHREmail.Trim(), clientHREmail.Split("@").First());
-                mailMessage.To.Add(new MailAddress(emailId.ToLower(), "Candidate"));
-
-                foreach (var clientUser in clientUsers)
-                {
-                    mailMessage.CC.Add(new MailAddress(clientUser.EmailId.ToLower(), null));
-                }
 
                 object[] parameters = new object[] { companyURL, companyLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink, clientvideoURL };
-                mailMessage.Subject = ClientName + " - Video Interview - " + primarySkill;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
 
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string RBPayNotification(Mail model, string emailid)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
+
                 object[] parameters = new object[] { emailid };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RBFNNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
+                msg.HtmlContent = msgBody;
 
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string RBFNQueryNotification(Mail model, string query)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
                 var ccMails = model.CC.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.CC.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+
                 }
+
+
                 object[] parameters = new object[] { query };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RBFNQueryNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                msg.HtmlContent = msgBody;
+
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string ChannelRequestNotification(Mail model, string client, string Skill, string Requester)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                //var ccMails = model.CC.Split(";");
-                //foreach (var mails in ccMails)
-                //{
-                //    mailMessage.CC.Add(new MailAddress(mails.ToLower(), null));
-                //}
+
                 object[] parameters = new object[] { client, Skill, Requester };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ChannelManagementNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
-                return "Mail sent successfully.";
+                msg.HtmlContent = msgBody;
+                return SendMail(msg);
             }
             catch (Exception)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
         public string RBFNPaymentConfirmationNotification(Mail model, string amount, string fileName)
         {
             try
             {
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
                 var ccMails = model.CC.Split(";");
-                foreach (var mails in toMails)
+                foreach (var mail in toMails)
                 {
-                    mailMessage.CC.Add(new MailAddress(mails.ToLower(), null));
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+
                 }
+                
                 if (!String.IsNullOrEmpty(fileName))
                 {
-                    mailMessage.Attachments.Add(new Attachment(System.IO.File.OpenRead(fileName), fileName));
+                    byte[] byteData = Encoding.ASCII.GetBytes(File.ReadAllText(fileName));
+
+                    var attachment = new SendGrid.Helpers.Mail.Attachment
+                    {
+                        Content = Convert.ToBase64String(byteData),
+                        Filename = fileName,
+                        Type = "txt/plain",
+                        Disposition = "attachment"
+                    };
+                    msg.AddAttachment(attachment);
                 }
+
+                
                 object[] parameters = new object[] { amount };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RBFNPaymentConfirmationNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
 
-                mailMessage.Subject = model.Subject;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = msgBody;
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
-                smtpClient.Credentials = credentials;
-                smtpClient.Send(mailMessage);
+                return SendMail(msg);
+            }
+            catch (Exception ex)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+
+        private SendGridMessage ConstructMailMessageObject(string to, string subject, string from = null, string ccEmail = null, List<string> ccList = null, List<string> bccList = null)
+        {
+            var msg = new SendGridMessage();
+            if (from == null)
+            {
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+
+            }
+            else
+            {
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(from, from.Split("@").First());
+
+            }
+            msg.Subject = subject;
+            msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(to, to.Split("@").First()));
+
+            if (ccEmail != null)
+            {
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccEmail, ccEmail.Split("@").First()));
+
+            }
+
+            if (ccList != null && ccList.Count() != 0)
+            {
+                foreach (var email in ccList)
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(email, email.Split("@").First()));
+
+                }
+
+            }
+            if (bccList != null && bccList.Count() != 0)
+            {
+                foreach (var email in bccList)
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(email, email.Split("@").First()));
+
+                }
+            }
+            return msg;
+        }
+        private string SendMail(SendGridMessage msg)
+        {
+            try
+            {
+                var client = new SendGridClient(_sendGridClientKey);
+
+                var response = client.SendEmailAsync(msg).Result;
+                if (response.StatusCode != HttpStatusCode.Accepted)
+                {
+                    return "Failed to send mail. Please check all fields and try again.";
+
+                }
                 return "Mail sent successfully.";
             }
             catch (Exception ex)
             {
-                return "Failed to send mail. Please check all filled and try again.";
+                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to send mail. Please check all fields and try again.";
             }
         }
+
+
 
     }
 }

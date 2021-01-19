@@ -39,7 +39,7 @@ select IRF.id as IRFId, count(im.id) as TotalMeetings
 from IRF inner join InterviewMeetings im on IRF.IRFId = im.IRFId  
 inner join UserList ul on ul.EmailId = im.candidateEmail 
 inner join CandidatesMaster cm on ul.id =cm.UserId
-inner join Candidate ca on cm.id=ca.CandidateMasterId
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)
 where im.confirmationStatus=1
 group by IRF.id
 
@@ -54,7 +54,7 @@ left join InterviewComments ic on im.id= ic.InterviewId
 left join QCFeedbackReport qcf on qcf.InterviewId = im.id
 inner join UserList ul on ul.EmailId = im.candidateEmail 
 inner join CandidatesMaster cm on ul.id =cm.UserId
-inner join Candidate ca on cm.id=ca.CandidateMasterId
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)
 where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and qcf.InterviewId is not null
 group by irf.id
 
@@ -68,7 +68,7 @@ from irf left join InterviewMeetings im on irf.IRFId = im.IRFId
 left join InterviewComments ic on ic.InterviewId= im.id 
 inner join UserList ul on ul.EmailId = im.candidateEmail 
 inner join CandidatesMaster cm on ul.id =cm.UserId
-inner join Candidate ca on cm.id=ca.CandidateMasterId
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)
 where ic.MeetingStatus is null and im.confirmationStatus=1 and im.interviewDate>= @timeNow
 group by irf.id
 

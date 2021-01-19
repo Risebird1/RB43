@@ -1,6 +1,7 @@
 using Dapper;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -78,18 +79,12 @@ namespace Risebird.Functions
             try
             {
                 var mailFrom = "notification@risebird.io";
-                var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
-                mailMessage.To.Add(new MailAddress(candidateMail, "Risebird"));
-                //mailMessage.Bcc.Add(new MailAddress(candidateMail, null));
-                //if (!string.IsNullOrEmpty(clientHRMail))
-                //{
-                //    mailMessage.CC.Add(new MailAddress(clientHRMail, null));
+                var masg = new SendGridMessage();
 
-                //}
+                masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+                masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(candidateMail, "Risebird"));
 
-                mailMessage.Subject = "Interview has been Cancelled for the date: " + interviewDate;
+                masg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
 
                 StringBuilder msgBody = new StringBuilder("Dear Candidate,");
                 msgBody.Append("\n");
@@ -101,12 +96,9 @@ namespace Risebird.Functions
                 msgBody.Append("\n");
                 msgBody.AppendLine("Thank You, Team Risebird");
 
-                mailMessage.Body = msgBody.ToString();
-                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mailMessage);
+                masg.PlainTextContent = msgBody.ToString();
+                CommonSendMail _common = new CommonSendMail();
+                _common.SendMail(masg);
                 //return "Mail sent successfully.";
             }
             catch (Exception ex)

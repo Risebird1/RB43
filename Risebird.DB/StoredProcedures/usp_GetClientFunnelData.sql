@@ -27,10 +27,11 @@ Begin
 if(@roleId=1)
 	Begin
 
-		declare @TotalHRCompletedMeetings table (id int, MeetingStatus int, InterviewStatus int, IsApproved int, IsSelected int, OfferStatus int, JoiningStatus int);
-		insert into @TotalHRCompletedMeetings select im.id, ic.MeetingStatus, ic.InterviewStatus, ic.IsApproved, ic.IsSelected, ic.OfferStatus, ic.JoiningStatus from InterviewMeetings im 
+		declare @TotalHRCompletedMeetings table (id int, MeetingStatus int, InterviewStatus int, IsApproved int, IsSelected int, OfferStatus int, JoiningStatus int, QCStatus int);
+		insert into @TotalHRCompletedMeetings select im.id, ic.MeetingStatus, ic.InterviewStatus, ic.IsApproved, ic.IsSelected, ic.OfferStatus, ic.JoiningStatus, qcfr.QCStatus from InterviewMeetings im 
 		join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id)
 		left join InterviewComments ic on ic.InterviewId=im.id
+		left join QCFeedbackReport qcfr on qcfr.InterviewId =im.id
 		where ClientHrContact=@emailId and confirmationStatus=1 and ic.MeetingStatus=4
 
 			select
@@ -42,7 +43,7 @@ if(@roleId=1)
 			(select count(id) from @TotalHRCompletedMeetings) as TotalCompleted,
 
 			
-			(select count(id) from @TotalHRCompletedMeetings tcm where tcm.InterviewStatus=2 or tcm.InterviewStatus=4) as TotalRisebirdSelection,
+			(select count(id) from @TotalHRCompletedMeetings tcm where tcm.InterviewStatus=2 and tcm.QCStatus=1) as TotalRisebirdSelection,
 
 			(select count(id) from @TotalHRCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1) as TotalApproved,
 
@@ -56,10 +57,11 @@ else if(@roleId=4)
 	Begin 
 		
 
-		declare @TotalStaffingCompletedMeetings table (id int, MeetingStatus int, InterviewStatus int, IsApproved int, IsSelected int, OfferStatus int, JoiningStatus int);
-		insert into @TotalStaffingCompletedMeetings select im.id, ic.MeetingStatus, ic.InterviewStatus, ic.IsApproved, ic.IsSelected, ic.OfferStatus, ic.JoiningStatus from InterviewMeetings im 
+		declare @TotalStaffingCompletedMeetings table (id int, MeetingStatus int, InterviewStatus int, IsApproved int, IsSelected int, OfferStatus int, JoiningStatus int, QCStatus int);
+		insert into @TotalStaffingCompletedMeetings select im.id, ic.MeetingStatus, ic.InterviewStatus, ic.IsApproved, ic.IsSelected, ic.OfferStatus, ic.JoiningStatus, qcfr.QCStatus from InterviewMeetings im 
 		join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id)
 		left join InterviewComments ic on ic.InterviewId=im.id
+		left join QCFeedbackReport qcfr on qcfr.InterviewId =im.id
 		where staffingAgency=@emailId and confirmationStatus=1 and ic.MeetingStatus=4
 
 			select
@@ -71,7 +73,7 @@ else if(@roleId=4)
 			(select count(id) from @TotalStaffingCompletedMeetings) as TotalCompleted,
 
 			
-			(select count(id) from @TotalStaffingCompletedMeetings tcm where tcm.InterviewStatus=2 or tcm.InterviewStatus=4) as TotalRisebirdSelection,
+			(select count(id) from @TotalStaffingCompletedMeetings tcm where tcm.InterviewStatus=2 and tcm.QCStatus=1) as TotalRisebirdSelection,
 
 			(select count(id) from @TotalStaffingCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1) as TotalApproved,
 
@@ -91,10 +93,11 @@ else
 			insert into @listofIRF select irf.IRFId from IRF join TransClientUser tcu on tcu.IRFId = IRF.id where tcu.ClientUserId = @userId
 
 			
-			declare @TotalCompletedMeetings table (id int, MeetingStatus int, InterviewStatus int, IsApproved int, IsSelected int, OfferStatus int, JoiningStatus int);
-					insert into @TotalCompletedMeetings select im.id, ic.MeetingStatus, ic.InterviewStatus, ic.IsApproved, ic.IsSelected, ic.OfferStatus, ic.JoiningStatus from InterviewMeetings im 
+			declare @TotalCompletedMeetings table (id int, MeetingStatus int, InterviewStatus int, IsApproved int, IsSelected int, OfferStatus int, JoiningStatus int, QCStatus int);
+					insert into @TotalCompletedMeetings select im.id, ic.MeetingStatus, ic.InterviewStatus, ic.IsApproved, ic.IsSelected, ic.OfferStatus, ic.JoiningStatus, qcfr.QCStatus from InterviewMeetings im 
 					join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id)
 					left join InterviewComments ic on ic.InterviewId=im.id
+					left join QCFeedbackReport qcfr on qcfr.InterviewId =im.id
 					where im.IRFId in (select id from @listofIRF) and confirmationStatus=1 and ic.MeetingStatus=4
 			select
 
@@ -107,7 +110,7 @@ else
 
 			(select count(id) from @TotalCompletedMeetings) as TotalCompleted,
 
-			(select count(id) from @TotalCompletedMeetings tcm where tcm.InterviewStatus=2 or tcm.InterviewStatus=4) as TotalRisebirdSelection,
+			(select count(id) from @TotalCompletedMeetings tcm where tcm.InterviewStatus=2 and tcm.QCStatus=1) as TotalRisebirdSelection,
 
 			(select count(id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1) as TotalApproved,
 
@@ -122,6 +125,7 @@ else
 End
 
 End
+
 
 GO
 

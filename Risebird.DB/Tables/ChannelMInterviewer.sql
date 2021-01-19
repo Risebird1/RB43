@@ -26,8 +26,8 @@ CREATE TABLE [dbo].[ChannelMInterviewer](
 	[CreatedBy] [int] NULL,
 	[Trainingmailsend] [bit] NULL,
 	[PerInterviewrate] [int] NULL,
-	[TrainingTime] [datetime] NULL,
-	[CallTime] [datetime] NULL,
+	[TrainingTime] [varchar](20) NULL,
+	[CallTime] [varchar](20) NULL,
  CONSTRAINT [PK_ChannelMInterviewer] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC

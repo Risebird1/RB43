@@ -2915,7 +2915,7 @@
                     $.ajax({
                         type: "POST",
                         url: "/MeetingInvite/SendMeetingInvite",
-                        data: { Subject: $("#txtOnlineSubject").val(), candidateEmailId: $("#txtOnlineEmail").val(), startdate: $("#txtOnlinestart").val(), enddate: $("#txtOnlineend").val(), Message: $("#txtOnlineBody").val(),TimeZoneDetails:$("#txtOnlineTimeZone").val(),AdditionalUser:$("#txtOnlineMEmailids").val() },
+                        data: { Subject: $("#txtOnlineSubject").val(), candidateEmailId: $("#txtOnlineEmail").val(), startdate: $("#txtOnlinestart").val(), enddate: $("#txtOnlineend").val(), Message: $("#txtOnlineBody").val(),TimeZoneDetails:$("#txtOnlineTimeZone").val(),AdditionalUser:$("#txtOnlineMEmailids").val(), irfId: '@Model.irfIntId' },
                         success: function (data) {
                             swal.fire(data);
                             closeOnlineMeetingModel();

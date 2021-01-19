@@ -625,7 +625,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    
+
                     if (profileName == "Admin" || profileName == "HR")
                     {
                         var modelList = await _dashboardService.GetNotUpdatedMeetings();
@@ -644,7 +644,7 @@ namespace Risebird.Web.Controllers
                                 return x;
                             }).ToList();
 
-                           
+
                             if (filter.Status.Contains(UnassignedInterviewsTypes.Unassigned.GetDescription()))
                             {
                                 modelList = modelList.Where(x => string.IsNullOrEmpty(x.interviewer));
@@ -735,7 +735,7 @@ namespace Risebird.Web.Controllers
                             modelList = modelList.Where(x => string.IsNullOrEmpty(x.InterviewerComment));
                         }
 
-                            return View(modelList);
+                        return View(modelList);
                     }
                     else
                     {
