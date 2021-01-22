@@ -32,7 +32,7 @@ namespace Risebird.Web.Controllers
         private readonly IMeetingService _meetingService;
         private readonly IUserService _userService;
         private readonly IIRFRepository _iRFRepository;
-
+        private static string Searchvalue;
 
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository)
         {
@@ -178,7 +178,7 @@ namespace Risebird.Web.Controllers
                     }
                 }
 
-
+                ViewBag.Searchvalue = searchValue;
                 if (!String.IsNullOrEmpty(searchValue))
                 {
                     searchValue = searchValue.ToUpper();
@@ -230,11 +230,12 @@ namespace Risebird.Web.Controllers
         {
             int Page = 1;
             var model = _modelDetails;
+            Searchvalue = searchValue;
             if (!String.IsNullOrEmpty(searchValue))
             {
                 searchValue = searchValue.ToUpper();
                 model = model.Where(x => (!String.IsNullOrEmpty(x.CandidateName) ? x.CandidateName.ToUpper().Contains(searchValue) : x.CandidateName == "") || (!String.IsNullOrEmpty(x.CandidateEmailId) ? x.CandidateEmailId.ToUpper().Contains(searchValue) : x.CandidateEmailId == "")
-                  || (!String.IsNullOrEmpty(x.HREmail) ? x.HREmail.ToUpper().Contains(searchValue) : x.HREmail == "")|| (!String.IsNullOrEmpty(x.CurrentStatus) ? x.CurrentStatus.ToUpper().Contains(searchValue) : x.CurrentStatus == "")).ToList();
+                  || (!String.IsNullOrEmpty(x.HREmail) ? x.HREmail.ToUpper().Contains(searchValue) : x.HREmail == "")|| ((x.CurrentStatus!=null) ? x.CurrentStatus.ToUpper().Contains(searchValue) : x.CurrentStatus == "")).ToList();
 
             }
             int totalcount = model.Count;
