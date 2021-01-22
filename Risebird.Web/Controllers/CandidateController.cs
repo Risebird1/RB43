@@ -63,6 +63,10 @@ namespace Risebird.Web.Controllers
                 foreach (var candidate in distinctCandidates)
                 {
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
+                    if(data.Where(x=>x.confirmationStatus==1).Any() && data.Where(x=>x.confirmationStatus==2).Any())
+                    {
+                        data = data.Where(x => x.confirmationStatus == 1);
+                    }
                     var firstData = data.FirstOrDefault();
 
                     var candidateTimeline = new CandidateTimelineVM();

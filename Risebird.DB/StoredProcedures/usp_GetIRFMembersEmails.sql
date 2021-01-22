@@ -30,7 +30,7 @@ declare @Members table (EmailId varchar(100));
 	insert into @Members
 	select ul.EmailId from TransQualityController tqc join UserList ul on ul.id = tqc.UserId where IRFId = @IRFId
 
-	select * from @Members
+	select distinct(EmailId) from @Members
 
 	End
 		
