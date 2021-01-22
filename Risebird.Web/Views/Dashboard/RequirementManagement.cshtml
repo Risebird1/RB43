@@ -53,7 +53,7 @@
         </div>
     </nav>
     <!-- End Navbar -->
-
+    <!--  <div class="panel-header panel-header-sm"></div>-->
 
 
 
@@ -138,7 +138,87 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @*<div class="col-md-6 col-sm-6 border-rv">
 
+                                                        @if (!Model.IsClientUser && Model.Profile != "CuratedUser")
+                                                        {
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">Client Name</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.IRFList.Select(x => x.ClientCompName).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        }
+
+                                                        @if (Model.Profile == "CuratedUser")
+                                                        {
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="SubscriptionStatus">Subscription Status</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="SubscriptionStatus" name="SubscriptionStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.IRFList.Select(x => x.SubscriptionStatus).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        }
+
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">PrimarySkill</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.IRFList.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+
+                                                            <div>
+                                                                <div class="col-md-12 col-sm-12">
+
+
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
+
+
+
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
+
+
+
+                                                                </div>
+
+                                                            </div>
+
+
+
+                                                        </div>
+                                                    </div>*@
 
 
 
@@ -164,23 +244,25 @@
                                     <div class="card-content-holder border card-blue">
                                         <div class="card-header">
                                             <div class="row">
-                                                <div class=" col-md-9 col-sm-9 first">
-                                                    <h6> @item.Title</h6>
+                                                <div class=" col-md-12 col-sm-12 first">
+                                                    <h6> @item.CreatedDate.ToString("dd_MM")_@item.Client _@item.PrimarySkill</h6>
                                                 </div>
 
-                                                <div class="col-md-3 col-sm-3 card-header-buttons action">
-                                                </div>
+                                                <!-- <div class="col-md-7 col-sm-7 card-header-buttons action">
+                                                </div>-->
                                             </div>
                                         </div>
 
                                         <!-- irf body-->
                                         <div class="card-body">
                                             <div class="row">
-
+                                                @*<div class="statusImg">
+                                                        <img id="statusImage" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
+                                                    </div>*@
                                                 <div class="statusInfo" style="padding:0px 50px">
                                                     <div class="group inner list-group-item-text">
                                                         <div class="row second">
-                                                            <div class="client-field"> Interviewer Count:</div>  <div>@item.InterviewerCount</div>
+                                                            <div class="client-field"> Interview Count:</div>  <div>@item.InterviewCount</div>
                                                         </div> <br />
 
                                                         <div class="row three"> <span>IRFID:</span><a href="#">@item.IRFIDs</a></div> <br />

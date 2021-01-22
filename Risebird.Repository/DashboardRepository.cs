@@ -521,42 +521,73 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var CreatedBy = 0;
-                    string query = "Select id from UserList where Emailid=@Emailid";
-                    var dynamicParameters = new DynamicParameters();
-                    dynamicParameters.Add("@Emailid", request.CreatedBy);
-                    var result = await con.QueryAsync<int>(query, dynamicParameters);
-                    CreatedBy = result.FirstOrDefault();
-                    var ProcessedDate = DateTime.Now.ToString("MM-dd-yyyy");
                     var TrainingTime = request.TrainingTime.ToString();
                     var CallTime = request.CallTime.ToString();
-                    string sqlInsertReport = "INSERT INTO ChannelMInterviewer (ProcessedDate,Name,EmailAddress,Mobile,CVLink,CodedCVLink,PrimarySKill,Role,Priority,Comment,Approved,DMCallAvailability,AddedoverPortal,AddedoverSKillChannel,QC,Emergency,Training,AdvancePayment,CallAttended,Channelid,CreatedBy,Trainingmailsend,PerInterviewrate,TrainingTime,CallTime) Values (GETDATE(),@Name,@EmailAddress,@Mobile,@CVLink,@CodedCVLink,@PrimarySKill,@Role,@Priority,@Comment,@Approved,@DMCallAvailability,@AddedoverPortal,@AddedoverSKillChannel,@QC,@Emergency,@Training,@AdvancePayment,@CallAttended,@Channelid,@CreatedBy,@Trainingmailsend,@PerInterviewrate,@TrainingTime,@CallTime);";
-                    var insertdynamicParameters = new DynamicParameters();
-                    insertdynamicParameters.Add("@Name", request.Name);
-                    insertdynamicParameters.Add("@EmailAddress", request.EmailAddress);
-                    insertdynamicParameters.Add("@Mobile", request.Mobile);
-                    insertdynamicParameters.Add("@CVLink", request.CVLink);
-                    insertdynamicParameters.Add("@CodedCVLink", request.CodedCVLink);
-                    insertdynamicParameters.Add("@PrimarySKill", request.PrimarySKill);
-                    insertdynamicParameters.Add("@Role", request.Role);
-                    insertdynamicParameters.Add("@Priority", request.Priority);
-                    insertdynamicParameters.Add("@Comment", request.Comment);
-                    insertdynamicParameters.Add("@Approved", request.Approved);
-                    insertdynamicParameters.Add("@DMCallAvailability", request.DMCallAvailability);
-                    insertdynamicParameters.Add("@AddedoverPortal", request.AddedoverPortal);
-                    insertdynamicParameters.Add("@AddedoverSKillChannel", request.AddedoverSKillChannel);
-                    insertdynamicParameters.Add("@QC", request.QC);
-                    insertdynamicParameters.Add("@Emergency", request.Emergency);
-                    insertdynamicParameters.Add("@Training", request.Training);
-                    insertdynamicParameters.Add("@AdvancePayment", request.AdvancePayment);
-                    insertdynamicParameters.Add("@CallAttended", request.CallAttended);
-                    insertdynamicParameters.Add("@Channelid", request.Channelid);
-                    insertdynamicParameters.Add("@CreatedBy", CreatedBy);
-                    insertdynamicParameters.Add("@Trainingmailsend", request.Trainingmailsend);
-                    insertdynamicParameters.Add("@PerInterviewrate", request.PerInterviewrate);
-                    insertdynamicParameters.Add("@TrainingTime", TrainingTime);
-                    insertdynamicParameters.Add("@CallTime", CallTime);
-                    var results = await con.QueryAsync(sqlInsertReport, insertdynamicParameters);
+                    if (!request.isEditable)
+                    {
+                        var CreatedBy = 0;
+                        string query = "Select id from UserList where Emailid=@Emailid";
+                        var dynamicParameters = new DynamicParameters();
+                        dynamicParameters.Add("@Emailid", request.CreatedBy);
+                        var result = await con.QueryAsync<int>(query, dynamicParameters);
+                        CreatedBy = result.FirstOrDefault();
+                        string sqlInsertReport = "INSERT INTO ChannelMInterviewer (ProcessedDate,Name,EmailAddress,Mobile,CVLink,CodedCVLink,PrimarySKill,Role,Priority,Comment,Approved,DMCallAvailability,AddedoverPortal,AddedoverSKillChannel,QC,Emergency,Training,AdvancePayment,CallAttended,Channelid,CreatedBy,Trainingmailsend,PerInterviewrate,TrainingTime,CallTime) Values (GETDATE(),@Name,@EmailAddress,@Mobile,@CVLink,@CodedCVLink,@PrimarySKill,@Role,@Priority,@Comment,@Approved,@DMCallAvailability,@AddedoverPortal,@AddedoverSKillChannel,@QC,@Emergency,@Training,@AdvancePayment,@CallAttended,@Channelid,@CreatedBy,@Trainingmailsend,@PerInterviewrate,@TrainingTime,@CallTime);";
+                        var insertdynamicParameters = new DynamicParameters();
+                        insertdynamicParameters.Add("@Name", request.Name);
+                        insertdynamicParameters.Add("@EmailAddress", request.EmailAddress);
+                        insertdynamicParameters.Add("@Mobile", request.Mobile);
+                        insertdynamicParameters.Add("@CVLink", request.CVLink);
+                        insertdynamicParameters.Add("@CodedCVLink", request.CodedCVLink);
+                        insertdynamicParameters.Add("@PrimarySKill", request.PrimarySKill);
+                        insertdynamicParameters.Add("@Role", request.Role);
+                        insertdynamicParameters.Add("@Priority", request.Priority);
+                        insertdynamicParameters.Add("@Comment", request.Comment);
+                        insertdynamicParameters.Add("@Approved", request.Approved);
+                        insertdynamicParameters.Add("@DMCallAvailability", request.DMCallAvailability);
+                        insertdynamicParameters.Add("@AddedoverPortal", request.AddedoverPortal);
+                        insertdynamicParameters.Add("@AddedoverSKillChannel", request.AddedoverSKillChannel);
+                        insertdynamicParameters.Add("@QC", request.QC);
+                        insertdynamicParameters.Add("@Emergency", request.Emergency);
+                        insertdynamicParameters.Add("@Training", request.Training);
+                        insertdynamicParameters.Add("@AdvancePayment", request.AdvancePayment);
+                        insertdynamicParameters.Add("@CallAttended", request.CallAttended);
+                        insertdynamicParameters.Add("@Channelid", request.Channelid);
+                        insertdynamicParameters.Add("@CreatedBy", CreatedBy);
+                        insertdynamicParameters.Add("@Trainingmailsend", request.Trainingmailsend);
+                        insertdynamicParameters.Add("@PerInterviewrate", request.PerInterviewrate);
+                        insertdynamicParameters.Add("@TrainingTime", TrainingTime);
+                        insertdynamicParameters.Add("@CallTime", CallTime);
+                        var results = await con.QueryAsync(sqlInsertReport, insertdynamicParameters);
+                    }
+                    else
+                    {
+                        var updatequery = "Update ChannelMInterviewer set Name = @Name, EmailAddress = @EmailAddress, Mobile = @Mobile, CVLink = @CVLink, CodedCVLink = @CodedCVLink, PrimarySKill = @PrimarySKill, Role = @Role, Priority = @Priority, Comment = @Comment, Approved = @Approved, DMCallAvailability = @DMCallAvailability, AddedoverPortal = @AddedoverPortal, AddedoverSKillChannel = @AddedoverSKillChannel, QC = @QC, Emergency = @Emergency, Training = @Training, AdvancePayment = @AdvancePayment, CallAttended = @CallAttended, Trainingmailsend = @Trainingmailsend, PerInterviewrate = @PerInterviewrate, TrainingTime = @TrainingTime, CallTime = @CallTime where id = @id;";
+                        var updatedynamicParameters = new DynamicParameters();
+                        updatedynamicParameters.Add("@id", request.id);
+                        updatedynamicParameters.Add("@Name", request.Name);
+                        updatedynamicParameters.Add("@EmailAddress", request.EmailAddress);
+                        updatedynamicParameters.Add("@Mobile", request.Mobile);
+                        updatedynamicParameters.Add("@CVLink", request.CVLink);
+                        updatedynamicParameters.Add("@CodedCVLink", request.CodedCVLink);
+                        updatedynamicParameters.Add("@PrimarySKill", request.PrimarySKill);
+                        updatedynamicParameters.Add("@Role", request.Role);
+                        updatedynamicParameters.Add("@Priority", request.Priority);
+                        updatedynamicParameters.Add("@Comment", request.Comment);
+                        updatedynamicParameters.Add("@Approved", request.Approved);
+                        updatedynamicParameters.Add("@DMCallAvailability", request.DMCallAvailability);
+                        updatedynamicParameters.Add("@AddedoverPortal", request.AddedoverPortal);
+                        updatedynamicParameters.Add("@AddedoverSKillChannel", request.AddedoverSKillChannel);
+                        updatedynamicParameters.Add("@QC", request.QC);
+                        updatedynamicParameters.Add("@Emergency", request.Emergency);
+                        updatedynamicParameters.Add("@Training", request.Training);
+                        updatedynamicParameters.Add("@AdvancePayment", request.AdvancePayment);
+                        updatedynamicParameters.Add("@CallAttended", request.CallAttended);
+                        updatedynamicParameters.Add("@Trainingmailsend", request.Trainingmailsend);
+                        updatedynamicParameters.Add("@PerInterviewrate", request.PerInterviewrate);
+                        updatedynamicParameters.Add("@TrainingTime", TrainingTime);
+                        updatedynamicParameters.Add("@CallTime", CallTime);
+                        var results = await con.QueryAsync(updatequery, updatedynamicParameters);
+                    }
                     return "Success";
                 }
             }
