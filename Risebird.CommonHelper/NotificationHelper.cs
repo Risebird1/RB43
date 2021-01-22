@@ -42,7 +42,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Support Notification");
                 msg.Subject = model.Subject;
 
                 var toMails = model.TO.Split(";");
@@ -101,7 +101,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Urgent");
                 msg.Subject = "New Interview has been scheduled on date: " + meetingDate;
 
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
@@ -129,7 +129,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird QC Alert");
                 msg.Subject = "Interview dated: " + meetingDate + " submitted for quality check.";
 
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
@@ -157,7 +157,7 @@ namespace Risebird.CommonHelper
             {
 
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Unassigned Interview");
                 msg.Subject = "HR Alert!!! " + interviewer + " Interviewer has unassigned interview for candidate " + candidateEmail + " scheduled on " + meetingDate;
 
                 foreach (var mail in hrs)
@@ -194,7 +194,7 @@ namespace Risebird.CommonHelper
             {
 
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Notification");
                 msg.Subject = "New Interview has been assigned on date: " + meetingDate;
 
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviwers, null));
@@ -220,7 +220,7 @@ namespace Risebird.CommonHelper
             {
 
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Invite");
                 msg.Subject = ClientName + " - Video Interview - " + primarySkill;
 
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(emailId, emailId.Split("@").First()));
@@ -283,7 +283,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Cancel");
                 msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
 
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
@@ -344,7 +344,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Cancel");
                 msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewer, "Risebird"));
@@ -375,7 +375,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Cancel");
                 msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(candidateMail, "Risebird"));
@@ -979,7 +979,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Notification");
                 msg.Subject = "Candidate selected!";
 
                 foreach (var email in clients)
@@ -1005,7 +1005,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(clientHREmail.Trim(), clientHREmail.Split("@").First());
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Interview Invite");
                 msg.Subject = ClientName + " - Video Interview - " + primarySkill;
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(emailId, "Candidate"));
 
@@ -1039,7 +1039,7 @@ namespace Risebird.CommonHelper
             {
 
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Payment Notification");
                 msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
                 foreach (var mail in toMails)
@@ -1099,7 +1099,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "New Channel Alert");
                 msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
                 foreach (var mail in toMails)
@@ -1124,7 +1124,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Payment Notification");
                 msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
                 foreach (var mail in toMails)
