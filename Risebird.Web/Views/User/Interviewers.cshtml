@@ -234,20 +234,21 @@
                                                                             @item.PrimarySkill.Substring(40, @item.PrimarySkill.Length - 40)
                                                                         </p>
                                                                     </div>
+                                                                    <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
                                                                 }
                                                                 else
                                                                 {
                                                                     <div class="article">
 
                                                                         <p>
-                                                                            @item.PrimarySkill.Substring(0, @item.PrimarySkill.Length - 1)
+                                                                            @item.PrimarySkill.Substring(0, @item.PrimarySkill.Length )
                                                                         </p>
                                                                     </div>}
                                                             }
                                                             else
                                                             { <div></div>}
 
-                                                            <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+
                                                         </div>
 
 

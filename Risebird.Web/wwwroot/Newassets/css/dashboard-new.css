@@ -1146,7 +1146,11 @@ table.journey td.cadSkill {
     white-space: normal;
     border-radius: 5px;
 }
-
+#activityTable .cadName [data-tooltip]:before {
+    width: 270px !important;
+    left: 30% !important;
+}
+#activityTable .cadName{max-width:250px!important}
 .cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
     position: absolute;
     bottom: 90%;
