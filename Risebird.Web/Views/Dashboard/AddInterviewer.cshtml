@@ -53,7 +53,9 @@
                                 <div class="col-md-12">
                                     <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Interviewer</h4></div>
                                 </div>
+                                @Html.HiddenFor(model => model.id)
                                 @Html.HiddenFor(model => model.Channelid)
+                                @Html.HiddenFor(model => model.isEditable)
                                 <div style="width: 100%;">&nbsp;</div>
 
 
@@ -239,7 +241,7 @@
 
                                     </div>
                                 </div>
-                       
+
 
                                 <div class="col-lg-3 col-md-6 col-sm-6 pr-1">
                                     <div class="form-group radiobox">
@@ -256,7 +258,7 @@
                                         @Html.EditorFor(model => model.TrainingTime, new { htmlAttributes = new { @class = "col-md-8 pull-left form-control text-box single-line", @type = "datetime-local", @style = "margin-top: 18px!important;" } })
                                     </div>
                                     <div id="divtraingtime1" class="tp25">
-                                       No Timing
+                                        No Timing
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-md-6 col-sm-6 px-1">

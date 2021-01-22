@@ -143,5 +143,6 @@ namespace Risebird.Entities.ViewModel
         public DateTime TrainingTime { get; set; }
         [Display(Name = "Call Time")]
         public DateTime CallTime { get; set; }
+        public bool isEditable { get; set; }
     }
 }

@@ -504,6 +504,7 @@ namespace Risebird.Web.Controllers
                     var Priority = from Prioritylevels s in Enum.GetValues(typeof(Prioritylevels))
                                    select new { ID = (int)s, Name = s.GetDescription() };
                     model.Prioritylist = new SelectList(Priority, "ID", "Name");
+                    model.isEditable = false;
                     return View(model);
                 }
                 else
@@ -555,11 +556,25 @@ namespace Risebird.Web.Controllers
                     var result = await _dashboardService.AddChannelInterviewer(model);
                     if (result == "Success")
                     {
-                        TempData["SuccessErrorMessageInterview"] = "Interviewer added Successfully.";
+                        if (model.isEditable)
+                        {
+                            TempData["SuccessErrorMessageInterview"] = "Interviewer Updated Successfully.";
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageInterview"] = "Interviewer added Successfully.";
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageInterview"] = "Fail to add interviewer.";
+                        if (model.isEditable)
+                        {
+                            TempData["SuccessErrorMessageInterview"] = "Fail to update interviewer.";
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageInterview"] = "Fail to add interviewer.";
+                        }
                     }
                     return RedirectToAction("Interviewer", "DashBoard", new { id = model.Channelid });
                 }
@@ -600,6 +615,7 @@ namespace Risebird.Web.Controllers
                 var Priority = from Prioritylevels s in Enum.GetValues(typeof(Prioritylevels))
                                select new { ID = (int)s, Name = s.GetDescription() };
                 model.Prioritylist = new SelectList(Priority, "ID", "Name");
+                model.isEditable = true;
                 return View("AddInterviewer", model);
             }
             else
