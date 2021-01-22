@@ -20,18 +20,18 @@ Begin
   
 IF (@Profile = 'Client')    
  BEGIN    
-  select ClientHrContact from InterviewMeetings where interviewDate >= @timeNow and  ClientHrContact is not null and confirmationStatus=1
+  select distinct(ClientHrContact) from InterviewMeetings where interviewDate >= @timeNow and  ClientHrContact is not null and confirmationStatus=1
     
  End    
 Else if(@Profile='Interviewer')  
  Begin  
-  select interviewer from InterviewMeetings where interviewDate >= @timeNow  and interviewer is not null and confirmationStatus=1
+  select distinct(interviewer) from InterviewMeetings where interviewDate >= @timeNow  and interviewer is not null and confirmationStatus=1
     
  End  
   
 Else  
  begin  
-  select candidateEmail from InterviewMeetings where interviewDate >= @timeNow  and candidateEmail is not null and confirmationStatus=1
+  select distinct(candidateEmail) from InterviewMeetings where interviewDate >= @timeNow  and candidateEmail is not null and confirmationStatus=1
     
  End  
 End  
