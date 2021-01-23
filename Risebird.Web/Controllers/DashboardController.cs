@@ -660,24 +660,26 @@ namespace Risebird.Web.Controllers
                                 return x;
                             }).ToList();
 
-
-                            if (filter.Status.Contains(UnassignedInterviewsTypes.Unassigned.GetDescription()))
+                            if (filter.Status != null)
                             {
-                                modelList = modelList.Where(x => string.IsNullOrEmpty(x.interviewer));
+                                if (filter.Status.Contains(UnassignedInterviewsTypes.Unassigned.GetDescription()))
+                                {
+                                    modelList = modelList.Where(x => string.IsNullOrEmpty(x.interviewer));
+                                }
+                                if (filter.Status.Contains(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription()))
+                                {
+                                    modelList = modelList.Where(x => x.MeetingStatus == null);
+                                }
+                                if (filter.Status.Contains(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription()))
+                                {
+                                    modelList = modelList.Where(x => x.InterviewStatus == null);
+                                }
+                                if (filter.Status.Contains(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription()))
+                                {
+                                    modelList = modelList.Where(x => string.IsNullOrEmpty(x.InterviewerComment));
+                                }
                             }
-                            if (filter.Status.Contains(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription()))
-                            {
-                                modelList = modelList.Where(x => x.MeetingStatus == null);
-                            }
-                            if (filter.Status.Contains(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription()))
-                            {
-                                modelList = modelList.Where(x => x.InterviewStatus == null);
-                            }
-                            if (filter.Status.Contains(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription()))
-                            {
-                                modelList = modelList.Where(x => string.IsNullOrEmpty(x.InterviewerComment));
-                            }
-
+                            
 
                         }
                         else
@@ -734,22 +736,26 @@ namespace Risebird.Web.Controllers
                             return x;
                         }).ToList();
 
-                        if (filter.Status.Contains(UnassignedInterviewsTypes.Unassigned.GetDescription()))
+                        if( filter.Status != null)
                         {
-                            modelList = modelList.Where(x => string.IsNullOrEmpty(x.interviewer));
+                            if (filter.Status.Contains(UnassignedInterviewsTypes.Unassigned.GetDescription()))
+                            {
+                                modelList = modelList.Where(x => string.IsNullOrEmpty(x.interviewer));
+                            }
+                            if (filter.Status.Contains(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription()))
+                            {
+                                modelList = modelList.Where(x => x.MeetingStatus == null);
+                            }
+                            if (filter.Status.Contains(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription()))
+                            {
+                                modelList = modelList.Where(x => x.InterviewStatus == null);
+                            }
+                            if (filter.Status.Contains(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription()))
+                            {
+                                modelList = modelList.Where(x => string.IsNullOrEmpty(x.InterviewerComment));
+                            }
                         }
-                        if (filter.Status.Contains(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription()))
-                        {
-                            modelList = modelList.Where(x => x.MeetingStatus == null);
-                        }
-                        if (filter.Status.Contains(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription()))
-                        {
-                            modelList = modelList.Where(x => x.InterviewStatus == null);
-                        }
-                        if (filter.Status.Contains(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription()))
-                        {
-                            modelList = modelList.Where(x => string.IsNullOrEmpty(x.InterviewerComment));
-                        }
+                        
 
                         return View(modelList);
                     }
