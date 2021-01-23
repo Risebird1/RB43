@@ -202,12 +202,12 @@
                                                                         @if (item.MorningUnassinged == 0)
                                                                         {
 
-                                                                            <span class="label-num" style="color: green"><strong title="Unassinged Interview: @item.MorningUnassinged">@item.MorningUnassinged</strong></span>
+                                                                            <span class="label-num" style="color: green"><strong title="Unassigned Interview: @item.MorningUnassinged">@item.MorningUnassinged</strong></span>
 
                                                                         }
                                                                         else
                                                                         {
-                                                                            <span class="label-num" style="color: red"><strong title="Unassinged Interview: @item.MorningUnassinged">@item.MorningUnassinged</strong></span>
+                                                                            <span class="label-num" style="color: red"><strong title="Unassigned Interview: @item.MorningUnassinged">@item.MorningUnassinged</strong></span>
                                                                         }
 
 
@@ -216,11 +216,11 @@
                                                                         <span class="label-num"><strong title="Total Interview: @item.Evening">@item.Evening</strong></span>/
                                                                         @if (item.EveningUnassinged == 0)
                                                                         {
-                                                                            <span class="label-num" style="color: green"><strong title="Unassinged Interview: @item.EveningUnassinged">@item.EveningUnassinged</strong></span>
+                                                                            <span class="label-num" style="color: green"><strong title="Unassigned Interview: @item.EveningUnassinged">@item.EveningUnassinged</strong></span>
                                                                         }
                                                                         else
                                                                         {
-                                                                            <span class="label-num" style="color: red"><strong title="Unassinged Interview: @item.EveningUnassinged">@item.EveningUnassinged</strong></span>
+                                                                            <span class="label-num" style="color: red"><strong title="Unassigned Interview: @item.EveningUnassinged">@item.EveningUnassinged</strong></span>
                                                                         }
                                                                     </td>
                                                                     <td class="text-center"><a class="selected" href="#" data-toggle="tooltip" title="Selected : @item.Selected"><span><strong>@item.Selected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @item.Rejected"><span><strong>@item.Rejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @item.BorderLine"><span><strong>@item.BorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @item.Proxy"><span><strong>@item.Proxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @item.NoShowCount"><span><strong>@item.NoShowCount </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @item.ScheduledCount"><span><strong>@item.ScheduledCount </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @item.DroppedCount"><span><strong>@item.DroppedCount</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @item.Pending"><span><strong>@item.Pending</strong></span></a></td>
