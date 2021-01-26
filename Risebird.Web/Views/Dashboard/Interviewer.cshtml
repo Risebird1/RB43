@@ -129,136 +129,179 @@
                                                 {
                                                     var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-                                                    <tr id=@item.id>
-                                                        <td> @item.ProcessedDate </td>
-                                                        <td>@item.CreatedBy</td>
-                                                        <td> @item.Name </td>
-                                                        <td>@item.EmailAddress</td>
-                                                        <td> @item.Mobile</td>
-                                                        @if (!String.IsNullOrEmpty(item.CVLink))
-                                                        {
-                                                            <td> <a target="_blank" href=@item.CVLink>Resume</a></td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                        @if (!String.IsNullOrEmpty(item.CodedCVLink))
-                                                        {
-                                                            <td> <a target="_blank" href=@item.CodedCVLink>Resume</a></td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                        <td class="text-center"> @item.PrimarySKill</td>
-                                                        <td>@item.Role</td>
-                                                        @if (item.Approved == 1)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        @if (item.Priority == "3")
-                                                        {
-                                                            <td>Very High</td>
-                                                        }
-                                                        else if (item.Priority == "1")
-                                                        {
-                                                            <td>Medium</td>
-                                                        }
-                                                        else if (item.Priority == "2")
-                                                        {
-                                                            <td>High</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>Low</td>
-                                                        }
-                                                        <td>@item.PerInterviewrate</td>
-                                                        <td>@item.Comment</td>
-                                                        @if (item.DMCallAvailability == 1)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        @if (item.AddedoverPortal == 1)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        @if (item.AddedoverSKillChannel == 1)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        @if (item.QC == 1)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        @if (item.Emergency == 1)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        @if (item.Training == 1)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        @if (item.AdvancePayment == 1)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        } @if (item.CallAttended == 1)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        @if (item.CallAttended == 1)
-                                                        {
-                                                            <td>@item.CallTime</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                        <td>
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                                <span onclick="location.href='@Url.Action("EditInterviewer","DashBoard",new {id=item.id,channelid=item.Channelid })'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                            </button>
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete interviewer">
-                                                                <span onclick="javascript:DeleteCandidateFromTest(@item.id,@item.Channelid);" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
+                                                <tr id=@item.id>
+                                                    <td> @item.ProcessedDate </td>
+                                                    <td>@item.CreatedBy</td>
+                                                    <td> @item.Name </td>
+                                                    <td>@item.EmailAddress</td>
+                                                    <td> @item.Mobile</td>
+                                                    @if (!String.IsNullOrEmpty(item.CVLink))
+                                                    {
+                                                        <td> <a target="_blank" href=@item.CVLink>Resume</a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    @if (!String.IsNullOrEmpty(item.CodedCVLink))
+                                                    {
+                                                        <td> <a target="_blank" href=@item.CodedCVLink>Resume</a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    <td class="text-center"> @item.PrimarySKill</td>
+                                                    <td>@item.Role</td>
+                                                    @if (item.Approved == 1)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No</td>
+                                                    }
+                                                    @if (item.Priority == "3")
+                                                    {
+                                                        <td>Very High</td>
+                                                    }
+                                                    else if (item.Priority == "1")
+                                                    {
+                                                        <td>Medium</td>
+                                                    }
+                                                    else if (item.Priority == "2")
+                                                    {
+                                                        <td>High</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>Low</td>
+                                                    }
+                                                    <td>@item.PerInterviewrate</td>
+                                                 
+
+                                                    <td class="interview-com">
+                                                        <div id="section">
+                                                            @if (item.Comment != null && item.Comment != "")
+                                                            {
+                                                                @if (item.Comment.Length > 40)
+                                                                {
+                                                                    <div class="article">
+                                                                        <p style="margin-bottom:0px;">
+                                                                            @item.Comment.Substring(0, 40)
+                                                                        </p>
+                                                                        <p class="moretext_@item.id moretext">
+                                                                            @item.Comment.Substring(40, @item.Comment.Length - 40)
+                                                                        </p>
+                                                                    </div>
+                                                                    <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="article">
+
+                                                                        <p>
+                                                                            @item.Comment.Substring(0, @item.Comment.Length)
+                                                                        </p>
+                                                                    </div>
+                                                                }}
+                                                            else
+                                                            { <div></div>}
+
+
+
+
+
+
+
+
+
+
+                                                        </div>
+
+                                                    </td>
+
+
+                                                    @if (item.DMCallAvailability == 1)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No</td>
+                                                    }
+                                                    @if (item.AddedoverPortal == 1)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No</td>
+                                                    }
+                                                    @if (item.AddedoverSKillChannel == 1)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No</td>
+                                                    }
+                                                    @if (item.QC == 1)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No</td>
+                                                    }
+                                                    @if (item.Emergency == 1)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No</td>
+                                                    }
+                                                    @if (item.Training == 1)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No</td>
+                                                    }
+                                                    @if (item.AdvancePayment == 1)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No</td>
+                                                    } @if (item.CallAttended == 1)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No</td>
+                                                    }
+                                                    @if (item.CallAttended == 1)
+                                                    {
+                                                        <td>@item.CallTime</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    <td>
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                            <span onclick="location.href='@Url.Action("EditInterviewer","DashBoard",new {id=item.id,channelid=item.Channelid })'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete interviewer">
+                                                            <span onclick="javascript:DeleteCandidateFromTest(@item.id,@item.Channelid);" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
+                                                    </td>
+                                                </tr>
                                                 }
                                             </tbody>
                                         </table>
