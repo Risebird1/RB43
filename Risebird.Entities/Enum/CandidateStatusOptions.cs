@@ -45,8 +45,8 @@ namespace Risebird.Entities.Enum
         [Description("Added")]
         Added,
 
-        [Display(Name = "Updated")]
-        [Description("Updated")]
+        [Display(Name = "Profile Updated")]
+        [Description("Profile Updated")]
         Updated,
 
         [Display(Name = "Meeting Status")]
@@ -63,5 +63,9 @@ namespace Risebird.Entities.Enum
         [Display(Name = "Not Responding")]
         [Description("Not Responding")]
         NotResponding,
+
+        [Display(Name = "Cancelled")]
+        [Description("Cancelled")]
+        Cancelled,
     }
 }

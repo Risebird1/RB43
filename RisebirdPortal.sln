@@ -43,7 +43,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CognitiveService", "Cogniti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureVideoUpload", "AzureVideoUpload\AzureVideoUpload.csproj", "{529DD8E4-3957-4518-8BBE-941D8916A442}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Risebird.WebAPI", "Risebird.WebAPI\Risebird.WebAPI.csproj", "{C9583BCE-0C7A-46EB-9BCC-64A32669C544}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Risebird.WebAPI", "Risebird.WebAPI\Risebird.WebAPI.csproj", "{C9583BCE-0C7A-46EB-9BCC-64A32669C544}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

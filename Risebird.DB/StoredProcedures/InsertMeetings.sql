@@ -9,7 +9,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[InsertMeetings]
+Create PROCEDURE [dbo].[InsertMeetings]
 @IRFId varchar(200),
 @interviewDate varchar(200),
 @slot varchar(100),
@@ -30,9 +30,11 @@ CREATE PROCEDURE [dbo].[InsertMeetings]
 @textreminder nvarchar(200)
 AS
 Begin
+declare @InterviewId int, @oldConfirmationStatus varchar(100), @newConfirmationStatus varchar(100), @isUpdate bit; 
 
 IF NOT EXISTS (SELECT 1   FROM   InterviewMeetings    WHERE  candidateEmail = @candidateEmail and interviewDate=@interviewDate and IRFId= @IRFId)
 Begin
+
 INSERT INTO [dbo].[InterviewMeetings]
            ([IRFId]
            ,[interviewDate]
@@ -77,10 +79,19 @@ INSERT INTO [dbo].[InterviewMeetings]
 GETUTCDATE(),
 @textreminder  
 )
+
+set @InterviewId=SCOPE_IDENTITY()
+
+
 End
+
+
 ELSE
 
 Begin
+
+set @InterviewId = (select id from InterviewMeetings where candidateEmail = @candidateEmail and interviewDate=@interviewDate)
+
  UPDATE [dbo].[InterviewMeetings]
    SET [interviewDate] = @interviewDate
 	  ,[ClientHrContact]=@ClientHrContact
@@ -96,12 +107,38 @@ Begin
  WHERE     candidateEmail = @candidateEmail and interviewDate=@interviewDate
  
  
+ 
 End
 
+
+if(@comfirmationStatus='1')
+	Begin
+
+	 IF NOT EXISTS (SELECT 1   FROM   InterviewComments    WHERE  InterviewId =@InterviewId)
+		Begin
+			insert into InterviewComments(InterviewId, MeetingStatus) values ( @InterviewId, 2)
+
+		End
+	 Else
+		Begin
+			update InterviewComments set MeetingStatus=2 where InterviewId=@InterviewId
+		End
+
+
+	End
+
+Else
+	Begin
+	 		update InterviewComments set MeetingStatus = null where InterviewId=@InterviewId
+
+	End
+
+declare
+	@profileId int = (select id from [Profile] where [Name]='Candidate')
 IF NOT EXISTS (SELECT 1  FROM  UserList  WHERE  EmailId = @candidateEmail)
 Begin
-	declare
-	@profileId int = (select id from [Profile] where [Name]='Candidate')
+	--declare
+	--@profileId int = (select id from [Profile] where [Name]='Candidate')
 	
 	Insert into UserList (idProfile, FirstName, EmailId, IsActive,MobileNumber) values (@profileId, @candidateName, @candidateEmail, 1,@textreminder)
 
@@ -138,7 +175,27 @@ Begin
 
 End
 
+--insert into CandidateStatus table
+declare @canUserId int,@canMstid int, @idIrf int;
+
+set @canUserId = (select id from UserList where EmailId = @candidateEmail and idProfile=@profileId)
+set @canMstid =(select id from CandidatesMaster where UserId=@canUserId)
+set @idIrf =(select id from IRF where IRFId=@IRFId)
+
+if(@comfirmationStatus='1')
+	Begin
+		insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
+		values (@idIrf, @canMstid, 'Scheduled', GETDATE(), 4, 'System')
+	End
+
+Else
+	Begin
+		insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
+		values (@idIrf, @canMstid, 'Cancelled', GETDATE(), 18, 'System')
+	End
 END
+
+
 
 
 GO

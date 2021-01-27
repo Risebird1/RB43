@@ -132,5 +132,6 @@ namespace Risebird.Repository.Interface
         Task<bool> EditCandidateStatus(CandidateStatus model);
         Task<bool> DeleteCandidateStatus(int id);
         Task<int> GetCandidateIdByEmail(string emailId);
+        Task<IEnumerable<string>> GetIRFClientsEmail(int irfId);
     }
 }

@@ -4178,5 +4178,26 @@ namespace Risebird.Repository
                 return 0;
             }
         }
+
+        public async Task<IEnumerable<string>> GetIRFClientsEmail(int irfId)
+        {
+            try
+            {
+                var query = "select UserList.EmailId from  TransClientUser join UserList on TransClientUser.ClientUserId = UserList.Id where TransClientUser.IRFId=@IRFId and ClientRoleId in (1,2)";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<string>(query, dynamicParameters);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
