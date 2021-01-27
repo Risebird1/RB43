@@ -49,5 +49,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<CandidateLastStatus>> GetCandidateLastStatus()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@dateValue", DateTime.Now.AddDays(-1));
+                    var result = SqlMapper.Query<CandidateLastStatus>(con, "usp_GetCandidateLastStatus", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

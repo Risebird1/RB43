@@ -40,6 +40,8 @@ namespace Risebird.MicroService
             builder.Services.AddScoped<INotificationHelper, NotificationHelper>();
             builder.Services.AddScoped<IApplicationErrorLogger, ApplicationErrorLogger>();
             builder.Services.AddScoped<ISpeechToTextHelper, SpeechToTextHelper>();
+            builder.Services.AddScoped<ICandidateRepository, CandidateRepository>();
+            builder.Services.AddScoped<IIRFRepository, IRFRepository>();
 
         }
 
