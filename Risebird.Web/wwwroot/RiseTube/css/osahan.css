@@ -896,7 +896,10 @@ a:hover, h1, h2, h3, h4, h5, h6 {
     flex-direction: column;
     box-sizing: border-box;
 }
-
+.interviewerSkill .video-card-body {
+    padding: 4px 10px 8px 10px;
+    height:50px;
+}
 .video-card-body {
     padding: 4px 3px 8px 3px;
     height: 100px;

@@ -56,6 +56,11 @@ namespace Risebird.Business.Interface
         //string GetRecruiterDomain(int userId);
         //List<InterviewVM> GetUpComingInterviewList();
         //List<InterviewerSkillsVM> GetUpComingInterviewerSkillsList();
+        Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page);
+        Task<int> GetInterviewerRiseTubeMeetingsCount();
+        Task<MeetingVM> GetMeetingbyid(int id, string Email);
+        Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern);
+        Task<InterviewReport> GetInterviewerInteviewReport(int interviewId, int irfId);
 
     }
 }

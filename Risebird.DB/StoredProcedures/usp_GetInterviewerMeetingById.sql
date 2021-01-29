@@ -30,7 +30,8 @@ SELECT [InterviewMeetings].id as imid
   ,interviewDuration        
   ,candidateEmail        
   ,ClientHrContact        
-  ,ca.ResumeLink as resumeLink        
+  ,ca.ResumeLink as resumeLink
+  ,ca.CodedResumeLink as encodedresumeLink 
   ,confirmationStatus        
   ,zoomLink        
   ,[InterviewMeetings].risebirdHR        

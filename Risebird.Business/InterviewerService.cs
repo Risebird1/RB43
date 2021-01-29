@@ -445,23 +445,23 @@ namespace Risebird.Business
                 var irfDetails = _interviewerRepository.GetInterviewerSkillChannelDetails(irfId);
 
                 //check whether an IRF exists for the given IRFId
-                var check = _interviewerRepository.GetInterviewerSkillChannelbyId(irfId);// what is need of this method
+                //var check = _interviewerRepository.GetInterviewerSkillChannelbyId(irfId);// what is need of this method
                 var interviewDetails = _interviewerRepository.GetInterviewerMeetingById(interviewId).Result;//Ask
 
-                if (!check)
+                if (irfDetails==null)
                 {
                     return null;
                 }
-                var interviewReport = _interviewerRepository.GetInterviewerReportById(interviewId, irfId);//need to create table for report
-                if (interviewReport != null && interviewReport.Any())
+                var interviewReport = await _interviewerRepository.GetInterviewerReportById(interviewId, irfId);//need to create table for report
+                if (interviewReport != null)
                 {
                     //call Edit Feedbackform method
-                    reportModel = interviewReport.FirstOrDefault();
+                    reportModel = interviewReport;
                     await EditInterviewReport(reportModel, irfId);
                 }
                 else
                 {
-                    var model = interviewReport.Any() ? interviewReport.FirstOrDefault() : new InterviewReport();
+                    var model = interviewReport!=null ? interviewReport : new InterviewReport();
                     model.IsEdited = model.InterviewId > 0;
                     //get all values from database
                     var levelTech = await _meetingRespository.GetLevelTech();// replacement
@@ -531,7 +531,8 @@ namespace Risebird.Business
                 reportModel.CandidateMobileNumber = interviewDetails.MobileNumber;
 
                 reportModel.IRFName = irfDetails.IRFId;
-                reportModel.PrimarySkill = irfDetails.JDTiltle.Split("|")[0];
+                //reportModel.PrimarySkill = irfDetails.JDTiltle.Split("|")[0];
+                reportModel.PrimarySkill = irfDetails.PrimarySkill;
                 return reportModel;
             }
 
@@ -572,7 +573,7 @@ namespace Risebird.Business
                 model.TechSkillReportCollection = techReportCollection;
             }
             //Recommonded
-            //model.QuestionsCollection = (IList<QuestionsDiscussed>)(_meetingRespository.GetQuestionsDiscussed(model.InterviewId));
+            model.InterviewerQuestionsCollection = (IList<InterviewerQuestionsDiscussed>)(await _interviewerRepository.GetQuestionsDiscussed(model.InterviewId));
             model.IsEdited = true;
             model.JobLevelName = Enum.GetName(typeof(JobLevels), model.JobLevel);
             var interviewMeetingsDetails = _interviewerRepository.GetInterviewerMeetingById(model.InterviewId).Result;

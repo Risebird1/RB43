@@ -13,12 +13,12 @@ CREATE PROCEDURE [dbo].[usp_MyInterviewerAssessment]
 @emailID varchar(200)        
 AS      
 BEGIN      
- select im.*, Skill.[Name] as PrimarySkill, isc.JDTiltle,isc.id as iscIntId,ic.ApprovalComments, ic.IsApproved,  
+ select im.*, Skill.[Name] as PrimarySkill, isc.JDTiltle,isc.id as iscIntId, ic.IsApproved,  
   ic.InterviewStatus, ic.IsSelected, ic.MeetingStatus, ic.VideoLink from TransInterviewerSkillsLeadInterviewer tisli  
   join UserList ul on tisli.UserId = ul.id  
   join InterviewerSkillsChannel isc on isc.id = tisli.InterviewerSkillId  
   inner join InterviewMeetings im on  im.IRFId=isc.InterviewerSkillId  
-  left join InterviewComments ic on ic.InterviewId = im.id  
+  left join InterviewerComments ic on ic.InterviewId = im.id  
   join Skill on isc.PrimarySkill=Skill.id  
   where ul.EmailId= @emailID and im.interviewer=@emailID and im.confirmationStatus=1 and IsEmergency=0         
       

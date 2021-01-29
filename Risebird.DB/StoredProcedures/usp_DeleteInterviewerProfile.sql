@@ -43,7 +43,7 @@ AS
 
 		  -- Now delete from InterviewerProfile Table
 		  delete from InterviewerProfile where UserId = @UserId
-
+		  delete from Interviewer where UserId = @UserId
 	      -- At last, Delete from User List table
 		  delete from UserList where Id = @UserId
    

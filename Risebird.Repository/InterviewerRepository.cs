@@ -1126,7 +1126,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select InterviewerSkillId as IRFId, JDTiltle from InterviewerSkillsChannel where id = @id";
+                var query = "Select InterviewerSkillId as IRFId, JDTiltle, sk.[Name] as PrimarySkill from InterviewerSkillsChannel isc join Skill sk on sk.id=isc.PrimarySkill where isc.id = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -1183,7 +1183,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public IEnumerable<InterviewReport> GetInterviewerReportById(int id, int irfId = 0)
+        public async Task<InterviewReport> GetInterviewerReportById(int id, int irfId = 0)
         {
             try
             {
@@ -1192,14 +1192,15 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IrfId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<InterviewReport>(con, "usp_GetInterviewerReportById", dynamicParameters,
+                    var result = await  SqlMapper.QueryAsync<InterviewReport>(con, "usp_GetInterviewerReportById", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -1284,6 +1285,8 @@ namespace Risebird.Repository
                     DynamicParameters parameters = new DynamicParameters();
                     DynamicParameters parametersRecomm = new DynamicParameters();
                     DynamicParameters paramx = new DynamicParameters();
+                    DynamicParameters paramPersonality = new DynamicParameters();
+
                     paramx.Add("@InterviewId", reportDetails.InterviewId);
                     paramx.Add("@SkillQuality", reportDetails.SkillQuality);
                     paramx.Add("@OverallScore", reportDetails.OverallScore);
@@ -1298,6 +1301,7 @@ namespace Risebird.Repository
                     paramx.Add("@InterviwerCommunication", reportDetails.InterviwerCommunication);
                     paramx.Add("@InterviewExperience", reportDetails.Interviewexperience);
                     paramx.Add("@OnlinePresence", reportDetails.OnlinePresence);
+                    paramx.Add("@ProfileScore", reportDetails.ProfileScore);
 
                     parameters.Add("@interviewId", reportDetails.InterviewId);
                     parameters.Add("@interviewStatus", reportDetails.InterviewStatus);
@@ -1320,6 +1324,7 @@ namespace Risebird.Repository
                     parameters.Add("@TimeManagement", reportDetails.TimeManagement);
                     parameters.Add("@Interviewscompleted", reportDetails.Interviewscompleted);
                     parameters.Add("@Creativity", reportDetails.Creativity);
+                    parameters.Add("@OverallInterviewingAbilityScore", reportDetails.OverallInterviewingAbilityScore);
 
                     parametersRecomm.Add("@interviewId", reportDetails.InterviewId);
                     parametersRecomm.Add("@CompanySize", reportDetails.CompanySize);
@@ -1336,6 +1341,14 @@ namespace Risebird.Repository
                     parametersRecomm.Add("@SkillIP", reportDetails.SkillIP);
                     parametersRecomm.Add("@PerHourRateIndia", reportDetails.PerHourRateIndia);
 
+                    paramPersonality.Add("@InterviewId", reportDetails.InterviewId);
+                    paramPersonality.Add("@OverallPersonalityScore", reportDetails.OverallPersonalityScore);
+                    paramPersonality.Add("@Openness", reportDetails.Openness);
+                    paramPersonality.Add("@Conscientiousness", reportDetails.Conscientiousness);
+                    paramPersonality.Add("@Extroversion", reportDetails.Extroversion);
+                    paramPersonality.Add("@Agreeableness", reportDetails.Agreeableness);
+                    paramPersonality.Add("@Neuroticism", reportDetails.Neuroticism);
+
                     if (reportDetails.IsEdited)
                     {
                         var result = SqlMapper.Query<int>(con, "usp_UpdateInterviewerReport", paramx,
@@ -1345,7 +1358,7 @@ namespace Risebird.Repository
                     else
                     {
                         //add to interviewReport table
-                        string sqlInsertReport = "INSERT INTO InterviewerReport (InterviewerSkillId, InterviewId, CandidateName,OverallScore, Rating, TechSkillComments,SkillQuality,CertificationQuality, EducationQuality, EmployersQuality,CareerProgression,ProjectsQuality,OnlinePresence,BehavioralScore,InterviwerCommunication,InterviewExperience ) Values   (@InterviewerSkillId, @InterviewId, @CandidateName,@OverallScore, @Rating, @TechSkillComments, @SkillQuality,   @CertificationQuality, @EducationQuality, @EmployersQuality,@CareerProgression,@ProjectsQuality,@OnlinePresence,@BehavioralScore,@InterviwerCommunication,@InterviewExperience);";
+                        string sqlInsertReport = "INSERT INTO InterviewerReport (InterviewerSkillId, InterviewId, CandidateName,OverallScore, Rating, TechSkillComments,SkillQuality,CertificationQuality, EducationQuality, EmployersQuality,CareerProgression,ProjectsQuality,OnlinePresence,BehavioralScore,InterviwerCommunication,InterviewExperience, ProfileScore) Values   (@InterviewerSkillId, @InterviewId, @CandidateName,@OverallScore, @Rating, @TechSkillComments, @SkillQuality,   @CertificationQuality, @EducationQuality, @EmployersQuality,@CareerProgression,@ProjectsQuality,@OnlinePresence,@BehavioralScore,@InterviwerCommunication,@InterviewExperience, @ProfileScore);";
                         var affectedRows = con.ExecuteAsync(sqlInsertReport, new
                         {
                             InterviewerSkillId = reportDetails.IRFId,
@@ -1364,6 +1377,7 @@ namespace Risebird.Repository
                             BehavioralScore = reportDetails.BehavioralScore,
                             InterviwerCommunication = reportDetails.InterviwerCommunication,
                             InterviewExperience = reportDetails.Interviewexperience,
+                            ProfileScore = reportDetails.ProfileScore
                         }).Result;
 
                     }
@@ -1390,10 +1404,39 @@ namespace Risebird.Repository
                     {
                         con.Close();
                     }
+
+
+                    DataTable questionsDt = new DataTable();
+                    questionsDt.Columns.Add("InterviewId", typeof(int));
+                    questionsDt.Columns.Add("Question", typeof(string));
+                    questionsDt.Columns.Add("RatingId", typeof(int));
+                    
+
+                    foreach (var item in reportDetails.InterviewerQuestionsCollection)
+                    {
+                        questionsDt.Rows.Add(reportDetails.InterviewId, item.Question, item.RatingId);
+                    }
+
+                    SqlCommand cmdQuestions = new SqlCommand("usp_InterviewerQuestionsDiscussedBulkInsert", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+                    cmdQuestions.Parameters.Add(new SqlParameter("@InterviewerQuestionsDiscussedBulkData", SqlDbType.Structured));
+                    cmdQuestions.Parameters["@InterviewerQuestionsDiscussedBulkData"].Value = questionsDt;
+                    con.Open();
+                    if (cmdQuestions.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerReportComments", parameters,
                             commandType: CommandType.StoredProcedure);
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerReportRecommendation", parametersRecomm,
                            commandType: CommandType.StoredProcedure);
+
+                    await SqlMapper.QueryAsync(con, "usp_AddUpdateInterviewerPersonalityScore", paramPersonality,
+                           commandType: CommandType.StoredProcedure);
+
                     return true;
                 }
 
@@ -1627,6 +1670,29 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return "";
+        }
+
+        public async Task<IEnumerable<InterviewerQuestionsDiscussed>> GetQuestionsDiscussed(int interviewId)
+        {
+            try
+            {
+                
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@InterviewId", interviewId);
+                    //parameters.Add("@timeNow", DateTime.Now);
+                    return await SqlMapper.QueryAsync<InterviewerQuestionsDiscussed>(con, "usp_GetInterviewerQuestionsDiscussed", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                   
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

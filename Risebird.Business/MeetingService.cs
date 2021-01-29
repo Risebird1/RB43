@@ -1408,9 +1408,12 @@ namespace Risebird.Business
         {
             try
             {
+                
                 //check the receiver and get all their emails from the db
                 var receiverEmails = _meetingRespository.GetEmailsforBroadcast(model.BroadcastReciever).Result;
+
                 var supportEmails = _supportRespository.GetAllSupportHREmails();
+
                 var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
                 return result;
 

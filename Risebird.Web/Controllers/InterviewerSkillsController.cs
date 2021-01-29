@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -23,7 +24,8 @@ namespace Risebird.Web.Controllers
         private IAzureStorageHelper _azureStorageHelper;
         private IMeetingService _meetingService;
         private IApplicationErrorLogger _applicationErrorLogger;
-        public InterviewerSkillsController(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, IInterviewerSkillsService InterviewerSkillsService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService)
+        private readonly IIRFRepository _iRFRepository;
+        public InterviewerSkillsController(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, IInterviewerSkillsService InterviewerSkillsService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IIRFRepository iRFRepository)
         {
             _interviewerSkillsRepository = InterviewerSkillsRepository;
             _iInterviewerSkillsService = InterviewerSkillsService;
@@ -31,6 +33,7 @@ namespace Risebird.Web.Controllers
             _meetingService = meetingService;
             _azureStorageHelper = azureStorageHelper;
             _evaluatorService = evaluatorService;
+            _iRFRepository = iRFRepository;
         }
 
         [Authorize]
@@ -194,8 +197,6 @@ namespace Risebird.Web.Controllers
             {
                 var model = new InterviewerSkillsVM();
                 var interviewers = _interviewerSkillsRepository.GetInterviewers();
-                model.SkillGeneralTypeList = new SelectList(_iInterviewerSkillsService.GetGeneralSkillMatrix(), "id", "Name");
-                model.SelectabilityTypeList = new SelectList(_iInterviewerSkillsService.GetSelectabilityMatrix(), "id", "Name");
                 ViewBag.RiseBirdHR = new SelectList(_iInterviewerSkillsService.GetRiseBirdHR(), "id", "EmailId");
                 ViewBag.Level = new SelectList(_interviewerSkillsRepository.GetLevels(), "id", "Name");
                 ViewBag.Interviewers = new SelectList(interviewers, "id", "EmailId");
@@ -265,8 +266,6 @@ namespace Risebird.Web.Controllers
                     //string skills = string.Empty;
                     //skills = string.Join(",", from item in model.SkillCollection select item.SkillId);
                     var interviewers = _iInterviewerSkillsService.GetInterviewers(model.PrimarySkill);
-                    model.SkillGeneralTypeList = new SelectList(_iInterviewerSkillsService.GetGeneralSkillMatrix(), "id", "Name");
-                    model.SelectabilityTypeList = new SelectList(_iInterviewerSkillsService.GetSelectabilityMatrix(), "id", "Name");
                     ViewBag.RiseBirdHR = new SelectList(_iInterviewerSkillsService.GetRiseBirdHR(), "id", "EmailId");
                     ViewBag.Level = new SelectList(_interviewerSkillsRepository.GetLevels(), "id", "Name");
                     ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
@@ -820,6 +819,272 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        public IActionResult RisetubeInterviewer(int? Page, string searchvalue)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    int ClientId = 0;
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        if (TempData["SuccessErrorMessageInterview"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                            TempData.Remove("SuccessErrorMessageInterview");
+                        }
+                        var modelList = new List<MeetingVM>();
+                        if (Page == null || Page == 0)
+                        {
+                            Page = 1;
+                        }
+                        int totalMeetings = 0;
+                        modelList = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsPaged(Page.Value).Result;
+                        totalMeetings = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsCount().Result;
 
+                        foreach (var item in modelList)
+                        {
+                            var usernames = item.candidateName.Trim().Split(" ");
+                            var namemodel = String.Empty;
+                            foreach (var name in usernames)
+                            {
+                                if (name != null && name.Length >= 2)
+                                    namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                                else if (name != null && name.Length == 1)
+                                    namemodel = namemodel + name?.ToCharArray()[0];
+                            }
+                            item.candidateName = namemodel;
+                        }
+                        ViewBag.ProfileName = profileName;
+                        if (!String.IsNullOrEmpty(searchvalue))
+                        {
+                            ViewBag.searchvalue = searchvalue;
+                        }
+                        else
+                        {
+                            ViewBag.searchvalue = "";
+                        }
+
+
+                        var remainder = totalMeetings % 12;
+                        if (remainder == 0)
+                        {
+                            ViewBag.Pages = totalMeetings / 12;
+
+                        }
+                        else
+                        {
+                            ViewBag.Pages = (totalMeetings / 12) + 1;
+
+                        }
+
+                        ViewBag.Page = Page.Value;
+                        ViewBag.MeetingsCount = totalMeetings;
+                        ViewBag.Remainder = remainder;
+                        return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IActionResult> InterviewerVideoPage(int id, string irfid, string actionstatus)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    ViewBag.actionstatus = "Risetube";
+                    ViewBag.ResultStatus = "VideoPresent";
+                    profileName = profileName.Replace("\"", "");
+
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "ExternalUser")
+                    {
+                        var emailId = HttpContext.Session.GetString("email")?.Trim();
+                        emailId = emailId.Replace("\"", "");
+                        if (TempData["SuccessErrorMessageInterview"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                            TempData.Remove("SuccessErrorMessageInterview");
+                        }
+
+                        var modelList1 = new List<MeetingVM>();
+                        MeetingVM model = new MeetingVM();
+                        model = await _iInterviewerSkillsService.GetMeetingbyid(id, emailId);
+                        if (model == null)
+                        {
+                            model = new MeetingVM();
+                            ViewBag.ResultStatus = "VideoNotPresent";
+                            return View(model);
+
+                        }
+                        modelList1 = await _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsByJD(0, emailId, model.JDTiltle.Split("|")[0]);
+
+                        modelList1 = modelList1.Select(x =>
+                        {
+                            x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                            return x;
+                        }).ToList();
+                        //var IRListModel = _interviewerService.GetInterviewerinteviewReport(model.imid, model.irfIntId).Result;
+                        var IRListModel = _iInterviewerSkillsService.GetInterviewerInteviewReport(model.imid, model.irfIntId).Result;
+                        var modelList = modelList1;
+
+                        foreach (var itemmodel in modelList)
+                        {
+                            var usernames1 = itemmodel.candidateName.Trim().Split(" ");
+                            var namemodel1 = String.Empty;
+                            foreach (var name in usernames1)
+                            {
+                                if (name != null && name.Length >= 2)
+                                    namemodel1 = namemodel1 + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                                else if (name != null && name.Length == 1)
+                                    namemodel1 = namemodel1 + name?.ToCharArray()[0];
+
+                            }
+                            itemmodel.candidateName = namemodel1;
+                        }
+
+                        MeetingVM NewModel = new MeetingVM();
+                        NewModel.SubVideo_List = modelList1.ToList().Where(x => x.imid != id).ToList();
+
+                        var usernames = model.candidateName.Trim().Split(" ");
+                        var namemodel = String.Empty;
+                        foreach (var name in usernames)
+                        {
+                            if (name != null && name.Length >= 2)
+                                namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                            else if (name != null && name.Length == 1)
+                                namemodel = namemodel + name?.ToCharArray()[0];
+                        }
+                        NewModel.candidateName = namemodel;
+
+                        ViewBag.ProfileName = profileName;
+                        if (IRListModel != null)
+                        {
+                            var usernames1 = IRListModel.CandidateName.Trim().Split(" ");
+                            var namemodel1 = String.Empty;
+                            foreach (var name in usernames1)
+                            {
+                                if (name != null && name.Length >= 2)
+                                    namemodel1 = namemodel1 + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                                else if (name != null && name.Length == 1)
+                                    namemodel1 = namemodel1 + name?.ToCharArray()[0];
+                            }
+                            IRListModel.CandidateName = namemodel1;
+                        }
+
+                        NewModel.CandidateId = model.CandidateId;
+                        NewModel.interviewDate = model.interviewDate;
+                        NewModel.imid = model.imid;
+                        NewModel.IRFId = model.IRFId;
+                        NewModel.ClientName = model.ClientName;
+                        NewModel.InterviewerComment = model.InterviewerComment;
+                        NewModel.InterviewStatus = model.InterviewStatus;
+                        NewModel.JDTiltle = model.JDTiltle;
+                        NewModel.JDLink = model.JDLink;
+                        NewModel.MeetingStatus = model.MeetingStatus;
+                        NewModel.confirmationStatus = model.confirmationStatus;
+                        NewModel.VideoLink = model.VideoLink;
+                        NewModel.candidateEmail = model.candidateEmail;
+                        NewModel.reportLink = model.reportLink;
+                        NewModel.resumeLink = model.resumeLink;
+                        if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
+                        {
+                            NewModel.resumeLink = IRListModel.encodedresumeLink;
+                            IRListModel.resumeLink = IRListModel.encodedresumeLink;
+                        }
+                        NewModel.zoomLink = model.zoomLink;
+                        NewModel.IreportModel = IRListModel ?? new InterviewReport();
+                        NewModel.ShortListCount = model.ShortListCount;
+                        NewModel.IsShortlisted = model.IsShortlisted;
+                        NewModel.ThumbnailImage = model.ThumbnailImage;
+                        NewModel.IsOnline = model.IsOnline;
+                        NewModel.candidateEmail = model.candidateEmail;
+                        NewModel.ClientHrContact = model.ClientHrContact;
+                        // to get videocount details
+                        NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
+                        NewModel.IsBiometricEnabled = model.IsBiometricEnabled;
+                        NewModel.MeetingPatch = model.MeetingPatch;
+                        if (model.MeetingPatch.Count() > 0)
+                        {
+                            NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
+                        }
+                        if (NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").Count() > 0)
+                        {
+                            NewModel.IreportModel.QuestionsCollection = NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").ToList();
+                        }
+                        if (NewModel.IreportModel.QuestionsCollection == null)
+                        {
+                            ViewBag.QuestionsDiscussedCount = 0;
+                        }
+                        else
+                        {
+                            ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
+                        }
+                        var comments = _meetingService.GetvedioComments(id);
+                        NewModel.Comments = comments;
+                        bool isQC = false;
+                        NewModel.IreportModel.IsQC = isQC;
+                        NewModel.irfIntId = model.irfIntId;
+                        if (IRListModel != null)
+                        {
+                            GetStatusList(IRListModel, model.irfIntId);
+                        }
+
+                        ViewBag.VideoStatus = "Private";
+                        return View(NewModel);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        private void GetStatusList(InterviewReport model, int irfId = 0)
+        {
+            var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            model.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
+
+            var meetingStatuses = from MeetingStatus s in Enum.GetValues(typeof(MeetingStatus))
+                                  select new { ID = (int)s, Name = s.GetDescription() };
+
+            model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
+
+            model.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
+            model.LevelTech = new SelectList(_iRFRepository.GetLevelTech(), "id", "Name");
+            var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+            model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
+
+            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
+        }
     }
 }

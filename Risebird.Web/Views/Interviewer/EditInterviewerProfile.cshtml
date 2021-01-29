@@ -21,8 +21,8 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Add Interviewer Profile form</a>
-                <a class="navbar-brand"> / &nbsp; Add Interviewer Profile </a>
+                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Interviewer</a>
+                <a class="navbar-brand"> / &nbsp; Edit Interviewer </a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -32,12 +32,12 @@
         </div>
     </nav>
 
-    <div class="panel-header panel-header-sm">
+    <div class="mt50">
     </div>
-    <div class="content">
+    <div class="content client interviewer">
         <div class="row">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
 
                         @using (Html.BeginForm("EditInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data" }))
@@ -114,7 +114,7 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.Label("DOB", "Age", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.TextBox("txt_Age", null, new { id = "txt_Age", @class = "form-control", @readonly = true })
+                                        @Html.TextBox("txt_Age", null, new { id = "txt_Age", @class = "form-control text-box single-line text-box single-line", @readonly = true })
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.AltEmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -642,9 +642,9 @@
                                             <thead>
                                                 <tr class="tableHeaderClass">
                                                     @*<th width="15%" class="table_heading">TechnologyEnvironment</th>*@
-                                                    <th width="10%" class="table_heading">Is Primary Skill used In Recent Project</th>
+                                                    <th width="10%" class="table_heading">Primary Skill used In Recent Project</th>
                                                     <th width="50%" class="table_heading">Project Description</th>
-                                                    <th width="10%" class="table_heading">Is Commercial Project</th>
+                                                    <th width="10%" class="table_heading">Commercial Project</th>
                                                     <th width="20%" class="table_heading">Nature of Project</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
@@ -673,7 +673,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            @Html.TextArea("InterviewerProjectsDetails[0].Description", null, new { @class = "form-control text-box single-line" })
+                                                            @Html.TextArea("InterviewerProjectsDetails[0].Description", null, new { @class = "form-control text-box single-line", @style="height:50px;" })
                                                         </td>
                                                         <td>
                                                             <div class="mdc-checkbox">
@@ -725,7 +725,7 @@
                                                                 </div>
                                                             </td>
                                                             <td>
-                                                                @Html.TextAreaFor(m => m.InterviewerProjectsDetails[i].Description, new { @class = "form-control text-box single-line" })
+                                                                @Html.TextAreaFor(m => m.InterviewerProjectsDetails[i].Description, new { @class = "form-control text-box single-line", @style = "height:50px" })
                                                             </td>
                                                             <td>
                                                                 <div class="mdc-checkbox">
@@ -1455,20 +1455,20 @@
 
 
 
-          function RadioChanged(val) {
-              if (val == 'Upload') {
-                    document.getElementById("uploadDiv").style.display = "block";
-                    document.getElementById("linkDiv").style.display = "none";
-                   document.getElementById("ResumeLink").value = '';
+        function RadioChanged(val) {
+            if (val == 'Upload') {
+                document.getElementById("uploadDiv").style.display = "block";
+                document.getElementById("linkDiv").style.display = "none";
+                document.getElementById("ResumeLink").value = '';
 
-                }
-               else {
-                   document.getElementById("uploadDiv").style.display = "none";
-                   document.getElementById("linkDiv").style.display = "block";
-                 document.getElementById("File").value = '';
+            }
+            else {
+                document.getElementById("uploadDiv").style.display = "none";
+                document.getElementById("linkDiv").style.display = "block";
+                document.getElementById("File").value = '';
 
             }
 
-          }
+        }
     </script>
 

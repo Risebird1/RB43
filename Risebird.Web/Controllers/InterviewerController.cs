@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -35,6 +36,11 @@ namespace Risebird.Web.Controllers
         private ISupportService _supportService;
         private readonly INotificationHelper _notificationHelper;
         private readonly IIRFService _irfService;
+        private static List<InterviewerProfileVM> _modelDetails;
+        private static List<Meeting> _modelDl;
+        private static string Searchvalue;
+        private static string Searchvalueprofile;
+        private static string SearchvalueInterviewer;
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
                                 ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService)
 
@@ -58,7 +64,7 @@ namespace Risebird.Web.Controllers
 
         #region Interviewer Profile functions
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? Page, string searchValue)
         {
             try
             {
@@ -74,8 +80,50 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("MessageInterviewer");
 
                         }
+                        var model = _interviewerService.GetInterviewers();
+                        if (String.IsNullOrEmpty(searchValue) && Page > 1)
+                        {
+                            searchValue = Searchvalueprofile;
+                        }
+                        Searchvalueprofile = searchValue;
+                       
+                        ViewBag.Searchvalue = searchValue;
+                        if (!String.IsNullOrEmpty(searchValue))
+                        {
+                            searchValue = searchValue.ToUpper();
+                            model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || ((x.PrimarySkill!=null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
-                        return View(_interviewerService.GetInterviewers());
+                        }
+                        ViewBag.TotalCount = model.Count;
+
+                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                        int a = model.Count / 10;
+                        if (model.Count % 10 == 0)
+                        {
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                        }
+                        else
+                        {
+                            a = a + 1;
+                            if (a == Page)
+                            {
+                                ViewBag.PageEndCount = model.Count;
+                            }
+                            else
+                            {
+                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                            }
+
+                        }
+                        if (model.Count == 0)
+                        {
+                            ViewBag.PageStartCount = 0;
+                            ViewBag.PageEndCount = 0;
+                        }
+                        _modelDetails = model;
+                        return View(model.ToPagedList(Page ?? 1, 10));
+                        // return View(_interviewerService.GetInterviewers());
                     }
                     else
                     {
@@ -950,7 +998,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> MyInterviewerAssessment()
+        public async Task<IActionResult> MyInterviewerAssessment(int? Page, string searchValue)
         {
             //add report
             try
@@ -1000,7 +1048,50 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageLeadInterviewer"].ToString();
                             TempData.Remove("SuccessErrorMessageLeadInterviewer");
                         }
-                        return View(myInterview);
+
+
+                        if (String.IsNullOrEmpty(searchValue) && Page > 1)
+                        {
+                            searchValue = SearchvalueInterviewer;
+                        }
+                        SearchvalueInterviewer = searchValue;
+                        ViewBag.Searchvalue = searchValue;
+                        if (!String.IsNullOrEmpty(searchValue))
+                        {
+                            searchValue = searchValue.ToUpper();
+                            myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "") || (!String.IsNullOrEmpty(x.PrimarySkill) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
+
+                        }
+                        ViewBag.TotalCount = myInterview.Count;
+
+                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                        int a = myInterview.Count / 10;
+                        if (myInterview.Count % 10 == 0)
+                        {
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                        }
+                        else
+                        {
+                            a = a + 1;
+                            if (a == Page)
+                            {
+                                ViewBag.PageEndCount = myInterview.Count;
+                            }
+                            else
+                            {
+                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                            }
+
+                        }
+                        if (myInterview.Count == 0)
+                        {
+                            ViewBag.PageStartCount = 0;
+                            ViewBag.PageEndCount = 0;
+                        }
+                        _modelDl = myInterview;
+                        return View(myInterview.ToPagedList(Page ?? 1, 10));
+                      //return View(myInterview);
                     }
                     else
                     {
@@ -1104,47 +1195,31 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                string userMenus = HttpContext.Session.GetString("userMenus");
-                if (userMenus == null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    return RedirectToAction("Index", "Home", new { url = "AddReport/Interviewer/" + interviewId + "/" + irfId + "/" + isClient + "/" + isClientSelected });
-                }
-                string profileName = HttpContext.Session.GetString("profileName");
-
-                if (profileName != null)
-                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                }
-                // var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
-                var model = _interviewerService.GetInterviewerinteviewReport(interviewId, irfId).Result;
-                if (model == null)
-                {
-                    model = new InterviewReport();
-                    if (profileName == "Admin" || profileName == "HR")
-                    {
-                        return RedirectToAction("Index");
-                    }
-                    else if (profileName != null && (profileName == "Interviewer"))
-                    {
-                        model.IsInterviewer = true;
 
-                        return RedirectToAction("MyInterviewerAssessment");
+                    if (profileName == "Admin" || profileName == "HR" || profileName=="Interviewer")
+                    {
+                        var model = _interviewerService.GetInterviewerinteviewReport(interviewId, irfId).Result;
+                        model.ProfileName = profileName;
+                        GetStatusList(model, irfId);
+                        return View(model);
 
                     }
-                }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
 
-                ViewBag.IsClient = isClient;
-                ViewBag.IsClientSelected = isClientSelected;
-                model.IsQC = isQC;
-                GetStatusList(model, irfId);
-                if (isClient || isClientSelected)
-                {
-                    return PartialView("ClientPartialReport", model);
                 }
                 else
                 {
-                    return View(model);
+                    return RedirectToAction("SignOut", "Session");
                 }
+
+
             }
             catch (Exception ex)
             {
@@ -1171,7 +1246,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     //profileName = "Interviewer";
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer")
+                    if (/*profileName == "Admin" || profileName == "HR" ||*/ profileName == "Interviewer")
                     {
                         if (model.AudioFile != null)
                         {
@@ -1202,7 +1277,7 @@ namespace Risebird.Web.Controllers
 
                             if (uploadedvideoFileURL == null)
                             {
-                                ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                                ModelState.AddModelError(String.Empty, "Video Upload has failed.");
                                 GetStatusList(model);
                                 return View("AddReport", model);
                             }
@@ -1218,20 +1293,12 @@ namespace Risebird.Web.Controllers
 
                         if (_interviewerService.AddInterviewerReport(model).Result)
                         {
-                            TempData["SuccessErrorMessageInterview"] = "Report saved Successfully";
-                            if (profileName == "Admin" || profileName == "HR")
-                            {
-                                return RedirectToAction("Index");
-                            }
+                            TempData["SuccessErrorMessageLeadInterviewer"] = "Report saved Successfully";
                             return RedirectToAction("MyInterviewerAssessment");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageInterview"] = "Report was not saved.";
-                            if (profileName == "Admin" || profileName == "HR")
-                            {
-                                return RedirectToAction("Index");
-                            }
+                            TempData["SuccessErrorMessageLeadInterviewer"] = "Report was not saved.";
                             return RedirectToAction("MyInterviewerAssessment");
                         }
                     }
@@ -1248,13 +1315,9 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterview"] = "Report was not saved.";
-                if (model.IsQC)
-                {
-                    return RedirectToAction("MyQualityControlledInterviews");
-
-                }
-                return RedirectToAction("Index");
+                TempData["SuccessErrorMessageLeadInterviewer"] = "Report was not saved.";
+                
+                return RedirectToAction("MyInterviewerAssessment");
             }
         }
         private void GetStatusList(InterviewReport model, int irfId = 0)
@@ -1270,9 +1333,9 @@ namespace Risebird.Web.Controllers
 
             model.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
             model.LevelTech = new SelectList(_iRFRepository.GetLevelTech(), "id", "Name");
-            //var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
-            //                     select new { ID = (int)s, Name = s.GetDescription() };
-            //model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
+            var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+            model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
 
             //model.QuestionsList = new SelectList(_interviewerService.GetTechSkillComments(irfId), "Comment", "Comment");
 
@@ -1513,6 +1576,123 @@ namespace Risebird.Web.Controllers
             return RedirectToAction("InterviewerAssessment");
         }
 
+
+        [HttpPost]
+
+        public JsonResult InterviewerProfileJson(string searchValue)
+        {
+            try
+            {
+                int Page = 1;
+                var model = _modelDetails;
+                Searchvalue = searchValue;
+                int totalcount = model.Count;
+                int Pagestart = 0;
+                int Pageend = 0;
+
+                ViewBag.Searchvalue = searchValue;
+                if (!String.IsNullOrEmpty(searchValue))
+                {
+                    searchValue = searchValue.ToUpper();
+                    model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
+
+                }
+                ViewBag.TotalCount = model.Count;
+
+                Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                int a = model.Count / 10;
+                if (model.Count % 10 == 0)
+                {
+                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                }
+                else
+                {
+                    a = a + 1;
+                    if (a == Page)
+                    {
+                        Pageend = model.Count;
+                    }
+                    else
+                    {
+                        Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                    }
+
+                }
+                if (model.Count == 0)
+                {
+                    Pagestart = 0;
+                    Pageend = 0;
+                }
+
+                return Json(new { result = model.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count });
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("failed");
+            }
+        }
+
+        [HttpPost]
+        public JsonResult InterviewerAssessmentJson(string searchValue)
+       {
+            try
+            {
+                int Page = 1;
+                var myInterview = _modelDl;
+                Searchvalue = searchValue;
+                int totalcount = myInterview.Count;
+                int Pagestart = 0;
+                int Pageend = 0;
+
+                ViewBag.Searchvalue = searchValue;
+                if (!String.IsNullOrEmpty(searchValue))
+                {
+                    searchValue = searchValue.ToUpper();
+                    myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "") || (!String.IsNullOrEmpty(x.PrimarySkill) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
+
+                }
+                ViewBag.TotalCount = myInterview.Count;
+
+                Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                int a = myInterview.Count / 10;
+                if (myInterview.Count % 10 == 0)
+                {
+                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                }
+                else
+                {
+                    a = a + 1;
+                    if (a == Page)
+                    {
+                        Pageend = myInterview.Count;
+                    }
+                    else
+                    {
+                        Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                    }
+
+                }
+                if (myInterview.Count == 0)
+                {
+                    Pagestart = 0;
+                    Pageend = 0;
+                }
+
+                return Json(new { result = myInterview.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = myInterview.Count });
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("failed");
+            }
+        }
+
+
+
     }
+
 
 }

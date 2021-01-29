@@ -43,7 +43,8 @@ namespace Risebird.Repository.Interface
         Task<MeetingVM> GetInterviewerMeetingById(int id);
         Task<bool> AddInterviewerReport(InterviewReport reportDetails);
         bool GetInterviewerSkillChannelbyId(int irfId);
-        IEnumerable<InterviewReport> GetInterviewerReportById(int id, int irfId = 0);
+        Task<InterviewReport> GetInterviewerReportById(int id, int irfId = 0);
+        //IEnumerable<InterviewReport> GetInterviewerReportById(int id, int irfId = 0);
         IEnumerable<TransSkill> GetSkillsbyIRFid(int id);
         IEnumerable<SkillComment> GetTechSkillComments(int id);
         IEnumerable<InterviewReport> GetInterviewerRecommendationbyinterviewid(int id);
@@ -52,6 +53,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<AssignmentVM> FetchAssessmentGroups();
         string ChangeStatusAssessment(int assessmentid, int status);
         string UpdateAssessment(AssignmentVM _assessment);
+        Task<IEnumerable<InterviewerQuestionsDiscussed>> GetQuestionsDiscussed(int interviewId);
 
     }
 }

@@ -1,62 +1,27 @@
 ﻿@model Risebird.Entities.ViewModel.InterviewReport
 @using System.Text.RegularExpressions
-
+@using Risebird.Entities.Enum
 @{
     ViewData["Title"] = "Interview Report";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<script>
-    amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
-    amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
-    amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
-</script>
+@*<script>
+        amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
+        amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
+        amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
+    </script>*@
 
-
-
-
-<script>
-    function dropDwnToolTips(id) {
-        if (id.value == 0) {
-            id.title = "";
-        }
-        else {
-            id.title = id.value;
-        }
-    }
-
-</script>
-<script type="text/javascript">
-
-    $(document).ready(function () {
-        $('.dropques option').wrap('<span>');
-
-        var selectedOption = $('.dropques').find("[selected]");
-        $(selectedOption).unwrap();
-
-
-    })
-
-    $(document).ready(function () {
-        $('.droprating option').wrap('<span>');
-
-        var selectedOption = $('.droprating').find("[selected]");
-        $(selectedOption).unwrap();
-
-
-    })
-
-</script>
+<link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
 <div class="main-panel" id="main-panel">
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
 
-            <div class="navbar-wrapper" style="width: 100%;
-        float: left;
-        display: block;
-">
+            <div class="navbar-wrapper" style="width: 100%; float: left; display: block;">
 
                 <div class="navbar-toggle">
                     <button type="button" class="navbar-toggler">
@@ -81,13 +46,13 @@
     <div class="loader text-center">
         <img src="~/Newassets/img/lazyload.gif" />
     </div>
-    <div class="panel-header panel-header-sm">
+    <div class="mt50">
     </div>
-    <div class="content dataloading">
+    <div class="content dataloading client">
 
-        <div class="row">
+        <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
                         <form action="/Interviewer/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckConditions()" id="reportForm">
                             @Html.AntiForgeryToken()
@@ -152,10 +117,11 @@
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            @Html.LabelFor(model => model.ProfileScore, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
+                                            @Html.DropDownListFor(x => Model.ProfileScore, Html.GetEnumSelectList<ProfileScoreOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "SetChartAndTotal()" })
 
+                                            @Html.ValidationMessageFor(model => model.ProfileScore, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-6">
@@ -175,7 +141,7 @@
                                             @Html.LabelFor(model => model.Rating, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                             @Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "select-css form-control" })
-                                            @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
+                                            @Html.ValidationMessageFor(model => model.Rating, "", new { @class = "text-danger" })
 
                                         </div>
 
@@ -196,7 +162,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.SkillQuality, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.SkillQuality, Model.SkillQualityList, "Select Skill Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.DropDownListFor(x => Model.SkillQuality, Model.SkillQualityList, "Select Skill Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.SkillQuality, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -204,7 +170,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.CertificationQuality, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.CertificationQuality, Model.CertificationQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.DropDownListFor(x => Model.CertificationQuality, Model.CertificationQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.CertificationQuality, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -215,7 +181,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.EducationQuality, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.EducationQuality, Model.EducationQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.DropDownListFor(x => Model.EducationQuality, Model.EducationQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.EducationQuality, "", new { @class = "text-danger" })
 
 
@@ -225,7 +191,8 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.EmployersQuality, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.EmployersQuality, Model.EmployersQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.DropDownListFor(x => Model.EmployersQuality, Html.GetEnumSelectList<EmployerQualityOptions>(), "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+
                                             @Html.ValidationMessageFor(model => model.EmployersQuality, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -236,7 +203,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.CareerProgression, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.CareerProgression, Model.CareerProgressionList, "Select Career", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.DropDownListFor(x => Model.CareerProgression, Model.CareerProgressionList, "Select Career", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.CareerProgression, "", new { @class = "text-danger" })
 
                                         </div>
@@ -245,7 +212,8 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.ProjectsQuality, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.ProjectsQuality, Model.ProjectsQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.DropDownListFor(x => Model.ProjectsQuality, Html.GetEnumSelectList<ProjectQualityOptions>(), "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+
                                             @Html.ValidationMessageFor(model => model.ProjectsQuality, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -256,7 +224,8 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.OnlinePresence, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.OnlinePresence, Model.OnlinePresenceList, "Select Presence", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.DropDownListFor(x => Model.OnlinePresence, Html.GetEnumSelectList<OnlinePresenceOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+
                                             @Html.ValidationMessageFor(model => model.OnlinePresence, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -264,7 +233,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.BehavioralScore, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.BehavioralScore, Model.BehavioralScoreList, "Select Score", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.DropDownListFor(x => Model.BehavioralScore, Model.BehavioralScoreList, "Select Score", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.BehavioralScore, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -276,7 +245,8 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InterviwerCommunication, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.InterviwerCommunication, Model.InterviwerCommunicationList, "Select Communication Type", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.DropDownListFor(x => Model.InterviwerCommunication, Html.GetEnumSelectList<InterviewerCommunicationOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+
                                             @Html.ValidationMessageFor(model => model.InterviwerCommunication, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -284,7 +254,8 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.Interviewexperience, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.Interviewexperience, Model.InterviewexperienceList, "Select Exprience", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.DropDownListFor(x => Model.Interviewexperience, Html.GetEnumSelectList<InterviewExperienceOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+
                                             @Html.ValidationMessageFor(model => model.Interviewexperience, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -295,16 +266,95 @@
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
+                                            <h2>Personality Report</h2>
+                                        </div><!--end of multiple location-->
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.OverallPersonalityScore, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.OverallPersonalityScore, Html.GetEnumSelectList<PersonalityScoreOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "SetChartAndTotal()" })
+
+                                            @Html.ValidationMessageFor(model => model.OverallPersonalityScore, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Openness, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.Openness, Html.GetEnumSelectList<OpennessOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                            @Html.ValidationMessageFor(model => model.Openness, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Conscientiousness, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.Conscientiousness, Html.GetEnumSelectList<ConscientiousnessOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+
+                                            @Html.ValidationMessageFor(model => model.Conscientiousness, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Extroversion, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.Extroversion, Html.GetEnumSelectList<ExtroversionOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                            @Html.ValidationMessageFor(model => model.Extroversion, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Agreeableness, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.Agreeableness, Html.GetEnumSelectList<AgreeablenessOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+
+                                            @Html.ValidationMessageFor(model => model.Agreeableness, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Neuroticism, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.Neuroticism, Html.GetEnumSelectList<NeuroticismOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                            @Html.ValidationMessageFor(model => model.Neuroticism, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
                                             <h2>Report Details</h2>
                                         </div><!--end of multiple location-->
                                     </div>
 
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="card chart-box">
+                                            <div class="card-body">
+                                                <p class="card-text">Overall Score: <span class="totScore" id="totScore"></span></p>
+                                                <div>
 
+                                                    <div id="scoreChart" style="height: 200px; width:100%;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-md-6 col-sm-6">
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 card-text-label" })
+                                                    @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 " })
                                                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                         <div class="talktext">
                                                             @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line  scrollbar" }, @style = "height: 86px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters" })
@@ -316,16 +366,12 @@
                                                 <div class="form-group">
                                                     <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
                                                 </div>
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                    @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
-                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                        <p style="min-height:20px;border:1px #1d181817 solid">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <p class="vidfrmae" style="min-height:20px;border:1px #1d181817 solid">
                                             @Html.HiddenFor(x => Model.VideoLink)
                                             @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                             {
@@ -366,9 +412,8 @@
 
 
                                                 <div class="choose-file">
-                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Upload Thumbnail Image File</label>
+                                                    <label class="file-lable"> Upload Thumbnail Image File</label>
 
-                                                    @*<div class="form-group">*@
                                                     @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                                     @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control", @accept = ".jpeg, .png" })
                                                     @{
@@ -377,7 +422,6 @@
                                                             <a id="audioId" target="_blank" title="Image" href=@Model.AudioLink.ToString().Replace(" ","%20")>Uploaded Image</a>
                                                         }
                                                     }
-                                                    @*</div>*@
                                                 </div>
                                             </div>
 
@@ -394,8 +438,8 @@
                                         <div class="card">
 
                                             <div class="mdc-card-wrapper__text-section">
-                                                <div class="choose-file ">
-                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Upload Video File</label>
+                                                <div class="choose-file file-wrap ">
+                                                    <label class="file-lable"> Upload Video File</label>
 
 
 
@@ -437,7 +481,7 @@
                                                         @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control ", @accept = ".mp4" })
 
 
-                                                        <div class="mtop-15">
+                                                        <div>
                                                             @{
                                                                 if (Model.VideoLink != null)
                                                                 {
@@ -453,13 +497,13 @@
                                     </div>
 
                                 </div>
-                                <div class="row">
+                                <!--<div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
                                             <h2>Record Feedback Audio</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        </div>--><!--end of multiple location-->
+                                    <!--</div>--><!--end of col-md-12-->
+                                    <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="row">
 
 
@@ -480,7 +524,6 @@
                                                 </div>
                                                 <div class="row" id="recordingRow" style="display:none">
                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
-                                                        @*<h3 style="background-color:antiquewhite">Recordings</h3>*@
                                                         <div id="recordingsList"></div>
                                                     </div>
 
@@ -493,13 +536,13 @@
 
                                         </div>
 
-                                    </div>
+                                    </div>-->
 
 
 
                                     <!--end of col-md-12-->
 
-                                </div>
+                                <!--</div>-->
 
                                 <div id="playUploadedAudioOne">
                                     @if (Model.FeedbackAudioLink != null)
@@ -601,6 +644,85 @@
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
+                                            <h2>Questions Discussed</h2>
+                                        </div><!--end of multiple location-->
+                                    </div><!--end of col-md-12-->
+
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+
+                                        <div class="table-responsive-sm report">
+                                            <table class="table table-bordered mbn" id="QuestionsTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="50%">Questions</th>
+                                                        <th width="10%">Rating</th>
+                                                        <th width="10%" class="action text-center">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.InterviewerQuestionsCollection == null || Model.InterviewerQuestionsCollection.Count() == 0)
+                                                    {
+                                                        <tr>
+
+                                                            <td>
+                                                                @Html.TextBox("InterviewerQuestionsCollection[0].Question", null, new { @class = "form-control" })
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownList("InterviewerQuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
+
+                                                            </td>
+
+                                                            <td class="action text-center">
+                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+
+                                                                <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                    else
+                                                    {
+                                                        for (int i = 0; i < Model.InterviewerQuestionsCollection.Count(); i++)
+                                                        {
+                                                            <tr style="cursor:pointer">
+
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.InterviewerQuestionsCollection[i].Question, new { @class = "form-control text-box single-line" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DropDownListFor(m => m.InterviewerQuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
+                                                                </td>
+
+                                                                <td class="action text-center ">
+                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                </td>
+                                                            </tr>
+
+
+                                                        }
+
+                                                    }
+
+
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <label class="text-danger" id="Question_Error" style="color:red; margin-left:433px; font-size:16px"></label>
+
+                                    </div><!--end of col-md-12-->
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
                                             <h2>Tech Skill Report</h2>
                                         </div><!--end of multiple location-->
                                     </div><!--end of col-md-12-->
@@ -660,7 +782,7 @@
                                             </table>
                                         </div>
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
+                                            @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 " })
 
                                             <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                 <div class="talktext">
@@ -688,13 +810,26 @@
 
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
-                                                <div class="card">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.OverallInterviewingAbilityScore, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                    <div class="mdc-card-wrapper__text-section">
+                                                    @Html.DropDownListFor(x => Model.OverallInterviewingAbilityScore, Html.GetEnumSelectList<InterviewingAbilityScoreOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "SetChartAndTotal()" })
+                                                    @Html.ValidationMessageFor(model => model.OverallInterviewingAbilityScore, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <label class="control-label col-md-12 col-sm-12 desp-label"> Bias free Decision Making</label>
+                                                <div class="form-group radiobox" style="margin-top:0px;">
+
+                                                    <div>
                                                         <div class="choose-file ">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Bias free Decision Making</label>
+
                                                             <div class="col-md-12 col-sm-12">
-                                                                <div class="form-group">
+                                                                <div class="form-group" style="margin-bottom:0px;">
 
                                                                     @Html.RadioButtonFor(m => m.DecisionMaking, "Yes") <span class="radio-field">Yes</span>
                                                                     @Html.RadioButtonFor(m => m.DecisionMaking, "No")<span class="radio-field">No</span>
@@ -706,13 +841,14 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
-                                                <div class="card">
+                                                <label class="control-label col-md-12 col-sm-12 desp-label"> Articulation/ Communication</label>
+                                                <div class="form-group radiobox" style="margin-top:0px;">
 
-                                                    <div class="mdc-card-wrapper__text-section">
+                                                    <div>
                                                         <div class="choose-file ">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Articulation/ Communication</label>
+
                                                             <div class="col-md-12">
-                                                                <div class="form-group">
+                                                                <div class="form-group" style="margin-bottom:0px;">
                                                                     @Html.RadioButtonFor(m => m.Articulation, "Yes") <span class="radio-field">Yes</span>
                                                                     @Html.RadioButtonFor(m => m.Articulation, "No")<span class="radio-field">No</span>
                                                                 </div>
@@ -725,13 +861,14 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
-                                                <div class="card">
+                                                <label class="control-label col-md-12 col-sm-12 desp-label"> Readiness for Online Interviews </label>
+                                                <div class="form-group radiobox" style="margin-top:0px;">
 
-                                                    <div class="mdc-card-wrapper__text-section">
+                                                    <div>
                                                         <div class="choose-file ">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Readiness for Online Interviews </label>
+
                                                             <div class="col-md-12 col-sm-12">
-                                                                <div class="form-group">
+                                                                <div class="form-group" style="margin-bottom:0px;">
                                                                     @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "Yes")<span class="radio-field">Yes</span>
                                                                     @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "No")<span class="radio-field">No</span>
                                                                 </div>
@@ -741,13 +878,14 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
-                                                <div class="card">
+                                                <label class="control-label col-md-12 col-sm-12 desp-label"> Interpersonal - Teamwork</label>
+                                                <div class="form-group radiobox" style="margin-top:0px;">
 
-                                                    <div class="mdc-card-wrapper__text-section">
+                                                    <div>
                                                         <div class="choose-file ">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Interpersonal - Teamwork</label>
+
                                                             <div class="col-md-12 col-sm-12">
-                                                                <div class="form-group">
+                                                                <div class="form-group" style="margin-bottom:0px;">
                                                                     @Html.RadioButtonFor(m => m.Teamwork, "Yes")<span class="radio-field">Yes</span>
                                                                     @Html.RadioButtonFor(m => m.Teamwork, "No")<span class="radio-field">No</span>
 
@@ -761,13 +899,14 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
-                                                <div class="card">
+                                                <label class="control-label col-md-12 col-sm-12 desp-label"> Relationship Management</label>
+                                                <div class="form-group radiobox" style="margin-top:0px;">
 
-                                                    <div class="mdc-card-wrapper__text-section">
+                                                    <div>
                                                         <div class="choose-file ">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Relationship Management</label>
+
                                                             <div class="col-md-12 col-sm-12">
-                                                                <div class="form-group">
+                                                                <div class="form-group" style="margin-bottom:0px;">
                                                                     @Html.RadioButtonFor(m => m.RelationshipManagement, "Yes")<span class="radio-field">Yes</span>
                                                                     @Html.RadioButtonFor(m => m.RelationshipManagement, "No")<span class="radio-field">No</span>
 
@@ -778,13 +917,14 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
-                                                <div class="card">
+                                                <label class="control-label col-md-12 col-sm-12 desp-label"> Conflict Resolution</label>
+                                                <div class="form-group radiobox" style="margin-top:0px;">
 
-                                                    <div class="mdc-card-wrapper__text-section">
+                                                    <div>
                                                         <div class="choose-file ">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Conflict Resolution</label>
+
                                                             <div class="col-md-12 col-sm-12">
-                                                                <div class="form-group">
+                                                                <div class="form-group" style="margin-bottom:0px;">
                                                                     @Html.RadioButtonFor(m => m.ConflictResolution, "Yes")<span class="radio-field">Yes</span>
                                                                     @Html.RadioButtonFor(m => m.ConflictResolution, "No")<span class="radio-field">No</span>
 
@@ -798,13 +938,13 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
-                                                <div class="card">
-
-                                                    <div class="mdc-card-wrapper__text-section">
+                                                <label class="control-label col-md-12 col-sm-12 desp-label"> Adaptability</label>
+                                                <div class="form-group radiobox" style="margin-top:0px;">
+                                                    <div>
                                                         <div class="choose-file ">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Adaptability</label>
+
                                                             <div class="col-md-12 col-sm-12">
-                                                                <div class="form-group">
+                                                                <div class="form-group" style="margin-bottom:0px;">
                                                                     @Html.RadioButtonFor(m => m.Adaptability, "Yes")<span class="radio-field">Yes</span>
                                                                     @Html.RadioButtonFor(m => m.Adaptability, "No")<span class="radio-field">No</span>
 
@@ -815,13 +955,13 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
-                                                <div class="card">
-
-                                                    <div class="mdc-card-wrapper__text-section">
+                                                <label class="control-label col-md-12 col-sm-12 desp-label"> Mode of Interviews</label>
+                                                <div class="form-group radiobox" style="margin-top:0px;">
+                                                    <div>
                                                         <div class="choose-file ">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Mode of Interviews</label>
+
                                                             <div class="col-md-12 col-sm-12">
-                                                                <div class="form-group">
+                                                                <div class="form-group" style="margin-bottom:0px;">
                                                                     @Html.RadioButtonFor(m => m.ModeInterviews, "Telephonic")<span class="radio-field">Telephonic</span>
                                                                     @Html.RadioButtonFor(m => m.ModeInterviews, "Video")<span class="radio-field">Video</span>
                                                                 </div>
@@ -834,13 +974,14 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
-                                                <div class="card">
+                                                <label class="control-label col-md-12 col-sm-12 desp-label"> Ability to Work Under Pressure</label>
+                                                <div class="form-group radiobox" style="margin-top:0px;">
 
-                                                    <div class="mdc-card-wrapper__text-section">
+                                                    <div>
                                                         <div class="choose-file ">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Ability to Work Under Pressure</label>
+
                                                             <div class="col-md-12 col-sm-12">
-                                                                <div class="form-group">
+                                                                <div class="form-group" style="margin-bottom:0px;">
                                                                     @Html.RadioButtonFor(m => m.WorkUnderPressure, "Yes")<span class="radio-field">
                                                                         Yes
                                                                     </span>
@@ -853,13 +994,14 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
-                                                <div class="card">
+                                                <label class="control-label col-md-12 col-sm-12 desp-label"> Time Management</label>
+                                                <div class="form-group radiobox" style="margin-top:0px;">
 
-                                                    <div class="mdc-card-wrapper__text-section">
+                                                    <div>
                                                         <div class="choose-file ">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Time Management</label>
+
                                                             <div class="col-md-12 col-sm-12">
-                                                                <div class="form-group">
+                                                                <div class="form-group" style="margin-bottom:0px;">
                                                                     @Html.RadioButtonFor(m => m.TimeManagement, "Yes")<span class="radio-field">
                                                                         Yes
                                                                     </span>
@@ -874,7 +1016,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
-                                                <div class="col-md-12 col-sm-12">
+                                                <div >
                                                     <div class="form-group">
                                                         @Html.LabelFor(model => model.Interviewscompleted, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                         @Html.TextBoxFor(m => m.Interviewscompleted, new { @class = "form-control text-box single-line" })
@@ -882,7 +1024,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
-                                                <div class="col-md-12 col-sm-12">
+                                                <div>
                                                     <div class="form-group">
                                                         @Html.LabelFor(model => model.ReadymadeAssessment, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                         @Html.TextBoxFor(m => m.ReadymadeAssessment, new { @class = "form-control text-box single-line" })
@@ -893,7 +1035,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
-                                                <div class="col-md-12 col-sm-12">
+                                                <div>
                                                     <div class="form-group">
                                                         @Html.LabelFor(model => model.Creativity, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                         @Html.TextBoxFor(m => m.Creativity, new { @class = "form-control text-box single-line" })
@@ -945,11 +1087,12 @@
                                         <div class="row">
 
                                             <div class="col-md-6 col-sm-6">
-                                                <div class="mdc-card-wrapper__text-section">
+                                                <label class="control-label col-md-12 col-sm-12 desp-label"> CompanyType</label>
+                                                <div class="form-group radiobox" style="margin-top:0px;">
                                                     <div class="choose-file ">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> CompanyType</label>
+
                                                         <div class="col-md-12">
-                                                            <div class="form-group">
+                                                            <div class="form-group" style="margin-bottom:0px;">
                                                                 @Html.RadioButtonFor(m => m.CompanyType, "Product")<span class="radio-field">Product</span>
                                                                 @Html.RadioButtonFor(m => m.CompanyType, "Service")<span class="radio-field">Service</span>
 
@@ -1053,42 +1196,29 @@
                                     <div class="row">
 
                                         <div class="col-md-12 mc-button-area">
-                                            @if (Model.IsInterviewer)
-                                            {
+                                            @Html.ActionLink("Back to List", "MyInterviewerAssessment", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
 
-                                                @Html.ActionLink("Back to List", "MyInterview", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                            }
-                                            else if (ViewBag.IsClient)
+                                            @if (Model.ProfileName == "Interviewer")
                                             {
-                                                //@Html.ActionLink("Back to List", "ClientMeetings", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                            }
-                                            else if (ViewBag.IsClientSelected)
-                                            {
-                                                // @Html.ActionLink("Back to List", "ClientSelectedMeetings", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                            }
-                                            else
-                                            {
-                                                @Html.ActionLink("Back to List", "Index", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                            }
-                                            @if (!(ViewBag.IsClient || ViewBag.IsClientSelected))
-                                            {
-                                                if (Model.IsEdited)
+                                                @if (Model.IsEdited)
                                                 {
-                                                    @*<button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>*@
                                                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save" onclick="SubmitForm()">Save</button>
                                                 }
                                                 else
                                                 {
-                                                    @*<button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>*@
                                                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="SubmitForm()">Submit</button>
                                                 }
+
                                             }
+
+
 
                                         </div>
                                     </div>
                                 </div>
 
                             </div>
+                            @Html.HiddenFor(x => x.OverallScore, new { id = "OverallScore" })
                         </form>
                     </div>
 
@@ -1147,7 +1277,9 @@
     }
 </script>
 <script>
+
     function SubmitForm() {
+
         if (CheckConditions()) {
             document.getElementById("reportForm").submit();
         }
@@ -1175,105 +1307,38 @@
 
     }
 
-    function CountProctoring(value) {
-
-        if (value == "" || value == null) {
-            return;
-        }
-
-        var proctoringItems = $('[id^="Proctoring_"]');
-        var proctoringTotal = 0;
-        for (i = 0; i < proctoringItems.length; i++) {
-            proctoringTotal += parseInt(proctoringItems[i].value);
-        }
-        $("#ProctoringCount").val(proctoringTotal);
-        if (parseInt(proctoringTotal) > 0) {
-            $("#ProctoringCount").css("border-color", "red");
-        }
-        else {
-            $("#ProctoringCount").css("border-color", "#E3E3E3");
-        }
-    }
-      function switchtoquestionVedio(questiontime) {
-
-        var time = 1;
-        if (questiontime != '') {
-            time = questiontime;
-            time = questiontime;
-            time = questiontime;
-        }
-        var vid = document.getElementsByClassName("vjs-tech");
-        vid[0].currentTime = time;
-        //time should be in seconds
-    }
     function CalculateOverAll(id, value) {
-        var num = id.match(/(\d+)/);
-        var index = num[0];
-        value = parseInt(value);
-        var skillName;
+
         if (id.includes("Tech")) {
+            var num = id.match(/(\d+)/);
+            var index = num[0];
+            value = parseInt(value);
+            var skillName = "TechSkillReportCollection";
 
-            skillName = "TechSkillReportCollection";
+            var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
+            var required = $("#" + reqLevelId).val();
+            if (required <= value) {
+                var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
+                $("#" + skillName + "_" + index + "__WeightageActual").val(reqWeightage);
+                $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
+
+            }
+
+            else {
+
+                var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
+                var adjustedReqWeightage = Math.pow(0.5, (required - value)) * (reqWeightage);
+                $("#" + skillName + "_" + index + "__WeightageActual").val(adjustedReqWeightage);
+                $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
+            }
         }
 
-        var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
-        var required = $("#" + reqLevelId).val();
-        if (required <= value) {
-            var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
-            $("#" + skillName + "_" + index + "__WeightageActual").val(reqWeightage);
-            $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
+        SetChartAndTotal();
 
-        }
-        else {
-            $("#" + skillName + "_" + index + "__WeightageActual").val("0");
-            $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
-        }
-
-        var items = $('[id$="WeightageActual"]');
-        //var length = item.length;
-        var totalCount = 0;
-
-        for (i = 0; i < items.length; i++) {
-            totalCount += parseInt(items[i].value);
-        }
-        //items.forEach(function (item) {
-        //    totalCount = totalCount + item.val();
-        //});
-        var average = totalCount / 4;
-        $("#OverallScore").val(average);
-
-        var arr = [];
-        var obj = { y: "", legendText: "", label: "" }
-        //TechSkills actual weightage total
-        var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
-        var techTotal = 0;
-        for (i = 0; i < techItems.length; i++) {
-
-            techTotal = parseInt(techTotal) + parseInt($("#TechSkillReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        obj.y = parseInt(techTotal) / 4;
-        obj.label = "Tech Skills Score";
-        obj.legendText = "Tech Skills Score";
-        arr.push(obj.y);
     }
 
     $(document).ready(function () {
 
-        var proctoringItems = $('[id^="Proctoring_"]');
-        var proctoringTotal = 0;
-        for (i = 0; i < proctoringItems.length; i++) {
-            proctoringTotal += parseInt(proctoringItems[i].value);
-        }
-        $("#ProctoringCount").val(proctoringTotal);
-        if (parseInt(proctoringTotal) > 0) {
-            $("#ProctoringCount").css("border-color", "red");
-        }
-        else {
-            $("#ProctoringCount").css("border-color", "#E3E3E3");
-        }
-
-        //shorter/better attempt
         var weightageItems = $('[id$="WeightageActual"]');
         for (i = 0; i < weightageItems.length; i++) {
             var id = weightageItems[i].id;
@@ -1289,31 +1354,185 @@
                 $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
                 $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
             }
+
             else {
-                $("#" + skillName + digit + "__WeightageActual").val("0");
+                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+                var adjustedReqWeightage = Math.pow(0.5, (reqLevel - actLevel)) * (reqWeight);
+                $("#" + skillName + digit + "__WeightageActual").val(adjustedReqWeightage);
                 $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
 
             }
 
         }
 
-
-        var items = $('[id$="WeightageActual"]');
-        var totalCount = 0;
-
-        for (i = 0; i < items.length; i++) {
-            totalCount += parseInt(items[i].value);
-        }
-        var average = totalCount / 4;
-        $("#OverallScore").val(average);
-
-
-
-
+        SetChartAndTotal();
 
 
     });
 
+
+    function SetChartAndTotal() {
+        var items = $('[id$="WeightageActual"]');
+        var totalCount = 0;
+        var techTotal = 0;
+        for (i = 0; i < items.length; i++) {
+            techTotal += parseInt(items[i].value);
+        }
+        var profileScore = 0;
+        var personalityScore = 0;
+        var interviewingAbilityScore = 0;
+
+
+        // get all the other scores to add to the total count
+        var profileValue = document.getElementById("ProfileScore").value;
+        var personalityValue = document.getElementById("OverallPersonalityScore").value;
+        var interviewingAbilityValue = document.getElementById("OverallInterviewingAbilityScore").value;
+
+        if (profileValue != null && profileValue != '') {
+            profileScore = parseInt(profileValue) * 20;
+        }
+        if (personalityValue != null && personalityValue != '') {
+            personalityScore = parseInt(personalityValue) * 25;
+        }
+        if (interviewingAbilityValue != null && interviewingAbilityValue != '') {
+            interviewingAbilityScore = parseInt(interviewingAbilityValue) * 20;
+        }
+
+
+        totalCount = (techTotal + profileScore + personalityScore + interviewingAbilityScore) / 4;
+
+        $("#OverallScore").val(totalCount);
+
+        document.getElementById("totScore").innerHTML = totalCount;
+
+        var arr = [];
+        var obj = { y: "", legendText: "", label: "" }
+
+        obj.y = techTotal / 4;
+        obj.label = "Tech Skills Score";
+        obj.legendText = "Tech Skills Score";
+        arr.push(obj.y);
+
+
+        var objProfile = { y: "", legendText: "", label: "" }
+
+        objProfile.y = profileScore / 4;
+        objProfile.label = "Profile Score";
+        objProfile.legendText = "Profile Score";
+        arr.push(objProfile.y);
+
+        var objPersonality = { y: "", legendText: "", label: "" }
+
+        objPersonality.y = personalityScore / 4;
+        objPersonality.label = "Personality Score";
+        objPersonality.legendText = "Personality Score";
+        arr.push(objPersonality.y);
+
+        var objInterviewingAbility = { y: "", legendText: "", label: "" }
+
+        objInterviewingAbility.y = interviewingAbilityScore / 4;
+        objInterviewingAbility.label = "Interviewing Ability Score";
+        objInterviewingAbility.legendText = "Interviewing Ability Score";
+        arr.push(objInterviewingAbility.y);
+
+        am4core.ready(function () {
+
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            // Create chart instance
+            var chart = am4core.create("scoreChart", am4charts.XYChart);
+
+            // Add data
+            chart.data = [{
+                "country": "Tech",
+                "visits": arr[0]
+
+            }, {
+                "country": "Profile",
+                "visits": arr[1]
+            }, {
+                "country": "Personality",
+                "visits": arr[2]
+            }, {
+                "country": "Interviewing Ability",
+                "visits": arr[3]
+            }];
+
+            // Create axes
+            chart.logo.disabled = true;
+            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+            categoryAxis.dataFields.category = "country";
+            categoryAxis.renderer.inside = true;
+            categoryAxis.renderer.labels.template.valign = 0;
+
+            categoryAxis.renderer.grid.template.location = 0;
+            categoryAxis.renderer.minGridDistance = 30;
+            chart.fontSize = 13;
+            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+            categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
+                if (target.dataItem && target.dataItem.index & 2 == 2) {
+                    return dy;
+                }
+                return dy;
+            });
+
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+            categoryAxis.renderer.grid.template.disabled = true;
+            valueAxis.renderer.grid.template.disabled = true;
+            valueAxis.min = 0;
+            valueAxis.max = 30;
+            categoryAxis.renderer.labels.template.paddingBottom = 165;
+
+            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+            // Create series
+            var series = chart.series.push(new am4charts.ColumnSeries());
+            series.dataFields.valueY = "visits";
+            series.dataFields.categoryX = "country";
+            series.name = "Visits";
+            series.colorField = "color";
+
+            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
+            series.tooltip.label.adapter.add("text", function (text, target) {
+                if (target.dataItem && target.dataItem.valueY == 0) {
+
+                    return "";
+                }
+                else {
+
+                    return text;
+                }
+            });
+            series.columns.template.fillOpacity = .8;
+            series.columns.template.tooltipY = 8;
+            series.tooltip.background.strokeOpacity = 0
+            series.tooltip.pointerOrientation = "vertical";
+            series.columns.template.showTooltipOn = "always";
+            series.tooltip.background.filters.clear();
+            series.tooltip.getFillFromObject = false;
+            series.tooltip.label.fill = am4core.color("#9a9a9a");
+            series.tooltip.background.cornerRadius = 0;
+            series.tooltip.label.textAlign = "middle";
+            series.tooltip.background.fill = 0;
+            var columnTemplate = series.columns.template;
+            columnTemplate.strokeWidth = 2;
+            columnTemplate.strokeOpacity = 1;
+            chart.colors.list = [
+                am4core.color("#07BEF3"),
+                am4core.color("#00F96B"),
+                am4core.color("#F64042"),
+                am4core.color("#00A8B0")
+
+            ];
+            series.columns.template.events.once("inited", function (event) {
+                event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
+            });
+
+        });
+
+    }
     function AddRow() {
 
 
@@ -1321,7 +1540,7 @@
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#QuestionsTable tr").length - 1;
 
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+        $tr.find("input,select,hidden,text").attr("name", function () { // find name in the cloned row
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
         }).attr("id", function () { // change id also
@@ -1336,7 +1555,7 @@
 
 
         // reset fields in the new row
-        $tr.find("select").val("");
+        //$tr.find("select").val("");
         $tr.find("input[type=text]").val("");
         $tr.find("input[type=hidden]").val("");
 
@@ -1353,11 +1572,11 @@
         $form.data("validator", null);
 
         // Check document for changes
-        $.validator.unobtrusive.parse(document);
+        //$.validator.unobtrusive.parse(document);
 
     }
 
-    function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
+    function DeleteRow(element, collectionName, tdOne, tdTwo) {
 
         if ($(element).parents('tbody').find('tr').length === 1) {
 
@@ -1376,28 +1595,19 @@
             if (currentIndex == maxIndex) {
                 $(element).closest('tr').remove();
             }
-            //ClientCollection_1__ClientRoleId
             else {
                 $(element).closest('tr').remove();
                 var startIndex = currentIndex + 1;
                 var endIndex = maxIndex + 1;
                 for (i = startIndex; i < endIndex; i++) {
+
                     var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
                     elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
-                    //name="ClientCollection[3].ClientUserId"
                     elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+
                     var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
                     elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
                     elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
-
-                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
-                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
-                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
-
-                    var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
-                    elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
-                    elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
-
 
 
                 }
@@ -1412,38 +1622,6 @@
     }
 
 
-    function InterviewerChanged(val, id) {
-
-        var index = id.charAt(22);
-        var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
-        $.ajax({
-            type: "GET",
-            url: "/IRF/GetInterviewerSkills",
-            data: { 'id': val },
-            success: function (data) {
-                $("#" + skillElementid).val(data);
-            }
-        });
-
-
-    }
-
-    function QuestionChanged(id, val) {
-        var num = id.match(/(\d+)/);
-
-        var index = num[0];//id.charAt(20);
-        var skillElementid = 'QuestionsCollection_' + index + '__SkillName';
-        $.ajax({
-            type: "GET",
-            url: "/IRF/GetQuestionSkills",
-            data: { 'id': val },
-            success: function (data) {
-                $("#" + skillElementid).val(data);
-            }
-        });
-
-
-    }
 
     function MeetingStatusChanged(value) {
         if (value == 1 || value == 2 || value == 3) {
@@ -1456,13 +1634,54 @@
     }
 
     function CheckConditions() {
+        return (CheckInterviewerComments() && CheckQuestions()) && CheckScores();
+    }
 
-        return (CheckInterviewerComments() && CheckQuestionsTiming());
+    function CheckScores() {
+        var profileValue = document.getElementById("ProfileScore").value;
+
+        if (profileValue == null || profileValue == '') {
+            document.getElementById("ProfileScore").focus();
+            return false;
+        }
+        var personalityValue = document.getElementById("OverallPersonalityScore").value;
+
+        if (personalityValue == null || personalityValue == '') {
+            document.getElementById("OverallPersonalityScore").focus();
+            return false;
+
+        }
+
+        var interviewingAbilityValue = document.getElementById("OverallInterviewingAbilityScore").value;
+
+        if (interviewingAbilityValue == null || interviewingAbilityValue == '') {
+            document.getElementById("OverallInterviewingAbilityScore").focus();
+            return false;
+        }
+        return true;
+    }
+
+    function CheckQuestions() {
+        var questionItems = $('[id^="InterviewerQuestionsCollection"][id$="Question"]');
+        for (i = 0; i < questionItems.length; i++) {
+
+            var question = $("#" + questionItems[i].id).val();
+            if (question == null || question == '') {
+                document.getElementById("Question_Error").innerHTML = "Kindly fill the Question(s)";
+                document.getElementById(questionItems[i].id).focus();
+
+                return false;
+            }
+
+        }
+        document.getElementById("Question_Error").innerHTML = "";
+        return true;
+
     }
 
     function CheckInterviewerComments() {
         var interviewStatusElem = document.getElementById("InterviewStatus");
-        if (interviewStatusElem.value == 2|| interviewStatusElem.value == 4) {
+        if (interviewStatusElem.value == 2 || interviewStatusElem.value == 4) {
             var comments = document.getElementById("InterviewerComment").value;
             if (comments.length >= 250) {
                 document.getElementById("interviewerComment_Error").innerHTML = "";
@@ -1471,7 +1690,7 @@
             else {
                 //interviewerComment_Error
                 document.getElementById("InterviewerComment").focus();
-                document.getElementById("interviewerComment_Error").innerHTML="Kindly enter a minimum of 250 characters.";
+                document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 250 characters.";
                 return false;
             }
         }
@@ -1479,207 +1698,11 @@
             return true;
     }
 
-    function CheckQuestionsTiming() {
-     var interviewStatusElem = document.getElementById("InterviewStatus");
-        if (interviewStatusElem.value == 2||interviewStatusElem.value == 3|| interviewStatusElem.value == 4)
-        {
-        var questionItems = $('[id^="QuestionsCollection"][id$="Timing"]');
-        var oldVal = $("#QuestionsCollection_0__Timing").val();
-            for (i = 0; i < questionItems.length; i++) {
 
-            var temp = $("#QuestionsCollection_" + i + "__Timing").val();
-            if (temp == null || temp == '') {
-
-                document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60)."
-                return false;
-            }
-            if (i > 0) {
-                if (parseInt(temp) < parseInt(oldVal)) {
-                    document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60).";
-                    return false;
-                }
-                else
-                    oldVal = temp;
-            }
-        }
-            document.getElementById('QuestionsCollection_TimingError').innerHTML = "";
-
-        return true;
-       }
-      else
-            return true;
-    }
-
-    $(document).ready(function () {
-        //Perform Ajax request.
-        var count = '@ViewBag.QuestionsDiscussedCount';
-        //Get Question Skills
-        if (count == null || parseInt(count) == 0) {
-            var val = $("#QuestionsCollection_0__Comment").val();
-            $.ajax({
-                type: "GET",
-                url: "/IRF/GetQuestionSkills",
-                data: { 'id': val },
-                success: function (data) {
-                    $("#QuestionsCollection_0__SkillName").val(data);
-                }
-            });
-
-        }
-
-
-    });
-
-    $(document).on('click', '.delete-row', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Skill');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-joinability', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Row');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-skillgeneral', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Row');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-client', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Row');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-interviewer', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Interviewers');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-qualityController', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Quality Controller');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-controller', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Quality Controller');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
 
 </script>
 
-<script>
 
-    window.onload = function () {
-
-        var totalScore = 0;
-        var arr = [];
-        var obj = { y: "", legendText: "", label: "" }
-        //TechSkills actual weightage total
-        var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
-        var techTotal = 0;
-        for (i = 0; i < techItems.length; i++) {
-
-            techTotal = parseInt(techTotal) + parseInt($("#TechSkillReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        obj.y = parseInt(techTotal) / 4;
-        obj.label = "Tech Skills Score";
-        obj.legendText = "Tech Skills Score";
-        arr.push(obj.y);
-
-    }
-</script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>

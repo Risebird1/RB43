@@ -1,0 +1,769 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "RiseTube";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = String.Empty;
+    string endDte = String.Empty;
+    string[] primarySkills = new string[] { };
+    string[] ClientHR = new string[] { };
+    string[] ClientName = new string[] { };
+    string[] ApprovalStatus = new string[] { };
+    string[] JoiningStatus = new string[] { };
+    string[] OfferStatus = new string[] { };
+    string[] InterviewStatus = new string[] { };
+    string[] CandidateName = new string[] { };
+    string[] CandidateLocation = new string[] { };
+    string[] IsShortListed = new string[] { };
+    string[] IsIntrested = new string[] { };
+    string[] CandidateAvailable = new string[] { };
+
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("RiseTubefilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("RiseTubefilters"));
+    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
+    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
+    ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
+    InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
+    CandidateName = filter.CandidateName != null ? filter.CandidateName : new string[] { };
+    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
+    ApprovalStatus = filter.ApprovalStatus != null ? filter.ApprovalStatus : new string[] { };
+    JoiningStatus = filter.JoiningStatus != null ? filter.JoiningStatus : new string[] { };
+    OfferStatus = filter.OfferStatus != null ? filter.OfferStatus : new string[] { };
+    CandidateLocation = filter.CandidateLocation != null ? filter.CandidateLocation : new string[] { };
+    IsShortListed = filter.IsShortListed != null ? filter.IsShortListed : new string[] { };
+    IsIntrested = filter.IsIntrested != null ? filter.IsIntrested : new string[] { };
+    CandidateAvailable = filter.CandidateAvailable != null ? filter.CandidateAvailable : new string[] { };
+
+}
+
+
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
+<link href="~/Newassets/css/risetube.css?v=6" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Risetube</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <!--  <div class="panel-header panel-header-sm"> </div>-->
+
+    <div class="pt30 videocon ">
+        <div class="col-md-12 nopad">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left risetubeheader">
+                    <h4 class="card-title"></h4>
+
+                    <div class="mobile-view"> <h4 class="card-title risetubeid">Risetube</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div>
+                        <div class="newsletter">
+
+                            <div class="content">
+                                <div class="input-group card-title-space" id="myForm">
+                                    <div class="searchbox">
+                                        <input type="email" id="txtsearch" value="@ViewBag.searchvalue" class="form-control txtsearch1" placeholder="Please enter Skills (or) Name of Candidate" AutoCompleteType="Disabled">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn3" id="btnSearch" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                      
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="content video client interviewerSkill">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <form action="@Url.Action("Index","risetube")" method="post" id="form">
+
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                Start Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                End Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group col-md-12 col-sm-12">
+
+
+                                                        <div>
+                                                            <div class="col-md-12 col-sm-12 mc-button-area text-right">
+
+                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4  reset-filter">
+                                                                    Reset Filter
+                                                                </button>
+
+                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
+                                                                    Apply Filter
+                                                                </button>
+                                                            </div>
+
+                                                        </div>
+
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="video-block section-padding" id="VideoList">
+                                <div class="row">
+                                    @foreach (var item in Model)
+                                    {
+                                        var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+                                        <div class="col-xl-3 col-sm-6 mb-3">
+                                            <div class="video-card">
+                                                <div class="video-card-image">
+                                                    @if (item.MeetingPatchCount > 0)
+                                                    {
+                                                        <div class="count-bg"><span>@item.MeetingPatchCount</span></div>
+                                                    }
+                                                    @if (item.VideoLink.Contains(".mp4"))
+                                                    {
+                                                        @if (item.ThumbnailImage != null)
+                                                        {
+                                                            <img src="@item.ThumbnailImage" class="thumbnailImage" />
+                                                        }
+                                                        <video controls class="video-thumb" controlsList="nodownload">
+                                                            <source src="@item.VideoLink" type="video/mp4">
+                                                        </video>
+                                                        <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = item.imid})'" style=" cursor: pointer;"></a>
+                                                    }
+                                                    else
+                                                    {
+                                                        @if (item.ThumbnailImage != null)
+                                                        {
+                                                            <img src="@item.ThumbnailImage" class="thumb-height" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <img src="~/RiseTube/img/video-icon.png" class="thumb-height" />
+                                                        }
+                                                        <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = item.imid})'" style=" cursor: pointer;"></a>
+                                                    }
+
+
+                                                </div>
+                                                <div class="video-card-body">
+                                                    <div class="video-title">
+
+                                                        @if (@item.candidateName.Length > 20)
+                                                        {
+                                                            <a data-tooltip="@item.candidateName" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@item.candidateName</span> </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="candidate">@item.candidateName</span>}
+
+
+
+
+                                                        @if (@item.JDTiltle.Length > 20)
+                                                        {
+                                                            <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">@item.JDTiltle</span></a>}
+
+                                                        else
+                                                        {
+                                                            <span class="designation">@item.JDTiltle</span>}
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+
+                                </div>
+                            </div>
+                            <hr>
+
+                            @{
+                                var page = ViewBag.Page;
+                                var startCount = (page - 1) * 12 + 1;
+                                var endCount = (page) * 12;
+                            }
+                            @if (ViewBag.MeetingsCount == 0)
+                            {
+                                <p>
+                                    No selected candidates are available as per requirement!
+                                </p>
+                            }
+                            else if (ViewBag.Pages == page && ViewBag.Remainder == 0)
+                            {
+                                var endNum = page * 12;
+                                <p>
+                                    @startCount - @endNum of @ViewBag.MeetingsCount
+                                </p>
+                            }
+                            else if (ViewBag.Pages == page && ViewBag.Remainder != 1)
+                            {
+                                var endNum = (page - 1) * 12 + ViewBag.Remainder;
+                                <p>
+                                    @startCount - @endNum of @ViewBag.MeetingsCount
+                                </p>
+                            }
+                            else if (ViewBag.Pages == page && ViewBag.Remainder == 1)
+                            {
+                                <p>
+                                    @startCount of @ViewBag.MeetingsCount
+                                </p>
+                            }
+                            else
+                            {
+                                <p>
+                                    @startCount - @endCount of @ViewBag.MeetingsCount
+                                </p>
+                            }
+
+                            <div class="pagination-container">
+                                <ul class="pagination">
+
+                                    @{
+                                        var startFrom = 0;
+                                        var endWith = 0;
+                                        if (page % 3 != 0)
+                                        {
+                                            startFrom = ((page / 3) * 3) + 1;
+                                        }
+                                        else
+                                        {
+                                            startFrom = (((page - 1) / 3) * 3) + 1;
+                                        }
+                                        var pages = ViewBag.Pages;
+
+                                        if (pages - startFrom > 2)
+                                        {
+                                            endWith = startFrom + 2;
+                                        }
+                                        else
+                                        {
+                                            endWith = pages;
+                                        }
+
+                                    }
+
+                                    @if (page > 3)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("RisetubeInterviewer", "InterviewerSkills", new { page = startFrom - 1, searchvalue = ViewBag.searchvalue })"
+                                               class="PagedList-skipToPrevious">
+                                                &laquo;
+                                            </a>
+                                        </li>
+
+                                    }
+                                    @for (int i = startFrom; i <= endWith; i++)
+
+                                    {
+
+                                        <li class="@(i == ViewBag.page ? "page-item active" : "page-item")">
+                                            @Html.ActionLink(i.ToString(), "RisetubeInterviewer", "InterviewerSkills", new { Page = i, searchvalue = ViewBag.searchvalue }, htmlAttributes: new { @class = "" })
+
+                                        </li>
+                                    }
+
+
+                                    @if (pages > endWith)
+                                    {
+                                        <li class="PagedList-skipToNext">
+                                            <a href="@Url.Action("RisetubeInterviewer", "InterviewerSkills", new { page = endWith + 1, searchvalue = ViewBag.searchvalue })">
+                                                &raquo;
+                                            </a>
+                                        </li>
+
+                                    }
+
+
+                                </ul>
+                            </div>
+
+
+                        </div>
+
+
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="myCallModal" class="modal modal-wrap modal-bg">
+            <!-- Modal content -->
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+
+
+
+
+                    <div class="filheader">
+                        <div class="filavatar">
+                            <span class="publicsharing-icon">
+
+
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                            </span>
+                        </div>
+                        <h5 class="modal-title pull-left"> Call Candidate !</h5>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                    </button>
+
+
+
+
+                    <div class="modal-body">
+
+                        <h5 class="modal-title text-center mt-20" id="callingLabel"></h5>
+
+                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 0px auto;
+    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<!-- Custom styles for this template-->
+<link href="~/RiseTube/css/osahan.css" rel="stylesheet">
+<!-- Owl Carousel -->
+<link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.carousel.css">
+<link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.theme.css">
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link href="~/Newassets/css/risetube.css" rel="stylesheet" />
+
+<!-- Bootstrap core JavaScript-->
+<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
+@*<script src="~/RiseTube/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>*@
+<!-- Core plugin JavaScript-->
+<script src="~/RiseTube/vendor/jquery-easing/jquery.easing.min.js"></script>
+<!-- Owl Carousel -->
+<script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
+<!-- Custom scripts for all pages-->
+<script src="~/RiseTube/js/custom.js"></script>
+<script>
+    $(document).ready(function () {
+
+        $(".candidate-name").each(function () {
+            if ($(this).text().length > 15) {
+                $(this).text($(this).text().substr(0, 15) + "...")
+
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
+
+        $(".join-time").each(function () {
+            if ($(this).text().length > 10) {
+                $(this).text($(this).text().substr(0, 10) + "...")
+
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
+
+        $(".joining-time").each(function () {
+            if ($(this).text().length > 12) {
+                $(this).text($(this).text().substr(0, 12) + "...")
+
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
+
+
+
+        $(".expected-salary").each(function () {
+            if ($(this).text().length > 5) {
+                $(this).text($(this).text().substr(0, 5) + "...")
+
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+
+
+
+
+
+        });
+
+
+        $(".expected-time").each(function () {
+            if ($(this).text().length > 3) {
+                $(this).text($(this).text().substr(0, 3) + "...")
+
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
+
+
+    });
+</script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#btnSearch").click(function () {
+
+            var value = $("#txtsearch").val();
+            window.location.href = "/risetube/Index?searchvalue=" + value;
+            $('#myForm').trigger("reset");
+
+        });
+
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
+
+        $("#PrimarySkill").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+
+
+        $("#RFID").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+
+        });
+
+        $("#ClientHR").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+
+        });
+
+        $("#ConfirmationStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+
+        });
+
+        $("#MeetingStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+
+         });
+
+        $("#InterviewStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+
+        });
+
+        $("#Interviewer").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+
+        });
+        $("#CandidateName").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#ClientName").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#ApprovalStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#JoiningStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#OfferStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#CandidateLocation").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#IsShortListed").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#IsIntrested").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#CandidateAvailable").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+
+
+    });
+
+    function ResetFilter() {
+
+            window.location.href = "/risetube/ResetRisetubeFilter";
+    }
+
+    function ApplySessionFilter() {
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
+        var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
+        var interviewStatus =  @Html.Raw(Json.Serialize(InterviewStatus));
+        var approvalStatus = @Html.Raw(Json.Serialize(ApprovalStatus));
+        var joiningStatus = @Html.Raw(Json.Serialize(JoiningStatus));
+        var offerStatus = @Html.Raw(Json.Serialize(OfferStatus));
+        var candidateName =  @Html.Raw(Json.Serialize(CandidateName));
+        var clientName =  @Html.Raw(Json.Serialize(ClientName));
+        var candidateLocation =  @Html.Raw(Json.Serialize(CandidateLocation));
+        var IsShortListed =  @Html.Raw(Json.Serialize(IsShortListed));
+        var IsIntrested =  @Html.Raw(Json.Serialize(IsIntrested));
+        var CandidateAvailable=@Html.Raw(Json.Serialize(CandidateAvailable));
+
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        $("#PrimarySkill").val(primarySkillsArr);
+        $("#ClientHR").val(clientHR);
+        $("#InterviewStatus").val(interviewStatus);
+        $("#ApprovalStatus").val(approvalStatus);
+        $("#JoiningStatus").val(joiningStatus);
+        $("#OfferStatus").val(offerStatus);
+        $("#CandidateName").val(candidateName);
+        $("#ClientName").val(clientName);
+        $("#CandidateLocation").val(candidateLocation);
+        $("#IsShortListed").val(IsShortListed);
+        $("#IsIntrested").val(IsIntrested);
+        $("#CandidateAvailable").val(CandidateAvailable);
+
+
+    }
+
+
+</script>
+
+
+<script>
+    var input = document.getElementById("txtsearch");
+    input.addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById("btnSearch").click();
+        }
+    });
+</script>
+
+
+
+
+<script>
+    var candidate = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
+
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+
+    });
+
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+    });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+
+    });
+
+    function CallButtonClick(name, phoneNumber) {
+        candidate = name;
+        // Get the modal
+        var modal = document.getElementById("myCallModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(phoneNumber);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+
+
+</script>
+
+

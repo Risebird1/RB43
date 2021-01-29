@@ -1,4 +1,7 @@
-﻿@model IEnumerable<Risebird.Entities.Data.Meeting>
+﻿@*@model IEnumerable<Risebird.Entities.Data.Meeting>*@
+
+@model X.PagedList.IPagedList<Risebird.Entities.Data.Meeting>
+@using X.PagedList.Mvc.Core;
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
@@ -44,10 +47,21 @@
                 </div>
 
                 <div class="pull-right">
+                    <div id="meeting_filter" class="dataTables_filter pull-left  mt-20">
+
+                        <div class="searchCon" style="margin-right:10px;">
+
+                            <button onclick="searchResult()" type="button" id="search">&nbsp</button>
+                            <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.Searchvalue">
+
+
+
+                            <button style="display:none;" type="button" id="x">x</button>
+
+                        </div>
+                    </div>
                     <div>
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interviewer", actMethod ="MyInterviewerAssessment" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
-                        </button>
+
 
 
                     </div>
@@ -69,103 +83,165 @@
                         </div>
                         <div class="dataloading">
 
+                            <div id="tableID" class="second">
+                                <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
 
-                            <div style="overflow-x:scroll" class="scrollbar" id="style-2">
-                                <div id="tableID" class="second">
-                                    <table id="MyInterviewList" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th>Slot</th>
-                                                <th>Duration</th>
-                                                <th>Interviewer Email</th>
-                                                @*<th>Candidate Contact</th>*@
-                                                <th>Resume</th>
-                                                <th>Primary Skill</th>
-                                                <th>Risebird HR</th>
-                                                <th>Zoom ID</th>
-                                                <th>Meeting Status</th>
-                                                <th>Interview Status</th>
-                                                <th class="disabled-sorting text-right">Actions</th>
-                                                <th style="text-align:center">Call</th>
-                                            </tr>
-                                        </thead>
-                                        <tfoot>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th>Slot</th>
-                                                <th>Duration</th>
-                                                <th>Interviewer Email</th>
-                                                @*<th>Candidate Contact</th>*@
-                                                <th>Resume</th>
-                                                <th>Primary Skill</th>
-                                                <th>Risebird HR</th>
-                                                <th>Zoom ID</th>
-                                                <th>Meeting Status</th>
-                                                <th>Interview Status</th>
-                                                <th class="disabled-sorting text-right">Actions</th>
-                                                <th style="text-align:center">Call</th>
-                                            </tr>
-                                        </tfoot>
-                                        <tbody>
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table id="MyInterviewList" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="border-right: 0px !important;"></th>
+                                                        <th>Date</th>
+                                                        <th>Slot</th>
+                                                        <th>Duration</th>
+                                                        <th>Interviewer Email</th>
+                                                        @*<th>Candidate Contact</th>*@
+                                                        <th>Resume</th>
+                                                        <th>Primary Skill</th>
+
+                                                        <th class="disabled-sorting text-center">Actions</th>
+                                                        <th style="text-align:center">Call</th>
+                                                    </tr>
+                                                </thead>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th style="border-right: 0px !important;"></th>
+                                                        <th>Date</th>
+                                                        <th>Slot</th>
+                                                        <th>Duration</th>
+                                                        <th>Interviewer Email</th>
+                                                        @*<th>Candidate Contact</th>*@
+                                                        <th>Resume</th>
+                                                        <th>Primary Skill</th>
+
+                                                        <th class="disabled-sorting text-center">Actions</th>
+                                                        <th style="text-align:center">Call</th>
+                                                    </tr>
+                                                </tfoot>
+                                                <tbody id="tblbodyInterviewerAssessment">
 
 
-                                            @foreach (var item in Model)
-                                            {
-
-                                                <tr id=@item.id>
-                                                    <td> @item.interviewDate </td>
-                                                    <td> @item.interviewSlot </td>
-                                                    <td> @item.interviewDuration </td>
-                                                    <td> @item.candidateEmail</td>
-
-                                                    @if (item.resumeLink != null && item.resumeLink != "")
+                                                    @foreach (var item in Model)
                                                     {
-                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Resume</td>
-                                                    }
-                                                    <td>@item.PrimarySkill</td>
 
-                                                    <td> @item.risebirdHR</td>
-                                                    <td>@item.zoomLink</td>
-                                                    <td>@item.MeetingStatusDesc</td>
-                                                    <td>@item.InterviewStatusDesc</td>
-                                                    <td class="text-right">
-                                                        @if (item.interviewDate.Date >= DateTime.Now.Date)
+                                                    <tr id=@item.id data-changes="1">
+                                                        <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                                                        <td> @item.interviewDate </td>
+                                                        <td> @item.interviewSlot </td>
+                                                        <td> @item.interviewDuration </td>
+
+                                                        @if (item.candidateEmail != null && item.candidateEmail != "")
                                                         {
 
-                                                            <button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
-                                                                <span onclick="javascript:CheckTimeDifference('@item.id','@item.interviewDate');" title="UnAssign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
-                                                            </button>
+                                                            @if (item.candidateEmail.Length > 18)
+                                                            {
+
+
+                                                                <td class="cadEmail">
+                                                                    <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 18)... </a>
+                                                                </td>
+                                                            }
+
+
+                                                            else
+                                                            {
+                                                                <td class="cadEmail">
+                                                                    <a onclick=""> @item.candidateEmail </a>
+                                                                </td>
+                                                            }
 
                                                         }
-                                                    </td>
-                                                    <td class="callInterviewerbtn">
-                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                                                        else
                                                         {
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer.">
-                                                                <span onclick="ModalButtonClick('@item.MobileNumber', '@item.candidateEmail')" data-original-title="Tooltip on top" title="Click here to call the interviewer." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                            </button>
+                                                            <td></td>
                                                         }
-                                                        @*<button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
-                                                                <span onclick="location.href = '@Url.Action("SampleQuestions", "Interviewer", new { id = item.irfIntId })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
-                                                            </button>*@
-                                                        @*<button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification">
-                                                                <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, meetingId = item.id })'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
-                                                            </button>*@
-                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report">
-                                                            <span onclick="location.href = '@Url.Action("AddReport", "Interviewer", new { interviewId = item.id, irfId = item.iscIntId })'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
+
+
+                                                        @if (item.resumeLink != null && item.resumeLink != "")
+                                                        {
+                                                            <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No Resume</td>
+                                                        }
+                                                      
+                                                            @if (item.PrimarySkill != null && item.PrimarySkill != "")
+                                                            {
+                                                            <td>@item.PrimarySkill</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td> }
+         
+
+                                                           
+
+                                                            <td class="text-center">
+                                                                @if (item.interviewDate.Date >= DateTime.Now.Date)
+                                                                {
+
+                                                                    <button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
+                                                                        <span onclick="javascript:CheckTimeDifference('@item.id','@item.interviewDate');" title="UnAssign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
+                                                                    </button>
+
+                                                                }
+
+                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report">
+                                                                    <span onclick="location.href = '@Url.Action("AddReport", "Interviewer", new { interviewId = item.id, irfId = item.iscIntId })'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                </button>
+                                                            </td>
+                                                            <td class="callInterviewerbtn text-center">
+                                                                @*@if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer.">
+                                                                        <span onclick="ModalButtonClick('@item.MobileNumber', '@item.candidateEmail')" data-original-title="Tooltip on top" title="Click here to call the interviewer." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                    </button>
+                                                                }*@
+
+
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="collapse @item.id">
+
+                                                            <td colspan="999" class="child-section">
+                                                                <table class="table table-striped">
+                                                                    <tr>
+                                                                        <th>Risebird HR</th>
+                                                                        <th>Zoom ID</th>
+                                                                        <th>Meeting Status</th>
+                                                                        <th>Interview Status</th>
+                                                                    </tr>
+
+                                                                    <tr>
+
+                                                                        <td> @item.HRCoordinatorEmailId</td>
+                                                                        <td>@item.risebirdHR</td>
+                                                                        <td>@item.MeetingStatusDesc</td>
+                                                                        <td>@item.InterviewStatusDesc</td>
+                                                                    </tr>
+
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="col-sm-12 col-md-5 pull-left" id="divmeetingentries">
+                                        Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-7 dataTables_paginate pull-right" id="divmeetingpages">
+                                        @Html.PagedListPager(Model, Page => Url.Action("MyInterviewerAssessment", new { Page = Page }))
+                                    </div>
                                 </div>
-
                             </div>
 
                         </div>
@@ -226,20 +302,6 @@
         });
 
 
-        $('#MyInterviewList').DataTable({
-            "pagingType": "full_numbers",
-            "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
-            ],
-            responsive: true,
-            language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Search records",
-            }
-
-        });
-        var table = $('#MyInterviewList').DataTable();
     });
 
 </script>
@@ -314,6 +376,11 @@
         setTimeout(afterTimeOut, 2000);
 
     });
+    function ModalButtonClickJson(phoneNumber, id) {
+        var emailId = $('#hidemail_' + id).val(); 
+        ModalButtonClick(phoneNumber, emailId);
+
+    }
 
     function ModalButtonClick(phoneNumber, interviewerMail) {
         interviewer = interviewerMail;
@@ -556,6 +623,233 @@
     }
 </script>
 
+<script>
+    $(document).ready(function () {
+
+        $(".dataTables_filter").keyup(function (e) {
+
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            searchResult();
+        });
+
+
+
+
+    });
+</script>
+<script>
+
+    function searchResult() {
+
+        $.ajax({
+            type: "POST",
+            url: "/Interviewer/InterviewerAssessmentJson",
+            data: { 'searchValue': $('#txtmeeting_filter').val() },
+            success: function (data) {
+                if (data != "failed") {
+
+                    bindtableData(data.result);
+                    bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
+                }
+            }
+        });
+    }
+    function bindtableData(data) {
+
+        var html = '';
+        if (data.length == 0) {
+            html += '  <tr>';
+            html += ' <td colspan="9" class="text-center">No data available in table</td>';
+            html += ' </tr>';
+        }
+
+        for (var i = 0; i < data.length; i++) {
+
+            html += '<tr id=' + data[i].id + ' data-changes="1">';
+
+            html += '  <td style="width:10px;" data-toggle="collapse" id="' + data[i].id + '" data-target=".' + data[i].id + '" class="detail-row" onclick="changeicon(' + data[i].id + ')">&nbsp;</td>';
+
+            html += '  <td> ' + new Date(data[i].interviewDate).toLocaleString() + ' </td>';
+
+            html += '  <td> ' + data[i].interviewSlot + ' </td>';
+            html += '  <td> ' + data[i].interviewDuration + ' </td>';
+
+
+
+
+            if (data[i].candidateEmail != null && data[i].candidateEmail != "") {
+                if (data[i].candidateEmail.length > 18) {
+                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].candidateEmail + '">' + data[i].candidateEmail.substring(0, 18) + '...</a></td>';
+                }
+                else {
+                    html += '  <td class="cadEmail"><a onclick="">' + data[i].candidateEmail + ' </a></td>';
+                }
+            }
+            else {
+                html += '<td></td>';
+            }
+
+            if (data[i].resumeLink != null && data[i].resumeLink != "") {
+
+                html += ' <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a></td> ';
+            }
+            else {
+                html += '  <td>No Resume</td>';
+            }
+
+
+
+            if (data[i].primarySkill != null && data[i].primarySkill != "") {
+                html += ' <td>' + data[i].primarySkill + '</td>';
+            }
+            else {
+                html += '  <td></td>';
+            }
+
+
+            html += '  <td class="text-center">';
+            if (data[i].interviewDate.Date >= new Date().getDate()) {
+
+                html += '<button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">  <span onclick="javascript:CheckTimeDifference(' + data[i].id + ',' + data[i].interviewDate + ');" title="UnAssign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span> </button>';
+            }
+            html += '<button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report"> <a href = "Interviewer/AddReport?interviewId=' + data[i].id + '&irfId=' + data[i].iscIntId + '"  title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></a> </button>';
+
+
+            html += ' </td> ';
+
+
+            html += '   <td class="callInterviewerbtn text-center">';
+            var oldDateObj = new Date();
+            var newDateObj = new Date();
+            var newObj = new Date();
+            newDateObj.setTime(oldDateObj.getTime() - (5 * 60 * 1000));
+            newObj.setTime(oldDateObj.getTime() + (65 * 60 * 1000));
+            if (data[i].mobileNumber != null && data[i].mobileNumber != "" && newDateObj <= new Date(data[i].interviewDate) && new Date(data[i].interviewDate) <= newObj) {
+                html += '<input id="hidemail_' + data[i].id +'" type="hidden" value="'+data[i].candidateEmail+'"/><button class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer."><span onclick="ModalButtonClickJson(' + data[i].mobileNumber+', ' + data[i].id+')" data-original-title="Tooltip on top" title="Click here to call the interviewer." class="mdc - fab__icon material - icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span></button>';
+
+            }
+
+html += '  </td>';
+
+html += '  </tr>';
+
+
+html += '   <tr class="collapse ' + data[i].id + '">';
+
+html += ' <td colspan="999" class="child-section">';
+html += ' <table class="table table-striped">';
+            html += '  <tr>';
+            html += ' <th>Risebird HR</th>';
+            html += ' <th>Zoom ID</th>';
+            html += ' <th>Meeting Status</th>';
+            html += ' <th>Interview Status</th>';
+html += '   </tr>';
+
+html += '  <tr>';
+
+            if (data[i].hRCoordinatorEmailId != null && data[i].hRCoordinatorEmailId != "") {
+                html += ' <td>' + data[i].hRCoordinatorEmailId + '</td>';
+            }
+            else {
+                html += '  <td></td>';
+            }
+            if (data[i].risebirdHR != null && data[i].risebirdHR != "") {
+                html += ' <td>' + data[i].risebirdHR + '</td>';
+            }
+            else {
+                html += '  <td></td>';
+            }
+
+            if (data[i].meetingStatusDesc != null && data[i].meetingStatusDesc != "") {
+                html += ' <td>' + data[i].meetingStatusDesc + '</td>';
+            }
+            else {
+                html += '  <td></td>';
+            }
+
+            if (data[i].interviewStatusDesc != null && data[i].interviewStatusDesc != "") {
+                html += ' <td>' + data[i].interviewStatusDesc + '</td>';
+            }
+            else {
+                html += '  <td></td>';
+            }
+        
+html += '  </tr>';
+
+html += '   </table>';
+html += '   </td>';
+html += '   </tr>';
+
+
+}
+$("#tblbodyInterviewerAssessment").empty().html(html);
+}
+function bindPages(pagecount, startpage, endpage, totalcount) {
+var html = '';
+html += '<div class="pagination-container">';
+html += '<ul class="pagination">';
+for (var i = 1; i <= pagecount; i++) {
+if (i == 1) {
+    html += '   <li class="active"><span>1</span></li>';
+} else if (i <= 10) {
+    html += '<li><a href="/Interviewer/MyInterviewerAssessment?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+} else if (i == 11) {
+    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+    html += '<li class="PagedList-skipToNext"><a href="/Interviewer/MyInterviewerAssessment?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+    html += '<li class="PagedList-skipToLast"><a href="/Interviewer/MyInterviewerAssessment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+} else {
+    break;
+}
+if (pagecount <= 10 && i == pagecount && i != 1) {
+    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+    html += '<li class="PagedList-skipToNext"><a href="/Interviewer/MyInterviewerAssessment?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+    html += '<li class="PagedList-skipToLast"><a href="/Interviewer/MyInterviewerAssessment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+}
+}
+html += '</ul>';
+html += '</div>';
+$("#divmeetingpages").empty().html(html);
+var pagestartdetails = '';
+pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
+$("#divmeetingentries").empty().html(pagestartdetails);
+
+}
+</script>
+
+<script>
+    function changeicon(id) {
+        if ($("#" + id).attr("data-changes") == "1") {
+            $("#" + id).addClass("shows");
+            $("#" + id).attr("data-changes", "2");
+        }
+        else {
+            $("#" + id).removeClass("shows");
+            $("#" + id).attr("data-changes", "1");
+        }
+    }
+
+    function moreless(id) {
+
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
+
+</script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
@@ -589,7 +883,8 @@
                     function (value) //confirm
                     {
                         //if Yes do this
-                        window.location.href = '/Interview/MyInterview';
+                        location.reload(true);
+                        //window.location.href = '/Interview/MyInterview';
                     }
                 )
 
@@ -609,7 +904,9 @@
                 },
                     function ()
                     {
-                        window.location.href = '/Interview/MyInterview';
+                        location.reload(true);
+                        
+                        //window.location.href = '/Interview/MyInterview';
                     }
                 )
             }

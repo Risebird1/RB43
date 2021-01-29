@@ -28,9 +28,9 @@ declare @commonTable table (IRFId int, [Type] varchar(25), EmailId varchar(100),
 		from TransInterviewer ti join Interviewer ipr on ipr.UserId = ti.UserId
 		join UserList ul on ul.id = ti.UserId
 		join IRF on irf.id = ti.IRFId
-		join InterviewMeetings im on im.IRFId=irf.IRFId 
-		where irf.id=@IRFId and im.interviewer=ul.EmailId and im.confirmationStatus=1
-		group by ti.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber           --6
+		left join InterviewMeetings im on im.IRFId=IRF.IRFId and im.interviewer = ul.EmailId
+		where irf.id=@IRFId and (im.confirmationStatus=1 or im.confirmationStatus is null)
+		group by ti.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber  
 		
 	insert into @commonTable 
 
@@ -41,11 +41,9 @@ declare @commonTable table (IRFId int, [Type] varchar(25), EmailId varchar(100),
 		from TransQualityController tqc join Interviewer ipr on ipr.UserId = tqc.UserId
 		join UserList ul on ul.id = tqc.UserId
 		join IRF on irf.id = tqc.IRFId
-		join InterviewMeetings im on im.IRFId=irf.IRFId 
-		where tqc.IRFId = @IRFId and im.QCInterviewer=ul.EmailId and im.confirmationStatus=1
+		left join InterviewMeetings im on im.IRFId=IRF.IRFId and im.QCInterviewer = ul.EmailId
+		where tqc.IRFId = @IRFId and (im.confirmationStatus=1 or im.confirmationStatus is null)
 		group by tqc.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber
-
-		
 
 	insert into @commonTable 
 		
@@ -56,8 +54,8 @@ declare @commonTable table (IRFId int, [Type] varchar(25), EmailId varchar(100),
 		from TransEmergencyInterviewer tei join Interviewer ipr on ipr.UserId = tei.UserId
 		join UserList ul on ul.id = tei.UserId
 		join IRF on irf.id = tei.IRFId
-		join InterviewMeetings im on im.IRFId=irf.IRFId 
-		where  tei.IRFId = @IRFId and im.interviewer=ul.EmailId and im.confirmationStatus=1
+		left join InterviewMeetings im on im.IRFId=irf.IRFId and im.interviewer = ul.EmailId
+		where  tei.IRFId = @IRFId  and (im.confirmationStatus=1 or im.confirmationStatus is null)
 		group by tei.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber 
 
 select * from @commonTable		 

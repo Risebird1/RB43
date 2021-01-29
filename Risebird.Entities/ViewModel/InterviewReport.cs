@@ -30,7 +30,7 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("Overall Score")]
         [Required]
-        public int OverallScore { get; set; }
+        public float OverallScore { get; set; }
 
         [DisplayName("Overall Rating")]
         [Required]
@@ -179,7 +179,7 @@ namespace Risebird.Entities.ViewModel
         public string BehavioralScore { get; set; }
         public SelectList BehavioralScoreList { get; set; }
 
-        [Display(Name = "Interviwer Communication")]
+        [Display(Name = "Interviewer Communication")]
         public string InterviwerCommunication { get; set; }
 
         public SelectList InterviwerCommunicationList { get; set; }
@@ -189,7 +189,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Number of interviews completed")]
         public string Interviewscompleted { get; set; }
-        [Display(Name = "Readymade Assessment")]
+        [Display(Name = "Ready-made Assessment")]
         public string ReadymadeAssessment { get; set; }
         public string Creativity { get; set; }
         [Display(Name = "Company Size")]
@@ -223,8 +223,11 @@ namespace Risebird.Entities.ViewModel
         public SelectList SkillNatureList { get; set; }
 
         public string Domain { get; set; }
+
+        [Display(Name = "Skill IP")]
+
         public string SkillIP { get; set; }
-        [Display(Name = "PerHour Rate -India")]
+        [Display(Name = "Per-hour Rate - India")]
         public string PerHourRateIndia { get; set; }
         public string DecisionMaking { get; set; }
         public string Articulation { get; set; }
@@ -244,9 +247,30 @@ namespace Risebird.Entities.ViewModel
         public int? OldMeetingStatus { get; set; }
         public string OldconfirmationStatus { get; set; }
         public string UserDetails { get; set; }
+        public IList<InterviewerQuestionsDiscussed> InterviewerQuestionsCollection { get; set; }
 
-        
-        
+        [Display(Name = "Overall Personality Score")]
+        [Required]
+
+        public int? OverallPersonalityScore { get; set; }
+        public int? Openness { get; set; }
+        public int? Conscientiousness { get; set; }
+        public int? Extroversion { get; set; }
+        public int? Agreeableness { get; set; }
+        public int? Neuroticism { get; set; }
+
+        [Display(Name = "Overall Profile Score")]
+        [Required]
+        public int? ProfileScore { get; set; }
+
+        [Display(Name = "Overall Interviewing Ability Score")]
+        [Required]
+        public int? OverallInterviewingAbilityScore { get; set; }
+        public string ProfileName { get; set; }
+
+
+
+
     }
     public class RBInterviewDetails
     {

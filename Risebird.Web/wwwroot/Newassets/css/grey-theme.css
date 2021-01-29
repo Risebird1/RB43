@@ -5,7 +5,10 @@ body {
 .main-panel {
     background: #ebecf1;
 }
-
+.expiry [type="date"] {
+    background: #dddddf url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 7% !important;
+}
 .navbar.navbar-transparent.btn-primary:hover, .navbar.navbar-transparent.btn-primary:focus {
     background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
 }
@@ -436,8 +439,12 @@ table.journey {
     position: relative;
     top: -4px;
 }
+.dob [type="date"] {
+    background: #ebecee url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 4.2% !important;
+}
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: whitesmoke;
+    background: #d6d6d6ad;
     color: #888 !important;
 }
 #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {

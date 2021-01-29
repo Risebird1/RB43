@@ -12,16 +12,5 @@ namespace Risebird.Entities.ViewModel
         public string LevelName { get; set; }
         public int Weightage { get; set; }
     }
-    public class TransInterviewerSkillsofGeneralSkill
-    {
-        public int id { get; set; }
-        public int InterviewerSkillID { get; set; }
-        public int LevelId { get; set; }
-        public string LevelName { get; set; }
-        public string Type { get; set; }
-        public string Value { get; set; }
-        public int Weightage { get; set; }
-        public String Name { get; set; }
-
-    }
+    
 }

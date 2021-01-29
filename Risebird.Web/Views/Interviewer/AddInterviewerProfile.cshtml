@@ -30,12 +30,12 @@
         </div>
     </nav>
 
-    <div class="panel-header panel-header-sm">
+    <div class="mt50">
     </div>
-    <div class="content interviewerprofile">
+    <div class="content interviewerprofile client">
         <div class="row">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
 
                         @using (Html.BeginForm("AddInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data" }))
@@ -105,7 +105,7 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.Label("DOB", "Age", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.TextBox("txt_Age", null, new { id = "txt_Age", @class = "form-control", @readonly = true })
+                                        @Html.TextBox("txt_Age", null, new { id = "txt_Age", @class = "form-control text-box single-line ", @readonly = true })
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.AltEmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -311,7 +311,7 @@
                                                         <td>
                                                             @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].Version, null, new { @class = "form-control text-box single-line" })
                                                         </td>
-                                                        <td>
+                                                        <td class="expiry">
                                                             @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].Expirydate, null, new { @class = "form-control text-box single-line", type = "date" })
                                                         </td>
                                                         <td class="action text-center">
@@ -448,7 +448,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            @Html.TextArea("InterviewerProjectsDetails[0].Description", null, new { @class = "form-control text-box single-line" })
+                                                            @Html.TextArea("InterviewerProjectsDetails[0].Description", null, new { @class = "form-control text-box single-line",@style="height:50px;" })
                                                         </td>
                                                         <td>
                                                             <div class="mdc-checkbox">

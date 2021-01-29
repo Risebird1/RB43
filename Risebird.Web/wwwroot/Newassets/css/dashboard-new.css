@@ -1083,6 +1083,11 @@ table.journey td.cadSkill {
     margin-left: -25px;
 }
 
+.interviewer .cadName [data-tooltip]:before {
+    margin-left: -25px;
+}
+
+
 #tblbodyCandidate .action .mdc-fab {
     width: 29px !important;
     height: 30px !important;
@@ -1175,9 +1180,11 @@ table.journey td.cadSkill {
 }
 
 .table-bordered.interviewertable td, .table-bordered.interviewertable th, .table-bordered.journey td, .table-bordered.journey th {
-    border: 1px solid #dee2e6 !important;
+    border: 1px solid #dee2e6;
 }
-
+.table-bordered.interviewertable th, .table-bordered th {
+    background: #dcdcdc4d;
+}
 table {
     border-collapse: inherit;
 }
@@ -1393,7 +1400,7 @@ table.interviewertable th, table.interviewertable td {
     border-radius: 4px 4px 0 0;
     height: 40px;
     font-size: 0.8rem;
-    border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+  
 }
 
 .page-container.page-mode-rtl .x-navigation.x-navigation-minimized li ul {
@@ -3087,6 +3094,7 @@ button.btn {
         background: #bbb;
     }
 
+
 /***** Media queries *****/
 
 @media (min-width: 992px) and (max-width: 1199px) {
@@ -3177,7 +3185,7 @@ button.btn {
 
     .navbar-brand {
         height: 60px;
-        margin-left: 15px;
+        margin-left: 0px;
     }
 
     .navbar-collapse {

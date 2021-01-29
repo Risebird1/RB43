@@ -2583,7 +2583,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
 .navbar-toggle {
     position: relative;
     float: right;
-    padding: 0px 10px !important;
+    padding: 0px 0px !important;
     margin-right: 0px !important;
     margin-top: 0px !important;
     margin-bottom: 0px !important;
@@ -7668,10 +7668,10 @@ input.theatre-btn:focus {
 .control-label, .control-labeled {
     color: #5f5c5c !important;
     font-weight: normal !important;
-    font-size: 14px !important;
+    font-size: 15px !important;
 }
 
-
+.prtop{margin-top:20px;}
 
 .card .card-footer .stats i {
     margin-right: 5px;
@@ -10994,7 +10994,8 @@ svg {
 
 
 .table-responsive-sm .table > thead > tr > th {
-    font-size: 14px;
+    /*    font-size: 14px;*/
+    color: #5f5c5c !important;
 }
 
 .trash-btn {
@@ -11397,7 +11398,7 @@ div.dataTables_scrollFoot table {
     }
 
     .navbar .navbar-brand {
-        font-size: 10px !important;
+        font-size: 8.9px !important;
     }
 
     .swal2-popup .swal2-title {
@@ -11436,7 +11437,10 @@ div.dataTables_scrollFoot table {
         margin: 0px 0px 10px 0px !important;
         width: calc(100% - 0px) !important;
     }
-
+    .table-responsive-sm .table > thead > tr > th.table_heading {
+        color: #5f5c5c !important;
+        font-size: 14px !important;
+    }
     .table-responsive-sm th, .table-responsive-sm th.table_heading {
         font-size: 12px !important;
     }

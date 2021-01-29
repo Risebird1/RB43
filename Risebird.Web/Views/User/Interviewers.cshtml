@@ -637,12 +637,12 @@
             if (data[i].primarySkill != null && data[i].primarySkill != "") {
                 if (data[i].primarySkill.length > 40) {
                     html += '  <div class="article">';
-                    html += '  <p style="margin-bottom:0px;">' + data[i].primarySkill.substring(0, 30) + '</p>';
+                    html += '  <p style="margin-bottom:0px;">' + data[i].primarySkill.substring(0, 40) + '</p>';
                     html += '   <p class="moretext_' + data[i].id + ' moretext">' + data[i].primarySkill.substring(40, data[i].primarySkill.length - 40) + '</p>';
                     html += '</div>';
                 }
                 else {
-                    html += '<div class="article"><p>' + data[i].primarySkill.substring(0, data[i].primarySkill.length - 1) + '</p></div>';
+                    html += '<div class="article"><p>' + data[i].primarySkill.substring(0, data[i].primarySkill.length) + '</p></div>';
                 }
             }
             else {

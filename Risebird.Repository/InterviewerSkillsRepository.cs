@@ -265,37 +265,6 @@ namespace Risebird.Repository
                         con, "select * from [dbo].[InterviewerSkillsChannel]", null, commandType: Text).Result.AsList();
                     var InterviewerSkillId = irfList.Where(x => x.InterviewerSkillId == InterviewerSkillsDetails.InterviewerSkillId).Last().id;//irfList.Find(x => x.IRFId == InterviewerSkillsDetails.IRFId).id;
 
-
-
-                    foreach (var item in InterviewerSkillsDetails.Selectability)
-                    {
-                        string sqlSelectability = "INSERT INTO TransInterviewerSkillsSelectablity (InterviewerSkillId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
-                        var affectedRows = con.ExecuteAsync(sqlSelectability, new
-                        {
-                            IRFId = InterviewerSkillId,
-                            item.LevelId,
-                            item.Type,
-                            item.Value,
-                            item.Weightage
-                        }).Result;
-                    }
-
-
-                    //update general skill table
-                    foreach (var item in InterviewerSkillsDetails.SkillGeneral)
-                    {
-
-                        string sqlSkillGeneral = "INSERT INTO TransInterviewerSkillsGeneralSkills (InterviewerSkillId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
-                        var affectedRows = con.ExecuteAsync(sqlSkillGeneral, new
-                        {
-                            IRFId = InterviewerSkillId,
-                            item.LevelId,
-                            item.Type,
-                            item.Value,
-                            item.Weightage
-                        }).Result;
-                    }
-
                     //update tech skill table
                     foreach (var item in InterviewerSkillsDetails.SkillCollection)
                     {
@@ -519,26 +488,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public IEnumerable<TransInterviewerSkillsofGeneralSkill> GetSkillsGeneralbyInterviewerSkillId(int id)
-        {
-            try
-            {
-                var query = "Select * from TransInterviewerSkillsGeneralSkills where InterviewerSkillId = @InterviewerSkillId";
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@InterviewerSkillId", id);
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var results = con.Query<TransInterviewerSkillsofGeneralSkill>(query, dynamicParameters);
-                    return results;
-                }
-
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
+        
         public IEnumerable<TransInterviewerSkillsLeadInterviewer> GetTransInterviewer(int id)
         {
             try
@@ -580,26 +530,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public IEnumerable<TransInterviewerSkillsSelectability> GetTransSelectability(int id)
-        {
-            try
-            {
-                var query = "Select * from TransInterviewerSkillsSelectablity where InterviewerSkillId = @InterviewerSkillId";
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@InterviewerSkillId", id);
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var results = con.Query<TransInterviewerSkillsSelectability>(query, dynamicParameters);
-                    return results;
-                }
-
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
+        
         public async Task<bool> UpdateInterviewerSkillsDetails(InterviewerSkillsVM InterviewerSkillsDetails)
         {
             try
@@ -613,39 +544,7 @@ namespace Risebird.Repository
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerSkillsChannel", parameters,
                        commandType: CommandType.StoredProcedure);
 
-                    if (InterviewerSkillsDetails.Selectability != null)
-                    {
-                        foreach (var item in InterviewerSkillsDetails.Selectability)
-                        {
-                            string sqlSelectability = "INSERT INTO TransInterviewerSkillsSelectablity (InterviewerSkillId, LevelId, Type, Value, Weightage) Values (@InterviewerSkillId, @LevelId, @Type, @Value, @Weightage);";
-                            var affectedRows = con.ExecuteAsync(sqlSelectability, new
-                            {
-                                InterviewerSkillId = InterviewerSkillsDetails.id,
-                                item.LevelId,
-                                item.Type,
-                                item.Value,
-                                item.Weightage
-                            }).Result;
-                        }
-                    }
-                    //update general skill table
-
-                    if (InterviewerSkillsDetails.SkillGeneral != null)
-                    {
-                        foreach (var item in InterviewerSkillsDetails.SkillGeneral)
-                        {
-
-                            string sqlSkillGeneral = "INSERT INTO TransInterviewerSkillsGeneralSkills (InterviewerSkillId, LevelId, Type, Value, Weightage) Values (@InterviewerSkillId, @LevelId, @Type, @Value, @Weightage);";
-                            var affectedRows = con.ExecuteAsync(sqlSkillGeneral, new
-                            {
-                                InterviewerSkillId = InterviewerSkillsDetails.id,
-                                item.LevelId,
-                                item.Type,
-                                item.Value,
-                                item.Weightage
-                            }).Result;
-                        }
-                    }
+                    
 
 
 
@@ -1037,6 +936,250 @@ namespace Risebird.Repository
             }
 
         }
+        public async Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startFromParam", ((Page - 1) * 12));
+                    parameters.Add("@endWithParam", Page * 12);
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetInterviewerRiseTubeMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return (List<MeetingVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<int> GetInterviewerRiseTubeMeetingsCount()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_GetInterviewerRisetubeIndexMeetings", null,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+        public async Task<MeetingVM> GetMeetingbyid(int id, string Email)
+        {
+            try
+            {
+                if (id == 0)
+                    return null;
+                var parameters = new DynamicParameters();
+                parameters.Add("@interviewId", id);
+                parameters.Add("@Email", Email);
 
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryFirstAsync<MeetingVM>(con, "usp_GetInterviewerVideoMeetingsbyId", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    var query = "Select InterviewId,VideoTitle,VideoLink,Priority,ThumbnailLink from VideoQuestionDetails Where InterViewid=@InterViewid and NULLIF(VideoLink, '') IS NOT NULL";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@InterViewid", id);
+                    var resultset = con.Query<QuestionDetails>(query, dynamicParameters);
+                    if (resultset.Count() != 0)
+                    {
+                        result.MeetingPatch = resultset.OrderBy(x => x.Priority).ToList();
+                    }
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+            }
+            return null;
+        }
+        public async Task<IEnumerable<MeetingVM>> GetInterviewerRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@clientid", clientId);
+                    parameters.Add("@Emailid", Emailid);
+                    parameters.Add("@JDpattern", JDpattern);
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetInterviewerRiseTubeMeetingsByJD", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IRFDetails GetInterviewerIRFDetails(int id)
+        {
+            try
+            {
+                var query = "Select InterviewerSkillId as IRFId,JDTiltle from InterviewerSkillsChannel where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<IRFDetails>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<MeetingVM> GetInterviewMeetingById(int id)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@interviewId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryFirstAsync<MeetingVM>(con, "usp_GetInterviewerMeetingById", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<InterviewReport> GetInterviewerInterviewReportById(int id, int irfId = 0)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@InterviewId", id);//@IrfId
+                dynamicParameters.Add("@IrfId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<InterviewReport>(con, "usp_GetInterviewerReportById", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<TransSkill>> GetSkillsbyIRFid(int id)
+        {
+            try
+            {
+                var query = "Select id,InterviewerSkillId as IRFId,SkillId,LevelId,Weightage from [dbo].[TransInterviewerSkillsTechSkills] where InterviewerSkillId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<TransSkill>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public int GetCandidateId(int id, string irfName)
+        {
+            int result = 0;
+            try
+            {
+                var query = "select cm.id from InterviewMeetings im join UserList ul on im.candidateEmail = ul.EmailId join TransInterviewerListInterviewerSkills cm on cm.UserId=ul.id where im.IRFId = @irfName and im.id =@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@irfName", irfName);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    result = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return result;
+            }
+        }
+        public IEnumerable<TechSkillReport> GetTechSkillReport(int id)
+        {
+            try
+            {
+                var query = "select a.*, Skill.[Name] as SkillName from (select TechSkillReport.*, [LevelTech].[Name] as RequiredLevel from TechSkillReport inner join [LevelTech] on TechSkillReport.RequiredLevelId=[LevelTech].id) as a inner join Skill on a.SkillId = Skill.id where InterviewId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TechSkillReport>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<QuestionsDiscussed> GetQuestionsDiscussed(int id)
+        {
+            try
+            {
+                // var query = "Select * from QuestionsDiscussed where InterviewId = @id";
+                var query = "Select  qd.id,qd.InterviewId,qd.Comment,qd.SkillName,qd.RatingId,qd.Timing,vc.VideoLink,vc.Priority from QuestionsDiscussed qd Left join VideoQuestionDetails vc on vc.Question=qd.Comment and vc.Interviewid =@id where qd.Interviewid= @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<QuestionsDiscussed>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

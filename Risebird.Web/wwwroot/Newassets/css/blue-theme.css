@@ -5,7 +5,10 @@ body {
 .main-panel {
     background: #f8faff;
 }
-
+.expiry [type="date"] {
+    background: #ebecee url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 7% !important;
+}
 .can-details a, .callatag {
     background: #e2f0ff;
     color: #007bff !important;
@@ -394,9 +397,12 @@ textarea::-webkit-scrollbar-thumb {
     position: relative;
     top: -4px;
 }
-
+.dob [type="date"] {
+    background: #ebecee url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 4.2% !important;
+}
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: whitesmoke;
+    background: #e6e6e6ad;
     color: #888 !important;
 }
 

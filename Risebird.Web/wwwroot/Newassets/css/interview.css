@@ -22,7 +22,7 @@
         text-rendering: optimizeLegibility;
         margin: 0px 10px 20px 10px;
     }
-
+.file-wrap{position:relative;top:-13px;}
 #countdown {
     width: 180px;
     text-align: center;
@@ -81,7 +81,30 @@
             width: 50px;
         }
 
-.callno {
+
+.interviewer .table-bordered td {
+    border-right: 1px solid #dee2e6 !important;
+    border-left: 0px !important;
+
+    border-bottom: 0px !important;
+}
+
+.interviewer .table-bordered td:last-child {
+    border-right: 0px solid #dee2e6 !important;
+}
+.employee .mdc-card .form-control[disabled], .employee .mdc-card .form-control[readonly] {
+    background: none;
+    border: none;
+}
+.client .table-bordered td {
+    border-right: 1px solid #dee2e6 !important;
+    border-left: 0px !important;
+    border-bottom: 0px !important;
+}
+    .client .table-bordered td:last-child {
+        border-right: 0px solid #dee2e6 !important;
+    }
+    .callno {
     float: left;
     display: block;
     border-bottom: 3px solid #ff5852;
@@ -233,9 +256,13 @@ textarea::-webkit-scrollbar-thumb {
 
 #uploadDiv input[type=file], #codeduploadDiv input[type=file] {
     opacity: 1;
-    height: 45px;
+    height: 41px;
 }
-
+.upload #resumeId {
+    padding: 8px 0px;
+    border-radius: 4px;
+    background: none
+}
 
 .filebox {
     margin-top: 15px;
@@ -247,7 +274,7 @@ textarea::-webkit-scrollbar-thumb {
     }
 
 .radiobox {
-    background: #f5f5f5;
+    background: #efefef;
     padding: 8px 0px;
     margin-top: 15px;
 }
@@ -571,21 +598,22 @@ input[type=number] {
     -moz-appearance: textfield;
 }
 
+
 [type="date"] {
-    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
-    background-size: 5% !important;
+    background: #ebecee url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 7% !important;
 }
 
     [type="date"]::-webkit-inner-spin-button {
         display: none;
     }
 
-    [type="date"]::-webkit-calendar-picker-indicator {
-        opacity: 0;
-    }
+[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+}
 
 [type="datetime-local"] {
-    background-size: 5% !important;
+    background-size: 4.5% !important;
 }
 
     [type="datetime-local"]::-webkit-inner-spin-button {
@@ -600,9 +628,11 @@ input[type=number] {
     cursor: pointer !important;
     transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 }
-
-
-.no-sort::after {
+.vidfrmae iframe{border:0px;}
+.report #QuestionsTable .form-control[readonly]:hover, .report #QuestionsTable .form-control:hover {
+    background: #ebecee !important;
+}
+        .no-sort::after {
     display: none !important;
 }
 
@@ -1176,8 +1206,8 @@ ul.panel-controls > li > button {
 }
 
 .file-lable {
-    color: #000;
-    font-size: 14px !important;
+    font-size: 16px !important;
+    color: #5f5c5c !important;
 }
 
 .card-text-label {
@@ -1207,7 +1237,7 @@ ul.panel-controls > li > button {
     width: 100%;
     font-size: 0.8rem;
     margin: 0 !important;
-    border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+
 }
 
     .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
@@ -1332,7 +1362,7 @@ ul.panel-controls > li > button {
 }
 
     .navbar .navbar-wrapper .navbar-brand {
-        margin-right: 0.5rem;
+        margin-right: 0.3rem;
         font-size: 14px;
     }
 

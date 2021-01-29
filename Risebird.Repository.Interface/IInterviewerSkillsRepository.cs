@@ -28,9 +28,7 @@ namespace Risebird.Repository.Interface
         bool CheckUniqueness(string value);
         InterviewerSkillsChannelModel EditInterviewerSkills(int InterviewerSkillId);
         IEnumerable<TransInterviewerSkillsofSkills> GetSkillsbyInterviewerSkillId(int id);
-        IEnumerable<TransInterviewerSkillsofGeneralSkill> GetSkillsGeneralbyInterviewerSkillId(int id);
         IEnumerable<TransInterviewerSkillsLeadInterviewer> GetTransInterviewer(int id);
-        IEnumerable<TransInterviewerSkillsSelectability> GetTransSelectability(int id);
         string GetPrimarySkill(int id);
         Task<bool> UpdateInterviewerSkillsDetails(InterviewerSkillsVM irfDetails);
         Task<IEnumerable<UnApprovedInterviewer>> GetUnApprovedInterviewerList(int id);
@@ -92,5 +90,16 @@ namespace Risebird.Repository.Interface
         ////bool AddPausedMeetings(int InterviewerSkillId, int meetingId);
         ////Task<IEnumerable<MeetingVM>> PlayIRF(string InterviewerSkillId);
         //IEnumerable<TransClientUser> GetTransClientUserRole();
+        Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page);
+        Task<int> GetInterviewerRiseTubeMeetingsCount();
+        Task<MeetingVM> GetMeetingbyid(int id, string Email);
+        Task<IEnumerable<MeetingVM>> GetInterviewerRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern);
+        IRFDetails GetInterviewerIRFDetails(int id);
+        Task<MeetingVM> GetInterviewMeetingById(int id);
+        IEnumerable<InterviewReport> GetInterviewerInterviewReportById(int id, int irfId = 0);
+        Task<IEnumerable<TransSkill>> GetSkillsbyIRFid(int id);
+        int GetCandidateId(int id, string irfName);
+        IEnumerable<TechSkillReport> GetTechSkillReport(int id);
+        IEnumerable<QuestionsDiscussed> GetQuestionsDiscussed(int id);
     }
 }

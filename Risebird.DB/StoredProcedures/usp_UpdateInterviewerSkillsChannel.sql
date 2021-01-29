@@ -40,9 +40,7 @@ set
 Where id =@id
 
 delete from TransInterviewerSkillsLeadInterviewer where InterviewerSkillId=@id
-delete from TransInterviewerSkillsGeneralSkills where InterviewerSkillId=@id
 delete from TransInterviewerSkillsTechSkills where InterviewerSkillId=@id
-delete from TransInterviewerSkillsSelectablity where InterviewerSkillId=@id
 End
 
 GO

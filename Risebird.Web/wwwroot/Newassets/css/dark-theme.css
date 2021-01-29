@@ -483,12 +483,15 @@ table {
 .spinner, .spinner .button {
     background: #181818;
 }
-
+.table-bordered.interviewertable th, .table-bordered th, .table-bordered.journey th {
+    background:transparent!important;
+    border: 0px !important;
+}
 .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
     border-bottom: 2px #121212 solid !important;
 }
 
-.mdc-card button.dropdown-toggle:focus #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover
+.mdc-card button.dropdown-toggle:focus #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover{
 border-bottom: 2px #121212 solid !important;
 }
 
@@ -619,14 +622,14 @@ select * {
 }
 
 .table-bordered th {
-    border: 1px solid #464343 !important;
+    border-right: 1px solid #464343 !important;
     background: #121212;
     color: #9a9a9a;
 }
-
-div.dataTables_wrapper div.dataTables_info {
-    color: #f7eaea75;
-}
+    .table-bordered th:last-child{border:0px!important}
+    div.dataTables_wrapper div.dataTables_info {
+        color: #f7eaea75;
+    }
 
 #supportList_filter input[type=search] {
     background: #000 url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center !important;
@@ -1307,7 +1310,10 @@ table {
     background: #181818 url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
 }
-
+.dob [type="date"] {
+    background: #181818 url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 4.2% !important;
+}
 [type="datetime-local"] {
     background: #181818 url(../img/dark-timdate.png) 94% 50% no-repeat !important;
     background-size: 5% !important;
@@ -1461,7 +1467,7 @@ select * {
 }
 
 .table-bordered th {
-    border: 1px solid #464343 !important;
+  
     background: #121212;
     color: #9a9a9a;
 }
