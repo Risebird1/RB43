@@ -318,7 +318,7 @@
                                                                                             <div class="interviewer-comment itemcomment">
 
                                                                                                 <div class="form-group" style="margin-bottom:0px; ">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12 card-text-label" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12" })
 
 
                                                                                                     <div class="talk-bubble tri-right border-bubble right-in inComment" style="width:100%;">
@@ -487,7 +487,7 @@
                                                                                                             {
                                                                                                                 <tr>
 
-                                                                                                                    <td class="desktop-view">
+                                                                                                                    <td>
                                                                                                                         @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
 
                                                                                                                     </td>
@@ -499,7 +499,7 @@
                                                                                                                         @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { ID = "droplevel", @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @value = "title", onmouseover = "getOption(this)" })
 
                                                                                                                     </td>
-                                                                                                                    <td class="desktop-view">
+                                                                                                                    <td>
                                                                                                                         @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly", @value = "title" })
                                                                                                                     </td>
                                                                                                                     <td>
@@ -1461,7 +1461,7 @@
             //TechSkills actual weightage total
             var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
             var techTotal = 0;
-            for (i = 0; i < (techItems.length / 2); i++) {
+            for (i = 0; i < (techItems.length); i++) {
 
                 techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
 
