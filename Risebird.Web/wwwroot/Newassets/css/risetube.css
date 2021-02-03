@@ -911,7 +911,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
     #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
-        background: url("../../img/audio-button-set-4-transparent.png") !important;
+        background: #eee url("../../img/audio-button-set-4-transparent.png") !important;
         background-size: 25px !important;
         background-repeat: no-repeat !important;
         background-position: 45% !important;
@@ -2987,5 +2987,14 @@ table {
     #myForm .searchbox input[type=email] {
         width: 250px !important;
         height: auto;
+    }
+}
+
+
+
+
+@media screen and (max-width: 360px) {
+    .date-calendar {
+        font-size: 11px;
     }
 }

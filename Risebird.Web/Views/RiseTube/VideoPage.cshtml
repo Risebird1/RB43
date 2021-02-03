@@ -774,7 +774,7 @@
                                                                                     <div class="interviewer-comment itemcomment">
 
                                                                                         <div class="form-group" style="margin-bottom:0px; ">
-                                                                                            @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12 card-text-label" })
+                                                                                            @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12" })
 
 
                                                                                             <div class="talk-bubble tri-right border-bubble right-in inComment" style="width:100%;">
@@ -804,7 +804,7 @@
                                                                                             @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
                                                                                         </div>
                                                                                         <div class="form-group">
-                                                                                            @Html.LabelFor(model => model.IreportModel.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label bolder" })
+                                                                                            @Html.LabelFor(model => model.IreportModel.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  bolder" })
                                                                                             @Html.TextBoxFor(m => m.IreportModel.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
                                                                                         </div>
@@ -1021,7 +1021,7 @@
                                                                                                     {
                                                                                                         <tr>
 
-                                                                                                            <td class="desktop-view">
+                                                                                                            <td >
                                                                                                                 @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
 
                                                                                                             </td>
@@ -1033,7 +1033,7 @@
                                                                                                                 @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { ID = "droplevel", @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @value = "title", onmouseover = "getOption(this)" })
 
                                                                                                             </td>
-                                                                                                            <td class="desktop-view">
+                                                                                                            <td >
                                                                                                                 @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly", @value = "title" })
                                                                                                             </td>
                                                                                                             <td>
