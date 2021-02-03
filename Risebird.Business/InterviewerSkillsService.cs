@@ -202,6 +202,7 @@ namespace Risebird.Business
                 model.EndDate = InterviewerSkills.EndDate;
                 model.CalendlyLink = InterviewerSkills.CalendlyLink;
                 model.RisebirdHr = InterviewerSkills.RisebirdHr;
+                model.PrimarySkill = InterviewerSkills.PrimarySkill;
                 //var skillCount = transTechSkills.Count();
                 return model;
 
