@@ -154,5 +154,10 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Skills")]
         public string PrimarySkill { get; set; }
+        [Display(Name = "Interviewer Tag")]
+
+        public string Tag { get; set; }
+        public SelectList TagList { get; set; }
+
     }
 }

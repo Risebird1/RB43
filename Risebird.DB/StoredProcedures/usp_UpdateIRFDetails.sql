@@ -36,6 +36,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 @Type varchar(5), 
 @Heuristicsscore int,
 @PrimarySkillInvite varchar(100),
+@Tag varchar(200),
 @idIrf int output    
     
 AS    
@@ -63,6 +64,7 @@ set
 			,[BussinessType]=@Type 
 			,[Heuristicsscore]=@Heuristicsscore
 			,[PrimarySkillInvite]=@PrimarySkillInvite
+			,[Tag]=@Tag
 Where id =@id    
     
 delete from TransClientUser where IRFId=@id    

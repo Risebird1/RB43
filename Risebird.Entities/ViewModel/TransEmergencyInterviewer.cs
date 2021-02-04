@@ -7,6 +7,7 @@
         public int UserId { get; set; }
         public int InterviewerId { get; set; }
         public string PrimarySkill { get; set; }
+        public string EmailId { get; set; }
         public int PerSuccessRate { get; set; }
 
     }

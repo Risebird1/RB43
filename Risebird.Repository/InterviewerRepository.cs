@@ -258,6 +258,7 @@ namespace Risebird.Repository
             parameters.Add("@IsActive", entity.IsActive);
             parameters.Add("@IsApproved", entity.IsApproved);
             parameters.Add("@IsLeadInterviewer", entity.IsLeadInterviewer);
+            parameters.Add("@Tag", entity.Tag);
             parameters.Add("@InterviewerProfileId", SqlDbType.Int, direction: ParameterDirection.Output);
 
             return parameters;
@@ -1689,6 +1690,26 @@ namespace Risebird.Repository
 
             }
             catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<string>> GetAllTagsFromIRF()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<string>(con, "[dbo].[usp_GetAllTagsFromIRF]", null,
+                        commandType: StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }

@@ -914,48 +914,57 @@ namespace Risebird.Repository
 
 
                     //update trans interviewer table
-
-                    DataTable interviewerDt = new DataTable();
-                    interviewerDt.Columns.Add("IRFId", typeof(int));
-                    interviewerDt.Columns.Add("UserId", typeof(int));
-                    interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
-                    
-                    foreach (var item in irfDetails.InterviewerCollection)
+                    if(irfDetails.InterviewerCollection !=null && irfDetails.InterviewerCollection.Count()>0 && !(irfDetails.InterviewerCollection.Where(x => x.UserId == 0).Any()))
                     {
-                        interviewerDt.Rows.Add(irfID, item.UserId,item.PerSuccessRate);
+                        DataTable interviewerDt = new DataTable();
+                        interviewerDt.Columns.Add("IRFId", typeof(int));
+                        interviewerDt.Columns.Add("UserId", typeof(int));
+                        interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+
+                        foreach (var item in irfDetails.InterviewerCollection)
+                        {
+                            interviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate);
+                        }
+
+                        SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
+                        cmdInterviewer.CommandType = CommandType.StoredProcedure;
+                        cmdInterviewer.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
+                        cmdInterviewer.Parameters["@InterviewerBulkData"].Value = interviewerDt;
+                        con.Open();
+                        if (cmdInterviewer.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
                     }
 
-                    SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
-                    cmdInterviewer.CommandType = CommandType.StoredProcedure;
-                    cmdInterviewer.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
-                    cmdInterviewer.Parameters["@InterviewerBulkData"].Value = interviewerDt;
-                    con.Open();
-                    if (cmdInterviewer.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
-                    }
+
 
                     //update trans emergency interviewer table
 
-                    DataTable emergencyInterviewerDt = new DataTable();
-                    emergencyInterviewerDt.Columns.Add("IRFId", typeof(int));
-                    emergencyInterviewerDt.Columns.Add("UserId", typeof(int));
-                    emergencyInterviewerDt.Columns.Add("PerSuccessRate", typeof(int));
-
-                    foreach (var item in irfDetails.EmergencyInterviewerCollection)
+                    if (irfDetails.EmergencyInterviewerCollection != null && irfDetails.EmergencyInterviewerCollection.Count() > 0 && !(irfDetails.EmergencyInterviewerCollection.Where(x => x.UserId == 0).Any()))
                     {
-                        emergencyInterviewerDt.Rows.Add(irfID, item.UserId,item.PerSuccessRate);
+                        DataTable emergencyInterviewerDt = new DataTable();
+                        emergencyInterviewerDt.Columns.Add("IRFId", typeof(int));
+                        emergencyInterviewerDt.Columns.Add("UserId", typeof(int));
+                        emergencyInterviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+
+                        foreach (var item in irfDetails.EmergencyInterviewerCollection)
+                        {
+                            emergencyInterviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate);
+                        }
+
+                        SqlCommand cmdEmergencyInterviewer = new SqlCommand("usp_EmergencyInterviewerBulkInsert", con);
+                        cmdEmergencyInterviewer.CommandType = CommandType.StoredProcedure;
+                        cmdEmergencyInterviewer.Parameters.Add(new SqlParameter("@EmergencyInterviewerBulkData", SqlDbType.Structured));
+                        cmdEmergencyInterviewer.Parameters["@EmergencyInterviewerBulkData"].Value = emergencyInterviewerDt;
+                        con.Open();
+                        if (cmdEmergencyInterviewer.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
                     }
 
-                    SqlCommand cmdEmergencyInterviewer = new SqlCommand("usp_EmergencyInterviewerBulkInsert", con);
-                    cmdEmergencyInterviewer.CommandType = CommandType.StoredProcedure;
-                    cmdEmergencyInterviewer.Parameters.Add(new SqlParameter("@EmergencyInterviewerBulkData", SqlDbType.Structured));
-                    cmdEmergencyInterviewer.Parameters["@EmergencyInterviewerBulkData"].Value = emergencyInterviewerDt;
-                    con.Open();
-                    if (cmdEmergencyInterviewer.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
-                    }
+                    
 
                     //update trans Client table
 
@@ -980,26 +989,30 @@ namespace Risebird.Repository
                     }
 
                     //update trans QC table
-
-                    DataTable qualityControllerDt = new DataTable();
-                    qualityControllerDt.Columns.Add("IRFId", typeof(int));
-                    qualityControllerDt.Columns.Add("UserId", typeof(int));
-                    qualityControllerDt.Columns.Add("PerSuccessRate", typeof(int));
-
-                    foreach (var item in irfDetails.QualityController)
+                    if (irfDetails.QualityController != null && irfDetails.QualityController.Count() > 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()))
                     {
-                        qualityControllerDt.Rows.Add(irfID, item.UserId,item.PerSuccessRate);
+                        DataTable qualityControllerDt = new DataTable();
+                        qualityControllerDt.Columns.Add("IRFId", typeof(int));
+                        qualityControllerDt.Columns.Add("UserId", typeof(int));
+                        qualityControllerDt.Columns.Add("PerSuccessRate", typeof(int));
+
+                        foreach (var item in irfDetails.QualityController)
+                        {
+                            qualityControllerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate);
+                        }
+
+                        SqlCommand cmdQualityController = new SqlCommand("usp_QCBulkInsert", con);
+                        cmdQualityController.CommandType = CommandType.StoredProcedure;
+                        cmdQualityController.Parameters.Add(new SqlParameter("@QCBulkData", SqlDbType.Structured));
+                        cmdQualityController.Parameters["@QCBulkData"].Value = qualityControllerDt;
+                        con.Open();
+                        if (cmdQualityController.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+
                     }
 
-                    SqlCommand cmdQualityController = new SqlCommand("usp_QCBulkInsert", con);
-                    cmdQualityController.CommandType = CommandType.StoredProcedure;
-                    cmdQualityController.Parameters.Add(new SqlParameter("@QCBulkData", SqlDbType.Structured));
-                    cmdQualityController.Parameters["@QCBulkData"].Value = qualityControllerDt;
-                    con.Open();
-                    if (cmdQualityController.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
-                    }
 
                     DataTable resumeEvaluatorDt = new DataTable();
                     resumeEvaluatorDt.Columns.Add("IRFId", typeof(int));
@@ -1251,25 +1264,30 @@ namespace Risebird.Repository
                     //    }
                     //}
 
-                    DataTable interviewerDt = new DataTable();
-                    interviewerDt.Columns.Add("IRFId", typeof(int));
-                    interviewerDt.Columns.Add("UserId", typeof(int));
-                    interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
-
-                    foreach (var item in irfDetails.InterviewerCollection)
+                    if(irfDetails.InterviewerCollection!=null && irfDetails.InterviewerCollection.Count()!=0 && !(irfDetails.InterviewerCollection.Where(x=>x.UserId==0).Any()))
                     {
-                        interviewerDt.Rows.Add(irfDetails.id, item.UserId,item.PerSuccessRate);
+                        DataTable interviewerDt = new DataTable();
+                        interviewerDt.Columns.Add("IRFId", typeof(int));
+                        interviewerDt.Columns.Add("UserId", typeof(int));
+                        interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+
+                        foreach (var item in irfDetails.InterviewerCollection)
+                        {
+                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate);
+                        }
+
+                        SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
+                        cmdInterviewer.CommandType = CommandType.StoredProcedure;
+                        cmdInterviewer.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
+                        cmdInterviewer.Parameters["@InterviewerBulkData"].Value = interviewerDt;
+                        con.Open();
+                        if (cmdInterviewer.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
                     }
 
-                    SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
-                    cmdInterviewer.CommandType = CommandType.StoredProcedure;
-                    cmdInterviewer.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
-                    cmdInterviewer.Parameters["@InterviewerBulkData"].Value = interviewerDt;
-                    con.Open();
-                    if (cmdInterviewer.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
-                    }
+
 
 
                     // update trans emergency interviewers table
@@ -1286,25 +1304,29 @@ namespace Risebird.Repository
                     //    }
                     //}
 
-                    DataTable emergencyInterviewerDt = new DataTable();
-                    emergencyInterviewerDt.Columns.Add("IRFId", typeof(int));
-                    emergencyInterviewerDt.Columns.Add("UserId", typeof(int));
-                    emergencyInterviewerDt.Columns.Add("PerSuccessRate", typeof(int));
-
-                    foreach (var item in irfDetails.EmergencyInterviewerCollection)
+                    if (irfDetails.EmergencyInterviewerCollection != null && irfDetails.EmergencyInterviewerCollection.Count() != 0 && !(irfDetails.EmergencyInterviewerCollection.Where(x => x.UserId == 0).Any()))
                     {
-                        emergencyInterviewerDt.Rows.Add(irfDetails.id, item.UserId,item.PerSuccessRate);
+                        DataTable emergencyInterviewerDt = new DataTable();
+                        emergencyInterviewerDt.Columns.Add("IRFId", typeof(int));
+                        emergencyInterviewerDt.Columns.Add("UserId", typeof(int));
+                        emergencyInterviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+
+                        foreach (var item in irfDetails.EmergencyInterviewerCollection)
+                        {
+                            emergencyInterviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate);
+                        }
+
+                        SqlCommand cmdEmergencyInterviewer = new SqlCommand("usp_EmergencyInterviewerBulkInsert", con);
+                        cmdEmergencyInterviewer.CommandType = CommandType.StoredProcedure;
+                        cmdEmergencyInterviewer.Parameters.Add(new SqlParameter("@EmergencyInterviewerBulkData", SqlDbType.Structured));
+                        cmdEmergencyInterviewer.Parameters["@EmergencyInterviewerBulkData"].Value = emergencyInterviewerDt;
+                        con.Open();
+                        if (cmdEmergencyInterviewer.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
                     }
 
-                    SqlCommand cmdEmergencyInterviewer = new SqlCommand("usp_EmergencyInterviewerBulkInsert", con);
-                    cmdEmergencyInterviewer.CommandType = CommandType.StoredProcedure;
-                    cmdEmergencyInterviewer.Parameters.Add(new SqlParameter("@EmergencyInterviewerBulkData", SqlDbType.Structured));
-                    cmdEmergencyInterviewer.Parameters["@EmergencyInterviewerBulkData"].Value = emergencyInterviewerDt;
-                    con.Open();
-                    if (cmdEmergencyInterviewer.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
-                    }
 
                     //update trans Client table
 
@@ -1360,26 +1382,29 @@ namespace Risebird.Repository
 
                     //    }
                     //}
-
-                    DataTable qualityControllerDt = new DataTable();
-                    qualityControllerDt.Columns.Add("IRFId", typeof(int));
-                    qualityControllerDt.Columns.Add("UserId", typeof(int));
-                    qualityControllerDt.Columns.Add("PerSuccessRate", typeof(int));
-
-                    foreach (var item in irfDetails.QualityController)
+                    if (irfDetails.QualityController != null && irfDetails.QualityController.Count() != 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()))
                     {
-                        qualityControllerDt.Rows.Add(irfDetails.id, item.UserId,item.PerSuccessRate);
-                    }
+                        DataTable qualityControllerDt = new DataTable();
+                        qualityControllerDt.Columns.Add("IRFId", typeof(int));
+                        qualityControllerDt.Columns.Add("UserId", typeof(int));
+                        qualityControllerDt.Columns.Add("PerSuccessRate", typeof(int));
 
-                    SqlCommand cmdQualityController = new SqlCommand("usp_QCBulkInsert", con);
-                    cmdQualityController.CommandType = CommandType.StoredProcedure;
-                    cmdQualityController.Parameters.Add(new SqlParameter("@QCBulkData", SqlDbType.Structured));
-                    cmdQualityController.Parameters["@QCBulkData"].Value = qualityControllerDt;
-                    con.Open();
-                    if (cmdQualityController.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
+                        foreach (var item in irfDetails.QualityController)
+                        {
+                            qualityControllerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate);
+                        }
+
+                        SqlCommand cmdQualityController = new SqlCommand("usp_QCBulkInsert", con);
+                        cmdQualityController.CommandType = CommandType.StoredProcedure;
+                        cmdQualityController.Parameters.Add(new SqlParameter("@QCBulkData", SqlDbType.Structured));
+                        cmdQualityController.Parameters["@QCBulkData"].Value = qualityControllerDt;
+                        con.Open();
+                        if (cmdQualityController.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
                     }
+                        
 
                     //if (irfDetails.ResumeEvaluatorCollection != null)
                     //{
@@ -2242,6 +2267,7 @@ namespace Risebird.Repository
             parameters.Add("@Type", entity.Type);
             parameters.Add("@Heuristicsscore", entity.Heuristicsscore);
             parameters.Add("@PrimarySkillInvite", entity.PrimarySkillInvite);
+            parameters.Add("@Tag", entity.Tag);
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
 
             return parameters;
@@ -4192,6 +4218,25 @@ namespace Risebird.Repository
                     return result;
                 }
 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<InterviewerProfileVM>> GetInterviewersByTag(string tag)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Tag", tag);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "usp_GetInterviewersByTag", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result;
+                }
             }
             catch (SqlException ex)
             {

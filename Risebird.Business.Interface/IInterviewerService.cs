@@ -42,6 +42,7 @@ namespace Risebird.Business.Interface
         IEnumerable<AssignmentVM> FetchAssessmentGroups();
         string ChangeStatusAssessment(int assessmentid, int status);
         string UpdateAssessment(AssignmentVM _assessment);
+        Task<IEnumerable<string>> GetAllTagsFromIRF();
 
     }
 }

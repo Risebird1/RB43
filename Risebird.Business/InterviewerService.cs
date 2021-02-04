@@ -682,5 +682,18 @@ namespace Risebird.Business
                 return "";
             }
         }
+
+        public async Task<IEnumerable<string>> GetAllTagsFromIRF()
+        {
+            try
+            {
+                return await _interviewerRepository.GetAllTagsFromIRF();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

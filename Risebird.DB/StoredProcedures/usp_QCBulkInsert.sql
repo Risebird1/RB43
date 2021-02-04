@@ -13,7 +13,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[usp_QCBulkInsert]
+Create PROCEDURE [dbo].[usp_QCBulkInsert]
 (
       @QCBulkData AS [dbo].[TransQualityController_TableType] READONLY
 )
@@ -30,7 +30,10 @@ INSERT INTO [dbo].[TransQualityController](
 	[InterviewerId])
 	
 
-SELECT qcbd.*, Interviewer.id as InterviewerId FROM @QCBulkData qcbd left join Interviewer on qcbd.UserId = Interviewer.UserId
+--SELECT qcbd.*, Interviewer.id as InterviewerId FROM @QCBulkData qcbd left join Interviewer on qcbd.UserId = Interviewer.UserId
+
+SELECT qcbd.*, InterviewerProfile.id as InterviewerId FROM @QCBulkData qcbd left join InterviewerProfile on qcbd.UserId = InterviewerProfile.UserId
+
 
 
 END

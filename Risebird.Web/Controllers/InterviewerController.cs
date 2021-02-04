@@ -425,6 +425,8 @@ namespace Risebird.Web.Controllers
             var daySlot = from DaySlot s in Enum.GetValues(typeof(DaySlot))
                           select new { ID = (int)s, Name = s.GetDescription() };
             model.DaySlotList = new SelectList(daySlot, "ID", "Name");
+            model.TagList = new SelectList(_interviewerService.GetAllTagsFromIRF().Result);
+
         }
 
         public async Task<IActionResult> DeleteInterviewerProfile(int UserId)
