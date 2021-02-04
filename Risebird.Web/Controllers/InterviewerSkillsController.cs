@@ -843,8 +843,8 @@ namespace Risebird.Web.Controllers
                             Page = 1;
                         }
                         int totalMeetings = 0;
-                        modelList = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsPaged(Page.Value).Result;
-                        totalMeetings = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsCount().Result;
+                        modelList = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsPaged(Page.Value, searchvalue).Result;
+                        totalMeetings = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsCount(searchvalue).Result;
 
                         foreach (var item in modelList)
                         {

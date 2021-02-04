@@ -1441,8 +1441,7 @@
             //TechSkills actual weightage total
             var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
             var techTotal = 0;
-            for (i = 0; i < (techItems.length); i++) {
-
+            for (i = 0; i < techItems.length; i++) {
                 techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
             }
             if (profileValue != null && profileValue != '') {

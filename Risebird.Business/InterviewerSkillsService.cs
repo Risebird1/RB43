@@ -417,11 +417,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page)
+        public async Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page,string searchvalue)
         {
             try
             {
-                var result = await _interviewerSkillsRepository.GetInterviewerRiseTubeMeetingsPaged(Page);
+                var result = await _interviewerSkillsRepository.GetInterviewerRiseTubeMeetingsPaged(Page, searchvalue);
                 return result.ToList();
             }
             catch (Exception ex)
@@ -430,11 +430,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<int> GetInterviewerRiseTubeMeetingsCount()
+        public async Task<int> GetInterviewerRiseTubeMeetingsCount(string searchvalue)
         {
             try
             {
-                return await _interviewerSkillsRepository.GetInterviewerRiseTubeMeetingsCount(); ;
+                return await _interviewerSkillsRepository.GetInterviewerRiseTubeMeetingsCount(searchvalue); ;
             }
             catch (Exception ex)
             {

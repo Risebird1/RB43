@@ -936,7 +936,7 @@ namespace Risebird.Repository
             }
 
         }
-        public async Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page)
+        public async Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page,string searchvalue)
         {
             try
             {
@@ -945,6 +945,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@startFromParam", ((Page - 1) * 12));
                     parameters.Add("@endWithParam", Page * 12);
+                    parameters.Add("@searchvalue", searchvalue);
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetInterviewerRiseTubeMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return (List<MeetingVM>)result;
@@ -960,14 +961,15 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<int> GetInterviewerRiseTubeMeetingsCount()
+        public async Task<int> GetInterviewerRiseTubeMeetingsCount(string searchvalue)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    var result = await SqlMapper.QueryAsync<int>(con, "usp_GetInterviewerRisetubeIndexMeetings", null,
+                    parameters.Add("@searchvalue", searchvalue);
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_GetInterviewerRisetubeIndexMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
