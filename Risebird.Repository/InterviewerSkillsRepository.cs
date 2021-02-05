@@ -488,7 +488,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        
+
         public IEnumerable<TransInterviewerSkillsLeadInterviewer> GetTransInterviewer(int id)
         {
             try
@@ -530,7 +530,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        
+
         public async Task<bool> UpdateInterviewerSkillsDetails(InterviewerSkillsVM InterviewerSkillsDetails)
         {
             try
@@ -544,7 +544,7 @@ namespace Risebird.Repository
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerSkillsChannel", parameters,
                        commandType: CommandType.StoredProcedure);
 
-                    
+
 
 
 
@@ -1182,6 +1182,28 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<List<string>> FetchAdminList()
+        {
+            try
+            {
+                var query = "Select Emailid from UserList where idProfile in(1)";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<string>(query, null);
+                    return (List<string>)result;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
         }
     }
 }

@@ -42,12 +42,13 @@ namespace Risebird.CommonHelper.Interface
         string InsuficientBalancNotifiaction(Mail model);
         string SendQCPassNotificationToClient(List<string> clients, string candidateEmail, string primarySkill, string interviewStatus, string interviewDate);
         string SharedTestLink(Mail model, string title, string timeduration, string Url, string ClientName);
-        string CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany,int score);
+        string CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany, int score);
         string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null);
-        string RBPayNotification(Mail model,string emailid);
+        string RBPayNotification(Mail model, string emailid);
         string RBFNQueryNotification(Mail model, string query);
         string ChannelRequestNotification(Mail model, string client, string Skill, string Requester);
-        string RBFNPaymentConfirmationNotification(Mail model, string amount,string fileName);
+        string RBFNPaymentConfirmationNotification(Mail model, string amount, string fileName);
         string SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill);
+        string CandidateShortlistNotification(Mail model, string currenturl, string comment, string email);
     }
 }

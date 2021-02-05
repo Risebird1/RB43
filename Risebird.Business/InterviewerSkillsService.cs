@@ -612,6 +612,17 @@ namespace Risebird.Business
 
             return model;
         }
+        public async Task<List<string>> FetchAdminList()
+        {
+            try
+            {
+                return await _interviewerSkillsRepository.FetchAdminList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
-
 }

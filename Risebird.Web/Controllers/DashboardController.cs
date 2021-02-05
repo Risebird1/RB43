@@ -299,6 +299,7 @@ namespace Risebird.Web.Controllers
             return Json(result);
         }
 
+
         #region ChannelManagement
         public async Task<IActionResult> RequirementManagement()
         {
@@ -306,7 +307,16 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
                 var model = await _dashboardService.FetchChannelRequests();
+                ViewBag.Client = "false";
+                if (profileName == "Client")
+                {
+                    var Emailaddress = emailid.ToUpper();
+                    model = model.Where(x => x.RequesterEmailid.ToUpper() == Emailaddress).ToList();
+                    ViewBag.Client = "true";
+                }
                 if (TempData["SuccessErrorMessageInterview"] != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
@@ -338,6 +348,7 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
             }
+            ViewBag.Client = "false";
             var model = new ChannelVM();
             model.isEditable = false;
             return View(model);
@@ -425,9 +436,14 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                 {
                     ViewBag.type = "back";
+                    ViewBag.Client = "false";
+                    if (profileName == "Client")
+                    {
+                        ViewBag.Client = "true";
+                    }
                     var model = await _dashboardService.FetchChannelRequestsByid(id);
                     model.isEditable = true;
                     var Priority = from Prioritylevels s in Enum.GetValues(typeof(Prioritylevels))
@@ -630,6 +646,217 @@ namespace Risebird.Web.Controllers
             var model = await _dashboardService.FetchHRList(term);
             return Json(model);
         }
+        public IActionResult AddInterviewerList(int id, string channelname)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        if (profileName == "Client")
+                        {
+                            ViewBag.IsClient = "true";
+                        }
+                        ViewBag.ChannelName = channelname;
+                        ViewBag.ISCId = id;
+                        ViewBag.Profile = profileName;
+                        var interviewerList = new List<ChannelApprovedInterviewer>();
+                        interviewerList = _dashboardService.GetChannelInterviewers(id)?.ToList();
+
+
+                        if (TempData["SuccessErrorMessageISCInterviewerList"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageISCInterviewerList"].ToString();
+                            TempData.Remove("SuccessErrorMessageISCInterviewerList");
+                        }
+                        return View(interviewerList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+        [HttpGet]
+        public IActionResult SelectChannelInterviewers(int cmId, string cmTitle)
+        {
+
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR")
+                {
+                    var model = new AddChannelInterviewersVM();
+                    model.ChannelInterviewersCollection = (IList<ChannelApprovedInterviewer>)_dashboardService.GetChannelApprovedInterviewer(cmId);
+                    model.ChannelId = cmId;
+                    model.ChannelTitle = cmTitle;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> SelectChannelInterviewers(AddChannelInterviewersVM model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (_dashboardService.AddChannelApprovedInterviewer(model.ChannelInterviewersCollection, model.ChannelId))
+                        {
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Interviewer added Successfully";
+                            return RedirectToAction("AddInterviewerList", new { id = model.ChannelId, channelname = model.ChannelTitle });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Interviewer could not be added.";
+                            return RedirectToAction("AddInterviewerList", new { id = model.ChannelId, channelname = model.ChannelTitle });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageISCInterviewerList"] = "Interviewer could not be added.";
+                return RedirectToAction("AddInterviewerList", new { id = model.ChannelId, channelname = model.ChannelTitle });
+            }
+        }
+        public IActionResult DeleteChannelInterviewer(int id, int iscId, string iscName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (_dashboardService.DeleteChannelInterviewer(id).Result)
+                        {
+                            //TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer removed Successfully.";
+                            return RedirectToAction("AddInterviewerList", new { id = iscId, channelname = iscName });
+                        }
+                        else
+                        {
+                            //TempData["SuccessErrorMessageISCInterviewer"] = "Could not remove Interviewer.";
+                            return RedirectToAction("AddInterviewerList", new { id = iscId, channelname = iscName });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageISCInterviewer"] = "Could not remove Interviewer.";
+                return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
+            }
+
+        }
+        public IActionResult ChannelInterviewerAction(int id, string channelName, int channelid, string status)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Client")
+                    {
+                        if (_dashboardService.ChannelInterviewerAction(id, status).Result)
+                        {
+                            if (status == "Approved")
+                            {
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer approved Successfully.";
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer unapproved Successfully.";
+                            }
+
+                            return RedirectToAction("AddInterviewerList", new { id = channelid, channelname = channelName });
+                        }
+                        else
+                        {
+                            if (status == "Approved")
+                            {
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Could not approved Interviewer.";
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Could not unapproved Interviewer.";
+                            }
+                            return RedirectToAction("AddInterviewerList", new { id = channelid, channelname = channelName });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageISCInterviewer"] = "Could not remove Interviewer.";
+                return RedirectToAction("GetISCInterviewers", new { id = channelid, channelname = channelName });
+            }
+        }
+        
         #endregion
 
         [Authorize]
@@ -679,7 +906,7 @@ namespace Risebird.Web.Controllers
                                     modelList = modelList.Where(x => string.IsNullOrEmpty(x.InterviewerComment));
                                 }
                             }
-                            
+
 
                         }
                         else
@@ -736,7 +963,7 @@ namespace Risebird.Web.Controllers
                             return x;
                         }).ToList();
 
-                        if( filter.Status != null)
+                        if (filter.Status != null)
                         {
                             if (filter.Status.Contains(UnassignedInterviewsTypes.Unassigned.GetDescription()))
                             {
@@ -755,7 +982,7 @@ namespace Risebird.Web.Controllers
                                 modelList = modelList.Where(x => string.IsNullOrEmpty(x.InterviewerComment));
                             }
                         }
-                        
+
 
                         return View(modelList);
                     }

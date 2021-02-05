@@ -101,5 +101,6 @@ namespace Risebird.Repository.Interface
         int GetCandidateId(int id, string irfName);
         IEnumerable<TechSkillReport> GetTechSkillReport(int id);
         IEnumerable<QuestionsDiscussed> GetQuestionsDiscussed(int id);
+        Task<List<string>> FetchAdminList();
     }
 }
