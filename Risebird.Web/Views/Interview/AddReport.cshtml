@@ -1,5 +1,6 @@
 ﻿@model Risebird.Entities.ViewModel.InterviewReport
 @using System.Text.RegularExpressions
+@using Risebird.Entities.Enum
 
 @{
     ViewData["Title"] = "Interview Report";
@@ -219,7 +220,7 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="card">
                                             <div class="card-body">
-                                                <div class="form-group"  style="margin-bottom:0px;">
+                                                <div class="form-group" style="margin-bottom:0px;">
                                                     @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 " })
                                                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                         <div class="talktext">
@@ -229,10 +230,10 @@
                                                     </div>
 
                                                 </div>
-                                                <div class="form-group"  style="margin-bottom:0px;">
+                                                <div class="form-group" style="margin-bottom:0px;">
                                                     <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
                                                 </div>
-                                             
+
                                             </div>
                                         </div>
                                     </div>
@@ -359,7 +360,7 @@
 
 
                                                 <div class="pull-left"> <button id="startRecButton" type="button" onclick="startRecording()">Start Recording</button><span class="record-txt">Start<br /> Recording</span></div>
-                                                <div class="pull-left"> <button id="stopRecButton" type="button" onclick="stopRecording('@Model.InterviewId')" disabled="disabled">Stop Recording</button><span class="record-txt">Stop<br /> Recording</span></div>
+                                                <div class="pull-left"> <button id="stopRecButton" type="button" onclick="stopRecording('@Model.InterviewId','@((int)CandidateTypeEnum.Candidate)')" disabled="disabled">Stop Recording</button><span class="record-txt">Stop<br /> Recording</span></div>
                                                 <div class="pull-left">
                                                     <div> <button id="cancelRecButton" type="button" onclick="cancelRecording()" disabled="disabled">Cancel Recording</button><span class="record-txt">Cancel<br /> Recording</span></div>
                                                 </div>
@@ -1294,9 +1295,9 @@
                                 </div>
 
                             </div>
-                            @Html.HiddenFor(x=>x.CandidateId)
-                            @Html.HiddenFor(x=>x.OldInterviewStatus)
-                            @Html.HiddenFor(x=>x.OldMeetingStatus)
+                            @Html.HiddenFor(x => x.CandidateId)
+                            @Html.HiddenFor(x => x.OldInterviewStatus)
+                            @Html.HiddenFor(x => x.OldMeetingStatus)
                         </form>
                     </div>
 

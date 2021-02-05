@@ -1390,11 +1390,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink)
+        public bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink, int candidateType =0)
         {
             try
             {
-                return _meetingRespository.SaveFeedbackAudio(interviewId, feedbackAudioLink);
+                return _meetingRespository.SaveFeedbackAudio(interviewId, feedbackAudioLink, candidateType);
             }
 
             catch (Exception e)
