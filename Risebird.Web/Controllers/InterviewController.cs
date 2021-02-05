@@ -4875,6 +4875,12 @@ namespace Risebird.Web.Controllers
         public async Task<string> UploadAudio()
         {
             var file = Request.Form.Files;
+            var nvc = Request.Form;
+            int candidateType=0;
+            if (!string.IsNullOrEmpty(nvc["candidateType"]))
+            {
+                candidateType = Convert.ToInt16(nvc["candidateType"]);
+            }
 
             var fileName = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');
             var interviewId = fileName.Split("_")[2];
@@ -4886,7 +4892,7 @@ namespace Risebird.Web.Controllers
                 var blob = containerRef.GetBlockBlobReference(fileName);
                 uploadedfbaudioFileURL = blob.Uri.ToString();
             }
-            _meetingService.SaveFeedbackAudio(Convert.ToInt32(interviewId), uploadedfbaudioFileURL);
+            _meetingService.SaveFeedbackAudio(Convert.ToInt32(interviewId), uploadedfbaudioFileURL, candidateType);
             return uploadedfbaudioFileURL;
         }
 

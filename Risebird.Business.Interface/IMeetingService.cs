@@ -66,7 +66,7 @@ namespace Risebird.Business.Interface
 
         List<MeetingVM> IRFMultipleCandidateInvites(string IRFId);
         Task<bool> DeleteInterview(int imid);
-        bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink);
+        bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink, int candidateType = 0);
         Task<string> Broadcast(BroadcastModel model);
         IEnumerable<Meeting> GetHROpenInterviews();
         string HRAssignYourself(int meetingid, string hrMailId);

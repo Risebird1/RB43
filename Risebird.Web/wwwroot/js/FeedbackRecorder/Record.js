@@ -9,7 +9,7 @@ var input; 							//MediaStreamAudioSourceNode we'll be recording
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext;//audio context to help us record
 var interviewId;
-
+var candidateType;
 function startRecording() {
     //console.log("recordButton clicked");
     document.getElementById("stopRecButton").disabled = false;
@@ -70,14 +70,14 @@ function startRecording() {
 //    }
 //}
 
-function stopRecording(id) {
+function stopRecording(id, canType) {
     document.getElementById("stopRecButton").disabled = true;
     document.getElementById("startRecButton").disabled = false;
     document.getElementById("cancelRecButton").disabled = true;
     document.getElementById("recordingStatus").innerHTML = "Recording stopped!";
     setTimeout(afterTimeOut, 500);
     interviewId = id;
-    
+    candidateType = canType;
     //tell the recorder to stop the recording
     rec.stop();
 
@@ -129,6 +129,8 @@ function createDownloadLink(blob) {
 
     var fd = new FormData();
     fd.append("audio_data", blob, filename + ".wav");
+    fd.append('candidateType', candidateType);
+
     $.ajax(
         {
             url: '/Interview/UploadAudio',

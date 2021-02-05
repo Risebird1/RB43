@@ -166,12 +166,12 @@
                                                         @if (item.EmailId != null && item.EmailId != "")
                                                         {
 
-                                                            @if (item.EmailId.Length > 20)
+                                                            @if (item.EmailId.Length > 25)
                                                             {
 
 
                                                                 <td class="cadEmail">
-                                                                    <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0,20)... </a>
+                                                                    <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0,25)... </a>
                                                                 </td>
                                                             }
 
@@ -665,8 +665,8 @@
 
 
             if (data[i].emailId != null && data[i].emailId != "") {
-                if (data[i].emailId.length > 20) {
-                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].emailId + '">' + data[i].emailId.substring(0, 18) + '...  + '</a></td>';
+                if (data[i].emailId.length > 25) {
+                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].emailId + '">' + data[i].emailId.substring(0, 25) + '...  </a></td>';
                 }
                 else {
                     html += '  <td class="cadEmail"><a onclick="">' + data[i].emailId + ' </a></td>';
