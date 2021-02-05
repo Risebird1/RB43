@@ -80,5 +80,6 @@ namespace Risebird.Business.Interface
         Task<bool> DeleteCandidateStatus(int id);
         IEnumerable<Level> GetLevels();
         IEnumerable<LevelTech> GetLevelTech();
+        Task<IEnumerable<InterviewerProfileVM>> GetInterviewersByTag(string tag);
     }
 }

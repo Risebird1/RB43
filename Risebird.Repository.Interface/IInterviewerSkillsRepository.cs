@@ -90,8 +90,8 @@ namespace Risebird.Repository.Interface
         ////bool AddPausedMeetings(int InterviewerSkillId, int meetingId);
         ////Task<IEnumerable<MeetingVM>> PlayIRF(string InterviewerSkillId);
         //IEnumerable<TransClientUser> GetTransClientUserRole();
-        Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page);
-        Task<int> GetInterviewerRiseTubeMeetingsCount();
+        Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page,string searchvalue);
+        Task<int> GetInterviewerRiseTubeMeetingsCount(string searchvalue);
         Task<MeetingVM> GetMeetingbyid(int id, string Email);
         Task<IEnumerable<MeetingVM>> GetInterviewerRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern);
         IRFDetails GetInterviewerIRFDetails(int id);
@@ -101,5 +101,6 @@ namespace Risebird.Repository.Interface
         int GetCandidateId(int id, string irfName);
         IEnumerable<TechSkillReport> GetTechSkillReport(int id);
         IEnumerable<QuestionsDiscussed> GetQuestionsDiscussed(int id);
+        Task<List<string>> FetchAdminList();
     }
 }

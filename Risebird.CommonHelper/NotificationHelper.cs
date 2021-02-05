@@ -1138,7 +1138,7 @@ namespace Risebird.CommonHelper
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
                 }
-                
+
                 if (!String.IsNullOrEmpty(fileName))
                 {
                     byte[] byteData = Encoding.ASCII.GetBytes(File.ReadAllText(fileName));
@@ -1153,7 +1153,7 @@ namespace Risebird.CommonHelper
                     msg.AddAttachment(attachment);
                 }
 
-                
+
                 object[] parameters = new object[] { amount };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RBFNPaymentConfirmationNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -1236,7 +1236,7 @@ namespace Risebird.CommonHelper
 
                 var msg = new SendGridMessage();
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                msg.Subject = "Candidate status for yesterday (" + DateTime.Now.AddDays(-1).ToString("dd MMMM yyyy") + ")"; 
+                msg.Subject = "Candidate status for yesterday (" + DateTime.Now.AddDays(-1).ToString("dd MMMM yyyy") + ")";
 
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
                 foreach (var clientEmail in clientEmails)
@@ -1284,7 +1284,7 @@ namespace Risebird.CommonHelper
                 sb.Append("</table>");
 
 
-                object[] parameters = new object[] { irfName,  primarySkill, sb };
+                object[] parameters = new object[] { irfName, primarySkill, sb };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateLastStatusTemplate.html");
 
                 string msgBody = string.Format(rawEmail, parameters);
@@ -1299,7 +1299,30 @@ namespace Risebird.CommonHelper
 
             }
         }
+        public string CandidateShortlistNotification(Mail model, string currenturl, string comment, string email)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Payment Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                object[] parameters = new object[] { email, currenturl, comment };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewershortlistNotification.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
 
+                return SendMail(msg);
+            }
+            catch (Exception ex)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
 
     }
 }

@@ -27,7 +27,9 @@ INSERT INTO [dbo].[TransEmergencyInterviewer](
 	[InterviewerId])
 	
 
-SELECT eibd.*, Interviewer.id as InterviewerId FROM @EmergencyInterviewerBulkData eibd left join Interviewer on eibd.UserId = Interviewer.UserId
+--SELECT eibd.*, Interviewer.id as InterviewerId FROM @EmergencyInterviewerBulkData eibd left join Interviewer on eibd.UserId = Interviewer.UserId
+SELECT eibd.*, InterviewerProfile.id as InterviewerId FROM @EmergencyInterviewerBulkData eibd left join InterviewerProfile on eibd.UserId = InterviewerProfile.UserId
+
 
 
 END

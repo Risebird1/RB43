@@ -488,7 +488,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        
+
         public IEnumerable<TransInterviewerSkillsLeadInterviewer> GetTransInterviewer(int id)
         {
             try
@@ -530,7 +530,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        
+
         public async Task<bool> UpdateInterviewerSkillsDetails(InterviewerSkillsVM InterviewerSkillsDetails)
         {
             try
@@ -544,7 +544,7 @@ namespace Risebird.Repository
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerSkillsChannel", parameters,
                        commandType: CommandType.StoredProcedure);
 
-                    
+
 
 
 
@@ -936,7 +936,7 @@ namespace Risebird.Repository
             }
 
         }
-        public async Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page)
+        public async Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page,string searchvalue)
         {
             try
             {
@@ -945,6 +945,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@startFromParam", ((Page - 1) * 12));
                     parameters.Add("@endWithParam", Page * 12);
+                    parameters.Add("@searchvalue", searchvalue);
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetInterviewerRiseTubeMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return (List<MeetingVM>)result;
@@ -960,14 +961,15 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<int> GetInterviewerRiseTubeMeetingsCount()
+        public async Task<int> GetInterviewerRiseTubeMeetingsCount(string searchvalue)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    var result = await SqlMapper.QueryAsync<int>(con, "usp_GetInterviewerRisetubeIndexMeetings", null,
+                    parameters.Add("@searchvalue", searchvalue);
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_GetInterviewerRisetubeIndexMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
@@ -1165,7 +1167,7 @@ namespace Risebird.Repository
             try
             {
                 // var query = "Select * from QuestionsDiscussed where InterviewId = @id";
-                var query = "Select  qd.id,qd.InterviewId,qd.Comment,qd.SkillName,qd.RatingId,qd.Timing,vc.VideoLink,vc.Priority from QuestionsDiscussed qd Left join VideoQuestionDetails vc on vc.Question=qd.Comment and vc.Interviewid =@id where qd.Interviewid= @id";
+                var query = "Select  qd.id,qd.InterviewId,qd.Question as Comment,qd.RatingId from InterviewerQuestionsDiscussed qd where qd.Interviewid= @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -1180,6 +1182,28 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<List<string>> FetchAdminList()
+        {
+            try
+            {
+                var query = "Select Emailid from UserList where idProfile in(1)";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<string>(query, null);
+                    return (List<string>)result;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
         }
     }
 }

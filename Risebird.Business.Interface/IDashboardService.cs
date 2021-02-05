@@ -33,5 +33,10 @@ namespace Risebird.Business.Interface
         Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCount();
         Task<IEnumerable<MeetingVM>> GetNotUpdatedMeetings();
         Task<List<string>> FetchHRList(string searchterm);
+        bool AddChannelApprovedInterviewer(IEnumerable<ChannelApprovedInterviewer> model, int channelid);
+        IEnumerable<ChannelApprovedInterviewer> GetChannelApprovedInterviewer(int id);
+        IEnumerable<ChannelApprovedInterviewer> GetChannelInterviewers(int id);
+        Task<bool> DeleteChannelInterviewer(int id);
+        Task<bool> ChannelInterviewerAction(int id, string action);
     }
 }

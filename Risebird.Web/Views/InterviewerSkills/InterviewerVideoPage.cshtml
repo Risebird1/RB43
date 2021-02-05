@@ -80,7 +80,8 @@
                 <div class="mdc-card card bg-w">
                     <div class="mdc-card-wrapper__text-section">
 
-
+                        <input type="text" id="txtVideoId" value="@Model.imid" hidden />
+                        <input type="text" id="txtUserEmailfromlogin" value="@ViewBag.Emailaddress" hidden />
                         @if (ViewBag.ResultStatus == "VideoPresent")
                         {
                             <div id="wrapper">
@@ -535,13 +536,9 @@
                                                                                                     <table class="table table-bordered mbn disQus" id="QuestionsTable">
                                                                                                         <thead>
                                                                                                             <tr>
-                                                                                                                <th width="40%">Questions</th>
-                                                                                                                <th width="20%">SkillName</th>
-                                                                                                                <th width="20%">Rating</th>
-                                                                                                                @if (Model.MeetingPatch.Count() == 0)
-                                                                                                                {
-                                                                                                                    <th width="10%">Time(In Seconds)</th>
-                                                                                                                }
+                                                                                                                <th width="70%">Questions</th>
+                                                                                                                <th width="30%">Rating</th>
+
                                                                                                             </tr>
                                                                                                         </thead>
                                                                                                         <tbody>
@@ -552,19 +549,12 @@
                                                                                                                         @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
                                                                                                                     </td>
-
-                                                                                                                    <td>
-                                                                                                                        @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                                                                                    </td>
                                                                                                                     <td>
                                                                                                                         @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control" })
 
                                                                                                                     </td>
 
-                                                                                                                    <td>
-                                                                                                                        <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" @*min="1" *@>
-                                                                                                                    </td>
+
                                                                                                                 </tr>
                                                                                                             }
                                                                                                             else
@@ -575,18 +565,11 @@
                                                                                                                     {
                                                                                                                         <tr onclick="switchtoquestionVideo(@Model.IreportModel.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                                                                             <td>
-                                                                                                                                @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                                            </td>
-                                                                                                                            <td>
-                                                                                                                                @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                                                @*@Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })*@
+                                                                                                                                @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].Comment, new { ID = "drop", @class = "dropques form-control text-box single-line " })
                                                                                                                             </td>
                                                                                                                             <td>
                                                                                                                                 @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating", disabled = "disabled" })
-                                                                                                                            </td>
-                                                                                                                            <td>
-
-                                                                                                                                @Html.EditorFor(m => m.IreportModel.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
-
                                                                                                                             </td>
                                                                                                                         </tr>
                                                                                                                     }
@@ -597,10 +580,8 @@
                                                                                                                     {
                                                                                                                         <tr onclick="changeVideo(@Model.IreportModel.QuestionsCollection[i].Priority)" style="cursor:pointer">
                                                                                                                             <td>
-                                                                                                                                @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                                            </td>
-                                                                                                                            <td>
-                                                                                                                                @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                                                @*@Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })*@
+                                                                                                                                @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].Comment, new { ID = "drop", @class = "dropques form-control text-box single-line " })
                                                                                                                             </td>
                                                                                                                             <td>
                                                                                                                                 @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating" })
@@ -1061,7 +1042,7 @@
             </div>
         </div>
     </div>
-    <div id="myModal" class="modal modal-bg">
+    <div id="MyShortlistModel" class="modal modal-bg">
         <!-- Modal content -->
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -1069,28 +1050,39 @@
 
                 <div class="filheader">
                     <div class="filavatar">
-                        <span class="publicsharing-icon">
-
-
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
-                        </span>
+                        <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
                     </div>
-                    <h5 class="modal-title pull-left">Call Candidate !</h5>
+                    <h5 class="modal-title pull-left">ShortList</h5>
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                    <span onclick="closeShortlistModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
                 </button>
 
 
-
                 <div class="modal-body">
+                    <div class="col-md-12">
+                        <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Your Email Id</label>
+                        <div class="sharing">
+                            <textarea spellcheck="true" class="form-control " rows="2" id="txtUserEmailid" placeholder="Please enter your EmailId" style="width:100%"></textarea>
+                            <div id="words"></div>
+                        </div>
 
-                    <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="label-field desp-label" for="Comment">Comment(Editable)</label>
 
+                        <div class="sharing">
+                            <textarea spellcheck="true" class="form-control" rows="2" id="txtusercomment" placeholder="Comment" style="width:100%; "></textarea>
+                            <div id="words"></div>
+                        </div>
 
-                    <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
-    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
-
+                    </div>
+                    <div class="col-md-12 ">
+                        <div class="text-right">
+                            <input type="button" onclick="ShortlistVideoLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
+                            <input style="color:#fff;line-height: 13px;" type="button" onclick="closeShortlistModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -1461,10 +1453,8 @@
             //TechSkills actual weightage total
             var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
             var techTotal = 0;
-            for (i = 0; i < (techItems.length); i++) {
-
+            for (i = 0; i < techItems.length; i++) {
                 techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
-
             }
             if (profileValue != null && profileValue != '') {
                 profileScore = parseInt(profileValue) * 20;
@@ -1475,7 +1465,7 @@
             if (interviewingAbilityValue != null && interviewingAbilityValue != '') {
                 interviewingAbilityScore = parseInt(interviewingAbilityValue) * 20;
             }
-            
+
             obj.y = techTotal / 4;
             obj.label = "Tech Skills Score";
             obj.legendText = "Tech Skills Score";
@@ -1812,16 +1802,12 @@
 
             $("#btnShortlist").on('click', function () {
                 if ($(this).attr('Shortvalue') == 1) {
-                    $(this).attr('Shortvalue', "2");
-                    $.ajax({
-                        type: "POST",
-                        url: "/RiseTube/CandidateShortList",
-                        data: { videoid: $("#txtVideoId").val() },
-                        success: function (data) {
-                            $("#btnShortlist").val("Shortlisted(" + data + ")");
-                        }
-                    });
-
+                    var modal = document.getElementById("MyShortlistModel");
+                    modal.style.display = "block";
+                    if ($("#txtUserEmailfromlogin").val() != "") {
+                        $("#txtUserEmailid").attr("readonly", "readonly");
+                        $("#txtUserEmailid").val($("#txtUserEmailfromlogin").val());
+                    }
                 }
             });
 
@@ -1846,7 +1832,6 @@
                                         html += '  <div class="message-data"><span class="message-data-name"><b>' + data[i].userName + ' </b></span></div>  <div class="message my-message borders comment-tri-right left-tp"> ' + data[i].comment; '</div>'
                                         html += '    </li>';
                                     }
-
                                     html += '    </ul></div></div>';
                                     $("#divcomments").empty().html(html);
                                 }
@@ -1855,80 +1840,31 @@
                     });
                 }
             });
-            $('#btnSearch').on('click', function () {
-                if ($(this).attr('data-click-state') == 1) {
-                    $(this).attr('data-click-state', 0);
-                    $(this).css('background-color', 'blue');
-                    $(this).val('Share');
-                    $.ajax({
-                        type: "POST",
-                        url: "/RiseTube/VideoShare",
-                        data: { value: "Private", videoid: $("#txtVideoId").val() },
-                        success: function (data) {
-
-                        }
-                    });
-                }
-                else {
-                    $(this).attr('data-click-state', 1);
-                    $(this).css('background-color', 'green');
-                    $(this).val('Shared');
-                    $.ajax({
-                        type: "POST",
-                        url: "/RiseTube/VideoShare",
-                        data: { value: "Public", videoid: $("#txtVideoId").val() },
-                        success: function (data) {
-
-                        }
-                    });
-
-                }
-            });
-            $('#toggle-click').on('click', function () {
-                if ($(this).attr('data-click-state') == 1) {
-                    $(this).attr('data-click-state', 0);
-
-
-                }
-                else {
-                    $(this).attr('data-click-state', 1);
-                    $(this).css('color', 'blue');
-                    $('#toggle-click1').css('color', 'black');
-                    $.ajax({
-                        type: "POST",
-                        url: "/RiseTube/VideoLike",
-                        data: { value: "Liked", videoid: $("#txtVideoId").val() },
-                        success: function (data) {
-                            $("#pTotalvideolike").text(data.totalVedioLike);
-                            $("#pTotalvideodislike").text(data.totalVedioDisLike);
-
-                        }
-                    });
-                }
-            });
-            $('#toggle-click1').on('click', function () {
-                if ($(this).attr('data-click-state') == 1) {
-                    $(this).attr('data-click-state', 0);
-
-                }
-                else {
-                    $(this).attr('data-click-state', 1);
-                    $(this).css('color', 'blue');
-                    $('#toggle-click').css('color', 'black');
-                    $.ajax({
-                        type: "POST",
-                        url: "/RiseTube/VideoLike",
-                        data: { value: "Disliked", videoid: $("#txtVideoId").val() },
-                        success: function (data) {
-                            $("#pTotalvideolike").text(data.totalVedioLike);
-                            $("#pTotalvideodislike").text(data.totalVedioDisLike);
-
-                        }
-                    });
-                }
-            });
         });
 
+        function ShortlistVideoLinkToMail() {
+            var emailaddress = $("#txtUserEmailid").val();
+            var comment = $("#txtusercomment").val();
+            if (emailaddress.trim() != "" && comment.trim() != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "/InterviewerSkills/CandidateShortList",
+                    data: { videoid: $("#txtVideoId").val(), email: emailaddress, comment: comment },
+                    success: function (data) {
+                        $("#btnShortlist").val("Shortlisted");
+                        swal.fire("Shortlisted successfully.");
+                        $("#btnShortlist").attr('Shortvalue', "2");
+                        closeShortlistModel();
+                    }
+                });
+            } else {
+                swal.fire("All fields are required.");
+            }
+        }
+        function closeShortlistModel() {
+            var modal = document.getElementById("MyShortlistModel");
+            modal.style.display = "none";
+        }
         function switchtoquestionVideo(questiontime) {
             var time = 1;
             if (questiontime != '') {

@@ -334,5 +334,70 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public bool AddChannelApprovedInterviewer(IEnumerable<ChannelApprovedInterviewer> model, int channelid)
+        {
+            try
+            {
+                return _dashboardRespository.AddChannelApprovedInterviewer(model.Where(x => x.IsAdded), channelid);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public IEnumerable<ChannelApprovedInterviewer> GetChannelApprovedInterviewer(int id)
+        {
+            try
+            {
+                return _dashboardRespository.GetChannelApprovedInterviewer(id).Result.ToList();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IEnumerable<ChannelApprovedInterviewer> GetChannelInterviewers(int id)
+        {
+            try
+            {
+                return _dashboardRespository.GetChannelInterviewers(id);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> DeleteChannelInterviewer(int id)
+        {
+            try
+            {
+                return _dashboardRespository.DeleteChannelInterviewer(id).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<bool> ChannelInterviewerAction(int id, string action)
+        {
+            try
+            {
+                return _dashboardRespository.ChannelInterviewerAction(id,action).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

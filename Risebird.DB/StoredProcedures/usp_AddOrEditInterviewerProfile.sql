@@ -37,6 +37,7 @@ CREATE PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @IsLeadInterviewer bit,
 @IsActive bit,
 @IsApproved bit,
+@Tag varchar(200),
 @InterviewerProfileId int output
 
 AS
@@ -77,7 +78,8 @@ Declare @v_ProfileId int;
 			[LinkedinLink] = @LinkedinLink,
 			[Blog] = @Blog,
 			[IsLeadInterviewer] = @IsLeadInterviewer,
-			[IsApproved] = @IsApproved
+			[IsApproved] = @IsApproved,
+			[Tag]=@Tag
        
 	where userId = @UserId;
 	
@@ -143,7 +145,8 @@ Declare @v_User_Id int;
 			[LinkedinLink],
 			[Blog],
 			[IsLeadInterviewer],
-			[IsApproved])
+			[IsApproved],
+			[Tag])
        VALUES
            (@v_User_Id,
 			@NickName,
@@ -164,7 +167,8 @@ Declare @v_User_Id int;
 			@LinkedinLink,
 			@Blog,
 			@IsLeadInterviewer,
-			@IsApproved)
+			@IsApproved,
+			@Tag)
 
 End
 

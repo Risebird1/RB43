@@ -97,6 +97,7 @@ namespace Risebird.Entities.ViewModel
         public string PrimarySkill { get; set; }
         public DateTime CreatedDate { get; set; }
         public string Title { get; set; }
+        public string RequesterEmailid { get; set; }
     }
     public class ChannelInterviewerVM
     {
@@ -144,5 +145,27 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Call Time")]
         public DateTime CallTime { get; set; }
         public bool isEditable { get; set; }
+    }
+    public class ChannelApprovedInterviewer
+    {
+        public int InterviewerProfileId { get; set; }
+        public int id { get; set; }
+        public int UserId { get; set; }
+        public int Channelid { get; set; }
+        public string CurrentRole { get; set; }
+        public string ResumeLink { get; set; }
+        public string PublicUrl { get; set; }
+        public string FirstName { get; set; }
+        public string EmailId { get; set; }
+        public string SkillName { get; set; }
+        public bool IsAdded { get; set; }
+        public string status { get; set; }
+        public bool Isclient { get; set; }
+    }
+    public class AddChannelInterviewersVM
+    {
+        public IList<ChannelApprovedInterviewer> ChannelInterviewersCollection { get; set; }
+        public int ChannelId { get; set; }
+        public string ChannelTitle { get; set; }
     }
 }

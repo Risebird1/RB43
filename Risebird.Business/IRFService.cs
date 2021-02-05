@@ -462,6 +462,7 @@ namespace Risebird.Business
                 model.Heuristicsscore = IRF.Heuristicsscore;
                 model.Type = IRF.BussinessType;
                 model.PrimarySkillInvite = IRF.PrimarySkillInvite;
+                model.Tag = IRF.Tag;
                 var skillCount = transTechSkills.Count();
                 return model;
 
@@ -1490,6 +1491,19 @@ namespace Risebird.Business
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
+        }
+        public async Task<IEnumerable<InterviewerProfileVM>> GetInterviewersByTag(string tag)
+        {
+            try
+            {
+                return await _irfRepository.GetInterviewersByTag(tag);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
         }
     }
 }
