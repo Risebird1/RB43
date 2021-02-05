@@ -97,7 +97,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3 col-sm-3 px-1">
+                            <div class="col-md-3 col-sm-3 pr-1">
                                 <div class="form-group" style="margin-bottom:0px;">
                                     @Html.LabelFor(model => model.Tag, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
@@ -236,7 +236,7 @@
 
 
 
-                                        @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
+                                        @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line"} })
                                         @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @class = "text-danger" })
                                         <div class="spinner">
                                             <button type="button" class="up button">&rsaquo;</button>
@@ -259,10 +259,11 @@
 
                                     </div>
                                     <div class="form-group">
-                                        Upload Company Details
+                                        <span class="desp-label control-label">  Upload Company Details</span>
                                         <input id="companydetails" name="companydetails" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)">
-                                        Provide Company Details
-                                        <input id="companydetails" name="companydetails" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)">
+                                        <span class="desp-label control-label">
+                                            Provide Company Details</span>
+                                            <input id="companydetails" name="companydetails" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)">
                                     </div>
                                     <div class="form-group" style="display:none" id="linkcdDiv">
                                         @Html.LabelFor(model => model.CompanyDetails, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -326,8 +327,10 @@
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
 
                                     </div>
-                                    <div class="form-group">
-                                        Upload JD
+                                    <div class="form-group" style="margin-top:-15px;">
+                                        <span class="desp-label control-label">
+                                            Upload JD
+                                        </span>
 
 
                                         <div class="mdc-touch-target-wrapper" style="top: 4px;
@@ -341,18 +344,19 @@
                                                 <div class="mdc-radio__ripple"></div>
                                             </div>
                                         </div>
-                                        Provide JD Link
-
-                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                            <div class="mdc-radio mdc-radio--touch">
-                                                <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
-                                                <div class="mdc-radio__background">
-                                                    <div class="mdc-radio__outer-circle"></div>
-                                                    <div class="mdc-radio__inner-circle"></div>
+                                        <span class="desp-label control-label">
+                                            Provide JD Link
+                                            </span>
+                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                <div class="mdc-radio mdc-radio--touch">
+                                                    <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
+                                                    <div class="mdc-radio__background">
+                                                        <div class="mdc-radio__outer-circle"></div>
+                                                        <div class="mdc-radio__inner-circle"></div>
+                                                    </div>
+                                                    <div class="mdc-radio__ripple"></div>
                                                 </div>
-                                                <div class="mdc-radio__ripple"></div>
                                             </div>
-                                        </div>
 
 
                                     </div>
@@ -460,7 +464,11 @@
 
                                                     </td>
                                                     <td>
-                                                        <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="text" value="">
+                                                        <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="text" value="" required>
+                                                      
+                                                        <span class="field-validation-valid text-danger" data-valmsg-for="Joinability[0].Value" data-valmsg-replace="true"></span>
+                                                    
+                                                    
                                                     </td>
                                                     <td>
                                                         <input class="form-control text-box single-line" id="Joinability_0__Weightage" name="Joinability[0].Weightage" type="number" max="100" min="1" value="100">
@@ -515,7 +523,8 @@
 
                                                     </td>
                                                     <td>
-                                                        <input class="form-control text-box single-line" id="Selectability_0__Value" name="Selectability[0].Value" type="text" value="">
+                                                        <input class="form-control text-box single-line" id="Selectability_0__Value" name="Selectability[0].Value" type="text" value="" required>
+                                                        <span class="field-validation-valid text-danger" data-valmsg-for="Selectability[0].Value" data-valmsg-replace="true"></span>
                                                     </td>
                                                     <td>
                                                         <input class="form-control text-box single-line" id="Selectability_0__Weightage" name="Selectability[0].Weightage" type="number" max="100" min="1" value="100">
@@ -570,7 +579,8 @@
 
                                                     </td>
                                                     <td>
-                                                        <input class="form-control text-box single-line" id="SkillGeneral_0__Value" name="SkillGeneral[0].Value" type="text" value="">
+                                                        <input class="form-control text-box single-line" id="SkillGeneral_0__Value" name="SkillGeneral[0].Value" type="text" value="" required>
+                                                        <span class="field-validation-valid text-danger" data-valmsg-for="SkillGeneral[0].Value" data-valmsg-replace="true"></span>
                                                     </td>
 
                                                     <td>
