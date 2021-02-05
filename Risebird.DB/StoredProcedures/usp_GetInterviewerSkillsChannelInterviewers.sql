@@ -17,10 +17,11 @@ CREATE PROCEDURE [dbo].[usp_GetInterviewerSkillsChannelInterviewers]
 AS
 BEGIN
 
-select ipr.id as InterviewerProfileId, ipr.UserId, ipr.ResumeLink, ipr.CurrentRole, ipr.PreferredDomain, ul.FirstName, ul.EmailId, ul.MobileNumber, tilis.ISCId,tilis.id, ipr.Experience, ipr.City, isc.EndDate from TransInterviewerListInterviewerSkills tilis 
+select ipr.id as InterviewerProfileId, ipr.UserId, ipr.ResumeLink, ipr.CurrentRole, ipr.PreferredDomain, ul.FirstName, ul.EmailId, ul.MobileNumber, tilis.ISCId,tilis.id, ipr.Experience, ipr.City, isc.EndDate, im.id as imid from TransInterviewerListInterviewerSkills tilis 
 left join InterviewerProfile ipr on ipr.id = tilis.InterviewerProfileId
 left join UserList ul on ipr.UserId = ul.id
 left join InterviewerSkillsChannel isc on isc.id = tilis.ISCId
+left join InterviewMeetings im on (im.IRFId = isc.InterviewerSkillId and ul.EmailId=im.candidateEmail)
 where tilis.ISCId = @ISCId
 
 END

@@ -17,5 +17,6 @@ namespace Risebird.Entities.ViewModel
         public string City { get; set; }
         public float Experience { get; set; }
         public DateTime EndDate { get; set; }
+        public int? imid { get; set; }
     }
 }
