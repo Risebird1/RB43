@@ -143,28 +143,37 @@
                                                     <td>No Resume</td>
                                                 }
 
-                                                <td class="action" style="align-items:center">
-                                                    <button class="mdc-fab app-fab--absolute" aria-label="Send Invite">
-                                                        <span onclick="location.href = '@Url.Action("SendInvite", "InterviewerSkills", new { iscName = ViewBag.ISCName, iscId = ViewBag.ISCId, emailId = item.EmailId, endDate = item.EndDate, interviewerProfileId = item.InterviewerProfileId})'" title="Send Invite" class="mdc-fab__icon material-icons">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                            <td class="action" style="align-items:center">
+                                                @if (item.imid != null && item.imid>0)
+                                                {
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                        <span onclick="location.href = '@Url.Action("AddReport", "Interviewer", new { interviewId = item.imid, irfId = item.ISCId})'" title="Report" class="mdc-fab__icon material-icons">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
                                                         </span>
                                                     </button>
+                                                }
 
-                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Cancel Invite">
-                                                        <span onclick="location.href = '@Url.Action("CancelInvite", "InterviewerSkills", new { iscName = ViewBag.ISCName, iscId = ViewBag.ISCId, emailId = item.EmailId })'" title="Cancel Invite" class="mdc-fab__icon material-icons">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
-                                                        </span>
-                                                    </button>
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Send Invite">
+                                                    <span onclick="location.href = '@Url.Action("SendInvite", "InterviewerSkills", new { iscName = ViewBag.ISCName, iscId = ViewBag.ISCId, emailId = item.EmailId, endDate = item.EndDate, interviewerProfileId = item.InterviewerProfileId})'" title="Send Invite" class="mdc-fab__icon material-icons">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                    </span>
+                                                </button>
+
+                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Cancel Invite">
+                                                    <span onclick="location.href = '@Url.Action("CancelInvite", "InterviewerSkills", new { iscName = ViewBag.ISCName, iscId = ViewBag.ISCId, emailId = item.EmailId })'" title="Cancel Invite" class="mdc-fab__icon material-icons">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
+                                                    </span>
+                                                </button>
 
 
 
-                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                        <span onclick="javascript:DeleteISCInterviewer('@item.id', '@ViewBag.ISCId', '@ViewBag.ISCName');" title="Remove" class="mdc-fab__icon material-icons">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
-                                                        </span>
-                                                    </button>
+                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                    <span onclick="javascript:DeleteISCInterviewer('@item.id', '@ViewBag.ISCId', '@ViewBag.ISCName');" title="Remove" class="mdc-fab__icon material-icons">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                    </span>
+                                                </button>
 
-                                                </td>
+                                            </td>
 
                                                 <td>@item.City</td>
                                                 <td>@item.CurrentRole</td>
