@@ -2987,13 +2987,31 @@ textarea.form-control {
     -ms-transition: all .3s;
     transition: all .3s;
 }
-
+#QuestionsTable.table-bordered td {
+    border-right: 1px solid #dee2e6 !important;
+    border-left: 0px solid #dee2e6 !important;
+    border-top: 1px solid #dee2e6 !important;
+    border-bottom: 0px solid #dee2e6 !important;
+}
+ #QuestionsTable.table-bordered td:nth-of-type(even) {
+    border-right: 0px !important;
+}
+ #SkillTable.table-bordered td {
+    border-right: 1px solid #dee2e6 !important;
+    border-left: 0px solid #dee2e6 !important;
+    border-top: 1px solid #dee2e6 !important;
+    border-bottom: 0px solid #dee2e6 !important;
+}
+    #SkillTable.table-bordered td:nth-of-type(5), #SkillTable.table-bordered td:nth-of-type(10) {
+        border-right: 0px !important;
+    }
+    textarea{font-size:14px;}
     textarea,
     textarea.form-control {
         height: 90px;
         padding-top: 8px;
         padding-bottom: 8px;
-        line-height: 30px;
+        line-height: 25px;
     }
 
         input[type="text"]:focus,
