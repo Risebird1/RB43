@@ -61,7 +61,9 @@
 
                 <div class="pull-right">
                     <div>
-
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span  data-toggle="tooltip" data-placement="top" title="Share to admin(Shortlist details)" onclick="openShortlistModel()" data-original-title="Tooltip on top"><font style="font-family:arial;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg> Admin</font></span>
+                        </button>
                         @Html.ActionLink("Back to List", "RisetubeInterviewer", "InterviewerSkills", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
 
                     </div>
@@ -160,13 +162,13 @@
                                                                         @if (Model.VideoLink != null)
                                                                         {
                                                                             <div class="shortlist pull-left" style="text-align: end;padding:0px 10px;">
-                                                                                @if (Model.IsShortlisted > 0)
+                                                                                @if (ViewBag.Shortlist == "true")
                                                                                 {<i class="fa fa-check"></i>
-                                                                                    <input type="button" class="share-wrap btnShortlist shortlist" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
+                                                                                    <input type="button" class="share-wrap btnShortlist shortlist" id="btnShortlist" value="ShortListed" Shortvalue="2" />
                                                                                 }
                                                                                 else
                                                                                 { <i class="fa fa-check"></i>
-                                                                                    <input type="button" class="share-wrap btnShortlist shortlist" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
+                                                                                    <input type="button" class="share-wrap btnShortlist shortlist" id="btnShortlist" value="ShortList" Shortvalue="1" />
 
                                                                                 }
                                                                             </div>
@@ -1078,13 +1080,9 @@
                             <div id="words"></div>
                         </div>
 
-                    </div>
-                    <div class="col-md-12 ">
-                        <div class="text-right">
-                            <input type="button" onclick="ShortlistVideoLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                            <input style="color:#fff;line-height: 13px;" type="button" onclick="closeShortlistModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
-                        </div>
-                    </div>
+                    <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
+    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+
                 </div>
 
             </div>
@@ -1702,70 +1700,6 @@
     <script src="https://code.highcharts.com/modules/drilldown.js"></script>
     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
-    <script>
-        var candidate = "";
-        var span = document.getElementById("callPopUp");
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
-            hangUp();
-            var modal = document.getElementById("myModal");
-            modal.style.display = "none";
-        }
-        $(document).ready(function () {
-            $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-                // Set up the Twilio Client Device with the token
-                Twilio.Device.setup(data.token);
-            });
-        });
-
-        /* Callback to let us know Twilio Client is ready */
-        Twilio.Device.ready(function (device) {
-
-        });
-
-        function callCandidate(phoneNumber) {
-            var params = { "phoneNumber": phoneNumber };
-            Twilio.Device.connect(params);
-        }
-        function hangUp() {
-            Twilio.Device.disconnectAll();
-        }
-
-        Twilio.Device.connect(function (connection) {
-            var appendText = "In call with " + "<b>" + candidate + "</b>";
-            document.getElementById("callingLabel").innerHTML = appendText;
-        });
-
-        function afterTimeOut() {
-            var modal = document.getElementById("myModal");
-            modal.style.display = "none";
-        }
-
-        Twilio.Device.disconnect(function (connection) {
-            var appendText = "Call disconnected! ";
-            document.getElementById("callingLabel").innerHTML = appendText;
-            setTimeout(afterTimeOut, 2000);
-
-        });
-
-        function ModalButtonClick(mobileNumber, candidateName) {
-            candidate = candidateName;
-            // Get the modal
-            var modal = document.getElementById("myModal");
-            // When the user clicks the button, open the modal
-            modal.style.display = "block";
-            var appendText = "Calling... " + "<b>" + candidate + "</b>";
-            document.getElementById("callingLabel").innerHTML = appendText;
-            callCandidate(mobileNumber);
-        }
-        function closeCallPopUp() {
-            hangUp();
-            var modal = document.getElementById("myModal");
-            modal.style.display = "none";
-        }
-
-
-    </script>
 
     <script>
         $(document).ready(function () {
@@ -1799,17 +1733,21 @@
         });
     </script>
     <script>
-
+        var shortlisttotalcount = [];
         jQuery(document).ready(function ($) {
 
             $("#btnShortlist").on('click', function () {
                 if ($(this).attr('Shortvalue') == 1) {
-                    var modal = document.getElementById("MyShortlistModel");
-                    modal.style.display = "block";
-                    if ($("#txtUserEmailfromlogin").val() != "") {
-                        $("#txtUserEmailid").attr("readonly", "readonly");
-                        $("#txtUserEmailid").val($("#txtUserEmailfromlogin").val());
-                    }
+                    $(this).attr('Shortvalue', "2");
+                    $.ajax({
+                        type: "POST",
+                        url: "/RiseTube/CandidateShortList",
+                        data: { videoid: $("#txtVideoId").val() },
+                        success: function (data) {
+                            $("#btnShortlist").val("Shortlisted(" + data + ")");
+                        }
+                    });
+
                 }
             });
 
@@ -1842,31 +1780,80 @@
                     });
                 }
             });
+            $('#btnSearch').on('click', function () {
+                if ($(this).attr('data-click-state') == 1) {
+                    $(this).attr('data-click-state', 0);
+                    $(this).css('background-color', 'blue');
+                    $(this).val('Share');
+                    $.ajax({
+                        type: "POST",
+                        url: "/RiseTube/VideoShare",
+                        data: { value: "Private", videoid: $("#txtVideoId").val() },
+                        success: function (data) {
+
+                        }
+                    });
+                }
+                else {
+                    $(this).attr('data-click-state', 1);
+                    $(this).css('background-color', 'green');
+                    $(this).val('Shared');
+                    $.ajax({
+                        type: "POST",
+                        url: "/RiseTube/VideoShare",
+                        data: { value: "Public", videoid: $("#txtVideoId").val() },
+                        success: function (data) {
+
+                        }
+                    });
+
+                }
+            });
+            $('#toggle-click').on('click', function () {
+                if ($(this).attr('data-click-state') == 1) {
+                    $(this).attr('data-click-state', 0);
+
+
+                }
+                else {
+                    $(this).attr('data-click-state', 1);
+                    $(this).css('color', 'blue');
+                    $('#toggle-click1').css('color', 'black');
+                    $.ajax({
+                        type: "POST",
+                        url: "/RiseTube/VideoLike",
+                        data: { value: "Liked", videoid: $("#txtVideoId").val() },
+                        success: function (data) {
+                            $("#pTotalvideolike").text(data.totalVedioLike);
+                            $("#pTotalvideodislike").text(data.totalVedioDisLike);
+
+                        }
+                    });
+                }
+            });
+            $('#toggle-click1').on('click', function () {
+                if ($(this).attr('data-click-state') == 1) {
+                    $(this).attr('data-click-state', 0);
+
+                }
+                else {
+                    $(this).attr('data-click-state', 1);
+                    $(this).css('color', 'blue');
+                    $('#toggle-click').css('color', 'black');
+                    $.ajax({
+                        type: "POST",
+                        url: "/RiseTube/VideoLike",
+                        data: { value: "Disliked", videoid: $("#txtVideoId").val() },
+                        success: function (data) {
+                            $("#pTotalvideolike").text(data.totalVedioLike);
+                            $("#pTotalvideodislike").text(data.totalVedioDisLike);
+
+                        }
+                    });
+                }
+            });
         });
 
-        function ShortlistVideoLinkToMail() {
-            var emailaddress = $("#txtUserEmailid").val();
-            var comment = $("#txtusercomment").val();
-            if (emailaddress.trim() != "" && comment.trim() != "") {
-                $.ajax({
-                    type: "POST",
-                    url: "/InterviewerSkills/CandidateShortList",
-                    data: { videoid: $("#txtVideoId").val(), email: emailaddress, comment: comment },
-                    success: function (data) {
-                        $("#btnShortlist").val("Shortlisted");
-                        swal.fire("Shortlisted successfully.");
-                        $("#btnShortlist").attr('Shortvalue', "2");
-                        closeShortlistModel();
-                    }
-                });
-            } else {
-                swal.fire("All fields are required.");
-            }
-        }
-        function closeShortlistModel() {
-            var modal = document.getElementById("MyShortlistModel");
-            modal.style.display = "none";
-        }
         function switchtoquestionVideo(questiontime) {
             var time = 1;
             if (questiontime != '') {

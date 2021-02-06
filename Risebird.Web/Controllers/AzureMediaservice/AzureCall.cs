@@ -94,7 +94,7 @@ namespace Risebird.Web.Controllers.AzureMediaservice
             //    chunk = stream.ToArray();
             //}
             //reservation.chunk = chunk;
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Files", file.FileName);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", file.FileName);
             using (var stream = new FileStream(path, FileMode.Create))
             {
                 file.CopyTo(stream);

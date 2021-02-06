@@ -553,6 +553,9 @@ namespace Risebird.Web.Controllers
                     if (model.CV == null && (model.CVLink == null))
                     {
                         ModelState.AddModelError(String.Empty, "Please upload a CV.");
+                        var Priority = from Prioritylevels s in Enum.GetValues(typeof(Prioritylevels))
+                                       select new { ID = (int)s, Name = s.GetDescription() };
+                        model.Prioritylist = new SelectList(Priority, "ID", "Name");
                         return View(model);
                     }
                     if (model.CV != null)
