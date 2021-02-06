@@ -49,6 +49,6 @@ namespace Risebird.CommonHelper.Interface
         string ChannelRequestNotification(Mail model, string client, string Skill, string Requester);
         string RBFNPaymentConfirmationNotification(Mail model, string amount, string fileName);
         string SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill);
-        string CandidateShortlistNotification(Mail model, string currenturl, string comment, string email);
+        string CandidateShortlistNotification(Mail model, string currenturl, string comment, string email, string[] videoidlist);
     }
 }

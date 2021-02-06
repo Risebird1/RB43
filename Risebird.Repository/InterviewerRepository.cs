@@ -239,6 +239,7 @@ namespace Risebird.Repository
             parameters.Add("@NickName", entity.NickName);
             parameters.Add("@EmailId", entity.EmailId);
             parameters.Add("@AltEmailId", entity.AltEmailId);
+            entity.DOB = entity.DOB < new DateTime(1753, 1, 1) ? new DateTime(1753, 1, 1) : entity.DOB;
             parameters.Add("@DOB", entity.DOB);
             parameters.Add("@Gender", entity.Gender);
             parameters.Add("@AnnualSalary", entity.AnnualSalary);
@@ -1193,7 +1194,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IrfId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await  SqlMapper.QueryAsync<InterviewReport>(con, "usp_GetInterviewerReportById", dynamicParameters,
+                    var result = await SqlMapper.QueryAsync<InterviewReport>(con, "usp_GetInterviewerReportById", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
@@ -1411,7 +1412,7 @@ namespace Risebird.Repository
                     questionsDt.Columns.Add("InterviewId", typeof(int));
                     questionsDt.Columns.Add("Question", typeof(string));
                     questionsDt.Columns.Add("RatingId", typeof(int));
-                    
+
 
                     foreach (var item in reportDetails.InterviewerQuestionsCollection)
                     {
@@ -1677,7 +1678,7 @@ namespace Risebird.Repository
         {
             try
             {
-                
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var dynamicParameters = new DynamicParameters();
@@ -1685,7 +1686,7 @@ namespace Risebird.Repository
                     //parameters.Add("@timeNow", DateTime.Now);
                     return await SqlMapper.QueryAsync<InterviewerQuestionsDiscussed>(con, "usp_GetInterviewerQuestionsDiscussed", dynamicParameters,
                          commandType: CommandType.StoredProcedure);
-                   
+
                 }
 
             }

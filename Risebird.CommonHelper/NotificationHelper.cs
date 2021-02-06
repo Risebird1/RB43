@@ -1299,7 +1299,7 @@ namespace Risebird.CommonHelper
 
             }
         }
-        public string CandidateShortlistNotification(Mail model, string currenturl, string comment, string email)
+        public string CandidateShortlistNotification(Mail model, string currenturl, string comment, string email, string[] videoidlist)
         {
             try
             {
@@ -1311,7 +1311,20 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { email, currenturl, comment };
+                StringBuilder sr = new StringBuilder();
+                int i = 0;
+                foreach (var item in videoidlist)
+                {
+                    if (!String.IsNullOrEmpty(item))
+                    {
+                        i++;
+                        sr.Append(i);
+                        sr.Append(") ");
+                        sr.Append(currenturl + item);
+                        sr.Append("\n");
+                    }
+                }
+                object[] parameters = new object[] { email, sr.ToString(), comment };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewershortlistNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;

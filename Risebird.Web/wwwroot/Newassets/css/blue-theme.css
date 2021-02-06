@@ -18,6 +18,18 @@ body {
     .can-details a:focus {
         color: #f96332 !important;
     }
+.sharetr {
+    background: #e2e2e2;
+    padding: 5px;
+    font-size: 16px;
+}
+
+.sharetd {
+    background: #eceaea;
+    padding: 5px 5px;
+    font-size: 16px;
+}
+
 
 td.detail-row {
     background-color: #fff;

@@ -26,6 +26,7 @@ namespace Risebird.Web.Controllers
         private IApplicationErrorLogger _applicationErrorLogger;
         private readonly IIRFRepository _iRFRepository;
         private readonly INotificationHelper _notificationHelper;
+        private static List<int> Shortlistvideoids = new List<int>();
         public InterviewerSkillsController(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, IInterviewerSkillsService InterviewerSkillsService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IIRFRepository iRFRepository, INotificationHelper notificationHelper)
         {
             _interviewerSkillsRepository = InterviewerSkillsRepository;
@@ -1046,6 +1047,11 @@ namespace Risebird.Web.Controllers
                         }
 
                         ViewBag.VideoStatus = "Private";
+                        ViewBag.Shortlist = "false";
+                        if (Shortlistvideoids.Contains(id))
+                        {
+                            ViewBag.Shortlist = "true";
+                        }
                         return View(NewModel);
                     }
                     else
@@ -1184,6 +1190,11 @@ namespace Risebird.Web.Controllers
                     }
 
                     ViewBag.VideoStatus = "Private";
+                    ViewBag.Shortlist = "false";
+                    if (Shortlistvideoids.Contains(id))
+                    {
+                        ViewBag.Shortlist = "true";
+                    }
                     return View(NewModel);
                 }
             }
@@ -1193,9 +1204,23 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        public async Task<JsonResult> CandidateShortList(int videoid, string email, string comment)
+        [HttpPost]
+        public JsonResult CandidateShortList(int videoid)
         {
-            string currenturl = Request.Host.ToString() + "/InterviewerSkills/InterviewerVideoPage/" + videoid;
+            Shortlistvideoids.Add(videoid);
+            return Json("Success");
+        }
+        [HttpPost]
+        public JsonResult FetchCandidateShortList()
+        {
+            string currenturl = Request.Host.ToString() + "/InterviewerSkills/InterviewerVideoPage";
+            return Json(new { result = Shortlistvideoids, currenturl = currenturl });
+        }
+        [HttpPost]
+        public async Task<JsonResult> CandidateShortListNotification(string videoids, string email, string comment)
+        {
+            var videoidlist = videoids.Split(";");
+            string currenturl = Request.Host.ToString() + "/InterviewerSkills/InterviewerVideoPage/";
             var Emailds = await _iInterviewerSkillsService.FetchAdminList();
             string Emailaddress = string.Join(";", Emailds);
             Mail _mail = new Mail
@@ -1203,7 +1228,7 @@ namespace Risebird.Web.Controllers
                 TO = Emailaddress,
                 Subject = "Risebird: Interview video is shortlisted"
             };
-            var result = _notificationHelper.CandidateShortlistNotification(_mail, currenturl, comment, email);
+            var result = _notificationHelper.CandidateShortlistNotification(_mail, currenturl, comment, email, videoidlist);
             if (result.Contains("Mail sent successfully"))
             {
                 return Json("ShortListed Successfully.");

@@ -1290,6 +1290,17 @@ table {
     background: #f5f5f5 url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
 }
+.sharetr {
+    background: #101010;
+    padding: 5px;
+    font-size: 16px;
+}
+
+.sharetd {
+    background: #181818;
+    padding: 5px 5px;
+    font-size: 16px;
+}
 
 #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
     background: url("../../img/audio-button-set-4-transparent.png") #181818;
