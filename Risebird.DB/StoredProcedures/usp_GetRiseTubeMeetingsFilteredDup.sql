@@ -60,7 +60,7 @@ if @clientid = 0
 			outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount
 			outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore
 
-			where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%')) 
+			where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%')) 
 			and cast(interviewDate as date) >= cast (@startDate as date)
 			and cast(interviewDate as date) <= cast (@endDate as date)
 			
@@ -97,7 +97,7 @@ if @clientid = 0
 			outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount
 			outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore
 
-			where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null 
+			where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null 
 			and cast(interviewDate as date) >= cast (@startDate as date)
 			and cast(interviewDate as date) <= cast (@endDate as date)
 			
@@ -150,7 +150,7 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
 			inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id  
 			inner join @tblTechSkill tts on tts.InterviewId = im.id
 			left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId
-			where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid and QCF.QCStatus=1 and (ic.MoveToCP is null or ic.MoveToCP =0) and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))       
+			where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid and QCF.QCStatus=1 and (ic.MoveToCP is null or ic.MoveToCP =0) and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))       
 			and cast(interviewDate as date) >= cast (@startDate as date)
 			and cast(interviewDate as date) <= cast (@endDate as date)
 			
@@ -186,7 +186,7 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
 			inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id 
 			inner join @tblTechSkill tts on tts.InterviewId = im.id
 			left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId
-			where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid and QCF.QCStatus=1 and (ic.MoveToCP is null or ic.MoveToCP =0)       
+			where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid and QCF.QCStatus=1 and (ic.MoveToCP is null or ic.MoveToCP =0)       
 			and cast(interviewDate as date) >= cast (@startDate as date)
 			and cast(interviewDate as date) <= cast (@endDate as date)
 			
