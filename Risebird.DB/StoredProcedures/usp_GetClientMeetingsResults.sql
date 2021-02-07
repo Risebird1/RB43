@@ -30,13 +30,13 @@ if(@roleId=1)
 				where inm.confirmationStatus=1 and inm.ClientHrContact=@emailId
 
 			select (select Count(imid) from @commonClientHRTable where InterviewStatus=1) as ProxyCount,
-			(select Count(imid) from @commonClientHRTable where InterviewStatus=2 and QCStatus=1) as SelectedCount,
-			(select Count(imid) from @commonClientHRTable where InterviewStatus=3 or (InterviewStatus=2 and QCStatus=2)) as RejectedCount,
-			(select Count(imid) from @commonClientHRTable where InterviewStatus=2 and QCStatus is null) as Pending,
-			(select Count(imid) from @commonClientHRTable where InterviewStatus=4) as BorderLineCount,
+			(select Count(imid) from @commonClientHRTable where MeetingStatus = 4 and InterviewStatus=2 and QCStatus=1) as SelectedCount,
+			(select Count(imid) from @commonClientHRTable where MeetingStatus = 4 and InterviewStatus=3) as RejectedCount,
+			(select Count(imid) from @commonClientHRTable where(((InterviewStatus=2 or InterviewStatus=4)  and QCStatus is null) or (InterviewStatus is null and MeetingStatus=4))) as Pending,
+			(select Count(imid) from @commonClientHRTable where  MeetingStatus = 4 and QCStatus=1 and InterviewStatus=4) as BorderLineCount,
 			(select Count(imid) from @commonClientHRTable where InterviewStatus is null and MeetingStatus=1) as NoShowCount,
 			(select Count(imid) from @commonClientHRTable where InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
-			(select Count(imid) from @commonClientHRTable where InterviewStatus is null and MeetingStatus=3) as DroppedCount,
+			(select Count(imid) from @commonClientHRTable where  InterviewStatus is null and MeetingStatus=3) as DroppedCount,
 			(select Count(imid) from @commonClientHRTable) as TotalMeetingsCount
 	End
 
@@ -52,13 +52,13 @@ else if(@roleId=4)
 				where inm.confirmationStatus=1 and inm.staffingAgency=@emailId
 
 			select (select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus=1) as ProxyCount,
-			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus=2 and QCStatus=1) as SelectedCount,
-			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus=3 or (InterviewStatus=2 and QCStatus=2)) as RejectedCount,
-			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus=2 and QCStatus is null) as Pending,
-			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus=4) as BorderLineCount,
+			(select Count(imid) from @commonStaffiingAgencyTable where MeetingStatus = 4 and InterviewStatus=2 and QCStatus=1) as SelectedCount,
+			(select Count(imid) from @commonStaffiingAgencyTable where  MeetingStatus = 4 and InterviewStatus=3) as RejectedCount,
+			(select Count(imid) from @commonStaffiingAgencyTable where  (((InterviewStatus=2 or InterviewStatus=4)  and QCStatus is null) or (InterviewStatus is null and MeetingStatus=4))) as Pending,
+			(select Count(imid) from @commonStaffiingAgencyTable where  MeetingStatus = 4 and QCStatus=1 and InterviewStatus=4) as BorderLineCount,
 			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus is null and MeetingStatus=1) as NoShowCount,
 			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
-			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus is null and MeetingStatus=3) as DroppedCount,
+			(select Count(imid) from @commonStaffiingAgencyTable where  InterviewStatus is null and MeetingStatus=3) as DroppedCount,
 			(select Count(imid) from @commonStaffiingAgencyTable) as TotalMeetingsCount
 
 	End
@@ -75,12 +75,12 @@ else
 				where tcu.ClientUserId = @userId and inm.confirmationStatus=1
 
 			select (select Count(imid) from @commonTable where InterviewStatus=1) as ProxyCount,
-			(select Count(imid) from @commonTable where InterviewStatus=2 and QCStatus=1) as SelectedCount,
-			(select Count(imid) from @commonTable where InterviewStatus=3 or (InterviewStatus=2 and QCStatus=2)) as RejectedCount,
-			(select Count(imid) from @commonTable where InterviewStatus=2 and QCStatus is null) as Pending,
-			(select Count(imid) from @commonTable where InterviewStatus=4) as BorderLineCount,
+			(select Count(imid) from @commonTable where   MeetingStatus = 4 and InterviewStatus=2 and QCStatus=1) as SelectedCount,
+			(select Count(imid) from @commonTable where  MeetingStatus = 4 and InterviewStatus=3) as RejectedCount,
+			(select Count(imid) from @commonTable where  (((InterviewStatus=2 or InterviewStatus=4)  and QCStatus is null) or (InterviewStatus is null and MeetingStatus=4))) as Pending,
+			(select Count(imid) from @commonTable where  MeetingStatus = 4 and QCStatus=1 and InterviewStatus=4) as BorderLineCount,
 			(select Count(imid) from @commonTable where InterviewStatus is null and MeetingStatus=1) as NoShowCount,
-			(select Count(imid) from @commonTable where InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
+			(select Count(imid) from @commonTable where  InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
 			(select Count(imid) from @commonTable where InterviewStatus is null and MeetingStatus=3) as DroppedCount,
 			(select Count(imid) from @commonTable) as TotalMeetingsCount
 
