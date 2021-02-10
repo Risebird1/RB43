@@ -7,19 +7,12 @@
 @using Risebird.Entities.ViewModel
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "Candidate Timeline";
+    ViewData["Title"] = "Candidates Status";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
     string[] ClientHR = new string[] { };
     string[] ConfirmationStatus = new string[] { };
 }
-
-@*@if (HttpContextAccessor.HttpContext.Session.GetString("CandidateTimeLineFilter") != null)
-    {
-        filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("CandidateTimeLineFilter"));
-        ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
-        ConfirmationStatus = filter.ConfirmationStatus != null ? filter.ConfirmationStatus : new string[] { };
-    }*@
 
 <link href="~/Newassets/css/interviewer.css?v=7" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
@@ -36,7 +29,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">Candidate Timeline</a>
+                <a class="navbar-brand">Candidates Status</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
