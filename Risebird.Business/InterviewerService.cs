@@ -45,6 +45,11 @@ namespace Risebird.Business
         {
             try
             {
+                if(interviewerProfile.TagArray!=null)
+                {
+                    interviewerProfile.Tag = string.Join(',', interviewerProfile.TagArray);
+                }
+
                 return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
             }
             catch (Exception e)
@@ -58,6 +63,12 @@ namespace Risebird.Business
             try
             {
                 //Edit Method
+
+                if (interviewerProfile.TagArray != null)
+                {
+                    interviewerProfile.Tag = string.Join(',', interviewerProfile.TagArray);
+                }
+
                 interviewerProfile.InterviewerEducationDetails = interviewerProfile.InterviewerEducationDetails.Where(x => x.CollegeType != null).ToList();
                 interviewerProfile.InterviewerProjectsDetails = interviewerProfile.InterviewerProjectsDetails.Where(x => x.NatureOfProject != null).ToList();
                 interviewerProfile.InterviewerAvailabilityDetails = interviewerProfile.InterviewerAvailabilityDetails.Where(x => x.Weekday != null).ToList();
@@ -178,6 +189,10 @@ namespace Risebird.Business
                 ProfileModel.InterviewerProjectsDetails = ProjectsList;
                 ProfileModel.InterviewerAvailabilityDetails = AvailabilityList;
                 ProfileModel.InterviewerAccDetails = AccDetailsList;
+                if(!string.IsNullOrEmpty(ProfileModel.Tag))
+                {
+                    ProfileModel.TagArray = ProfileModel.Tag.Split(',');
+                }
 
                 return ProfileModel;
 
@@ -506,23 +521,29 @@ namespace Risebird.Business
                     model.InterviewBiometryScore = interviewDetails.InterviewBiometryScore;
                     reportModel = model;
                 }
-                var techInterviewerRecommendation = _interviewerRepository.GetInterviewerRecommendationbyinterviewid(interviewId);
-                foreach (var item in techInterviewerRecommendation)
+                var techInterviewerRecommendation = await _interviewerRepository.GetInterviewerRecommendationbyinterviewid(interviewId);
+
+                reportModel.CompanySize = techInterviewerRecommendation.CompanySize;
+                reportModel.JobFunction = techInterviewerRecommendation.JobFunction;
+                reportModel.Industry = techInterviewerRecommendation.Industry;
+                reportModel.CompanyHeadquarters = techInterviewerRecommendation.CompanyHeadquarters;
+                reportModel.CompanyType = techInterviewerRecommendation.CompanyType;
+                reportModel.CompanyStage = techInterviewerRecommendation.CompanyStage;
+                reportModel.SkillCategory = techInterviewerRecommendation.SkillCategory;
+                reportModel.Yearsofexperience = techInterviewerRecommendation.Yearsofexperience;
+                reportModel.Senioritylevel = techInterviewerRecommendation.Senioritylevel;
+                reportModel.SkillNature = techInterviewerRecommendation.SkillNature;
+                reportModel.Domain = techInterviewerRecommendation.Domain;
+                reportModel.SkillIP = techInterviewerRecommendation.SkillIP;
+                reportModel.PerHourRateOutside = techInterviewerRecommendation.PerHourRateOutside;
+                reportModel.PerHourRateIndia = techInterviewerRecommendation.PerHourRateIndia;
+
+                if (!string.IsNullOrEmpty(techInterviewerRecommendation.SkillCategory))
                 {
-                    reportModel.CompanySize = item.CompanySize;
-                    reportModel.JobFunction = item.JobFunction;
-                    reportModel.Industry = item.Industry;
-                    reportModel.CompanyHeadquarters = item.CompanyHeadquarters;
-                    reportModel.CompanyType = item.CompanyType;
-                    reportModel.CompanyStage = item.CompanyStage;
-                    reportModel.SkillCategory = item.SkillCategory;
-                    reportModel.Yearsofexperience = item.Yearsofexperience;
-                    reportModel.Senioritylevel = item.Senioritylevel;
-                    reportModel.SkillNature = item.SkillNature;
-                    reportModel.Domain = item.Domain;
-                    reportModel.SkillIP = item.SkillIP;
-                    reportModel.PerHourRateIndia = item.PerHourRateIndia;
+                    reportModel.SkillCategoryArray = techInterviewerRecommendation.SkillCategory.Split(',');
+
                 }
+                
                 //get candidateId
                 reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfDetails.IRFId);
                 reportModel.CandidateName = interviewDetails.candidateName;
@@ -587,6 +608,15 @@ namespace Risebird.Business
         {
             try
             {
+                if(reportModel.SkillCategoryArray!=null)
+                {
+                    reportModel.SkillCategory = string.Join(',', reportModel.SkillCategoryArray);
+                }
+                else
+                {
+                    reportModel.SkillCategory = string.Empty;
+                }
+
                 var result = await _interviewerRepository.AddInterviewerReport(reportModel);
 
                 return result;

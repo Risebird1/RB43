@@ -208,7 +208,8 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Skill Category")]
         public string SkillCategory { get; set; }
-        public SelectList SkillCategoryList { get; set; }
+        public string[] SkillCategoryArray { get; set; }
+        public List<SelectListItem> SkillCategoryList { get; set; }
 
         [Display(Name = "Years of experience")]
         public string Yearsofexperience { get; set; }
@@ -227,17 +228,28 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Skill IP")]
 
         public string SkillIP { get; set; }
-        [Display(Name = "Per-hour Rate - India")]
+        [Display(Name = "Per-hour Rate - (India)")]
         public string PerHourRateIndia { get; set; }
+
+        [Display(Name = "Per-hour Rate - (Elsewhere)")]
+        public string PerHourRateOutside { get; set; }
+        [Display(Name = "Decision Making")]
         public string DecisionMaking { get; set; }
         public string Articulation { get; set; }
+        [Display(Name = "Readiness Online Interviews")]
         public string ReadinessOnlineInterviews { get; set; }
+        [Display(Name = "Team work")]
         public string Teamwork { get; set; }
+        [Display(Name = "Relationship Management")]
         public string RelationshipManagement { get; set; }
+        [Display(Name = "Conflict Resolution")]
         public string ConflictResolution { get; set; }
         public string Adaptability { get; set; }
+        [Display(Name = "Mode of Interviews")]
         public string ModeInterviews { get; set; }
+        [Display(Name = "Work Under Pressure")]
         public string WorkUnderPressure { get; set; }
+        [Display(Name = "Time Management")]
         public string TimeManagement { get; set; }
 
         public string SharedEmailAddress { get; set; }
@@ -252,7 +264,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Overall Personality Score")]
         [Required]
 
-        public int? OverallPersonalityScore { get; set; }
+        public float? OverallPersonalityScore { get; set; }
         public int? Openness { get; set; }
         public int? Conscientiousness { get; set; }
         public int? Extroversion { get; set; }
@@ -261,15 +273,13 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Overall Profile Score")]
         [Required]
-        public int? ProfileScore { get; set; }
+        public float? ProfileScore { get; set; }
 
         [Display(Name = "Overall Interviewing Ability Score")]
         [Required]
-        public int? OverallInterviewingAbilityScore { get; set; }
+        public float? OverallInterviewingAbilityScore { get; set; }
         public string ProfileName { get; set; }
-
-
-
+        //public string PerHourRateOutside { get; set; }
 
     }
     public class RBInterviewDetails

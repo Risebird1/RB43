@@ -47,7 +47,8 @@ namespace Risebird.Repository.Interface
         //IEnumerable<InterviewReport> GetInterviewerReportById(int id, int irfId = 0);
         IEnumerable<TransSkill> GetSkillsbyIRFid(int id);
         IEnumerable<SkillComment> GetTechSkillComments(int id);
-        IEnumerable<InterviewReport> GetInterviewerRecommendationbyinterviewid(int id);
+        Task<InterviewReport> GetInterviewerRecommendationbyinterviewid(int id);
+        //IEnumerable<InterviewReport> GetInterviewerRecommendationbyinterviewid(int id);
         IEnumerable<AssignmentVM> GetInterviewerAssessment(string emailid);
         string AddAssessment(AssignmentVM _assessment);
         IEnumerable<AssignmentVM> FetchAssessmentGroups();

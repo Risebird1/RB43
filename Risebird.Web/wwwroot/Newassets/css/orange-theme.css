@@ -123,7 +123,9 @@ textarea::-webkit-scrollbar {
     color: #fff !important;
     text-transform: uppercase;
 }
-
+.employee .mdc-card .form-control[disabled] {
+    color: #504e4e !important;
+}
 .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover, .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
     color: #FFFFFF;
     BACKGROUND: #ea6b26;
@@ -213,10 +215,11 @@ textarea::-webkit-scrollbar {
 }
 
 .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
-    background-color: whitesmoke !important;
-    border-bottom: 1px solid #aaa !important;
+    background-color: #ececee !important;
 }
-
+.radiobox {
+    background: #efefef;
+}
 .qc-feedback .card-footer .upload-label {
     background: #e2e2e2;
 }

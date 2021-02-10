@@ -5,7 +5,7 @@ BEGIN
 CREATE TABLE [dbo].[InterviewerPersonalityScore](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[InterviewId] [int] NOT NULL,
-	[OverallPersonalityScore] [int] NULL,
+	[OverallPersonalityScore] [float] NULL,
 	[Openness] [int] NULL,
 	[Conscientiousness] [int] NULL,
 	[Extroversion] [int] NULL,
@@ -18,6 +18,19 @@ CREATE TABLE [dbo].[InterviewerPersonalityScore](
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] 
+END
+
+ELSE
+BEGIN
+	IF EXISTS(
+	SELECT *
+	FROM sys.columns
+	WHERE Name IN (N'OverallPersonalityScore')
+		AND Object_ID = Object_ID(N'InterviewerPersonalityScore'))
+	BEGIN
+		ALTER TABLE InterviewerPersonalityScore
+		alter column OverallPersonalityScore float
+	END
 END
 GO
 

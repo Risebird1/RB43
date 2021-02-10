@@ -751,85 +751,85 @@
                 html += ' <td>No Coded Resume</td>';
             }
 
-            if (data[i].isApproved == true) {
-                html += '<td>Approved</td>';
-            }
-            else {
-                html += ' <td>Not Approved</td>';
-            }
-            html += ' <td>' + data[i].city + '</td>';
-            html += ' <td >' + data[i].currentRole + '</td>';
-            html += ' <td>' + data[i].experience + '</td>';
-            html += ' <td>' + data[i].preferredDomain + '</td>';
-            if (data[i].gitHubLink != null && data[i].gitHubLink != "") {
-                html += '<td><a id="githubId" target="_blank" title="Github" href=' + data[i].gitHubLink + '>Github</a> </td>';
+if (data[i].isApproved == true) {
+    html += '<td>Approved</td>';
+}
+else {
+    html += ' <td>Not Approved</td>';
+}
+html += ' <td>' + data[i].city + '</td>';
+html += ' <td >' + data[i].currentRole + '</td>';
+html += ' <td>' + data[i].experience + '</td>';
+html += ' <td>' + data[i].preferredDomain + '</td>';
+if (data[i].gitHubLink != null && data[i].gitHubLink != "") {
+    html += '<td><a id="githubId" target="_blank" title="Github" href=' + data[i].gitHubLink + '>Github</a> </td>';
 
-            }
-            else {
-                html += ' <td>No Github</td>';
-            }
-            if (data[i].linkedinLink != null && data[i].linkedinLink != "") {
-                html += ' <td><a id="linkedInId" target="_blank" title="LinkedIn" href=' + data[i].linkedinLink + '>LinkedIn</a> </td>';
+}
+else {
+    html += ' <td>No Github</td>';
+}
+if (data[i].linkedinLink != null && data[i].linkedinLink != "") {
+    html += ' <td><a id="linkedInId" target="_blank" title="LinkedIn" href=' + data[i].linkedinLink + '>LinkedIn</a> </td>';
 
-            }
-            else {
-                html += '  <td>No LinkedIn</td>';
-            }
-            if (data[i].stackOverflowLink != null && data[i].stackOverflowLink != "") {
-                html += '   <td><a id="stackOverFlowId" target="_blank" title="Stackoverflow" href=' + data[i].stackOverflowLink + '>Stackoverflow</a> </td>';
+}
+else {
+    html += '  <td>No LinkedIn</td>';
+}
+if (data[i].stackOverflowLink != null && data[i].stackOverflowLink != "") {
+    html += '   <td><a id="stackOverFlowId" target="_blank" title="Stackoverflow" href=' + data[i].stackOverflowLink + '>Stackoverflow</a> </td>';
 
-            }
-            else {
-                html += '   <td>No Stackoverflow</td>';
-            }
-            if (data[i].blog != null && data[i].blog != "") {
+}
+else {
+    html += '   <td>No Stackoverflow</td>';
+}
+if (data[i].blog != null && data[i].blog != "") {
 
-                html += '  <td><a id="blogId" target="_blank" title="Blog" href=' + data[i].blog + '>Blog</a> </td>';
+    html += '  <td><a id="blogId" target="_blank" title="Blog" href=' + data[i].blog + '>Blog</a> </td>';
 
-            }
-            else {
-                html += ' <td>No Blog</td>';
-            }
-            html += '  </tr>';
+}
+else {
+    html += ' <td>No Blog</td>';
+}
+html += '  </tr>';
 
-            html += '   </table>';
-            html += '   </td>';
-            html += '   </tr>';
+html += '   </table>';
+html += '   </td>';
+html += '   </tr>';
 
 
-        }
-        $("#tblbodyInterviewerProfile").empty().html(html);
-    }
-    function bindPages(pagecount, startpage, endpage, totalcount) {
-        var html = '';
-        html += '<div class="pagination-container">';
-        html += '<ul class="pagination">';
-        for (var i = 1; i <= pagecount; i++) {
-            if (i == 1) {
-                html += '   <li class="active"><span>1</span></li>';
-            } else if (i <= 10) {
-                html += '<li><a href="/Interviewer/Index?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
-            } else if (i == 11) {
-                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/Interviewer/Index?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/Interviewer/Index?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-            } else {
-                break;
-            }
-            if (pagecount <= 10 && i == pagecount && i != 1) {
-                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/Interviewer/Index?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/Interviewer/Index?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-            }
-        }
-        html += '</ul>';
-        html += '</div>';
-        $("#divmeetingpages").empty().html(html);
-        var pagestartdetails = '';
-        pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
-        $("#divmeetingentries").empty().html(pagestartdetails);
+}
+$("#tblbodyInterviewerProfile").empty().html(html);
+}
+function bindPages(pagecount, startpage, endpage, totalcount) {
+var html = '';
+html += '<div class="pagination-container">';
+html += '<ul class="pagination">';
+for (var i = 1; i <= pagecount; i++) {
+if (i == 1) {
+    html += '   <li class="active"><span>1</span></li>';
+} else if (i <= 10) {
+    html += '<li><a href="/Interviewer/Index?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+} else if (i == 11) {
+    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+    html += '<li class="PagedList-skipToNext"><a href="/Interviewer/Index?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+    html += '<li class="PagedList-skipToLast"><a href="/Interviewer/Index?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+} else {
+    break;
+}
+if (pagecount <= 10 && i == pagecount && i != 1) {
+    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+    html += '<li class="PagedList-skipToNext"><a href="/Interviewer/Index?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+    html += '<li class="PagedList-skipToLast"><a href="/Interviewer/Index?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+}
+}
+html += '</ul>';
+html += '</div>';
+$("#divmeetingpages").empty().html(html);
+var pagestartdetails = '';
+pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
+$("#divmeetingentries").empty().html(pagestartdetails);
 
-    }
+}
 </script>
 
 <script>

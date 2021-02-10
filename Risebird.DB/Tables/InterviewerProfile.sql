@@ -197,6 +197,14 @@ BEGIN
     ALTER TABLE InterviewerProfile
     Add Blog nvarchar(max) NULL
 END
-
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AssessmentGroupId')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add AssessmentGroupId int 
+END
 
 End

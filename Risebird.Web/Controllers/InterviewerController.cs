@@ -86,12 +86,12 @@ namespace Risebird.Web.Controllers
                             searchValue = Searchvalueprofile;
                         }
                         Searchvalueprofile = searchValue;
-                       
+
                         ViewBag.Searchvalue = searchValue;
                         if (!String.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper();
-                            model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || ((x.PrimarySkill!=null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+                            model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                         }
                         ViewBag.TotalCount = model.Count;
@@ -425,7 +425,24 @@ namespace Risebird.Web.Controllers
             var daySlot = from DaySlot s in Enum.GetValues(typeof(DaySlot))
                           select new { ID = (int)s, Name = s.GetDescription() };
             model.DaySlotList = new SelectList(daySlot, "ID", "Name");
-            model.TagList = new SelectList(_interviewerService.GetAllTagsFromIRF().Result);
+            model.AssessmentGroupList = new SelectList(_interviewerService.FetchAssessmentGroups(), "id", "AssessmentGroup");
+            var tagList = _interviewerService.GetAllTagsFromIRF().Result;
+            var selectList = new List<SelectListItem>();
+
+            foreach (var item in tagList)
+            {
+                bool selected = false;
+
+                if (model.TagArray != null && model.TagArray.Contains(item))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem(item, item, selected);
+
+                selectList.Add(selectItem);
+
+            }
+            model.TagList = selectList;
 
         }
 
@@ -1093,7 +1110,7 @@ namespace Risebird.Web.Controllers
                         }
                         _modelDl = myInterview;
                         return View(myInterview.ToPagedList(Page ?? 1, 10));
-                      //return View(myInterview);
+                        //return View(myInterview);
                     }
                     else
                     {
@@ -1202,7 +1219,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "HR" || profileName=="Interviewer")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer")
                     {
                         var model = _interviewerService.GetInterviewerinteviewReport(interviewId, irfId).Result;
                         model.ProfileName = profileName;
@@ -1233,7 +1250,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-       
+
         [HttpPost]
         [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
         [RequestSizeLimit(1048576000)]
@@ -1318,7 +1335,7 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageLeadInterviewer"] = "Report was not saved.";
-                
+
                 return RedirectToAction("MyInterviewerAssessment");
             }
         }
@@ -1353,7 +1370,20 @@ namespace Risebird.Web.Controllers
             model.InterviewexperienceList = new SelectList(_iRFRepository.GetInterviewexperience(), "Id", "Name");
 
             model.CompanyStageList = new SelectList(_iRFRepository.GetCompanyStage(), "Id", "Name");
-            model.SkillCategoryList = new SelectList(_iRFRepository.GetSkillCategory(), "Id", "Name");
+            var skillCategories = _iRFRepository.GetSkillCategory();
+            var selectList = new List<SelectListItem>();
+            foreach (var item in skillCategories)
+            {
+                bool selected = false;
+                if(model.SkillCategoryArray!=null && model.SkillCategoryArray.Contains(Convert.ToString(item.Id)))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem(item.Name, Convert.ToString(item.Id), selected);
+                
+                selectList.Add(selectItem);
+            }
+            model.SkillCategoryList = selectList;
             model.YearsofexperienceList = new SelectList(_iRFRepository.GetInterviewerExprienceYear(), "Id", "Name");
             model.SenioritylevelList = new SelectList(_iRFRepository.GetSenioritylevel(), "Id", "Name");
             model.SkillNatureList = new SelectList(_iRFRepository.GetSkillNature(), "Id", "Name");
@@ -1638,7 +1668,7 @@ namespace Risebird.Web.Controllers
 
         [HttpPost]
         public JsonResult InterviewerAssessmentJson(string searchValue)
-       {
+        {
             try
             {
                 int Page = 1;

@@ -35,7 +35,7 @@
                         <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interviewer" onclick="location.href='@Url.Action("AddEmployerDetails", "Interviewer", new { IProfileId = ViewBag.IProfileId})'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Add Employer</font></span>
                     </button>
 
-                    @Html.ActionLink("Back To List", "Index", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                    @Html.ActionLink("Back To List", "Index", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button", @style="margin-right:10px;" })
 
                 </div>
             </div>
@@ -52,7 +52,7 @@
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
-                          
+
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
                                 <table id="interviewer" class="table table-striped table-bordered" cellspacing="0" width="150%">
                                     <thead>
@@ -94,31 +94,31 @@
                                     <tbody>
                                         @foreach (var item in Model)
                                         {
-                                        <tr id=@item.id>
-                                            <td><span class="control-label">@item.CompanyName</span></td>
-                                            <td>@Html.DropDownList("item.Type", (SelectList)ViewBag.CompanyTypeList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
-                                            <td>@Html.DropDownList("item.CompanyStage", (SelectList)ViewBag.CompanyStageList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
-                                            <td>@Html.DropDownList("item.Size", (SelectList)ViewBag.CompanySizeList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
-                                            <td>@Html.DropDownList("item.JobFunctionId", (SelectList)ViewBag.JobFunction, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
-                                            <td>@Html.DropDownList("item.IndustryId", (SelectList)ViewBag.Industry, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
-                                            <td>@Html.DropDownList("item.Headquarters", (SelectList)ViewBag.CountryList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
-                                            <td>@Html.DropDownList("item.Role", (SelectList)ViewBag.RoleList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled",@style="width:auto;" })</td>
-                                            <td>@item.Domain</td>
-                                            <td>@Html.DropDownList("item.SeniorityLevel", (SelectList)ViewBag.SeniorityLevelList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
-                                            <td>@Html.DropDownList("item.ExperienceId", (SelectList)ViewBag.ExperienceRange, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
-                                            <td>@Html.DropDownList("item.WorkNature", (SelectList)ViewBag.WorkNatureList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled",@style = "width:auto;" })</td>
-                                            <td>@Html.DropDownList("item.PrimaryResponsibility", (SelectList)ViewBag.PrimaryResponsibilityList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
+                                            <tr id=@item.id>
+                                                <td><span class="control-label">@item.CompanyName</span></td>
+                                                <td>@Html.DropDownListFor(m => m.Where(x => x.id == item.id).FirstOrDefault().Type, (SelectList)ViewBag.CompanyTypeList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled", @style = "cursor:default" })</td>
+                                                <td>@Html.DropDownListFor(m => m.Where(x => x.id == item.id).FirstOrDefault().CompanyStage, (SelectList)ViewBag.CompanyStageList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled", @style = "cursor:default" })</td>
+                                                <td>@Html.DropDownListFor(m => m.Where(x => x.id == item.id).FirstOrDefault().Size, (SelectList)ViewBag.CompanySizeList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled", @style = "cursor:default" })</td>
+                                                <td>@Html.DropDownListFor(m => m.Where(x => x.id == item.id).FirstOrDefault().JobFunctionId, (SelectList)ViewBag.JobFunction, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled", @style = "cursor:default" })</td>
+                                                <td>@Html.DropDownListFor(m => m.Where(x => x.id == item.id).FirstOrDefault().IndustryId, (SelectList)ViewBag.Industry, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled", @style = "cursor:default" })</td>
+                                                <td>@Html.DropDownListFor(m => m.Where(x => x.id == item.id).FirstOrDefault().Headquarters, (SelectList)ViewBag.CountryList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled", @style = "cursor:default" })</td>
+                                                <td>@Html.DropDownListFor(m => m.Where(x => x.id == item.id).FirstOrDefault().Role, (SelectList)ViewBag.RoleList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled", @style = "width:auto;cursor:default" })</td>
+                                                <td>@item.Domain</td>
+                                                <td>@Html.DropDownListFor(m => m.Where(x => x.id == item.id).FirstOrDefault().SeniorityLevel, (SelectList)ViewBag.SeniorityLevelList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled", @style = "cursor:default" })</td>
+                                                <td>@Html.DropDownListFor(m => m.Where(x => x.id == item.id).FirstOrDefault().ExperienceId, (SelectList)ViewBag.ExperienceRange, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled", @style = "cursor:default" })</td>
+                                                <td>@Html.DropDownListFor(m => m.Where(x => x.id == item.id).FirstOrDefault().WorkNature, (SelectList)ViewBag.WorkNatureList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled", @style = "width:auto;cursor:default" })</td>
+                                                <td>@Html.DropDownListFor(m => m.Where(x => x.id == item.id).FirstOrDefault().PrimaryResponsibility, (SelectList)ViewBag.PrimaryResponsibilityList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled", @style = "width:auto;cursor:default" })</td>
 
-                                            <td class="text-right">
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit interviewer">
-                                                    <span onclick="location.href = '@Url.Action("EditEmployerDetails", "Interviewer", new { id = item.id, IProfileId = @ViewBag.IProfileId })'" title="Click here to edit interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                </button>
-                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete interviewer">
-                                                    <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.CompanyName');" title="Click here to delete interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                <td class="text-right">
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit interviewer">
+                                                        <span onclick="location.href = '@Url.Action("EditEmployerDetails", "Interviewer", new { id = item.id, IProfileId = @ViewBag.IProfileId })'" title="Click here to edit interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                    </button>
+                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete interviewer">
+                                                        <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.CompanyName');" title="Click here to delete interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
 
-                                                </button>
-                                            </td>
-                                        </tr>
+                                                    </button>
+                                                </td>
+                                            </tr>
                                         }
                                     </tbody>
                                 </table>

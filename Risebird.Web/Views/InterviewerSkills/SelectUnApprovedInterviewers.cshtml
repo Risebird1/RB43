@@ -5,6 +5,7 @@
 }
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link href="~/Newassets/css/risetube.css?v=133" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 
@@ -20,7 +21,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                @Html.ActionLink("GetISCInterviewers", "InterviewerSkills", new { id = @ViewBag.ISCId, InterviewerSkillidName = @ViewBag.ISCName }, htmlAttributes: new { @class = "navbar-brand breadcrumscolor" })
+                @Html.ActionLink("ISC Interviewers", "GetISCInterviewers", "InterviewerSkills", new { id = @Model.ISCId, InterviewerSkillidName = @Model.ISCName }, htmlAttributes: new { @class = "navbar-brand breadcrumscolor" })
                 <a class="navbar-brand"> / &nbsp; UnApproved Interviewer</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,10 +38,10 @@
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
                     <h4 class="card-title col-md-12">Select interviewers for <strong>'@Model.ISCName'</strong></h4>
-              
+
                 </div>
 
-              
+
             </div>
         </div>
     </div>
@@ -67,52 +68,63 @@
                                         @using (Html.BeginForm("SelectUnApprovedInterviewers", "InterviewerSkills", FormMethod.Post, new { enctype = "multipart/form-data" }))
                                         {
 
-                                <div class="table-responsive">
-                                    <table id="meeting" class="table table-striped table-bordered" cellspacing="0" style="text-align:center">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>EmailId</th>
-                                                <th>Skills</th>
-                                                <th>Resume</th>
-                                                <th>Add</th>
-                                            </tr>
-                                        </thead>
-                                        <tfoot>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>EmailId</th>
-                                                <th>Skills</th>
-                                                <th>Resume</th>
-                                                <th>Add</th>
-                                            </tr>
-                                        </tfoot>
-                                        <tbody>
+                                            <div class="table-responsive">
+                                                <table id="meeting" class="table table-striped table-bordered" cellspacing="0" style="text-align:center">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <th>EmailId</th>
+                                                            <th>Skills</th>
+                                                            <th>Resume</th>
+                                                            <th>Add</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <th>EmailId</th>
+                                                            <th>Skills</th>
+                                                            <th>Resume</th>
+                                                            <th>Add</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                    <tbody>
 
 
-                                            @for (int i = 0; i < Model.UnApprovedInterviewersCollection.Count(); i++)
-                                            {
-                                                <tr>
-                                                    <td>@Model.UnApprovedInterviewersCollection[i].FirstName</td>
-                                                    <td>@Model.UnApprovedInterviewersCollection[i].EmailId</td>
-                                                    <td>@Model.UnApprovedInterviewersCollection[i].SkillName</td>
-                                                    @if (Model.UnApprovedInterviewersCollection[i].ResumeLink != null && Model.UnApprovedInterviewersCollection[i].ResumeLink != "")
-                                                    {
-                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@Model.UnApprovedInterviewersCollection[i].ResumeLink>Resume</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Resume</td>
-                                                    }
-                                                    <td>@Html.CheckBoxFor(m => m.UnApprovedInterviewersCollection[i].IsAdded)</td>
-                                                    @Html.HiddenFor(m => m.UnApprovedInterviewersCollection[i].UserId)
-                                                    @Html.HiddenFor(m => m.UnApprovedInterviewersCollection[i].InterviewerProfileId)
+                                                        @for (int i = 0; i < Model.UnApprovedInterviewersCollection.Count(); i++)
+                                                        {
+                                                            <tr>
+                                                                <td>@Model.UnApprovedInterviewersCollection[i].FirstName</td>
+                                                                <td>@Model.UnApprovedInterviewersCollection[i].EmailId</td>
+                                                                @if (Model.UnApprovedInterviewersCollection[i].SkillName.Length > 30)
+                                                                {
+                                                            <td class="video-title" title="@Model.UnApprovedInterviewersCollection[i].SkillName">
 
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
+
+                                                                <a onclick="" data-tooltip="@Model.UnApprovedInterviewersCollection[i].SkillName">  @Model.UnApprovedInterviewersCollection[i].SkillName.Substring(0, 30) ...</a>
+                                                            </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>@Model.UnApprovedInterviewersCollection[i].SkillName</td>
+                                                                }
+                                                                @if (Model.UnApprovedInterviewersCollection[i].ResumeLink != null && Model.UnApprovedInterviewersCollection[i].ResumeLink != "")
+                                                                {
+                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@Model.UnApprovedInterviewersCollection[i].ResumeLink>Resume</a> </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No Resume</td>
+                                                                }
+                                                                <td>@Html.CheckBoxFor(m => m.UnApprovedInterviewersCollection[i].IsAdded)</td>
+                                                                @Html.HiddenFor(m => m.UnApprovedInterviewersCollection[i].UserId)
+                                                                @Html.HiddenFor(m => m.UnApprovedInterviewersCollection[i].InterviewerProfileId)
+
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                             @Html.HiddenFor(m => m.ISCId)
                                             @Html.HiddenFor(m => m.ISCName)
 

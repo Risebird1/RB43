@@ -7,6 +7,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 
+
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -19,7 +20,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Add Interviewer</a>
+                <a class="navbar-brand breadcrumscolor" href="/Interviewer/Index">Interviewers</a>
                 <a class="navbar-brand"> / &nbsp; Add Interviewer</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,7 +99,19 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.Tag, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(model => model.Tag, Model.TagList, new { @class = "select-css form-control text-box single-line" })
+
+                                        <select id="TagArray" name="TagArray" class="form-control multiselect" multiple="multiple">
+                                            @foreach (var item in Model.TagList.ToList())
+                                            {
+                                                @if (item != null)
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
+
+                                                }
+                                            }
+
+                                        </select>
+
                                         @Html.ValidationMessageFor(model => model.Tag, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
@@ -144,6 +157,11 @@
                                                           new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
                                         @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
                                     </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(model => model.AssessmentGroupId, (SelectList)Model.AssessmentGroupList, new { @class = "select-css form-control text-box single-line" })
+                                        @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new { @class = "text-danger" })
+                                    </div>
                                 </div>
                                 <div class="col-lg-4  col-md-4 col-sm-4 pl-1">
                                     <div class="form-group">
@@ -183,38 +201,40 @@
                                     </div>
                                     <div class="form-group" style="margin-top: -10px;">
                                         <span class="desp-label control-label">
-                                            Upload Resume</span>
+                                            Upload Resume
+                                        </span>
 
-                                            <div class="mdc-touch-target-wrapper" style="top: 4px;
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px;
     position: relative;">
-                                                <div class="mdc-radio mdc-radio--touch">
-                                                    <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Upload" checked="checked" onclick="RadioChanged(this.value)">
-                                                    <div class="mdc-radio__background">
-                                                        <div class="mdc-radio__outer-circle"></div>
-                                                        <div class="mdc-radio__inner-circle"></div>
-                                                    </div>
-                                                    <div class="mdc-radio__ripple"></div>
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Upload" checked="checked" onclick="RadioChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
                                                 </div>
+                                                <div class="mdc-radio__ripple"></div>
                                             </div>
+                                        </div>
 
 
 
-                                            <!--- <input id="Resume" name="Resume" value="Upload" type="radio" checked="checked" onclick="RadioChanged(this.value)">-->
-                                            | <span class="desp-label control-label">
-    Coded Resume</span>
-    <!--- <input id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">-->
+                                        <!--- <input id="Resume" name="Resume" value="Upload" type="radio" checked="checked" onclick="RadioChanged(this.value)">-->
+                                        | <span class="desp-label control-label">
+                                            Coded Resume
+                                        </span>
+                                        <!--- <input id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">-->
 
-    <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
-        <div class="mdc-radio mdc-radio--touch">
-            <input class="mdc-radio__native-control" id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">
-            <div class="mdc-radio__background">
-                <div class="mdc-radio__outer-circle"></div>
-                <div class="mdc-radio__inner-circle"></div>
-            </div>
-            <div class="mdc-radio__ripple"></div>
-        </div>
-    </div>
-</div>
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                                <div class="mdc-radio__ripple"></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div style="display:none" id="linkDiv">
                                         @Html.LabelFor(model => model.CodedResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
@@ -455,7 +475,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            @Html.TextArea("InterviewerProjectsDetails[0].Description", null, new { @class = "form-control text-box single-line",@style="height:50px;" })
+                                                            @Html.TextArea("InterviewerProjectsDetails[0].Description", null, new { @class = "form-control text-box single-line", @style = "height:50px;" })
                                                         </td>
                                                         <td>
                                                             <div class="mdc-checkbox">
@@ -632,23 +652,31 @@
 
 </div>
 <script>
-        //====== Age CalculationFunctiopn======//
+    //====== Age CalculationFunctiopn======//
 
-        $(document).ready(function () {
-            $("#DOB").change(function () {
-                var BirthDate = $("#DOB").val();
-                var dob = new Date(BirthDate);
-                var today = new Date();
-                var age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
-                document.getElementById("txt_Age").value = age.toString();
-            });
+    $(document).ready(function () {
+
+        $("#TagArray").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
         });
 
-        // ========== Add Row Methods  =========================================================//
+        $("#DOB").change(function () {
+            var BirthDate = $("#DOB").val();
+            var dob = new Date(BirthDate);
+            var today = new Date();
+            var age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
+            document.getElementById("txt_Age").value = age.toString();
+        });
+    });
 
-        // Skills
+    // ========== Add Row Methods  =========================================================//
 
-        function addRowSkillDetails() {
+    // Skills
+
+    function addRowSkillDetails() {
 
         var table = document.getElementById("skillTable");
         var rowCount = table.rows.length;
@@ -697,9 +725,9 @@
 
     }
 
-       // For Certificate
+    // For Certificate
 
-        function addRowCertificateDetails() {
+    function addRowCertificateDetails() {
 
         var $ttc = $("#certificateTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -739,8 +767,8 @@
 
     }
 
-        // For Education
-        function addRowEducationDetails() {
+    // For Education
+    function addRowEducationDetails() {
 
         var table = document.getElementById("educationTable");
         var rowCount = table.rows.length;
@@ -788,7 +816,7 @@
     }
 
     // For Project
-        function addProjectTableRow() {
+    function addProjectTableRow() {
         var table = document.getElementById("projectTable");
         var rowCount = table.rows.length;
         if (rowCount == 4) {
@@ -799,7 +827,7 @@
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#projectTable tr").length - 1;
 
-            $tr.find("input,select,hidden, textarea").attr("name", function () { // find name in the cloned row
+        $tr.find("input,select,hidden, textarea").attr("name", function () { // find name in the cloned row
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
         }).attr("id", function () { // change id also
@@ -834,10 +862,10 @@
         // Check document for changes
         //$.validator.unobtrusive.parse(document);
 
-        }
+    }
 
-        // For Availability
-        function addAvailabilityDetails() {
+    // For Availability
+    function addAvailabilityDetails() {
         var table = document.getElementById("availabilityDetailsTable");
         var rowCount = table.rows.length;
         if (rowCount == 13) {
@@ -881,236 +909,236 @@
         // Check document for changes
         //$.validator.unobtrusive.parse(document);
 
+    }
+    //=========================== End of Add rows functions ====================//
+
+    //===========================Begin of delete rows functions ====================//
+
+    function deleteRowSkillDetails(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix) {
+        if ($(element).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Row');
+            return false;
         }
-        //=========================== End of Add rows functions ====================//
 
-        //===========================Begin of delete rows functions ====================//
+        else {
+            document.getElementById("btnUpload").disabled = false;
 
-        function deleteRowSkillDetails(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix) {
-            if ($(element).parents('tbody').find('tr').length === 1) {
-
-                alert('Must have atleast one Row');
-                return false;
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
             }
-
+            //ClientCollection_1__ClientRoleId
             else {
-                document.getElementById("btnUpload").disabled = false;
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
 
-                //var currentvalue = $(this).attr('value');
-                var closestRow = $(element).closest('tr');
-                var currentIndex = closestRow[0].sectionRowIndex;
-                var totalRows = $(element).parents('tbody').find('tr').length;
-                var maxIndex = totalRows - 1;
-                if (currentIndex == maxIndex) {
-                    $(element).closest('tr').remove();
-                }
-                //ClientCollection_1__ClientRoleId
-                else {
-                    $(element).closest('tr').remove();
-                    var startIndex = currentIndex + 1;
-                    var endIndex = maxIndex + 1;
-                    for (i = startIndex; i < endIndex; i++) {
-                        var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
-                        elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
-                        elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
 
-                        var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
-                        elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
-                        elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
 
-                        var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
-                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
-                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+                    var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                    elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                    elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
 
-                        var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
-                        elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
-                        elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+                    var elem5 = document.getElementById(collectionName + "_" + i + "__" + tdFive);
+                    elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
+                    elem5.name = collectionName + "[" + (i - 1) + "]." + tdFive;
 
-                        var elem5 = document.getElementById(collectionName + "_" + i + "__" + tdFive);
-                        elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
-                        elem5.name = collectionName + "[" + (i - 1) + "]." + tdFive;
-
-                        var elem6 = document.getElementById(collectionName + "_" + i + "__" + tdSix);
-                        elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
-                        elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
-
-                    }
+                    var elem6 = document.getElementById(collectionName + "_" + i + "__" + tdSix);
+                    elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
+                    elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
 
                 }
 
             }
+
+        }
+    }
+
+
+
+    // for certficate and Project Lists
+
+    function deleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
+        if ($(element).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Row');
+            return false;
         }
 
+        else {
+            document.getElementById("btnUpload").disabled = false;
 
-
-        // for certficate and Project Lists
-
-        function deleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
-            if ($(element).parents('tbody').find('tr').length === 1) {
-
-                alert('Must have atleast one Row');
-                return false;
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
             }
-
+            //ClientCollection_1__ClientRoleId
             else {
-                document.getElementById("btnUpload").disabled = false;
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
 
-                //var currentvalue = $(this).attr('value');
-                var closestRow = $(element).closest('tr');
-                var currentIndex = closestRow[0].sectionRowIndex;
-                var totalRows = $(element).parents('tbody').find('tr').length;
-                var maxIndex = totalRows - 1;
-                if (currentIndex == maxIndex) {
-                    $(element).closest('tr').remove();
-                }
-                //ClientCollection_1__ClientRoleId
-                else {
-                    $(element).closest('tr').remove();
-                    var startIndex = currentIndex + 1;
-                    var endIndex = maxIndex + 1;
-                    for (i = startIndex; i < endIndex; i++) {
-                        var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
-                        elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
-                        elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
 
-                        var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
-                        elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
-                        elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
 
-                        var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
-                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
-                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
-
-                        var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
-                        elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
-                        elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
-
-                    }
+                    var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                    elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                    elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
 
                 }
 
             }
+
+        }
+    }
+
+
+
+
+    function deleteRowEducationDetails(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix, tdSeven) {
+        if ($(element).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Row');
+            return false;
         }
 
+        else {
+            document.getElementById("btnUpload").disabled = false;
 
-
-
-        function deleteRowEducationDetails(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix, tdSeven) {
-            if ($(element).parents('tbody').find('tr').length === 1) {
-
-                alert('Must have atleast one Row');
-                return false;
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
             }
-
+            //ClientCollection_1__ClientRoleId
             else {
-                document.getElementById("btnUpload").disabled = false;
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
 
-                //var currentvalue = $(this).attr('value');
-                var closestRow = $(element).closest('tr');
-                var currentIndex = closestRow[0].sectionRowIndex;
-                var totalRows = $(element).parents('tbody').find('tr').length;
-                var maxIndex = totalRows - 1;
-                if (currentIndex == maxIndex) {
-                    $(element).closest('tr').remove();
-                }
-                //ClientCollection_1__ClientRoleId
-                else {
-                    $(element).closest('tr').remove();
-                    var startIndex = currentIndex + 1;
-                    var endIndex = maxIndex + 1;
-                    for (i = startIndex; i < endIndex; i++) {
-                        var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
-                        elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
-                        elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
 
-                        var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
-                        elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
-                        elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
 
-                        var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
-                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
-                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+                    var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                    elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                    elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
 
-                        var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
-                        elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
-                        elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+                    var elem5 = document.getElementById(collectionName + "_" + i + "__" + tdFive);
+                    elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
+                    elem5.name = collectionName + "[" + (i - 1) + "]." + tdFive;
 
-                        var elem5 = document.getElementById(collectionName + "_" + i + "__" + tdFive);
-                        elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
-                        elem5.name = collectionName + "[" + (i - 1) + "]." + tdFive;
+                    var elem6 = document.getElementById(collectionName + "_" + i + "__" + tdSix);
+                    elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
+                    elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
 
-                        var elem6 = document.getElementById(collectionName + "_" + i + "__" + tdSix);
-                        elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
-                        elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
-
-                        var elem7 = document.getElementById(collectionName + "_" + i + "__" + tdSeven);
-                        elem7.id = collectionName + "_" + (i - 1) + "__" + tdSeven;
-                        elem7.name = collectionName + "[" + (i - 1) + "]." + tdSeven;
-
-                    }
+                    var elem7 = document.getElementById(collectionName + "_" + i + "__" + tdSeven);
+                    elem7.id = collectionName + "_" + (i - 1) + "__" + tdSeven;
+                    elem7.name = collectionName + "[" + (i - 1) + "]." + tdSeven;
 
                 }
 
             }
+
+        }
+    }
+
+    function deleteRowAvailabilityDetails(element, collectionName, tdOne, tdTwo, tdThree) {
+        if ($(element).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Row');
+            return false;
         }
 
-        function deleteRowAvailabilityDetails(element, collectionName, tdOne, tdTwo, tdThree) {
-            if ($(element).parents('tbody').find('tr').length === 1) {
+        else {
+            document.getElementById("btnUpload").disabled = false;
 
-                alert('Must have atleast one Row');
-                return false;
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
             }
-
+            //ClientCollection_1__ClientRoleId
             else {
-                document.getElementById("btnUpload").disabled = false;
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
 
-                //var currentvalue = $(this).attr('value');
-                var closestRow = $(element).closest('tr');
-                var currentIndex = closestRow[0].sectionRowIndex;
-                var totalRows = $(element).parents('tbody').find('tr').length;
-                var maxIndex = totalRows - 1;
-                if (currentIndex == maxIndex) {
-                    $(element).closest('tr').remove();
-                }
-                //ClientCollection_1__ClientRoleId
-                else {
-                    $(element).closest('tr').remove();
-                    var startIndex = currentIndex + 1;
-                    var endIndex = maxIndex + 1;
-                    for (i = startIndex; i < endIndex; i++) {
-                        var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
-                        elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
-                        elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
 
-                        var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
-                        elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
-                        elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
 
-                        var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
-                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
-                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
-
-
-                    }
 
                 }
 
             }
-        }
-
-        function RadioChanged(val) {
-            if (val == 'Upload') {
-                document.getElementById("uploadDiv").style.display = "block";
-                document.getElementById("linkDiv").style.display = "none";
-                document.getElementById("ResumeLink").value = '';
-
-            }
-            else {
-                document.getElementById("uploadDiv").style.display = "none";
-                document.getElementById("linkDiv").style.display = "block";
-                document.getElementById("File").value = '';
-
-            }
 
         }
+    }
+
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("ResumeLink").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("File").value = '';
+
+        }
+
+    }
 </script>

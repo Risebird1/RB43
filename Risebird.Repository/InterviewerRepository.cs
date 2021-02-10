@@ -260,6 +260,7 @@ namespace Risebird.Repository
             parameters.Add("@IsApproved", entity.IsApproved);
             parameters.Add("@IsLeadInterviewer", entity.IsLeadInterviewer);
             parameters.Add("@Tag", entity.Tag);
+            parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
             parameters.Add("@InterviewerProfileId", SqlDbType.Int, direction: ParameterDirection.Output);
 
             return parameters;
@@ -1256,7 +1257,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public IEnumerable<InterviewReport> GetInterviewerRecommendationbyinterviewid(int id)
+        public async Task<InterviewReport> GetInterviewerRecommendationbyinterviewid(int id)
         {
             try
             {
@@ -1265,14 +1266,14 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Interviewid", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<InterviewReport>(query, dynamicParameters);
-                    return results;
+                    var results = await con.QueryAsync<InterviewReport>(query, dynamicParameters);
+                    return results.FirstOrDefault();
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -1292,7 +1293,7 @@ namespace Risebird.Repository
                     paramx.Add("@InterviewId", reportDetails.InterviewId);
                     paramx.Add("@SkillQuality", reportDetails.SkillQuality);
                     paramx.Add("@OverallScore", reportDetails.OverallScore);
-                    paramx.Add("@Rating", reportDetails.Rating);
+                    //paramx.Add("@Rating", reportDetails.Rating);
                     paramx.Add("@TechSkillComments", reportDetails.TechSkillComments);
                     paramx.Add("@CertificationQuality", reportDetails.CertificationQuality);
                     paramx.Add("@EducationQuality", reportDetails.EducationQuality);
@@ -1330,8 +1331,8 @@ namespace Risebird.Repository
 
                     parametersRecomm.Add("@interviewId", reportDetails.InterviewId);
                     parametersRecomm.Add("@CompanySize", reportDetails.CompanySize);
-                    parametersRecomm.Add("@JobFunction", reportDetails.JobFunction);
-                    parametersRecomm.Add("@Industry", reportDetails.Industry);
+                    //parametersRecomm.Add("@JobFunction", reportDetails.JobFunction);
+                    //parametersRecomm.Add("@Industry", reportDetails.Industry);
                     parametersRecomm.Add("@CompanyHeadquarters", reportDetails.CompanyHeadquarters);
                     parametersRecomm.Add("@CompanyType", reportDetails.CompanyType);
                     parametersRecomm.Add("@CompanyStage", reportDetails.CompanyStage);
@@ -1340,8 +1341,9 @@ namespace Risebird.Repository
                     parametersRecomm.Add("@Senioritylevel", reportDetails.Senioritylevel);
                     parametersRecomm.Add("@SkillNature", reportDetails.SkillNature);
                     parametersRecomm.Add("@Domain", reportDetails.Domain);
-                    parametersRecomm.Add("@SkillIP", reportDetails.SkillIP);
+                    //parametersRecomm.Add("@SkillIP", reportDetails.SkillIP);
                     parametersRecomm.Add("@PerHourRateIndia", reportDetails.PerHourRateIndia);
+                    parametersRecomm.Add("@PerHourRateOutside", reportDetails.PerHourRateOutside);
 
                     paramPersonality.Add("@InterviewId", reportDetails.InterviewId);
                     paramPersonality.Add("@OverallPersonalityScore", reportDetails.OverallPersonalityScore);

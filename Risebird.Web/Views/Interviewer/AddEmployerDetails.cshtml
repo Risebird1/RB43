@@ -61,7 +61,7 @@
 
 
 
-                                <div class="col-md-4 col-sm-4 pr-1">
+                                <div class="col-md-6 col-sm-6 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.CompanyName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
                                         @Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
@@ -72,7 +72,7 @@
 
 
 
-                                <div class="col-md-4 col-sm-4 px-1">
+                                <div class="col-md-6 col-sm-6 pl-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
                                         @Html.DropDownListFor(m => m.Type, (SelectList)ViewBag.CompanyTypeList, new { @class = "select-css form-control text-box single-line" })
@@ -80,7 +80,7 @@
                                 </div>
 
 
-                                <div class="col-md-4 col-sm-4 pl-1">
+                                <div class="col-md-6 col-sm-6 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.CompanyStage, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
                                         @Html.DropDownListFor(m => m.CompanyStage, (SelectList)ViewBag.CompanyStageList, new { @class = "select-css form-control text-box single-line" })
@@ -88,7 +88,7 @@
                                 </div>
 
 
-                                <div class="col-md-4 col-sm-4 pr-1">
+                                <div class="col-md-6 col-sm-6 pl-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.Size, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
                                         @Html.DropDownListFor(m => m.Size, (SelectList)ViewBag.CompanySizeList, new { @class = "select-css form-control text-box single-line" })
@@ -98,7 +98,7 @@
 
 
 
-                                <div class="col-md-4 col-sm-4 px-1">
+                                <div class="col-md-6 col-sm-6 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.JobFunctionId, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
                                         @Html.DropDownListFor(model => model.JobFunctionId, (SelectList)ViewBag.JobFunction, new { @class = "select-css form-control text-box single-line" })
@@ -106,7 +106,7 @@
                                 </div>
 
 
-                                <div class="col-md-4 col-sm-4 pl-1">
+                                <div class="col-md-6 col-sm-6 pl-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.IndustryId, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
                                         @Html.DropDownListFor(model => model.IndustryId, (SelectList)ViewBag.Industry, new { @class = "select-css form-control text-box single-line" })
@@ -115,7 +115,7 @@
 
 
                                 @*--company Head quarter*@
-                                <div class="col-md-4 col-sm-4 pr-1">
+                                <div class="col-md-6 col-sm-6 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.Headquarters, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
                                         @Html.DropDownListFor(m => m.Headquarters, (SelectList)ViewBag.CountryList, new { @class = "select-css form-control text-box single-line" })
@@ -124,7 +124,7 @@
 
                                 </div>
 
-                                <div class="col-md-4 col-sm-4 px-1">
+                                <div class="col-md-6 col-sm-6 pl-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.Role, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
                                         @Html.DropDownListFor(m => m.Role, (SelectList)ViewBag.RoleList, new { @class = "select-css form-control text-box single-line" })
@@ -133,7 +133,7 @@
                                 </div>
 
 
-                                <div class="col-md-4 col-sm-4 pl-1">
+                                <div class="col-md-6 col-sm-6 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
                                         @Html.EditorFor(model => model.Domain, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
@@ -142,7 +142,7 @@
                                 </div>
 
 
-                                <div class="col-md-4 col-sm-4 pr-1">
+                                <div class="col-md-6 col-sm-6 pl-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.SeniorityLevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
                                         @Html.DropDownListFor(m => m.SeniorityLevel, (SelectList)ViewBag.SeniorityLevelList, new { @class = "select-css form-control text-box single-line" })
@@ -151,7 +151,7 @@
 
 
 
-                                <div class="col-md-4 col-sm-4 px-1">
+                                <div class="col-md-6 col-sm-6 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(m => m.ExperienceId, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
                                         @Html.DropDownListFor(m => m.ExperienceId, (SelectList)ViewBag.ExperienceRange, new { @class = "select-css form-control text-box single-line" })
@@ -160,7 +160,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-4 col-sm-4 pl-1">
+                                <div class="col-md-6 col-sm-6 pl-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.WorkNature, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
                                         @Html.DropDownListFor(m => m.WorkNature, (SelectList)ViewBag.WorkNatureList, new { @class = "select-css form-control text-box single-line" })
@@ -168,7 +168,7 @@
                                 </div>
 
 
-                                <div class="col-md-4 col-sm-4 pr-1">
+                                <div class="col-md-6 col-sm-6 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.PrimaryResponsibility, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
                                         @Html.DropDownListFor(m => m.PrimaryResponsibility, (SelectList)ViewBag.PrimaryResponsibilityList, new { @class = "select-css form-control text-box single-line" })
@@ -176,7 +176,7 @@
                                 </div>
 
 
-                                <div class="col-md-4 col-sm-4 px-1">
+                                <div class="col-md-6 col-sm-6 pl-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.CompanyLinkedinPage, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
                                         @Html.EditorFor(model => model.CompanyLinkedinPage, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
@@ -185,7 +185,7 @@
                                 </div>
 
 
-                                <div class="col-md-4 col-sm-4 pl-1">
+                                <div class="col-md-6 col-sm-6 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.CompanyWebsite, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
                                         @Html.EditorFor(model => model.CompanyWebsite, new { htmlAttributes = new { @class = "form-control text-box single-line" } })

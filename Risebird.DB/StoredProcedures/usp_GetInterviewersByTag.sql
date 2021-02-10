@@ -18,7 +18,7 @@ Create PROCEDURE [dbo].[usp_GetInterviewersByTag]
 AS
 Begin
 
-select UserId, ul.EmailId from InterviewerProfile ipr join UserList ul on ul.id =ipr.UserId where IsApproved=1 and Tag=@Tag
+select UserId, ul.EmailId from InterviewerProfile ipr join UserList ul on ul.id =ipr.UserId where IsApproved=1 and Tag like ('%' +@Tag +'%')
 
 
 End
@@ -27,3 +27,5 @@ End
 GO
 
 
+--jwere
+--rumatest3
