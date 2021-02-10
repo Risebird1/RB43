@@ -15,6 +15,7 @@
 
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" defer />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css" />
 <script>
     amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
     amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
@@ -38,7 +39,7 @@
                 <div class="navbar-toggle">
                     <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
                 </div>
-                <a class="navbar-brand card-title">Risetube</a>
+                <a class="navbar-brand card-title">Interviewer Search</a>
                 @if (!String.IsNullOrEmpty(Model.LogoUrl))
                 {
                     <img src="@Model.LogoUrl" style="width:60px;height:60px" />
@@ -62,9 +63,9 @@
                 <div class="pull-right">
                     <div>
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span  data-toggle="tooltip" data-placement="top" title="Share to admin(Shortlist details)" onclick="openShortlistModel()" data-original-title="Tooltip on top"><font style="font-family:arial;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg> Admin</font></span>
+                            <span data-toggle="tooltip" data-placement="top" title="Share to admin(Shortlist details)" onclick="openShortlistModel()" data-original-title="Tooltip on top"><font style="font-family:arial;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg> Admin</font></span>
                         </button>
-                        @Html.ActionLink("Back to List", "RisetubeInterviewer", "InterviewerSkills", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                        @Html.ActionLink("Back to List", "RisetubeInterviewer", "InterviewerSkills", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button",@style="margin-right:10px;" })
 
                     </div>
                 </div>
@@ -143,21 +144,14 @@
                                                                                 <a onclick="">   @Model.candidateName <span class="dot"></span></a>
                                                                             }
                                                                         </div>
-                                                                        <div style="        float: left;
+                                                                        <div style="float: left;
         padding: 0px 10px 0px 0px;
 ">
-                                                                            @if (@Model.JDTiltle.Length > 5)
-                                                                            {
-
-                                                                                <a href="#" data-tooltip="@Model.JDTiltle">
-                                                                                    <span class="job_title join-time"> (@Model.JDTiltle.Split("|")[0])</span>
-                                                                                </a>}
-                                                                            else
-                                                                            {
-                                                                                <span>@Model.JDTiltle</span>
-                                                                            }
+                                                                            
+                                                                                <span>@Model.AssessmentGroup</span>
+                                                                            
                                                                         </div>
-                                                                        <div style="float:left"><i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span class="date-calendar">@Model.interviewDate</span></div>
+
 
                                                                         @if (Model.VideoLink != null)
                                                                         {
@@ -181,7 +175,7 @@
 ">
                                                                             <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
                                                                             <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
-                                                                            <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
+                                                                            <input type="text" hidden value="@Model.AssessmentGroup" id="txthiddenSkill" />
                                                                         </div>
 
                                                                     </h1>
@@ -283,16 +277,17 @@
                                                                                 @Html.HiddenFor(model => model.IreportModel.OverallPersonalityScore)
                                                                                 @Html.HiddenFor(model => model.IreportModel.OverallInterviewingAbilityScore)
                                                                                 <ul class="nav nav-pills nav-pills-primary tabs">
-                                                                                    <li class="nav-link active item1" rel="link1">Report Summary</li>
-                                                                                    <li class="nav-link item2" rel="link2">Candidate Details</li>
+                                                                                    <li class="nav-link active item1" rel="link1">Summary</li>
+                                                                                    <li class="nav-link item2" rel="link2">Interviewing Details</li>
                                                                                     <li class="nav-link item3" rel="link3"> Tech Skill Report</li>
-                                                                                    <li class="nav-link item4" rel="link4"> Questions Discussed</li>
-
-
+                                                                                    <li class="nav-link item4" rel="link4"> Interviewing Strategy </li>
+                                                                                    <li class="nav-link item5" rel="link5"> Profile Score </li>
+                                                                                    <li class="nav-link item6" rel="link6"> Interviewing ability </li>
+                                                                                    <li class="nav-link item7" rel="link7"> Personality Score  </li>
                                                                                 </ul>
                                                                                 <hr />
                                                                                 <div class="tab_container tab-space">
-                                                                                    <h3 class="d_active tab_drawer_heading" rel="link1">Report Summary</h3>
+                                                                                    <h3 class="d_active tab_drawer_heading" rel="link1"> Summary</h3>
                                                                                     <div id="link1" class="tab_content">
                                                                                         <div class="row">
                                                                                             <div class="left-chart">
@@ -321,7 +316,7 @@
                                                                                             <div class="interviewer-comment itemcomment">
 
                                                                                                 <div class="form-group" style="margin-bottom:0px; ">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12" })
+                                                                                                    @Html.Label("Comment", "Comment", htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12" })
 
 
                                                                                                     <div class="talk-bubble tri-right border-bubble right-in inComment" style="width:100%;">
@@ -357,79 +352,72 @@
 
                                                                                     </div>
                                                                                     <!-- #tab1 -->
-                                                                                    <h3 class="tab_drawer_heading" rel="link2">Candidate Details</h3>
+                                                                                    <h3 class="tab_drawer_heading" rel="link2">Interviewing Details</h3>
                                                                                     <div id="link2" class="tab_content">
                                                                                         <div class="row">
                                                                                             <div class="col-md-6 col-sm-6">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                                                                    @Html.Label("Interviewer Name", "Interviewer Name", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
 
                                                                                                     @Html.TextBoxFor(m => m.IreportModel.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                                 </div>
                                                                                             </div>
                                                                                             <div class="col-md-6 col-sm-6">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.CompanyType, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
                                                                                         <div class="row">
                                                                                             <div class="col-md-6 col-sm-6">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.Label("Per Hour Rate India", "Per Hour Rate India", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
 
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                    @Html.ValidationMessageFor(model => model.IreportModel.expectedPerHourRate, "", new { @class = "text-danger" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.PerHourRateIndia, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                                 </div>
                                                                                             </div>
                                                                                             <div class="col-md-6 col-sm-6">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.PreferredLocation, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    @Html.Label("Per Hour Rate OutSide", "Per Hour Rate OutSide", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.PerHourRateOutside, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
                                                                                         <div class="row">
                                                                                             <div class="col-md-6 col-sm-6">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.SkillCategory, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SkillCategory, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                                 </div>
                                                                                             </div>
-
                                                                                             <div class="col-md-6 col-sm-6">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.joiningTime, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.joiningTime, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Yearsofexperience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.Yearsofexperience, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
-
                                                                                         <div class="row">
                                                                                             <div class="col-md-6 col-sm-6">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Senioritylevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.Senioritylevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.Label("Coded Resume", "Coded Resume", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
 
                                                                                                     @{
-                                                                                                        if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
-                                                                                                        { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
+                                                                                                        if (Model.IreportModel.encodedresumeLink != null && Model.IreportModel.encodedresumeLink != "")
+                                                                                                        { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.encodedresumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
                                                                                                     }
                                                                                                 </div>
                                                                                             </div>
-                                                                                            <div class="col-md-6 col-sm-6">
-                                                                                                <div class="form-group">
 
-
-                                                                                                    @{
-                                                                                                        if (Model.IreportModel.AadharFileLink != null && Model.IreportModel.AadharFileLink != "")
-                                                                                                        { @Html.LabelFor(model => model.IreportModel.AadharFileLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })<a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ", "%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
-                                                                                                    }
-                                                                                                </div>
-                                                                                            </div>
                                                                                         </div>
 
 
@@ -529,7 +517,7 @@
                                                                                     </div>
                                                                                     <!-- #tab3 -->
 
-                                                                                    <h3 class="tab_drawer_heading" rel="link4">  Questions Discussed</h3>
+                                                                                    <h3 class="tab_drawer_heading" rel="link4"> Interviewing Strategy</h3>
                                                                                     <div id="link4" class="tab_content">
                                                                                         <div>
                                                                                             <div class="table-responsive-sm ">
@@ -599,436 +587,573 @@
                                                                                         </div>
                                                                                     </div>
 
+
+                                                                                    <h3 class="tab_drawer_heading" rel="link5"> Profile Score</h3>
+
+                                                                                    <div id="link5" class="tab_content interviewer">
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-4 col-sm-4">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.SkillQuality, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    <a class="info" href="#"><span>Select Skill Quality, Multiple tracks at same time </span></a>
+                                                                                                    @Html.HiddenFor(m => m.IreportModel.SkillQuality)
+                                                                                                    <div class="star-rating">
+                                                                                                        <input type="radio" id="SkillQuality_5" name="ability1" value="5" disabled />
+                                                                                                        <label for="SkillQuality_5" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="SkillQuality_4" name="ability1" value="4" disabled />
+                                                                                                        <label for="SkillQuality_4" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="SkillQuality_3" name="ability1" value="3" disabled />
+                                                                                                        <label for="SkillQuality_3" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="SkillQuality_2" name="ability1" value="2" disabled />
+                                                                                                        <label for="SkillQuality_2" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="SkillQuality_1" name="ability1" value="1" disabled />
+                                                                                                        <label for="SkillQuality_1" class="star">&#9733;</label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-4 col-sm-4">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.CertificationQuality, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.HiddenFor(m => m.IreportModel.CertificationQuality)
+                                                                                                    <div class="star-rating">
+                                                                                                        <input type="radio" id="CertificationQuality_5" name="ability2" value="5" disabled />
+                                                                                                        <label for="CertificationQuality_5" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="CertificationQuality_4" name="ability2" value="4" disabled />
+                                                                                                        <label for="CertificationQuality_4" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="CertificationQuality_3" name="ability2" value="3" disabled />
+                                                                                                        <label for="CertificationQuality_3" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="CertificationQuality_2" name="ability2" value="2" disabled />
+                                                                                                        <label for="CertificationQuality_2" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="CertificationQuality_1" name="ability2" value="1" disabled />
+                                                                                                        <label for="CertificationQuality_1" class="star">&#9733;</label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-4 col-sm-4">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.EducationQuality, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.HiddenFor(m => m.IreportModel.EducationQuality)
+                                                                                                    <div class="star-rating">
+                                                                                                        <input type="radio" id="EducationQuality_5" name="ability3" value="5" disabled />
+                                                                                                        <label for="EducationQuality_5" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="EducationQuality_4" name="ability3" value="4" disabled />
+                                                                                                        <label for="EducationQuality_4" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="EducationQuality_3" name="ability3" value="3" disabled />
+                                                                                                        <label for="EducationQuality_3" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="EducationQuality_2" name="ability3" value="2" disabled />
+                                                                                                        <label for="EducationQuality_2" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="EducationQuality_1" name="ability3" value="1" disabled />
+                                                                                                        <label for="EducationQuality_1" class="star">&#9733;</label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+
+                                                                                            <div class="col-md-4 col-sm-4">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.EmployersQuality, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.HiddenFor(m => m.IreportModel.EmployersQuality)
+                                                                                                    <div class="star-rating">
+                                                                                                        <input type="radio" id="EmployersQuality_5" name="ability4" value="5" disabled />
+                                                                                                        <label for="EmployersQuality_5" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="EmployersQuality_4" name="ability4" value="4" disabled />
+                                                                                                        <label for="EmployersQuality_4" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="EmployersQuality_3" name="ability4" value="3" disabled />
+                                                                                                        <label for="EmployersQuality_3" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="EmployersQuality_2" name="ability4" value="2" disabled />
+                                                                                                        <label for="EmployersQuality_2" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="EmployersQuality_1" name="ability4" value="1" disabled />
+                                                                                                        <label for="EmployersQuality_1" class="star">&#9733;</label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-4 col-sm-4">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.CareerProgression, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.HiddenFor(m => m.IreportModel.CareerProgression)
+                                                                                                    <div class="star-rating">
+                                                                                                        <input type="radio" id="CareerProgression_5" name="ability5" value="5" disabled />
+                                                                                                        <label for="CareerProgression_5" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="CareerProgression_4" name="ability5" value="4" disabled />
+                                                                                                        <label for="CareerProgression_4" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="CareerProgression_3" name="ability5" value="3" disabled />
+                                                                                                        <label for="CareerProgression_3" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="CareerProgression_2" name="ability5" value="2" disabled />
+                                                                                                        <label for="CareerProgression_2" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="CareerProgression_1" name="ability5" value="1" disabled />
+                                                                                                        <label for="CareerProgression_1" class="star">&#9733;</label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-4 col-sm-4">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.ProjectsQuality, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.HiddenFor(m => m.IreportModel.ProjectsQuality)
+                                                                                                    <div class="star-rating">
+                                                                                                        <input type="radio" id="ProjectsQuality_5" name="ability6" value="5" disabled />
+                                                                                                        <label for="ProjectsQuality_5" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="ProjectsQuality_4" name="ability6" value="4" disabled />
+                                                                                                        <label for="ProjectsQuality_4" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="ProjectsQuality_3" name="ability6" value="3" disabled />
+                                                                                                        <label for="ProjectsQuality_3" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="ProjectsQuality_2" name="ability6" value="2" disabled />
+                                                                                                        <label for="ProjectsQuality_2" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="ProjectsQuality_1" name="ability6" value="1" disabled />
+                                                                                                        <label for="ProjectsQuality_1" class="star">&#9733;</label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                       
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-4 col-sm-4">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.OnlinePresence, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.HiddenFor(m => m.IreportModel.OnlinePresence)
+                                                                                                    <div class="star-rating">
+                                                                                                        <input type="radio" id="OnlinePresence_5" name="ability7" value="5" disabled />
+                                                                                                        <label for="OnlinePresence_5" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="OnlinePresence_4" name="ability7" value="4" disabled />
+                                                                                                        <label for="OnlinePresence_4" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="OnlinePresence_3" name="ability7" value="3" disabled />
+                                                                                                        <label for="OnlinePresence_3" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="OnlinePresence_2" name="ability7" value="2" disabled />
+                                                                                                        <label for="OnlinePresence_2" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="OnlinePresence_1" name="ability7" value="1" disabled />
+                                                                                                        <label for="OnlinePresence_1" class="star">&#9733;</label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-4 col-sm-4">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.BehavioralScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.HiddenFor(m => m.IreportModel.BehavioralScore)
+                                                                                                    <div class="star-rating">
+                                                                                                        <input type="radio" id="BehavioralScore_5" name="ability8" value="5" disabled />
+                                                                                                        <label for="BehavioralScore_5" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="BehavioralScore_4" name="ability8" value="4" disabled />
+                                                                                                        <label for="BehavioralScore_4" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="BehavioralScore_3" name="ability8" value="3" disabled />
+                                                                                                        <label for="BehavioralScore_3" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="BehavioralScore_2" name="ability8" value="2" disabled />
+                                                                                                        <label for="BehavioralScore_2" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="BehavioralScore_1" name="ability8" value="1" disabled />
+                                                                                                        <label for="BehavioralScore_1" class="star">&#9733;</label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                    <h3 class="tab_drawer_heading" rel="link6"> Interviewing ability</h3>
+
+                                                                                    <div id="link6" class="tab_content">
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.DecisionMaking, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.DecisionMaking, new { ID = "drop", @class = "dropques form-control text-box single-line ", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Articulation, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.Articulation, new { ID = "drop", @class = "dropques form-control text-box single-line ", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.ReadinessOnlineInterviews, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.ReadinessOnlineInterviews, new { ID = "drop", @class = "dropques form-control text-box single-line ", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Teamwork, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.Teamwork, new { ID = "drop", @class = "dropques form-control text-box single-line ", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.RelationshipManagement, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.RelationshipManagement, new { ID = "drop", @class = "dropques form-control text-box single-line ", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.ConflictResolution, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.ConflictResolution, new { ID = "drop", @class = "dropques form-control text-box single-line ", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Adaptability, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.Adaptability, new { ID = "drop", @class = "dropques form-control text-box single-line ", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.ModeInterviews, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.ModeInterviews, new { ID = "drop", @class = "dropques form-control text-box single-line ", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.WorkUnderPressure, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.WorkUnderPressure, new { ID = "drop", @class = "dropques form-control text-box single-line ", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.TimeManagement, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.TimeManagement, new { ID = "drop", @class = "dropques form-control text-box single-line ", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Interviewscompleted, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.Interviewscompleted, new { ID = "drop", @class = "dropques form-control text-box single-line ", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.ReadymadeAssessment, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.ReadymadeAssessment, new { ID = "drop", @class = "dropques form-control text-box single-line ", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <h3 class="tab_drawer_heading" rel="link7"> Personality Score</h3>
+
+                                                                                    <div id="link7" class="tab_content interviewer">
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-4 col-sm-4">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Openness, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    <a class="info" href="#"><span>Inventive/Curious, Consistent/Cautious</span></a>
+                                                                                                    @Html.HiddenFor(m => m.IreportModel.Openness)
+                                                                                                    <div class="star-rating">
+                                                                                                        <input type="radio" id="Openness_5" name="rating1" value="5" disabled />
+                                                                                                        <label for="Openness_5" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Openness_4" name="rating1" value="4" disabled />
+                                                                                                        <label for="Openness_4" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Openness_3" name="rating1" value="3" disabled />
+                                                                                                        <label for="Openness_3" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Openness_2" name="rating1" value="2" disabled />
+                                                                                                        <label for="Openness_2" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Openness_1" name="rating1" value="1" disabled />
+                                                                                                        <label for="Openness_1" class="star">&#9733;</label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-4 col-sm-4">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Conscientiousness, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.HiddenFor(m => m.IreportModel.Conscientiousness)
+                                                                                                    <div class="star-rating">
+                                                                                                        <input type="radio" id="Conscientiousness_5" name="rating2" value="5" disabled />
+                                                                                                        <label for="Conscientiousness_5" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Conscientiousness_4" name="rating2" value="4" disabled />
+                                                                                                        <label for="Conscientiousness_4" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Conscientiousness_3" name="rating2" value="3" disabled />
+                                                                                                        <label for="Conscientiousness_3" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Conscientiousness_2" name="rating2" value="2" disabled />
+                                                                                                        <label for="Conscientiousness_2" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Conscientiousness_1" name="rating2" value="1" disabled />
+                                                                                                        <label for="Conscientiousness_1" class="star">&#9733;</label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-4 col-sm-4">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Extroversion, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.HiddenFor(m => m.IreportModel.Extroversion)
+                                                                                                    <div class="star-rating">
+                                                                                                        <input type="radio" id="Extroversion_5" name="rating3" value="5" disabled />
+                                                                                                        <label for="Extroversion_5" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Extroversion_4" name="rating3" value="4" disabled />
+                                                                                                        <label for="Extroversion_4" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Extroversion_3" name="rating3" value="3" disabled />
+                                                                                                        <label for="Extroversion_3" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Extroversion_2" name="rating3" value="2" disabled />
+                                                                                                        <label for="Extroversion_2" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Extroversion_1" name="rating3" value="1" disabled />
+                                                                                                        <label for="Extroversion_1" class="star">&#9733;</label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+
+                                                                                            <div class="col-md-4 col-sm-4">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Agreeableness, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.HiddenFor(m => m.IreportModel.Agreeableness)
+                                                                                                    <div class="star-rating">
+                                                                                                        <input type="radio" id="Agreeableness_5" name="rating4" value="5" disabled />
+                                                                                                        <label for="Agreeableness_5" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Agreeableness_4" name="rating4" value="4" disabled />
+                                                                                                        <label for="Agreeableness_4" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Agreeableness_3" name="rating4" value="3" disabled />
+                                                                                                        <label for="Agreeableness_3" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Agreeableness_2" name="rating4" value="2" disabled />
+                                                                                                        <label for="Agreeableness_2" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Agreeableness_1" name="rating4" value="1" disabled />
+                                                                                                        <label for="Agreeableness_1" class="star">&#9733;</label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-4 col-sm-4">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Neuroticism, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.HiddenFor(m => m.IreportModel.Neuroticism)
+                                                                                                    <div class="star-rating">
+                                                                                                        <input type="radio" id="Neuroticism_5" name="rating5" value="5" disabled />
+                                                                                                        <label for="Neuroticism_5" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Neuroticism_4" name="rating5" value="4" disabled />
+                                                                                                        <label for="Neuroticism_4" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Neuroticism_3" name="rating5" value="3" disabled />
+                                                                                                        <label for="Neuroticism_3" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Neuroticism_2" name="rating5" value="2" disabled />
+                                                                                                        <label for="Neuroticism_2" class="star">&#9733;</label>
+                                                                                                        <input type="radio" id="Neuroticism_1" name="rating5" value="1" disabled />
+                                                                                                        <label for="Neuroticism_1" class="star">&#9733;</label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                       
+
+
+
+                                                                                    </div>
+
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
 
-                                                                    <div class="col-md-4  side-player scroll" id="sd-proplayer">
 
-                                                                        @if (Model.MeetingPatch.Count > 0)
+                                                                }
+
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4  side-player scroll" id="sd-proplayer">
+
+                                                    @if (Model.MeetingPatch.Count > 0)
+                                                    {
+                                                        <div id="style-2" class="single-video-right splitvideo-desktop">
+                                                            <div>
+                                                                <div>
+                                                                    <div class="relatedvideo">
+                                                                        @foreach (var videolist in Model.MeetingPatch)
                                                                         {
-                                                                            <div id="style-2" class="single-video-right splitvideo-desktop">
-                                                                                <div>
-                                                                                    <div>
-                                                                                        <div class="relatedvideo">
-                                                                                            @foreach (var videolist in Model.MeetingPatch)
-                                                                                            {
-                                                                                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
-                                                                                                @if (Model.MeetingPatch.FirstOrDefault().Priority == videolist.Priority)
-                                                                                                {
-                                                                                                    <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
-                                                                                                        <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
-                                                                                                        <div class="video-card-image active-video" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)" disabled="true">
-
-                                                                                                            @if (videolist.VideoLink.Contains(".mp4"))
-                                                                                                            {
-                                                                                                                <video style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
-                                                                                                                    <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                                                </video>
-                                                                                                            }
-                                                                                                            else
-                                                                                                            {
-                                                                                                                <a class="play-icon" style=" cursor: pointer;"></a>
-                                                                                                            }
-                                                                                                        </div>
-                                                                                                        <div class="video-card-body" onclick="changeVideo(@videolist.Priority)">
-                                                                                                            <div class="video-title">
-                                                                                                                @if (@videolist.VideoTitle.Length > 11)
-                                                                                                                {
-                                                                                                                    <a data-tooltip="@videolist.VideoTitle" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.VideoTitle</span> </a>
-                                                                                                                }
-                                                                                                                else
-                                                                                                                {
-                                                                                                                    <span class="candidate">@videolist.VideoTitle</span>
-                                                                                                                }
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                }
-                                                                                                else
-                                                                                                {
-                                                                                                    <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
-                                                                                                        <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
-                                                                                                        <div class="video-card-image" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)">
-
-                                                                                                            @if (videolist.VideoLink.Contains(".mp4"))
-                                                                                                            {
-                                                                                                                <video style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
-                                                                                                                    <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                                                </video>
-                                                                                                            }
-                                                                                                            else
-                                                                                                            {
-                                                                                                                <a class="play-icon" style=" cursor: pointer;"></a>
-                                                                                                                @*<a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>*@
-                                                                                                            }
-
-                                                                                                        </div>
-                                                                                                        <div class="video-card-body" onclick="changeVideo(@videolist.Priority)">
-                                                                                                            <div class="video-title">
-                                                                                                                @if (@videolist.VideoTitle.Length > 11)
-                                                                                                                {
-                                                                                                                    <a data-tooltip="@videolist.VideoTitle" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.VideoTitle</span> </a>
-                                                                                                                }
-                                                                                                                else
-                                                                                                                {
-                                                                                                                    <span class="candidate">@videolist.VideoTitle</span>
-                                                                                                                }
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                }
-                                                                                            }
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        }
-
-                                                                        else
-                                                                        {
-                                                                            @if (Model.SubVideo_List.Count > 0)
+                                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+                                                                            @if (Model.MeetingPatch.FirstOrDefault().Priority == videolist.Priority)
                                                                             {
-                                                                                <h4 class="related-title">
-                                                                                    Similar Skill Video
-                                                                                </h4>
-                                                                                <div id="style-2" class="single-video-right related">
-                                                                                    <div>
-                                                                                        <div>
-                                                                                            <div class="relatedvideo">
+                                                                                <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
+                                                                                    <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
+                                                                                    <div class="video-card-image active-video" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)" disabled="true">
 
-                                                                                                @foreach (var videolist in Model.SubVideo_List)
-                                                                                                {
-                                                                                                    var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
-                                                                                                    <div class="video-card video-card-list videosidelist">
-                                                                                                        <div class="video-card-image">
-                                                                                                            @if (videolist.MeetingPatchCount > 0)
-                                                                                                            {
-                                                                                                                <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
-                                                                                                            }
-                                                                                                            @if (videolist.VideoLink.Contains(".mp4"))
-                                                                                                            {
-                                                                                                                @if (videolist.ThumbnailImage != null)
-                                                                                                                {
-                                                                                                                    <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
-                                                                                                                <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
-                                                                                                                    <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                                                </video>
-
-                                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                                                            }
-                                                                                                            else
-                                                                                                            {
-                                                                                                                @if (videolist.ThumbnailImage != null)
-                                                                                                                {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
-                                                                                                                else
-                                                                                                                { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
-
-                                                                                                        </div>
-                                                                                                        <div class="video-card-body">
-                                                                                                            <div class="video-title">
-                                                                                                                @if (@videolist.candidateName.Length > 11)
-                                                                                                                {
-                                                                                                                    <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
-                                                                                                                }
-                                                                                                                else
-                                                                                                                {
-                                                                                                                    <span onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", videolist)'" class="candidate">@videolist.candidateName</span>}
-
-                                                                                                                @if (@videolist.JDTiltle.Length > 10)
-                                                                                                                {
-                                                                                                                    <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
-
-                                                                                                                else
-                                                                                                                {
-                                                                                                                    <span>@videolist.JDTiltle</span>}
-
-                                                                                                            </div>
-                                                                                                            <div class="video-page text-success">
-                                                                                                                &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
-                                                                                                                <span class="divider-g">
-                                                                                                                    @if (videolist.InterviewStatus == 4)
-                                                                                                                    {
-                                                                                                                        <span style="color:palevioletred">Border Line</span>
-                                                                                                                    }
-
-                                                                                                                    else if (videolist.InterviewStatus == 2)
-                                                                                                                    {
-                                                                                                                        <span style="color:green">Selected</span>
-
-                                                                                                                    }
-                                                                                                                </span>
-
-                                                                                                            </div>
-
-
-                                                                                                            <div class="video-info">
-                                                                                                                <span> Notice Period: </span> @if (videolist.joiningTime.Length > 10)
-                                                                                                                {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
-                                                                                                            else
-                                                                                                            {
-                                                                                                                <span id="join_time"> @videolist.joiningTime</span>}
-                                                                                                            </div>
-
-                                                                                                            <div class="video-info">
-                                                                                                                <span>Expected Salary:</span>  @if (@videolist.expectedPerHourRate.Length > 10)
-                                                                                                                {
-                                                                                                                    <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
-
-                                                                                                                else
-                                                                                                                {
-                                                                                                                    <span>@videolist.expectedPerHourRate</span>}
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                }
-
-                                                                                            </div>
+                                                                                        @if (videolist.VideoLink.Contains(".mp4"))
+                                                                                        {
+                                                                                            <video style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
+                                                                                                <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                            </video>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <a class="play-icon" style=" cursor: pointer;"></a>
+                                                                                        }
+                                                                                    </div>
+                                                                                    <div class="video-card-body" onclick="changeVideo(@videolist.Priority)">
+                                                                                        <div class="video-title">
+                                                                                            @if (@videolist.VideoTitle.Length > 11)
+                                                                                            {
+                                                                                                <a data-tooltip="@videolist.VideoTitle" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.VideoTitle</span> </a>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <span class="candidate">@videolist.VideoTitle</span>
+                                                                                            }
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
                                                                             }
                                                                             else
                                                                             {
+                                                                                <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
+                                                                                    <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
+                                                                                    <div class="video-card-image" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)">
 
+                                                                                        @if (videolist.VideoLink.Contains(".mp4"))
+                                                                                        {
+                                                                                            <video style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
+                                                                                                <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                            </video>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <a class="play-icon" style=" cursor: pointer;"></a>
+                                                                                            @*<a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>*@
+                                                                                        }
+
+                                                                                    </div>
+                                                                                    <div class="video-card-body" onclick="changeVideo(@videolist.Priority)">
+                                                                                        <div class="video-title">
+                                                                                            @if (@videolist.VideoTitle.Length > 11)
+                                                                                            {
+                                                                                                <a data-tooltip="@videolist.VideoTitle" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.VideoTitle</span> </a>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <span class="candidate">@videolist.VideoTitle</span>
+                                                                                            }
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
                                                                             }
                                                                         }
-
                                                                     </div>
-                                                                }
-
-                                                                @if (Model.MeetingPatch.Count > 0)
-                                                                {
-                                                                    <div class="col-md-12 mob-pad" id="sd-player">
-                                                                        @if (Model.SubVideo_List.Count > 0)
-                                                                        {
-                                                                            <h4 class="related-title">Related Interviews</h4>
-                                                                            <div class="desktop-view">
-                                                                                <div style="overflow-x:scroll" class="scrollbar" id="style-2">
-                                                                                    <div>
-                                                                                        <div>
-                                                                                            <div style="margin-top:10px;">
-                                                                                                <table width="100%" cellpadding="0" cellspacing="0" style="border:0px!important">
-                                                                                                    <tr>
-                                                                                                        @foreach (var videolist in Model.SubVideo_List)
-                                                                                                        {
-                                                                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
-
-                                                                                                            <td class="relatedvideo rvdio" style="width:33.3%">
-                                                                                                                <div class="video-card video-card-list  videosidelist">
-                                                                                                                    <div class="video-card-image">
-                                                                                                                        @if (videolist.MeetingPatchCount > 0)
-                                                                                                                        {
-                                                                                                                            <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
-                                                                                                                            <div class="underline--magical"></div>
-                                                                                                                        }
-                                                                                                                        @if (videolist.VideoLink.Contains(".mp4"))
-                                                                                                                        {
-                                                                                                                            @if (videolist.ThumbnailImage != null)
-                                                                                                                            {
-                                                                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
-                                                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload ">
-                                                                                                                                <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                                                            </video>
-                                                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-
-
-                                                                                                                        }
-                                                                                                                        else
-                                                                                                                        {
-                                                                                                                            @if (videolist.ThumbnailImage != null)
-                                                                                                                            {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
-                                                                                                                            else
-                                                                                                                            { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
-
-
-                                                                                                                        @*
-                                                                                                                            <div class="time">3:50</div>
-                                                                                                                        *@
-                                                                                                                    </div>
-                                                                                                                    <div class="video-card-body">
-                                                                                                                        <div class="video-title">
-                                                                                                                            @if (@videolist.candidateName.Length > 11)
-                                                                                                                            {
-                                                                                                                                <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
-                                                                                                                            }
-                                                                                                                            else
-                                                                                                                            {
-                                                                                                                                <span onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" class="candidate">@videolist.candidateName</span>}
-
-                                                                                                                            @if (@videolist.JDTiltle.Length > 10)
-                                                                                                                            {
-                                                                                                                                <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
-
-                                                                                                                            else
-                                                                                                                            {
-                                                                                                                                <span>@videolist.JDTiltle</span>}
-
-                                                                                                                        </div>
-                                                                                                                        <div class="video-page text-success">
-                                                                                                                            &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
-                                                                                                                            <span class="divider-g">
-                                                                                                                                @if (videolist.InterviewStatus == 4)
-                                                                                                                                {
-                                                                                                                                    <span style="color:palevioletred">Border Line</span>
-                                                                                                                                }
-
-                                                                                                                                else if (videolist.InterviewStatus == 2)
-                                                                                                                                {
-                                                                                                                                    <span style="color:green">Selected</span>
-
-                                                                                                                                }
-                                                                                                                            </span>
-
-                                                                                                                        </div>
-
-
-                                                                                                                        <div class="video-info">
-                                                                                                                            <span> Notice Period: </span> @if (videolist.joiningTime.Length > 10)
-                                                                                                                            {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
-                                                                                                                        else
-                                                                                                                        {
-                                                                                                                            <span id="join_time"> @videolist.joiningTime</span>}
-                                                                                                                        </div>
-
-                                                                                                                        <div class="video-info">
-                                                                                                                            <span>Expected Salary:</span>  @if (@videolist.expectedPerHourRate.Length > 10)
-                                                                                                                            {
-                                                                                                                                <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
-
-                                                                                                                            else
-                                                                                                                            {
-                                                                                                                                <span>@videolist.expectedPerHourRate</span>}
-                                                                                                                        </div>
-                                                                                                                    </div>
-                                                                                                                </div>
-
-                                                                                                            </td>
-
-
-
-                                                                                                        }
-
-                                                                                                    </tr>
-                                                                                                </table>
-
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="mobile-view">
-                                                                                <div>
-                                                                                    <div>
-                                                                                        <div>
-                                                                                            <div class="related">
-
-                                                                                                @foreach (var videolist in Model.SubVideo_List)
-                                                                                                {
-                                                                                                    var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
-
-
-                                                                                                    <div class="video-card video-card-list  videosidelist">
-
-                                                                                                        <div class="video-card-image">
-                                                                                                            @if (videolist.MeetingPatchCount > 0)
-                                                                                                            {
-                                                                                                                <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
-                                                                                                            }
-                                                                                                            @if (videolist.VideoLink.Contains(".mp4"))
-                                                                                                            {
-                                                                                                                @if (videolist.ThumbnailImage != null)
-                                                                                                                {
-                                                                                                                    <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
-                                                                                                                <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
-                                                                                                                    <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                                                </video>
-
-                                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                                                            }
-                                                                                                            else
-                                                                                                            {
-                                                                                                                @if (videolist.ThumbnailImage != null)
-                                                                                                                {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
-                                                                                                                else
-                                                                                                                { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
-
-                                                                                                        </div>
-
-
-                                                                                                        <div class="video-card-body">
-                                                                                                            <div class="video-title">
-                                                                                                                @if (@videolist.candidateName.Length > 11)
-                                                                                                                {
-                                                                                                                    <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", videolist)'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
-                                                                                                                }
-                                                                                                                else
-                                                                                                                {
-                                                                                                                    <span class="candidate">@videolist.candidateName</span>}
-
-                                                                                                                @if (@videolist.JDTiltle.Length > 10)
-                                                                                                                {
-                                                                                                                    <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
-
-                                                                                                                else
-                                                                                                                {
-                                                                                                                    <span>@videolist.JDTiltle</span>}
-
-                                                                                                            </div>
-                                                                                                            <div class="video-page text-success">
-                                                                                                                &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
-                                                                                                                <span class="divider-g">
-                                                                                                                    @if (videolist.InterviewStatus == 4)
-                                                                                                                    {
-                                                                                                                        <span style="color:palevioletred">Border Line</span>
-                                                                                                                    }
-
-                                                                                                                    else if (videolist.InterviewStatus == 2)
-                                                                                                                    {
-                                                                                                                        <span style="color:green">Selected</span>
-
-                                                                                                                    }
-                                                                                                                </span>
-
-                                                                                                            </div>
-
-
-                                                                                                            <div class="video-info">
-                                                                                                                <span> Notice Period: </span> @if (videolist.joiningTime.Length > 10)
-                                                                                                                {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
-                                                                                                            else
-                                                                                                            {
-                                                                                                                <span id="join_time"> @videolist.joiningTime</span>}
-                                                                                                            </div>
-
-                                                                                                            <div class="video-info">
-                                                                                                                <span>Expected Salary:</span>  @if (@videolist.expectedPerHourRate.Length > 10)
-                                                                                                                {
-                                                                                                                    <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
-
-                                                                                                                else
-                                                                                                                {
-                                                                                                                    <span>@videolist.expectedPerHourRate</span>}
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                }
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                        }
-                                                                    </div>
-                                                                }
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    }
+
+                                                    else
+                                                    {
+                                                        @if (Model.SubVideo_List.Count > 0)
+                                                        {
+                                                            <h4 class="related-title">
+                                                                Similar Skill Video
+                                                            </h4>
+                                                            <div id="style-2" class="single-video-right related">
+                                                                <div>
+                                                                    <div>
+                                                                        <div class="relatedvideo">
+
+                                                                            @foreach (var videolist in Model.SubVideo_List)
+                                                                            {
+                                                                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+                                                                                <div class="video-card video-card-list videosidelist">
+                                                                                    <div class="video-card-image">
+                                                                                        @if (videolist.MeetingPatchCount > 0)
+                                                                                        {
+                                                                                            <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
+                                                                                        }
+                                                                                        @if (videolist.VideoLink.Contains(".mp4"))
+                                                                                        {
+                                                                                            @if (videolist.ThumbnailImage != null)
+                                                                                            {
+                                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
+                                                                                            <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
+                                                                                                <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                            </video>
+
+                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            @if (videolist.ThumbnailImage != null)
+                                                                                            {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
+                                                                                            else
+                                                                                            { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
+
+                                                                                    </div>
+                                                                                    <div class="video-card-body">
+                                                                                        <div class="video-title">
+                                                                                            @if (@videolist.candidateName.Length > 11)
+                                                                                            {
+                                                                                                <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <span onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", videolist)'" class="candidate">@videolist.candidateName</span>}
+
+                                                                                            <span>@videolist.JDTiltle</span>
+
+
+
+                                                                                            @if (@videolist.JDTiltle.Length > 10)
+                                                                                            {
+                                                                                                <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
+
+                                                                                            else
+                                                                                            {
+                                                                                                <span>@videolist.JDTiltle</span>}
+
+                                                                                        </div>
+                                                                                        <div class="video-page text-success">
+                                                                                            &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
+                                                                                            <span class="divider-g">
+                                                                                                @if (videolist.InterviewStatus == 4)
+                                                                                                {
+                                                                                                    <span style="color:palevioletred">Border Line</span>
+                                                                                                }
+
+                                                                                                else if (videolist.InterviewStatus == 2)
+                                                                                                {
+                                                                                                    <span style="color:green">Selected</span>
+
+                                                                                                }
+                                                                                            </span>
+
+                                                                                        </div>
+
+
+                                                                                        <div class="video-info">
+                                                                                            <span> Notice Period: </span> @if (videolist.joiningTime.Length > 10)
+                                                                                            {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
+                                                                                        else
+                                                                                        {
+                                                                                            <span id="join_time"> @videolist.joiningTime</span>}
+                                                                                        </div>
+
+                                                                                        <div class="video-info">
+                                                                                            <span>Expected Salary:</span>  @if (@videolist.expectedPerHourRate.Length > 10)
+                                                                                            {
+                                                                                                <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
+
+                                                                                            else
+                                                                                            {
+                                                                                                <span>@videolist.expectedPerHourRate</span>}
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            }
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+
+                                                        }
+                                                    }
+
                                                 </div>
+
+
+
+
+
                                             </div>
                                         </div>
                                     </div>
@@ -1038,6 +1163,234 @@
                         else
                         {
                             <div>No Selected Candidate Yet on this Channel.</div>
+                        }
+
+                        @if (Model.MeetingPatch.Count > 0)
+                        {
+                            <div class="col-md-12 mob-pad" id="sd-player">
+                                @if (Model.SubVideo_List.Count > 0)
+                                {
+                                    <h4 class="related-title">Related Interviews</h4>
+                                    <div class="desktop-view">
+                                        <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+                                            <div>
+                                                <div>
+                                                    <div style="margin-top:10px;">
+                                                        <table width="100%" cellpadding="0" cellspacing="0" style="border:0px!important">
+                                                            <tr>
+                                                                @foreach (var videolist in Model.SubVideo_List)
+                                                                {
+                                                                    var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+
+                                                                    <td class="relatedvideo rvdio" style="width:33.3%">
+                                                                        <div class="video-card video-card-list  videosidelist">
+                                                                            <div class="video-card-image">
+                                                                                @if (videolist.MeetingPatchCount > 0)
+                                                                                {
+                                                                                    <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
+                                                                                    <div class="underline--magical"></div>
+                                                                                }
+                                                                                @if (videolist.VideoLink.Contains(".mp4"))
+                                                                                {
+                                                                                    @if (videolist.ThumbnailImage != null)
+                                                                                    {
+                                                                                        <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
+                                                                                    <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload ">
+                                                                                        <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                    </video>
+                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    @if (videolist.ThumbnailImage != null)
+                                                                                    {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
+                                                                                    else
+                                                                                    { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
+
+
+                                                                                @*
+                                                                                    <div class="time">3:50</div>
+                                                                                *@
+                                                                            </div>
+                                                                            <div class="video-card-body">
+                                                                                <div class="video-title">
+                                                                                    @if (@videolist.candidateName.Length > 11)
+                                                                                    {
+                                                                                        <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <span onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" class="candidate">@videolist.candidateName</span>}
+
+                                                                                    @if (@videolist.JDTiltle.Length > 10)
+                                                                                    {
+                                                                                        <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
+
+                                                                                    else
+                                                                                    {
+                                                                                        <span>@videolist.JDTiltle</span>}
+
+                                                                                </div>
+                                                                                <div class="video-page text-success">
+                                                                                    &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
+                                                                                    <span class="divider-g">
+                                                                                        @if (videolist.InterviewStatus == 4)
+                                                                                        {
+                                                                                            <span style="color:palevioletred">Border Line</span>
+                                                                                        }
+
+                                                                                        else if (videolist.InterviewStatus == 2)
+                                                                                        {
+                                                                                            <span style="color:green">Selected</span>
+
+                                                                                        }
+                                                                                    </span>
+
+                                                                                </div>
+
+
+                                                                                <div class="video-info">
+                                                                                    <span> Notice Period: </span> @if (videolist.joiningTime.Length > 10)
+                                                                                    {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
+                                                                                else
+                                                                                {
+                                                                                    <span id="join_time"> @videolist.joiningTime</span>}
+                                                                                </div>
+
+                                                                                <div class="video-info">
+                                                                                    <span>Expected Salary:</span>  @if (@videolist.expectedPerHourRate.Length > 10)
+                                                                                    {
+                                                                                        <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
+
+                                                                                    else
+                                                                                    {
+                                                                                        <span>@videolist.expectedPerHourRate</span>}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </td>
+
+
+
+                                                                }
+
+                                                            </tr>
+                                                        </table>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mobile-view">
+                                        <div>
+                                            <div>
+                                                <div>
+                                                    <div class="related">
+
+                                                        @foreach (var videolist in Model.SubVideo_List)
+                                                        {
+                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+
+
+                                                            <div class="video-card video-card-list  videosidelist">
+
+                                                                <div class="video-card-image">
+                                                                    @if (videolist.MeetingPatchCount > 0)
+                                                                    {
+                                                                        <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
+                                                                    }
+                                                                    @if (videolist.VideoLink.Contains(".mp4"))
+                                                                    {
+                                                                        @if (videolist.ThumbnailImage != null)
+                                                                        {
+                                                                            <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
+                                                                        <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
+                                                                            <source src="@videolist.VideoLink" type="video/mp4">
+                                                                        </video>
+
+                                                                        <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @if (videolist.ThumbnailImage != null)
+                                                                        {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
+                                                                        else
+                                                                        { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
+
+                                                                </div>
+
+
+                                                                <div class="video-card-body">
+                                                                    <div class="video-title">
+                                                                        @if (@videolist.candidateName.Length > 11)
+                                                                        {
+                                                                            <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", videolist)'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="candidate">@videolist.candidateName</span>}
+
+                                                                        @if (@videolist.JDTiltle.Length > 10)
+                                                                        {
+                                                                            <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
+
+                                                                        else
+                                                                        {
+                                                                            <span>@videolist.JDTiltle</span>}
+
+                                                                    </div>
+                                                                    <div class="video-page text-success">
+                                                                        &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
+                                                                        <span class="divider-g">
+                                                                            @if (videolist.InterviewStatus == 4)
+                                                                            {
+                                                                                <span style="color:palevioletred">Border Line</span>
+                                                                            }
+
+                                                                            else if (videolist.InterviewStatus == 2)
+                                                                            {
+                                                                                <span style="color:green">Selected</span>
+
+                                                                            }
+                                                                        </span>
+
+                                                                    </div>
+
+
+                                                                    <div class="video-info">
+                                                                        <span> Notice Period: </span> @if (videolist.joiningTime.Length > 10)
+                                                                        {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
+                                                                    else
+                                                                    {
+                                                                        <span id="join_time"> @videolist.joiningTime</span>}
+                                                                    </div>
+
+                                                                    <div class="video-info">
+                                                                        <span>Expected Salary:</span>  @if (@videolist.expectedPerHourRate.Length > 10)
+                                                                        {
+                                                                            <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
+
+                                                                        else
+                                                                        {
+                                                                            <span>@videolist.expectedPerHourRate</span>}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                }
+                            </div>
                         }
                     </div>
                 </div>
@@ -1054,7 +1407,8 @@
                     <div class="filavatar">
 
 
-                        <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg></span>
+                        <span>  <svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg></span>
+
                     </div>
                     <h5 class="modal-title pull-left">ShortList</h5>
                 </div>
@@ -1067,28 +1421,34 @@
                     <div class="col-md-12">
                         <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Your Email Id</label>
                         <div class="sharing">
-                            <textarea spellcheck="true" class="form-control " rows="2" id="txtUserEmailid" placeholder="Please enter your EmailId" style="width:100%;overflow:hidden"></textarea>
+                            <input type="text" spellcheck="true" class="form-control " id="txtUserEmailid" placeholder="Please enter your EmailId" style="width:100%" />
                             <div id="words"></div>
                         </div>
 
                     </div>
                     <div class="col-md-12">
-                        <label class="label-field desp-label" for="Comment">Comment(Editable)</label>
+                        <label class="label-field desp-label" for="Comment">Comment (Editable)</label>
 
                         <div class="sharing">
-                            <textarea spellcheck="true" class="form-control" rows="2" id="txtusercomment" placeholder="Comment" style="width:100%;height:50px; "></textarea>
+                            <textarea spellcheck="true" class="form-control" rows="2" id="txtusercomment" placeholder="" style="width:100%;min-height:80px "></textarea>
                             <div id="words"></div>
                         </div>
 
-                    <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
-    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+                    </div>
+                    <div class="col-md-12" id="divshortlistdetails">
 
+                    </div>
+                    <div class="col-md-12 ">
+                        <div class="text-right">
+                            <input type="button" onclick="ShortlistVideoLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
+                            <input style="color:#fff;line-height: 13px;" type="button" onclick="closeShortlistModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        </div>
+                    </div>
                 </div>
 
             </div>
         </div>
     </div>
-
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js" defer></script>
@@ -1733,21 +2093,64 @@
         });
     </script>
     <script>
+        function SetStarDetails() {
+            var openness = $("#IreportModel_Openness").val();
+            if (parseInt(openness) > 0)
+                $("#Openness_" + openness).attr("checked", "checked");
+            var conscientiousness = $("#IreportModel_Conscientiousness").val();
+            if (parseInt(conscientiousness) > 0)
+                $("#Conscientiousness_" + conscientiousness).attr("checked", "checked");
+            var extroversion = $("#IreportModel_Extroversion").val();
+            if (parseInt(extroversion) > 0)
+                $("#Extroversion_" + extroversion).attr("checked", "checked");
+            var agreeableness = $("#IreportModel_Agreeableness").val();
+            if (parseInt(agreeableness) > 0)
+                $("#Agreeableness_" + agreeableness).attr("checked", "checked");
+            var neuroticism = $("#IreportModel_Neuroticism").val();
+            if (parseInt(neuroticism) > 0)
+                $("#Neuroticism_" + neuroticism).attr("checked", "checked");
+        }
+        function SetStarProfile() {
+            var skillQuality = $("#IreportModel_SkillQuality").val();
+            if (parseInt(skillQuality) > 0)
+                $("#SkillQuality_" + skillQuality).attr("checked", "checked");
+            var certificationQuality = $("#IreportModel_CertificationQuality").val();
+            if (parseInt(certificationQuality) > 0)
+                $("#CertificationQuality_" + certificationQuality).attr("checked", "checked");
+            var educationQuality = $("#IreportModel_EducationQuality").val();
+            if (parseInt(educationQuality) > 0)
+                $("#EducationQuality_" + educationQuality).attr("checked", "checked");
+            var employersQuality = $("#IreportModel_EmployersQuality").val();
+            if (parseInt(employersQuality) > 0)
+                $("#EmployersQuality_" + employersQuality).attr("checked", "checked");
+            var careerProgression = $("#IreportModel_CareerProgression").val();
+            if (parseInt(careerProgression) > 0)
+                $("#CareerProgression_" + careerProgression).attr("checked", "checked");
+            var projectsQuality = $("#IreportModel_ProjectsQuality").val();
+            if (parseInt(projectsQuality) > 0)
+                $("#ProjectsQuality_" + projectsQuality).attr("checked", "checked");
+            var onlinePresence = $("#IreportModel_OnlinePresence").val();
+            if (parseInt(onlinePresence) > 0)
+                $("#OnlinePresence_" + onlinePresence).attr("checked", "checked");
+            var behavioralScore = $("#IreportModel_BehavioralScore").val();
+            if (parseInt(behavioralScore) > 0)
+                $("#BehavioralScore_" + behavioralScore).attr("checked", "checked");
+        }
         var shortlisttotalcount = [];
         jQuery(document).ready(function ($) {
-
+            SetStarProfile();
+            SetStarDetails();
             $("#btnShortlist").on('click', function () {
                 if ($(this).attr('Shortvalue') == 1) {
-                    $(this).attr('Shortvalue', "2");
+                    $("#btnShortlist").attr('Shortvalue', "2");
                     $.ajax({
                         type: "POST",
-                        url: "/RiseTube/CandidateShortList",
+                        url: "/InterviewerSkills/CandidateShortList",
                         data: { videoid: $("#txtVideoId").val() },
                         success: function (data) {
-                            $("#btnShortlist").val("Shortlisted(" + data + ")");
+                            $("#btnShortlist").val("Shortlisted");
                         }
                     });
-
                 }
             });
 
@@ -1780,80 +2183,73 @@
                     });
                 }
             });
-            $('#btnSearch').on('click', function () {
-                if ($(this).attr('data-click-state') == 1) {
-                    $(this).attr('data-click-state', 0);
-                    $(this).css('background-color', 'blue');
-                    $(this).val('Share');
-                    $.ajax({
-                        type: "POST",
-                        url: "/RiseTube/VideoShare",
-                        data: { value: "Private", videoid: $("#txtVideoId").val() },
-                        success: function (data) {
-
-                        }
-                    });
-                }
-                else {
-                    $(this).attr('data-click-state', 1);
-                    $(this).css('background-color', 'green');
-                    $(this).val('Shared');
-                    $.ajax({
-                        type: "POST",
-                        url: "/RiseTube/VideoShare",
-                        data: { value: "Public", videoid: $("#txtVideoId").val() },
-                        success: function (data) {
-
-                        }
-                    });
-
-                }
-            });
-            $('#toggle-click').on('click', function () {
-                if ($(this).attr('data-click-state') == 1) {
-                    $(this).attr('data-click-state', 0);
-
-
-                }
-                else {
-                    $(this).attr('data-click-state', 1);
-                    $(this).css('color', 'blue');
-                    $('#toggle-click1').css('color', 'black');
-                    $.ajax({
-                        type: "POST",
-                        url: "/RiseTube/VideoLike",
-                        data: { value: "Liked", videoid: $("#txtVideoId").val() },
-                        success: function (data) {
-                            $("#pTotalvideolike").text(data.totalVedioLike);
-                            $("#pTotalvideodislike").text(data.totalVedioDisLike);
-
-                        }
-                    });
-                }
-            });
-            $('#toggle-click1').on('click', function () {
-                if ($(this).attr('data-click-state') == 1) {
-                    $(this).attr('data-click-state', 0);
-
-                }
-                else {
-                    $(this).attr('data-click-state', 1);
-                    $(this).css('color', 'blue');
-                    $('#toggle-click').css('color', 'black');
-                    $.ajax({
-                        type: "POST",
-                        url: "/RiseTube/VideoLike",
-                        data: { value: "Disliked", videoid: $("#txtVideoId").val() },
-                        success: function (data) {
-                            $("#pTotalvideolike").text(data.totalVedioLike);
-                            $("#pTotalvideodislike").text(data.totalVedioDisLike);
-
-                        }
-                    });
-                }
-            });
         });
+        function ShortlistVideoLinkToMail() {
 
+            var emailaddress = $("#txtUserEmailid").val();
+            var comment = $("#txtusercomment").val();
+            var videoids = '';
+            if (emailaddress.trim() != "" && comment.trim() != "") {
+                for (var i = 0; i < shortlisttotalcount.length; i++) {
+                    var checked = $("input[id=chk" + i + "]:checked").length;
+                    if (checked != 0) {
+                        videoids = videoids + ";" + shortlisttotalcount[i];
+                    }
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/InterviewerSkills/CandidateShortListNotification",
+                    data: { videoids: videoids, email: emailaddress, comment: comment },
+                    success: function (data) {
+                        swal.fire("Shortlisted successfully.");
+                        closeShortlistModel();
+                    }
+                });
+            } else {
+                swal.fire("All fields are required.");
+            }
+        }
+        function closeShortlistModel() {
+            var modal = document.getElementById("MyShortlistModel");
+            modal.style.display = "none";
+        }
+        function openShortlistModel() {
+            if ($("#txtUserEmailfromlogin").val() != "") {
+                $("#txtUserEmailid").attr("readonly", "readonly");
+                $("#txtUserEmailid").val($("#txtUserEmailfromlogin").val());
+            }
+            $.ajax({
+                type: "POST",
+                url: "/InterviewerSkills/FetchCandidateShortList",
+                success: function (data) {
+                    var modal = document.getElementById("MyShortlistModel");
+                    modal.style.display = "block";
+                    bindShortlistdata(data.result, data.currenturl);
+                }
+            });
+        }
+
+        function bindShortlistdata(data, currenturl) {
+            shortlisttotalcount = data;
+            var html = '';
+            html += '<table width="100%" style="border:1px solid #dee2e6;margin: 20px 0px;">';
+            html += '    <thead>';
+            html += '<tr">';
+            html += '   <td class="sharetr">Public Url</td>';
+            html += '   <td class="sharetr text-center">Action</td>';
+            html += '</tr>';
+            html += '</thead>';
+            html += '<tbody>';
+            for (var i = 0; i < data.length; i++) {
+                html += '<tr>';
+                html += '   <td class="sharetd">' + currenturl + '/' + data[i] + '</td>';
+                html += '   <td class="sharetd"><input style="width: 70px;" type="checkbox" checked id="chk' + i + '" /></td>';
+                html += '</tr>';
+            }
+            html += '</tbody>';
+            html += '</table>';
+            $("#divshortlistdetails").empty().html(html);
+        }
         function switchtoquestionVideo(questiontime) {
             var time = 1;
             if (questiontime != '') {

@@ -1407,12 +1407,12 @@ border-bottom: 2px #121212 solid !important;
 
 .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
     background-color: #181818 !important;
-    border-bottom: 1px solid #181818 !important;
+
 }
-
-
-
-#ProctoringTable .label-type {
+.radiobox {
+    background: #181818;
+}
+    #ProctoringTable .label-type {
     background: #181818 !important;
     color: #9A9A9A !important;
 }

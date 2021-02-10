@@ -6,15 +6,18 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+
 @*<script>
         amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
         amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
         amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
     </script>*@
 
-<link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+<link href="~/Newassets/css/interview.css?v=12345" rel="stylesheet" />
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
+<link href="~/Newassets/css/select2.css?v7" defer rel="stylesheet" />
 <div class="main-panel" id="main-panel">
 
     <!-- Navbar -->
@@ -54,7 +57,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
-                        <form action="/Interviewer/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckConditions()" id="reportForm">
+                        <form action="/Interviewer/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form interviewer" onsubmit="return CheckConditions()" id="reportForm">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -89,6 +92,29 @@
                                 </div>
 
                                 <div class="row">
+
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                            @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+
+
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -114,148 +140,246 @@
                                         </div><!--end of multiple location-->
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.ProfileScore, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.ProfileScore, Html.GetEnumSelectList<ProfileScoreOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "SetChartAndTotal()" })
+                                @Html.HiddenFor(x => x.ProfileScore)
 
-                                            @Html.ValidationMessageFor(model => model.ProfileScore, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
-                                            @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-
-                                </div>
 
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-4 col-sm-4">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.Rating, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.LabelFor(model => model.SkillQuality, htmlAttributes: new { @class = "control-label  desp-label" })
+                                            <a class="info" href="#"><span>Select Skill Quality, Multiple tracks at same time </span></a>
+                                            <!--   @Html.DropDownListFor(x => Model.SkillQuality, Model.SkillQualityList, "Select Skill Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
 
-                                            @Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "select-css form-control" })
-                                            @Html.ValidationMessageFor(model => model.Rating, "", new { @class = "text-danger" })
+                                            @Html.HiddenFor(m => m.SkillQuality)
 
-                                        </div>
+                                            <div class="star-rating">
+                                                <input type="radio" id="SkillQuality_5" name="rating1" value="5" onclick="RatingChanged('SkillQuality','5', 'Profile')" />
+                                                <label for="SkillQuality_5" class="star">&#9733;</label>
+                                                <input type="radio" id="SkillQuality_4" name="rating1" value="4" onclick="RatingChanged('SkillQuality','4', 'Profile')" />
+                                                <label for="SkillQuality_4" class="star">&#9733;</label>
+                                                <input type="radio" id="SkillQuality_3" name="rating1" value="3" onclick="RatingChanged('SkillQuality','3', 'Profile')" />
+                                                <label for="SkillQuality_3" class="star">&#9733;</label>
+                                                <input type="radio" id="SkillQuality_2" name="rating1" value="2" onclick="RatingChanged('SkillQuality','2', 'Profile')" />
+                                                <label for="SkillQuality_2" class="star">&#9733;</label>
+                                                <input type="radio" id="SkillQuality_1" name="rating1" value="1" onclick="RatingChanged('SkillQuality','1', 'Profile')" />
+                                                <label for="SkillQuality_1" class="star">&#9733;</label>
+                                            </div>
 
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                            @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.SkillQuality, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.SkillQuality, Model.SkillQualityList, "Select Skill Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.SkillQuality, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-4 col-sm-4">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.CertificationQuality, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.LabelFor(model => model.CertificationQuality, htmlAttributes: new { @class = "control-label desp-label" })
+                                            <a class="info" href="#"><span>Relevant, Not Relevant, Not Done </span></a>
+                                            <!--@Html.DropDownListFor(x => Model.CertificationQuality, Model.CertificationQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
 
-                                            @Html.DropDownListFor(x => Model.CertificationQuality, Model.CertificationQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+
+                                            @Html.HiddenFor(m => m.CertificationQuality)
+                                            <div class="star-rating">
+                                                <input type="radio" id="CertificationQuality_5" name="rating2" value="5" onclick="RatingChanged('CertificationQuality','5', 'Profile')" />
+                                                <label for="CertificationQuality_5" class="star">&#9733;</label>
+                                                <input type="radio" id="CertificationQuality_4" name="rating2" value="4" onclick="RatingChanged('CertificationQuality','4', 'Profile')" />
+                                                <label for="CertificationQuality_4" class="star">&#9733;</label>
+                                                <input type="radio" id="CertificationQuality_3" name="rating2" value="3" onclick="RatingChanged('CertificationQuality','3', 'Profile')" />
+                                                <label for="CertificationQuality_3" class="star">&#9733;</label>
+                                                <input type="radio" id="CertificationQuality_2" name="rating2" value="2" onclick="RatingChanged('CertificationQuality','2', 'Profile')" />
+                                                <label for="CertificationQuality_2" class="star">&#9733;</label>
+                                                <input type="radio" id="CertificationQuality_1" name="rating2" value="1" onclick="RatingChanged('CertificationQuality','1', 'Profile')" />
+                                                <label for="CertificationQuality_1" class="star">&#9733;</label>
+                                            </div>
+
+
                                             @Html.ValidationMessageFor(model => model.CertificationQuality, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
-
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-4 col-sm-4">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.EducationQuality, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.EducationQuality, Model.EducationQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                            @Html.LabelFor(model => model.EducationQuality, htmlAttributes: new { @class = "control-label  desp-label" })
+                                            <a class="info" href="#"><span>Full Time, Tech Education, Distance learning,Non tech-Bcom,Bsc,MBA </span></a>
+                                            <!--  @Html.DropDownListFor(x => Model.EducationQuality, Model.EducationQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
+                                            @Html.HiddenFor(m => m.EducationQuality)
+                                            <div class="star-rating">
+                                                <input type="radio" id="EducationQuality_5" name="rating3" value="5" onclick="RatingChanged('EducationQuality','5', 'Profile')" />
+                                                <label for="EducationQuality_5" class="star">&#9733;</label>
+                                                <input type="radio" id="EducationQuality_4" name="rating3" value="4" onclick="RatingChanged('EducationQuality','4', 'Profile')" />
+                                                <label for="EducationQuality_4" class="star">&#9733;</label>
+                                                <input type="radio" id="EducationQuality_3" name="rating3" value="3" onclick="RatingChanged('EducationQuality','3', 'Profile')" />
+                                                <label for="EducationQuality_3" class="star">&#9733;</label>
+                                                <input type="radio" id="EducationQuality_2" name="rating3" value="2" onclick="RatingChanged('EducationQuality','2', 'Profile')" />
+                                                <label for="EducationQuality_2" class="star">&#9733;</label>
+                                                <input type="radio" id="EducationQuality_1" name="rating3" value="1" onclick="RatingChanged('EducationQuality','1', 'Profile')" />
+                                                <label for="EducationQuality_1" class="star">&#9733;</label>
+                                            </div>
                                             @Html.ValidationMessageFor(model => model.EducationQuality, "", new { @class = "text-danger" })
 
 
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-6">
+                                </div>
+                                <div class="row">
+
+                                    <div class="col-md-4 col-sm-4">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.EmployersQuality, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.EmployersQuality, Html.GetEnumSelectList<EmployerQualityOptions>(), "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-
+                                            @Html.LabelFor(model => model.EmployersQuality, htmlAttributes: new { @class = "control-label  desp-label" })
+                                            <a class="info" href="#"><span>Relevant, Not Relevant</span></a>
+                                            <!--  @Html.DropDownListFor(x => Model.EmployersQuality, Html.GetEnumSelectList<EmployerQualityOptions>(), "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
+                                            @Html.HiddenFor(m => m.EmployersQuality)
+                                            <div class="star-rating">
+                                                <input type="radio" id="EmployersQuality_5" name="rating4" value="5" onclick="RatingChanged('EmployersQuality','5', 'Profile')" />
+                                                <label for="EmployersQuality_5" class="star">&#9733;</label>
+                                                <input type="radio" id="EmployersQuality_4" name="rating4" value="4" onclick="RatingChanged('EmployersQuality','4', 'Profile')" />
+                                                <label for="EmployersQuality_4" class="star">&#9733;</label>
+                                                <input type="radio" id="EmployersQuality_3" name="rating4" value="3" onclick="RatingChanged('EmployersQuality','3', 'Profile')" />
+                                                <label for="EmployersQuality_3" class="star">&#9733;</label>
+                                                <input type="radio" id="EmployersQuality_2" name="rating4" value="2" onclick="RatingChanged('EmployersQuality','2', 'Profile')" />
+                                                <label for="EmployersQuality_2" class="star">&#9733;</label>
+                                                <input type="radio" id="EmployersQuality_1" name="rating4" value="1" onclick="RatingChanged('EmployersQuality','1', 'Profile')" />
+                                                <label for="EmployersQuality_1" class="star">&#9733;</label>
+                                            </div>
                                             @Html.ValidationMessageFor(model => model.EmployersQuality, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
-
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-4 col-sm-4">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.CareerProgression, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.LabelFor(model => model.CareerProgression, htmlAttributes: new { @class = "control-label  desp-label" })
+                                            <a class="info" href="#"><span>Stuck in small company for long time, Freelancer, Teacher, Project manager, Delivery manager, People Management, Administrative</span></a>
+                                            <!---  @Html.DropDownListFor(x => Model.CareerProgression, Model.CareerProgressionList, "Select Career", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
 
-                                            @Html.DropDownListFor(x => Model.CareerProgression, Model.CareerProgressionList, "Select Career", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                            @Html.HiddenFor(m => m.CareerProgression)
+
+                                            <div class="star-rating">
+                                                <input type="radio" id="CareerProgression_5" name="rating5" value="5" onclick="RatingChanged('CareerProgression','5', 'Profile')" />
+                                                <label for="CareerProgression_5" class="star">&#9733;</label>
+                                                <input type="radio" id="CareerProgression_4" name="rating5" value="4" onclick="RatingChanged('CareerProgression','4', 'Profile')" />
+                                                <label for="CareerProgression_4" class="star">&#9733;</label>
+                                                <input type="radio" id="CareerProgression_3" name="rating5" value="3" onclick="RatingChanged('CareerProgression','3', 'Profile')" />
+                                                <label for="CareerProgression_3" class="star">&#9733;</label>
+                                                <input type="radio" id="CareerProgression_2" name="rating5" value="2" onclick="RatingChanged('CareerProgression','2', 'Profile')" />
+                                                <label for="CareerProgression_2" class="star">&#9733;</label>
+                                                <input type="radio" id="CareerProgression_1" name="rating5" value="1" onclick="RatingChanged('CareerProgression','1', 'Profile')" />
+                                                <label for="CareerProgression_1" class="star">&#9733;</label>
+                                            </div>
+
+
                                             @Html.ValidationMessageFor(model => model.CareerProgression, "", new { @class = "text-danger" })
 
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-4 col-sm-4">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.ProjectsQuality, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.ProjectsQuality, Html.GetEnumSelectList<ProjectQualityOptions>(), "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-
+                                            @Html.LabelFor(model => model.ProjectsQuality, htmlAttributes: new { @class = "control-label  desp-label" })
+                                            <a class="info" href="#"><span>Relevant, Not Relevant</span></a>
+                                            <!---  @Html.DropDownListFor(x => Model.ProjectsQuality, Html.GetEnumSelectList<ProjectQualityOptions>(), "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
+                                            @Html.HiddenFor(m => m.ProjectsQuality)
+                                            <div class="star-rating">
+                                                <input type="radio" id="ProjectsQuality_5" name="rating6" value="5" onclick="RatingChanged('ProjectsQuality','5', 'Profile')" />
+                                                <label for="ProjectsQuality_5" class="star">&#9733;</label>
+                                                <input type="radio" id="ProjectsQuality_4" name="rating6" value="4" onclick="RatingChanged('ProjectsQuality','4', 'Profile')" />
+                                                <label for="ProjectsQuality_4" class="star">&#9733;</label>
+                                                <input type="radio" id="ProjectsQuality_3" name="rating6" value="3" onclick="RatingChanged('ProjectsQuality','3', 'Profile')" />
+                                                <label for="ProjectsQuality_3" class="star">&#9733;</label>
+                                                <input type="radio" id="ProjectsQuality_2" name="rating6" value="2" onclick="RatingChanged('ProjectsQuality','2', 'Profile')" />
+                                                <label for="ProjectsQuality_2" class="star">&#9733;</label>
+                                                <input type="radio" id="ProjectsQuality_1" name="rating6" value="1" onclick="RatingChanged('ProjectsQuality','1', 'Profile')" />
+                                                <label for="ProjectsQuality_1" class="star">&#9733;</label>
+                                            </div>
                                             @Html.ValidationMessageFor(model => model.ProjectsQuality, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
-
                                 </div>
+
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-4 col-sm-4">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.OnlinePresence, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.OnlinePresence, Html.GetEnumSelectList<OnlinePresenceOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-
+                                            @Html.LabelFor(model => model.OnlinePresence, htmlAttributes: new { @class = "control-label  desp-label" })
+                                            <a class="info" href="#"><span>Yes, No</span></a>
+                                            <!-- @Html.DropDownListFor(x => Model.OnlinePresence, Html.GetEnumSelectList<OnlinePresenceOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
+                                            @Html.HiddenFor(m => m.OnlinePresence)
+                                            <div class="star-rating">
+                                                <input type="radio" id="OnlinePresence_5" name="rating7" value="5" onclick="RatingChanged('OnlinePresence','5', 'Profile')" />
+                                                <label for="OnlinePresence_5" class="star">&#9733;</label>
+                                                <input type="radio" id="OnlinePresence_4" name="rating7" value="4" onclick="RatingChanged('OnlinePresence','4', 'Profile')" />
+                                                <label for="OnlinePresence_4" class="star">&#9733;</label>
+                                                <input type="radio" id="OnlinePresence_3" name="rating7" value="3" onclick="RatingChanged('OnlinePresence','3', 'Profile')" />
+                                                <label for="OnlinePresence_3" class="star">&#9733;</label>
+                                                <input type="radio" id="OnlinePresence_2" name="rating7" value="2" onclick="RatingChanged('OnlinePresence','2', 'Profile')" />
+                                                <label for="OnlinePresence_2" class="star">&#9733;</label>
+                                                <input type="radio" id="OnlinePresence_1" name="rating7" value="1" onclick="RatingChanged('OnlinePresence','1', 'Profile')" />
+                                                <label for="OnlinePresence_1" class="star">&#9733;</label>
+                                            </div>
                                             @Html.ValidationMessageFor(model => model.OnlinePresence, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-4 col-sm-4">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.BehavioralScore, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.LabelFor(model => model.BehavioralScore, htmlAttributes: new { @class = "control-label desp-label" })
+                                            <a class="info" href="#"><span>Not listening, Talking too general, Too busy, not taking seriously, High tantrums </span></a>
+                                            <!-- @Html.DropDownListFor(x => Model.BehavioralScore, Model.BehavioralScoreList, "Select Score", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
+                                            @Html.HiddenFor(m => m.BehavioralScore)
+                                            <div class="star-rating">
+                                                <input type="radio" id="BehavioralScore_5" name="rating8" value="5" onclick="RatingChanged('BehavioralScore','5', 'Profile')" />
+                                                <label for="BehavioralScore_5" class="star">&#9733;</label>
+                                                <input type="radio" id="BehavioralScore_4" name="rating8" value="4" onclick="RatingChanged('BehavioralScore','4', 'Profile')" />
+                                                <label for="BehavioralScore_4" class="star">&#9733;</label>
+                                                <input type="radio" id="BehavioralScore_3" name="rating8" value="3" onclick="RatingChanged('BehavioralScore','3', 'Profile')" />
+                                                <label for="BehavioralScore_3" class="star">&#9733;</label>
+                                                <input type="radio" id="BehavioralScore_2" name="rating8" value="2" onclick="RatingChanged('BehavioralScore','2', 'Profile')" />
+                                                <label for="BehavioralScore_2" class="star">&#9733;</label>
+                                                <input type="radio" id="BehavioralScore_1" name="rating8" value="1" onclick="RatingChanged('BehavioralScore','1', 'Profile')" />
+                                                <label for="BehavioralScore_1" class="star">&#9733;</label>
+                                            </div>
 
-                                            @Html.DropDownListFor(x => Model.BehavioralScore, Model.BehavioralScoreList, "Select Score", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.BehavioralScore, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
-
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-4 col-sm-4">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.InterviwerCommunication, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.LabelFor(model => model.InterviwerCommunication, htmlAttributes: new { @class = "control-label  desp-label" })
+                                            <a class="info" href="#"><span>Poor,Good, Very Good </span></a>
+                                            <!--- @Html.DropDownListFor(x => Model.InterviwerCommunication, Html.GetEnumSelectList<InterviewerCommunicationOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
+                                            @Html.HiddenFor(m => m.InterviwerCommunication)
 
-                                            @Html.DropDownListFor(x => Model.InterviwerCommunication, Html.GetEnumSelectList<InterviewerCommunicationOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-
+                                            <div class="star-rating">
+                                                <input type="radio" id="InterviwerCommunication_5" name="rating9" value="5" onclick="RatingChanged('InterviwerCommunication','5', 'Profile')" />
+                                                <label for="InterviwerCommunication_5" class="star">&#9733;</label>
+                                                <input type="radio" id="InterviwerCommunication_4" name="rating9" value="4" onclick="RatingChanged('InterviwerCommunication','4', 'Profile')" />
+                                                <label for="InterviwerCommunication_4" class="star">&#9733;</label>
+                                                <input type="radio" id="InterviwerCommunication_3" name="rating9" value="3" onclick="RatingChanged('InterviwerCommunication','3', 'Profile')" />
+                                                <label for="InterviwerCommunication_3" class="star">&#9733;</label>
+                                                <input type="radio" id="InterviwerCommunication_2" name="rating9" value="2" onclick="RatingChanged('InterviwerCommunication','2', 'Profile')" />
+                                                <label for="InterviwerCommunication_2" class="star">&#9733;</label>
+                                                <input type="radio" id="InterviwerCommunication_1" name="rating9" value="1" onclick="RatingChanged('InterviwerCommunication','1', 'Profile')" />
+                                                <label for="InterviwerCommunication_1" class="star">&#9733;</label>
+                                            </div>
                                             @Html.ValidationMessageFor(model => model.InterviwerCommunication, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-6">
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col-md-4 col-sm-4">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.Interviewexperience, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.Interviewexperience, Html.GetEnumSelectList<InterviewExperienceOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-
+                                            @Html.LabelFor(model => model.Interviewexperience, htmlAttributes: new { @class = "control-label  desp-label" })
+                                            <a class="info" href="#"><span>Poor,Good, Very Good </span></a>
+                                            <!--  @Html.DropDownListFor(x => Model.Interviewexperience, Html.GetEnumSelectList<InterviewExperienceOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
+                                            @Html.HiddenFor(m => m.Interviewexperience)
+                                            <div class="star-rating">
+                                                <input type="radio" id="Interviewexperience_5" name="rating10" value="5" onclick="RatingChanged('Interviewexperience','5', 'Profile')" />
+                                                <label for="Interviewexperience_5" class="star">&#9733;</label>
+                                                <input type="radio" id="Interviewexperience_4" name="rating10" value="4" onclick="RatingChanged('Interviewexperience','4', 'Profile')" />
+                                                <label for="Interviewexperience_4" class="star">&#9733;</label>
+                                                <input type="radio" id="Interviewexperience_3" name="rating10" value="3" onclick="RatingChanged('Interviewexperience','3', 'Profile')" />
+                                                <label for="Interviewexperience_3" class="star">&#9733;</label>
+                                                <input type="radio" id="Interviewexperience_2" name="rating10" value="2" onclick="RatingChanged('Interviewexperience','2', 'Profile')" />
+                                                <label for="Interviewexperience_2" class="star">&#9733;</label>
+                                                <input type="radio" id="Interviewexperience_1" name="rating10" value="1" onclick="RatingChanged('Interviewexperience','1', 'Profile')" />
+                                                <label for="Interviewexperience_1" class="star">&#9733;</label>
+                                            </div>
                                             @Html.ValidationMessageFor(model => model.Interviewexperience, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -271,67 +395,127 @@
                                     </div>
                                 </div>
 
+
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6">
+
+
+
+                                    <div class="col-md-4 col-sm-4">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.OverallPersonalityScore, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.OverallPersonalityScore, Html.GetEnumSelectList<PersonalityScoreOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "SetChartAndTotal()" })
-
-                                            @Html.ValidationMessageFor(model => model.OverallPersonalityScore, "", new { @class = "text-danger" })
+                                            @Html.LabelFor(model => model.Conscientiousness, htmlAttributes: new { @class = "control-label desp-label" })
+                                            <a class="info" href="#"><span>Efficient/Organized, Easy-going/Careless</span></a>
+                                            <!--   @Html.DropDownListFor(x => Model.Conscientiousness, Html.GetEnumSelectList<ConscientiousnessOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
+                                            @Html.HiddenFor(m => m.Conscientiousness)
+                                            <div class="star-rating">
+                                                <input type="radio" id="Conscientiousness_5" name="rating11" value="5" onclick="RatingChanged('Conscientiousness','5', 'Personality')" />
+                                                <label for="Conscientiousness_5" class="star">&#9733;</label>
+                                                <input type="radio" id="Conscientiousness_4" name="rating11" value="4" onclick="RatingChanged('Conscientiousness','4', 'Personality')" />
+                                                <label for="Conscientiousness_4" class="star">&#9733;</label>
+                                                <input type="radio" id="Conscientiousness_3" name="rating11" value="3" onclick="RatingChanged('Conscientiousness','3', 'Personality')" />
+                                                <label for="Conscientiousness_3" class="star">&#9733;</label>
+                                                <input type="radio" id="Conscientiousness_2" name="rating11" value="2" onclick="RatingChanged('Conscientiousness','2', 'Personality')" />
+                                                <label for="Conscientiousness_2" class="star">&#9733;</label>
+                                                <input type="radio" id="Conscientiousness_1" name="rating11" value="1" onclick="RatingChanged('Conscientiousness','1', 'Personality')" />
+                                                <label for="Conscientiousness_1" class="star">&#9733;</label>
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Conscientiousness, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-4 col-sm-4">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.Openness, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.LabelFor(model => model.Extroversion, htmlAttributes: new { @class = "control-label desp-label" })
+                                            <a class="info" href="#"><span>Outgoing/Energetic, Solitary/Reserved</span></a>
+                                            <!--  @Html.DropDownListFor(x => Model.Extroversion, Html.GetEnumSelectList<ExtroversionOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
+                                            @Html.HiddenFor(m => m.Extroversion)
 
-                                            @Html.DropDownListFor(x => Model.Openness, Html.GetEnumSelectList<OpennessOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                            <div class="star-rating">
+                                                <input type="radio" id="Extroversion_5" name="rating12" value="5" onclick="RatingChanged('Extroversion','5', 'Personality')" />
+                                                <label for="Extroversion_5" class="star">&#9733;</label>
+                                                <input type="radio" id="Extroversion_4" name="rating12" value="4" onclick="RatingChanged('Extroversion','4', 'Personality')" />
+                                                <label for="Extroversion_4" class="star">&#9733;</label>
+                                                <input type="radio" id="Extroversion_3" name="rating12" value="3" onclick="RatingChanged('Extroversion','3', 'Personality')" />
+                                                <label for="Extroversion_3" class="star">&#9733;</label>
+                                                <input type="radio" id="Extroversion_2" name="rating12" value="2" onclick="RatingChanged('Extroversion','2', 'Personality')" />
+                                                <label for="Extroversion_2" class="star">&#9733;</label>
+                                                <input type="radio" id="Extroversion_1" name="rating12" value="1" onclick="RatingChanged('Extroversion','1', 'Personality')" />
+                                                <label for="Extroversion_1" class="star">&#9733;</label>
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Extroversion, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Agreeableness, htmlAttributes: new { @class = "control-label  desp-label" })
+                                            <a class="info" href="#"><span>Friendly/Compassionate, Challenging/Detached</span></a>
+                                            <!--  @Html.DropDownListFor(x => Model.Agreeableness, Html.GetEnumSelectList<AgreeablenessOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
+                                            @Html.HiddenFor(m => m.Agreeableness)
+                                            <div class="star-rating">
+                                                <input type="radio" id="Agreeableness_5" name="rating13" value="5" onclick="RatingChanged('Agreeableness','5', 'Personality')" />
+                                                <label for="Agreeableness_5" class="star">&#9733;</label>
+                                                <input type="radio" id="Agreeableness_4" name="rating13" value="4" onclick="RatingChanged('Agreeableness','4', 'Personality')" />
+                                                <label for="Agreeableness_4" class="star">&#9733;</label>
+                                                <input type="radio" id="Agreeableness_3" name="rating13" value="3" onclick="RatingChanged('Agreeableness','3', 'Personality')" />
+                                                <label for="Agreeableness_3" class="star">&#9733;</label>
+                                                <input type="radio" id="Agreeableness_2" name="rating13" value="2" onclick="RatingChanged('Agreeableness','2', 'Personality')" />
+                                                <label for="Agreeableness_2" class="star">&#9733;</label>
+                                                <input type="radio" id="Agreeableness_1" name="rating13" value="1" onclick="RatingChanged('Agreeableness','1', 'Personality')" />
+                                                <label for="Agreeableness_1" class="star">&#9733;</label>
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Agreeableness, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col-md-4 col-sm-4">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Neuroticism, htmlAttributes: new { @class = "control-label  desp-label" })
+                                            <a class="info" href="#"><span>Sensitive/Nervous, Secure/Confident</span></a>
+                                            <!--  @Html.DropDownListFor(x => Model.Neuroticism, Html.GetEnumSelectList<NeuroticismOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })--->
+                                            @Html.HiddenFor(m => m.Neuroticism)
+                                            <div class="star-rating">
+                                                <input type="radio" id="Neuroticism_5" name="rating14" value="5" onclick="RatingChanged('Neuroticism','5', 'Personality')" />
+                                                <label for="Neuroticism_5" class="star">&#9733;</label>
+                                                <input type="radio" id="Neuroticism_4" name="rating14" value="4" onclick="RatingChanged('Neuroticism','4', 'Personality')" />
+                                                <label for="Neuroticism_4" class="star">&#9733;</label>
+                                                <input type="radio" id="Neuroticism_3" name="rating14" value="3" onclick="RatingChanged('Neuroticism','3', 'Personality')" />
+                                                <label for="Neuroticism_3" class="star">&#9733;</label>
+                                                <input type="radio" id="Neuroticism_2" name="rating14" value="2" onclick="RatingChanged('Neuroticism','2', 'Personality')" />
+                                                <label for="Neuroticism_2" class="star">&#9733;</label>
+                                                <input type="radio" id="Neuroticism_1" name="rating14" value="1" onclick="RatingChanged('Neuroticism','1', 'Personality')" />
+                                                <label for="Neuroticism_1" class="star">&#9733;</label>
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Neuroticism, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Openness, htmlAttributes: new { @class = "control-label  desp-label" })
+                                            <a class="info" href="#"><span>Inventive/Curious, Consistent/Cautious</span></a>
+                                            <!-- @Html.DropDownListFor(x => Model.Openness, Html.GetEnumSelectList<OpennessOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
+                                            @Html.HiddenFor(m => m.Openness)
+                                            <div class="star-rating">
+                                                <input type="radio" id="Openness_5" name="rating15" value="5" onclick="RatingChanged('Openness','5', 'Personality')" />
+                                                <label for="Openness_5" class="star">&#9733;</label>
+                                                <input type="radio" id="Openness_4" name="rating15" value="4" onclick="RatingChanged('Openness','4', 'Personality')" />
+                                                <label for="Openness_4" class="star">&#9733;</label>
+                                                <input type="radio" id="Openness_3" name="rating15" value="3" onclick="RatingChanged('Openness','3', 'Personality')" />
+                                                <label for="Openness_3" class="star">&#9733;</label>
+                                                <input type="radio" id="Openness_2" name="rating15" value="2" onclick="RatingChanged('Openness','2', 'Personality')" />
+                                                <label for="Openness_2" class="star">&#9733;</label>
+                                                <input type="radio" id="Openness_1" name="rating15" value="1" onclick="RatingChanged('Openness','1', 'Personality')" />
+                                                <label for="Openness_1" class="star">&#9733;</label>
+                                            </div>
+
                                             @Html.ValidationMessageFor(model => model.Openness, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
 
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.Conscientiousness, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.Conscientiousness, Html.GetEnumSelectList<ConscientiousnessOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-
-                                            @Html.ValidationMessageFor(model => model.Conscientiousness, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.Extroversion, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.Extroversion, Html.GetEnumSelectList<ExtroversionOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                            @Html.ValidationMessageFor(model => model.Extroversion, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
+                                    @Html.HiddenFor(x => x.OverallPersonalityScore)
 
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.Agreeableness, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.Agreeableness, Html.GetEnumSelectList<AgreeablenessOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-
-                                            @Html.ValidationMessageFor(model => model.Agreeableness, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.Neuroticism, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.Neuroticism, Html.GetEnumSelectList<NeuroticismOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                            @Html.ValidationMessageFor(model => model.Neuroticism, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-
-                                </div>
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
@@ -798,28 +982,16 @@
 
                                 </div>
 
-
-
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
-                                            <h2>Interviewing Ability Score</h2>
+                                            <h2>Interviewing Ability</h2>
                                         </div>
                                     </div>
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.OverallInterviewingAbilityScore, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                    @Html.DropDownListFor(x => Model.OverallInterviewingAbilityScore, Html.GetEnumSelectList<InterviewingAbilityScoreOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "SetChartAndTotal()" })
-                                                    @Html.ValidationMessageFor(model => model.OverallInterviewingAbilityScore, "", new { @class = "text-danger" })
-                                                </div>
-                                            </div>
-
-
-                                        </div>
+                                        @Html.HiddenFor(x => x.OverallInterviewingAbilityScore)
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
                                                 <label class="control-label col-md-12 col-sm-12 desp-label"> Bias free Decision Making</label>
@@ -831,8 +1003,8 @@
                                                             <div class="col-md-12 col-sm-12">
                                                                 <div class="form-group" style="margin-bottom:0px;">
 
-                                                                    @Html.RadioButtonFor(m => m.DecisionMaking, "Yes") <span class="radio-field">Yes</span>
-                                                                    @Html.RadioButtonFor(m => m.DecisionMaking, "No")<span class="radio-field">No</span>
+                                                                    @Html.RadioButtonFor(m => m.DecisionMaking, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" }) <span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.DecisionMaking, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
 
                                                                 </div>
                                                             </div>
@@ -849,8 +1021,8 @@
 
                                                             <div class="col-md-12">
                                                                 <div class="form-group" style="margin-bottom:0px;">
-                                                                    @Html.RadioButtonFor(m => m.Articulation, "Yes") <span class="radio-field">Yes</span>
-                                                                    @Html.RadioButtonFor(m => m.Articulation, "No")<span class="radio-field">No</span>
+                                                                    @Html.RadioButtonFor(m => m.Articulation, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" }) <span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.Articulation, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -869,8 +1041,8 @@
 
                                                             <div class="col-md-12 col-sm-12">
                                                                 <div class="form-group" style="margin-bottom:0px;">
-                                                                    @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "Yes")<span class="radio-field">Yes</span>
-                                                                    @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "No")<span class="radio-field">No</span>
+                                                                    @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -886,8 +1058,8 @@
 
                                                             <div class="col-md-12 col-sm-12">
                                                                 <div class="form-group" style="margin-bottom:0px;">
-                                                                    @Html.RadioButtonFor(m => m.Teamwork, "Yes")<span class="radio-field">Yes</span>
-                                                                    @Html.RadioButtonFor(m => m.Teamwork, "No")<span class="radio-field">No</span>
+                                                                    @Html.RadioButtonFor(m => m.Teamwork, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.Teamwork, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
 
                                                                 </div>
                                                             </div>
@@ -907,8 +1079,8 @@
 
                                                             <div class="col-md-12 col-sm-12">
                                                                 <div class="form-group" style="margin-bottom:0px;">
-                                                                    @Html.RadioButtonFor(m => m.RelationshipManagement, "Yes")<span class="radio-field">Yes</span>
-                                                                    @Html.RadioButtonFor(m => m.RelationshipManagement, "No")<span class="radio-field">No</span>
+                                                                    @Html.RadioButtonFor(m => m.RelationshipManagement, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.RelationshipManagement, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
 
                                                                 </div>
                                                             </div>
@@ -925,8 +1097,8 @@
 
                                                             <div class="col-md-12 col-sm-12">
                                                                 <div class="form-group" style="margin-bottom:0px;">
-                                                                    @Html.RadioButtonFor(m => m.ConflictResolution, "Yes")<span class="radio-field">Yes</span>
-                                                                    @Html.RadioButtonFor(m => m.ConflictResolution, "No")<span class="radio-field">No</span>
+                                                                    @Html.RadioButtonFor(m => m.ConflictResolution, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.ConflictResolution, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
 
                                                                 </div>
                                                             </div>
@@ -945,8 +1117,8 @@
 
                                                             <div class="col-md-12 col-sm-12">
                                                                 <div class="form-group" style="margin-bottom:0px;">
-                                                                    @Html.RadioButtonFor(m => m.Adaptability, "Yes")<span class="radio-field">Yes</span>
-                                                                    @Html.RadioButtonFor(m => m.Adaptability, "No")<span class="radio-field">No</span>
+                                                                    @Html.RadioButtonFor(m => m.Adaptability, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.Adaptability, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
 
                                                                 </div>
                                                             </div>
@@ -962,8 +1134,8 @@
 
                                                             <div class="col-md-12 col-sm-12">
                                                                 <div class="form-group" style="margin-bottom:0px;">
-                                                                    @Html.RadioButtonFor(m => m.ModeInterviews, "Telephonic")<span class="radio-field">Telephonic</span>
-                                                                    @Html.RadioButtonFor(m => m.ModeInterviews, "Video")<span class="radio-field">Video</span>
+                                                                    @Html.RadioButtonFor(m => m.ModeInterviews, "Telephonic", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Telephonic</span>
+                                                                    @Html.RadioButtonFor(m => m.ModeInterviews, "Video", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Video</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -982,10 +1154,10 @@
 
                                                             <div class="col-md-12 col-sm-12">
                                                                 <div class="form-group" style="margin-bottom:0px;">
-                                                                    @Html.RadioButtonFor(m => m.WorkUnderPressure, "Yes")<span class="radio-field">
+                                                                    @Html.RadioButtonFor(m => m.WorkUnderPressure, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">
                                                                         Yes
                                                                     </span>
-                                                                    @Html.RadioButtonFor(m => m.WorkUnderPressure, "No")<span class="radio-field">No</span>
+                                                                    @Html.RadioButtonFor(m => m.WorkUnderPressure, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
 
                                                                 </div>
                                                             </div>
@@ -1002,10 +1174,10 @@
 
                                                             <div class="col-md-12 col-sm-12">
                                                                 <div class="form-group" style="margin-bottom:0px;">
-                                                                    @Html.RadioButtonFor(m => m.TimeManagement, "Yes")<span class="radio-field">
+                                                                    @Html.RadioButtonFor(m => m.TimeManagement, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">
                                                                         Yes
                                                                     </span>
-                                                                    @Html.RadioButtonFor(m => m.TimeManagement, "No")<span class="radio-field">No</span>
+                                                                    @Html.RadioButtonFor(m => m.TimeManagement, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1016,36 +1188,75 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
-                                                <div>
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.Interviewscompleted, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                        @Html.TextBoxFor(m => m.Interviewscompleted, new { @class = "form-control text-box single-line" })
+                                                <label class="control-label col-md-12 col-sm-12 desp-label"> Has interviewing experience</label>
+                                                <div class="form-group radiobox" style="margin-top:0px;">
+
+                                                    <div>
+                                                        <div class="choose-file ">
+
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    @Html.RadioButtonFor(m => m.Interviewscompleted, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">
+                                                                        Yes
+                                                                    </span>
+                                                                    @Html.RadioButtonFor(m => m.Interviewscompleted, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
-                                                <div>
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.ReadymadeAssessment, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                        @Html.TextBoxFor(m => m.ReadymadeAssessment, new { @class = "form-control text-box single-line" })
+                                                <label class="control-label col-md-12 col-sm-12 desp-label"> Ready-made Assessment</label>
+                                                <div class="form-group radiobox" style="margin-top:0px;">
+
+                                                    <div>
+                                                        <div class="choose-file ">
+
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    @Html.RadioButtonFor(m => m.ReadymadeAssessment, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">
+                                                                        Yes
+                                                                    </span>
+                                                                    @Html.RadioButtonFor(m => m.ReadymadeAssessment, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+
 
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
-                                                <div>
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.Creativity, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                        @Html.TextBoxFor(m => m.Creativity, new { @class = "form-control text-box single-line" })
+                                                <label class="control-label col-md-12 col-sm-12 desp-label"> Creativity</label>
+                                                <div class="form-group radiobox" style="margin-top:0px;">
 
+                                                    <div>
+                                                        <div class="choose-file ">
+
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    @Html.RadioButtonFor(m => m.Creativity, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">
+                                                                        Yes
+                                                                    </span>
+                                                                    @Html.RadioButtonFor(m => m.Creativity, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
+
+
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
@@ -1063,27 +1274,14 @@
                                             </div>
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.JobFunction, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.JobFunction, new { @class = "form-control text-box single-line" })
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.Industry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.Industry, new { @class = "form-control text-box single-line" })
-
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
                                                     @Html.LabelFor(model => model.CompanyHeadquarters, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                     @Html.TextBoxFor(m => m.CompanyHeadquarters, new { @class = "form-control text-box single-line" })
                                                 </div>
                                             </div>
-
                                         </div>
+
+
+
                                         <div class="row">
 
                                             <div class="col-md-6 col-sm-6">
@@ -1106,7 +1304,7 @@
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.CompanyStage, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                    @Html.DropDownListFor(x => Model.CompanyStage, Model.CompanyStageList, "Select Company Stage", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                                    @Html.DropDownListFor(x => Model.CompanyStage, Model.CompanyStageList, "Select Company Stage", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                                     @Html.ValidationMessageFor(model => model.ProjectsQuality, "", new { @class = "text-danger" })
                                                 </div>
                                             </div>
@@ -1117,8 +1315,25 @@
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.SkillCategory, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                    @Html.DropDownListFor(x => Model.SkillCategory, Model.SkillCategoryList, "Select Category", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
-                                                    @Html.ValidationMessageFor(model => model.CareerProgression, "", new { @class = "text-danger" })
+                                                    <select id="SkillCategoryArray" name="SkillCategoryArray" class="form-control multiselect" multiple="multiple">
+                                                        @foreach (var item in Model.SkillCategoryList.ToList())
+                                                        {
+                                                            @if (item != null)
+                                                            {
+                                                                @if (item.Selected)
+                                                                {
+                                                                    <option value="@item.Value" selected>@item.Text</option>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <option value="@item.Value">@item.Text</option>
+                                                                }
+                                                            }
+                                                        }
+
+                                                    </select>
+
+                                                    @Html.ValidationMessageFor(model => model.SkillCategory, "", new { @class = "text-danger" })
 
                                                 </div>
                                             </div>
@@ -1126,7 +1341,7 @@
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.Yearsofexperience, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                    @Html.DropDownListFor(x => Model.Yearsofexperience, Model.YearsofexperienceList, "Select Experience", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                                    @Html.DropDownListFor(x => Model.Yearsofexperience, Model.YearsofexperienceList, "Select Experience", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                                     @Html.ValidationMessageFor(model => model.Yearsofexperience, "", new { @class = "text-danger" })
                                                 </div>
                                             </div>
@@ -1137,7 +1352,7 @@
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.Senioritylevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                    @Html.DropDownListFor(x => Model.Senioritylevel, Model.SenioritylevelList, "Select Senioritylevel", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                                    @Html.DropDownListFor(x => Model.Senioritylevel, Model.SenioritylevelList, "Select Senioritylevel", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                                     @Html.ValidationMessageFor(model => model.Senioritylevel, "", new { @class = "text-danger" })
 
                                                 </div>
@@ -1146,29 +1361,14 @@
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.SkillNature, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                    @Html.DropDownListFor(x => Model.SkillNature, Model.SkillNatureList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                                    @Html.DropDownListFor(x => Model.SkillNature, Model.SkillNatureList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                                     @Html.ValidationMessageFor(model => model.SkillNature, "", new { @class = "text-danger" })
                                                 </div>
                                             </div>
 
                                         </div>
 
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.Domain, new { @class = "form-control text-box single-line" })
 
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.SkillIP, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.SkillIP, new { @class = "form-control text-box single-line" })
-                                                </div>
-                                            </div>
-
-                                        </div>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
@@ -1177,8 +1377,33 @@
 
                                                 </div>
                                             </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.PerHourRateOutside, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.PerHourRateOutside, new { @class = "form-control text-box single-line" })
+
+                                                </div>
+                                            </div>
+
+
+
+
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.Domain, new { @class = "form-control text-box single-line" })
+
+                                                </div>
+                                            </div>
+                                            @*<div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.SkillIP, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.SkillIP, new { @class = "form-control text-box single-line" })
+                                                    </div>
+                                                </div>*@
 
                                         </div>
+
                                     </div>
                                 </div>
                                 <label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
@@ -1241,6 +1466,202 @@
 @*<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>*@
 
+
+<script>
+    function CalculateProfileTotal(isOnload) {
+        var skillQualityScore = 0;
+        var certificationQualityScore = 0;
+        var educationQualityScore = 0;
+        var employersQualityScore = 0;
+        var careerProgressionScore = 0;
+        var projectsQualityScore = 0;
+        var onlinePresenceScore = 0;
+        var behavioralScore = 0;
+        var interviwerCommunicationScore = 0;
+        var interviewExperienceScore = 0;
+        //SkillQuality, CertificationQuality, EducationQuality, EmployersQuality, CareerProgression, ProjectsQuality, OnlinePresence
+        //BehavioralScore, InterviwerCommunication, Interviewexperience
+        var skillQualityVal = document.getElementById("SkillQuality").value;
+        if (skillQualityVal != null && skillQualityVal != '') {
+            skillQualityScore = parseInt(skillQualityVal);
+        }
+        var certificationQualityVal = document.getElementById("CertificationQuality").value;
+        if (certificationQualityVal != null && certificationQualityVal != '') {
+            certificationQualityScore = parseInt(certificationQualityVal);
+        }
+        var educationQualityVal = document.getElementById("EducationQuality").value;
+        if (educationQualityVal != null && educationQualityVal != '') {
+            educationQualityScore = parseInt(educationQualityVal);
+        }
+        var employersQualityVal = document.getElementById("EmployersQuality").value;
+        if (employersQualityVal != null && employersQualityVal != '') {
+            employersQualityScore = parseInt(employersQualityVal);
+        }
+        var careerProgressionVal = document.getElementById("CareerProgression").value;
+        if (careerProgressionVal != null && careerProgressionVal != '') {
+            careerProgressionScore = parseInt(careerProgressionVal);
+        }
+        var projectsQualityVal = document.getElementById("ProjectsQuality").value;
+        if (projectsQualityVal != null && projectsQualityVal != '') {
+            projectsQualityScore = parseInt(projectsQualityVal);
+        }
+        var onlinePresenceVal = document.getElementById("OnlinePresence").value;
+        if (onlinePresenceVal != null && onlinePresenceVal != '') {
+            onlinePresenceScore = parseInt(onlinePresenceVal);
+        }
+        var behavioralScoreVal = document.getElementById("BehavioralScore").value;
+        if (behavioralScoreVal != null && behavioralScoreVal != '') {
+            behavioralScore = parseInt(behavioralScoreVal);
+        }
+        var interviwerCommunicationVal = document.getElementById("InterviwerCommunication").value;
+        if (interviwerCommunicationVal != null && interviwerCommunicationVal != '') {
+            interviwerCommunicationScore = parseInt(interviwerCommunicationVal);
+        }
+        var interviewexperienceVal = document.getElementById("Interviewexperience").value;
+        if (interviewexperienceVal != null && interviewexperienceVal != '') {
+            interviewExperienceScore = parseInt(interviewexperienceVal);
+        }
+
+        var totalProfileScore = (skillQualityScore + certificationQualityScore + educationQualityScore + employersQualityScore +
+            careerProgressionScore + projectsQualityScore + onlinePresenceScore + behavioralScore + interviwerCommunicationScore
+            + interviewExperienceScore) / 10;
+
+        document.getElementById("ProfileScore").value = totalProfileScore * 10;
+        if (!isOnload) {
+            SetChartAndTotal();
+        }
+
+    }
+
+    function CalculatePersonalityTotal(isOnload) {
+        var opennessScore = 0;
+        var neuroticismScore = 0;
+        var conscientiousnessScore = 0;
+        var extroversionScore = 0;
+        var agreeablenessScore = 0;
+
+        var opennessVal = document.getElementById("Openness").value;
+        if (opennessVal != null && opennessVal != '') {
+            opennessScore = parseInt(opennessVal);
+        }
+
+        var neuroticismVal = document.getElementById("Neuroticism").value;
+        if (neuroticismVal != null && neuroticismVal != '') {
+            neuroticismScore = parseInt(neuroticismVal);
+        }
+
+        var conscientiousnessVal = document.getElementById("Conscientiousness").value;
+        if (conscientiousnessVal != null && conscientiousnessVal != '') {
+            conscientiousnessScore = parseInt(conscientiousnessVal);
+        }
+
+        var extroversionVal = document.getElementById("Extroversion").value;
+        if (extroversionVal != null && extroversionVal != '') {
+            extroversionScore = parseInt(extroversionVal);
+        }
+
+        var agreeablenessVal = document.getElementById("Agreeableness").value;
+        if (agreeablenessVal != null && agreeablenessVal != '') {
+            agreeablenessScore = parseInt(agreeablenessVal);
+        }
+
+        var totalPersonalityScore = (opennessScore + neuroticismScore + conscientiousnessScore + extroversionScore + agreeablenessScore) / 5;
+        document.getElementById("OverallPersonalityScore").value = totalPersonalityScore * 20;
+        if (!isOnload) {
+            SetChartAndTotal();
+        }
+
+    }
+
+    function CalculateAbilityTotal(isOnload) {
+
+        //get all the fields value and add
+        var decisionMakingScore = 0;
+        var articulationScore = 0;
+        var readinessOnlineInterviewsScore = 0;
+        var teamworkScore = 0;
+        var relationshipManagementScore = 0;
+        var conflictResolutionScore = 0;
+        var adaptabilityScore = 0;
+        //var modeInterviewsScore = 0;
+        var workUnderPressureScore = 0;
+        var timeManagementScore = 0;
+        var interviewsCompletedScore = 0;
+        var readymadeAssessmentScore = 0;
+        var creativityScore = 0;
+
+        var decisionMakingVal = document.getElementsByName("DecisionMaking")[0].checked;
+        if (decisionMakingVal) {
+            decisionMakingScore = 1;
+        }
+
+        var articulationVal = document.getElementsByName("Articulation")[0].checked;
+        if (articulationVal) {
+            articulationScore = 1;
+        }
+        var readinessOnlineInterviewsVal = document.getElementsByName("ReadinessOnlineInterviews")[0].checked;
+        if (readinessOnlineInterviewsVal) {
+            readinessOnlineInterviewsScore = 1;
+        }
+
+        var teamworkVal = document.getElementsByName("Teamwork")[0].checked;
+        if (teamworkVal) {
+            teamworkScore = 1;
+        }
+
+        var relationshipManagementVal = document.getElementsByName("RelationshipManagement")[0].checked;
+        if (relationshipManagementVal) {
+            relationshipManagementScore = 1;
+        }
+
+        var conflictResolutionVal = document.getElementsByName("ConflictResolution")[0].checked;
+        if (conflictResolutionVal) {
+            conflictResolutionScore = 1;
+        }
+
+        var adaptabilityVal = document.getElementsByName("Adaptability")[0].checked;
+        if (adaptabilityVal) {
+            adaptabilityScore = 1;
+        }
+
+
+        var workUnderPressureVal = document.getElementsByName("WorkUnderPressure")[0].checked;
+        if (workUnderPressureVal) {
+            workUnderPressureScore = 1;
+        }
+
+        var timeManagementVal = document.getElementsByName("TimeManagement")[0].checked;
+        if (timeManagementVal) {
+            timeManagementScore = 1;
+        }
+
+        var interviewsCompletedVal = document.getElementsByName("Interviewscompleted")[0].checked;
+        if (interviewsCompletedVal) {
+            interviewsCompletedScore = 1;
+        }
+
+        var readymadeAssessmentVal = document.getElementsByName("ReadymadeAssessment")[0].checked;
+        if (readymadeAssessmentVal) {
+            readymadeAssessmentScore = 1;
+        }
+
+        var creativityVal = document.getElementsByName("Creativity")[0].checked;
+        if (creativityVal) {
+            creativityScore = 1;
+        }
+
+        var totalAbilityScore = (creativityScore + readymadeAssessmentScore + interviewsCompletedScore + timeManagementScore + workUnderPressureScore
+            + adaptabilityScore + conflictResolutionScore + relationshipManagementScore + teamworkScore
+            + readinessOnlineInterviewsScore + articulationScore + decisionMakingScore) / 12;
+
+        document.getElementById("OverallInterviewingAbilityScore").value = totalAbilityScore * 100;
+        if (!isOnload) {
+            SetChartAndTotal();
+        }
+
+    }
+</script>
+
 <script>
     function getPDF() {
 
@@ -1286,10 +1707,28 @@
         else
             return;
     }
+
+
+
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js?v7" defer></script>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        jQuery("#select").select2({ multiple: true });
+        jQuery(".select2").css('width', '100%')
+    });
 
+</script>
 <script>
-
+    function RatingChanged(id, val, type) {
+        $("#" + id).val(val);
+        if (type == 'Personality') {
+            CalculatePersonalityTotal(false);
+        }
+        if (type == 'Profile') {
+            CalculateProfileTotal(false);
+        }
+    }
 
     function RadioChanged(val) {
         if (val == 'Upload') {
@@ -1312,7 +1751,7 @@
         if (id.includes("Tech")) {
             var num = id.match(/(\d+)/);
             var index = num[0];
-            value = parseInt(value);
+            value = parseFloat(value);
             var skillName = "TechSkillReportCollection";
 
             var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
@@ -1337,8 +1776,103 @@
 
     }
 
-    $(document).ready(function () {
+    function SetStarValue() {
+        var profileValue = document.getElementById("ProfileScore").value;
+        var personalityValue = document.getElementById("OverallPersonalityScore").value;
+        var interviewingAbilityValue = document.getElementById("OverallInterviewingAbilityScore").value;
+        var SkillQualityValue = document.getElementById("SkillQuality").value;
+        var CertificationQualityValue = document.getElementById("CertificationQuality").value;
+        var EducationQualityValue = document.getElementById("EducationQuality").value;
+        var EmployersQualityValue = document.getElementById("EmployersQuality").value;
+        var CareerProgressionValue = document.getElementById("CareerProgression").value;
+        var ProjectsQualityValue = document.getElementById("ProjectsQuality").value;
+        var OnlinePresenceValue = document.getElementById("OnlinePresence").value;
+        var BehavioralScoreValue = document.getElementById("BehavioralScore").value;
+        var InterviwerCommunicationValue = document.getElementById("InterviwerCommunication").value;
+        var InterviewexperienceValue = document.getElementById("Interviewexperience").value;
+        var ConscientiousnessValue = document.getElementById("Conscientiousness").value;
+        var ExtroversionValue = document.getElementById("Extroversion").value;
+        var AgreeablenessValue = document.getElementById("Agreeableness").value;
+        var NeuroticismValue = document.getElementById("Neuroticism").value;
+        var OpennessValue = document.getElementById("Openness").value;
+        if (profileValue != null && profileValue != "" && parseInt(profileValue) > 0) {
+            $('#ProfileScore_' + profileValue).attr('checked', 'checked');
+        }
+        if (personalityValue != null && personalityValue != "" && parseInt(personalityValue) > 0) {
+            $('#OverallPersonalityScore_' + personalityValue).attr('checked', 'checked');
+        }
+        if (parseInt(interviewingAbilityValue) > 0) {
+            $('#OverallInterviewingAbilityScore_' + interviewingAbilityValue).attr('checked', 'checked');
+        }
 
+        if (SkillQualityValue != null && SkillQualityValue != "" && parseInt(SkillQualityValue) > 0) {
+            $('#SkillQuality_' + SkillQualityValue).attr('checked', 'checked');
+        }
+        if (parseInt(CertificationQualityValue) > 0) {
+            $('#CertificationQuality_' + CertificationQualityValue).attr('checked', 'checked');
+        }
+
+        if (EducationQualityValue != null && EducationQualityValue != "" && parseInt(EducationQualityValue) > 0) {
+            $('#EducationQuality_' + EducationQualityValue).attr('checked', 'checked');
+        }
+
+        if (EmployersQualityValue != null && EmployersQualityValue != "" && parseInt(EmployersQualityValue) > 0) {
+            $('#EmployersQuality_' + EmployersQualityValue).attr('checked', 'checked');
+        }
+
+        if (CareerProgressionValue != null && CareerProgressionValue != "" && parseInt(CareerProgressionValue) > 0) {
+            $('#CareerProgression_' + CareerProgressionValue).attr('checked', 'checked');
+        }
+
+        if (ProjectsQualityValue != null && ProjectsQualityValue != "" && parseInt(ProjectsQualityValue) > 0) {
+            $('#ProjectsQuality_' + ProjectsQualityValue).attr('checked', 'checked');
+        }
+
+        if (OnlinePresenceValue != null && OnlinePresenceValue != "" && parseInt(OnlinePresenceValue) > 0) {
+            $('#OnlinePresence_' + OnlinePresenceValue).attr('checked', 'checked');
+        }
+
+        if (BehavioralScoreValue != null && BehavioralScoreValue != "" && parseInt(BehavioralScoreValue) > 0) {
+            $('#BehavioralScore_' + BehavioralScoreValue).attr('checked', 'checked');
+        }
+
+        if (InterviwerCommunicationValue != null && InterviwerCommunicationValue != "" && parseInt(InterviwerCommunicationValue) > 0) {
+            $('#InterviwerCommunication_' + InterviwerCommunicationValue).attr('checked', 'checked');
+        }
+
+        if (InterviewexperienceValue != null && InterviewexperienceValue != "" && parseInt(InterviewexperienceValue) > 0) {
+            $('#Interviewexperience_' + InterviewexperienceValue).attr('checked', 'checked');
+        }
+        if (ConscientiousnessValue != null && ConscientiousnessValue != "" && parseInt(ConscientiousnessValue) > 0) {
+            $('#Conscientiousness_' + ConscientiousnessValue).attr('checked', 'checked');
+        }
+
+        if (ExtroversionValue != null && ExtroversionValue != "" && parseInt(ExtroversionValue) > 0) {
+            $('#Extroversion_' + ExtroversionValue).attr('checked', 'checked');
+        }
+
+        if (AgreeablenessValue != null && AgreeablenessValue != "" && parseInt(AgreeablenessValue) > 0) {
+            $('#Agreeableness_' + AgreeablenessValue).attr('checked', 'checked');
+        }
+        if (NeuroticismValue != null && NeuroticismValue != "" && parseInt(NeuroticismValue) > 0) {
+            $('#Neuroticism_' + NeuroticismValue).attr('checked', 'checked');
+        }
+
+        if (OpennessValue != null && OpennessValue != "" && parseInt(OpennessValue) > 0) {
+            $('#Openness_' + OpennessValue).attr('checked', 'checked');
+        }
+
+    }
+
+    $(document).ready(function () {
+        $("#SkillCategoryArray").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+       
+        SetStarValue();
         var weightageItems = $('[id$="WeightageActual"]');
         for (i = 0; i < weightageItems.length; i++) {
             var id = weightageItems[i].id;
@@ -1365,10 +1899,17 @@
 
         }
 
+        CalculateAbilityTotal(true);
+
+        //CalculatePersonalityTotal(true);
+        //CalculateProfileTotal(true);
+
         SetChartAndTotal();
 
 
     });
+
+
 
 
     function SetChartAndTotal() {
@@ -1376,7 +1917,7 @@
         var totalCount = 0;
         var techTotal = 0;
         for (i = 0; i < items.length; i++) {
-            techTotal += parseInt(items[i].value);
+            techTotal += parseFloat(items[i].value);
         }
         var profileScore = 0;
         var personalityScore = 0;
@@ -1389,18 +1930,19 @@
         var interviewingAbilityValue = document.getElementById("OverallInterviewingAbilityScore").value;
 
         if (profileValue != null && profileValue != '') {
-            profileScore = parseInt(profileValue) * 20;
+            profileScore = parseFloat(profileValue);
         }
         if (personalityValue != null && personalityValue != '') {
-            personalityScore = parseInt(personalityValue) * 25;
+            personalityScore = parseFloat(personalityValue);
         }
         if (interviewingAbilityValue != null && interviewingAbilityValue != '') {
-            interviewingAbilityScore = parseInt(interviewingAbilityValue) * 20;
+            interviewingAbilityScore = parseFloat(interviewingAbilityValue);
         }
 
-
         totalCount = (techTotal + profileScore + personalityScore + interviewingAbilityScore) / 4;
-
+        if (totalCount != Math.floor(totalCount)) {
+            totalCount = totalCount.toFixed(2);
+        }
         $("#OverallScore").val(totalCount);
 
         document.getElementById("totScore").innerHTML = totalCount;

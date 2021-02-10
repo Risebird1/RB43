@@ -11,8 +11,8 @@
     dynamic filter = null;
     string strtDte = String.Empty;
     string endDte = String.Empty;
-    string[] primarySkills = new string[] { };
-    string[] ClientHR = new string[] { };
+    string[] AssessmentGroups = new string[] { };
+    string[] Senioritylevel = new string[] { };
     string[] ClientName = new string[] { };
     string[] ApprovalStatus = new string[] { };
     string[] JoiningStatus = new string[] { };
@@ -25,13 +25,13 @@
     string[] CandidateAvailable = new string[] { };
 
 }
-@if (HttpContextAccessor.HttpContext.Session.GetString("RiseTubefilters") != null)
+@if (HttpContextAccessor.HttpContext.Session.GetString("InterviewerRiseTubefilters") != null)
 {
-    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("RiseTubefilters"));
+    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("InterviewerRiseTubefilters"));
     strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
-    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
-    ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
+    AssessmentGroups = filter.AssessmentGroup != null ? filter.AssessmentGroup : new string[] { };
+    Senioritylevel = filter.Senioritylevel != null ? filter.Senioritylevel : new string[] { };
     InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
     CandidateName = filter.CandidateName != null ? filter.CandidateName : new string[] { };
     ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
@@ -62,7 +62,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">Risetube</a>
+                <a class="navbar-brand">RiseTube</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -77,40 +77,45 @@
     <div class="pt30 videocon ">
         <div class="col-md-12 nopad">
             <div class="card-header bg-w clearfix">
-            
+
                 <div class="pull-left risetubeheader">
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title risetubeid">Risetube</h4></div>
 
                 </div>
 
-                   <div class="pull-right">
-            <div>
-                <div class="newsletter">
+                <div class="pull-right">
+                    <div>
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-toggle="modal" data-target="#filterModal">
 
-                    <div class="content">
-                        <div class="input-group card-title-space" id="myForm">
-                            <div class="searchbox">
-                                <input type="email" id="txtsearch" value="@ViewBag.searchvalue" class="form-control txtsearch1" placeholder="Please enter Skills (or) Name of Candidate" AutoCompleteType="Disabled">
-                                <span class="input-group-btn">
-                                    <button class="btn btn3" id="btnSearch" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
-                                </span>
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
+                        <div class="newsletter">
+
+                            <div class="content">
+                                <div class="input-group card-title-space" id="myForm">
+                                    <div class="searchbox">
+                                        <input type="email" id="txtsearch" value="@ViewBag.searchvalue" class="form-control txtsearch1" placeholder="Please enter Skills (or) Name of Candidate" AutoCompleteType="Disabled">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn3" id="btnSearch" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
+                        </div>
+
+
+
+                    </div>
                 </div>
 
 
+            </div>
 
-            </div>
-        </div>  
-             
-
-            </div>
-                
-            </div>
         </div>
+    </div>
 
 
 
@@ -136,7 +141,7 @@
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <form action="@Url.Action("Index","risetube")" method="post" id="form">
+                                        <form action="@Url.Action("RisetubeInterviewer","InterviewerSkills")" method="post" id="form">
 
                                             <div class="modal-body">
                                                 <div class="row">
@@ -160,7 +165,45 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
 
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroup">Assessment Group</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="AssessmentGroup" name="AssessmentGroup" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in Model.Select(x => x.AssessmentGroup).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Senioritylevel">
+                                                                Seniority level
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="Senioritylevel" name="Senioritylevel" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in Model.Select(x => x.Senioritylevel).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
                                                     <div class="form-group col-md-12 col-sm-12">
 
 
@@ -243,14 +286,43 @@
 
 
 
-                                                        @if (@item.JDTiltle.Length > 20)
+                                                        @if (@item.AssessmentGroup.Length > 28)
                                                         {
-                                                            <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">@item.JDTiltle</span></a>}
+                                                            <a href="#" data-tooltip="@item.AssessmentGroup"> <span class="join-time  designation">@item.AssessmentGroup</span></a>}
 
                                                         else
-                                                        {
-                                                            <span class="designation">@item.JDTiltle</span>}
+                                                        { <span class="designation">@item.AssessmentGroup</span>}
 
+
+
+
+                                                    </div>
+                                                    <div class="video-info col-sm-6 col-md-6 col-lg-6 nopad pull-left">
+                                                        <span>Tech Score: @item.TechSkillScore</span>
+                                                    </div>
+                                                    <div class="video-info col-sm-6 col-md-6 col-lg-6 nopad pull-left">
+                                                        <span>
+                                                            Resume:
+                                                            @if (!String.IsNullOrEmpty(item.resumeLink))
+                                                            {
+                                                                <a target="_blank" href=@item.resumeLink>Resume</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a> No Resume</a>
+                                                            }
+                                                        </span>
+                                                    </div>
+
+
+
+
+                                                    <div class="video-info col-sm-12 col-md-12 col-lg-12 nopad pull-left">
+                                                        <span>Rate - IND / Outside IND:</span>
+                                                        <span>(@item.PerHourRateIndia INR / @item.PerHourRateOutside)</span>
+                                                    </div>
+                                                    <div class="video-info col-sm-8 col-md-8 col-lg-8 nopad pull-left">
+                                                        <span>Level- Upto to @item.Senioritylevel</span>
                                                     </div>
 
                                                 </div>
@@ -536,7 +608,7 @@
             ApplySessionFilter();
         }
 
-        $("#PrimarySkill").multiselect({
+        $("#AssessmentGroup").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '100%',
@@ -552,7 +624,7 @@
 
         });
 
-        $("#ClientHR").multiselect({
+        $("#Senioritylevel").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '100%',
@@ -651,14 +723,14 @@
 
     function ResetFilter() {
 
-            window.location.href = "/risetube/ResetRisetubeFilter";
+        window.location.href = "/InterviewerSkills/ResetInterviewerRisetubeFilter";
     }
 
     function ApplySessionFilter() {
         var strtDte = '@strtDte';
         var endDte = '@endDte';
-        var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
-        var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
+        var AssessmentGrouparr = @Html.Raw(Json.Serialize(AssessmentGroups));
+        var Senioritylevel =  @Html.Raw(Json.Serialize(Senioritylevel));
         var interviewStatus =  @Html.Raw(Json.Serialize(InterviewStatus));
         var approvalStatus = @Html.Raw(Json.Serialize(ApprovalStatus));
         var joiningStatus = @Html.Raw(Json.Serialize(JoiningStatus));
@@ -672,8 +744,8 @@
 
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
-        $("#PrimarySkill").val(primarySkillsArr);
-        $("#ClientHR").val(clientHR);
+        $("#AssessmentGroup").val(AssessmentGrouparr);
+        $("#Senioritylevel").val(Senioritylevel);
         $("#InterviewStatus").val(interviewStatus);
         $("#ApprovalStatus").val(approvalStatus);
         $("#JoiningStatus").val(joiningStatus);

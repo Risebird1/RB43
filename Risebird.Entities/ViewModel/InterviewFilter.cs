@@ -29,6 +29,8 @@ namespace Risebird.Entities.ViewModel
         public string[] Client { get; set; }
         public string[] SecondarySkill { get; set; }
         public string[] CompentencyLevel { get; set; }
+        public string[] AssessmentGroup { get; set; }
+        public string[] Senioritylevel { get; set; }
 
     }
 }

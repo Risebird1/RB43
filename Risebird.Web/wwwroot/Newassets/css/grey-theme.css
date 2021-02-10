@@ -32,7 +32,9 @@ textarea::-webkit-scrollbar {
     padding: 5px 5px;
     font-size: 16px;
 }
-
+.employee .mdc-card .form-control[disabled] {
+    color: #504e4e !important;
+}
 textarea::-webkit-scrollbar-thumb {
     background-color: #acacad !important;
     border: 1px solid #acacad !important;
@@ -207,8 +209,10 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
     border-right: 1px #ddd solid !important
 }
 .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
-    background-color: whitesmoke !important;
-    border-bottom: 1px solid #aaa !important;
+    background-color: #ececee !important;
+}
+.radiobox {
+    background: #efefef;
 }
 table.dataTable thead .sorting:after {
     color: transparent
