@@ -189,7 +189,7 @@
                                         @Html.EditorFor(model => model.City, new { htmlAttributes = new { id = "txt_City", @class = "form-control text-box single-line", @type = "text" } })
                                         @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
                                     </div>
-                                    <div class="form-group"  style="margin-top: -10px;">
+                                    <div class="form-group" style="margin-top: -10px;">
 
                                         <span class="desp-label control-label">
                                             Upload Resume
@@ -213,22 +213,22 @@
                                             Coded Resume
                                         </span>
 
-                                            <div class="mdc-touch-target-wrapper" style="        top: 4px;
-       
+                                        <div class="mdc-touch-target-wrapper" style="        top: 4px;
+
         position: relative;">
-                                                <div class="mdc-radio mdc-radio--touch">
-                                                    <input class="mdc-radio__native-control" id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">
-                                                    <div class="mdc-radio__background">
-                                                        <div class="mdc-radio__outer-circle"></div>
-                                                        <div class="mdc-radio__inner-circle"></div>
-                                                    </div>
-                                                    <div class="mdc-radio__ripple"></div>
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
                                                 </div>
+                                                <div class="mdc-radio__ripple"></div>
                                             </div>
+                                        </div>
 
 
 
-                                            <!-- <input id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">-->
+                                        <!-- <input id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">-->
                                     </div>
                                     <div style="display:none" id="linkDiv">
                                         @Html.LabelFor(model => model.CodedResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -242,13 +242,15 @@
                                     <div>
                                         @if (Model.ResumeLink != null)
                                         {
-                                            <div class="upload" style=" float: left;">  <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" id="resumeId" target="_blank" title="Resume" href=@Model.ResumeLink>Upload Resume  </a></div>
+                                            <div class="upload" style=" float: left;">  <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" id="resumeId" target="_blank" title="Resume" href=@Model.ResumeLink.Replace(" ","%20")>Uploaded Resume  </a></div>
                                         }
                                     </div>
                                     <div>
                                         @if (Model.CodedResumeLink != null)
                                         {
-                                            <a id="codedResumeId" target="_blank" title="CodedResume" href=@Model.CodedResumeLink>Coded Resume</a>
+                                            <div class="upload" style=" float: left;margin-left:5px">
+                                                <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="codedResumeId" target="_blank" title="CodedResume" href=@Model.CodedResumeLink.Replace(" ","%20")>Coded Resume</a>
+                                            </div>
                                         }
                                     </div>
                                     @Html.Hidden("ResumeLink", Model.ResumeLink, htmlAttributes: new { id = "hdn_ResumeLink" })
@@ -680,7 +682,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            @Html.TextArea("InterviewerProjectsDetails[0].Description", null, new { @class = "form-control text-box single-line", @style="height:50px;" })
+                                                            @Html.TextArea("InterviewerProjectsDetails[0].Description", null, new { @class = "form-control text-box single-line", @style = "height:50px;" })
                                                         </td>
                                                         <td>
                                                             <div class="mdc-checkbox">

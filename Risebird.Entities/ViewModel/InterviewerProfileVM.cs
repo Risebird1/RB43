@@ -53,7 +53,7 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter Mobile Number")]
         public string MobileNumber { get; set; }
 
-        [Display(Name = "Altername Mobile Number")]
+        [Display(Name = "Alternate Mobile Number")]
         public string AltMobileNumber { get; set; }
 
         [Display(Name = "Current Role")]

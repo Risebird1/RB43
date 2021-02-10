@@ -171,7 +171,7 @@
 
 
                                                                 <td class="cadEmail">
-                                                                    <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0,25)... </a>
+                                                                    <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0, 25)... </a>
                                                                 </td>
                                                             }
 
@@ -236,7 +236,7 @@
                                                         {
                                                             <td>
 
-                                                                <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
+                                                                <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink.Replace(" ","%20")>Resume</a>
                                                             </td>
                                                         }
                                                         else
@@ -301,7 +301,7 @@
                                                                     {
                                                                         <td>
 
-                                                                            <a id="codedResumeId" target="_blank" title="Coded Resume" href=@item.CodedResumeLink>Coded Resume</a>
+                                                                            <a id="codedResumeId" target="_blank" title="Coded Resume" href=@item.CodedResumeLink.Replace(" ","%20")>Coded Resume</a>
                                                                         </td>
                                                                     }
                                                                     else
@@ -390,7 +390,7 @@
                                 </div>
                             </div>
                         </div>
-                        </div>
+                    </div>
                     <!-- end content-->
                 </div>
                 <!--  end card  -->
@@ -701,13 +701,13 @@
 
 
 
-            html += '  <td><a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a></td>';
+            html += '  <td><a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink.replace(" ", "%20") + '>Resume</a></td>';
             html += '   <td class="text-center action">';
             html += ' <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit interviewer Profile">';
-            html += ' <a href = "/Interviewer/EditInterviewerProfile/?userId' + data[i].userId + '" title="Click here to edit interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></a>';
+            html += ' <a href = "/Interviewer/EditInterviewerProfile/?userId=' + data[i].userId + '" title="Click here to edit interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></a>';
             html += '  </button>';
             html += '  <button class="mdc-fab app-fab--absolute" aria-label="Click here to Add interviewer Employer Details">';
-            html += ' <a href = "/Interviewer/IndexEmployer?id= ' + data[i].id + '" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></a>';
+            html += ' <a href = "/Interviewer/IndexEmployer?id= ' + data[i].id + '" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M10 8c1.66 0 2.99-1.34 2.99-3S11.66 2 10 2 7 3.34 7 5s1.34 3 3 3zm-6 2V8h2V6H4V4H2v2H0v2h2v2h2zm6 0c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></a>';
             html += '  </button>';
             html += ' <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">';
             html += '  <span onclick="javascript:DeleteEntityfromEnvironmentJson(' + data[i].id + ');" title="Click here to delete interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>';
@@ -733,7 +733,23 @@
 
             html += '  <tr>';
 
-            html += ' <td class="text-center">' + data[i].noOfInterview + '</td>';
+            if (data[i].isLeadInterviewer) {
+                html += '   <td class="text-center">Yes</td>';
+            }
+            else {
+                html += '  <td class="text-center">No</td>';
+            }
+            if (data[i].codedResumeLink != null && data[i].codedResumeLink != "") {
+
+                html += '  <td> <a id="codedResumeId" target="_blank" title="Coded Resume" href=' + data[i].codedResumeLink.replace(" ", "%20") + '>Coded Resume</a></td>';
+
+
+
+
+            }
+            else {
+                html += ' <td>No Coded Resume</td>';
+            }
 
             if (data[i].isApproved == true) {
                 html += '<td>Approved</td>';
