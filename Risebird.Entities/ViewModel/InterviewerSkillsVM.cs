@@ -10,7 +10,7 @@ namespace Risebird.Entities.ViewModel
     {
         public int id { get; set; }
 
-        [DisplayName("InterviewerSkillId")]
+        [DisplayName("Interviewer Skill ID")]
         [Required]
         public string InterviewerSkillId { get; set; }
 
@@ -52,6 +52,7 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("Calendly Link")]
         public string CalendlyLink { get; set; }
+        [DisplayName("Primary Skill")]
         public string PrimarySkill { get; set; }
         public string LoggedEmail { get; set; }
         public string SkillName { get; set; }
