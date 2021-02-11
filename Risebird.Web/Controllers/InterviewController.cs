@@ -44,7 +44,7 @@ namespace Risebird.Web.Controllers
         private static List<MeetingVM> _modelDetails;
         private static List<Meeting> _modelDetail;
         private static string Searchvalue;
-        private static string Searchvalueproiprity;
+
 
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;

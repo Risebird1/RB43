@@ -30,6 +30,7 @@ namespace Risebird.Web.Controllers
         private readonly INotificationHelper _notificationHelper;
         private readonly IMeetingService _meetingService;
         private static string Searchvalueproiprity;
+        private static string SearchSelectedMeetings;
         private static List<MeetingVM> _modelDetails;
         private readonly IIRFService _irfService;
         private static string Searchvalue;
@@ -1658,7 +1659,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.ClientNameList = _meetingService.GetEndClientList(emailid, selectedMeeting);
                         if (String.IsNullOrEmpty(searchValue))
                         {
-                            searchValue = Searchvalueproiprity;
+                            searchValue = SearchSelectedMeetings;
                         }
                         ViewBag.Searchvalue = searchValue;
                         if (!String.IsNullOrEmpty(searchValue))
@@ -1826,7 +1827,7 @@ namespace Risebird.Web.Controllers
                             && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
                             && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
                         && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
-                        ViewBag.Searchvalue = searchValue;
+                        ViewBag.Searchvalue = "";
                         if (!String.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper();
@@ -2179,7 +2180,7 @@ namespace Risebird.Web.Controllers
             {
                 int Page = 1;
                 var selectedMeeting = _modelDetails;
-                Searchvalue = searchValue;
+                SearchSelectedMeetings = searchValue;
                 if (!String.IsNullOrEmpty(searchValue))
                 {
                     searchValue = searchValue.ToUpper();
