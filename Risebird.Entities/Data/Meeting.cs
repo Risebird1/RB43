@@ -94,6 +94,7 @@ namespace Risebird.Entities.Data
         public string ClientHrMobile { get; set; }
         public string StaffingAgencyMobile { get; set; }
         public string HRImageFileURL { get; set; }
+        public string ISCId { get; set; }
 
     }
 }

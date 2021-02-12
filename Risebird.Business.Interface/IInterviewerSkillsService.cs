@@ -60,7 +60,6 @@ namespace Risebird.Business.Interface
         Task<int> GetInterviewerRiseTubeMeetingsCount(string searchvalue);
         Task<MeetingVM> GetMeetingbyid(int id, string Email);
         Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern);
-        Task<InterviewReport> GetInterviewerInteviewReport(int interviewId, int irfId);
         Task<List<string>> FetchAdminList();
 
     }

@@ -29,7 +29,7 @@
                     </button>
                 </div>
                 <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Skills Channel</a>
-                <a class="navbar-brand">Add Skills Channel</a>
+                <a class="navbar-brand">/ &nbsp;Add Skills Channel</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -63,11 +63,10 @@
 
                             <div class="col-md-3 col-sm-3 pr-1">
                                 <div class="form-group" style="margin-bottom:0px;">
-                                    @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
+                                    <div class="mandate">@Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span style="color:red">*</span></div>
 
                                     @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
-                                    <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                   <!--- <label class="text-danger" id="uniqueMsg" style="color:red"></label>-->
                                     @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
 
 
@@ -99,7 +98,7 @@
 
                             <div class="col-md-3 col-sm-3 pr-1">
                                 <div class="form-group" style="margin-bottom:0px;">
-                                    @Html.LabelFor(model => model.Tag, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    <div class="mandate"> @Html.LabelFor(model => model.Tag, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
 
                                     @Html.EditorFor(model => model.Tag, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                     @Html.ValidationMessageFor(model => model.Tag, "", new { @class = "text-danger" })
@@ -149,142 +148,146 @@
                                 </div>
                                 <div class="col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        <div class="mandate">
+                                            @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
 
 
 
-                                        @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @class = "text-danger" })
+                                            @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @class = "text-danger" })
 
 
 
 
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+
+                                            @Html.DropDownList("CompanyType[0].Type", (SelectList)Model.CompanyTypeList, new { @class = "select-css form-control text-box single-line" })
+
+
+                                            @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
+
+
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="mandate">  @Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+                                            @Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.ClientName, "", new { @class = "text-danger" })
+
+
+                                        </div>
+                                        <div class="form-group">
+
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+
+                                                @Html.EditorFor(model => model.JobCountry, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+
+
+                                                @Html.ValidationMessageFor(model => model.JobCountry, "", new { @class = "text-danger" })
+
+                                            </div>
+                                        <div class="form-group">
+                                            @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
+                                            @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, new { @class = "form-control select-css " })
+
+                                            @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @class = "text-danger" })
+
+
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="mandate">   @Html.LabelFor(model => model.PrimarySkillInvite, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+
+                                            @Html.EditorFor(model => model.PrimarySkillInvite, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.PrimarySkillInvite, "", new { @class = "text-danger" })
+
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-
-                                        @Html.DropDownList("CompanyType[0].Type", (SelectList)Model.CompanyTypeList, new { @class = "select-css form-control text-box single-line" })
-
-
-                                        @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
-
-
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.ClientName, "", new { @class = "text-danger" })
-
-
-                                    </div>
-                                    <div class="form-group">
-
-                                        @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.JobCountry, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-
-
-                                        @Html.ValidationMessageFor(model => model.JobCountry, "", new { @class = "text-danger" })
-
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
-                                        @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, new { @class = "form-control select-css " })
-
-                                        @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @class = "text-danger" })
-
-
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.PrimarySkillInvite, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.PrimarySkillInvite, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.PrimarySkillInvite, "", new { @class = "text-danger" })
-
-                                    </div>
-                                </div>
                                 <div class="col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        <div class="mandate">
+                                            @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
 
-                                        @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
-                                        <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></label>
-                                        @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
-
-
-
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
-
-                                        <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></label>
-                                        @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                                            @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
+                                            <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></label>
+                                            @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
 
 
 
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-
-
-                                        @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line"} })
-                                        @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @class = "text-danger" })
-                                        <div class="spinner">
-                                            <button type="button" class="up button">&rsaquo;</button>
-                                            <button type="button" class="down button">&lsaquo;</button>
                                         </div>
-
-
-                                    </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        <div class="mandate">
+                                            @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+
+                                            @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
+
+                                            <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></label>
+                                            @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
 
 
-                                        @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @class = "text-danger" })
-                                        <div class="spinner">
-                                            <button type="button" class="up-1 button">&rsaquo;</button>
-                                            <button type="button" class="down-1 button">&lsaquo;</button>
+
                                         </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
 
-                                    </div>
-                                    <div class="form-group">
-                                        <span class="desp-label control-label">  Upload Company Details</span>
-                                        <input id="companydetails" name="companydetails" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)">
-                                        <span class="desp-label control-label">
-                                            Provide Company Details</span>
+
+                                            @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @class = "text-danger" })
+                                            <div class="spinner">
+                                                <button type="button" class="up button">&rsaquo;</button>
+                                                <button type="button" class="down button">&lsaquo;</button>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+
+                                            @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @class = "text-danger" })
+                                            <div class="spinner">
+                                                <button type="button" class="up-1 button">&rsaquo;</button>
+                                                <button type="button" class="down-1 button">&lsaquo;</button>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="form-group">
+                                            <span class="desp-label control-label">  Upload Company Details</span>
+                                            <input id="companydetails" name="companydetails" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)">
+                                            <span class="desp-label control-label">
+                                                Provide Company Details
+                                            </span>
                                             <input id="companydetails" name="companydetails" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)">
+                                        </div>
+                                        <div class="form-group" style="display:none" id="linkcdDiv">
+                                            @Html.LabelFor(model => model.CompanyDetails, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.CompanyDetails, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.CompanyDetails, "", new { @class = "text-danger" })
+
+                                        </div>
+                                        <div class="" style="display:none" id="uploadcdDiv">
+                                            @Html.LabelFor(model => model.CompanyDetailFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
+
+                                        </div>
+
                                     </div>
-                                    <div class="form-group" style="display:none" id="linkcdDiv">
-                                        @Html.LabelFor(model => model.CompanyDetails, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.CompanyDetails, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.CompanyDetails, "", new { @class = "text-danger" })
-
-                                    </div>
-                                    <div class="" style="display:none" id="uploadcdDiv">
-                                        @Html.LabelFor(model => model.CompanyDetailFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
-
-                                    </div>
-
-                                </div>
                                 <div class="col-md-4 col-sm-4 pl-1">
 
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
+                                        <div class="mandate">  @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
 
 
                                         @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1", @onchange = "PerMinRateInterviewer()" } })
@@ -297,55 +300,56 @@
 
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        <div class="mandate">
+                                            @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
 
 
 
-                                        @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
-                                        @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @class = "text-danger" })
-                                        <div class="spinner">
-                                            <button type="button" class="up-3 button">&rsaquo;</button>
-                                            <button type="button" class="down-3 button">&lsaquo;</button>
-                                        </div>
-
-
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.RisebirdHr, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-
-
-                                        @Html.DropDownList("RisebirdHr", (SelectList)ViewBag.RiseBirdHR, new { @class = "select-css form-control" })
-                                        @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
-
-                                    </div>
-
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, new { @class = "select-css form-control" })
-                                        @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
-
-                                    </div>
-                                    <div class="form-group" style="margin-top:-15px;">
-                                        <span class="desp-label control-label">
-                                            Upload JD
-                                        </span>
-
-
-                                        <div class="mdc-touch-target-wrapper" style="top: 4px;
-    position: relative;">
-                                            <div class="mdc-radio mdc-radio--touch">
-                                                <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
-                                                <div class="mdc-radio__background">
-                                                    <div class="mdc-radio__outer-circle"></div>
-                                                    <div class="mdc-radio__inner-circle"></div>
-                                                </div>
-                                                <div class="mdc-radio__ripple"></div>
+                                            @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
+                                            @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @class = "text-danger" })
+                                            <div class="spinner">
+                                                <button type="button" class="up-3 button">&rsaquo;</button>
+                                                <button type="button" class="down-3 button">&lsaquo;</button>
                                             </div>
+
+
                                         </div>
-                                        <span class="desp-label control-label">
-                                            Provide JD Link
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.RisebirdHr, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+
+
+                                            @Html.DropDownList("RisebirdHr", (SelectList)ViewBag.RiseBirdHR, new { @class = "select-css form-control" })
+                                            @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
+
+                                        </div>
+
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, new { @class = "select-css form-control" })
+                                            @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
+
+                                        </div>
+                                        <div class="form-group" style="margin-top:-15px;">
+                                            <span class="desp-label control-label">
+                                                Upload JD
+                                            </span>
+
+
+                                            <div class="mdc-touch-target-wrapper" style="top: 4px;
+    position: relative;">
+                                                <div class="mdc-radio mdc-radio--touch">
+                                                    <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
+                                                    <div class="mdc-radio__background">
+                                                        <div class="mdc-radio__outer-circle"></div>
+                                                        <div class="mdc-radio__inner-circle"></div>
+                                                    </div>
+                                                    <div class="mdc-radio__ripple"></div>
+                                                </div>
+                                            </div>
+                                            <span class="desp-label control-label">
+                                                Provide JD Link<span class="red">*</span>
                                             </span>
                                             <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
                                                 <div class="mdc-radio mdc-radio--touch">
@@ -359,22 +363,22 @@
                                             </div>
 
 
+                                        </div>
+                                        <div class="form-group" style="display:none" id="linkDiv">
+                                           @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
+
+                                        </div>
+                                        <div class="" style="display:none" id="uploadDiv">
+                                            @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+
+                                        </div>
+
                                     </div>
-                                    <div class="form-group" style="display:none" id="linkDiv">
-                                        @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
-
-                                    </div>
-                                    <div class="" style="display:none" id="uploadDiv">
-                                        @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
-
-                                    </div>
-
-                                </div>
                             </div>
 
 
@@ -446,7 +450,7 @@
 
                                                     <th width="15%" class="table_heading">Level</th>
                                                     <th width="25%" class="table_heading">Type</th>
-                                                    <th width="40%" class="table_heading">Value</th>
+                                                    <th width="40%" class="table_heading">Value <span class="red">*</span></th>
                                                     <th width="10%" class="table_heading">Weightage</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
@@ -506,7 +510,7 @@
 
                                                     <th width="15%" class="table_heading">Level</th>
                                                     <th width="25%" class="table_heading">Type</th>
-                                                    <th width="40%" class="table_heading">Value</th>
+                                                    <th width="40%" class="table_heading">Value <span class="red">*</span></th>
                                                     <th width="10%" class="table_heading">Weightage</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
@@ -562,7 +566,7 @@
                                                 <tr>
                                                     <th width="15%" class="table_heading">Level</th>
                                                     <th width="25%" class="table_heading">Type</th>
-                                                    <th width="40%" class="table_heading">Value</th>
+                                                    <th width="40%" class="table_heading">Value <span class="red">*</span></th>
                                                     <th width="10%" class="table_heading">Weightage</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>

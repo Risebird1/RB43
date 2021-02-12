@@ -910,13 +910,22 @@ textarea::-webkit-scrollbar-thumb {
     transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 }
 
-    #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
-        background: #eee url("../../img/audio-button-set-4-transparent.png") !important;
-        background-size: 25px !important;
-        background-repeat: no-repeat !important;
-        background-position: 45% !important;
-        z-index: 1000;
+ #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
+    background: #eee url("../../img/audio-button-set-4-transparent.png") !important;
+    background-size: 25px !important;
+    background-repeat: no-repeat !important;
+    background-position: 45% !important;
+     z-index: 1000;
     }
+
+
+.disQus#QuestionsTable .form-control[readonly]:hover, .disQus#QuestionsTable .form-control:hover {
+    background: #eee !important;
+    background-size: 25px !important;
+    background-repeat: no-repeat !important;
+    background-position: 45% !important;
+    z-index: 1000;
+}
 
 .pagination-container > ul > li {
     padding: 5px 12px !important;

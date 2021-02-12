@@ -30,7 +30,11 @@ Create PROCEDURE [dbo].[InsertMeetings]
 @textreminder nvarchar(200)
 AS
 Begin
-declare @InterviewId int, @oldConfirmationStatus varchar(100), @newConfirmationStatus varchar(100), @isUpdate bit; 
+declare @InterviewId int; 
+
+IF EXISTS (Select 1 from IRF where IRFId =@IRFId)
+Begin
+
 
 IF NOT EXISTS (SELECT 1   FROM   InterviewMeetings    WHERE  candidateEmail = @candidateEmail and interviewDate=@interviewDate and IRFId= @IRFId)
 Begin
@@ -193,6 +197,95 @@ Else
 		insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
 		values (@idIrf, @canMstid, 'Cancelled', GETDATE(), 18, 'System')
 	End
+
+End
+
+Else
+--it is a interviewer skill channel Id, therefore unapproved interviewer's meeting
+Begin
+
+IF NOT EXISTS (SELECT 1   FROM   UnapprovedInterviewerMeetings    WHERE  candidateEmail = @candidateEmail and interviewDate=@interviewDate and ISCId= @IRFId)
+Begin
+
+INSERT INTO [dbo].[UnapprovedInterviewerMeetings]
+           ([ISCId]
+           ,[interviewDate]
+           ,[interviewSlot]
+           ,[interviewDuration]
+		   ,[candidateName]
+           ,[candidateEmail]
+           ,[confirmationStatus]
+           ,[zoomLink]
+           ,[ZoomId]
+           ,[sCreatedBy]
+           ,[dtCreatedOn]
+           )
+     VALUES
+           (@IRFId,
+@interviewDate,
+@slot,
+@interviewDuration,
+@candidateName,
+@candidateEmail,
+@comfirmationStatus,
+@zoomLink,
+@hrRiseBirdAssinged,
+'Clendly',
+GETUTCDATE()
+)
+
+set @InterviewId=SCOPE_IDENTITY()
+
+
+End
+
+
+ELSE
+
+Begin
+
+set @InterviewId = (select id from UnapprovedInterviewerMeetings where candidateEmail = @candidateEmail and interviewDate=@interviewDate)
+
+ UPDATE [dbo].[UnapprovedInterviewerMeetings]
+   SET [confirmationStatus] = @comfirmationStatus
+	  ,[zoomLink]=@zoomLink
+      ,[ZoomId]=@hrRiseBirdAssinged
+       
+ WHERE candidateEmail = @candidateEmail and interviewDate=@interviewDate
+ 
+ 
+ 
+End
+
+
+if(@comfirmationStatus='1')
+	Begin
+
+	 IF NOT EXISTS (SELECT 1   FROM   InterviewerComments    WHERE  InterviewId =@InterviewId)
+		Begin
+			insert into InterviewerComments(InterviewId, MeetingStatus) values ( @InterviewId, 2)
+
+		End
+	 Else
+		Begin
+			update InterviewerComments set MeetingStatus=2 where InterviewId=@InterviewId
+		End
+
+
+	End
+
+Else
+	Begin
+	 		update InterviewerComments set MeetingStatus = null where InterviewId=@InterviewId
+
+	End
+
+End
+
+
+
+
+
 END
 
 

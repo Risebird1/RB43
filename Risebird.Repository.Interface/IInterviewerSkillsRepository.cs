@@ -25,7 +25,8 @@ namespace Risebird.Repository.Interface
         IEnumerable<Interviewer> GetInterviewerSkills(int userId);
         IEnumerable<Interviewer> GetInterviewerSkillofInterviewerSkills();
         Skill GetSkillById(int id);
-        bool CheckUniqueness(string value);
+        //bool CheckUniqueness(string value);
+        Task<bool> CheckUniqueness(string value);
         InterviewerSkillsChannelModel EditInterviewerSkills(int InterviewerSkillId);
         IEnumerable<TransInterviewerSkillsofSkills> GetSkillsbyInterviewerSkillId(int id);
         IEnumerable<TransInterviewerSkillsLeadInterviewer> GetTransInterviewer(int id);
@@ -94,13 +95,8 @@ namespace Risebird.Repository.Interface
         Task<int> GetInterviewerRiseTubeMeetingsCount(string searchvalue);
         Task<MeetingVM> GetMeetingbyid(int id, string Email);
         Task<IEnumerable<MeetingVM>> GetInterviewerRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern);
-        IRFDetails GetInterviewerIRFDetails(int id);
-        Task<MeetingVM> GetInterviewMeetingById(int id);
-        IEnumerable<InterviewReport> GetInterviewerInterviewReportById(int id, int irfId = 0);
         Task<IEnumerable<TransSkill>> GetSkillsbyIRFid(int id);
         int GetCandidateId(int id, string irfName);
-        IEnumerable<TechSkillReport> GetTechSkillReport(int id);
-        IEnumerable<QuestionsDiscussed> GetQuestionsDiscussed(int id);
         Task<List<string>> FetchAdminList();
     }
 }

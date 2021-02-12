@@ -14,17 +14,16 @@ CREATE PROCEDURE [dbo].[usp_GetInterviewerRiseTubeMeetingsByJD]
 AS          
 Begin                
               
-select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,            
-im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,im.InterviewBiometryScore,            
-im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, ca.NickName as candidateName,            
-im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,             
+select im.id as imid, im.ISCId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail,           
+im.confirmationStatus, im.zoomLink, im.ZoomId, im.interviewer,            
+im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, ca.NickName as candidateName,                       
 ul.MobileNumber as MobileNumber, ca.ResumeLink as resumeLink,             
 IRF.id as irfIntId,IRF.JDTiltle,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,    
 patchvideoCount.MeetingCount as MeetingPatchCount,      
 Techscore.TechSkillScore as TechSkillScore ,ag.AssessmentGroup               
       
-from InterviewMeetings im                
-inner join InterviewerSkillsChannel IRF on im.IRFId = IRF.InterviewerSkillId              
+from UnapprovedInterviewerMeetings im                
+inner join InterviewerSkillsChannel IRF on im.ISCId = IRF.InterviewerSkillId              
 left join [dbo].[InterviewerComments] ic on im.id = ic.InterviewId            
 left join UserList ul on ul.EmailId = im.candidateEmail            
 join TransInterviewerListInterviewerSkills cm on ul.id = cm.UserId            
@@ -33,10 +32,9 @@ outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Int
 outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore      
 left join AssessmentGroup ag on ag.id=ca.AssessmentGroupId      
 where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and IRF.JDTiltle LIKE ('%' +@JDpattern+'%')      
-group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,            
-im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation, im.InterviewBiometryScore,            
-im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, ca.NickName,            
-im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,             
+group by im.id,im.ISCId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail,             
+im.confirmationStatus, im.zoomLink, im.ZoomId, im.interviewer,            
+im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, ca.NickName,                        
 ul.MobileNumber, ca.ResumeLink,IRF.id,IRF.JDTiltle,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id,ic.ThumbnailImage  ,patchvideoCount.MeetingCount,Techscore.TechSkillScore,ag.AssessmentGroup 
                    
       

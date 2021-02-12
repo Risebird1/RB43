@@ -171,7 +171,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _interviewerSkillsRepository.CheckUniqueness(value);
+                return _interviewerSkillsRepository.CheckUniqueness(value).Result;
             }
 
             catch (Exception e)
@@ -471,147 +471,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<InterviewReport> GetInterviewerInteviewReport(int interviewId, int irfId)
-        {
-            try
-            {
-                var reportModel = new InterviewReport();
-                var irfDetails = _interviewerSkillsRepository.GetInterviewerIRFDetails(irfId);
-                //check whether an IRF exists for the given IRFId
-                var check = irfDetails != null ? true : false;
-                var interviewDetails = _interviewerSkillsRepository.GetInterviewMeetingById(interviewId).Result;
-
-                if (!check)
-                {
-                    return null;
-                }
-                // check whether a feedback for the interviewId has already been submitted
-                var interviewReport = _interviewerSkillsRepository.GetInterviewerInterviewReportById(interviewId, irfId);
-                if (interviewReport != null && interviewReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
-                {
-                    //call Edit Feedbackform method
-                    reportModel = interviewReport.FirstOrDefault();
-                    await EditInterviewReport(reportModel);
-                }
-                else
-                {
-                    var model = interviewReport.Any() ? interviewReport.FirstOrDefault() : new InterviewReport();
-                    model.IsEdited = model.InterviewId > 0;
-
-                    //get all values from database
-                    var levelTech = _interviewerSkillsRepository.GetLevelTech();
-                    var skills = _interviewerSkillsRepository.GetSkills();
-                    var techSkillsDetails = await _interviewerSkillsRepository.GetSkillsbyIRFid(irfId);
-
-                    var techSkillList = new List<TechSkillReport>();
-                    //assign values to model
-                    foreach (var item in techSkillsDetails ?? new List<TransSkill>())
-                    {
-                        TechSkillReport obj = new TechSkillReport
-                        {
-                            InterviewId = interviewId,
-                            RequiredLevel = levelTech.FirstOrDefault(x => x.id == item.LevelId)?.Name,
-                            RequiredLevelId = levelTech.FirstOrDefault(x => x.id == item.LevelId).id,
-                            SkillName = skills.FirstOrDefault(x => x.id == item.SkillId)?.Name,
-                            SkillId = skills.FirstOrDefault(x => x.id == item.SkillId).id,
-                            WeightageRequired = item.Weightage
-                        };
-
-                        techSkillList.Add(obj);
-                    }
-                    model.TechSkillReportCollection = (IList<TechSkillReport>)techSkillList;
-
-
-                    model.InterviewId = interviewId;
-                    model.CandidateName = interviewDetails.candidateName;
-                    model.interviewDate = interviewDetails.interviewDate.ToString();
-                    model.resumeLink = interviewDetails.resumeLink;
-                    model.encodedresumeLink = interviewDetails.encodedresumeLink;
-                    model.IRFId = irfId;
-
-                    model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
-                    model.currentEmployerName = interviewDetails.currentEmployerName;
-                    model.expectedPerHourRate = interviewDetails.expectedPerHourRate;
-                    model.PreferredLocation = interviewDetails.preferredLocation;
-                    model.IsEdited = false;
-                    model.IsApproved = interviewDetails.IsApproved;
-                    model.IsSelected = interviewDetails.IsSelected;
-                    model.FinalComments = interviewDetails.FinalComments;
-                    model.ApprovalComments = interviewDetails.ApprovalComments;
-                    model.IsBiometricEnabled = interviewDetails.IsBiometricEnabled;
-                    model.JoiningBiometryScore = interviewDetails.JoiningBiometryScore;
-                    model.InterviewBiometryScore = interviewDetails.InterviewBiometryScore;
-                    reportModel = model;
-                }
-                // joinability and Selectability
-
-                //get candidateId
-                reportModel.CandidateId = _interviewerSkillsRepository.GetCandidateId(interviewId, irfDetails.IRFId);
-                reportModel.CandidateName = interviewDetails.candidateName;
-                reportModel.TotalExperience = interviewDetails.TotalExperience + " Years";
-                reportModel.CandidateEmail = interviewDetails.candidateEmail;
-                reportModel.CandidateVisa = interviewDetails.CandidateVisa;
-                reportModel.CandidateMobileNumber = interviewDetails.MobileNumber;
-
-                reportModel.IRFName = irfDetails.IRFId;
-                reportModel.PrimarySkill = irfDetails.JDTiltle.Split("|")[0];
-                reportModel.joiningTime = interviewDetails.joiningTime;
-                return reportModel;
-            }
-
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
-        }
-        private async Task<InterviewReport> EditInterviewReport(InterviewReport model)
-        {
-            var techReportCollection = (IList<TechSkillReport>)(_interviewerSkillsRepository.GetTechSkillReport(model.InterviewId));
-            if (!techReportCollection.Any())
-            {
-                var techSkillsDetails = await _interviewerSkillsRepository.GetSkillsbyIRFid(model.IRFId);
-                var techSkillList = new List<TechSkillReport>();
-                var levelTech = _interviewerSkillsRepository.GetLevelTech();
-                var skills = _interviewerSkillsRepository.GetSkills();
-
-                //assign values to model
-                foreach (var item in techSkillsDetails ?? new List<TransSkill>())
-                {
-                    TechSkillReport obj = new TechSkillReport
-                    {
-                        InterviewId = model.InterviewId,
-                        RequiredLevel = levelTech.FirstOrDefault(x => x.id == item.LevelId)?.Name,
-                        RequiredLevelId = levelTech.FirstOrDefault(x => x.id == item.LevelId).id,
-                        SkillName = skills.FirstOrDefault(x => x.id == item.SkillId)?.Name,
-                        SkillId = skills.FirstOrDefault(x => x.id == item.SkillId).id,
-                        WeightageRequired = item.Weightage
-                    };
-
-                    techSkillList.Add(obj);
-                }
-                model.TechSkillReportCollection = (IList<TechSkillReport>)techSkillList;
-            }
-            else
-            {
-                model.TechSkillReportCollection = techReportCollection;
-            }
-
-
-            model.QuestionsCollection = (IList<QuestionsDiscussed>)(_interviewerSkillsRepository.GetQuestionsDiscussed(model.InterviewId));
-            model.IsEdited = true;
-            model.JobLevelName = Enum.GetName(typeof(JobLevels), model.JobLevel);
-            var interviewMeetingsDetails = _interviewerSkillsRepository.GetInterviewMeetingById(model.InterviewId).Result;
-            model.PreferredLocation = interviewMeetingsDetails.preferredLocation;
-            model.resumeLink = interviewMeetingsDetails.resumeLink;
-            model.encodedresumeLink = interviewMeetingsDetails.encodedresumeLink;
-            model.currentEmployerName = model.currentEmployerName;
-            model.expectedPerHourRate = interviewMeetingsDetails.expectedPerHourRate;
-            model.OldInterviewStatus = model.InterviewStatus;
-            model.OldMeetingStatus = model.MeetingStatus;
-
-            return model;
-        }
+        
         public async Task<List<string>> FetchAdminList()
         {
             try

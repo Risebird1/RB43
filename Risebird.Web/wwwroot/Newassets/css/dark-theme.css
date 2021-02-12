@@ -1347,7 +1347,7 @@ table {
     border-bottom: 2px #121212 solid !important;
 }
 
-.mdc-card button.dropdown-toggle:focus #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover
+.mdc-card button.dropdown-toggle:focus #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover{
 border-bottom: 2px #121212 solid !important;
 }
 

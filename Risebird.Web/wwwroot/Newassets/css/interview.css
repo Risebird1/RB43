@@ -119,8 +119,7 @@
     }
 
 .card-title-space {
-    margin-top: 20px;
-
+    margin: 20px 3px 0px 3px;
     float: right
 }
 
@@ -185,6 +184,93 @@
             left: 95px;
         }
 
+.interviewer .star-rating {
+    /*border: solid 1px #ccc;*/
+    display: flex;
+    flex-direction: row-reverse;
+    font-size: 2.0em;
+    justify-content: space-around;
+    padding: 0 .2em;
+    text-align: center;
+    width: 220px;
+    margin-bottom: 10px;
+}
+
+    .interviewer .star-rating input {
+        display: none;
+    }
+
+    .interviewer .star-rating label {
+        color: #b7b7b7;
+        cursor: pointer;
+        padding: 0px !important;
+        font-size: 25px !important;
+    }
+
+    .interviewer .star-rating :checked ~ label {
+        color: #f90;
+    }
+
+    .interviewer .star-rating label:hover,
+    .interviewer .star-rating label:hover ~ label {
+        color: #fc0;
+    }
+    /* text pops up when icon is in hover state */
+
+    .interviewer a.info:hover span {
+        bottom: 24px;
+        visibility: visible;
+        opacity: 1;
+        z-index: 1000;
+    }
+
+
+
+
+
+.mb10 {
+    margin-bottom: 10px
+}
+
+
+
+    /* pop-up text */
+
+    .interviewer a.info span {
+        color: #fff;
+        position: absolute;
+        font-family: sans-serif;
+        bottom: 0;
+        left: -90px;
+        text-align: center;
+        padding: 5px 7px;
+        z-index: -1;
+        font-size: 14px;
+        min-width: 230px;
+        border-radius: 2px;
+        background: #a09f9f;
+        visibility: hidden;
+        opacity: 0;
+        -o-transition: all .3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        -webkit-transition: all .5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        -moz-transition: all .3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        transition: all .3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+        /* pop-up text arrow */
+
+
+        .interviewer a.info span:before {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #9e9999;
+            position: absolute;
+            bottom: -5px;
+            left: 95px;
+        }
+
     /* text pops up when icon is in hover state */
 
     .interviewer a.info:hover span {
@@ -204,7 +290,13 @@
 
     .interviewer .table-bordered td:last-child {
         border-right: 0px solid #dee2e6 !important;
+        
     }
+
+.interviewer #QuestionsTable td:last-child {
+    border-right: 0px solid #dee2e6 !important;
+    border-left: 1px solid #dee2e6 !important;
+}
 
 .employee .mdc-card .form-control[disabled], .employee .mdc-card .form-control[readonly] {
     background: none;

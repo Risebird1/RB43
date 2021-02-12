@@ -9,20 +9,22 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
- 
-Create PROCEDURE [dbo].[usp_GetUnapprovedInterviewerScheduledInterviews]     
-@emailID varchar(200)        
-AS      
-BEGIN      
-select DISTINCT InterviewMeetings.*, isc.id as iscIntId, isc.JDTiltle,isc.CalendlyLink, isc.EndDate, ic.VideoLink, ul.MobileNumber as InterviewerPhone, Skill.[Name] as PrimarySkill from InterviewMeetings    
-inner join InterviewerSkillsChannel isc on InterviewMeetings.IRFId=isc.InterviewerSkillId
-left join InterviewComments ic on InterviewMeetings.id = ic.InterviewId  
-join UserList ul on InterviewMeetings.interviewer = ul.EmailId 
-left join Skill on isc.PrimarySkill = Skill.id
-where interviewMeetings.candidateEmail =@emailID and confirmationStatus = 1         
-    
-END   
+     
+CREATE PROCEDURE [dbo].[usp_GetUnapprovedInterviewerScheduledInterviews]         
+@emailID varchar(200)            
+AS          
+BEGIN          
+select DISTINCT im.*, isc.id as iscIntId, isc.JDTiltle,isc.CalendlyLink, isc.EndDate, ic.VideoLink, ul.MobileNumber as InterviewerPhone, Skill.[Name] as PrimarySkill   
+from UnapprovedInterviewerMeetings im       
+inner join InterviewerSkillsChannel isc on im.ISCId=isc.InterviewerSkillId    
+left join InterviewerComments ic on im.id = ic.InterviewId      
+join UserList ul on im.interviewer = ul.EmailId     
+left join Skill on isc.PrimarySkill = Skill.id    
+where im.candidateEmail =@emailID and confirmationStatus = 1     
+        
+END       
+  
+  
 GO
 
 

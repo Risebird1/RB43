@@ -371,7 +371,7 @@
                                         @{
                                             if (!String.IsNullOrEmpty(Model.JDLink))
                                             {
-                                                <a style="text-decoration:none;" id="audioId" target="_blank" rel="tooltip" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.JDLink.ToString().Replace(" ","%20")>Uploaded JD</a>
+                                                <a style="text-decoration:none;" id="audioId" target="_blank" rel="tooltip" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded pull-left col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.JDLink.ToString().Replace(" ","%20")>Uploaded JD</a>
                                             }
                                         }
                                     </div>
@@ -836,7 +836,7 @@
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
                                                     <th width="50%" class="table_heading">Skills</th>
-                                                    <th width="20%" class="table_heading">Per Interviewer Rate</th>
+                                                    <th width="20%" class="table_heading">Per Interviewer Rate<span class="red">*</span></th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
@@ -951,7 +951,7 @@
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
                                                     <th width="50%" class="table_heading">Skills</th>
-                                                    <th width="20%" class="table_heading">Per QC Rate</th>
+                                                    <th width="20%" class="table_heading">Per QC Rate <span class="red">*</span></th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
@@ -1062,7 +1062,7 @@
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
                                                     <th width="50%" class="table_heading">Skills</th>
-                                                    <th width="20%" class="table_heading">Per EI Rate</th>
+                                                    <th width="20%" class="table_heading">Per EI Rate<span class="red">*</span></th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>

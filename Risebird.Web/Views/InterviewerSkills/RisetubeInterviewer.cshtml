@@ -6,7 +6,7 @@
 @using X.PagedList;
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "RiseTube";
+    ViewData["Title"] = "Interviewer Search";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
     string strtDte = String.Empty;
@@ -62,7 +62,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">RiseTube</a>
+                <a class="navbar-brand">Interviewer Search</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -80,7 +80,7 @@
 
                 <div class="pull-left risetubeheader">
                     <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title risetubeid">Risetube</h4></div>
+                    <div class="mobile-view"> <h4 class="card-title risetubeid">Interviewer Search</h4></div>
 
                 </div>
 
@@ -282,18 +282,18 @@
                                                         else
                                                         {
                                                             <span class="candidate">@item.candidateName</span>}
-
-
-
-
-                                                        @if (@item.AssessmentGroup.Length > 28)
+                                                        @if (!String.IsNullOrEmpty(item.AssessmentGroup))
                                                         {
-                                                            <a href="#" data-tooltip="@item.AssessmentGroup"> <span class="join-time  designation">@item.AssessmentGroup</span></a>}
 
+                                                            @if (@item.AssessmentGroup.Length > 28)
+                                                            {
+                                                                <a href="#" data-tooltip="@item.AssessmentGroup"> <span class="join-time  designation">@item.AssessmentGroup</span></a>}
+
+                                                            else
+                                                            { <span class="designation">@item.AssessmentGroup</span>}
+                                                        }
                                                         else
-                                                        { <span class="designation">@item.AssessmentGroup</span>}
-
-
+                                                        { <span class="designation"></span>}
 
 
                                                     </div>

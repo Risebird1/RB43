@@ -97,7 +97,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Interviewer Comment")]
         public string InterviewerComment { get; set; }
 
-        [Display(Name = "Uploaded Candidate Resume")]
+        [Display(Name = "Uploaded Resume")]
         public string resumeLink { get; set; }
         [Display(Name = "Uploaded Candidate EncodedResume")]
         public string encodedresumeLink { get; set; }
@@ -279,6 +279,7 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public float? OverallInterviewingAbilityScore { get; set; }
         public string ProfileName { get; set; }
+        public string ISCId { get; set; }
         //public string PerHourRateOutside { get; set; }
 
     }

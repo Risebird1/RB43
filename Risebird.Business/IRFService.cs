@@ -537,7 +537,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _irfRepository.CheckUniqueness(value);
+                return _irfRepository.CheckUniqueness(value).Result;
             }
 
             catch (Exception e)

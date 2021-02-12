@@ -22,39 +22,31 @@ CREATE PROCEDURE [dbo].[usp_GetInterviewerMeetingById]
 AS              
 Begin              
               
-SELECT [InterviewMeetings].id as imid              
-     ,[InterviewMeetings].IRFId ,      
-     InterviewerComments.VideoLink      
+SELECT im.id as imid              
+  ,im.ISCId ,      
+   InterviewerComments.VideoLink      
   ,interviewDate              
   ,interviewSlot              
   ,interviewDuration              
   ,interviewDuration              
   ,candidateEmail              
-  ,ClientHrContact              
   ,ca.ResumeLink as resumeLink    
   ,ca.CodedResumeLink as encodedresumeLink              
   ,confirmationStatus              
   ,zoomLink              
-  ,[InterviewMeetings].risebirdHR              
+  ,im.ZoomId        
   ,interviewer              
-  ,PreferredLocation              
-  ,ExpectedPerHourRate              
-  ,staffingAgency              
   ,ca.NickName as candidateName              
-  ,joiningTime              
-  ,currentEmployerName              
   ,ul.MobileNumber              
-  ,JoiningBiometryScore              
-  ,InterviewBiometryScore              
   ,InterviewerComments.IsApproved              
   ,InterviewerComments.IsSelected              
   ,IRF.id as irfIntId              
-FROM [dbo].[InterviewMeetings]              
-inner join InterviewerSkillsChannel as IRF on [InterviewMeetings].IRFId = IRF.InterviewerSkillId              
-left join InterviewerComments on InterviewMeetings.id=InterviewerComments.InterviewId           
-join Userlist ul on ul.EmailId=InterviewMeetings.candidateEmail          
+FROM [dbo].[UnapprovedInterviewerMeetings] im              
+inner join InterviewerSkillsChannel as IRF on im .ISCId = IRF.InterviewerSkillId              
+left join InterviewerComments on im.id=InterviewerComments.InterviewId           
+join Userlist ul on ul.EmailId=im.candidateEmail          
 left join InterviewerProfile ca on ca.UserId =ul.id            
 WHERE              
-      [InterviewMeetings].id = @interviewId              
+      im.id = @interviewId              
 End 
 go

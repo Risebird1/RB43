@@ -221,6 +221,9 @@ namespace Risebird.Entities.ViewModel
         public string Senioritylevel { get; set; }
         public string PerHourRateIndia { get; set; }
         public string PerHourRateOutside { get; set; }
+        public string ISCId { get; set; }
+        public string ZoomId { get; set; }
+
 
     }
     public class VedioComments

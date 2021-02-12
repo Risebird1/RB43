@@ -11,7 +11,6 @@ CREATE TABLE [dbo].[InterviewerPersonalityScore](
 	[Extroversion] [int] NULL,
 	[Agreeableness] [int] NULL,
 	[Neuroticism] [int] NULL,
-	FOREIGN KEY([InterviewId]) REFERENCES [dbo].[InterviewMeetings] ([id]),
 
  CONSTRAINT [PK_InterviewerPersonalityScore] PRIMARY KEY CLUSTERED 
 (

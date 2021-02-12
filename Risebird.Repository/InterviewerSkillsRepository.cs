@@ -424,17 +424,19 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public bool CheckUniqueness(string value)
+        public async Task<bool> CheckUniqueness(string value)
         {
             try
             {
-                var query = "Select * from InterviewerSkillsChannel where InterviewerSkillId = @InterviewerSkillId";
+                //var query = "Select * from InterviewerSkillsChannel where InterviewerSkillId = @InterviewerSkillId";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@InterviewerSkillId", value);
+                dynamicParameters.Add("@value", value);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<InterviewerSkillsVM>(query, dynamicParameters);
-                    if (results.Count() > 0)
+
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetIRFISCUniqueness", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    if (result.Count() > 0)
                         return false;
                     else
                         return true;
@@ -443,7 +445,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
 
@@ -1040,65 +1042,9 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public IRFDetails GetInterviewerIRFDetails(int id)
-        {
-            try
-            {
-                var query = "Select InterviewerSkillId as IRFId,JDTiltle from InterviewerSkillsChannel where id = @id";
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", id);
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var results = con.Query<IRFDetails>(query, dynamicParameters);
-                    return results.FirstOrDefault();
-                }
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
-        public async Task<MeetingVM> GetInterviewMeetingById(int id)
-        {
-            try
-            {
-                var parameters = new DynamicParameters();
-                parameters.Add("@interviewId", id);
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var result = await SqlMapper.QueryFirstAsync<MeetingVM>(con, "usp_GetInterviewerMeetingById", parameters,
-                        commandType: CommandType.StoredProcedure);
-                    return result;
-                }
-
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
-        public IEnumerable<InterviewReport> GetInterviewerInterviewReportById(int id, int irfId = 0)
-        {
-            try
-            {
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@InterviewId", id);//@IrfId
-                dynamicParameters.Add("@IrfId", irfId);
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    return SqlMapper.Query<InterviewReport>(con, "usp_GetInterviewerReportById", dynamicParameters,
-                       commandType: CommandType.StoredProcedure);
-                }
-
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
+       
+        
+        
         public async Task<IEnumerable<TransSkill>> GetSkillsbyIRFid(int id)
         {
             try
@@ -1124,7 +1070,7 @@ namespace Risebird.Repository
             int result = 0;
             try
             {
-                var query = "select cm.id from InterviewMeetings im join UserList ul on im.candidateEmail = ul.EmailId join TransInterviewerListInterviewerSkills cm on cm.UserId=ul.id where im.IRFId = @irfName and im.id =@id";
+                var query = "select cm.id from UnapprovedInterviewerMeetings im join UserList ul on im.candidateEmail = ul.EmailId join TransInterviewerListInterviewerSkills cm on cm.UserId=ul.id where im.ISCId = @irfName and im.id =@id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 dynamicParameters.Add("@irfName", irfName);
@@ -1142,47 +1088,7 @@ namespace Risebird.Repository
                 return result;
             }
         }
-        public IEnumerable<TechSkillReport> GetTechSkillReport(int id)
-        {
-            try
-            {
-                var query = "select a.*, Skill.[Name] as SkillName from (select TechSkillReport.*, [LevelTech].[Name] as RequiredLevel from TechSkillReport inner join [LevelTech] on TechSkillReport.RequiredLevelId=[LevelTech].id) as a inner join Skill on a.SkillId = Skill.id where InterviewId = @id";
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", id);
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var results = con.Query<TechSkillReport>(query, dynamicParameters);
-                    return results;
-                }
-
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
-        public IEnumerable<QuestionsDiscussed> GetQuestionsDiscussed(int id)
-        {
-            try
-            {
-                // var query = "Select * from QuestionsDiscussed where InterviewId = @id";
-                var query = "Select  qd.id,qd.InterviewId,qd.Question as Comment,qd.RatingId from InterviewerQuestionsDiscussed qd where qd.Interviewid= @id";
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", id);
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var results = con.Query<QuestionsDiscussed>(query, dynamicParameters);
-                    return results;
-                }
-
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
+        
         public async Task<List<string>> FetchAdminList()
         {
             try
