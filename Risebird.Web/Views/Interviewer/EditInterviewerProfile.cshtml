@@ -6,7 +6,7 @@
 }
 
 
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=13455" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <div class="main-panel" id="main-panel">
@@ -38,7 +38,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
-                    <div class="mdc-card-wrapper__text-section">
+                    <div class="mdc-card-wrapper__text-section interviewer">
 
                         @using (Html.BeginForm("EditInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data" }))
                         {
@@ -259,7 +259,7 @@
                                         @Html.TextBoxFor(model => model.CodedResumeFile, new { id = "txt_CodedResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
                                     </div>
                                     <div class="" id="uploadDiv">
-                                        @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                     
                                         @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
                                     </div>
                                     <div>
@@ -301,7 +301,7 @@
                                                     <th width="15%" class="table_heading">Category </th>
                                                     <th width="15%" class="table_heading">IP</th>
                                                     <th width="15%" class="table_heading">Level</th>
-                                                    <th width="5%" class="table_heading">Year of Experince </th>
+                                                    <th width="5%" class="table_heading">Years of Experince </th>
                                                     <th width="20%" class="table_heading">Nature</th>
                                                     <th width="10%" class="table_heading text-center "> Action</th>
                                                 </tr>
@@ -471,7 +471,7 @@
                                                 <tr>
                                                     <th width="10%" class="table_heading">Educational Type </th>
                                                     <th width="15%" class="table_heading">Degree</th>
-                                                    <th width="20%" class="table_heading">EducationMode</th>
+                                                    <th width="20%" class="table_heading">Education Mode</th>
                                                     <th width="10%" class="table_heading">College Type</th>
                                                     <th width="20%" class="table_heading">University Name</th>
                                                     <th width="10%" class="table_heading">Pass Out Year</th>
@@ -978,9 +978,10 @@
                                 <div class="row">
 
                                     <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "Index", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                         <input type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
 
-                                        @Html.ActionLink("Back to List", "Index", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+
                                     </div>
                                 </div>
                             </div>

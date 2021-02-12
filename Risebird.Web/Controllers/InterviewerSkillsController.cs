@@ -27,7 +27,8 @@ namespace Risebird.Web.Controllers
         private readonly IIRFRepository _iRFRepository;
         private readonly INotificationHelper _notificationHelper;
         private static List<int> Shortlistvideoids = new List<int>();
-        public InterviewerSkillsController(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, IInterviewerSkillsService InterviewerSkillsService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IIRFRepository iRFRepository, INotificationHelper notificationHelper)
+        private IInterviewerService _interviewerService;
+        public InterviewerSkillsController(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, IInterviewerSkillsService InterviewerSkillsService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IInterviewerService interviewerService)
         {
             _interviewerSkillsRepository = InterviewerSkillsRepository;
             _iInterviewerSkillsService = InterviewerSkillsService;
@@ -37,6 +38,7 @@ namespace Risebird.Web.Controllers
             _evaluatorService = evaluatorService;
             _iRFRepository = iRFRepository;
             _notificationHelper = notificationHelper;
+            _interviewerService = interviewerService;
         }
 
         [Authorize]
@@ -1067,7 +1069,7 @@ namespace Risebird.Web.Controllers
                             x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                             return x;
                         }).ToList();
-                        var IRListModel = _iInterviewerSkillsService.GetInterviewerInteviewReport(model.imid, model.irfIntId).Result;
+                        var IRListModel = _interviewerService.GetInterviewerinteviewReport(model.imid, model.irfIntId).Result;
 
                         var modelList = modelList1;
 
@@ -1102,18 +1104,20 @@ namespace Risebird.Web.Controllers
                             if (!String.IsNullOrEmpty(IRListModel.SkillCategory))
                             {
                                 var SkillCategorys = IRListModel.SkillCategory.Split(",");
+                                var Skillset = "";
                                 foreach (var item in SkillCategorys)
                                 {
                                     int SkillCategoryid = Convert.ToInt32(item);
-                                    if (!String.IsNullOrEmpty(IRListModel.SkillCategory))
+                                    if (!String.IsNullOrEmpty(Skillset))
                                     {
-                                        IRListModel.SkillCategory = IRListModel.SkillCategory + "," + SkillCategoryList.Where(x => x.Id == SkillCategoryid).FirstOrDefault().Name;
+                                        Skillset = Skillset + "," + SkillCategoryList.Where(x => x.Id == SkillCategoryid).FirstOrDefault().Name;
                                     }
                                     else
                                     {
-                                        IRListModel.SkillCategory = SkillCategoryList.Where(x => x.Id == SkillCategoryid).FirstOrDefault().Name;
+                                        Skillset = SkillCategoryList.Where(x => x.Id == SkillCategoryid).FirstOrDefault().Name;
                                     }
                                 }
+                                IRListModel.SkillCategory = Skillset;
                                 IRListModel.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
                             }
                         }
@@ -1132,17 +1136,13 @@ namespace Risebird.Web.Controllers
                         {
                             NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
                         }
-                        if (NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").Count() > 0)
-                        {
-                            NewModel.IreportModel.QuestionsCollection = NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").ToList();
-                        }
-                        if (NewModel.IreportModel.QuestionsCollection == null)
+                        if (NewModel.IreportModel.InterviewerQuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
                         }
                         else
                         {
-                            ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
+                            ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.InterviewerQuestionsCollection?.Count();
                         }
                         var comments = _meetingService.GetvedioComments(id);
                         NewModel.Comments = comments;
@@ -1193,7 +1193,7 @@ namespace Risebird.Web.Controllers
                         x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                         return x;
                     }).ToList();
-                    var IRListModel = _iInterviewerSkillsService.GetInterviewerInteviewReport(model.imid, model.irfIntId).Result;
+                    var IRListModel = _interviewerService.GetInterviewerinteviewReport(model.imid, model.irfIntId).Result;
                     var modelList = modelList1;
 
                     MeetingVM NewModel = new MeetingVM();
@@ -1226,18 +1226,20 @@ namespace Risebird.Web.Controllers
                         if (!String.IsNullOrEmpty(IRListModel.SkillCategory))
                         {
                             var SkillCategorys = IRListModel.SkillCategory.Split(",");
+                            var Skillset = "";
                             foreach (var item in SkillCategorys)
                             {
                                 int SkillCategoryid = Convert.ToInt32(item);
-                                if (!String.IsNullOrEmpty(IRListModel.SkillCategory))
+                                if (!String.IsNullOrEmpty(Skillset))
                                 {
-                                    IRListModel.SkillCategory = IRListModel.SkillCategory + "," + SkillCategoryList.Where(x => x.Id == SkillCategoryid).FirstOrDefault().Name;
+                                    Skillset = Skillset + "," + SkillCategoryList.Where(x => x.Id == SkillCategoryid).FirstOrDefault().Name;
                                 }
                                 else
                                 {
-                                    IRListModel.SkillCategory = SkillCategoryList.Where(x => x.Id == SkillCategoryid).FirstOrDefault().Name;
+                                    Skillset = SkillCategoryList.Where(x => x.Id == SkillCategoryid).FirstOrDefault().Name;
                                 }
                             }
+                            IRListModel.SkillCategory = Skillset;
                             IRListModel.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
                         }
                     }
@@ -1256,17 +1258,13 @@ namespace Risebird.Web.Controllers
                     {
                         NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
                     }
-                    if (NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").Count() > 0)
-                    {
-                        NewModel.IreportModel.QuestionsCollection = NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").ToList();
-                    }
-                    if (NewModel.IreportModel.QuestionsCollection == null)
+                    if (NewModel.IreportModel.InterviewerQuestionsCollection == null)
                     {
                         ViewBag.QuestionsDiscussedCount = 0;
                     }
                     else
                     {
-                        ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
+                        ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.InterviewerQuestionsCollection?.Count();
                     }
                     var comments = _meetingService.GetvedioComments(id);
                     NewModel.Comments = comments;

@@ -1059,7 +1059,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
-                        con, "update [dbo].[InterviewMeetings] set interviewer=@value where id = @meetingid", new { value = interviewerMail, meetingid = meetingid }, commandType: Text);
+                        con, "update [dbo].[UnapprovedInterviewerMeetings] set interviewer=@value where id = @meetingid", new { value = interviewerMail, meetingid = meetingid }, commandType: Text);
                     return "Interview assigned successfully.";
                 }
             }
@@ -1104,7 +1104,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select interviewDate, candidateEmail from InterviewMeetings where id = @meetingid";
+                var query = "select interviewDate, candidateEmail from UnapprovedInterviewerMeetings where id = @meetingid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", meetingid);
                 dynamicParameters.Add("@value", 2);
@@ -1129,7 +1129,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select InterviewerSkillId as IRFId, JDTiltle, sk.[Name] as PrimarySkill from InterviewerSkillsChannel isc join Skill sk on sk.id=isc.PrimarySkill where isc.id = @id";
+                var query = "Select InterviewerSkillId as ISCId, JDTiltle, sk.[Name] as PrimarySkill from InterviewerSkillsChannel isc join Skill sk on sk.id=isc.PrimarySkill where isc.id = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -1362,15 +1362,15 @@ namespace Risebird.Repository
                     else
                     {
                         //add to interviewReport table
-                        string sqlInsertReport = "INSERT INTO InterviewerReport (InterviewerSkillId, InterviewId, CandidateName,OverallScore, Rating, TechSkillComments,SkillQuality,CertificationQuality, EducationQuality, EmployersQuality,CareerProgression,ProjectsQuality,OnlinePresence,BehavioralScore,InterviwerCommunication,InterviewExperience, ProfileScore) Values   (@InterviewerSkillId, @InterviewId, @CandidateName,@OverallScore, @Rating, @TechSkillComments, @SkillQuality,   @CertificationQuality, @EducationQuality, @EmployersQuality,@CareerProgression,@ProjectsQuality,@OnlinePresence,@BehavioralScore,@InterviwerCommunication,@InterviewExperience, @ProfileScore);";
+                        string sqlInsertReport = "INSERT INTO InterviewerReport (InterviewerSkillId, InterviewId, CandidateName,OverallScore, TechSkillComments,SkillQuality,CertificationQuality, EducationQuality, EmployersQuality,CareerProgression,ProjectsQuality,OnlinePresence,BehavioralScore,InterviwerCommunication,InterviewExperience, ProfileScore) Values   (@InterviewerSkillId, @InterviewId, @CandidateName,@OverallScore, @TechSkillComments, @SkillQuality,   @CertificationQuality, @EducationQuality, @EmployersQuality,@CareerProgression,@ProjectsQuality,@OnlinePresence,@BehavioralScore,@InterviwerCommunication,@InterviewExperience, @ProfileScore);";
                         var affectedRows = con.ExecuteAsync(sqlInsertReport, new
                         {
-                            InterviewerSkillId = reportDetails.IRFId,
+                            InterviewerSkillId = reportDetails.ISCId,
                             InterviewId = reportDetails.InterviewId,
                             CandidateName = reportDetails.CandidateName,
                             EducationQuality = reportDetails.EducationQuality,
                             OverallScore = reportDetails.OverallScore,
-                            Rating = reportDetails.Rating,
+                            //Rating = reportDetails.Rating,
                             TechSkillComments = reportDetails.TechSkillComments,
                             SkillQuality = reportDetails.SkillQuality,
                             CertificationQuality = reportDetails.CertificationQuality,
@@ -1399,7 +1399,7 @@ namespace Risebird.Repository
                     {
                         techReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual);
                     }
-                    SqlCommand cmdTechReport = new SqlCommand("usp_TechSkillReportBulkInsert", con);
+                    SqlCommand cmdTechReport = new SqlCommand("usp_InterviewerTechSkillReportBulkInsert", con);
                     cmdTechReport.CommandType = CommandType.StoredProcedure;
                     cmdTechReport.Parameters.Add(new SqlParameter("@TechSkillReportBulkData", SqlDbType.Structured));
                     cmdTechReport.Parameters["@TechSkillReportBulkData"].Value = techReportDt;
@@ -1715,6 +1715,49 @@ namespace Risebird.Repository
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public int GetCandidateId(int id, string irfName)
+        {
+            int result = 0;
+            try
+            {
+                var query = "select cm.id from UnapprovedInterviewerMeetings im join UserList ul on im.candidateEmail = ul.EmailId join CandidatesMaster cm on cm.UserId=ul.id where im.ISCId = @irfName and im.id =@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@irfName", irfName);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    result = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return result;
+            }
+        }
+        public IEnumerable<TechSkillReport> GetTechSkillReport(int id)
+        {
+            try
+            {
+                var query = "select a.*, Skill.[Name] as SkillName from (select ts.*, [LevelTech].[Name] as RequiredLevel from InterviewerTechSkillReport ts inner join [LevelTech] on ts.RequiredLevelId=[LevelTech].id) as a inner join Skill on a.SkillId = Skill.id where InterviewId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TechSkillReport>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }

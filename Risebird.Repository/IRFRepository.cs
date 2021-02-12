@@ -522,17 +522,18 @@ namespace Risebird.Repository
             return null;
         }
 
-        public bool CheckUniqueness(string value)
+        public async Task<bool> CheckUniqueness(string value)
         {
             try
             {
-                var query = "Select * from IRF where IRFId = @IRFId";
+                //var query = "Select * from IRF where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@IRFId", value);
+                dynamicParameters.Add("@value", value);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<IRF>(query, dynamicParameters);
-                    if (results.Count() > 0)
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetIRFISCUniqueness", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    if (result.Count() > 0)
                         return false;
                     else
                         return true;
@@ -541,7 +542,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
 

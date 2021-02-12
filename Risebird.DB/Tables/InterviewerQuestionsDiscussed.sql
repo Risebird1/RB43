@@ -8,7 +8,6 @@ Begin
 	[InterviewId] [int] NOT NULL,
 	[Question] [varchar](max) NOT NULL,
 	[RatingId] [int] NOT NULL,
-	FOREIGN KEY([InterviewId]) REFERENCES [dbo].[InterviewMeetings] ([id]),
 
 	 CONSTRAINT [PK_InterviewerQuestionsDiscussed] PRIMARY KEY CLUSTERED 
 	(

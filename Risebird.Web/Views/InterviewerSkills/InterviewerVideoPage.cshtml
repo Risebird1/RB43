@@ -4,7 +4,7 @@
 @using Risebird.Entities.ViewModel
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "VideoPage";
+    ViewData["Title"] = "Interviewer Video";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
@@ -57,7 +57,7 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
 
-                    <div class="mobile-view"> <h4 class="card-title">Risetube</h4></div>
+                    <div class="mobile-view"> <h4 class="card-title">Interviewer Search</h4></div>
                 </div>
 
                 <div class="pull-right">
@@ -65,7 +65,7 @@
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span data-toggle="tooltip" data-placement="top" title="Share to admin(Shortlist details)" onclick="openShortlistModel()" data-original-title="Tooltip on top"><font style="font-family:arial;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg> Admin</font></span>
                         </button>
-                        @Html.ActionLink("Back to List", "RisetubeInterviewer", "InterviewerSkills", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button",@style="margin-right:10px;" })
+                        @Html.ActionLink("Back to List", "RisetubeInterviewer", "InterviewerSkills", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button", @style = "margin-right:10px;" })
 
                     </div>
                 </div>
@@ -147,9 +147,9 @@
                                                                         <div style="float: left;
         padding: 0px 10px 0px 0px;
 ">
-                                                                            
-                                                                                <span>@Model.AssessmentGroup</span>
-                                                                            
+
+                                                                            <span>@Model.AssessmentGroup</span>
+
                                                                         </div>
 
 
@@ -532,15 +532,15 @@
                                                                                                             </tr>
                                                                                                         </thead>
                                                                                                         <tbody>
-                                                                                                            @if (Model.IreportModel.QuestionsCollection == null || Model.IreportModel.QuestionsCollection.Count() == 0)
+                                                                                                            @if (Model.IreportModel.InterviewerQuestionsCollection == null || Model.IreportModel.InterviewerQuestionsCollection.Count() == 0)
                                                                                                             {
                                                                                                                 <tr>
                                                                                                                     <td>
-                                                                                                                        @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                                                                        @Html.DropDownList("InterviewerQuestionsCollection[0].Question", (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
                                                                                                                     </td>
                                                                                                                     <td>
-                                                                                                                        @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control" })
+                                                                                                                        @Html.DropDownList("InterviewerQuestionsCollection[0].RatingId", (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control" })
 
                                                                                                                     </td>
 
@@ -551,30 +551,30 @@
                                                                                                             {
                                                                                                                 @if (Model.MeetingPatch.Count() == 0)
                                                                                                                 {
-                                                                                                                    for (int i = 0; i < Model.IreportModel.QuestionsCollection.Count(); i++)
+                                                                                                                    for (int i = 0; i < Model.IreportModel.InterviewerQuestionsCollection.Count(); i++)
                                                                                                                     {
-                                                                                                                        <tr onclick="switchtoquestionVideo(@Model.IreportModel.QuestionsCollection[i].Timing)" style="cursor:pointer">
+                                                                                                                        <tr style="cursor:pointer">
                                                                                                                             <td>
                                                                                                                                 @*@Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })*@
-                                                                                                                                @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].Comment, new { ID = "drop", @class = "dropques form-control text-box single-line " })
+                                                                                                                                @Html.TextBoxFor(m => m.IreportModel.InterviewerQuestionsCollection[i].Question, new { ID = "drop", @class = "dropques form-control text-box single-line " })
                                                                                                                             </td>
                                                                                                                             <td>
-                                                                                                                                @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating", disabled = "disabled" })
+                                                                                                                                @Html.DropDownListFor(m => m.IreportModel.InterviewerQuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating", disabled = "disabled" })
                                                                                                                             </td>
                                                                                                                         </tr>
                                                                                                                     }
                                                                                                                 }
                                                                                                                 else
                                                                                                                 {
-                                                                                                                    for (int i = 0; i < Model.IreportModel.QuestionsCollection.Count(); i++)
+                                                                                                                    for (int i = 0; i < Model.IreportModel.InterviewerQuestionsCollection.Count(); i++)
                                                                                                                     {
-                                                                                                                        <tr onclick="changeVideo(@Model.IreportModel.QuestionsCollection[i].Priority)" style="cursor:pointer">
+                                                                                                                        <tr style="cursor:pointer">
                                                                                                                             <td>
                                                                                                                                 @*@Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })*@
-                                                                                                                                @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].Comment, new { ID = "drop", @class = "dropques form-control text-box single-line " })
+                                                                                                                                @Html.TextBoxFor(m => m.IreportModel.InterviewerQuestionsCollection[i].Question, new { ID = "drop", @class = "dropques form-control text-box single-line " })
                                                                                                                             </td>
                                                                                                                             <td>
-                                                                                                                                @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating" })
+                                                                                                                                @Html.DropDownListFor(m => m.IreportModel.InterviewerQuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating" })
                                                                                                                             </td>
                                                                                                                         </tr>
                                                                                                                     }
@@ -594,7 +594,7 @@
                                                                                         <div class="row">
                                                                                             <div class="col-md-4 col-sm-4">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.SkillQuality, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.SkillQuality, htmlAttributes: new { @class = "control-label  desp-label" })
                                                                                                     <a class="info" href="#"><span>Select Skill Quality, Multiple tracks at same time </span></a>
                                                                                                     @Html.HiddenFor(m => m.IreportModel.SkillQuality)
                                                                                                     <div class="star-rating">
@@ -613,7 +613,8 @@
                                                                                             </div>
                                                                                             <div class="col-md-4 col-sm-4">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.CertificationQuality, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.CertificationQuality, htmlAttributes: new { @class = "control-label desp-label" })
+                                                                                                    <a class="info" href="#"><span>Relevant, Not Relevant, Not Done </span></a>
                                                                                                     @Html.HiddenFor(m => m.IreportModel.CertificationQuality)
                                                                                                     <div class="star-rating">
                                                                                                         <input type="radio" id="CertificationQuality_5" name="ability2" value="5" disabled />
@@ -631,7 +632,9 @@
                                                                                             </div>
                                                                                             <div class="col-md-4 col-sm-4">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.EducationQuality, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.EducationQuality, htmlAttributes: new { @class = "control-label  desp-label" })
+                                                                                                    <a class="info" href="#"><span>Full Time, Tech Education, Distance learning,Non tech-Bcom,Bsc,MBA </span></a>
+
                                                                                                     @Html.HiddenFor(m => m.IreportModel.EducationQuality)
                                                                                                     <div class="star-rating">
                                                                                                         <input type="radio" id="EducationQuality_5" name="ability3" value="5" disabled />
@@ -652,7 +655,10 @@
 
                                                                                             <div class="col-md-4 col-sm-4">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.EmployersQuality, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.EmployersQuality, htmlAttributes: new { @class = "control-label desp-label" })
+                                                                                                 
+                                                                                                    <a class="info" href="#"><span>Relevant, Not Relevant</span></a>
+                                                                                                    
                                                                                                     @Html.HiddenFor(m => m.IreportModel.EmployersQuality)
                                                                                                     <div class="star-rating">
                                                                                                         <input type="radio" id="EmployersQuality_5" name="ability4" value="5" disabled />
@@ -670,7 +676,10 @@
                                                                                             </div>
                                                                                             <div class="col-md-4 col-sm-4">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.CareerProgression, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.CareerProgression, htmlAttributes: new { @class = "control-label  desp-label" })
+
+                                                                                                    <a class="info" href="#"><span>Stuck in small company for long time, Freelancer, Teacher, Project manager, Delivery manager, People Management, Administrative</span></a>
+
                                                                                                     @Html.HiddenFor(m => m.IreportModel.CareerProgression)
                                                                                                     <div class="star-rating">
                                                                                                         <input type="radio" id="CareerProgression_5" name="ability5" value="5" disabled />
@@ -688,7 +697,10 @@
                                                                                             </div>
                                                                                             <div class="col-md-4 col-sm-4">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.ProjectsQuality, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.ProjectsQuality, htmlAttributes: new { @class = "control-label  desp-label" })
+                                                                                                    <a class="info" href="#"><span>Relevant, Not Relevant</span></a>
+
+
                                                                                                     @Html.HiddenFor(m => m.IreportModel.ProjectsQuality)
                                                                                                     <div class="star-rating">
                                                                                                         <input type="radio" id="ProjectsQuality_5" name="ability6" value="5" disabled />
@@ -705,11 +717,13 @@
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
-                                                                                       
+
                                                                                         <div class="row">
                                                                                             <div class="col-md-4 col-sm-4">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.OnlinePresence, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.OnlinePresence, htmlAttributes: new { @class = "control-label desp-label" })
+
+                                                                                                    <a class="info" href="#"><span>Yes, No</span></a>
                                                                                                     @Html.HiddenFor(m => m.IreportModel.OnlinePresence)
                                                                                                     <div class="star-rating">
                                                                                                         <input type="radio" id="OnlinePresence_5" name="ability7" value="5" disabled />
@@ -727,7 +741,8 @@
                                                                                             </div>
                                                                                             <div class="col-md-4 col-sm-4">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.BehavioralScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.BehavioralScore, htmlAttributes: new { @class = "control-label  desp-label" })
+                                                                                                    <a class="info" href="#"><span>Not listening, Talking too general, Too busy, not taking seriously, High tantrums </span></a>
                                                                                                     @Html.HiddenFor(m => m.IreportModel.BehavioralScore)
                                                                                                     <div class="star-rating">
                                                                                                         <input type="radio" id="BehavioralScore_5" name="ability8" value="5" disabled />
@@ -753,6 +768,8 @@
                                                                                             <div class="col-md-6 col-sm-6">
                                                                                                 <div class="form-group">
                                                                                                     @Html.LabelFor(model => model.IreportModel.DecisionMaking, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                   
+                                                                                                    
                                                                                                     @Html.TextBoxFor(m => m.IreportModel.DecisionMaking, new { ID = "drop", @class = "dropques form-control text-box single-line ", @readonly = "readonly" })
                                                                                                 </div>
                                                                                             </div>
@@ -840,7 +857,7 @@
                                                                                         <div class="row">
                                                                                             <div class="col-md-4 col-sm-4">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.Openness, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Openness, htmlAttributes: new { @class = "control-label  desp-label" })
                                                                                                     <a class="info" href="#"><span>Inventive/Curious, Consistent/Cautious</span></a>
                                                                                                     @Html.HiddenFor(m => m.IreportModel.Openness)
                                                                                                     <div class="star-rating">
@@ -859,7 +876,8 @@
                                                                                             </div>
                                                                                             <div class="col-md-4 col-sm-4">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.Conscientiousness, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Conscientiousness, htmlAttributes: new { @class = "control-label  desp-label" })
+                                                                                                    <a class="info" href="#"><span>Efficient/Organized, Easy-going/Careless</span></a>
                                                                                                     @Html.HiddenFor(m => m.IreportModel.Conscientiousness)
                                                                                                     <div class="star-rating">
                                                                                                         <input type="radio" id="Conscientiousness_5" name="rating2" value="5" disabled />
@@ -877,7 +895,9 @@
                                                                                             </div>
                                                                                             <div class="col-md-4 col-sm-4">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.Extroversion, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Extroversion, htmlAttributes: new { @class = "control-label desp-label" })
+                                                                                                    <a class="info" href="#"><span>Outgoing/Energetic, Solitary/Reserved</span></a>
+
                                                                                                     @Html.HiddenFor(m => m.IreportModel.Extroversion)
                                                                                                     <div class="star-rating">
                                                                                                         <input type="radio" id="Extroversion_5" name="rating3" value="5" disabled />
@@ -898,7 +918,9 @@
 
                                                                                             <div class="col-md-4 col-sm-4">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.Agreeableness, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Agreeableness, htmlAttributes: new { @class = "control-label  desp-label" })
+                                                                                                    <a class="info" href="#"><span>Friendly/Compassionate, Challenging/Detached</span></a>
+
                                                                                                     @Html.HiddenFor(m => m.IreportModel.Agreeableness)
                                                                                                     <div class="star-rating">
                                                                                                         <input type="radio" id="Agreeableness_5" name="rating4" value="5" disabled />
@@ -916,7 +938,9 @@
                                                                                             </div>
                                                                                             <div class="col-md-4 col-sm-4">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.Neuroticism, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Neuroticism, htmlAttributes: new { @class = "control-label  desp-label" })
+
+                                                                                                    <a class="info" href="#"><span>Sensitive/Nervous, Secure/Confident</span></a>
                                                                                                     @Html.HiddenFor(m => m.IreportModel.Neuroticism)
                                                                                                     <div class="star-rating">
                                                                                                         <input type="radio" id="Neuroticism_5" name="rating5" value="5" disabled />
@@ -933,7 +957,7 @@
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
-                                                                                       
+
 
 
 
@@ -1748,7 +1772,7 @@
     function QuestionChanged(id , val ) {
 
         var index = id.charAt(20);
-        var skillElementid = 'QuestionsCollection_' + index + '__SkillName';
+        var skillElementid = 'InterviewerQuestionsCollection_' + index + '__SkillName';
         $.ajax({
             type: "GET",
             url: "/IRF/GetQuestionSkills",
@@ -1768,13 +1792,13 @@
         var count = '@ViewBag.QuestionsDiscussedCount';
         //Get Question Skills
         if (count == null || parseInt(count) == 0) {
-            var val = $("#QuestionsCollection_0__Comment").val();
+            var val = $("#InterviewerQuestionsCollection_0__Comment").val();
             $.ajax({
                 type: "GET",
                 url: "/IRF/GetQuestionSkills",
                 data: { 'id': val },
                 success: function (data) {
-                    $("#QuestionsCollection_0__SkillName").val(data);
+                    $("#InterviewerQuestionsCollection_0__SkillName").val(data);
                 }
             });
 
@@ -1814,16 +1838,16 @@
             var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
             var techTotal = 0;
             for (i = 0; i < techItems.length; i++) {
-                techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
+                techTotal = parseFloat(techTotal) + parseFloat($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
             }
             if (profileValue != null && profileValue != '') {
-                profileScore = parseInt(profileValue) * 20;
+                profileScore = parseFloat(profileValue);
             }
             if (personalityValue != null && personalityValue != '') {
-                personalityScore = parseInt(personalityValue) * 25;
+                personalityScore = parseFloat(personalityValue);
             }
             if (interviewingAbilityValue != null && interviewingAbilityValue != '') {
-                interviewingAbilityScore = parseInt(interviewingAbilityValue) * 20;
+                interviewingAbilityScore = parseFloat(interviewingAbilityValue);
             }
 
             obj.y = techTotal / 4;
@@ -1855,6 +1879,9 @@
 
 
             totalCount = (techTotal + profileScore + personalityScore + interviewingAbilityScore) / 4;
+            if (totalCount != Math.floor(totalCount)) {
+                totalCount = totalCount.toFixed(2);
+            }
             document.getElementById("totScore").innerHTML = totalCount;
 
 

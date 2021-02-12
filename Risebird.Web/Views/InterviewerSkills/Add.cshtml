@@ -21,11 +21,12 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand breadcrumscolor" href="/InterviewerSkills/Index">Interviewer Skills Channel</a>
+              <a class="navbar-brand breadcrumscolor" href="/InterviewerSkills/Index">Interviewer Skills Channel</a>
                 <span class="desktop-view">
-                    <a class="navbar-brand">/ &nbsp; Add Interviewer Skills</a></span>
-                    <span class="mobile-view"> <a class="navbar-brand">/ &nbsp; Add Skills</a></span>
-</div>
+                    <a class="navbar-brand">/ Add Interviewer Skills Channel</a>
+                </span>
+                <span class="mobile-view"> <a class="navbar-brand"> Add Interviewer Skills Channel</a></span>
+            </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -63,15 +64,16 @@
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 pull-left nopad">
                                         <div class="col-lg-4  col-md-4 col-sm-4 pr-1 pull-left">
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.InterviewerSkillId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @*<label class="control-label col-md-4 col-sm-2 desp-label" for="irfid">irf id</label>*@
+                                                <div class="mandate">
+                                                    @Html.LabelFor(model => model.InterviewerSkillId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+                                                    @*<label class="control-label col-md-4 col-sm-2 desp-label" for="irfid">irf id</label>*@
 
-                                                @Html.EditorFor(model => model.InterviewerSkillId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
-                                                <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                                @Html.ValidationMessageFor(model => model.InterviewerSkillId, "", new { @class = "text-danger" })
-                                                @*<input class="form-control text-box single-line" id="IRFId" name="IRFId" type="text" value="">*@
+                                                    @Html.EditorFor(model => model.InterviewerSkillId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
+                                                    <!--<label class="text-danger" id="uniqueMsg" style="color:red"></label>-->
+                                                    @Html.ValidationMessageFor(model => model.InterviewerSkillId, "", new { @class = "text-danger" })
+                                                    @*<input class="form-control text-box single-line" id="IRFId" name="IRFId" type="text" value="">*@
 
-                                            </div>
+                                                </div>
                                         </div>
                                         <div class="col-lg-4  col-md-4 col-sm-4 px-1 pull-left">
                                             <div class="form-group">
@@ -92,10 +94,11 @@
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 pull-left nopad">
                                         <div class="col-md-4 col-sm-4 pr-1 pull-left">
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @class = "text-danger" })
-                                            </div>
+                                                <div class="mandate">
+                                                    @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+                                                    @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                    @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @class = "text-danger" })
+                                                </div>
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                 @Html.DropDownList("PrimarySkill", (SelectList)ViewBag.Skill, new { @class = "select-css form-control", @onchange = "SkillChanged()" })
@@ -104,24 +107,25 @@
                                         </div>
                                         <div class="col-md-4 col-sm-4 px-1 pull-left">
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <div class="mandate">  @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
                                                 @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
                                                 <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></label>
                                                 @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
                                             </div>
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
-                                                <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></label>
-                                                @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
-                                            </div>
+                                                <div class="mandate">
+                                                    @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+                                                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
+                                                    <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></label>
+                                                    @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                                                </div>
                                         </div>
                                         <div class="col-md-4 col-sm-4 pl-1 pull-left">
 
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <div class="mandate">@Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
                                                 @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number", @min = "1" } })
-                                                @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @class = "text-danger" })
+                                                <!--@Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @class = "text-danger" })-->
                                                 <div class="spinner">
                                                     <button type="button" class="up button">&rsaquo;</button>
                                                     <button type="button" class="down button">&lsaquo;</button>
@@ -229,9 +233,10 @@
                                             <div class="row">
 
                                                 <div class="col-md-12 mc-button-area">
+                                                    @Html.ActionLink("Back to List", "Index", "InterviewerSkills", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                                     <input type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
 
-                                                    @Html.ActionLink("Back to List", "Index", "InterviewerSkills", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+
                                                 </div>
                                             </div>
                                         </div>

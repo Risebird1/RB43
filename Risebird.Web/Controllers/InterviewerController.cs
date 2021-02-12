@@ -1210,7 +1210,7 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
-        public IActionResult AddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false)
+        public IActionResult AddReport(int interviewId, int iscId, bool isClient = false, bool isClientSelected = false, bool isQC = false)
         {
             try
             {
@@ -1221,9 +1221,9 @@ namespace Risebird.Web.Controllers
 
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer")
                     {
-                        var model = _interviewerService.GetInterviewerinteviewReport(interviewId, irfId).Result;
+                        var model = _interviewerService.GetInterviewerinteviewReport(interviewId, iscId).Result;
                         model.ProfileName = profileName;
-                        GetStatusList(model, irfId);
+                        GetStatusList(model, iscId);
                         return View(model);
 
                     }

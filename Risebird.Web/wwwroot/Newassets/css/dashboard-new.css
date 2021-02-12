@@ -2987,7 +2987,8 @@ textarea.form-control {
     -ms-transition: all .3s;
     transition: all .3s;
 }
-#QuestionsTable.table-bordered td {
+
+    #QuestionsTable.table-bordered td {
     border-right: 1px solid #dee2e6 !important;
     border-left: 0px solid #dee2e6 !important;
     border-top: 1px solid #dee2e6 !important;
@@ -3040,10 +3041,50 @@ textarea.form-control {
         textarea::-webkit-input-placeholder, textarea.form-control::-webkit-input-placeholder {
             color: #888;
         }
-
-label {
-    font-weight: 300;
+.interviewer .multiselect {
+    background: #ececee !important;
 }
+
+
+    .interviewer .multiselect .multiselect-selected-text {
+        color: #807e7e !important;
+        font-size: 13px !important;
+        float: left !important;
+    }
+.mandate {
+    position: relative;
+    width: auto;
+}
+    .mandate label {
+        width: auto;
+        padding: 0px 0px 0px 20px;
+    }
+    .mandate span.red, span.red {
+        color: red
+    }
+
+.interviewer a.info {
+    background: url(../../Newassets/img/info.png) no-repeat !important;
+    width: 17px;
+    height: 17px;
+    position: absolute;
+    display: inline-block;
+    top: 3px;
+    margin: 0 -9px;
+    -o-transition: all .5s;
+    -webkit-transition: all .5s;
+    -moz-transition: all .5s;
+    transition: all .5s;
+    -webkit-font-smoothing: antialiased;
+}
+
+    .interviewer a.info:hover {
+        background: #ef92a3;
+    }
+
+    label {
+        font-weight: 300;
+    }
 
 
 button.btn {

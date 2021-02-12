@@ -87,9 +87,9 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Lead Interviewer")]
         public bool IsLeadInterviewer { get; set; }
-
+        [Display(Name = "Is Active")]
         public bool IsActive { get; set; }
-        [Display(Name = "IsApproved")]
+        [Display(Name = "Is Approved")]
         public bool IsApproved { get; set; }
 
 
@@ -123,6 +123,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList CompanyTypeList { get; set; }
         public SelectList LevelList { get; set; }
         public SelectList GraduationTypeList { get; set; }
+        [Display(Name = "Education Mode")]
         public SelectList EducationModeList { get; set; }
         public SelectList DegreeList { get; set; }
         public SelectList NatureOfProjectList { get; set; }
@@ -157,6 +158,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Interviewer Tag")]
 
         public string Tag { get; set; }
+        [Display(Name = "Assessment Group Id")]
         public int AssessmentGroupId { get; set; }
         public SelectList AssessmentGroupList { get; set; }
         public List<SelectListItem> TagList { get; set; }

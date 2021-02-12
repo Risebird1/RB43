@@ -56,5 +56,7 @@ namespace Risebird.Repository.Interface
         string UpdateAssessment(AssignmentVM _assessment);
         Task<IEnumerable<InterviewerQuestionsDiscussed>> GetQuestionsDiscussed(int interviewId);
         Task<IEnumerable<string>> GetAllTagsFromIRF();
+        int GetCandidateId(int id, string irfName);
+        IEnumerable<TechSkillReport> GetTechSkillReport(int id);
     }
 }

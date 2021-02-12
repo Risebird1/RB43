@@ -21,7 +21,7 @@ select ipr.id as InterviewerProfileId, ipr.UserId, ipr.ResumeLink, ipr.CurrentRo
 left join InterviewerProfile ipr on ipr.id = tilis.InterviewerProfileId
 left join UserList ul on ipr.UserId = ul.id
 left join InterviewerSkillsChannel isc on isc.id = tilis.ISCId
-left join InterviewMeetings im on (im.IRFId = isc.InterviewerSkillId and ul.EmailId=im.candidateEmail)
+left join UnapprovedInterviewerMeetings im on (im.ISCId = isc.InterviewerSkillId and ul.EmailId=im.candidateEmail)
 where tilis.ISCId = @ISCId
 
 END
