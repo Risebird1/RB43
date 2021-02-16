@@ -134,12 +134,12 @@
                                                         @if (item.candidateEmail != null && item.candidateEmail != "")
                                                         {
 
-                                                            @if (item.candidateEmail.Length > 18)
+                                                            @if (item.candidateEmail.Length > 30)
                                                             {
 
 
                                                                 <td class="cadEmail">
-                                                                    <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 18)... </a>
+                                                                    <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 30)... </a>
                                                                 </td>
                                                             }
 
@@ -193,13 +193,13 @@
                                                                 </button>
                                                             </td>
                                                             <td class="callInterviewerbtn text-center">
-                                                                @*@if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                                                 {
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer.">
                                                                         <span onclick="ModalButtonClick('@item.MobileNumber', '@item.candidateEmail')" data-original-title="Tooltip on top" title="Click here to call the interviewer." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
                                                                     </button>
-                                                                }*@
-
+                                                                }
+                                                                
 
                                                             </td>
                                                         </tr>
@@ -253,28 +253,29 @@
             </div>
             <div id="myModal" class="modal modal-bg">
                 <!-- Modal content -->
-                <div class="modal-content">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
 
-                    <div class="filheader">
-                        <div class="filavatar">
-                            <span class="publicsharing-icon">
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon">
 
 
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
-                            </span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                                </span>
+                            </div>
+                            <h5 class="modal-title pull-left">Call Interviewer!</h5>
                         </div>
-                        <h5 class="modal-title pull-left">Call Interviewer!</h5>
-                    </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
-                    </button>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
 
-                    <div class="modal-body">
+                        <div class="modal-body">
 
-                        <label id="callingLabel" class="modal-title text-center mt-20"><b>Calling...</b></label>
+                            <h5 class="modal-title text-center mt-20" id="callingLabel"><b>Calling...</b></h5>
+                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto; display: block;" class="btn btn-fill btn-danger" value="Hang Up">
 
-                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto; display: block;" class="btn btn-fill btn-danger" value="Hang Up">
-
+                        </div>
                     </div>
 
                 </div>
@@ -687,8 +688,8 @@
 
 
             if (data[i].candidateEmail != null && data[i].candidateEmail != "") {
-                if (data[i].candidateEmail.length > 18) {
-                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].candidateEmail + '">' + data[i].candidateEmail.substring(0, 18) + '...</a></td>';
+                if (data[i].candidateEmail.length > 30) {
+                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].candidateEmail + '">' + data[i].candidateEmail.substring(0, 30) + '...</a></td>';
                 }
                 else {
                     html += '  <td class="cadEmail"><a onclick="">' + data[i].candidateEmail + ' </a></td>';

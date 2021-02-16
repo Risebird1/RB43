@@ -88,7 +88,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Meeting Status")]
         public SelectList MeetingStatusList { get; set; }
-
+        
         [Display(Name = "Upload Image")]
         public IFormFile AudioFile { get; set; }
 
@@ -118,6 +118,10 @@ namespace Risebird.Entities.ViewModel
 
         public bool IsInterviewer { get; set; }
         public int? IsApproved { get; set; }
+
+        [Display(Name = "Interview Status")]
+        public SelectList InterviewerApproved { get; set; }
+
         public string ApprovalComments { get; set; }
 
         public int? IsSelected { get; set; }
@@ -280,8 +284,10 @@ namespace Risebird.Entities.ViewModel
         public float? OverallInterviewingAbilityScore { get; set; }
         public string ProfileName { get; set; }
         public string ISCId { get; set; }
+        public string BackUrl { get; set; }
         //public string PerHourRateOutside { get; set; }
-
+        public SelectList CompanySizeList { get; set; }
+        public SelectList CountryList { get; set; }
     }
     public class RBInterviewDetails
     {

@@ -222,7 +222,9 @@ namespace Risebird.Entities.ViewModel
         public string PerHourRateIndia { get; set; }
         public string PerHourRateOutside { get; set; }
         public string ISCId { get; set; }
+        public int iscIntId { get; set; }
         public string ZoomId { get; set; }
+        public string PrimarySkill { get; set; }
 
 
     }
@@ -240,5 +242,56 @@ namespace Risebird.Entities.ViewModel
     {
         public string UserName { get; set; }
         public string Count { get; set; }
+    }
+    public class InterviewerMeetingVM
+    {
+
+        public InterviewerMeetingVM()
+        {
+            SubVideo_List = new List<InterviewerMeetingVM>();
+        }
+        public List<InterviewerMeetingVM> SubVideo_List { get; set; }
+        public int imid { get; set; }
+
+        [Display(Name = "Interview Date")]
+        [Required(ErrorMessage = "Please enter Interview Date.")]
+        public DateTime interviewDate { get; set; }
+        [Display(Name = "Interview Slot")]
+        [Required(ErrorMessage = "Please enter Interview Slot.")]
+        public string interviewSlot { get; set; }
+        [Display(Name = "Interview Duration")]
+        [Required(ErrorMessage = "Please enter Interview Duration.")]
+        public int interviewDuration { get; set; }
+
+        [Display(Name = "Candidate Email")]
+        [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
+        ErrorMessage = "Please Enter Correct Email Address")]
+        [Required(ErrorMessage = "Please enter Candidate Email Id.")]
+        public string candidateEmail { get; set; }
+        [Required(ErrorMessage = "Please enter Candidate Name.")]
+        [Display(Name = "Candidate Name")]
+        public string candidateName { get; set; }
+        public string confirmationStatus { get; set; }
+        [Display(Name = "Zoom Meeting Link")]
+        [Required(ErrorMessage = "Please enter Zoom Meeting Link.")]
+        public string zoomLink { get; set; }
+        [Display(Name = "Zoom Login Details")]
+        //[Required(ErrorMessage = "Please enter Zoom Login Details.")]
+        public string zoomDetails { get; set; }
+        [Display(Name = "Interviewer")]
+        public string interviewer { get; set; }
+        public DateTime dtCreatedOn { get; set; }
+        [Display(Name = "Confirmation Status")]
+        public SelectList ConfirmationStatusList { get; set; }
+        [Display(Name = "Interview Slot")]
+        public SelectList InterviewSlotList { get; set; }
+        public SelectList ISCList { get; set; }
+        public string ISCId { get; set; }
+        public int iscIntId { get; set; }
+        public string ZoomId { get; set; }
+        public string PrimarySkill { get; set; }
+        public string sCreatedBy { get; set; }
+        public bool IsEditable { get; set; }
+
     }
 }

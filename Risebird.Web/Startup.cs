@@ -210,6 +210,8 @@ namespace Risebird.Web
             services.AddScoped<ISpeechToTextHelper, SpeechToTextHelper>();
             services.AddScoped<IActivityTrackerRepository, ActivityTrackerRepository>();
             services.AddScoped<IActivityTrackerService, ActivityTrackerService>();
+            services.AddScoped<IUnapprovedInterviewerMeetingsService, UnapprovedInterviewerMeetingsService>();
+            services.AddScoped<IUnapprovedInterviewerMeetingsRepository, UnapprovedInterviewerMeetingsRepository>();
 
         }
     }

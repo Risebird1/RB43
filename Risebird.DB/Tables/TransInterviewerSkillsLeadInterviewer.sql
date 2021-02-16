@@ -17,6 +17,16 @@ CREATE TABLE [dbo].[TransInterviewerSkillsLeadInterviewer](
 
 END
 GO
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PerSuccessRate')
+      AND Object_ID = Object_ID(N'TransInterviewerSkillsLeadInterviewer'))
+BEGIN
+    ALTER TABLE TransInterviewerSkillsLeadInterviewer
+    Add  PerSuccessRate int
+END
+GO
 
 
 

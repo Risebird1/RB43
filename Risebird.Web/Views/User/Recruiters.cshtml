@@ -78,7 +78,7 @@
                                             <th>Email Id</th>
                                             <th>Domain</th>
                                             <th>Mobile Number</th>
-                                            <th class="disabled-sorting text-right">Actions</th>
+                                            <th class="disabled-sorting text-center">Actions</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
@@ -88,7 +88,7 @@
                                             <th>Email Id</th>
                                             <th>Domain</th>
                                             <th>Mobile Number</th>
-                                            <th class="disabled-sorting text-right">Actions</th>
+                                            <th class="disabled-sorting  text-center">Actions</th>
                                         </tr>
                                     </tfoot>
                                     <tbody id="tblbodyRecruiters">
@@ -127,14 +127,14 @@
 
 
 
-                                            <td class="text-right action">
+                                            <td class="text-center action">
 
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Recruiter">
-                                                    <span onclick="location.href = '@Url.Action("EditRecruiter", "User", new { id = item.id})'" title="Click here to edit risebird user" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                    <span onclick="location.href = '@Url.Action("EditRecruiter", "User", new { id = item.id})'" title="Click here to edit Recruiter" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                 </button>
 
 
-                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete risebird user">
+                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete Risebird User">
                                                     <span onclick="javascript:DeleteEntityfromEnvironment('@item.UserId','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
                                                 </button>
 
@@ -338,13 +338,13 @@
                 html += '<td></td>';
             }
 
-            html += '   <td class="text-right action">';
+            html += '   <td class="text-center action">';
             html += ' <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Recruiter">';
-            html += ' <a href ="/User/EditRecruiter?id=' + data[i].id + '" title="Click here to edit risebird user" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>';
+            html += ' <a href ="/User/EditRecruiter?id=' + data[i].id + '" title="Click here to edit Recruiter" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>';
             html += '  </button>';
 
 
-            html += '    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete risebird user">';
+            html += '    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete Risebird User">';
 
             html += '<span onclick="javascript:DeleteEntityfromEnvironmentJson(' + data[i].id + ');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>';
 

@@ -1205,12 +1205,12 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageLeadInterviewer"] = "Unassignment is Failed";
+                TempData["SuccessErrorMessageLeadInterviewer"] = "Unassignment failed.";
                 return RedirectToAction("MyInterviewerAssessment");
             }
         }
         #endregion
-        public IActionResult AddReport(int interviewId, int iscId, bool isClient = false, bool isClientSelected = false, bool isQC = false)
+        public IActionResult AddReport(int interviewId, int iscId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string backUrl = null)
         {
             try
             {
@@ -1224,6 +1224,7 @@ namespace Risebird.Web.Controllers
                         var model = _interviewerService.GetInterviewerinteviewReport(interviewId, iscId).Result;
                         model.ProfileName = profileName;
                         GetStatusList(model, iscId);
+                        model.BackUrl = backUrl;
                         return View(model);
 
                     }
@@ -1264,7 +1265,9 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    //profileName = "Interviewer";
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    model.UserDetails = emailid;
                     if (/*profileName == "Admin" || profileName == "HR" ||*/ profileName == "Interviewer")
                     {
                         if (model.AudioFile != null)
@@ -1347,7 +1350,7 @@ namespace Risebird.Web.Controllers
 
             var meetingStatuses = from MeetingStatus s in Enum.GetValues(typeof(MeetingStatus))
                                   select new { ID = (int)s, Name = s.GetDescription() };
-
+            meetingStatuses = meetingStatuses.Where(x => x.Name != "Scheduled").ToList();
             model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
 
             model.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
@@ -1355,7 +1358,15 @@ namespace Risebird.Web.Controllers
             var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
-
+            var isApproved = from InterviewerApproved s in Enum.GetValues(typeof(InterviewerApproved))
+                             select new { ID = (int)s, Name = s.GetDescription() };
+            model.InterviewerApproved = new SelectList(isApproved, "ID", "Name");
+            var CompanySizeTypes = from CompanySize s in Enum.GetValues(typeof(CompanySize))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+            model.CompanySizeList = new SelectList(CompanySizeTypes, "ID", "Name");
+            var Country = from Country s in Enum.GetValues(typeof(Country))
+                          select new { ID = (int)s, Name = s.GetDescription() };
+            model.CountryList = new SelectList(Country, "ID", "Name");
             //model.QuestionsList = new SelectList(_interviewerService.GetTechSkillComments(irfId), "Comment", "Comment");
 
             model.SkillQualityList = new SelectList(_iRFRepository.GetSkillQuality(), "Id", "Name");
@@ -1375,12 +1386,12 @@ namespace Risebird.Web.Controllers
             foreach (var item in skillCategories)
             {
                 bool selected = false;
-                if(model.SkillCategoryArray!=null && model.SkillCategoryArray.Contains(Convert.ToString(item.Id)))
+                if (model.SkillCategoryArray != null && model.SkillCategoryArray.Contains(Convert.ToString(item.Id)))
                 {
                     selected = true;
                 }
                 var selectItem = new SelectListItem(item.Name, Convert.ToString(item.Id), selected);
-                
+
                 selectList.Add(selectItem);
             }
             model.SkillCategoryList = selectList;

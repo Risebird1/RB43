@@ -196,7 +196,8 @@
                                                 <thead>
                                                     <tr>
                                                         <th width="20%" class="table_heading">User</th>
-                                                        <th width="70%" class="table_heading">Skills</th>
+                                                        <th width="50%" class="table_heading">Skills</th>
+                                                        <th width="20%" class="table_heading">Per Success Rate</th>
                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                     </tr>
                                                 </thead>
@@ -210,10 +211,12 @@
                                                             @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
                                                             @Html.TextBox("InterviewerCollection[0].SkillId", null, new { @class = "select-css form-control", @readonly = "readonly" })
                                                         </td>
-
+                                                        <td>
+                                                            @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "select-css form-control", @type="number" })
+                                                        </td>
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'SkillId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'SkillId','PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -682,7 +685,7 @@
     });
 
 
-    function DeleteRow(element, collectionName, tdOne, tdTwo) {
+    function DeleteRow(element, collectionName, tdOne, tdTwo,tdThree) {
         if ($(element).parents('tbody').find('tr').length === 1) {
 
             alert('Must have atleast one Row');
@@ -714,6 +717,11 @@
                         elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
                         elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
                         elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+                    }
+                    if (tdThree != null && tdThree != "") {
+                        elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
                     }
                 }
             }

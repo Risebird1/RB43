@@ -10,10 +10,9 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[usp_DeleteInterviewerProfile] @UserId int
+CREATE PROCEDURE [dbo].[usp_DeleteInterviewerProfile]
+@UserId int
 AS
- Begin Try
-  BEGIN TRAN DeleteInterviewerProfile
   Declare @v_ProfileId int;
 		
 	IF EXISTS (SELECT 1 FROM UserList where Id = @UserId) 
@@ -43,24 +42,13 @@ AS
 
 		  -- Now delete from InterviewerProfile Table
 		  delete from InterviewerProfile where UserId = @UserId
-		  delete from Interviewer where UserId = @UserId
+		  --delete from Interviewer where UserId = @UserId
 	      -- At last, Delete from User List table
 		  delete from UserList where Id = @UserId
    
 	   END
-    Commit TRAN DeleteInterviewerProfile;
- End Try 
 
- Begin Catch
-	RAISERROR ('Error While Deleting Interviewer Profile', -- Message text.
-			16, -- Severity.
-			1 -- State.
-			);
-
-	Rollback;
-
- End Catch
-
+ 
 
 
 

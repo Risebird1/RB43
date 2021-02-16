@@ -484,7 +484,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.ISCName = InterviewerSkillidName;
                         ViewBag.ISCId = id;
                         ViewBag.Profile = profileName;
-
+                        ViewBag.CurrentUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
                         var interviewerList = _iInterviewerSkillsService.GetISCInterviewers(id)?.ToList();
 
 

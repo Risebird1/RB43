@@ -218,7 +218,9 @@ input [type='radio']:checked:after {
     background-color: #42a5f5 !important;
     top: -1px !important;
 }
-
+.interviewDate [type="datetime-local"] {
+    background-size: 3% !important;
+}
 .sidebar[data-color="blue"]:after, .off-canvas-sidebar[data-color="blue"]:after {
     background: #2CA8FF;
 }

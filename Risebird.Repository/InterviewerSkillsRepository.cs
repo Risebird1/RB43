@@ -284,6 +284,7 @@ namespace Risebird.Repository
                         DynamicParameters param = new DynamicParameters();
                         param.Add("@InterviewerSkillId", InterviewerSkillId);
                         param.Add("@InterviewerUserId", item.UserId);
+                        param.Add("@InterviewerPerSuccessRate", item.PerSuccessRate);
                         var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewerSkillsLeadInterviewer", param,
                                 commandType: CommandType.StoredProcedure);
 
@@ -576,6 +577,7 @@ namespace Risebird.Repository
                             DynamicParameters param = new DynamicParameters();
                             param.Add("@InterviewerSkillId", InterviewerSkillsDetails.id);
                             param.Add("@InterviewerUserId", item.UserId);
+                            param.Add("@@InterviewerPerSuccessRate", item.PerSuccessRate);
                             var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewerSkillsLeadInterviewer", param,
                                     commandType: CommandType.StoredProcedure);
                         }

@@ -9,22 +9,25 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-create PROCEDURE [dbo].[usp_GetTransISCLeadInterviewer] 
-@ISCId int
-AS  
-BEGIN  
-
-	
-select c.* from (SELECT  UserId, PrimarySkill = 
-    STUFF((SELECT ', ' + SkillName
-           FROM (select ipr.*, sk.[Name] as SkillName from InterviewerProfile ipr join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id left join Skill sk on sk.id=tis.SkillId) b 
-           WHERE b.Id = a.Id
-           FOR XML PATH('')), 1, 2, '')
-	FROM (select ipr.*, sk.[Name] as SkillName from InterviewerProfile ipr join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id left join Skill sk on sk.id=tis.SkillId ) a
-	GROUP BY Id, UserId) c 
-	join TransInterviewerSkillsLeadInterviewer tis on c.UserId = tis.UserId
-	where tis.InterviewerSkillId = @ISCId
-End  
+    
+CREATE PROCEDURE [dbo].[usp_GetTransISCLeadInterviewer]     
+@ISCId int    
+AS      
+BEGIN      
+    
+     
+select c.*,tis.PerSuccessRate from (SELECT  UserId, PrimarySkill =     
+    STUFF((SELECT ', ' + SkillName    
+           FROM (select ipr.*, sk.[Name] as SkillName from InterviewerProfile ipr join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id left join Skill sk on sk.id=tis.SkillId) b     
+           WHERE b.Id = a.Id    
+           FOR XML PATH('')), 1, 2, '')    
+ FROM (select ipr.*, sk.[Name] as SkillName from InterviewerProfile ipr join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id left join Skill sk on sk.id=tis.SkillId ) a    
+ GROUP BY Id, UserId) c     
+ join TransInterviewerSkillsLeadInterviewer tis on c.UserId = tis.UserId    
+ where tis.InterviewerSkillId = @ISCId  
+End      
+  
+  
 GO
 
 

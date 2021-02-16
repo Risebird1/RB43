@@ -2309,14 +2309,14 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink, int candidateType=0)
+        public bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink, int candidateType = 0)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@InterviewId", interviewId);//@IrfId
                 dynamicParameters.Add("@FeedbackAudioLink", feedbackAudioLink);
-                if(candidateType==(int)CandidateTypeEnum.Interviewer)
+                if (candidateType == (int)CandidateTypeEnum.Interviewer)
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
@@ -2334,7 +2334,7 @@ namespace Risebird.Repository
                         return true;
                     }
                 }
-                
+
 
             }
             catch (SqlException ex)
@@ -2473,7 +2473,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await  con.QueryAsync(query, dynamicParameters);
+                    var results = await con.QueryAsync(query, dynamicParameters);
                     return true;
                 }
 
@@ -3562,21 +3562,14 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "";
-                if (flag == 2)
-                {
-                    query = "Select ip.id,ip.InterviewId,ip.Type,ip.Comment,ip.Status,ip.Points,isNull(im.interviewdate,ip.Date) as Date,ic.MeetingStatus,ir.JobCountry as  PreferredLocation,ic.InterviewStatus,IsNull(IsNull(ISNULL(ti.PerSuccessRate,tei.PerSuccessRate),tqi.PerSuccessRate),ip.Points) as Rate from InterviewPoints ip left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.InterviewId=im.id left join IRF ir on ir.IRFId=im.IRFId left join TransInterviewer ti on ti.IRFId=ir.id and ti.UserId=@UserId left join TransEmergencyInterviewer tei on tei.IRFId=ir.id and tei.UserId=@UserId left join TransQualityController tqi on tqi.IRFId=ir.id and tqi.UserId=@UserId where ip.userid = @Userid and (ip.Status='Submitted' or ip.Status='Pending' or ip.Status='Advance')";
-                }
-                else
-                {
-                    query = "Select ip.id,ip.InterviewId,ip.Type,ip.Comment,ip.Status,ip.Points,isNull(im.interviewdate,ip.Date) as Date,ic.MeetingStatus,ir.JobCountry as  PreferredLocation,ic.InterviewStatus,IsNull(IsNull(ISNULL(ti.PerSuccessRate,tei.PerSuccessRate),tqi.PerSuccessRate),ip.Points) as Rate from InterviewPoints ip left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.InterviewId=im.id left join IRF ir on ir.IRFId=im.IRFId left join TransInterviewer ti on ti.IRFId=ir.id and ti.UserId=@UserId left join TransEmergencyInterviewer tei on tei.IRFId=ir.id and tei.UserId=@UserId left join TransQualityController tqi on tqi.IRFId=ir.id and tqi.UserId=@UserId where ip.userid = @Userid and (ip.Status='Submitted' or ip.Status='Advance')";
-                }
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Userid", interviewerid);
+                dynamicParameters.Add("@flag", flag);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<RBInterviewDetails>(query, dynamicParameters);
-                    return (List<RBInterviewDetails>)results;
+                    var result = await SqlMapper.QueryAsync<RBInterviewDetails>(con, "Usp_FetchRBInterviewerDetails", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return (List<RBInterviewDetails>)result;
                 }
             }
             catch (SqlException ex)
@@ -3593,9 +3586,10 @@ namespace Risebird.Repository
                 var status = "Submitted";
                 var Type = "Admin";
                 var date = DateTime.Now;
+                var interviewerids = 0;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date ) Values (@interviewid, @interviewerid, @Points, @Type, @Comment, @status, @date);";
+                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date,Interviewerid ) Values (@interviewid, @interviewerid, @Points, @Type, @Comment, @status, @date,@interviewerids);";
                     var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
                     {
                         interviewid,
@@ -3604,7 +3598,8 @@ namespace Risebird.Repository
                         Type,
                         Comment,
                         status,
-                        date
+                        date,
+                        interviewerids
 
                     });
                     return "Success";
@@ -3689,12 +3684,13 @@ namespace Risebird.Repository
                     return "Failed";
                 }
                 int interviewid = 0;
+                int interviewerid = 0;
                 string Type = "Finance";
                 string status = "Advance";
                 var date = DateTime.Now;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date ) Values (@interviewid, @userid, @Amount, @Type, @Comment, @status, @date);";
+                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date ,Interviewerid) Values (@interviewid, @userid, @Amount, @Type, @Comment, @status, @date,@interviewerid);";
                     var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
                     {
                         interviewid,
@@ -3703,7 +3699,8 @@ namespace Risebird.Repository
                         Type,
                         Comment,
                         status,
-                        date
+                        date,
+                        interviewerid
 
                     });
                     return "Success";
@@ -3723,7 +3720,7 @@ namespace Risebird.Repository
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@st", st);
                 dynamicParameters.Add("@se", se);
-                var query = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id";
+                var query = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id Union Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<RBInterviewDetails>(query, dynamicParameters);
@@ -3731,7 +3728,7 @@ namespace Risebird.Repository
                 }
                 if (_list.Count > 0)
                 {
-                    var queryad = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where ip.Status='Advance' and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id";
+                    var queryad = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where ip.Status='Advance' and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id union Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewId where ip.Status='Advance' and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync<RBInterviewDetails>(queryad, dynamicParameters);
