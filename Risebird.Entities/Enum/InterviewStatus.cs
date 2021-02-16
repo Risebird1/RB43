@@ -221,9 +221,9 @@ namespace Risebird.Entities.Enum
     public enum InterviewerApproved
     {
         [Description("Not Approved")]
-        NotApproved = 0,
+        NotApproved = 1,
         [Description("Approved")]
-        Approved = 1,
+        Approved = 2,
     }
     //public enum JoinabilityType
     //{
