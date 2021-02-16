@@ -141,7 +141,7 @@
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <form action="@Url.Action("RisetubeInterviewer","InterviewerSkills")" method="post" id="form">
+                                        <form action="@Url.Action("InterviewerSearch","InterviewerSkills")" method="post" id="form">
 
                                             <div class="modal-body">
                                                 <div class="row">
@@ -403,7 +403,7 @@
                                     @if (page > 3)
                                     {
                                         <li>
-                                            <a href="@Url.Action("RisetubeInterviewer", "InterviewerSkills", new { page = startFrom - 1, searchvalue = ViewBag.searchvalue })"
+                                            <a href="@Url.Action("InterviewerSearch", "InterviewerSkills", new { page = startFrom - 1, searchvalue = ViewBag.searchvalue })"
                                                class="PagedList-skipToPrevious">
                                                 &laquo;
                                             </a>
@@ -415,7 +415,7 @@
                                     {
 
                                         <li class="@(i == ViewBag.page ? "page-item active" : "page-item")">
-                                            @Html.ActionLink(i.ToString(), "RisetubeInterviewer", "InterviewerSkills", new { Page = i, searchvalue = ViewBag.searchvalue }, htmlAttributes: new { @class = "" })
+                                            @Html.ActionLink(i.ToString(), "InterviewerSearch", "InterviewerSkills", new { Page = i, searchvalue = ViewBag.searchvalue }, htmlAttributes: new { @class = "" })
 
                                         </li>
                                     }
@@ -424,7 +424,7 @@
                                     @if (pages > endWith)
                                     {
                                         <li class="PagedList-skipToNext">
-                                            <a href="@Url.Action("RisetubeInterviewer", "InterviewerSkills", new { page = endWith + 1, searchvalue = ViewBag.searchvalue })">
+                                            <a href="@Url.Action("InterviewerSearch", "InterviewerSkills", new { page = endWith + 1, searchvalue = ViewBag.searchvalue })">
                                                 &raquo;
                                             </a>
                                         </li>
@@ -595,7 +595,7 @@
         $("#btnSearch").click(function () {
 
             var value = $("#txtsearch").val();
-            window.location.href = "/InterviewerSkills/RisetubeInterviewer?searchvalue=" + value;
+            window.location.href = "/InterviewerSkills/InterviewerSearch?searchvalue=" + value;
             $('#myForm').trigger("reset");
 
         });
