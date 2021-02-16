@@ -2173,9 +2173,19 @@
                     $.ajax({
                         type: "POST",
                         url: "/InterviewerSkills/CandidateShortList",
-                        data: { videoid: $("#txtVideoId").val() },
+                        data: { videoid: $("#txtVideoId").val(), status:"Shortlisted" },
                         success: function (data) {
                             $("#btnShortlist").val("Shortlisted");
+                        }
+                    });
+                } else {
+                    $("#btnShortlist").attr('Shortvalue', "1");
+                    $.ajax({
+                        type: "POST",
+                        url: "/InterviewerSkills/CandidateShortList",
+                        data: { videoid: $("#txtVideoId").val(), status: "Shortlist" },
+                        success: function (data) {
+                            $("#btnShortlist").val("ShortList");
                         }
                     });
                 }

@@ -17,7 +17,7 @@ CREATE TABLE [dbo].[TransInterviewerSkillsLeadInterviewer](
 
 END
 GO
-IF EXISTS(
+IF Not EXISTS(
     SELECT *
     FROM sys.columns
     WHERE Name IN (N'PerSuccessRate')
