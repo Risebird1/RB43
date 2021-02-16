@@ -19,5 +19,14 @@ CREATE TABLE [dbo].[InterviewPoints](
 ) ON [PRIMARY]
 END
 GO
-
+IF Not EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'InterviewerId')
+      AND Object_ID = Object_ID(N'InterviewPoints'))
+BEGIN
+    ALTER TABLE InterviewPoints
+    Add  InterviewerId int
+END
+GO
 

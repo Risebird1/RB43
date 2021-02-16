@@ -1292,9 +1292,17 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public JsonResult CandidateShortList(int videoid)
+        public JsonResult CandidateShortList(int videoid, string status)
         {
-            Shortlistvideoids.Add(videoid);
+            if (status == "Shortlist")
+            {
+                var itemToRemove = Shortlistvideoids.Single(r => r == videoid);
+                Shortlistvideoids.Remove(itemToRemove);
+            }
+            else
+            {
+                Shortlistvideoids.Add(videoid);
+            }
             return Json("Success");
         }
         [HttpPost]
