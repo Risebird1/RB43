@@ -180,7 +180,7 @@
                                                     <tr>
                                                         <th width="20%" class="table_heading">User</th>
                                                         <th width="50%" class="table_heading">Skills</th>
-                                                        <th width="20%" class="table_heading">Per Success Rate</th>
+                                                        <th width="20%" class="table_heading">Per Interview Rate</th>
                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                     </tr>
                                                 </thead>
@@ -189,7 +189,7 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                              @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                             </td>
 
                                                             <td>
