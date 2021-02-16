@@ -96,8 +96,9 @@ else
             @if (JsonConvert.DeserializeObject<List<Menu>>(@HttpContextAccessor.HttpContext.Session.GetString("userMenus")) != null)
             {
                 var menuList = JsonConvert.DeserializeObject<List<Menu>>(HttpContextAccessor.HttpContext.Session.GetString("userMenus"));
-                var adminMenuList = menuList.Where(a => a.idParentFunction == 6).ToList();
-                var menuList1 = menuList.Where(a => a.idParentFunction != 6).ToList();
+                var adminMenuList = menuList.Where(a => a.idParentFunction == 3).ToList();
+                var interviewerMenuList = menuList.Where(a => a.idParentFunction == 6).ToList();
+                var menuList1 = menuList.Where(a => (a.idParentFunction != 6 && a.idParentFunction != 3)).ToList();
                 foreach (var m in menuList1)
                 {
                     if (!string.IsNullOrEmpty(m.sUrl))
@@ -346,7 +347,7 @@ else
                             </li>
                         }
                     }
-                    else
+                    else if (m.functionName == "Admin")
                     {
                         <li>
                             <a data-toggle="collapse" href="#@m.functionName">
@@ -359,6 +360,34 @@ else
                             <div class="collapse " id="@m.functionName">
                                 <ul class="nav">
                                     @foreach (var item in adminMenuList)
+                                    {
+                                        <li>
+                                            <a href="@item.sUrl">
+                                                <span class="sidebar-mini-icon">  @(new string(item.functionName.ToString().Split(' ').Select(x => x[0]).ToArray()))</span>
+                                                <span class="sidebar-normal">     @item.functionName </span>
+                                            </a>
+                                        </li>
+                                    }
+
+                                </ul>
+                            </div>
+                        </li>
+                        
+
+                    }
+                    else if (m.functionName == "Interviewer")
+                    {
+                        <li>
+                            <a data-toggle="collapse" href="#@m.functionName">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path d="M9 8c1.66 0 2.99-1.34 2.99-3S10.66 2 9 2C7.34 2 6 3.34 6 5s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg>
+                                <p>
+                                    @m.functionName
+                                    <b class="caret"></b>
+                                </p>
+                            </a>
+                            <div class="collapse " id="@m.functionName">
+                                <ul class="nav">
+                                    @foreach (var item in interviewerMenuList)
                                     {
                                         <li>
                                             <a href="@item.sUrl">
