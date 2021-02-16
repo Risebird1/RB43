@@ -308,12 +308,11 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_DeleteInterviewerProfile]", parameters,
+                   await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_DeleteInterviewerProfile]", parameters,
                    commandType: CommandType.StoredProcedure);
+                   return true;
 
                 }
-                return true;
-
             }
             catch (SqlException ex)
             {
@@ -1352,6 +1351,22 @@ namespace Risebird.Repository
                     paramPersonality.Add("@Extroversion", reportDetails.Extroversion);
                     paramPersonality.Add("@Agreeableness", reportDetails.Agreeableness);
                     paramPersonality.Add("@Neuroticism", reportDetails.Neuroticism);
+                    DynamicParameters parametersPoints = new DynamicParameters();
+                    if (reportDetails.MeetingStatus == 4)
+                    {
+                        parametersPoints.Add("@Points", 100);
+                    }
+                    else if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)
+                    {
+                        parametersPoints.Add("@Points", 33);
+                    }
+                    else
+                    {
+                        parametersPoints.Add("@Points", 0);
+                    }
+                    parametersPoints.Add("@interviewId", reportDetails.InterviewId);
+                    parametersPoints.Add("@UserEmail", reportDetails.UserDetails);
+                    parametersPoints.Add("@Type", "Interview");
 
                     if (reportDetails.IsEdited)
                     {
@@ -1440,6 +1455,9 @@ namespace Risebird.Repository
 
                     await SqlMapper.QueryAsync(con, "usp_AddUpdateInterviewerPersonalityScore", paramPersonality,
                            commandType: CommandType.StoredProcedure);
+
+                    SqlMapper.Query(con, "usp_InterviewerAddPoints", parametersPoints,
+                            commandType: CommandType.StoredProcedure);
 
                     return true;
                 }

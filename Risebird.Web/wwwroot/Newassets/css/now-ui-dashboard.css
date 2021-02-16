@@ -11378,7 +11378,7 @@ div.dataTables_scrollFoot table {
     }
 
     .dataTables_wrapper .collapsed .child .child {
-        padding-left: 10px !important;
+        padding-left: 6px !important;
     }
 
         .dataTables_wrapper .collapsed .child .child .dtr-data, .dataTables_wrapper .collapsed .child .child .dtr-title {
@@ -11387,6 +11387,7 @@ div.dataTables_scrollFoot table {
 
     .dataTables_wrapper .collapsed tr.child ul {
         display: block;
+        text-align:left;
     }
 
 
@@ -11396,7 +11397,7 @@ div.dataTables_scrollFoot table {
         font-weight: bold;
         box-shadow: 0 3px #5794d4;
     }
-
+   
     .navbar .navbar-brand {
         font-size: 8.9px !important;
     }

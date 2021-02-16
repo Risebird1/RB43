@@ -1,0 +1,243 @@
+﻿@model Risebird.Entities.ViewModel.InterviewerMeetingVM
+
+@{
+    ViewData["Title"] = "Interview";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand breadcrumscolor" href="/UnapprovedInterviewerMeetings/Index">Interview Forms</a>
+                @if (Model.IsEditable)
+                {
+                    <a class="navbar-brand"> /  &nbsp; Edit Interview</a>
+                }
+                else
+                {
+                    <a class="navbar-brand"> /  &nbsp; Add Interview</a>
+                }
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="mt50">
+    </div>
+
+
+
+
+    <div class="content client">
+        <div class="row bg-white">
+            <div class="col-md-12">
+                <div class="mdc-card card bg-white">
+                    <div class="mdc-card-wrapper__text-section">
+                        @using (Html.BeginForm("Add", "UnapprovedInterviewerMeetings", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return (checkDate());" }))
+                        {
+
+                            @Html.AntiForgeryToken()
+
+
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    @if (Model.IsEditable)
+                                    {
+                                        <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Edit Interview</h4></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Add Interview</h4></div>
+                                    }
+                                </div>
+                                <div style="width: 100%;">&nbsp;</div>
+                                @Html.HiddenFor(model => model.imid)
+                                @Html.HiddenFor(model => model.IsEditable)
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="col-lg-6  col-md-6 col-sm-6 pr-1">
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ISCId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.DropDownListFor(model => model.ISCId, Model.ISCList, new { @class = "select-css form-control" })
+                                    @Html.ValidationMessageFor(model => model.ISCId, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group interviewDate">
+                                    <div class="mandate">
+                                        @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label  desp-label" })<span class="red">*</span>
+                                        </div>
+                                        @Html.EditorFor(model => model.interviewDate, new { htmlAttributes = new { @class = "form-control", @Value = Model.interviewDate.ToString("dd/MM/yyyy") } })
+                                        <label class="text-danger" id="error_interviewDate" style="color:red;padding:0px;"></label>
+
+                                    </div>
+                                <div class="form-group">
+                                    <div class="mandate">
+                                        @Html.LabelFor(model => model.interviewSlot, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+
+                                        @Html.DropDownListFor(x => Model.interviewSlot, Model.InterviewSlotList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                        @Html.ValidationMessageFor(model => model.interviewSlot, "", new { @class = "text-danger" })
+
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.interviewDuration, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.interviewDuration, new { htmlAttributes = new { @class = "input form-control" } })
+                                        @Html.ValidationMessageFor(model => model.interviewDuration, "", new { @class = "text-danger" })
+                                        <div class="spinner">
+                                            <button type="button" class="up button">&rsaquo;</button>
+                                            <button type="button" class="down button">&lsaquo;</button>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="mandate">
+                                            @Html.LabelFor(model => model.zoomLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+                                            @Html.EditorFor(model => model.zoomLink, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.zoomLink, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.zoomDetails, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.zoomDetails, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.zoomDetails, "", new { @class = "text-danger" })
+                                        </div>
+
+                                    </div>
+
+                              
+
+                                <div class="col-lg-6  col-md-6 col-sm-12 pl-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ZoomId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.ZoomId, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.ZoomId, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.confirmationStatus, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.DropDownListFor(x => Model.confirmationStatus, Model.ConfirmationStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                        @Html.ValidationMessageFor(model => model.confirmationStatus, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.interviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.interviewer, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.interviewer, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="mandate">
+                                            @Html.LabelFor(model => model.candidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+                                            @Html.EditorFor(model => model.candidateEmail, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.candidateEmail, "", new { @class = "text-danger" })
+                                        </div>
+                                    <div class="form-group">
+                                        <div class="mandate">
+                                            @Html.LabelFor(model => model.candidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+                                            @Html.EditorFor(model => model.candidateName, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.candidateName, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                            </div>
+
+
+                            <div class="card-footer ">
+                                <div class="row">
+
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "Index", "UnapprovedInterviewerMeetings", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Add Interview">
+                                            Submit
+                                        </button>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        var inputs = document.getElementsByTagName("input");
+        for (i = 0; i <= inputs.length; i++) {
+            inputs[i].addEventListener("input", function () {
+                document.getElementById("btnUpload").disabled = false;
+            });
+        }
+    });
+
+</script>
+
+<script>
+    $('form').submit(function () {
+        if ($(this).valid()) {
+            $(':submit', this).attr('disabled', 'disabled');
+        }
+    });
+
+    function checkDate() {
+
+        var interviewDate = new Date(document.getElementById("interviewDate").value);
+
+        var todayDate = new Date();
+
+        if (todayDate.getTime() > interviewDate.getTime()) {
+
+            document.getElementById("error_interviewDate").innerHTML = "Interview Date time should be greater than current Date time.";
+            return false;
+        }
+        else
+            document.getElementById("error_interviewDate").innerHTML = "";
+        return true;
+    }
+
+</script>
+
+<script>
+
+    document.body.className += "js";
+
+    var spinner = document.querySelector('.input');
+    var buttonUp = document.querySelector('.up');
+    var buttonDown = document.querySelector('.down');
+
+    buttonUp.onclick = function () {
+        var value = parseInt(spinner.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value++;
+        spinner.value = value;
+    };
+
+    buttonDown.onclick = function () {
+        var value = parseInt(spinner.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value--;
+        spinner.value = value;
+    };
+
+</script>

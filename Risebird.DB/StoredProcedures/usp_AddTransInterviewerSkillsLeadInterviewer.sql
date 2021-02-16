@@ -11,18 +11,19 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Create PROCEDURE [dbo].[usp_AddTransInterviewerSkillsLeadInterviewer]
-
-@InterviewerSkillId int,
-@InterviewerUserId int
-
-AS
-Begin
-
-
-insert into [dbo].[TransInterviewerSkillsLeadInterviewer] values (@InterviewerSkillId,(select id from [dbo].[InterviewerProfile] where userid=@InterviewerUserId), @InterviewerUserId)
-
-End
+CREATE PROCEDURE [dbo].[usp_AddTransInterviewerSkillsLeadInterviewer]    
+    
+@InterviewerSkillId int,    
+@InterviewerUserId int ,  
+@InterviewerPerSuccessRate int  
+    
+AS    
+Begin    
+    
+    
+insert into [dbo].[TransInterviewerSkillsLeadInterviewer] values (@InterviewerSkillId,(select id from [dbo].[InterviewerProfile] where userid=@InterviewerUserId), @InterviewerUserId,@InterviewerPerSuccessRate)    
+    
+End 
 Go
 
 

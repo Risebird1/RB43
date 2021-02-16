@@ -1316,7 +1316,9 @@ table {
     padding: 10px !important;
     color: #9A9A9A !important;
 }
-
+.interviewDate [type="datetime-local"] {
+    background-size: 3% !important;
+}
 [type="date"].form-control {
     background: #181818 url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;

@@ -1191,6 +1191,7 @@ table {
 
 .table.interviewertable td, .table.journey td {
     border-top: 1px solid #dee2e6 !important;
+    vertical-align:middle!important;
 }
 
 .interviewer-comment .talk-bubble [data-tooltip]:before {
@@ -2952,7 +2953,7 @@ td.detail-row {
     width: 20px;
     height: 20px;
     background-color: #cccccc47;
-    background-position: center 12px;
+    background-position: center 19px;
     padding: 12px 6.5px !important;
 }
 

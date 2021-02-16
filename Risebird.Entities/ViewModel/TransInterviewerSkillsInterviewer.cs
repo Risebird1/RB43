@@ -9,6 +9,6 @@
         public bool IsApproved { get; set; }
         public string PrimarySkill { get; set; }
         public string EmailId { get; set; }
-
+        public int PerSuccessRate { get; set; }
     }
 }
