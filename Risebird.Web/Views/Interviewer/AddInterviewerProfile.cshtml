@@ -68,10 +68,11 @@
                                         @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
-                                    </div>
+                                        <div class="mandate">
+                                            @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+                                        </div>
                                     <div class="form-group">
                                         <div class="mandate">
                                             @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
