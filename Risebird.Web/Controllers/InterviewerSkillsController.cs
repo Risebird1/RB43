@@ -824,7 +824,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        public IActionResult RisetubeInterviewer(int? Page, string searchvalue)
+        public IActionResult InterviewerSearch(int? Page, string searchvalue)
         {
             try
             {
@@ -919,7 +919,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public IActionResult RisetubeInterviewer(int? Page, InterviewFilter filter, string searchvalue)
+        public IActionResult InterviewerSearch(int? Page, InterviewFilter filter, string searchvalue)
         {
             try
             {
@@ -1019,7 +1019,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     HttpContext.Session.Remove("InterviewerRiseTubefilters");
-                    return RedirectToAction("RisetubeInterviewer");
+                    return RedirectToAction("InterviewerSearch");
                 }
                 else
                 {
