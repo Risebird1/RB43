@@ -104,7 +104,9 @@
 
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.InterviewerApproved, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewerApproved">Approval Status</label>
+
+                                            @*@Html.LabelFor(model => model.InterviewerApproved, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })*@
 
                                             @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewerApproved, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
