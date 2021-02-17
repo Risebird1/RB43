@@ -380,9 +380,9 @@ namespace Risebird.Business
                     {
                         //update total invites count
                         _interviewerSkillsRepository.UpdateInterviewerInvites(iscId, interviewerProfileId);
-
+                        return true;
                     }
-                    return true;
+                    
                 }
                 return false;
             }

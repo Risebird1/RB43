@@ -582,13 +582,13 @@ namespace Risebird.CommonHelper
             {
                 var msg = new SendGridMessage();
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Discussion Invite");
-                msg.Subject = "Discussion invitation";
+                msg.Subject = "Discussion Invitation(" + primarySkill +")";
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerMailId, "Interviewer"));
                 msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(hrEmailId, null));
 
 
 
-                object[] parameters = new object[] { iscName, primarySkill, calendlyLink };
+                object[] parameters = new object[] { primarySkill, calendlyLink };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteInterviewerTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;

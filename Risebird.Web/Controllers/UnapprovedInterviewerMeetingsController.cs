@@ -110,10 +110,6 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        var list = new List<SelectListItem>
-                        {
-                            new SelectListItem { Text = "No Clients", Value = "" }
-                        };
                         var model = new InterviewerMeetingVM();
                         var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                                    select new { ID = (int)s, Name = s.GetDescription() };
