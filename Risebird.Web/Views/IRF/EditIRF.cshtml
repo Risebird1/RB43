@@ -893,6 +893,7 @@
                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
 
                                                                 </td>
+                                                                @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
 
                                                             }
                                                             else
@@ -902,7 +903,7 @@
                                                                 </td>
                                                             }
 
-                                                            
+
 
                                                             <td>
                                                                 @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
@@ -913,16 +914,17 @@
 
                                                             </td>
                                                             <td class="action text-center">
-                                                                @if (Model.InterviewerList != null && Model.InterviewerList.Count() != 0)
-                                                                {
-                                                                    <div>
+                                                   
+                                                                <div>
+                                                                    @if (Model.InterviewerList != null && Model.InterviewerList.Count() != 0)
+                                                                    {
                                                                         <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
+                                                                    }
 
-                                                                    </div>
-                                                                }
+                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
+                                                                </div>
                                                             </td>
                                                         </tr>
                                                     }
@@ -1005,10 +1007,10 @@
                                                             @if (Model.InterviewerList == null || Model.InterviewerList.Count() == 0)
                                                             {
                                                                 <td>
-                                                                    @Html.TextBoxFor(m => m.QualityController[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
+                                                                    @Html.TextBoxFor(m => m.QualityController[i].EmailId,  new { @class = "form-control", @readonly = "readonly" })
 
                                                                 </td>
-
+                                                                @Html.HiddenFor(m=>m.QualityController[i].UserId)
                                                             }
                                                             else
                                                             {
@@ -1028,15 +1030,17 @@
 
                                                             </td>
                                                             <td class="action text-center">
-                                                                @if (Model.InterviewerList != null && Model.InterviewerList.Count() != 0)
-                                                                {
-                                                                    <div>
+                                                               
+                                                                <div>
+                                                                    @if (Model.InterviewerList != null && Model.InterviewerList.Count() != 0)
+                                                                    {
                                                                         <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                                    </div>
-                                                                }
+                                                                    }
 
+                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                </div>
                                                             </td>
                                                         </tr>
                                                     }
@@ -1070,43 +1074,43 @@
 
                                                 @if (Model.EmergencyInterviewerCollection == null || Model.EmergencyInterviewerCollection.Count() == 0)
                                                 {
-                                                <tr>
-                                                    @if (Model.InterviewerList == null || Model.InterviewerList.Count() == 0)
-                                                    {
-                                                        <td>
-                                                            @Html.TextBox("EmergencyInterviewerCollection[0].UserId", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                        </td>
-
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>
-                                                            @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "form-control select-css ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
-                                                        </td>
-                                                    }
-
-
-                                                    <td>
-                                                        @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
-                                                        @Html.TextBox("EmergencyInterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                    </td>
-                                                    <td>
-
-                                                        @Html.TextBox("EmergencyInterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
-
-                                                    </td>
-                                                    <td class="action text-center">
-                                                        @if (Model.InterviewerList != null && Model.InterviewerList.Count() != 0)
+                                                    <tr>
+                                                        @if (Model.InterviewerList == null || Model.InterviewerList.Count() == 0)
                                                         {
-                                                            <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            <td>
+                                                                @Html.TextBox("EmergencyInterviewerCollection[0].UserId", null, new { @class = "form-control", @readonly = "readonly" })
+
+                                                            </td>
 
                                                         }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "form-control select-css ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
+                                                            </td>
+                                                        }
 
-                                                    </td>
-                                                </tr>
+
+                                                        <td>
+                                                            @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
+                                                            @Html.TextBox("EmergencyInterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
+
+                                                        </td>
+                                                        <td>
+
+                                                            @Html.TextBox("EmergencyInterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+
+                                                        </td>
+                                                        <td class="action text-center">
+                                                            @if (Model.InterviewerList != null && Model.InterviewerList.Count() != 0)
+                                                            {
+                                                                <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                            }
+
+                                                        </td>
+                                                    </tr>
 
                                                 }
                                                 else
@@ -1120,6 +1124,8 @@
                                                                     @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
 
                                                                 </td>
+                                                                @Html.HiddenFor(m => m.EmergencyInterviewerCollection[i].UserId)
+
 
                                                             }
                                                             else
@@ -1139,15 +1145,17 @@
 
                                                             </td>
                                                             <td class="action text-center">
-                                                                @if (Model.InterviewerList != null && Model.InterviewerList.Count() != 0)
-                                                                {
-                                                                    <div>
-
+                                                                <div>
+                                                                    @if (Model.InterviewerList != null && Model.InterviewerList.Count() != 0)
+                                                                    {
                                                                         <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill','PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                        
+                                                                    }
 
-                                                                    </div>
-                                                                }
+                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill','PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                </div>
+                                                               
 
                                                             </td>
                                                         </tr>
