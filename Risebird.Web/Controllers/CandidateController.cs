@@ -134,14 +134,18 @@ namespace Risebird.Web.Controllers
 
                         foreach (var item in meetingStatusData)
                         {
-                            var meetingStatusObj = new TimelineStatus();
-                            meetingStatusObj.Date = item.MeetingStatusDate.ToString("dd");
-                            meetingStatusObj.Day = item.MeetingStatusDate.Date.ToString("dddd");
-                            meetingStatusObj.Status = item.MeetingStatus;
-                            meetingStatusObj.StatusDate = item.MeetingStatusDate.Date.ToString("MMMM yyyy");
-                            meetingStatusObj.Time = item.MeetingStatusDate.ToString("hh:mm tt");
+                            if (item.MeetingStatus != MeetingStatus.Scheduled.GetDescription())
+                            {
+                                var meetingStatusObj = new TimelineStatus();
+                                meetingStatusObj.Date = item.MeetingStatusDate.ToString("dd");
+                                meetingStatusObj.Day = item.MeetingStatusDate.Date.ToString("dddd");
+                                meetingStatusObj.Status = item.MeetingStatus;
+                                meetingStatusObj.StatusDate = item.MeetingStatusDate.Date.ToString("MMMM yyyy");
+                                meetingStatusObj.Time = item.MeetingStatusDate.ToString("hh:mm tt");
 
-                            meetingStatusObjList.Add(meetingStatusObj);
+                                meetingStatusObjList.Add(meetingStatusObj);
+                            }
+                            
                         }
                         candidateTimeline.MeetingStatus = meetingStatusObjList;
                     }
