@@ -375,7 +375,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 32].Value = item.QCStatusStatusDesc;
                         Sheet.Cells[i, 33].Value = item.HRCoordinatorEmailId;
                         Sheet.Cells[i, 34].Value = item.JobCountry;
-                        Sheet.Cells[i, 34].Value = item.BillingOwner;
+                        Sheet.Cells[i, 35].Value = item.BillingOwner;
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
