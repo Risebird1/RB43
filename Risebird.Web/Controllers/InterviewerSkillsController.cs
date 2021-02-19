@@ -28,7 +28,8 @@ namespace Risebird.Web.Controllers
         private readonly INotificationHelper _notificationHelper;
         private static List<int> Shortlistvideoids = new List<int>();
         private IInterviewerService _interviewerService;
-        public InterviewerSkillsController(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, IInterviewerSkillsService InterviewerSkillsService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IInterviewerService interviewerService)
+        private readonly IUserService _userService;
+        public InterviewerSkillsController(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, IInterviewerSkillsService InterviewerSkillsService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IInterviewerService interviewerService, IUserService userService)
         {
             _interviewerSkillsRepository = InterviewerSkillsRepository;
             _iInterviewerSkillsService = InterviewerSkillsService;
@@ -39,6 +40,7 @@ namespace Risebird.Web.Controllers
             _iRFRepository = iRFRepository;
             _notificationHelper = notificationHelper;
             _interviewerService = interviewerService;
+            _userService = userService;
         }
 
         [Authorize]
@@ -1271,12 +1273,18 @@ namespace Risebird.Web.Controllers
                     bool isQC = false;
                     NewModel.IreportModel.IsQC = isQC;
                     NewModel.irfIntId = model.irfIntId;
+                    var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                    if (menus != null)
+                    {
+                        menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
+                        HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                    }
                     if (IRListModel != null)
                     {
                         GetStatusList(IRListModel, model.irfIntId);
                     }
 
-                    ViewBag.VideoStatus = "Private";
+                    ViewBag.VideoStatus = "Public";
                     ViewBag.Shortlist = "false";
                     if (Shortlistvideoids.Contains(id))
                     {
