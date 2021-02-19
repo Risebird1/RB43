@@ -9,5 +9,6 @@ namespace Risebird.Business.Interface
     public interface ICandidateService
     {
         Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null);
+        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimelinebyDate(DateTime startDate, DateTime endDate, string emailId = null);
     }
 }

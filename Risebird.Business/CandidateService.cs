@@ -33,5 +33,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimelinebyDate(DateTime startDate, DateTime endDate, string emailId = null)
+        {
+            try
+            {
+                return await _candidateRepository.GetCandidateTimelinebyDate(startDate, endDate, emailId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
