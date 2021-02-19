@@ -170,7 +170,15 @@ BEGIN
     ALTER TABLE IRF
     Add PrimarySkillInvite VARCHAR(100)
 END
-
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'BillingOwner')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add BillingOwner int
+END
 END
 
 

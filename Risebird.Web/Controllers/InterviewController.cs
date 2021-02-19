@@ -262,6 +262,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 32].Value = "QC Status";
                 Sheet.Cells[1, 33].Value = "Coordinating HR";
                 Sheet.Cells[1, 34].Value = "Job Country";
+                Sheet.Cells[1, 35].Value = "Billing Owner";
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
                 //string LastAction = null; ;
@@ -374,6 +375,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 32].Value = item.QCStatusStatusDesc;
                         Sheet.Cells[i, 33].Value = item.HRCoordinatorEmailId;
                         Sheet.Cells[i, 34].Value = item.JobCountry;
+                        Sheet.Cells[i, 34].Value = item.BillingOwner;
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);

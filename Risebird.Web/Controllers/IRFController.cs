@@ -1326,7 +1326,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.PageEndCount = 0;
                         }
                         _modelDetail = meetings;
-                        ViewBag.IRFId =id;
+                        //ViewBag.IRFId =id;
                         return View(meetings.ToPagedList(Page ?? 1, 10));
                         
                     }

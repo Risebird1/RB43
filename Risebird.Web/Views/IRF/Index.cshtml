@@ -330,13 +330,13 @@
                                                             <div class="row three"> <span>End Date:</span>@item.EndDate</div> <br />
 
                                                             <div class="row four">
-                                                                <span>Total Interviews:</span> @(item.TotalMeetings != null ? item.TotalMeetings : 0)
+                                                                <span>Total Candidates:</span> @(item.TotalMeetings != null ? item.TotalMeetings : 0)
                                                             </div> <br />
 
                                                             @if (Model.Profile != "Recruiter")
                                                             {
                                                                 <div class="row ">
-                                                                    <span>Scheduled Interviews:</span> @(item.ScheduledMeetings != null ? item.ScheduledMeetings : 0)
+                                                                    <span>Completed Interviews:</span> @(item.ScheduledMeetings != null ? item.ScheduledMeetings : 0)
                                                                 </div> <br />
                                                             }
                                                         }
@@ -344,7 +344,7 @@
                                                         @if (Model.Profile != "CuratedUser")
                                                         {
                                                             <div class="row five">
-                                                                <span>Selected Interviews: @(item.SelectedMeetings != null ? item.SelectedMeetings : 0)</span>
+                                                                <span>Selected Candidates: @(item.SelectedMeetings != null ? item.SelectedMeetings : 0)</span>
                                                             </div> <br />
 
                                                             if (@item.CompanyDetails != null && @item.CompanyDetails != "None")

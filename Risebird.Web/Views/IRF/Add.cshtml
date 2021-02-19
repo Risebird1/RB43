@@ -96,6 +96,13 @@
 
                                     </div>
                                 </div>
+                                <div class="col-md-3 col-sm-3 pl-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.BillingOwner, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(model => model.BillingOwner, (SelectList)ViewBag.ClientUser, new { @class = "select-css form-control" })
+
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
 
@@ -760,7 +767,7 @@
                                                     <td>
 
                                                         @Html.TextBox("EmergencyInterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
-                                                       
+
                                                     </td>
                                                     <td class="action text-center">
 
@@ -1119,28 +1126,33 @@
             url: "/IRF/GetClientUser",
             data: { 'clientId': clientId },
             success: function (data) {
-
-
-
                 var drpdwnId = $("#ClientCollection_0__ClientUserId");
                 //drpdwnId.options.length = 0;
                 $("#ClientCollection_0__ClientUserId option").remove();
-
                 if (data.length > 0) {
                     $(data).each(function () {
                         var option = $("<option />");
-
                         //Set Text part.
                         option.html(this.text);
-
                         //Set Value part.
                         option.val(this.value);
-
                         //Add the Option element to DropDownList.
                         drpdwnId.append(option);
                     });
                 }
-
+                var drpbilling = $("#BillingOwner");
+                $("#BillingOwner option").remove();
+                if (data.length > 0) {
+                    $(data).each(function () {
+                        var option = $("<option />");
+                        //Set Text part.
+                        option.html(this.text);
+                        //Set Value part.
+                        option.val(this.value);
+                        //Add the Option element to DropDownList.
+                        drpbilling.append(option);
+                    });
+                }
 
             }
         });

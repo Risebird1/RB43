@@ -217,6 +217,7 @@ namespace Risebird.Entities.ViewModel
         public int? Heuristicsscore { get; set; }
         public string HeuristicDesc { get; set; }
         public string JobCountry { get; set; }
+        public string BillingOwner { get; set; }
     }
     public class VedioComments
     {

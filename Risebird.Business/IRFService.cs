@@ -462,6 +462,7 @@ namespace Risebird.Business
                 model.Heuristicsscore = IRF.Heuristicsscore;
                 model.Type = IRF.BussinessType;
                 model.PrimarySkillInvite = IRF.PrimarySkillInvite;
+                model.BillingOwner = IRF.BillingOwner;
                 var skillCount = transTechSkills.Count();
                 return model;
 
@@ -728,7 +729,7 @@ namespace Risebird.Business
             try
             {
                 //check if the candidate email exists for the IRFId
-                var duplicate =(await _irfRepository.GetIRFCandidates(obj.IRFId)).Where(x => x.EmailId.ToLower() == obj.EmailId?.Trim().ToLower());
+                var duplicate = (await _irfRepository.GetIRFCandidates(obj.IRFId)).Where(x => x.EmailId.ToLower() == obj.EmailId?.Trim().ToLower());
                 if (duplicate != null && duplicate.Any())
                 {
                     return "Sorry! Candidate already exists for the IRF.";
@@ -747,7 +748,7 @@ namespace Risebird.Business
                     _notificationHelper.SendCandidateOnboardedMail(hrs.ToList(), obj.Name, obj.IRFName, "HR");
 
                     //get candidateId
-                    var candidateId =await  _irfRepository.GetCandidateIdByEmail(obj.EmailId);
+                    var candidateId = await _irfRepository.GetCandidateIdByEmail(obj.EmailId);
 
                     //add candidate status 
                     await AddCandidateStatus(emailId, candidateId, obj.IRFId, "Candidate added", (int)CandidateStatusOptions.Added);
@@ -806,9 +807,9 @@ namespace Risebird.Business
             try
             {
                 var result = _irfRepository.UpdateCandidate(obj);
-                if(result)
+                if (result)
                 {
-                   await  AddCandidateStatus(emailId, obj.CandidateMasterId, obj.IRFId, "Candidate updated", (int)CandidateStatusOptions.Updated);
+                    await AddCandidateStatus(emailId, obj.CandidateMasterId, obj.IRFId, "Candidate updated", (int)CandidateStatusOptions.Updated);
 
                 }
                 return _irfRepository.UpdateCandidate(obj);
@@ -829,7 +830,7 @@ namespace Risebird.Business
                 var irf = _irfRepository.GetIRFbyId(irfId);
                 var inviteCount = irf.TotalInvites;
                 var calendlyLink = irf.CalendlyLink;
-                var candidate =(await _irfRepository.GetIRFCandidates(irfId)).FirstOrDefault(x => x.EmailId == email);
+                var candidate = (await _irfRepository.GetIRFCandidates(irfId)).FirstOrDefault(x => x.EmailId == email);
                 //var candidateInviteCount = candidate.TotalInvites;
                 if (email != null && calendlyLink != null)
                 {
@@ -839,7 +840,7 @@ namespace Risebird.Business
                     string primarySkill = string.Empty;
                     primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
 
-                    if(irf.BussinessType == "B2B")
+                    if (irf.BussinessType == "B2B")
                     {
                         _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink);
 
@@ -857,7 +858,7 @@ namespace Risebird.Business
                     _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
 
                     //add candidate status
-                     await AddCandidateStatus(loggedUserEmailId, candidate.CandidateMasterId, irfId, "Invitation sent", (int)CandidateStatusOptions.InvitationSent);
+                    await AddCandidateStatus(loggedUserEmailId, candidate.CandidateMasterId, irfId, "Invitation sent", (int)CandidateStatusOptions.InvitationSent);
 
 
                     return true;
@@ -1311,7 +1312,7 @@ namespace Risebird.Business
         {
             try
             {
-                 return  _irfRepository.GetSkillDetails();
+                return _irfRepository.GetSkillDetails();
             }
 
             catch (Exception e)
@@ -1346,7 +1347,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string AssessmentLike(int id,string emailid)
+        public string AssessmentLike(int id, string emailid)
         {
             try
             {
@@ -1373,7 +1374,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        private async Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, string audioLink=null)
+        private async Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, string audioLink = null)
         {
             try
             {

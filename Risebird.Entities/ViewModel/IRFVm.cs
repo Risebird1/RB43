@@ -123,6 +123,9 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string PrimarySkillInvite { get; set; }
         public bool IsClone { get; set; }
+        [DisplayName("Billing Owner")]
+        [Required]
+        public int BillingOwner { get; set; }
 
     }
     public class InterviewerIds
@@ -204,5 +207,6 @@ namespace Risebird.Entities.ViewModel
         public string PrimarySkillInvite { get; set; }
         public string AssignTo { get; set; }
         public string AssignStatus { get; set; }
+        public int BillingOwner { get; set; }
     }
 }
