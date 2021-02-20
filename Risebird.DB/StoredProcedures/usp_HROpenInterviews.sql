@@ -13,7 +13,7 @@ GO
 CREATE PROCEDURE [dbo].[usp_HROpenInterviews] 
 AS
 BEGIN
-select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,
+select im.id, im.IRFId,irf.Id as irfIntId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,
 im.confirmationStatus, im.interviewer, im.candidateName, im.QCInterviewer,
 ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,
 irf.JDLink from InterviewMeetings im  
