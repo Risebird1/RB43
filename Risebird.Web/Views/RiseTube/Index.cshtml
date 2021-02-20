@@ -356,11 +356,11 @@
 
                                                         <span>Location:</span>
                                                         <span>
-                                                            @if (@item.preferredLocation.Length > 10)
+                                                            @if (@item.ClientName.Length > 10)
                                                             {
-                                                                <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.preferredLocation</span></a>}
+                                                                <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.ClientName</span></a>}
                                                             else
-                                                            {<span>@item.preferredLocation</span>}
+                                                            {<span>@item.ClientName</span>}
                                                         </span>
 
                                                     </div>
