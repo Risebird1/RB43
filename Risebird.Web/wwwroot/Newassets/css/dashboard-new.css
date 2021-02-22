@@ -3355,10 +3355,15 @@ input[type='radio'] {
 }
 
 .card-title-space {
-    margin-top: 20px;
+/*    margin-top: 20px;*/
     margin-bottom: 0px;
 }
-
+.pubshare {
+    line-height: 22px;
+    font-size: 13px;
+    font-weight: 600;
+    border:0px;
+}
 
 .content.client {
     margin-top: 0px;
@@ -3366,9 +3371,9 @@ input[type='radio'] {
     clear: both;
 }
 
-.pt30 {
+/*.pt30 {
     padding-top: 30px;
-}
+}*/
 
 .mt50 {
     margin-top: 55px;
