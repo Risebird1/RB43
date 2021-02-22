@@ -33,9 +33,9 @@ textarea::-webkit-scrollbar-thumb {
     height: auto !important;
 }
 
-.pt30 {
+/*.pt30 {
     padding-top: 30px;
-}
+}*/
 
 .transparent-chart {
     position: absolute;
