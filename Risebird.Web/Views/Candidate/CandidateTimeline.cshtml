@@ -75,6 +75,10 @@
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
                         </button>
+
+                        <i type="submit" class="fa fa-file-excel-o excel-file card-title-space" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateStatusExporttoExcel", "Candidate")'"></i>
+
+
                     </div>
                     <!--<div id="meeting_filter" class="dataTables_filter mt-20">
 
@@ -784,6 +788,25 @@
 
     });
 
+
+
+    //function ExportToExcel(obj) {
+
+    //    var data = JSON.parse(obj.replace(/&quot;/g, '"'));
+
+    //    $.ajax({
+    //        url: '/Candidate/CandidateStatusExporttoExcel',
+    //        data: { 'modelData': JSON.stringify(data) },
+    //        method:'POST',
+    //        success: function (response) {
+    //            debugger;
+    //            return response;
+
+
+
+    //        }
+    //    });
+    //}
 
 </script>
 
