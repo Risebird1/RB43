@@ -462,7 +462,7 @@ namespace Risebird.Business
                 model.Heuristicsscore = IRF.Heuristicsscore;
                 model.Type = IRF.BussinessType;
                 model.PrimarySkillInvite = IRF.PrimarySkillInvite;
-                model.Tag = IRF.Tag;
+                
                 model.BillingOwner = IRF.BillingOwner;
                 var skillCount = transTechSkills.Count();
                 return model;

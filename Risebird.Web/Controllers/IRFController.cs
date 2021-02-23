@@ -39,7 +39,8 @@ namespace Risebird.Web.Controllers
         private IConfiguration _configuration;
         private IInterviewerSkillsService _iInterviewerSkillsService;
         private readonly ICandidateService _candidateService;
-        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService)
+        private IInterviewerService _interviewerService;
+        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -52,6 +53,7 @@ namespace Risebird.Web.Controllers
             _configuration = configuration;
             _iInterviewerSkillsService = iInterviewerSkillsService;
             _candidateService = candidateService;
+            _interviewerService = interviewerService;
         }
 
 
@@ -678,7 +680,7 @@ namespace Risebird.Web.Controllers
                 var model = new IRFVm();
                 var skills = _irfRepository.GetSkills();
                 //SelectList(interviewers, "UserId", "EmailId");
-                //var interviewers = _irfService.GetInterviewersForIRF(skills.FirstOrDefault().Name);
+                var interviewers = _irfService.GetInterviewersForIRF(skills.FirstOrDefault().Name);
                 //var interviewers = _irfRepository.GetInterviewers();
                 model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
                 model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
@@ -691,16 +693,17 @@ namespace Risebird.Web.Controllers
                 ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
                 ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                 ViewBag.Skill = new SelectList(skills, "id", "Name");
-                //ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
+                ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
                 ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(clients.FirstOrDefault().id), "id", "EmailId");
                 ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-               // ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+                ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
                 ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
                 ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
                 ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
-               // ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
-               // ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
+                ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
+                ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
                 ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
+                model.AssessmentGroupList = new SelectList(_interviewerService.FetchAssessmentGroups(), "id", "AssessmentGroup");
                 var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                  select new { ID = (int)s, Name = s.GetDescription() };
                 ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
@@ -1380,8 +1383,8 @@ namespace Risebird.Web.Controllers
                         ViewBag.IsClientUser = false;
                     }
                     var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
-                    
-                    if(model.InterviewerCollection!=null)
+
+                    if (model.InterviewerCollection != null)
                     {
                         foreach (var item in model.InterviewerCollection)
                         {
@@ -1391,12 +1394,12 @@ namespace Risebird.Web.Controllers
                             }
                         }
                     }
-                    
-                    //string skills = string.Empty;
-                    //skills = string.Join(",", from item in model.SkillCollection select item.SkillName);
-                    //var interviewers = _irfService.GetInterviewersForIRF(skills);
-                    var interviewers = _irfService.GetInterviewersByTag(model.Tag).Result;
-                    model.InterviewerList = interviewers;
+
+                    string skills = string.Empty;
+                    skills = string.Join(",", from item in model.SkillCollection select item.SkillName);
+                    var interviewers = _irfService.GetInterviewersForIRF(skills);
+                    //var interviewers = _irfService.GetInterviewersByTag(model.Tag).Result;
+                    //model.InterviewerList = interviewers.ToList();
                     ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                     ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
                     ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");

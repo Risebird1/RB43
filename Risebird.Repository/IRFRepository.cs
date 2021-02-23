@@ -2269,7 +2269,7 @@ namespace Risebird.Repository
             parameters.Add("@Heuristicsscore", entity.Heuristicsscore);
             parameters.Add("@PrimarySkillInvite", entity.PrimarySkillInvite);
             parameters.Add("@BillingOwner", entity.BillingOwner);
-            parameters.Add("@Tag", entity.Tag);
+            parameters.Add("@Tag", "");
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
 
             return parameters;
