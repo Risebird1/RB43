@@ -694,8 +694,8 @@ table {
     }
 
 .panel-header-sm {
-    height: 85px !important;
-    padding-top: 65px;
+  /*  height: 85px !important;
+    padding-top: 65px;*/
     background: none !important;
 }
 

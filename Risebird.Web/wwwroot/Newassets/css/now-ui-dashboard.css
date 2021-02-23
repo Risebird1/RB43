@@ -7346,16 +7346,14 @@ input.theatre-btn:focus {
         font-size: 13px;
     }
 
-        .panel-header .header .category a {
-            color: #FFFFFF;
-        }
-/*
+    .panel-header .header .category a {
+    color: #FFFFFF;
+    }
+
     .panel-header-sm {
-    height: 135px;
-}
+    height:0px!important;
+   }
 
-
-*/
 
 .panel-header-lg {
     height: 380px;
