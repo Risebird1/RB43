@@ -7,7 +7,8 @@
 }
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
-<input type="hidden" value="@ViewBag.IRFId" id="hidirfid" />
+<input type="hidden" value="@ViewBag.IRFintId" id="hidirfid" />
+<input type="hidden" value="@ViewBag.IRF" id="hidirfname" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -103,7 +104,7 @@
                                                             <th>Confirmation Status</th>
                                                             <th>Interview Link</th>
                                                             <th>Meeting Status</th>
-                                                            <th>Selection Status</th>
+                                                            <th>Interview Status</th>
 
                                                         </tr>
                                                     </thead>
@@ -118,7 +119,7 @@
                                                             <th>Confirmation Status</th>
                                                             <th>Interview Link</th>
                                                             <th>Meeting Status</th>
-                                                            <th>Selection Status</th>
+                                                            <th>Interview Status</th>
 
                                                         </tr>
                                                     </tfoot>
@@ -143,18 +144,18 @@
                                                                         {
 
 
-                                                                    <td class="cadName">
-                                                                        <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 18)... </a>
-                                                                    </td>
-                                                                }
+                                                                            <td class="cadName">
+                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 18)... </a>
+                                                                            </td>
+                                                                        }
 
-                                                                else
-                                                                {
-                                                                    <td class="cadName">
-                                                                        <a onclick=""><span class="dot"></span> @item.candidateName </a>
-                                                                    </td>
-                                                                }
-                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="cadName">
+                                                                                <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                            </td>
+                                                                        }
+                                                                    }
 
                                                                 }
                                                                 @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
@@ -265,7 +266,7 @@
                                         </div>
 
                                         <div class="col-sm-12 col-md-7 dataTables_paginate pull-right " id="divmeetingpages">
-                                            @Html.PagedListPager(Model, Page => Url.Action("InterviewMeetings", new { Page = Page, id=ViewBag.IRFId }))
+                                            @Html.PagedListPager(Model, Page => Url.Action("InterviewMeetings", new { Page = Page, id = ViewBag.IRFintId, irfId = ViewBag.IRF }))
                                         </div>
                                     </div>
 
@@ -531,6 +532,8 @@
 
 
     function bindPages(pagecount, startpage, endpage, totalcount) {
+        var irfid = $("#hidirfid").val();
+        var irfname = $("#hidirfname").val();
         var html = '';
         html += '<div class="pagination-container">';
         html += '<ul class="pagination">';
@@ -538,19 +541,19 @@
             if (i == 1) {
                 html += '   <li class="active"><span>1</span></li>';
             } else if (i <= 10) {
-                html += '<li><a href="/IRF/InterviewMeetings?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+                html += '<li><a href="/IRF/InterviewMeetings/' + irfid + '?irfId=' + irfname + '&Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
             } else if (i == 11) {
                 html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/IRF/InterviewMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/IRF/InterviewMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/IRF/InterviewMeetings/' + irfid + '?irfId=' + irfname + '&Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/IRF/InterviewMeetings/' + irfid + '?irfId=' + irfname + '&Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
             } else {
                 break;
             }
-            if (pagecount <= 10 && i == pagecount && i != 1) {
-                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/IRF/InterviewMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/IRF/InterviewMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-            }
+            //if (pagecount <= 10 && i == pagecount && i != 1) {
+            //    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+            //    html += '<li class="PagedList-skipToNext"><a href="/IRF/InterviewMeetings/' + irfid +'?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+            //    html += '<li class="PagedList-skipToLast"><a href="/IRF/InterviewMeetings/' + irfid +'?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            //}
         }
         html += '</ul>';
         html += '</div>';
@@ -588,13 +591,3 @@
     };
     //// script for loader ends here
 </script>
-
-
-<!-- Keep the Page Content Here.-->
-
-
-<loading></loading>
-
-<!-- PAGE CONTENT WRAPPER -->
-interviewmeeting.txt
-Displaying interviewmeeting.txt.

@@ -38,8 +38,8 @@ namespace Risebird.Web.Controllers
         private static List<MeetingVM> _modelDetle;
         private IConfiguration _configuration;
         private IInterviewerSkillsService _iInterviewerSkillsService;
-
-        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, IInterviewerSkillsService iInterviewerSkillsService)
+        private readonly ICandidateService _candidateService;
+        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -51,6 +51,7 @@ namespace Risebird.Web.Controllers
             _skillService = skillService;
             _configuration = configuration;
             _iInterviewerSkillsService = iInterviewerSkillsService;
+            _candidateService = candidateService;
         }
 
 
@@ -1100,7 +1101,7 @@ namespace Risebird.Web.Controllers
                         if (!String.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper();
-                            selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")|| (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "")|| (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")|| (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+                            selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
 
                         }
                         ViewBag.TotalCount = selectedMeeting.Count;
@@ -1134,7 +1135,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.IRFId = id;
                         return View(selectedMeeting.ToPagedList(Page ?? 1, 10));
 
-            
+
                     }
                     else
                     {
@@ -1153,7 +1154,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-     
+
 
         [Authorize]
         [HttpGet]
@@ -1179,7 +1180,7 @@ namespace Risebird.Web.Controllers
                         if (!String.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper();
-                            modelList = modelList.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")|| (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+                            modelList = modelList.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
 
                         }
                         ViewBag.TotalCount = modelList.Count;
@@ -1212,7 +1213,7 @@ namespace Risebird.Web.Controllers
                         _modelDetle = modelList;
                         ViewBag.IRFID = irfId;
                         return View(modelList.ToPagedList(Page ?? 1, 10));
-                  
+
                     }
                     else
                     {
@@ -1304,7 +1305,9 @@ namespace Risebird.Web.Controllers
                         if (!String.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper();
-                            meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")).ToList();
+                            meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
+                            || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")
+                            || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
 
                         }
                         ViewBag.TotalCount = meetings.Count;
@@ -1335,9 +1338,9 @@ namespace Risebird.Web.Controllers
                             ViewBag.PageEndCount = 0;
                         }
                         _modelDetail = meetings;
-                        ViewBag.IRFId =id;
+                        //ViewBag.IRFId =id;
                         return View(meetings.ToPagedList(Page ?? 1, 10));
-                        
+
                     }
                     else
                     {
@@ -1357,11 +1360,11 @@ namespace Risebird.Web.Controllers
 
         }
 
-    
+
 
         [Authorize]
         [HttpGet]
-        public IActionResult EditIRF(string id, bool isClone=false)
+        public IActionResult EditIRF(string id, bool isClone = false)
         {
             try
             {
@@ -2149,7 +2152,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                   
+
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
@@ -2213,10 +2216,10 @@ namespace Risebird.Web.Controllers
                             ViewBag.PageStartCount = 0;
                             ViewBag.PageEndCount = 0;
                         }
-                       _modelDetails = candidateList;
+                        _modelDetails = candidateList;
                         return View(candidateList.ToPagedList(Page ?? 1, 10));
-                  
-                 
+
+
 
                     }
                     else
@@ -2559,7 +2562,7 @@ namespace Risebird.Web.Controllers
             return null;
         }
 
-        
+
         public IActionResult ShowCalendly(string irfName, string calendlyLink)
         {
             ViewBag.IRFName = irfName;
@@ -2917,7 +2920,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        
+
 
         [HttpGet]
         public IActionResult EnrollVoiceItUser(int candidateId, string candidateEmail, int irfId, string irfName)
@@ -2958,7 +2961,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        
+
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -4157,7 +4160,7 @@ namespace Risebird.Web.Controllers
         public JsonResult CandidatesJson(string searchValue)
         {
             int Page = 1;
-          var  candidateList = _modelDetails;
+            var candidateList = _modelDetails;
             if (!String.IsNullOrEmpty(searchValue))
             {
                 searchValue = searchValue.ToUpper();
@@ -4197,7 +4200,7 @@ namespace Risebird.Web.Controllers
 
             return Json(new { result = candidateList.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = candidateList.Count });
         }
-        
+
 
 
         public JsonResult InterviewMeetingsJson(string searchValue)
@@ -4207,7 +4210,9 @@ namespace Risebird.Web.Controllers
             if (!String.IsNullOrEmpty(searchValue))
             {
                 searchValue = searchValue.ToUpper();
-                meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")).ToList();
+                meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
+                            || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")
+                            || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
 
             }
             int totalcount = meetings.Count;
@@ -4244,9 +4249,6 @@ namespace Risebird.Web.Controllers
             return Json(new { result = meetings.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = meetings.Count });
         }
 
-
-
-
         public JsonResult SelectedInterviewMeetingsJson(string searchValue)
         {
             int Page = 1;
@@ -4254,7 +4256,7 @@ namespace Risebird.Web.Controllers
             if (!String.IsNullOrEmpty(searchValue))
             {
                 searchValue = searchValue.ToUpper();
-                selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")|| (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "")|| (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")|| (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+                selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
 
             }
             int totalcount = selectedMeeting.Count;
@@ -4290,16 +4292,14 @@ namespace Risebird.Web.Controllers
 
             return Json(new { result = selectedMeeting.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = selectedMeeting.Count });
         }
-
-
         public JsonResult MultipleCandidateInvitesJson(string searchValue)
-       {
+        {
             int Page = 1;
             var modelList = _modelDetle;
             if (!String.IsNullOrEmpty(searchValue))
             {
                 searchValue = searchValue.ToUpper();
-                modelList = modelList.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || 
+                modelList = modelList.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") ||
                 (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == string.Empty) || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == string.Empty) || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == null) || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == null)).ToList();
 
             }
@@ -4335,6 +4335,517 @@ namespace Risebird.Web.Controllers
             }
 
             return Json(new { result = modelList.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = modelList.Count });
+        }
+        public async Task<IActionResult> GetCandidateStatus(int id, string irfId, int? Page, string searchValue)
+        {
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+            profileName = profileName.Replace("\"", "");
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            emailid = emailid.Replace("\"", "");
+            if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+            {
+                var model = new List<CandidateTimelineVM>();
+                var candidateData = await _irfService.GetCandidateTimeline(profileName == "Client" ? emailid : null, id);
+                var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId, x.Name)).Distinct().OrderBy(x => x.Name);
+                foreach (var candidate in distinctCandidates)
+                {
+                    var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
+                    if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                    {
+                        data = data.Where(x => x.confirmationStatus == 1);
+                    }
+                    var firstData = data.FirstOrDefault();
+
+                    var candidateTimeline = new CandidateTimelineVM();
+
+                    candidateTimeline.HREmail = firstData.HREmail;
+                    candidateTimeline.CandidateEmailId = firstData.EmailId;
+                    candidateTimeline.CandidateName = firstData.Name;
+                    candidateTimeline.IRFId = firstData.IRFId;
+                    candidateTimeline.InterviewId = firstData.InterviewId;
+                    candidateTimeline.CurrentStatus = firstData.CurrentStatus != null ? firstData.CurrentStatus : string.Empty;
+                    candidateTimeline.CandidateMasterId = firstData.CandidateMasterId;
+                    candidateTimeline.CurrentInterviewStatus = firstData.CurrentInterviewStatus;
+                    candidateTimeline.QCStatus = firstData.QCStatus;
+                    candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
+                    candidateTimeline.confirmationStatus = firstData.confirmationStatus;
+                    candidateTimeline.PrimarySkill = firstData.PrimarySkill;
+                    candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
+
+                    //schedule status
+                    var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
+                    if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
+                    {
+                        scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
+                        var scheduleStatusObjList = new List<TimelineStatus>();
+                        foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status"))
+                        {
+                            var scheduleStatusObj = new TimelineStatus();
+                            scheduleStatusObj.Date = item.ScheduleStatusDate.ToString("dd");
+                            scheduleStatusObj.Day = item.ScheduleStatusDate.Date.ToString("dddd");
+                            scheduleStatusObj.Time = item.ScheduleStatusDate.ToString("hh:mm tt");
+                            scheduleStatusObj.Status = item.ScheduleStatusValue;
+
+                            scheduleStatusObj.StatusDate = item.ScheduleStatusDate.Date.ToString("MMMM yyyy");
+                            scheduleStatusObjList.Add(scheduleStatusObj);
+                        }
+                        candidateTimeline.ScheduleStatus = scheduleStatusObjList;
+                        var lastStatus = scheduleStatusData.LastOrDefault();
+                        if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
+                        {
+                            if ((lastStatus.ScheduleStatusComments == InterviewStatus.Selected.GetDescription() || lastStatus.ScheduleStatusComments == InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus != 1)
+                            {
+                                candidateTimeline.CurrentStatus = string.Empty;
+                            }
+                            else
+                            {
+                                candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
+                            }
+
+                        }
+                        else
+                        {
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusValue;
+
+                        }
+
+                    }
+
+                    //meeting status 
+                    var meetingStatusData = data.Select(x => (x.MeetingStatusDate, x.MeetingStatus)).Distinct();
+
+                    if (meetingStatusData.FirstOrDefault().MeetingStatusDate != DateTime.MinValue)
+                    {
+                        meetingStatusData = meetingStatusData.OrderBy(x => x.MeetingStatusDate);
+                        var meetingStatusObjList = new List<TimelineStatus>();
+
+                        foreach (var item in meetingStatusData)
+                        {
+                            if (item.MeetingStatus != MeetingStatus.Scheduled.GetDescription())
+                            {
+                                var meetingStatusObj = new TimelineStatus();
+                                meetingStatusObj.Date = item.MeetingStatusDate.ToString("dd");
+                                meetingStatusObj.Day = item.MeetingStatusDate.Date.ToString("dddd");
+                                meetingStatusObj.Status = item.MeetingStatus;
+                                meetingStatusObj.StatusDate = item.MeetingStatusDate.Date.ToString("MMMM yyyy");
+                                meetingStatusObj.Time = item.MeetingStatusDate.ToString("hh:mm tt");
+
+                                meetingStatusObjList.Add(meetingStatusObj);
+                            }
+
+                        }
+                        candidateTimeline.MeetingStatus = meetingStatusObjList;
+                    }
+                    //interview status
+                    var interviewStatusData = data.Select(x => (x.InterviewStatusDate, x.InterviewStatus)).Distinct();
+                    if (interviewStatusData.FirstOrDefault().InterviewStatusDate != DateTime.MinValue)
+                    {
+                        interviewStatusData = interviewStatusData.OrderBy(x => x.InterviewStatusDate);
+                        var interviewStatusObjList = new List<TimelineStatus>();
+
+                        foreach (var item in interviewStatusData)
+                        {
+                            if ((item.InterviewStatus == InterviewStatus.Selected.GetDescription() || item.InterviewStatus == InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus != 1)
+                            {
+                                continue;
+                            }
+                            var interviewStatusObj = new TimelineStatus();
+
+                            interviewStatusObj.Date = item.InterviewStatusDate.ToString("dd");
+                            interviewStatusObj.Day = item.InterviewStatusDate.Date.ToString("dddd");
+                            interviewStatusObj.Status = item.InterviewStatus;
+                            interviewStatusObj.StatusDate = item.InterviewStatusDate.Date.ToString("MMMM yyyy");
+                            interviewStatusObj.Time = item.InterviewStatusDate.ToString("hh:mm tt");
+
+                            interviewStatusObjList.Add(interviewStatusObj);
+                        }
+                        candidateTimeline.InterviewStatus = interviewStatusObjList;
+                    }
+                    //add candidate to final model
+                    if (candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus != null || (candidateTimeline.ScheduleStatus != null && candidateTimeline.ScheduleStatus.Count() != 0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
+                    {
+                        model.Add(candidateTimeline);
+
+                    }
+                }
+                if (!String.IsNullOrEmpty(searchValue))
+                {
+                    searchValue = searchValue.ToUpper();
+                    model = model.Where(x => (!String.IsNullOrEmpty(x.CandidateName) ? x.CandidateName.ToUpper().Contains(searchValue) : x.CandidateName == "") || (!String.IsNullOrEmpty(x.CandidateEmailId) ? x.CandidateEmailId.ToUpper().Contains(searchValue) : x.CandidateEmailId == "")
+                    || (!String.IsNullOrEmpty(x.HREmail) ? x.HREmail.ToUpper().Contains(searchValue) : x.HREmail == "") || (!String.IsNullOrEmpty(x.CurrentStatus) ? x.CurrentStatus.ToUpper().Contains(searchValue) : x.CurrentStatus == "")).ToList();
+                }
+                ViewBag.Searchvalue = searchValue;
+                ViewBag.TotalCount = model.Count;
+                ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                int a = model.Count / 10;
+                if (model.Count % 10 == 0)
+                {
+                    ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                }
+                else
+                {
+                    a = a + 1;
+                    if (a == Page)
+                    {
+                        ViewBag.PageEndCount = model.Count;
+                    }
+                    else
+                    {
+                        ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                    }
+
+                }
+                if (model.Count == 0)
+                {
+                    ViewBag.PageStartCount = 0;
+                    ViewBag.PageEndCount = 0;
+                }
+                HttpContext.Session.SetString("SkillChannelCandidateTimeLine", JsonConvert.SerializeObject(model));
+                return View(model.ToPagedList(Page ?? 1, 10));
+
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        public JsonResult GetCandidateTimelineJson(string searchValue)
+        {
+            int Page = 1;
+            if (HttpContext.Session.GetString("SkillChannelCandidateTimeLine") != null)
+            {
+                var model = JsonConvert.DeserializeObject<List<CandidateTimelineVM>>(HttpContext.Session.GetString("SkillChannelCandidateTimeLine"));
+                if (!String.IsNullOrEmpty(searchValue))
+                {
+                    searchValue = searchValue.ToUpper();
+                    model = model.Where(x => (!String.IsNullOrEmpty(x.CandidateName) ? x.CandidateName.ToUpper().Contains(searchValue) : x.CandidateName == "") || (!String.IsNullOrEmpty(x.CandidateEmailId) ? x.CandidateEmailId.ToUpper().Contains(searchValue) : x.CandidateEmailId == "")
+                      || (!String.IsNullOrEmpty(x.HREmail) ? x.HREmail.ToUpper().Contains(searchValue) : x.HREmail == "") || ((x.CurrentStatus != null) ? x.CurrentStatus.ToUpper().Contains(searchValue) : x.CurrentStatus == "")).ToList();
+
+                }
+                int totalcount = model.Count;
+                int Pagestart = 0;
+                int Pageend = 0;
+                ViewBag.TotalCount = model.Count;
+
+                Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                int a = model.Count / 10;
+                if (model.Count % 10 == 0)
+                {
+                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                }
+                else
+                {
+                    a = a + 1;
+                    if (a == Page)
+                    {
+                        Pageend = model.Count;
+                    }
+                    else
+                    {
+                        Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                    }
+
+                }
+                if (model.Count == 0)
+                {
+                    Pagestart = 0;
+                    Pageend = 0;
+                }
+                return Json(new { result = model.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count });
+            }
+            else
+            {
+                return Json("failed");
+            }
+        }
+        public async Task<FileContentResult> GetCandidateStatusExportToExcel(int id, string searchValue)
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("CandidateStatus");
+            string fileName = "CandidateStatus_" + DateTime.Now.ToString("dd/MM/yyyy") + ".xlsx";
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+            profileName = profileName.Replace("\"", "");
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            emailid = emailid.Replace("\"", "");
+            if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+            {
+                var model = new List<CandidateTimelineVM>();
+                var candidateData = await _irfService.GetCandidateTimeline(profileName == "Client" ? emailid : null, id);
+                var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId, x.Name)).Distinct().OrderBy(x => x.Name);
+                foreach (var candidate in distinctCandidates)
+                {
+                    var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
+                    if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                    {
+                        data = data.Where(x => x.confirmationStatus == 1);
+                    }
+                    var firstData = data.FirstOrDefault();
+                    var candidateTimeline = new CandidateTimelineVM();
+                    candidateTimeline.HREmail = firstData.HREmail;
+                    candidateTimeline.CandidateEmailId = firstData.EmailId;
+                    candidateTimeline.CandidateName = firstData.Name;
+                    candidateTimeline.IRFId = firstData.IRFId;
+                    candidateTimeline.InterviewId = firstData.InterviewId;
+                    candidateTimeline.CurrentStatus = firstData.CurrentStatus != null ? firstData.CurrentStatus : string.Empty;
+                    candidateTimeline.CandidateMasterId = firstData.CandidateMasterId;
+                    candidateTimeline.CurrentInterviewStatus = firstData.CurrentInterviewStatus;
+                    candidateTimeline.QCStatus = firstData.QCStatus;
+                    candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
+                    candidateTimeline.confirmationStatus = firstData.confirmationStatus;
+                    candidateTimeline.PrimarySkill = firstData.PrimarySkill;
+                    candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
+                    //schedule status
+                    var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
+                    if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
+                    {
+                        scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
+                        var scheduleStatusObjList = new List<TimelineStatus>();
+                        foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status"))
+                        {
+                            var scheduleStatusObj = new TimelineStatus();
+                            scheduleStatusObj.Date = item.ScheduleStatusDate.ToString("dd");
+                            scheduleStatusObj.Day = item.ScheduleStatusDate.Date.ToString("dddd");
+                            scheduleStatusObj.Time = item.ScheduleStatusDate.ToString("hh:mm tt");
+                            scheduleStatusObj.Status = item.ScheduleStatusValue;
+                            scheduleStatusObj.ActualDate = item.ScheduleStatusDate;
+                            scheduleStatusObj.StatusDate = item.ScheduleStatusDate.Date.ToString("MMMM yyyy");
+                            scheduleStatusObjList.Add(scheduleStatusObj);
+                        }
+                        candidateTimeline.ScheduleStatus = scheduleStatusObjList;
+                        var lastStatus = scheduleStatusData.LastOrDefault();
+                        if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
+                        {
+                            if ((lastStatus.ScheduleStatusComments == InterviewStatus.Selected.GetDescription() || lastStatus.ScheduleStatusComments == InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus != 1)
+                            {
+                                candidateTimeline.CurrentStatus = string.Empty;
+                            }
+                            else
+                            {
+                                candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
+                            }
+                        }
+                        else
+                        {
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusValue;
+
+                        }
+                    }
+                    //meeting status 
+                    var meetingStatusData = data.Select(x => (x.MeetingStatusDate, x.MeetingStatus)).Distinct();
+
+                    if (meetingStatusData.FirstOrDefault().MeetingStatusDate != DateTime.MinValue)
+                    {
+                        meetingStatusData = meetingStatusData.OrderBy(x => x.MeetingStatusDate);
+                        var meetingStatusObjList = new List<TimelineStatus>();
+
+                        foreach (var item in meetingStatusData)
+                        {
+                            if (item.MeetingStatus != MeetingStatus.Scheduled.GetDescription())
+                            {
+                                var meetingStatusObj = new TimelineStatus();
+                                meetingStatusObj.Date = item.MeetingStatusDate.ToString("dd");
+                                meetingStatusObj.Day = item.MeetingStatusDate.Date.ToString("dddd");
+                                meetingStatusObj.Status = item.MeetingStatus;
+                                meetingStatusObj.StatusDate = item.MeetingStatusDate.Date.ToString("MMMM yyyy");
+                                meetingStatusObj.Time = item.MeetingStatusDate.ToString("hh:mm tt");
+                                meetingStatusObj.ActualDate = item.MeetingStatusDate;
+                                meetingStatusObjList.Add(meetingStatusObj);
+                            }
+
+                        }
+                        candidateTimeline.MeetingStatus = meetingStatusObjList;
+                    }
+                    //interview status
+                    var interviewStatusData = data.Select(x => (x.InterviewStatusDate, x.InterviewStatus)).Distinct();
+                    if (interviewStatusData.FirstOrDefault().InterviewStatusDate != DateTime.MinValue)
+                    {
+                        interviewStatusData = interviewStatusData.OrderBy(x => x.InterviewStatusDate);
+                        var interviewStatusObjList = new List<TimelineStatus>();
+
+                        foreach (var item in interviewStatusData)
+                        {
+                            if ((item.InterviewStatus == InterviewStatus.Selected.GetDescription() || item.InterviewStatus == InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus != 1)
+                            {
+                                continue;
+                            }
+                            var interviewStatusObj = new TimelineStatus();
+
+                            interviewStatusObj.Date = item.InterviewStatusDate.ToString("dd");
+                            interviewStatusObj.Day = item.InterviewStatusDate.Date.ToString("dddd");
+                            interviewStatusObj.Status = item.InterviewStatus;
+                            interviewStatusObj.StatusDate = item.InterviewStatusDate.Date.ToString("MMMM yyyy");
+                            interviewStatusObj.Time = item.InterviewStatusDate.ToString("hh:mm tt");
+                            interviewStatusObj.ActualDate = item.InterviewStatusDate;
+                            interviewStatusObjList.Add(interviewStatusObj);
+                        }
+                        candidateTimeline.InterviewStatus = interviewStatusObjList;
+                    }
+                    //add candidate to final model
+                    if (candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus != null || (candidateTimeline.ScheduleStatus != null && candidateTimeline.ScheduleStatus.Count() != 0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
+                    {
+                        model.Add(candidateTimeline);
+
+                    }
+                }
+                if (!String.IsNullOrEmpty(searchValue))
+                {
+                    searchValue = searchValue.ToUpper();
+                    model = model.Where(x => (!String.IsNullOrEmpty(x.CandidateName) ? x.CandidateName.ToUpper().Contains(searchValue) : x.CandidateName == "") || (!String.IsNullOrEmpty(x.CandidateEmailId) ? x.CandidateEmailId.ToUpper().Contains(searchValue) : x.CandidateEmailId == "")
+                    || (!String.IsNullOrEmpty(x.HREmail) ? x.HREmail.ToUpper().Contains(searchValue) : x.HREmail == "") || (!String.IsNullOrEmpty(x.CurrentStatus) ? x.CurrentStatus.ToUpper().Contains(searchValue) : x.CurrentStatus == "")).ToList();
+                }
+
+                Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:Z1"].Style.WrapText = true;
+                int startColumn = 1; int endColumn = 10;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 40;
+                }
+                Sheet.Cells[1, 1].Value = "Candidate Added Date";
+                Sheet.Cells[1, 2].Value = "Candidate Name";
+                Sheet.Cells[1, 3].Value = "Candidate Email";
+                Sheet.Cells[1, 4].Value = "Primary Skill";
+                Sheet.Cells[1, 5].Value = "Client HR Email";
+                Sheet.Cells[1, 6].Value = "Schedule Status";
+                Sheet.Cells[1, 7].Value = "Meeting Status";
+                Sheet.Cells[1, 8].Value = "Interview Status";
+                Sheet.Cells[1, 9].Value = "Current Status";
+                Sheet.Cells[1, 10].Value = "Last Status Date";
+                int i = 2;
+                if (model.Count() > 0)
+                {
+                    foreach (var item in model)
+                    {
+                        Sheet.Cells[i, 1].Value = item.ScheduleStatus.Where(x => x.Status.ToUpper() == "ADDED").FirstOrDefault().ActualDate.ToString("MM/dd/yyyy HH:mm");
+                        Sheet.Cells[i, 2].Value = item.CandidateName;
+                        Sheet.Cells[i, 3].Value = item.CandidateEmailId;
+                        Sheet.Cells[i, 4].Value = item.PrimarySkill;
+                        Sheet.Cells[i, 5].Value = item.HREmail;
+                        if (item.ScheduleStatus.Where(x => x.Status.ToUpper() == "SCHEDULED").Count() > 0)
+                        {
+                            Sheet.Cells[i, 6].Value = "Scheduled";
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 6].Value = "Yet To Scheduled";
+                        }
+                        if (item.MeetingStatus != null)
+                        {
+                            Sheet.Cells[i, 7].Value = item.MeetingStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().Status;
+                        }
+                        if (item.InterviewStatus != null)
+                        {
+                            Sheet.Cells[i, 8].Value = item.InterviewStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().Status;
+                        }
+                        Sheet.Cells[i, 9].Value = item.CurrentStatus;
+
+                        if (item.ScheduleStatus != null)
+                        {
+                            if (item.MeetingStatus != null)
+                            {
+                                if (item.InterviewStatus != null)
+                                {
+                                    if (item.MeetingStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate > item.InterviewStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate)
+                                    {
+                                        if (item.MeetingStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate > item.ScheduleStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate)
+                                        {
+                                            Sheet.Cells[i, 10].Value = item.MeetingStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate.ToString("MM/dd/yyyy HH:mm");
+                                        }
+                                        else
+                                        {
+                                            Sheet.Cells[i, 10].Value = item.ScheduleStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate.ToString("MM/dd/yyyy HH:mm");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (item.InterviewStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate > item.ScheduleStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate)
+                                        {
+                                            Sheet.Cells[i, 10].Value = item.InterviewStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate.ToString("MM/dd/yyyy HH:mm");
+                                        }
+                                        else
+                                        {
+                                            Sheet.Cells[i, 10].Value = item.ScheduleStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate.ToString("MM/dd/yyyy HH:mm");
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (item.MeetingStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate > item.ScheduleStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate)
+                                    {
+                                        Sheet.Cells[i, 10].Value = item.MeetingStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate.ToString("MM/dd/yyyy HH:mm");
+                                    }
+                                    else
+                                    {
+                                        Sheet.Cells[i, 10].Value = item.ScheduleStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate.ToString("MM/dd/yyyy HH:mm");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (item.InterviewStatus != null)
+                                {
+                                    if (item.InterviewStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate > item.ScheduleStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate)
+                                    {
+                                        Sheet.Cells[i, 10].Value = item.InterviewStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate.ToString("MM/dd/yyyy HH:mm");
+                                    }
+                                    else
+                                    {
+                                        Sheet.Cells[i, 10].Value = item.ScheduleStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate.ToString("MM/dd/yyyy HH:mm");
+                                    }
+                                }
+                                else
+                                {
+                                    Sheet.Cells[i, 10].Value = item.ScheduleStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate.ToString("MM/dd/yyyy HH:mm");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (item.MeetingStatus != null)
+                            {
+                                if (item.InterviewStatus != null)
+                                {
+                                    if (item.InterviewStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate > item.MeetingStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate)
+                                    {
+                                        Sheet.Cells[i, 10].Value = item.InterviewStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate.ToString("MM/dd/yyyy HH:mm");
+                                    }
+                                    else
+                                    {
+                                        Sheet.Cells[i, 10].Value = item.MeetingStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate.ToString("MM/dd/yyyy HH:mm");
+                                    }
+                                }
+                                else
+                                {
+                                    Sheet.Cells[i, 10].Value = item.MeetingStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate.ToString("MM/dd/yyyy HH:mm");
+                                }
+                            }
+                            else
+                            {
+                                if (item.InterviewStatus != null)
+                                {
+                                    Sheet.Cells[i, 10].Value = item.InterviewStatus.OrderByDescending(x => x.ActualDate).FirstOrDefault().ActualDate.ToString("MM/dd/yyyy HH:mm");
+                                }
+                            }
+                        }
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            else
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "No data available in table !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
         }
     }
 }

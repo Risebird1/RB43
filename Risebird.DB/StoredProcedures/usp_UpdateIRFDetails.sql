@@ -11,32 +11,33 @@ SET QUOTED_IDENTIFIER ON
 GO
   
  
-Create PROCEDURE [dbo].[usp_UpdateIRFDetails]    
-    
-@IRFId nvarchar(200),    
-@id int,    
-@ClientName varchar(200),    
-@JDTiltle nvarchar(200),    
-@CompanyType varchar(200),    
-@ClientId int,    
-@JobCountry varchar(50),    
-@StartDate datetime,    
-@EndDate datetime,    
-@JDLink varchar(1000),    
-@NoOfPosition int,    
-@NoOfIntterview int,    
-@RisebirdHr int,    
-@JobLevel int,    
-@PerMintuteRate real,    
-@CalendlyLink varchar(500),    
-@TotalBudget int,    
-@IsBiometricEnabled bit,    
-@PriorityLevel int,    
-@CompanyDetails varchar(1000),    
-@Type varchar(5), 
-@Heuristicsscore int,
+Create PROCEDURE [dbo].[usp_UpdateIRFDetails]      
+      
+@IRFId nvarchar(200),      
+@id int,      
+@ClientName varchar(200),      
+@JDTiltle nvarchar(200),      
+@CompanyType varchar(200),      
+@ClientId int,      
+@JobCountry varchar(50),      
+@StartDate datetime,      
+@EndDate datetime,      
+@JDLink varchar(1000),      
+@NoOfPosition int,      
+@NoOfIntterview int,      
+@RisebirdHr int,      
+@JobLevel int,      
+@PerMintuteRate real,      
+@CalendlyLink varchar(500),      
+@TotalBudget int,      
+@IsBiometricEnabled bit,      
+@PriorityLevel int,      
+@CompanyDetails varchar(1000),      
+@Type varchar(5),   
+@Heuristicsscore int,  
 @PrimarySkillInvite varchar(100),
 @Tag varchar(200),
+@BillingOwner int,
 @idIrf int output    
     
 AS    
@@ -65,6 +66,7 @@ set
 			,[Heuristicsscore]=@Heuristicsscore
 			,[PrimarySkillInvite]=@PrimarySkillInvite
 			,[Tag]=@Tag
+			,[BillingOwner]=@BillingOwner
 Where id =@id    
     
 delete from TransClientUser where IRFId=@id    

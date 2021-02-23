@@ -127,6 +127,9 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string Tag { get; set; }
         public IEnumerable<InterviewerProfileVM> InterviewerList { get; set; }
+        [DisplayName("Billing Owner")]
+        [Required]
+        public int BillingOwner { get; set; }
 
     }
     public class InterviewerIds
@@ -210,5 +213,6 @@ namespace Risebird.Entities.ViewModel
         public string AssignStatus { get; set; }
         public string Tag { get; set; }
 
+        public int BillingOwner { get; set; }
     }
 }
