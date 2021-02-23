@@ -71,7 +71,7 @@ namespace Risebird.Business.Interface
         IEnumerable<InterviewerVM> GetSkillDetails();
         string Addassignmentgroup(Skilldetails _skilldetails);
         IEnumerable<AssignmentVM> FetchAssessmentdetails(int id);
-        string AssessmentLike(int id,string emailid);
+        string AssessmentLike(int id, string emailid);
         Task<IEnumerable<string>> GetPrimarySkillFromIRF();
         Task<bool> AddCandidateStatus(CandidateStatus model);
         Task<IEnumerable<CandidateStatus>> GetCandidatesStatusList(int irfId, int candidateId);
@@ -81,5 +81,6 @@ namespace Risebird.Business.Interface
         IEnumerable<Level> GetLevels();
         IEnumerable<LevelTech> GetLevelTech();
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewersByTag(string tag);
+        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null, int id = 0);
     }
 }

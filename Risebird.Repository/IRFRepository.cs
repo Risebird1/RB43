@@ -2268,6 +2268,7 @@ namespace Risebird.Repository
             parameters.Add("@Type", entity.Type);
             parameters.Add("@Heuristicsscore", entity.Heuristicsscore);
             parameters.Add("@PrimarySkillInvite", entity.PrimarySkillInvite);
+            parameters.Add("@BillingOwner", entity.BillingOwner);
             parameters.Add("@Tag", entity.Tag);
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
 
@@ -2697,7 +2698,7 @@ namespace Risebird.Repository
                             parameters.Add("@Notice", obj.Notice);
                             parameters.Add("@AddedByUserId", userId);
                             parameters.Add("@EncodedResumeLink", obj.EncodedResumeLink);
-                            
+
                             SqlMapper.Query<string>(con, "usp_AddCandidate", parameters, commandType: CommandType.StoredProcedure);
 
                         }
@@ -3976,8 +3977,8 @@ namespace Risebird.Repository
                     parameters.Add("@id", id);
                     var results = con.Query<AssignmentVM>(query, parameters);
                     var finalquery = "Select id,Assessmentid,QuestionCovered,Skill as Skills,QuestionLevel as Level,Time,VideoLink from AssessmentQuestions  where Assessmentid=@id";
-                    var finalparameters= new DynamicParameters();
-                    finalparameters.Add("@id",id);
+                    var finalparameters = new DynamicParameters();
+                    finalparameters.Add("@id", id);
                     var Questions = con.Query<AssessmentQuestions>(finalquery, finalparameters);
                     results.FirstOrDefault().Questionslist = Questions.ToList();
                     return results;
@@ -4061,7 +4062,7 @@ namespace Risebird.Repository
                 parameters.Add("@AudioFileLink", model.AudioFileLink);
                 parameters.Add("@Status", model.Status);
                 parameters.Add("@PerformedBy", model.PerformedBy);
-                
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(con, "usp_AddCandidateStatus", parameters,
@@ -4110,7 +4111,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await  SqlMapper.QueryAsync<CandidateStatus>(con, "usp_GetCandidateStatusById", dynamicParameters,
+                    var result = await SqlMapper.QueryAsync<CandidateStatus>(con, "usp_GetCandidateStatusById", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
@@ -4240,6 +4241,30 @@ namespace Risebird.Repository
                 }
             }
             catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null, int id = 0)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@EmailId", emailId);
+                parameters.Add("@irfid", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<CandidateTimelineData>(con, "usp_GetCandidateTimelineByIRFId", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }

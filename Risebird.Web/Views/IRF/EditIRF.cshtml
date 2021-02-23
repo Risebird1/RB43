@@ -83,6 +83,14 @@
 
                                     </div>
                                 </div>
+                                <div class="col-md-3 col-sm-3 pr-r">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BillingOwner, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(model => model.BillingOwner, (SelectList)ViewBag.ClientUser, new { @class = "form-control select-css" })
+
+                                    </div>
+                                </div>
+                            </div>
                                 <div class="col-md-3 col-sm-3 pr-1">
                                     <div class="form-group" style="margin-bottom:0px;">
                                         @Html.LabelFor(model => model.Tag, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -1382,7 +1390,7 @@
                                         @if (ViewBag.IsClientUser == false)
                                         {
                                             <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>
-                                           
+
                                         }
                                     </div>
                                 </div>
@@ -1416,7 +1424,7 @@
 
 <script>
     $(document).ready(function () {
-        
+
         if ('@Model.IsClone'=='True') {
             document.getElementById("IRFId").value = '';
             document.getElementById("CalendlyLink").value = '';
@@ -1464,7 +1472,7 @@
 
 </script>
 <script>
-    
+
 
     function RadioChanged(val) {
         if (val == 'Upload') {
