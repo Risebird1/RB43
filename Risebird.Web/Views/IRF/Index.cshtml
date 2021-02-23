@@ -81,7 +81,7 @@
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Skill Channel" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Skill Channel</font></span>
                                 </button>
-                              
+
                                 @if (Model.Profile == "Admin")
                                 {
                                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
@@ -299,12 +299,12 @@
                                                             </button>
                                                         }
                                                     }
-                                                    @if (Model.Profile=="Admin")
+                                                    @if (Model.Profile == "Admin")
                                                     {
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel" style=" top: -3px;">
                                                             <span onclick="location.href='@Url.Action("EditIRF", "IRF", new { id = item.id, isClone = true })'" title="Clone the Skills Channel" class="mdc-fab__icon material-icons">
-                                                                <i style="font-size:14px;"  class="fa fa-clone"></i>
-                                                              
+                                                                <i style="font-size:14px;" class="fa fa-clone"></i>
+
                                                             </span>
                                                         </button>
                                                     }
@@ -390,7 +390,9 @@
                                                 </div>
 
                                                 <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 ">
-
+                                                    <button class="mdc-fab app-fab--absolute item1" aria-label="Candidate Status">
+                                                        <span onclick="javascript:CandidatesStatus('@item.id', '@item.IRFId');" title="Candidates Status" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb( 255,255,255)" d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
+                                                    </button>
                                                     @if (Model.Profile != "CuratedUser")
                                                     {
                                                         @if (!@item.IsClientUser && Model.Profile != "Recruiter")
@@ -876,7 +878,7 @@
 
                         },
                         error: function () {
-                         
+
                             swal.fire("Error archiving!", "Please try again", "error");
                         }
                     })
@@ -927,7 +929,7 @@
 
                         },
                         error: function () {
-                        
+
                             swal.fire("Error subscribing!", "Please try again.", "error");
                         }
                     })
@@ -981,7 +983,7 @@
 
                         },
                         error: function () {
-                          
+
                             swal.fire("Error unsubscribing!", "Please try again.", "error");
                         }
                     })
@@ -1056,6 +1058,10 @@
         var url = '/IRF/Stats?id=' + id + '&irfId=' + IRFid;
         window.location.href = url;
     };
+    function CandidatesStatus(id, IRFid) {
+        var url = '/IRF/GetCandidateStatus?id=' + id + '&irfName=' + IRFid;
+        window.location.href = url;
+    }
     function UnArchiveIRF(id) {
 
         var url = '/IRF/UnArchiveIRF?id=' + id;
@@ -1081,7 +1087,7 @@
 
                         },
                         error: function () {
-                        
+
                             swal.fire("Error pausing!", "Please try again", "error");
                         }
                     })
@@ -1133,7 +1139,7 @@
 
                         },
                         error: function () {
-                        
+
                             swal.fire("Error playing!", "Please try again", "error");
                         }
                     })
@@ -1246,7 +1252,7 @@
             $("#PrimarySkill").val(primarySkill);
 
             var form = $("#form").serialize();
-           
+
         }
 
 </script>

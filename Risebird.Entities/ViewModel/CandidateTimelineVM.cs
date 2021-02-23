@@ -41,7 +41,7 @@ namespace Risebird.Entities.ViewModel
         public string Date { get; set; }
         public string Day { get; set; }
         public string Time { get; set; }
-
+        public DateTime ActualDate { get; set; }
     }
 
 

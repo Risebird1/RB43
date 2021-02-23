@@ -919,10 +919,10 @@ namespace Risebird.Repository
                     interviewerDt.Columns.Add("IRFId", typeof(int));
                     interviewerDt.Columns.Add("UserId", typeof(int));
                     interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
-                    
+
                     foreach (var item in irfDetails.InterviewerCollection)
                     {
-                        interviewerDt.Rows.Add(irfID, item.UserId,item.PerSuccessRate);
+                        interviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate);
                     }
 
                     SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
@@ -944,7 +944,7 @@ namespace Risebird.Repository
 
                     foreach (var item in irfDetails.EmergencyInterviewerCollection)
                     {
-                        emergencyInterviewerDt.Rows.Add(irfID, item.UserId,item.PerSuccessRate);
+                        emergencyInterviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate);
                     }
 
                     SqlCommand cmdEmergencyInterviewer = new SqlCommand("usp_EmergencyInterviewerBulkInsert", con);
@@ -988,7 +988,7 @@ namespace Risebird.Repository
 
                     foreach (var item in irfDetails.QualityController)
                     {
-                        qualityControllerDt.Rows.Add(irfID, item.UserId,item.PerSuccessRate);
+                        qualityControllerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate);
                     }
 
                     SqlCommand cmdQualityController = new SqlCommand("usp_QCBulkInsert", con);
@@ -1258,7 +1258,7 @@ namespace Risebird.Repository
 
                     foreach (var item in irfDetails.InterviewerCollection)
                     {
-                        interviewerDt.Rows.Add(irfDetails.id, item.UserId,item.PerSuccessRate);
+                        interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate);
                     }
 
                     SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
@@ -1293,7 +1293,7 @@ namespace Risebird.Repository
 
                     foreach (var item in irfDetails.EmergencyInterviewerCollection)
                     {
-                        emergencyInterviewerDt.Rows.Add(irfDetails.id, item.UserId,item.PerSuccessRate);
+                        emergencyInterviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate);
                     }
 
                     SqlCommand cmdEmergencyInterviewer = new SqlCommand("usp_EmergencyInterviewerBulkInsert", con);
@@ -1368,7 +1368,7 @@ namespace Risebird.Repository
 
                     foreach (var item in irfDetails.QualityController)
                     {
-                        qualityControllerDt.Rows.Add(irfDetails.id, item.UserId,item.PerSuccessRate);
+                        qualityControllerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate);
                     }
 
                     SqlCommand cmdQualityController = new SqlCommand("usp_QCBulkInsert", con);
@@ -2671,7 +2671,7 @@ namespace Risebird.Repository
                             parameters.Add("@Notice", obj.Notice);
                             parameters.Add("@AddedByUserId", userId);
                             parameters.Add("@EncodedResumeLink", obj.EncodedResumeLink);
-                            
+
                             SqlMapper.Query<string>(con, "usp_AddCandidate", parameters, commandType: CommandType.StoredProcedure);
 
                         }
@@ -3950,8 +3950,8 @@ namespace Risebird.Repository
                     parameters.Add("@id", id);
                     var results = con.Query<AssignmentVM>(query, parameters);
                     var finalquery = "Select id,Assessmentid,QuestionCovered,Skill as Skills,QuestionLevel as Level,Time,VideoLink from AssessmentQuestions  where Assessmentid=@id";
-                    var finalparameters= new DynamicParameters();
-                    finalparameters.Add("@id",id);
+                    var finalparameters = new DynamicParameters();
+                    finalparameters.Add("@id", id);
                     var Questions = con.Query<AssessmentQuestions>(finalquery, finalparameters);
                     results.FirstOrDefault().Questionslist = Questions.ToList();
                     return results;
@@ -4035,7 +4035,7 @@ namespace Risebird.Repository
                 parameters.Add("@AudioFileLink", model.AudioFileLink);
                 parameters.Add("@Status", model.Status);
                 parameters.Add("@PerformedBy", model.PerformedBy);
-                
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(con, "usp_AddCandidateStatus", parameters,
@@ -4084,7 +4084,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await  SqlMapper.QueryAsync<CandidateStatus>(con, "usp_GetCandidateStatusById", dynamicParameters,
+                    var result = await SqlMapper.QueryAsync<CandidateStatus>(con, "usp_GetCandidateStatusById", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
@@ -4195,6 +4195,30 @@ namespace Risebird.Repository
 
             }
             catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null, int id = 0)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@EmailId", emailId);
+                parameters.Add("@irfid", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<CandidateTimelineData>(con, "usp_GetCandidateTimelineByIRFId", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }

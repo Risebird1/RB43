@@ -58,7 +58,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<TransEmergencyInterviewer> GetTransEmergencyInterviewer(int id);
         Task<IEnumerable<string>> GetEmergencyInterviwerBasedOnIRFId(int irfId);
         bool UpdateEmergencyFlag(int id, string emailId, DateTime interviewDate);
-        Task <IEnumerable<Candidate>> GetCandidateIRFInvites(string emailId);
+        Task<IEnumerable<Candidate>> GetCandidateIRFInvites(string emailId);
         IEnumerable<ResumeEvaluator> GetResumeEvaluators();
         IEnumerable<HR> GetHRs();
         IEnumerable<TransResumeEvaluator> GetTransResumeEvaluator(int id);
@@ -124,7 +124,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<InterviewerVM> GetSkillDetails();
         string Addassignmentgroup(Skilldetails _skilldetails);
         IEnumerable<AssignmentVM> FetchAssessmentdetails(int id);
-        string AssessmentLike(int id,string emailid);
+        string AssessmentLike(int id, string emailid);
         Task<IEnumerable<string>> GetPrimarySkillFromIRF();
         Task<bool> AddCandidateStatus(CandidateStatus model);
         Task<IEnumerable<CandidateStatus>> GetCandidatesStatusList(int irfId, int candidateId);
@@ -133,5 +133,6 @@ namespace Risebird.Repository.Interface
         Task<bool> DeleteCandidateStatus(int id);
         Task<int> GetCandidateIdByEmail(string emailId);
         Task<IEnumerable<string>> GetIRFClientsEmail(int irfId);
+        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null,int id=0);
     }
 }

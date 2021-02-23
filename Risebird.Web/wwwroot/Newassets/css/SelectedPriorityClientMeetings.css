@@ -32,10 +32,10 @@ textarea::-webkit-scrollbar-thumb {
 .wrapper {
     height: auto !important;
 }
-
+/*
 .pt30 {
     padding-top: 30px;
-}
+}*/
 
 .transparent-chart {
     position: absolute;

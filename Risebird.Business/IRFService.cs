@@ -924,20 +924,20 @@ namespace Risebird.Business
                 int waste = 0;
                 var emailList = new List<string>();
                 var funnelData = new IRFFunnel();
-                //var candidates = _irfRepository.GetIRFCandidates(irfId);
-                //if(candidates.Count()==0)
+                var candidates = _irfRepository.GetIRFCandidates(irfId);
+                if (candidates.Result.Count() == 0)
                 {
                     //get candidates from Meeting table by passing IRFId
                     emailList = _irfRepository.GetIRFCandidatesEmail(irfName).ToList();
                     funnelData.TotalCandidates = emailList.Count();
                     funnelData.TotalInvites = emailList.Count();
                 }
-                //else
-                //{
-                //    emailList = candidates.Select(x => x.EmailId).ToList();
-                //    funnelData.TotalCandidates = candidates.Count();
-                //    funnelData.TotalInvites = candidates.Where(x => x.TotalInvites > 0).Count();
-                //}
+                else
+                {
+                    emailList = candidates.Result.Select(x => x.EmailId).ToList();
+                    funnelData.TotalCandidates = candidates.Result.Count();
+                    funnelData.TotalInvites = candidates.Result.Where(x => x.TotalInvites > 0).Count();
+                }
 
                 //get interviewMeetings where candidateEmail and irfName matches
                 var interviewIdList = new List<int>();
@@ -1489,6 +1489,19 @@ namespace Risebird.Business
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null, int id = 0)
+        {
+            try
+            {
+                return await _irfRepository.GetCandidateTimeline(emailId, id);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
