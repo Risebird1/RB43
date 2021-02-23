@@ -197,6 +197,15 @@ BEGIN
     ALTER TABLE InterviewerProfile
     Add Blog nvarchar(max) NULL
 END
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AssessmentGroupId')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Alter Column AssessmentGroupId varchar(100) 
+END
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns
@@ -204,7 +213,7 @@ IF NOT EXISTS(
       AND Object_ID = Object_ID(N'InterviewerProfile'))
 BEGIN
     ALTER TABLE InterviewerProfile
-    Add AssessmentGroupId int 
+    Add AssessmentGroupId varchar(100) 
 END
 
 End

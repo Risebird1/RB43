@@ -260,6 +260,10 @@ namespace Risebird.Repository
             parameters.Add("@IsApproved", entity.IsApproved);
             parameters.Add("@IsLeadInterviewer", entity.IsLeadInterviewer);
             parameters.Add("@Tag", entity.Tag);
+            if (entity.AssessmentGroupArray != null)
+            {
+                entity.AssessmentGroupId = string.Join(',', entity.AssessmentGroupArray);
+            }
             parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
             parameters.Add("@InterviewerProfileId", SqlDbType.Int, direction: ParameterDirection.Output);
 
@@ -308,9 +312,9 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                   await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_DeleteInterviewerProfile]", parameters,
-                   commandType: CommandType.StoredProcedure);
-                   return true;
+                    await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_DeleteInterviewerProfile]", parameters,
+                    commandType: CommandType.StoredProcedure);
+                    return true;
 
                 }
             }

@@ -448,7 +448,7 @@ namespace Risebird.Web.Controllers
             foreach (var item in Assessmentgroup)
             {
                 bool selected = false;
-                if (model.AssessmentGroupId == item.id)
+                if (model.AssessmentGroupArray != null && model.AssessmentGroupArray.Contains(item.id.ToString()))
                 {
                     selected = true;
                 }
