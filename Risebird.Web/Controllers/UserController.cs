@@ -30,7 +30,7 @@ namespace Risebird.Web.Controllers
         private static List<Recruiter> _modelDetail;
         private static List<ResumeEvaluator> _modelDl;
         private static string Searchvalue;
-                private static string Searchvalueproiprity;
+                private static string SearchInterviewers;
         public UserController(IUserService userService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
                                 ISkillService skillService, IProfileService profileService)
 
@@ -518,9 +518,9 @@ namespace Risebird.Web.Controllers
                     var model = _userService.GetInterviewers();
                     if (String.IsNullOrEmpty(searchValue) && Page > 1)
                     {
-                        searchValue = Searchvalueproiprity;
+                        searchValue = SearchInterviewers;
                     }
-                    Searchvalueproiprity = searchValue;
+                 
                     ViewBag.Searchvalue = searchValue;
                     if (!String.IsNullOrEmpty(searchValue))
                     {
@@ -2494,7 +2494,7 @@ namespace Risebird.Web.Controllers
             {
                 int Page = 1;
                 var model = _modelDetails;
-                Searchvalue = searchValue;
+                SearchInterviewers = searchValue;
                 int totalcount = model.Count;
                 int Pagestart = 0;
                 int Pageend = 0;

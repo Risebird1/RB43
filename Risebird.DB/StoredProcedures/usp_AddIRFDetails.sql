@@ -37,6 +37,7 @@ GO
 @Heuristicsscore int,
 @PrimarySkillInvite varchar(100),
 @Tag varchar(200),
+@BillingOwner int,
 @idIrf int output    
     
 AS    
@@ -66,7 +67,8 @@ INSERT INTO [dbo].[IRF]
 			,[BussinessType]
 			,[Heuristicsscore]
 			,[PrimarySkillInvite]
-			,[Tag])    
+			,[Tag]
+			,[BillingOwner])    
        VALUES    
            (@IRFId,    
 			@clientName,    
@@ -91,7 +93,8 @@ INSERT INTO [dbo].[IRF]
 			@Type,
 			@Heuristicsscore,
 			@PrimarySkillInvite,
-			@Tag)    
+			@Tag
+			@BillingOwner)    
     
 End    
 

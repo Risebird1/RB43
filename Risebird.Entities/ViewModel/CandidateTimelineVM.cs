@@ -28,6 +28,7 @@ namespace Risebird.Entities.ViewModel
         public int? CurrentMeetingStatus { get; set; }
         public int? confirmationStatus { get; set; }
         public string PrimarySkill { get; set; }
+        public DateTime? CurrentStatusDate { get; set; }
 
 
     }
@@ -40,7 +41,7 @@ namespace Risebird.Entities.ViewModel
         public string Date { get; set; }
         public string Day { get; set; }
         public string Time { get; set; }
-
+        public DateTime ActualDate { get; set; }
     }
 
 
