@@ -425,7 +425,7 @@ namespace Risebird.Web.Controllers
             var daySlot = from DaySlot s in Enum.GetValues(typeof(DaySlot))
                           select new { ID = (int)s, Name = s.GetDescription() };
             model.DaySlotList = new SelectList(daySlot, "ID", "Name");
-            model.AssessmentGroupList = new SelectList(_interviewerService.FetchAssessmentGroups(), "id", "AssessmentGroup");
+            var Assessmentgroup = _interviewerService.FetchAssessmentGroups();
             var tagList = _interviewerService.GetAllTagsFromIRF().Result;
             var selectList = new List<SelectListItem>();
 
@@ -443,7 +443,19 @@ namespace Risebird.Web.Controllers
 
             }
             model.TagList = selectList;
+            var AssessmentselectList = new List<SelectListItem>();
 
+            foreach (var item in Assessmentgroup)
+            {
+                bool selected = false;
+                if (model.AssessmentGroupId == item.id)
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem(item.AssessmentGroup, item.id.ToString(), selected);
+                AssessmentselectList.Add(selectItem);
+            }
+            model.AssessmentGroupList = AssessmentselectList;
         }
 
         public async Task<IActionResult> DeleteInterviewerProfile(int UserId)
