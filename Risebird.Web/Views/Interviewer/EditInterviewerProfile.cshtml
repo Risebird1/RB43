@@ -173,8 +173,27 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(model => model.AssessmentGroupId, (SelectList)Model.AssessmentGroupList, new {  @class = "select-css form-control text-box single-line" })
-                                        @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new { @class = "text-danger" })
+
+                                        @*@Html.DropDownListFor(model => model.AssessmentGroupId, (SelectList)Model.AssessmentGroupList, new { @class = "select-css form-control text-box single-line" })*@
+                                        <select id="AssessmentGroupArray" name="AssessmentGroupArray" class="form-control multiselect" multiple="multiple">
+                                            @foreach (var item in Model.AssessmentGroupList.ToList())
+                                            {
+                                                @if (item != null)
+                                                {
+                                                    @if (item.Selected)
+                                                    {
+                                                        <option value="@item.Value" selected>@item.Text</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@item.Value">@item.Text</option>
+                                                    }
+                                                }
+                                            }
+
+                                        </select>
+
+                                        @Html.ValidationMessageFor(model => model.AssessmentGroupArray, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
                                 <div class="col-lg-4  col-md-4 col-sm-4 pl-1">
@@ -1009,6 +1028,12 @@
 
         $(document).ready(function () {
             $("#TagArray").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#AssessmentGroupArray").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
                 buttonWidth: '100%',

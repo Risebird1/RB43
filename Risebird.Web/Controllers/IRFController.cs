@@ -39,7 +39,8 @@ namespace Risebird.Web.Controllers
         private IConfiguration _configuration;
         private IInterviewerSkillsService _iInterviewerSkillsService;
         private readonly ICandidateService _candidateService;
-        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService)
+        private IInterviewerService _interviewerService;
+        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -52,6 +53,7 @@ namespace Risebird.Web.Controllers
             _configuration = configuration;
             _iInterviewerSkillsService = iInterviewerSkillsService;
             _candidateService = candidateService;
+            _interviewerService = interviewerService;
         }
 
 
@@ -677,8 +679,9 @@ namespace Risebird.Web.Controllers
             {
                 var model = new IRFVm();
                 var skills = _irfRepository.GetSkills();
+                var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                 //SelectList(interviewers, "UserId", "EmailId");
-                //var interviewers = _irfService.GetInterviewersForIRF(skills.FirstOrDefault().Name);
+                var interviewers = _irfService.GetInterviewersForIRF(AssessmentsGroups.FirstOrDefault().id.ToString());
                 //var interviewers = _irfRepository.GetInterviewers();
                 model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
                 model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
@@ -691,16 +694,17 @@ namespace Risebird.Web.Controllers
                 ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
                 ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                 ViewBag.Skill = new SelectList(skills, "id", "Name");
-                //ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
+                ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
                 ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(clients.FirstOrDefault().id), "id", "EmailId");
                 ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-               // ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+                ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
                 ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
                 ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
                 ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
-               // ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
-               // ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
+                ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
+                ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
                 ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
+                model.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
                 var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                  select new { ID = (int)s, Name = s.GetDescription() };
                 ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
@@ -824,11 +828,11 @@ namespace Risebird.Web.Controllers
 
         }
         [Authorize]
-        public SelectList GetInterviewers(string skills)
+        public SelectList GetInterviewers(string assessmentgroupid)
         {
 
             var list = new List<SelectListItem>();
-            var interviewers = _irfService.GetInterviewers(skills);
+            var interviewers = _irfService.GetInterviewers(assessmentgroupid);
 
             if (interviewers != null && interviewers.Count() > 0)
             {
@@ -1380,8 +1384,8 @@ namespace Risebird.Web.Controllers
                         ViewBag.IsClientUser = false;
                     }
                     var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
-                    
-                    if(model.InterviewerCollection!=null)
+
+                    if (model.InterviewerCollection != null)
                     {
                         foreach (var item in model.InterviewerCollection)
                         {
@@ -1391,12 +1395,10 @@ namespace Risebird.Web.Controllers
                             }
                         }
                     }
-                    
-                    //string skills = string.Empty;
-                    //skills = string.Join(",", from item in model.SkillCollection select item.SkillName);
-                    //var interviewers = _irfService.GetInterviewersForIRF(skills);
-                    var interviewers = _irfService.GetInterviewersByTag(model.Tag).Result;
-                    model.InterviewerList = interviewers;
+                    var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                    var interviewers = _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
+                    //var interviewers = _irfService.GetInterviewersByTag(model.AssessmentGroupId).Result;
+                    //model.InterviewerList = interviewers.ToList();
                     ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                     ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
                     ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -1417,6 +1419,7 @@ namespace Risebird.Web.Controllers
                     var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                      select new { ID = (int)s, Name = s.GetDescription() };
                     ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+                    model.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
                     model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
                     model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
                     model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");

@@ -26,8 +26,7 @@ CREATE TABLE [dbo].[IRF](
             [BussinessType][varchar](4) NULL,
             [Heuristicsscore][int] NULL,
             [idProgress][int] NOT NULL DEFAULT 1,
-            [PrimarySkillInvite][varchar](100) NULL,
-            [Tag][varchar](200) NULL,
+            [PrimarySkillInvite][varchar](100) NULL
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -40,15 +39,7 @@ END
 
 ELSE
 BEGIN
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'Tag')
-      AND Object_ID = Object_ID(N'IRF'))
-BEGIN
-    ALTER TABLE IRF
-    Add Tag VARCHAR(200)
-END
+
 
 IF NOT EXISTS(
     SELECT *
@@ -189,6 +180,15 @@ BEGIN
     ALTER TABLE IRF
     Add BillingOwner int
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AssessmentGroupId')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add AssessmentGroupId varchar(100)
+	END
 END
 
 

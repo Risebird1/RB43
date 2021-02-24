@@ -159,8 +159,9 @@ namespace Risebird.Entities.ViewModel
 
         public string Tag { get; set; }
         [Display(Name = "Assessment Group Id")]
-        public int AssessmentGroupId { get; set; }
-        public SelectList AssessmentGroupList { get; set; }
+        public string AssessmentGroupId { get; set; }
+        public string[] AssessmentGroupArray { get; set; }
+        public List<SelectListItem> AssessmentGroupList { get; set; }
         public List<SelectListItem> TagList { get; set; }
         public string[] TagArray { get; set; }
     }
