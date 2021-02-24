@@ -23,7 +23,6 @@ CREATE TABLE [dbo].[InterviewerProfile](
 	[Blog] [varchar](2000) NULL,
 	[IsLeadInterviewer] [bit] NULL DEFAULT 0,
 	[IsApproved] [bit] NOT NULL,
-	[Tag][varchar](200) NULL,
 	CONSTRAINT [UC_InterviewerProfile] UNIQUE (NickName),
 	CONSTRAINT [FK_InterviewerProfile] FOREIGN KEY (UserId) REFERENCES UserList(id),
 	CONSTRAINT [PK_InterviewerProfile] PRIMARY KEY CLUSTERED 
@@ -36,15 +35,6 @@ END
 
 ELSE
 BEGIN
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'Tag')
-      AND Object_ID = Object_ID(N'InterviewerProfile'))
-BEGIN
-    ALTER TABLE InterviewerProfile
-    Add Tag VARCHAR(200)
-END
 
 IF EXISTS(
     SELECT *

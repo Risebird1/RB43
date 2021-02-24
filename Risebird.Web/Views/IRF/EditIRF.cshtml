@@ -90,13 +90,10 @@
 
                                     </div>
                                 </div>
-                            </div>
-                                <div class="col-md-3 col-sm-3 pr-1">
-                                    <div class="form-group" style="margin-bottom:0px;">
-                                        @Html.LabelFor(model => model.Tag, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.Tag, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.Tag, "", new { @class = "text-danger" })
+                                <div class="col-md-3 col-sm-3 pr-r">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, new { @class = "form-control select-css", @onchange = "TechSkillChanged()" })
 
                                     </div>
                                 </div>
@@ -220,9 +217,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <span class="desp-label control-label">
-                                            Upload Company Details
-                                        </span>
+                                        Upload Company Details
 
                                         <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
                                             <div class="mdc-radio mdc-radio--touch">
@@ -234,9 +229,8 @@
                                                 <div class="mdc-radio__ripple"></div>
                                             </div>
                                         </div>
-                                        <span class="desp-label control-label">
-                                            Provide Company Details
-                                        </span>
+
+                                        Provide Company Details
 
                                         <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
                                             <div class="mdc-radio mdc-radio--touch">
@@ -249,19 +243,19 @@
                                             </div>
                                         </div>
 
-                                        <span class="desp-label control-label">
-                                            None
-                                            </span>
-                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                <div class="mdc-radio mdc-radio--touch">
-                                                    <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="None" checked="checked" onclick="RadioCompanyChanged(this.value)">
-                                                    <div class="mdc-radio__background">
-                                                        <div class="mdc-radio__outer-circle"></div>
-                                                        <div class="mdc-radio__inner-circle"></div>
-                                                    </div>
-                                                    <div class="mdc-radio__ripple"></div>
+
+                                        None
+
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="None" checked="checked" onclick="RadioCompanyChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
                                                 </div>
+                                                <div class="mdc-radio__ripple"></div>
                                             </div>
+                                        </div>
 
 
 
@@ -379,7 +373,7 @@
                                         @{
                                             if (!String.IsNullOrEmpty(Model.JDLink))
                                             {
-                                                <a style="text-decoration:none;" id="audioId" target="_blank" rel="tooltip" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded pull-left col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.JDLink.ToString().Replace(" ","%20")>Uploaded JD</a>
+                                                <a style="text-decoration:none;" id="audioId" target="_blank" rel="tooltip" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.JDLink.ToString().Replace(" ","%20")>Uploaded JD</a>
                                             }
                                         }
                                     </div>
@@ -415,7 +409,7 @@
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "select-css form-control "@*, @onchange = "TechSkillChanged()"*@ })
+                                                            @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "select-css form-control " })
                                                         </td>
                                                         <td>
                                                             <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
@@ -442,7 +436,7 @@
 
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control"@*, @onchange = "TechSkillChanged()"*@ })
+                                                                @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
                                                             </td>
 
                                                             <td>
@@ -509,8 +503,7 @@
 
                                                         </td>
                                                         <td>
-                                                            <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="text" value="" required">
-                                                            <span class="field-validation-valid text-danger" data-valmsg-for="Joinability[0].Value" data-valmsg-replace="true"></span>
+                                                            <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="text" value="">
                                                         </td>
                                                         <td>
                                                             <input class="form-control text-box single-line" id="Joinability_0__Weightage" name="Joinability[0].Weightage" type="number" max="100" min="1" value="100">
@@ -606,7 +599,6 @@
                                                         </td>
                                                         <td>
                                                             <input class="form-control text-box single-line" id="Selectability_0__Value" name="Selectability[0].Value" type="text" value="">
-                                                            <span class="field-validation-valid text-danger" data-valmsg-for="Selectability[0].Value" data-valmsg-replace="true"></span>
                                                         </td>
                                                         <td>
                                                             <input class="form-control text-box single-line" id="Selectability_0__Weightage" name="Selectability[0].Weightage" type="number" max="100" min="1" value="100">
@@ -698,7 +690,6 @@
                                                         </td>
                                                         <td>
                                                             <input class="form-control text-box single-line" id="SkillGeneral_0__Value" name="SkillGeneral[0].Value" type="text" value="">
-                                                            <span class="field-validation-valid text-danger" data-valmsg-for="SkillGeneral[0].Value" data-valmsg-replace="true"></span>
                                                         </td>
 
                                                         <td>
@@ -844,7 +835,7 @@
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
                                                     <th width="50%" class="table_heading">Skills</th>
-                                                    <th width="20%" class="table_heading">Per Interviewer Rate<span class="red">*</span></th>
+                                                    <th width="20%" class="table_heading">Per Interviewer Rate</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
@@ -852,22 +843,10 @@
                                                 @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
                                                 {
                                                     <tr>
+                                                        <td>
+                                                            @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                        </td>
 
-
-                                                        @if (Model.InterviewerList == null  || Model.InterviewerList.Count()==0)
-                                                        {
-                                                            <td>
-                                                                @Html.TextBox("InterviewerCollection[0].UserId", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                            </td>
-
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
-                                                            </td>
-                                                        }
                                                         <td>
 
                                                             @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
@@ -877,14 +856,12 @@
 
                                                             @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
                                                         </td>
-
                                                         <td class="action text-center">
-                                                            @if (Model.InterviewerList != null && Model.InterviewerList.Count()!=0)
-                                                            {
-                                                                <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                            }
+
+
 
                                                         </td>
                                                     </tr>
@@ -894,24 +871,9 @@
                                                     for (int i = 0; i < Model.InterviewerCollection.Count(); i++)
                                                     {
                                                         <tr>
-
-                                                            @if (Model.InterviewerList == null || Model.InterviewerList.Count() == 0)
-                                                            {
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
-
-                                                                </td>
-                                                                @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
-
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)" })
-                                                                </td>
-                                                            }
-
-
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                            </td>
 
                                                             <td>
                                                                 @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
@@ -922,15 +884,11 @@
 
                                                             </td>
                                                             <td class="action text-center">
-                                                   
+
                                                                 <div>
-                                                                    @if (Model.InterviewerList != null && Model.InterviewerList.Count() != 0)
-                                                                    {
-                                                                        <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-
-                                                                    }
-
+                                                                    <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                     <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
 
                                                                 </div>
                                                             </td>
@@ -961,73 +919,41 @@
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
                                                     <th width="50%" class="table_heading">Skills</th>
-                                                    <th width="20%" class="table_heading">Per QC Rate <span class="red">*</span></th>
+                                                    <th width="20%" class="table_heading">Per QC Rate</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @if (Model.QualityController == null || Model.QualityController.Count() == 0)
                                                 {
-                                                <tr>
-
-                                                    @if (Model.InterviewerList == null || Model.InterviewerList.Count() == 0)
-                                                    {
-                                                        <td>
-                                                            @Html.TextBox("QualityController[0].UserId", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                        </td>
-
-                                                    }
-                                                    else
-                                                    {
+                                                    <tr>
                                                         <td>
                                                             @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, new { @class = "form-control select-css ", @onchange = "QCChanged(this.value, this.id)" })
                                                         </td>
-                                                    }
 
+                                                        <td>
+                                                            @Html.TextBox("QualityController[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
 
-                                                    <td>
-                                                        @Html.TextBox("QualityController[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
+                                                        </td>
+                                                        <td>
 
-                                                    </td>
-                                                    <td>
-
-                                                        @Html.TextBox("QualityController[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
-                                                    </td>
-                                                    <td class="action text-center">
-
-                                                        @if (Model.InterviewerList != null && Model.InterviewerList.Count() != 0)
-                                                        {
+                                                            @Html.TextBox("QualityController[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                        </td>
+                                                        <td class="action text-center">
                                                             <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                             <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                        }
-
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                    </tr>
                                                 }
                                                 else
                                                 {
                                                     @for (int i = 0; i < Model.QualityController.Count(); i++)
                                                     {
                                                         <tr>
-
-                                                            @if (Model.InterviewerList == null || Model.InterviewerList.Count() == 0)
-                                                            {
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.QualityController[i].EmailId,  new { @class = "form-control", @readonly = "readonly" })
-
-                                                                </td>
-                                                                @Html.HiddenFor(m=>m.QualityController[i].UserId)
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.QualityController[i].UserId, (SelectList)ViewBag.QualityController, new { @class = "form-control select-css ", @onchange = "QCChanged(this.value, this.id)" })
-                                                                </td>
-                                                            }
-
-                                                            
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.QualityController[i].UserId, (SelectList)ViewBag.QualityController, new { @class = "form-control select-css ", @onchange = "QCChanged(this.value, this.id)" })
+                                                            </td>
 
                                                             <td>
                                                                 @Html.TextBoxFor(m => m.QualityController[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
@@ -1038,14 +964,8 @@
 
                                                             </td>
                                                             <td class="action text-center">
-                                                               
                                                                 <div>
-                                                                    @if (Model.InterviewerList != null && Model.InterviewerList.Count() != 0)
-                                                                    {
-                                                                        <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-
-                                                                    }
-
+                                                                    <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                     <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
                                                                 </div>
@@ -1074,7 +994,7 @@
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
                                                     <th width="50%" class="table_heading">Skills</th>
-                                                    <th width="20%" class="table_heading">Per EI Rate<span class="red">*</span></th>
+                                                    <th width="20%" class="table_heading">Per EI Rate</th>
                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
@@ -1083,21 +1003,9 @@
                                                 @if (Model.EmergencyInterviewerCollection == null || Model.EmergencyInterviewerCollection.Count() == 0)
                                                 {
                                                     <tr>
-                                                        @if (Model.InterviewerList == null || Model.InterviewerList.Count() == 0)
-                                                        {
-                                                            <td>
-                                                                @Html.TextBox("EmergencyInterviewerCollection[0].UserId", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                            </td>
-
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>
-                                                                @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "form-control select-css ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
-                                                            </td>
-                                                        }
-
+                                                        <td>
+                                                            @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "form-control select-css ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
+                                                        </td>
 
                                                         <td>
                                                             @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
@@ -1110,12 +1018,8 @@
 
                                                         </td>
                                                         <td class="action text-center">
-                                                            @if (Model.InterviewerList != null && Model.InterviewerList.Count() != 0)
-                                                            {
-                                                                <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-                                                            }
+                                                            <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
                                                         </td>
                                                     </tr>
@@ -1126,23 +1030,9 @@
                                                     @for (int i = 0; i < Model.EmergencyInterviewerCollection.Count(); i++)
                                                     {
                                                         <tr>
-                                                            @if (Model.InterviewerList == null || Model.InterviewerList.Count() == 0)
-                                                            {
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
-
-                                                                </td>
-                                                                @Html.HiddenFor(m => m.EmergencyInterviewerCollection[i].UserId)
-
-
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.EmergencyInterviewerCollection[i].UserId, (SelectList)ViewBag.EmergencyInterviewers, new { @class = "select-css form-control ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
-                                                                </td>
-                                                            }
-                                                            
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.EmergencyInterviewerCollection[i].UserId, (SelectList)ViewBag.EmergencyInterviewers, new { @class = "select-css form-control ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
+                                                            </td>
 
                                                             <td>
                                                                 @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
@@ -1153,18 +1043,13 @@
 
                                                             </td>
                                                             <td class="action text-center">
-                                                                <div>
-                                                                    @if (Model.InterviewerList != null && Model.InterviewerList.Count() != 0)
-                                                                    {
-                                                                        <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                        
-                                                                    }
 
+                                                                <div>
+
+                                                                    <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                     <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill','PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
                                                                 </div>
-                                                               
-
                                                             </td>
                                                         </tr>
                                                     }
@@ -1546,108 +1431,108 @@
             }
 
         }
-        //var message = "";
-        //var newflag = false;
-        //var table = document.getElementById("InterviewerTable");
-        //var rowCount = table.rows.length;
-        //for (var i = 0; i < rowCount; i++) {
-        //    if ($("#InterviewerCollection_" + i + "__PerInterviewerRate").val() == "" || $("#InterviewerCollection_" + i + "__PerInterviewerRate").val() == "0") {
-        //        if (message == "") {
-        //            message = "Per Interviewer Rate should not be blank";
-        //        } else {
-        //            message = message + ",Per Interviewer Rate should not be blank";
-        //        }
-        //        newflag = true;
-        //        break;
-        //    }
-        //}
-        //var emetable = document.getElementById("EmergencyInterviewerTable");
-        //var emerowCount = emetable.rows.length;
-        //for (var i = 0; i < emerowCount; i++) {
-        //    if ($("#EmergencyInterviewerCollection_" + i + "__PerEIRate").val() == "" || $("#EmergencyInterviewerCollection_" + i + "__PerEIRate").val() == "0") {
-        //        if (message == "") {
-        //            message = "Per Emergency Interviewer Rate should not be blank";
-        //        } else {
-        //            message = message + ", Per Emergency Interviewer Rate should not be blank";
-        //        }
-        //        newflag = true;
-        //        break;
-        //    }
-        //}
-        //var qctable = document.getElementById("EmergencyInterviewerTable");
-        //var qcrowCount = qctable.rows.length;
-        //for (var i = 0; i < qcrowCount; i++) {
-        //    if ($("#QualityController_" + i + "__PerQCRate").val() == "" || $("#QualityController_" + i + "__PerQCRate").val() == "0") {
-        //        if (message == "") {
-        //            message = "Per QC Rate should not be blank";
-        //        } else {
-        //            message = message + ", Per QC Rate should not be blank";
-        //        }
-        //        newflag = true;
-        //        break;
-        //    }
-        //}
-        //if (newflag == true) {
-        //    alert(message);
-        //    return false;
-        //}
-        //if (inCorrectCount == 0) {
-        //    // check interviewers list InterviewerCollection_  InterviewerId
-        //    var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
-        //    for (i = 0; i < drpdowns.length; i++) {
+        var message = "";
+        var newflag = false;
+        var table = document.getElementById("InterviewerTable");
+        var rowCount = table.rows.length;
+        for (var i = 0; i < rowCount; i++) {
+            if ($("#InterviewerCollection_" + i + "__PerInterviewerRate").val() == "" || $("#InterviewerCollection_" + i + "__PerInterviewerRate").val() == "0") {
+                if (message == "") {
+                    message = "Per Interviewer Rate should not be blank";
+                } else {
+                    message = message + ",Per Interviewer Rate should not be blank";
+                }
+                newflag = true;
+                break;
+            }
+        }
+        var emetable = document.getElementById("EmergencyInterviewerTable");
+        var emerowCount = emetable.rows.length;
+        for (var i = 0; i < emerowCount; i++) {
+            if ($("#EmergencyInterviewerCollection_" + i + "__PerEIRate").val() == "" || $("#EmergencyInterviewerCollection_" + i + "__PerEIRate").val() == "0") {
+                if (message == "") {
+                    message = "Per Emergency Interviewer Rate should not be blank";
+                } else {
+                    message = message + ", Per Emergency Interviewer Rate should not be blank";
+                }
+                newflag = true;
+                break;
+            }
+        }
+        var qctable = document.getElementById("EmergencyInterviewerTable");
+        var qcrowCount = qctable.rows.length;
+        for (var i = 0; i < qcrowCount; i++) {
+            if ($("#QualityController_" + i + "__PerQCRate").val() == "" || $("#QualityController_" + i + "__PerQCRate").val() == "0") {
+                if (message == "") {
+                    message = "Per QC Rate should not be blank";
+                } else {
+                    message = message + ", Per QC Rate should not be blank";
+                }
+                newflag = true;
+                break;
+            }
+        }
+        if (newflag == true) {
+            alert(message);
+            return false;
+        }
+        if (inCorrectCount == 0) {
+            // check interviewers list InterviewerCollection_  InterviewerId
+            var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
+            for (i = 0; i < drpdowns.length; i++) {
 
-        //        var interviewId = $("#" + drpdowns[i].id).val();
-        //        if (interviewId == '') {
-        //            //noInterviewer
-        //            document.getElementById("noInterviewer").innerHTML = "There should be atleast one Interviewer.";
-        //            document.getElementById("noInterviewerDown").innerHTML = "There should be atleast one Interviewer.";
+                var interviewId = $("#" + drpdowns[i].id).val();
+                if (interviewId == '') {
+                    //noInterviewer
+                    document.getElementById("noInterviewer").innerHTML = "There should be atleast one Interviewer.";
+                    document.getElementById("noInterviewerDown").innerHTML = "There should be atleast one Interviewer.";
 
-        //            return false;
-        //        }
-        //    }
-        //    document.getElementById("noInterviewer").innerHTML = "";
-        //    document.getElementById("noInterviewerDown").innerHTML = "";
+                    return false;
+                }
+            }
+            document.getElementById("noInterviewer").innerHTML = "";
+            document.getElementById("noInterviewerDown").innerHTML = "";
 
 
-        //    return true;
-        //}
-        //else {
-        //    var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
-        //    for (i = 0; i < drpdowns.length; i++) {
+            return true;
+        }
+        else {
+            var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
+            for (i = 0; i < drpdowns.length; i++) {
 
-        //        var interviewId = $("#" + drpdowns[i].id).val();
-        //        if (interviewId == '') {
-        //            //noInterviewer
-        //            document.getElementById("noInterviewer").innerHTML = "There should be atleast one Interviewer.";
-        //            document.getElementById("noInterviewerDown").innerHTML = "There should be atleast one Interviewer.";
-        //            break;
+                var interviewId = $("#" + drpdowns[i].id).val();
+                if (interviewId == '') {
+                    //noInterviewer
+                    document.getElementById("noInterviewer").innerHTML = "There should be atleast one Interviewer.";
+                    document.getElementById("noInterviewerDown").innerHTML = "There should be atleast one Interviewer.";
+                    break;
 
-        //        }
-        //        document.getElementById("noInterviewer").innerHTML = "";
-        //        document.getElementById("noInterviewerDown").innerHTML = "";
-        //    }
+                }
+                document.getElementById("noInterviewer").innerHTML = "";
+                document.getElementById("noInterviewerDown").innerHTML = "";
+            }
 
-        //    return false;
-        //}
+            return false;
+        }
 
     }
 
 
     function TechSkillChanged() {
-
+        var Assessmentgroupid = $("#AssessmentGroupId").val();
         //var index = id.charAt(16);
-        var techSkills = $('[id^="SkillCollection"][id$="SkillId"]');
-        //var arr = [];
-        var skills = "";
-        for (i = 0; i < techSkills.length; i++) {
-            //arr.push(techSkills[i].value);
-            skills = skills + ',' + techSkills[i].value;
-        }
+        //var techSkills = $('[id^="SkillCollection"][id$="SkillId"]');
+        ////var arr = [];
+        //var skills = "";
+        //for (i = 0; i < techSkills.length; i++) {
+        //    //arr.push(techSkills[i].value);
+        //    skills = skills + ',' + techSkills[i].value;
+        //}
         var interviewerSkills;
         $.ajax({
             type: "GET",
             url: "/IRF/GetInterviewers",
-            data: { 'skills': skills },
+            data: { 'assessmentgroupid': Assessmentgroupid  },
             success: function (data) {
                 $.ajax({
                     type: "GET",
@@ -2377,7 +2262,7 @@
         var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
         $.ajax({
             type: "GET",
-            url: "/IRF/GetInterviewerSkillsFromProfile",
+            url: "/IRF/GetInterviewerSkills",
             data: { 'id': val },
             success: function (data) {
                 $("#" + skillElementid).val(data);
@@ -2393,7 +2278,7 @@
         var skillElementid = 'EmergencyInterviewerCollection_' + index + '__PrimarySkill';
         $.ajax({
             type: "GET",
-            url: "/IRF/GetInterviewerSkillsFromProfile",
+            url: "/IRF/GetInterviewerSkills",
             data: { 'id': val },
             success: function (data) {
                 $("#" + skillElementid).val(data);
@@ -2441,7 +2326,7 @@
         var skillElementid = 'QualityController_' + index + '__PrimarySkill';
         $.ajax({
             type: "GET",
-            url: "/IRF/GetInterviewerSkillsFromProfile",
+            url: "/IRF/GetInterviewerSkills",
             data: { 'id': val },
             success: function (data) {
                 $("#" + skillElementid).val(data);
@@ -2453,96 +2338,22 @@
 
 
     $(document).ready(function () {
-        var interviewers = '@Model.InterviewerCollection';
-        if (interviewers != '') {
-            var interviewerUserId;
-            var skill = $("#InterviewerCollection_0__PrimarySkill").val();
-            if (skill == null || skill == "") {
-                interviewerUserId = $("#InterviewerCollection_0__UserId").val();
-                if (interviewerUserId != '') {
-                    $.ajax({
-                        type: "GET",
-                        url: "/IRF/GetInterviewerSkillsFromProfile",
-                        data: { 'id': interviewerUserId },
-                        success: function (data) {
-                            $("#InterviewerCollection_0__PrimarySkill").val(data);
 
-                            //$("#QualityController_0__PrimarySkill").val(data);
-                            //$("#EmergencyInterviewerCollection_0__PrimarySkill").val(data);
+        var skill = $("#EmergencyInterviewerCollection_0__PrimarySkill").val();
+        if (skill == null || skill == "") {
+            var id = $("#EmergencyInterviewerCollection_0__UserId").val();
+            $.ajax({
+                type: "GET",
+                url: "/IRF/GetInterviewerSkills",
+                data: { 'id': id },
+                success: function (data) {
 
-                        }
-                    });
+                    $("#QualityController_0__PrimarySkill").val(data);
+                    $("#EmergencyInterviewerCollection_0__PrimarySkill").val(data);
+
                 }
-               
-            }
-            var emergencySkill = $("#EmergencyInterviewerCollection_0__PrimarySkill").val();
-
-            if (emergencySkill == null || emergencySkill == "") {
-                //if ($("#EmergencyInterviewerCollection_0__UserId").val() == interviewerUserId) {
-                //    $("#EmergencyInterviewerCollection_0__PrimarySkill").val(data);
-                //}
-                //else {
-                //    var emergencyUserId = $("#EmergencyInterviewerCollection_0__UserId").val()
-                //    $.ajax({
-                //        type: "GET",
-                //        url: "/IRF/GetInterviewerSkillsFromProfile",
-                //        data: { 'id': emergencyUserId },
-                //        success: function (data) {
-                //            $("#EmergencyInterviewerCollection_0__PrimarySkill").val(data);
-
-                //        }
-                //    });
-                //}
-                var emergencyUserId = $("#EmergencyInterviewerCollection_0__UserId").val()
-                if (emergencyUserId!='') {
-                    $.ajax({
-                        type: "GET",
-                        url: "/IRF/GetInterviewerSkillsFromProfile",
-                        data: { 'id': emergencyUserId },
-                        success: function (data) {
-                            $("#EmergencyInterviewerCollection_0__PrimarySkill").val(data);
-
-                        }
-                    });
-                }
-                
-            }
-            var qcSkill = $("#QualityController_0__PrimarySkill").val();
-            if (qcSkill == null || qcSkill == "") {
-                //if ($("#QualityController_0__UserId").val() == interviewerUserId) {
-                //    $("#QualityController_0__PrimarySkill").val(data);
-                //}
-                //else {
-                //    var qcUserId = $("#QualityController_0__UserId").val()
-                //    $.ajax({
-                //        type: "GET",
-                //        url: "/IRF/GetInterviewerSkillsFromProfile",
-                //        data: { 'id': qcUserId },
-                //        success: function (data) {
-                //            $("#QualityController_0__PrimarySkill").val(data);
-
-
-                //        }
-                //    });
-                //}
-                var qcUserId = $("#QualityController_0__UserId").val()
-                if (qcUserId != '') {
-                    $.ajax({
-                        type: "GET",
-                        url: "/IRF/GetInterviewerSkillsFromProfile",
-                        data: { 'id': qcUserId },
-                        success: function (data) {
-                            $("#QualityController_0__PrimarySkill").val(data);
-
-
-                        }
-                    });
-                }
-               
-            }
+            });
         }
-        
-        
 
 
     });
@@ -2700,9 +2511,9 @@
 
         }
 
-        //if (tdFive != null && tdFive == 'TechDelete')
-        //    //call TechSkillChanged
-        //    TechSkillChanged();
+        if (tdFive != null && tdFive == 'TechDelete')
+            //call TechSkillChanged
+            TechSkillChanged();
 
 
     }

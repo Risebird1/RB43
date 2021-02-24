@@ -143,30 +143,22 @@ namespace Risebird.Business
             }
         }
 
-        public IEnumerable<Interviewer> GetInterviewers(string skills)
+        public IEnumerable<Interviewer> GetInterviewers(string assessmentgroupid)
         {
             try
             {
                 var interviewers = _irfRepository.GetIRFInterviewerSkills();
-                var skillList = skills.Split(",");
-                var skillNameList = new List<string>();
-                foreach (var skill in skillList ?? new List<string>().ToArray())
-                {
-                    if (skill == "")
-                    {
-                        continue;
-                    }
-                    var skillName = _irfRepository.GetSkillById(Convert.ToInt16(skill)).Name;
-                    skillNameList.Add(skillName);
-                }
-
+                var assessmentgroupidlist = assessmentgroupid.Split(",");
                 var list = new List<Interviewer>();
                 foreach (var item in interviewers ?? new List<Interviewer>())
                 {
-                    foreach (var skillName in skillNameList ?? new List<string>())
+                    foreach (var groupid in assessmentgroupidlist ?? new List<string>().ToArray())
                     {
-
-                        if (item.PrimarySkill.Contains(skillName))
+                        if (groupid == "" || String.IsNullOrEmpty(item.AssessmentGroupId))
+                        {
+                            continue;
+                        }
+                        if (item.AssessmentGroupId.Contains(groupid))
                         {
                             list.Add(item);
                             break;
@@ -174,7 +166,6 @@ namespace Risebird.Business
                     }
                 }
                 list = list.Distinct().ToList();
-
                 return list;
             }
 
@@ -186,13 +177,13 @@ namespace Risebird.Business
         }
 
 
-        public IEnumerable<Interviewer> GetInterviewersForIRF(string skillNames)
+        public IEnumerable<Interviewer> GetInterviewersForIRF(string assessmentgroupid)
         {
             try
             {
                 //var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
                 var interviewers = _irfRepository.GetIRFInterviewerSkills();
-                var skillNameList = skillNames.Split(",");
+                var assessmentgroupidlist = assessmentgroupid.Split(",");
 
                 //skillList.RemoveAt()
                 var list = new List<Interviewer>();
@@ -200,9 +191,13 @@ namespace Risebird.Business
 
                 foreach (var item in interviewers ?? new List<Interviewer>())
                 {
-                    foreach (var skillName in skillNameList ?? new List<string>().ToArray())
+                    foreach (var groupid in assessmentgroupidlist ?? new List<string>().ToArray())
                     {
-                        if (item.PrimarySkill.Contains(skillName))
+                        if (String.IsNullOrEmpty(item.AssessmentGroupId))
+                        {
+                            continue;
+                        }
+                        if (item.AssessmentGroupId.Contains(groupid))
                         {
                             list.Add(item);
                             break;
@@ -462,7 +457,7 @@ namespace Risebird.Business
                 model.Heuristicsscore = IRF.Heuristicsscore;
                 model.Type = IRF.BussinessType;
                 model.PrimarySkillInvite = IRF.PrimarySkillInvite;
-                
+                model.AssessmentGroupId = IRF.AssessmentGroupId;
                 model.BillingOwner = IRF.BillingOwner;
                 var skillCount = transTechSkills.Count();
                 return model;

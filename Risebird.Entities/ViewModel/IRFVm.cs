@@ -211,8 +211,7 @@ namespace Risebird.Entities.ViewModel
         public string PrimarySkillInvite { get; set; }
         public string AssignTo { get; set; }
         public string AssignStatus { get; set; }
-        public string Tag { get; set; }
-
+        public string AssessmentGroupId { get; set; }
         public int BillingOwner { get; set; }
     }
 }

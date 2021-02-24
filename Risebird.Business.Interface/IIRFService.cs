@@ -30,7 +30,7 @@ namespace Risebird.Business.Interface
         string GetQuestionSkills(string id);
         IEnumerable<Users> GetClientUser(int id);
         string GetClientUserRole(int id);
-        IEnumerable<Interviewer> GetInterviewers(string skills);
+        IEnumerable<Interviewer> GetInterviewers(string assessmentgroupid);
         Task<IEnumerable<Candidate>> GetIRFCandidates(int id);
         Task<string> AddCandidate(Candidate obj, string emailId, string profile);
         Task<string> AddMultipleCandidates(List<Candidate> candidateList, string emailId, string profile);
@@ -55,7 +55,7 @@ namespace Risebird.Business.Interface
         Task<bool> SubscribeCuratedGroup(int id, string emailId, string profile);
         Task<bool> UnSubscribeCuratedGroup(int id, string emailId, string profile);
         bool SaveCandidateStatus(int candidateId, int status);
-        IEnumerable<Interviewer> GetInterviewersForIRF(string skillNames);
+        IEnumerable<Interviewer> GetInterviewersForIRF(string assessmentgroupid);
         IEnumerable<Users> GetAllHRs();
         bool AddCandidateCuratedScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore);
         IList<CandidateCuratedScore> GetCandidateCuratedScore(int id);

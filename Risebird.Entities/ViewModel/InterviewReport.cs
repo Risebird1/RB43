@@ -21,19 +21,19 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Candidate's Name")]
         //[RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
         //ErrorMessage = "Please Enter Correct Email Address")]
-        //[Required]
+        ////[Required]
         public string CandidateName { get; set; }
 
         [DisplayName("Confirmation Status")]
-        //[Required]
+        ////[Required]
         public string confirmationStatus { get; set; }
 
         [DisplayName("Overall Score")]
-        [Required]
+        //[Required]
         public float OverallScore { get; set; }
 
         [DisplayName("Overall Rating")]
-        [Required]
+        //[Required]
         public int Rating { get; set; }
         [Display(Name = "Current Employer")]
         public string currentEmployerName { get; set; }
@@ -266,7 +266,7 @@ namespace Risebird.Entities.ViewModel
         public IList<InterviewerQuestionsDiscussed> InterviewerQuestionsCollection { get; set; }
 
         [Display(Name = "Overall Personality Score")]
-        [Required]
+        //[Required]
 
         public float? OverallPersonalityScore { get; set; }
         public int? Openness { get; set; }
@@ -276,11 +276,11 @@ namespace Risebird.Entities.ViewModel
         public int? Neuroticism { get; set; }
 
         [Display(Name = "Overall Profile Score")]
-        [Required]
+        //[Required]
         public float? ProfileScore { get; set; }
 
         [Display(Name = "Overall Interviewing Ability Score")]
-        [Required]
+        //[Required]
         public float? OverallInterviewingAbilityScore { get; set; }
         public string ProfileName { get; set; }
         public string ISCId { get; set; }

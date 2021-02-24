@@ -1087,7 +1087,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
-                        con, "usp_UnAssignInterviewer", parameters, commandType: CommandType.StoredProcedure);
+                        con, "usp_UnAssignLeadInterviewer", parameters, commandType: CommandType.StoredProcedure);
                     return true;
                 }
             }

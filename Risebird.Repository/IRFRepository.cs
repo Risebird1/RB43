@@ -190,7 +190,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<Interviewer>(
-                        con, "select Interviewer.*, UserList.[EmailId] from Interviewer inner join UserList on Interviewer.UserId = UserList.id", null, commandType: Text);
+                        con, "select intp.UserId,PrimarySkill = STUFF((SELECT distinct  ', ' + Name FROM (select tis.InterviewerProfileId, ski.Name from TransInterviewerSkill tis join Skill ski on tis.SkillId = ski.id ) b WHERE b.InterviewerProfileId = intp.Id FOR XML PATH('')), 1, 1, '') FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId  where intp.IsApproved=1  ", null, commandType: Text);
                 }
             }
             catch (SqlException ex)
@@ -207,7 +207,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<Interviewer>(
-                        con, "select inv.UserId, inv.PrimarySkill, UserList.[EmailId] from Interviewer inv inner join UserList on inv.UserId = UserList.id where inv.IsApproved=1", null, commandType: Text);
+                        con, "select intp.UserId,intp.AssessmentGroupId, ul.EmailId FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId  where intp.IsApproved=1", null, commandType: Text);
                 }
             }
             catch (SqlException ex)
@@ -915,7 +915,7 @@ namespace Risebird.Repository
 
 
                     //update trans interviewer table
-                    if(irfDetails.InterviewerCollection !=null && irfDetails.InterviewerCollection.Count()>0 && !(irfDetails.InterviewerCollection.Where(x => x.UserId == 0).Any()))
+                    if (irfDetails.InterviewerCollection != null && irfDetails.InterviewerCollection.Count() > 0 && !(irfDetails.InterviewerCollection.Where(x => x.UserId == 0).Any()))
                     {
                         DataTable interviewerDt = new DataTable();
                         interviewerDt.Columns.Add("IRFId", typeof(int));
@@ -965,7 +965,7 @@ namespace Risebird.Repository
                         }
                     }
 
-                    
+
 
                     //update trans Client table
 
@@ -1265,7 +1265,7 @@ namespace Risebird.Repository
                     //    }
                     //}
 
-                    if(irfDetails.InterviewerCollection!=null && irfDetails.InterviewerCollection.Count()!=0 && !(irfDetails.InterviewerCollection.Where(x=>x.UserId==0).Any()))
+                    if (irfDetails.InterviewerCollection != null && irfDetails.InterviewerCollection.Count() != 0 && !(irfDetails.InterviewerCollection.Where(x => x.UserId == 0).Any()))
                     {
                         DataTable interviewerDt = new DataTable();
                         interviewerDt.Columns.Add("IRFId", typeof(int));
@@ -1405,7 +1405,7 @@ namespace Risebird.Repository
                             con.Close();
                         }
                     }
-                        
+
 
                     //if (irfDetails.ResumeEvaluatorCollection != null)
                     //{
@@ -2269,7 +2269,7 @@ namespace Risebird.Repository
             parameters.Add("@Heuristicsscore", entity.Heuristicsscore);
             parameters.Add("@PrimarySkillInvite", entity.PrimarySkillInvite);
             parameters.Add("@BillingOwner", entity.BillingOwner);
-            parameters.Add("@Tag", "");
+            parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
 
             return parameters;
