@@ -123,13 +123,13 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string PrimarySkillInvite { get; set; }
         public bool IsClone { get; set; }
-        [DisplayName("Interviewer Tag")]
-        [Required]
-        public string Tag { get; set; }
         public IEnumerable<InterviewerProfileVM> InterviewerList { get; set; }
         [DisplayName("Billing Owner")]
         [Required]
         public int BillingOwner { get; set; }
+        [Display(Name = "Assessment Group Id")]
+        public string AssessmentGroupId { get; set; }
+        public SelectList AssessmentGroupList { get; set; }
 
     }
     public class InterviewerIds
@@ -211,8 +211,7 @@ namespace Risebird.Entities.ViewModel
         public string PrimarySkillInvite { get; set; }
         public string AssignTo { get; set; }
         public string AssignStatus { get; set; }
-        public string Tag { get; set; }
-
+        public string AssessmentGroupId { get; set; }
         public int BillingOwner { get; set; }
     }
 }

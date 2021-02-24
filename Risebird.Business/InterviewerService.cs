@@ -193,7 +193,10 @@ namespace Risebird.Business
                 {
                     ProfileModel.TagArray = ProfileModel.Tag.Split(',');
                 }
-
+                if (!string.IsNullOrEmpty(ProfileModel.AssessmentGroupId))
+                {
+                    ProfileModel.AssessmentGroupArray = ProfileModel.AssessmentGroupId.Split(',');
+                }
                 return ProfileModel;
 
             }

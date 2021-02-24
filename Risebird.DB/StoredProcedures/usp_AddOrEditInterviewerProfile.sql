@@ -38,7 +38,7 @@ CREATE PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @IsActive bit,    
 @IsApproved bit,    
 @Tag varchar(200),    
-@AssessmentGroupId int,  
+@AssessmentGroupId varchar(100),  
 @InterviewerProfileId int output    
     
 AS    

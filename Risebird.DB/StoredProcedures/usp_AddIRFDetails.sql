@@ -11,100 +11,95 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
- Create PROCEDURE [dbo].[usp_AddIRFDetails]    
+   
+ Create PROCEDURE [dbo].[usp_AddIRFDetails]        
+        
+@IRFId nvarchar(200),        
+@clientName varchar(200),        
+@JDTiltle nvarchar(200),        
+@CompanyType varchar(200),        
+@ClientId int,        
+@JobCountry varchar(50),        
+@StartDate datetime,        
+@EndDate datetime,        
+@JDLink varchar(1000),        
+@NoOfPosition int,        
+@NoOfIntterview int,        
+@RisebirdHr int,        
+@PerMintuteRate real,        
+@JobLevel int,        
+@CalendlyLink varchar(500),        
+@TotalBudget int,        
+@CreatedOn date,        
+@IsBiometricEnabled bit,        
+@PriorityLevel int,        
+@CompanyDetails varchar(1000),       
+@Type varchar(5),    
+@Heuristicsscore int,    
+@PrimarySkillInvite varchar(100),    
+@BillingOwner int, 
+@AssessmentGroupId varchar(100),
+@idIrf int output        
+        
+AS        
+Begin        
+        
+INSERT INTO [dbo].[IRF]        
+   ([IRFId]        
+   ,[clientName]        
+   ,[JDTiltle]        
+   ,[CompanyType]        
+   ,[ClientId]        
+   ,[JobCountry]        
+   ,[StartDate]        
+   ,[EndDate]                   
+   ,[JDLink]        
+   ,[NoOfPosition]        
+   ,[NoOfIntterview]        
+   ,[RisebirdHr]        
+   ,[PerMintuteRate]          
+   ,[JobLevel]        
+   ,[CalendlyLink]        
+   ,[CreatedOn]        
+   ,[IsBiometricEnabled]        
+   ,[TotalBudget]        
+   ,[PriorityLevel]        
+   ,[CompanyDetails]        
+   ,[BussinessType]    
+   ,[Heuristicsscore]    
+   ,[PrimarySkillInvite]  
+   ,[BillingOwner]
+   ,[AssessmentGroupId])        
+       VALUES        
+           (@IRFId,        
+   @clientName,        
+   @JDTiltle,        
+   @CompanyType,        
+   @ClientId,        
+   @JobCountry,        
+   @StartDate,        
+   @EndDate,        
+   @JDLink,        
+   @NoOfPosition,        
+   @NoOfIntterview,        
+   @RisebirdHr,        
+   @PerMintuteRate,        
+   @JobLevel,        
+   @CalendlyLink,        
+   @CreatedOn,        
+   @IsBiometricEnabled,        
+   @TotalBudget,        
+   @PriorityLevel,        
+   @CompanyDetails,      
+   @Type,    
+   @Heuristicsscore,    
+   @PrimarySkillInvite,  
+   @BillingOwner,
+   @AssessmentGroupId)        
+        
+End        
     
-@IRFId nvarchar(200),    
-@clientName varchar(200),    
-@JDTiltle nvarchar(200),    
-@CompanyType varchar(200),    
-@ClientId int,    
-@JobCountry varchar(50),    
-@StartDate datetime,    
-@EndDate datetime,    
-@JDLink varchar(1000),    
-@NoOfPosition int,    
-@NoOfIntterview int,    
-@RisebirdHr int,    
-@PerMintuteRate real,    
-@JobLevel int,    
-@CalendlyLink varchar(500),    
-@TotalBudget int,    
-@CreatedOn date,    
-@IsBiometricEnabled bit,    
-@PriorityLevel int,    
-@CompanyDetails varchar(1000),   
-@Type varchar(5),
-@Heuristicsscore int,
-@PrimarySkillInvite varchar(100),
-@Tag varchar(200),
-@BillingOwner int,
-@idIrf int output    
-    
-AS    
-Begin    
-    
-INSERT INTO [dbo].[IRF]    
-			([IRFId]    
-			,[clientName]    
-			,[JDTiltle]    
-			,[CompanyType]    
-			,[ClientId]    
-			,[JobCountry]    
-			,[StartDate]    
-			,[EndDate]               
-			,[JDLink]    
-			,[NoOfPosition]    
-			,[NoOfIntterview]    
-			,[RisebirdHr]    
-			,[PerMintuteRate]      
-			,[JobLevel]    
-			,[CalendlyLink]    
-			,[CreatedOn]    
-			,[IsBiometricEnabled]    
-			,[TotalBudget]    
-			,[PriorityLevel]    
-			,[CompanyDetails]    
-			,[BussinessType]
-			,[Heuristicsscore]
-			,[PrimarySkillInvite]
-			,[Tag]
-			,[BillingOwner])    
-       VALUES    
-           (@IRFId,    
-			@clientName,    
-			@JDTiltle,    
-			@CompanyType,    
-			@ClientId,    
-			@JobCountry,    
-			@StartDate,    
-			@EndDate,    
-			@JDLink,    
-			@NoOfPosition,    
-			@NoOfIntterview,    
-			@RisebirdHr,    
-			@PerMintuteRate,    
-			@JobLevel,    
-			@CalendlyLink,    
-			@CreatedOn,    
-			@IsBiometricEnabled,    
-			@TotalBudget,    
-			@PriorityLevel,    
-			@CompanyDetails,  
-			@Type,
-			@Heuristicsscore,
-			@PrimarySkillInvite,
-			@Tag
-			@BillingOwner)    
-    
-End    
+  GO
 
-
-  
-  
-
-
-  
-
-GO
 
 

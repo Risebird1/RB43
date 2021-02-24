@@ -20,5 +20,6 @@ namespace Risebird.Entities.Data
         public DateTime LastLogout { get; set; }
         public string ImageURL { get; set; }
         public int IdProfile { get; set; }
+        public string AssessmentGroupId { get; set; }
     }
 }
