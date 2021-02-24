@@ -7,8 +7,11 @@
     border-radius: 5px;
 }
 /*.pt30 {
+
+/*.pt30 {
     padding-top: 30px;
-}*/
+}
+
 #comment {
     width: 650px;
     height: 95px;
@@ -375,10 +378,7 @@
 .copy-btn {
     background: none;
     border: 0;
-    margin: -10px 0px 0px 5px !important;
-}
- #txtvideoUrls {
-    font-size: 15px;
+    margin: -10px 0px 0px 5px;
 }
 .special-text svg {
     fill: rgb(83, 165, 245)
