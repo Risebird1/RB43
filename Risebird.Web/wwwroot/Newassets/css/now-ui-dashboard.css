@@ -2462,6 +2462,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
 
     .navbar.navbar-absolute {
       /*  position: absolute;*/
+       /* position: absolute;*/
         width: 100%;
         padding-top: 10px;
         z-index: 1;
