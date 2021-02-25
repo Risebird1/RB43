@@ -4329,6 +4329,11 @@ namespace Risebird.Web.Controllers
             emailid = emailid.Replace("\"", "");
             if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
             {
+                if (HttpContext.Session.GetString("IRFCandidateStatusfilters") != null)
+                {
+                    HttpContext.Session.Remove("IRFCandidateStatusfilters");                   
+                }
+
                 var model = new List<CandidateTimelineVM>();
                 var candidateData = await _irfService.GetCandidateTimeline(profileName == "Client" ? emailid : null, id);
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId, x.Name)).Distinct().OrderBy(x => x.Name);
@@ -4463,6 +4468,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+       
         [HttpPost]
         public async Task<IActionResult> GetCandidateStatus(int id, string irfId, CandidateTimelineFilter filter)
         {
