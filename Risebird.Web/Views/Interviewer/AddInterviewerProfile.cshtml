@@ -104,10 +104,9 @@
                                         @Html.ValidationMessageFor(model => model.IsLeadInterviewer, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.Tag, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        <select id="TagArray" name="TagArray" class="form-control multiselect" multiple="multiple">
-                                            @foreach (var item in Model.TagList.ToList())
+                                        @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        <select id="AssessmentGroupArray" name="AssessmentGroupArray" class="form-control multiselect" multiple="multiple">
+                                            @foreach (var item in Model.AssessmentGroupList.ToList())
                                             {
                                                 @if (item != null)
                                                 {
@@ -117,8 +116,7 @@
                                             }
 
                                         </select>
-
-                                        @Html.ValidationMessageFor(model => model.Tag, "", new { @class = "text-danger" })
+                                        @Html.ValidationMessageFor(model => model.AssessmentGroupArray, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
                                 <div class="col-lg-4  col-md-4 col-sm-4 px-1">
@@ -171,21 +169,7 @@
                                                           new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
                                         @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
                                     </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        <select id="AssessmentGroupArray" name="AssessmentGroupArray" class="form-control multiselect" multiple="multiple">
-                                            @foreach (var item in Model.AssessmentGroupList.ToList())
-                                            {
-                                                @if (item != null)
-                                                {
-                                                    <option value="@item.Value">@item.Text</option>
-
-                                                }
-                                            }
-
-                                        </select>
-                                        @Html.ValidationMessageFor(model => model.AssessmentGroupArray, "", new { @class = "text-danger" })
-                                    </div>
+                                    
                                 </div>
                                 <div class="col-lg-4  col-md-4 col-sm-4 pl-1">
                                     <div class="form-group">

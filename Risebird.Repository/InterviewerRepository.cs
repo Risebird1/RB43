@@ -259,7 +259,6 @@ namespace Risebird.Repository
             parameters.Add("@IsActive", entity.IsActive);
             parameters.Add("@IsApproved", entity.IsApproved);
             parameters.Add("@IsLeadInterviewer", entity.IsLeadInterviewer);
-            parameters.Add("@Tag", entity.Tag);
             if (entity.AssessmentGroupArray != null)
             {
                 entity.AssessmentGroupId = string.Join(',', entity.AssessmentGroupArray);
