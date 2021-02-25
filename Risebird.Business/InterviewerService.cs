@@ -45,11 +45,6 @@ namespace Risebird.Business
         {
             try
             {
-                if (interviewerProfile.TagArray != null)
-                {
-                    interviewerProfile.Tag = string.Join(',', interviewerProfile.TagArray);
-                }
-
                 return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
             }
             catch (Exception e)
@@ -63,12 +58,6 @@ namespace Risebird.Business
             try
             {
                 //Edit Method
-
-                if (interviewerProfile.TagArray != null)
-                {
-                    interviewerProfile.Tag = string.Join(',', interviewerProfile.TagArray);
-                }
-
                 interviewerProfile.InterviewerEducationDetails = interviewerProfile.InterviewerEducationDetails.Where(x => x.CollegeType != null).ToList();
                 interviewerProfile.InterviewerProjectsDetails = interviewerProfile.InterviewerProjectsDetails.Where(x => x.NatureOfProject != null).ToList();
                 interviewerProfile.InterviewerAvailabilityDetails = interviewerProfile.InterviewerAvailabilityDetails.Where(x => x.Weekday != null).ToList();
@@ -189,10 +178,6 @@ namespace Risebird.Business
                 ProfileModel.InterviewerProjectsDetails = ProjectsList;
                 ProfileModel.InterviewerAvailabilityDetails = AvailabilityList;
                 ProfileModel.InterviewerAccDetails = AccDetailsList;
-                if (!string.IsNullOrEmpty(ProfileModel.Tag))
-                {
-                    ProfileModel.TagArray = ProfileModel.Tag.Split(',');
-                }
                 if (!string.IsNullOrEmpty(ProfileModel.AssessmentGroupId))
                 {
                     ProfileModel.AssessmentGroupArray = ProfileModel.AssessmentGroupId.Split(',');
