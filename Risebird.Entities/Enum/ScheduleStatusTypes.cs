@@ -9,7 +9,7 @@ namespace Risebird.Entities.Enum
     {
         [Description("Scheduled")]
         Scheduled = 1,
-        [Description("Not Scheduled")]
+        [Description("Not Yet Scheduled")]
         NotYetScheduled = 2
     }
 }

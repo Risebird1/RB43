@@ -70,7 +70,8 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
+                        //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
 
                     }
 
@@ -123,7 +124,9 @@ namespace Risebird.Web.Controllers
                             {
                                 if ((lastStatus.ScheduleStatusComments == InterviewStatus.Selected.GetDescription() || lastStatus.ScheduleStatusComments == InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus != 1)
                                 {
-                                    candidateTimeline.CurrentStatus = string.Empty;
+                                    //candidateTimeline.CurrentStatus = string.Empty;
+                                    candidateTimeline.CurrentStatus = CandidateStatusOptions.QCPending.GetDescription(); 
+                                    candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
                                 }
                                 else
                                 {
@@ -204,54 +207,39 @@ namespace Risebird.Web.Controllers
                     {
                         var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateTimelinefilters"));
 
-                        var filteredModel = new List<CandidateTimelineVM>();
-
                         filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.HREmail).ToArray() : filter.HREmail = filter.HREmail;
 
+                        if (filter.ScheduleStatus != null)
+                        {
+                            if (filter.ScheduleStatus.Length == 1)
+                            {
+                                if (filter.ScheduleStatus[0] == ScheduleStatusTypes.Scheduled.GetDescription())
+                                {
+                                    model = model.Where(x => x.ScheduleStatus != null && x.ScheduleStatus.Count() > 0 && x.ScheduleStatus.Any(y => y.Status == ScheduleStatusTypes.Scheduled.GetDescription())).ToList();
+
+                                }
+                                else
+                                {
+                                    model = model.Where(x => x.ScheduleStatus != null && x.ScheduleStatus.Count() > 0 && !x.ScheduleStatus.Any(y => y.Status == ScheduleStatusTypes.Scheduled.GetDescription())).ToList();
+
+                                }
+                            }
+                        }
+                        if (filter.MeetingStatus != null)
+                        {
+                            model = model.Where(x => x.MeetingStatus != null && x.MeetingStatus.Count() > 0 && x.MeetingStatus.Any(c => filter.MeetingStatus.Contains(c.Status))).ToList();
+
+                        }
+                        if (filter.InterviewStatus != null)
+                        {
+                            model = model.Where(x => x.InterviewStatus != null && x.InterviewStatus.Count() > 0 && x.InterviewStatus.Any(c => filter.InterviewStatus.Contains(c.Status))).ToList();
+
+                        }
                         if (filter.HREmail != null)
                         {
                             model = model.Where(x => filter.HREmail.Contains(x.HREmail)).ToList();
 
                         }
-
-                        if (filter.ScheduleStatus == null && filter.MeetingStatus == null && filter.ScheduleStatus == null)
-                        {
-                            return View(model);
-
-                        }
-                        else
-                        {
-                            if (filter.MeetingStatus != null)
-                            {
-                                filteredModel.AddRange(model.Where(x => x.CurrentStatus != null && filter.MeetingStatus.Contains(x.CurrentStatus)));
-                            }
-                            if (filter.InterviewStatus != null)
-                            {
-                                filteredModel.AddRange(model.Where(x => x.CurrentStatus != null && filter.InterviewStatus.Contains(x.CurrentStatus)));
-                            }
-
-                            if (filter.ScheduleStatus != null)
-                            {
-                                if (filter.ScheduleStatus.Length == 1)
-                                {
-                                    if (filter.ScheduleStatus[0] == ScheduleStatusTypes.Scheduled.GetDescription())
-                                    {
-                                        filteredModel.AddRange(model.Where(x => x.ScheduleStatus != null && x.ScheduleStatus.Count() > 0 && x.ScheduleStatus.Any(y => y.Status == ScheduleStatusTypes.Scheduled.GetDescription())));
-
-                                    }
-                                    else
-                                    {
-                                        filteredModel.AddRange(model.Where(x => x.ScheduleStatus != null && x.ScheduleStatus.Count() > 0 && !x.ScheduleStatus.Any(y => y.Status == ScheduleStatusTypes.Scheduled.GetDescription())));
-
-                                    }
-                                }
-
-                                filteredModel = filteredModel.Distinct().ToList();
-                            }
-
-                        }
-
-                        model = filteredModel;
 
                     }
                     return View(model);
@@ -295,7 +283,8 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
+                        //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
                     }
                     var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId, x.Name)).Distinct().OrderBy(x => x.Name);
                     foreach (var candidate in distinctCandidates)
@@ -346,7 +335,9 @@ namespace Risebird.Web.Controllers
                             {
                                 if ((lastStatus.ScheduleStatusComments == InterviewStatus.Selected.GetDescription() || lastStatus.ScheduleStatusComments == InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus != 1)
                                 {
-                                    candidateTimeline.CurrentStatus = string.Empty;
+                                    //candidateTimeline.CurrentStatus = string.Empty;
+                                    candidateTimeline.CurrentStatus = CandidateStatusOptions.QCPending.GetDescription();
+                                    candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
                                 }
                                 else
                                 {
@@ -423,55 +414,41 @@ namespace Risebird.Web.Controllers
 
                         }
                     }
-                    var filteredModel = new List<CandidateTimelineVM>();
-
                     filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.HREmail).ToArray() : filter.HREmail = filter.HREmail;
 
+                    if (filter.ScheduleStatus != null)
+                    {
+                        if (filter.ScheduleStatus.Length == 1)
+                        {
+                            if (filter.ScheduleStatus[0] == ScheduleStatusTypes.Scheduled.GetDescription())
+                            {
+                                model = model.Where(x => x.ScheduleStatus != null && x.ScheduleStatus.Count() > 0 && x.ScheduleStatus.Any(y => y.Status == ScheduleStatusTypes.Scheduled.GetDescription())).ToList();
+
+                            }
+                            else
+                            {
+                                model = model.Where(x => x.ScheduleStatus != null && x.ScheduleStatus.Count() > 0 && !x.ScheduleStatus.Any(y => y.Status == ScheduleStatusTypes.Scheduled.GetDescription())).ToList();
+
+                            }
+                        }
+                    }
+                    if (filter.MeetingStatus != null)
+                    {
+                        model = model.Where(x => x.MeetingStatus != null && x.MeetingStatus.Count() > 0 && x.MeetingStatus.Any(c => filter.MeetingStatus.Contains(c.Status))).ToList();
+
+                    }
+                    if (filter.InterviewStatus != null)
+                    {
+                        model = model.Where(x => x.InterviewStatus != null && x.InterviewStatus.Count() > 0 && x.InterviewStatus.Any(c => filter.InterviewStatus.Contains(c.Status))).ToList();
+
+                    }
+
+                    
                     if (filter.HREmail != null)
                     {
                         model = model.Where(x => filter.HREmail.Contains(x.HREmail)).ToList();
 
                     }
-
-                    if(filter.ScheduleStatus==null && filter.MeetingStatus == null && filter.ScheduleStatus==null)
-                    {
-                        return View(model);
-                    }
-                    else
-                    {
-                        if (filter.MeetingStatus != null)
-                        {
-                            filteredModel.AddRange(model.Where(x => x.CurrentStatus != null && filter.MeetingStatus.Contains(x.CurrentStatus)));
-                        }
-                        if (filter.InterviewStatus != null)
-                        {
-                            filteredModel.AddRange(model.Where(x => x.CurrentStatus != null && filter.InterviewStatus.Contains(x.CurrentStatus)));
-                        }
-
-
-                        if (filter.ScheduleStatus != null)
-                        {
-                            if (filter.ScheduleStatus.Length == 1)
-                            {
-                                if (filter.ScheduleStatus[0] == ScheduleStatusTypes.Scheduled.GetDescription())
-                                {
-                                    filteredModel.AddRange(model.Where(x => x.ScheduleStatus != null && x.ScheduleStatus.Count() > 0 && x.ScheduleStatus.Any(y => y.Status == ScheduleStatusTypes.Scheduled.GetDescription())));
-
-                                }
-                                else
-                                {
-                                    filteredModel.AddRange(model.Where(x => x.ScheduleStatus != null && x.ScheduleStatus.Count() > 0 && !x.ScheduleStatus.Any(y => y.Status == ScheduleStatusTypes.Scheduled.GetDescription())));
-
-                                }
-                            }
-
-                            filteredModel = filteredModel.Distinct().ToList();
-                        }
-
-                        
-                    }
-
-                    model = filteredModel;
                     return View(model);
 
                 }
@@ -493,7 +470,6 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [Authorize]
-        //[HttpPost]
         public async Task<FileContentResult> CandidateStatusExporttoExcel(/*string modelData*/)
         {
             ExcelPackage Ep = new ExcelPackage();
@@ -519,7 +495,8 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
+                    //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
 
                 }
 
@@ -572,7 +549,10 @@ namespace Risebird.Web.Controllers
                         {
                             if ((lastStatus.ScheduleStatusComments == InterviewStatus.Selected.GetDescription() || lastStatus.ScheduleStatusComments == InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus != 1)
                             {
-                                candidateTimeline.CurrentStatus = string.Empty;
+                                //candidateTimeline.CurrentStatus = string.Empty;
+                                candidateTimeline.CurrentStatus = CandidateStatusOptions.QCPending.GetDescription(); 
+                                candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+
                             }
                             else
                             {
@@ -653,53 +633,39 @@ namespace Risebird.Web.Controllers
                 {
                     var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateTimelinefilters"));
 
-                    var filteredModel = new List<CandidateTimelineVM>();
-
                     filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.HREmail).ToArray() : filter.HREmail = filter.HREmail;
 
+                    if (filter.ScheduleStatus != null)
+                    {
+                        if (filter.ScheduleStatus.Length == 1)
+                        {
+                            if (filter.ScheduleStatus[0] == ScheduleStatusTypes.Scheduled.GetDescription())
+                            {
+                                model = model.Where(x => x.ScheduleStatus != null && x.ScheduleStatus.Count() > 0 && x.ScheduleStatus.Any(y => y.Status == ScheduleStatusTypes.Scheduled.GetDescription())).ToList();
+
+                            }
+                            else
+                            {
+                                model = model.Where(x => x.ScheduleStatus != null && x.ScheduleStatus.Count() > 0 && !x.ScheduleStatus.Any(y => y.Status == ScheduleStatusTypes.Scheduled.GetDescription())).ToList();
+
+                            }
+                        }
+                    }
+                    if (filter.MeetingStatus != null)
+                    {
+                        model = model.Where(x => x.MeetingStatus != null && x.MeetingStatus.Count() > 0 && x.MeetingStatus.Any(c => filter.MeetingStatus.Contains(c.Status))).ToList();
+
+                    }
+                    if (filter.InterviewStatus != null)
+                    {
+                        model = model.Where(x => x.InterviewStatus != null && x.InterviewStatus.Count() > 0 && x.InterviewStatus.Any(c => filter.InterviewStatus.Contains(c.Status))).ToList();
+
+                    }
                     if (filter.HREmail != null)
                     {
                         model = model.Where(x => filter.HREmail.Contains(x.HREmail)).ToList();
 
                     }
-
-                    if (filter.ScheduleStatus == null && filter.MeetingStatus == null && filter.ScheduleStatus == null)
-                    {
-                        filteredModel = model;
-                    }
-                    else
-                    {
-                        if (filter.MeetingStatus != null)
-                        {
-                            filteredModel.AddRange(model.Where(x => x.CurrentStatus != null && filter.MeetingStatus.Contains(x.CurrentStatus)));
-                        }
-                        if (filter.InterviewStatus != null)
-                        {
-                            filteredModel.AddRange(model.Where(x => x.CurrentStatus != null && filter.InterviewStatus.Contains(x.CurrentStatus)));
-                        }
-
-                        if (filter.ScheduleStatus != null)
-                        {
-                            if (filter.ScheduleStatus.Length == 1)
-                            {
-                                if (filter.ScheduleStatus[0] == ScheduleStatusTypes.Scheduled.GetDescription())
-                                {
-                                    filteredModel.AddRange(model.Where(x => x.ScheduleStatus != null && x.ScheduleStatus.Count() > 0 && x.ScheduleStatus.Any(y => y.Status == ScheduleStatusTypes.Scheduled.GetDescription())));
-
-                                }
-                                else
-                                {
-                                    filteredModel.AddRange(model.Where(x => x.ScheduleStatus != null && x.ScheduleStatus.Count() > 0 && !x.ScheduleStatus.Any(y => y.Status == ScheduleStatusTypes.Scheduled.GetDescription())));
-
-                                }
-                            }
-
-                            filteredModel = filteredModel.Distinct().ToList();
-                        }
-
-                    }
-
-                    model = filteredModel;
 
                 }
 

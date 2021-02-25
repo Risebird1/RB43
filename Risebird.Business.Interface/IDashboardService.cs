@@ -33,5 +33,6 @@ namespace Risebird.Business.Interface
         Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCount();
         Task<IEnumerable<MeetingVM>> GetNotUpdatedMeetings();
         Task<List<string>> FetchHRList(string searchterm);
+        Task<CandidateCurrentStatusCount> GetClientCandidatesCurrentStatusCount(string emailId);
     }
 }

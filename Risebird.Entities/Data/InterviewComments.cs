@@ -86,6 +86,8 @@ namespace Risebird.Entities.Data
         public string PrimarySkill { get; set; }
         public string candidateEmail { get; set; }
         public DateTime interviewDate { get; set; }
+        public int? OldQCStatus { get; set; }
+
 
     }
 }

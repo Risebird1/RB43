@@ -169,6 +169,9 @@
                                             @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
                                             @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
                                         </div>
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            <label class="text-danger" id="meetingStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -1855,6 +1858,9 @@
     }
 
     function MeetingStatusChanged(value) {
+        if (value != 2) {
+            document.getElementById("meetingStatus_Error").innerHTML = "";
+        }
         if (value == 1 || value == 2 || value == 3) {
             document.getElementById("InterviewStatus").value = '';
             document.getElementById("InterviewStatus").disabled = true;
@@ -1866,7 +1872,7 @@
 
     function CheckConditions() {
 
-        return (CheckInterviewerComments() && CheckQuestionsTiming());
+        return (CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestionsTiming());
     }
 
     function CheckInterviewerComments() {
@@ -1914,6 +1920,24 @@
        }
       else
             return true;
+    }
+
+
+
+
+    function CheckMeetingStatus() {
+        var meetingStatusElem = document.getElementById("MeetingStatus");
+        if (meetingStatusElem.value == 2) {
+            document.getElementById("meetingStatus_Error").innerHTML = "Kindly change the Meeting Status to an appropriate value.";
+            meetingStatusElem.focus();
+            return false;
+        }
+        else {
+            document.getElementById("meetingStatus_Error").innerHTML = "";
+            return true;
+            
+        }
+
     }
 
     $(document).ready(function () {

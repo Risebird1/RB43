@@ -1,4 +1,5 @@
 ﻿using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -167,6 +168,50 @@ namespace Risebird.Business
             try
             {
                 var countObj = await _dashboardRespository.GetClientCandidatesCount(emailId);
+                return countObj;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<CandidateCurrentStatusCount> GetClientCandidatesCurrentStatusCount(string emailId)
+        {
+            try
+            {
+                var countObj = new CandidateCurrentStatusCount();
+                var obj = await _dashboardRespository.GetClientCandidatesCurrentStatus(emailId);
+                if (obj != null && obj.Count() > 0)
+                {
+
+                    var meetingStatObj = obj.Where(x => x.StatusValue == "Meeting Status");
+                    if (meetingStatObj != null && meetingStatObj.Count() > 0)
+                    {
+                        countObj.NoShow = meetingStatObj.Where(x => x.Comments == MeetingStatus.NoShow.GetDescription())?.Count();
+                        countObj.Dropped = meetingStatObj.Where(x => x.Comments == MeetingStatus.Dropped.GetDescription())?.Count();
+                        countObj.Completed = meetingStatObj.Where(x => x.Comments == MeetingStatus.Completed.GetDescription())?.Count();
+                    }
+                    var inteviewStatObj = obj.Where(x => x.StatusValue == "Interview Status");
+                    if (inteviewStatObj != null && inteviewStatObj.Count() > 0)
+                    {
+                        countObj.Proxy = inteviewStatObj.Where(x => x.Comments == InterviewStatus.Proxy.GetDescription())?.Count();
+                        countObj.Selected = inteviewStatObj.Where(x => x.Comments == InterviewStatus.Selected.GetDescription())?.Count();
+                        countObj.Rejected = inteviewStatObj.Where(x => x.Comments == InterviewStatus.Rejected.GetDescription())?.Count();
+                        countObj.BorderLine = inteviewStatObj.Where(x => x.Comments == InterviewStatus.BorderLine.GetDescription())?.Count();
+                    }
+
+                    countObj.NotYetScheduled = obj.Where(x => x.Status != (int)CandidateStatusOptions.Scheduled && x.Comments != "Meeting Status" && x.Comments != "Interview Status" && x.Status != (int)CandidateStatusOptions.QCPending)?.Count();
+                    
+                    countObj.Scheduled = obj.Where(x => x.Status == (int)CandidateStatusOptions.Scheduled)?.Count();
+                    countObj.QCPending = obj.Where(x => x.Status == (int)CandidateStatusOptions.QCPending)?.Count();
+
+
+                    countObj.TotalCount = countObj.NoShow + countObj.Dropped + countObj.Scheduled + countObj.Completed
+                                         + countObj.Selected + countObj.Rejected + countObj.BorderLine + countObj.Proxy
+                                         + countObj.QCPending + countObj.NotYetScheduled;
+                }
                 return countObj;
             }
             catch (Exception ex)

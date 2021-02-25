@@ -679,6 +679,7 @@
 
         });
         var table = $('#MyInterviewList').DataTable();
+
     });
 
     $(document).ready(function () {
@@ -770,6 +771,7 @@
 <script>
     function ModalButtonClick(item) {
         imid = item.id;
+        oldQcStatus = item.QCStatus;
 
         // Get the modal
         var modal = document.getElementById("myModal");
@@ -823,6 +825,8 @@
 
 
     function SavePopUp() {
+        debugger;
+
         var comment = document.getElementById("qcComments").value;
         var qcStatus = document.getElementById("qcDropdown").value;
 
@@ -851,7 +855,7 @@
                 'imid': id, 'qcStatus': qcStatus, 'comment': comment, 'FraudLipSync': FraudLipSync, 'QuestionsRelevance': QuestionsRelevance, 'HandsOnCoding': HandsOnCoding, 'BiasAndCandidateHandling': BiasAndCandidateHandling, 'TechnicalCommunicationSkills': TechnicalCommunicationSkills, 'ChapteringCompleted': ChapteringCompleted,
                 'QuestionsFilled': QuestionsFilled, 'TechSkillsMetric': TechSkillsMetric, 'SelectabilityMetric': SelectabilityMetric, 'JoinabilityMetric': JoinabilityMetric,
                 'GeneralSkillMetric': GeneralSkillMetric, 'CommentsFilled': CommentsFilled, 'MeaningfulAssessments': MeaningfulAssessments, 'CorrectEnglishGrammar': CorrectEnglishGrammar,
-                'ProctoringReportFilled': ProctoringReportFilled
+                'ProctoringReportFilled': ProctoringReportFilled, 'oldQcStatus': oldQcStatus
             },
             success: function (data) {
 

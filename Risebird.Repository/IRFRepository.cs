@@ -4055,6 +4055,36 @@ namespace Risebird.Repository
             return false;
         }
 
+
+        public async Task<bool> AddQCCandidateStatus(int interviewId, string performedBy)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@InterviewId", interviewId);
+                parameters.Add("@Date", DateTime.Now);
+                parameters.Add("@PerformedBy",performedBy);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_AddQCCandidateStatus", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return false;
+        }
+
         public async Task<IEnumerable<CandidateStatus>> GetCandidatesStatusList(int irfId, int candidateId)
         {
             try

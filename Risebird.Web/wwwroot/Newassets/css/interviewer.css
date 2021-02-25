@@ -1037,8 +1037,10 @@ div.dataTables_wrapper div.dataTables_processing {
     padding: 1em 0;
 }
 
-table.dataTable thea
 
+.borderline {
+    background: yellow;
+}
 
 .noshow {
     background: grey
@@ -1069,7 +1071,7 @@ table.dataTable thea
 }
 
 .schedule {
-    background: #01e401;
+    background: green;
 }
 
 .pl15 {
