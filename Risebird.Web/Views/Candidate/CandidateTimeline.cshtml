@@ -33,7 +33,7 @@
     HREmail = filter.HREmail != null ? filter.HREmail : new string[] { };
 
 }
-<link href="~/Newassets/css/interviewer.css?v=7" rel="stylesheet" type="text/css" />
+<link href="~/Newassets/css/interviewer.css?v=1" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <div class="main-panel" id="main-panel">
@@ -70,13 +70,13 @@
 
                 <div class="pull-right">
                     <div>
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#filterModal">
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-toggle="modal" data-target="#filterModal" style="vertical-align:top">
 
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
                         </button>
 
-                        <i type="submit" class="fa fa-file-excel-o excel-file card-title-space" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateStatusExporttoExcel", "Candidate")'"></i>
+                        <i type="submit" class="fa fa-file-excel-o excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateStatusExporttoExcel", "Candidate")'"></i>
 
 
                     </div>
@@ -294,12 +294,12 @@
                                                         {
                                                             <tr>
 
-                                                                @if (item.CandidateName.Length > 20)
+                                                                @if (item.CandidateName.Length > 15)
                                                                 {
 
 
                                                                     <td class="cadName text-left pl15">
-                                                                        <a onclick="" data-tooltip="@item.CandidateName"> @item.CandidateName.Substring(0, 20)... </a>
+                                                                        <a onclick="" data-tooltip="@item.CandidateName"> @item.CandidateName.Substring(0, 15)... </a>
                                                                     </td>
                                                                 }
                                                                 else
@@ -313,12 +313,12 @@
 
 
 
-                                                                @if (item.CandidateEmailId.Length > 20)
+                                                                @if (item.CandidateEmailId.Length > 18)
                                                                 {
 
 
                                                                     <td class="cadEmail text-left pl15">
-                                                                        <a onclick="" data-tooltip="@item.CandidateEmailId"> @item.CandidateEmailId.Substring(0, 20)... </a>
+                                                                        <a onclick="" data-tooltip="@item.CandidateEmailId"> @item.CandidateEmailId.Substring(0, 18)... </a>
                                                                     </td>
                                                                 }
 
@@ -425,24 +425,49 @@
                                                                                 <div class="tl-round round1" style="background-color: #35353599;"></div>
                                                                                 <div class="circle-wrap">
 
-                                                                                    <div class="circle" id="circle0" style="left: 0%;">
-                                                                                        <div class="popupSpan">
+                                                                                    @if (status.Status == "Scheduled")
+                                                                                    {
+                                                                                        <div class="circle schedule" id="circle0" style="left: 0%;">
+                                                                                            <div class="popupSpan">
 
-                                                                                            <div class="event2Bubble">
-                                                                                                <div class="eventTime">
-                                                                                                    <div class="DayDigit">@status.Date</div>
-                                                                                                    <div class="Day">
-                                                                                                        @status.Day
-                                                                                                        <div class="MonthYear">
-                                                                                                            @status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time
+                                                                                                <div class="event2Bubble">
+                                                                                                    <div class="eventTime">
+                                                                                                        <div class="DayDigit">@status.Date</div>
+                                                                                                        <div class="Day">
+                                                                                                            @status.Day
+                                                                                                            <div class="MonthYear">
+                                                                                                                @status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
 
+                                                                                                    </div>
+                                                                                                    <div class="eventTitle">@status.Status</div>
                                                                                                 </div>
-                                                                                                <div class="eventTitle">@status.Status</div>
                                                                                             </div>
                                                                                         </div>
-                                                                                    </div>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <div class="circle" id="circle0" style="left: 0%;">
+                                                                                            <div class="popupSpan">
+
+                                                                                                <div class="event2Bubble">
+                                                                                                    <div class="eventTime">
+                                                                                                        <div class="DayDigit">@status.Date</div>
+                                                                                                        <div class="Day">
+                                                                                                            @status.Day
+                                                                                                            <div class="MonthYear">
+                                                                                                                @status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time
+                                                                                                            </div>
+                                                                                                        </div>
+
+                                                                                                    </div>
+                                                                                                    <div class="eventTitle">@status.Status</div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    }
+
                                                                                 </div>
                                                                             }
 
@@ -462,26 +487,8 @@
                                                                             <div class="circle-wrap">
                                                                                 @foreach (var status in item.MeetingStatus)
                                                                                 {
-                                                                                    @if (status.Status == "Scheduled")
-                                                                                    {
-                                                                                        <div class="circle schedule" id="circle0" style="left: 0%;">
-                                                                                            <div class="popupSpan">
-                                                                                                <div class="popupSpan">
-                                                                                                    <div class="event2Bubble">
-                                                                                                        <div class="eventTime">
-                                                                                                            <div class="DayDigit">@status.Date</div>
-                                                                                                            <div class="Day">
-                                                                                                                @status.Day
-                                                                                                                <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <div class="eventTitle">@status.Status</div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    }
-                                                                                    else if (status.Status == "Completed")
+                                                                                    
+                                                                                    if (status.Status == "Completed")
                                                                                     {
                                                                                         <div class="circle completed" id="circle0" style="left: 0%;">
                                                                                             <div class="popupSpan">
@@ -537,7 +544,7 @@
                                                                             <div class="circle-wrap">
                                                                                 @foreach (var status in item.InterviewStatus)
                                                                                 {
-                                                                                    @if (status.Status == "BorderLine")
+                                                                                    @if (status.Status == "Border Line")
                                                                                     {
                                                                                         <div class="circle borderline" id="circle0" style="left: 0%;">
                                                                                             <div class="popupSpan">

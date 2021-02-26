@@ -150,10 +150,16 @@ Begin
 	@cndUserId int = (select id from UserList where EmailId=@candidateEmail and idProfile=@profileId)
 
 	Insert into CandidatesMaster (UserId) values(@cndUserId)
+	declare
+	@canMasterId int = (select id from CandidatesMaster where UserId=@cndUserId)
 
 	Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId) 
 	values((select id from IRF where IRFId=@IRFId), @resumeLink, @prefferedLocation, @textreminder,
 	(select id from CandidatesMaster  where UserId = @cndUserId))
+
+	--insert candidate added status
+	insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
+	values ((select id from IRF where IRFId=@IRFId), @canMasterId, 'Added', GETDATE(), 12, 'System')
 	
 End
 
@@ -174,7 +180,11 @@ Begin
 	IF NOT EXISTS (SELECT 1  FROM  Candidate  WHERE  CandidateMasterId = @candidateMasterId and IRFID= @irfintid)
 		Begin
 			Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId) 
-			values(@irfintid, @resumeLink, @prefferedLocation,@textreminder, @candidateMasterId) 			
+			values(@irfintid, @resumeLink, @prefferedLocation,@textreminder, @candidateMasterId) 	
+			
+			--insert candidate added status
+			insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
+			values (@irfintid, @candidateMasterId, 'Added', GETDATE(), 12, 'System')
 		End
 
 End
