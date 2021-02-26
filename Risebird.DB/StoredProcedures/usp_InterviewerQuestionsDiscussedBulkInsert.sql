@@ -12,27 +12,30 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[usp_InterviewerQuestionsDiscussedBulkInsert]
-(
-      @InterviewerQuestionsDiscussedBulkData AS [dbo].[InterviewerQuestionsDiscussed_TableType] READONLY
-)
-AS
+CREATE PROCEDURE [dbo].[usp_InterviewerQuestionsDiscussedBulkInsert]  
+(  
+      @InterviewerQuestionsDiscussedBulkData AS [dbo].[InterviewerQuestionsDiscussed_TableType] READONLY  
+)  
+AS  
+  
+BEGIN  
+  
+SET NOCOUNT ON;  
+  
+--This row performs bulk copy of object DataTable to Table in SQL  
+INSERT INTO [dbo].[InterviewerQuestionsDiscussed](  
+ [InterviewId] ,  
+ [Question],  
+ [RatingId],
+ [Timing])  
+   
+  
+SELECT * FROM @InterviewerQuestionsDiscussedBulkData  
+  
+  
+END  
 
-BEGIN
 
-SET NOCOUNT ON;
-
---This row performs bulk copy of object DataTable to Table in SQL
-INSERT INTO [dbo].[InterviewerQuestionsDiscussed](
-	[InterviewId] ,
-	[Question],
-	[RatingId])
-	
-
-SELECT * FROM @InterviewerQuestionsDiscussedBulkData
-
-
-END
 GO
 
 
