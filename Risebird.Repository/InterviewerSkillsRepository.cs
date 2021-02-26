@@ -998,6 +998,7 @@ namespace Risebird.Repository
                 {
                     var result = await SqlMapper.QueryFirstAsync<MeetingVM>(con, "usp_GetInterviewerVideoMeetingsbyId", parameters,
                         commandType: CommandType.StoredProcedure);
+                  //Update Table For Interviewer
                     var query = "Select InterviewId,VideoTitle,VideoLink,Priority,ThumbnailLink from VideoQuestionDetails Where InterViewid=@InterViewid and NULLIF(VideoLink, '') IS NOT NULL";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@InterViewid", id);
