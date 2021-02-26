@@ -279,9 +279,43 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 6].Value = item.JDTiltle.Split("|")[0];
                         Sheet.Cells[i, 7].Value = item.interviewer;
                         Sheet.Cells[i, 8].Value = item.confirmationStatus;
-                        Sheet.Cells[i, 9].Value = item.MeetingStatusStatusDesc;
 
-                        Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
+
+
+                        if(item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                        {
+                            if(item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                            {
+                                Sheet.Cells[i, 9].Value = "Pending";
+
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 9].Value = item.MeetingStatusStatusDesc;
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 9].Value = string.Empty;
+                        }
+
+                        //Sheet.Cells[i, 9].Value = item.MeetingStatusStatusDesc;
+
+
+                        if((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                        {
+                            Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
+                        }
+                        else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && (item.QCStatus == null || item.QCInterview == 0))
+                        {
+                            Sheet.Cells[i, 10].Value = "QC Pending";
+
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 10].Value = string.Empty;
+
+                        }
 
                         if (!string.IsNullOrEmpty(item.resumeLink))
                         {

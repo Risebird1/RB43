@@ -1446,16 +1446,51 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 5].Value = item.JDTiltle.Split("|")[0];
                         Sheet.Cells[i, 6].Value = item.confirmationStatus;
 
-                        Sheet.Cells[i, 7].Value = item.MeetingStatusDescription;
+
+                        if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                        {
+                            if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                            {
+                                Sheet.Cells[i, 7].Value = "Pending";
+
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 7].Value = item.MeetingStatusStatusDesc;
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 7].Value = string.Empty;
+                        }
+
+                        //Sheet.Cells[i, 7].Value = item.MeetingStatusDescription;
 
                         if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                         {
                             Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
                         }
+                        else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && (item.QCStatus == null || item.QCInterview == 0))
+                        {
+                            Sheet.Cells[i, 8].Value = "QC Pending";
+
+                        }
                         else
                         {
-                            Sheet.Cells[i, 8].Value = "";
+                            Sheet.Cells[i, 8].Value = string.Empty;
+
                         }
+
+
+
+                        //if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                        //{
+                        //    Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
+                        //}
+                        //else
+                        //{
+                        //    Sheet.Cells[i, 8].Value = "";
+                        //}
 
                         if (!string.IsNullOrEmpty(item.VideoLink) && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                         {

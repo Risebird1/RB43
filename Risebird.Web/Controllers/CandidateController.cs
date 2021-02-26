@@ -84,7 +84,7 @@ namespace Risebird.Web.Controllers
 
                     }
 
-                    var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId, x.Name)).Distinct().OrderBy(x => x.Name);
+                    var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                     foreach (var candidate in distinctCandidates)
                     {
                         var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
@@ -131,17 +131,8 @@ namespace Risebird.Web.Controllers
                             var lastStatus = scheduleStatusData.LastOrDefault();
                             if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
                             {
-                                if ((lastStatus.ScheduleStatusComments == InterviewStatus.Selected.GetDescription() || lastStatus.ScheduleStatusComments == InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus != 1)
-                                {
-                                    //candidateTimeline.CurrentStatus = string.Empty;
-                                    candidateTimeline.CurrentStatus = CandidateStatusOptions.QCPending.GetDescription(); 
-                                    candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
-                                }
-                                else
-                                {
-                                    candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
-                                    candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
-                                }
+                                candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
+                                candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
 
                             }
                             else
@@ -187,10 +178,10 @@ namespace Risebird.Web.Controllers
 
                             foreach (var item in interviewStatusData)
                             {
-                                if ((item.InterviewStatus == InterviewStatus.Selected.GetDescription() || item.InterviewStatus == InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus != 1)
-                                {
-                                    continue;
-                                }
+                                //if ((item.InterviewStatus == InterviewStatus.Selected.GetDescription() || item.InterviewStatus == InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus != 1)
+                                //{
+                                //    continue;
+                                //}
                                 var interviewStatusObj = new TimelineStatus();
 
                                 interviewStatusObj.Date = item.InterviewStatusDate.ToString("dd");
@@ -295,7 +286,7 @@ namespace Risebird.Web.Controllers
                         //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
                         candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
                     }
-                    var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId, x.Name)).Distinct().OrderBy(x => x.Name);
+                    var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                     foreach (var candidate in distinctCandidates)
                     {
                         var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
@@ -342,18 +333,8 @@ namespace Risebird.Web.Controllers
                             var lastStatus = scheduleStatusData.LastOrDefault();
                             if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
                             {
-                                if ((lastStatus.ScheduleStatusComments == InterviewStatus.Selected.GetDescription() || lastStatus.ScheduleStatusComments == InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus != 1)
-                                {
-                                    //candidateTimeline.CurrentStatus = string.Empty;
-                                    candidateTimeline.CurrentStatus = CandidateStatusOptions.QCPending.GetDescription();
-                                    candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
-                                }
-                                else
-                                {
-                                    candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
-                                    candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
-
-                                }
+                                candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
+                                candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
 
                             }
                             else
@@ -400,10 +381,10 @@ namespace Risebird.Web.Controllers
 
                             foreach (var item in interviewStatusData)
                             {
-                                if ((item.InterviewStatus == InterviewStatus.Selected.GetDescription() || item.InterviewStatus == InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus != 1)
-                                {
-                                    continue;
-                                }
+                                //if ((item.InterviewStatus == InterviewStatus.Selected.GetDescription() || item.InterviewStatus == InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus != 1)
+                                //{
+                                //    continue;
+                                //}
                                 var interviewStatusObj = new TimelineStatus();
 
                                 interviewStatusObj.Date = item.InterviewStatusDate.ToString("dd");
@@ -518,7 +499,7 @@ namespace Risebird.Web.Controllers
 
                 }
 
-                var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId, x.Name)).Distinct().OrderBy(x => x.Name);
+                var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
                 {
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
@@ -565,18 +546,8 @@ namespace Risebird.Web.Controllers
                         var lastStatus = scheduleStatusData.LastOrDefault();
                         if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
                         {
-                            if ((lastStatus.ScheduleStatusComments == InterviewStatus.Selected.GetDescription() || lastStatus.ScheduleStatusComments == InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus != 1)
-                            {
-                                //candidateTimeline.CurrentStatus = string.Empty;
-                                candidateTimeline.CurrentStatus = CandidateStatusOptions.QCPending.GetDescription(); 
-                                candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
-
-                            }
-                            else
-                            {
-                                candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
-                                candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
-                            }
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
+                            candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
 
                         }
                         else
@@ -622,10 +593,10 @@ namespace Risebird.Web.Controllers
 
                         foreach (var item in interviewStatusData)
                         {
-                            if ((item.InterviewStatus == InterviewStatus.Selected.GetDescription() || item.InterviewStatus == InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus != 1)
-                            {
-                                continue;
-                            }
+                            //if ((item.InterviewStatus == InterviewStatus.Selected.GetDescription() || item.InterviewStatus == InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus != 1)
+                            //{
+                            //    continue;
+                            //}
                             var interviewStatusObj = new TimelineStatus();
 
                             interviewStatusObj.Date = item.InterviewStatusDate.ToString("dd");

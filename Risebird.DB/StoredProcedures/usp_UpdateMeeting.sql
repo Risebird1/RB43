@@ -64,6 +64,12 @@ Begin
 			WHERE id = @interviewId        
     
 		End
+
+	if(@comfirmationStatus='2')
+	IF EXISTS (SELECT 1   FROM   InterviewComments  WHERE  InterviewId=@interviewId)
+	Begin
+		update InterviewComments set MeetingStatus=null where InterviewId = @interviewId
+	End
 END
 
 
