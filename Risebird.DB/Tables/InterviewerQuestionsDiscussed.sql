@@ -8,7 +8,7 @@ Begin
 	[InterviewId] [int] NOT NULL,
 	[Question] [varchar](max) NOT NULL,
 	[RatingId] [int] NOT NULL,
-
+	[Timing] [int]
 	 CONSTRAINT [PK_InterviewerQuestionsDiscussed] PRIMARY KEY CLUSTERED 
 	(
 		[id] ASC
@@ -16,7 +16,15 @@ Begin
 	) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 End
-
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Timing')
+      AND Object_ID = Object_ID(N'InterviewerQuestionsDiscussed'))
+BEGIN
+    ALTER TABLE InterviewerQuestionsDiscussed
+    Add Timing INT NOT NULL DEFAULT 0
+END
 
 GO
 

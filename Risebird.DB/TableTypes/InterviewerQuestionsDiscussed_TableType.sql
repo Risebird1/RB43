@@ -5,7 +5,8 @@ BEGIN
 	CREATE TYPE [dbo].[InterviewerQuestionsDiscussed_TableType] AS TABLE(
 	[InterviewId] [int] NOT NULL,
 	[Question] [varchar](max) NULL,
-	[RatingId] [int] NOT NULL)
+	[RatingId] [int] NOT NULL,
+	[Timing] [int])
 END
 
 GO
