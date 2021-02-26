@@ -67,5 +67,9 @@ namespace Risebird.Entities.Enum
         [Display(Name = "Cancelled")]
         [Description("Cancelled")]
         Cancelled,
+
+        [Display(Name = "QC Pending")]
+        [Description("QC Pending")]
+        QCPending,
     }
 }

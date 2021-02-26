@@ -195,27 +195,27 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6 col-lg-6 col-sm-6">
+                            @*<div class="col-md-6 col-lg-6 col-sm-6">
                                 <div class="card">
                                     <div class="card-body">
-                                        <p style="width:100%" class="card-text">Total Candidates : <span><strong>@Model.CandidatesCountObj.TotalCandidates</strong></span></p>
+                                        <p style="width:100%" class="card-text">Candidates Current Status: <span><strong>@Model.CandidatesCountObj.TotalCount</strong></span></p>
                                         <div>
                                             <div id="candidatesPieId" class="PieId"></div>
                                         </div>
                                     </div>
                                 </div>
 
-                            </div>
-                            <div class="col-md-6 col-lg-6 col-sm-6">
+                            </div>*@
+                            @*<div class="col-md-6 col-lg-6 col-sm-6">
                                 <div class="card">
                                     <div class="card-body">
-                                        <p class="card-text">Total Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
+                                        <p class="card-text">Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
                                         <div>
                                             <div id="meetingsCountId" class="PieId"></div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>*@
                         </div>
                     </div>
                 </div>
@@ -319,67 +319,43 @@
         meetingsDataLabels = JSON.parse(meetingsDataLabels.replace(/&quot;/g, '"'));
         UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels);
         //candidatesPieId
-        if (@Model.CandidatesCountObj.TotalCandidates!= 0) {
-           var candidateCountObj = [{ y: @Model.CandidatesCountObj.Proxy, label: "Proxy" },
-            { y: @Model.CandidatesCountObj.Selected, label: "Selected" },
+        @*if (@Model.CandidatesCountObj.TotalCount!= 0) {
+
+        }*@
+        var candidateCountObj = [{ y: @Model.CandidatesCountObj.Selected, label: "Selected" },
             { y: @Model.CandidatesCountObj.Rejected, label: "Rejected" },
-            { y: @Model.CandidatesCountObj.BorderLine, label:"Border Line"},
-            { y: @Model.CandidatesCountObj.NoShowCount, label:"No Show"},
-            { y: @Model.CandidatesCountObj.ScheduledCount, label:"Scheduled"},
-            { y: @Model.CandidatesCountObj.DroppedCount, label:"Dropped"},
-            { y: @Model.CandidatesCountObj.QCPending, label:"Quality Check Pending"}]
+            { y: @Model.CandidatesCountObj.BorderLine, label: "BorderLine" },
+            { y: @Model.CandidatesCountObj.Proxy, label:"Proxy"},
+            { y: @Model.CandidatesCountObj.NoShow, label:"No Show"},
+            { y: @Model.CandidatesCountObj.Dropped, label:"Dropped"},
+            { y: @Model.CandidatesCountObj.Completed, label:"Completed"},
+            { y: @Model.CandidatesCountObj.Scheduled, label: "Scheduled" },
+            { y: @Model.CandidatesCountObj.QCPending, label: "QC Pending" },
+            { y: @Model.CandidatesCountObj.NotYetScheduled, label: "Not Yet Scheduled" }
+            
+        ]
 
-            var chart = new CanvasJS.Chart("candidatesPieId", {
-                theme: "light2",
-                width: 350,//in pixels
-                height: 200,//in pixels
-                animationEnabled: true,
-                title: null,
-                data: [{
-                    type: "pie",
-                    startAngle: 60,
-                    innerRadius: 55,
-                    indexLabelFontSize: 15,
-                    indexLabel: "{label}  {y}",
-                    toolTipContent: "<b>{label} </b>({y})",
+            //var chart = new CanvasJS.Chart("candidatesPieId", {
+            //    theme: "light2",
+            //    width: 350,//in pixels
+            //    height: 200,//in pixels
+            //    animationEnabled: true,
+            //    title: null,
+            //    data: [{
+            //        type: "pie",
+            //        startAngle: 60,
+            //        innerRadius: 55,
+            //        indexLabelFontSize: 15,
+            //        indexLabel: "{label}  {y}",
+            //        toolTipContent: "<b>{label} </b>({y})",
 
-                    dataPoints: candidateCountObj
-                }]
-            });
-            chart.render();
-        }
+            //        dataPoints: candidateCountObj
+            //    }]
+            //});
+            //chart.render();
 
 
-        //meetingsCountId
-        var meetingsCountObj = [{ y: @Model.MeetingResultCountObj.ProxyCount, label: "Proxy" },
-            { y: @Model.MeetingResultCountObj.SelectedCount, label: "Selected" },
-            { y: @Model.MeetingResultCountObj.RejectedCount, label: "Rejected" },
-            { y: @Model.MeetingResultCountObj.BorderLineCount, label:"Border Line"},
-            { y: @Model.MeetingResultCountObj.NoShowCount, label:"No Show"},
-            { y: @Model.MeetingResultCountObj.ScheduledCount, label:"Scheduled"},
-            { y: @Model.MeetingResultCountObj.DroppedCount, label: "Dropped" },
-            { y: @Model.MeetingResultCountObj.Pending, label:"Pending"}
-            @*{ y: @Model.MeetingResultCountObj.StatusPendingCount, label:"Status Pending"}*@
-            @*{y : @Model.MeetingResultCountObj.NoResultCount, label:"No Results"}*@]
-
-        var chart = new CanvasJS.Chart("meetingsCountId", {
-           theme: "light2",
-            width: 350,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: null,
-            data: [{
-                type: "pie",
-                startAngle: 60,
-                innerRadius: 55,
-                indexLabelFontSize: 15,
-                indexLabel: "{label}  {y}",
-                toolTipContent: "<b>{label} </b>({y})",
-
-                dataPoints: meetingsCountObj
-            }]
-        });
-        chart.render();
+        
 
     }
 

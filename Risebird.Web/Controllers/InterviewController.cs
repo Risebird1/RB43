@@ -2985,6 +2985,7 @@ namespace Risebird.Web.Controllers
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageInterviewComment"];
                     InterviewComments comments = _meetingService.GetInterviewComments(interviewId);
+                    comments.OldQCStatus = comments.QCStatus;
                     string prof = HttpContext.Session.GetString("profileName");
                     if (prof != null && prof.Contains("Client"))
                     {
@@ -3019,6 +3020,8 @@ namespace Risebird.Web.Controllers
                     {
                         var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                         profileName = profileName.Replace("\"", "");
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
                         if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                         {
@@ -3078,7 +3081,7 @@ namespace Risebird.Web.Controllers
                                 }
                             }
 
-                            if (_meetingService.UpdateComments(interviewComments))
+                            if (_meetingService.UpdateComments(interviewComments, emailid))
                             {
                                 TempData["SuccessErrorMessageInterviewComment"] = "Comments added Successfully";
                                 return RedirectToAction("AddComments", new { interviewId = interviewComments.InterviewId });
@@ -3753,9 +3756,11 @@ namespace Risebird.Web.Controllers
 
         }
         [Authorize]
-        public bool SaveQCFeedback(string imid, string qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled)
+        public bool SaveQCFeedback(string imid, string qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled, string oldQcStatus)
         {
-            var result = _meetingService.SaveQCFeedback(imid, qcStatus, comment, FraudLipSync, QuestionsRelevance, HandsOnCoding, BiasAndCandidateHandling, TechnicalCommunicationSkills, ChapteringCompleted, QuestionsFilled, TechSkillsMetric, SelectabilityMetric, JoinabilityMetric, GeneralSkillMetric, CommentsFilled, MeaningfulAssessments, CorrectEnglishGrammar, ProctoringReportFilled);
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            emailid = emailid.Replace("\"", "");
+            var result = _meetingService.SaveQCFeedback(imid, qcStatus, comment, FraudLipSync, QuestionsRelevance, HandsOnCoding, BiasAndCandidateHandling, TechnicalCommunicationSkills, ChapteringCompleted, QuestionsFilled, TechSkillsMetric, SelectabilityMetric, JoinabilityMetric, GeneralSkillMetric, CommentsFilled, MeaningfulAssessments, CorrectEnglishGrammar, ProctoringReportFilled, oldQcStatus, emailid);
             if (result)
             {
                 TempData["SuccessErrorMessage"] = "Saved Successfully";
