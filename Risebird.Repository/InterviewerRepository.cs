@@ -1432,11 +1432,11 @@ namespace Risebird.Repository
                     questionsDt.Columns.Add("InterviewId", typeof(int));
                     questionsDt.Columns.Add("Question", typeof(string));
                     questionsDt.Columns.Add("RatingId", typeof(int));
-
+                    questionsDt.Columns.Add("Timing", typeof(int));
 
                     foreach (var item in reportDetails.InterviewerQuestionsCollection)
                     {
-                        questionsDt.Rows.Add(reportDetails.InterviewId, item.Question, item.RatingId);
+                        questionsDt.Rows.Add(reportDetails.InterviewId, item.Question, item.RatingId, item.Timing);
                     }
 
                     SqlCommand cmdQuestions = new SqlCommand("usp_InterviewerQuestionsDiscussedBulkInsert", con)
