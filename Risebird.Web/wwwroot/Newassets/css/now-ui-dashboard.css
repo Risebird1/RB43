@@ -2461,8 +2461,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
     }
 
     .navbar.navbar-absolute {
-      /*  position: absolute;*/
-       /* position: absolute;*/
+    /*    position: absolute;*/
         width: 100%;
         padding-top: 10px;
         z-index: 1;
@@ -7333,7 +7332,7 @@ input.theatre-btn:focus {
     background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%);
     position: relative;
     overflow: hidden;
-   /* height: 135px;*/
+ /*   height: 135px;*/
 }
 
     .panel-header .header .title {

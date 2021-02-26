@@ -425,25 +425,9 @@ namespace Risebird.Web.Controllers
             var daySlot = from DaySlot s in Enum.GetValues(typeof(DaySlot))
                           select new { ID = (int)s, Name = s.GetDescription() };
             model.DaySlotList = new SelectList(daySlot, "ID", "Name");
-            var Assessmentgroup = _interviewerService.FetchAssessmentGroups();
+            model.AssessmentGroupList = new SelectList(_interviewerService.FetchAssessmentGroups(), "id", "AssessmentGroup");
             var tagList = _interviewerService.GetAllTagsFromIRF().Result;
             var selectList = new List<SelectListItem>();
-
-            foreach (var item in tagList)
-            {
-                bool selected = false;
-
-                if (model.TagArray != null && model.TagArray.Contains(item))
-                {
-                    selected = true;
-                }
-                var selectItem = new SelectListItem(item, item, selected);
-
-                selectList.Add(selectItem);
-
-            }
-            model.TagList = selectList;
-            var AssessmentselectList = new List<SelectListItem>();
 
             foreach (var item in Assessmentgroup)
             {

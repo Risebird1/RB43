@@ -1037,9 +1037,9 @@ div.dataTables_wrapper div.dataTables_processing {
     padding: 1em 0;
 }
 
-table.dataTable thea
+
 .borderline {
-    background: hotpink;
+    background: yellow;
 }
 
 .noshow {
@@ -1066,8 +1066,12 @@ table.dataTable thea
     background: orange;
 }
 
+.boderline {
+    background: yellow;
+}
+
 .schedule {
-    background: cornflowerblue;
+    background: green;
 }
 
 .pl15 {
@@ -1176,9 +1180,8 @@ table.dataTable thea
         padding: 12px 5px !important;
     }
 
-
-    #interviewer_length, #interviewer_filter {
-        margin: 7px 0px 0px 0px !important;
+ #interviewer_length, #interviewer_filter {
+  margin: 7px 0px 0px 0px !important;
     }
 
     .upload {

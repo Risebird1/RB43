@@ -38,5 +38,6 @@ namespace Risebird.Business.Interface
         IEnumerable<ChannelApprovedInterviewer> GetChannelInterviewers(int id);
         Task<bool> DeleteChannelInterviewer(int id);
         Task<bool> ChannelInterviewerAction(int id, string action);
+        Task<CandidateCurrentStatusCount> GetClientCandidatesCurrentStatusCount(string emailId);
     }
 }
