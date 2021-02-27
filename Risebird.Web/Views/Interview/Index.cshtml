@@ -465,8 +465,8 @@
                                             </tfoot>
                                             <tbody>
                                                 @foreach (var item in Model)
-                                                {
-                                                    var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+                                                       {
+                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
                                                 <tr id=@item.imid>
                                                     <td class="text-right action">
@@ -566,12 +566,14 @@
                                                     {
                                                         @if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
                                                         {
-                                                            <td>Status Pending</td>
+                                                            <td class="text-center">
+                                                                <a style="color:hotpink; font-weight: bold">Status Pending</a>
+                                                            </td>
 
                                                         }
                                                         else
                                                         {
-                                                            <td>@item.MeetingStatusStatusDesc</td>
+                                                            <td class="text-center">@item.MeetingStatusStatusDesc</td>
                                                         }
                                                     }
                                                     else
@@ -583,26 +585,26 @@
 
                                                     @if (item.InterviewStatus != 4 && item.InterviewStatus != 2)
                                                     {
-                                                        <td> @item.intervieweStatusStatDesc</td>
+                                                        <td class="text-center"> @item.intervieweStatusStatDesc</td>
                                                     }
-                                                    else if ((item.QCInterview > 0 && item.QCStatus == 1 && item.InterviewStatus == 4))
+                                                    else if (item.QCStatus == 1 && item.InterviewStatus == 4)
                                                     {
                                                         <td class="text-center">
                                                             <a style="color:greenyellow; font-weight: bold"> @item.intervieweStatusStatDesc</a>
                                                         </td>
                                                     }
-                                                    else if ((item.QCInterview > 0 && item.QCStatus == 1 && item.InterviewStatus == 2))
+                                                    else if (item.QCStatus == 1 && item.InterviewStatus == 2)
                                                     {
                                                         <td class="text-center">
                                                             <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
                                                         </td>
                                                     }
-                                                    else if (item.InterviewStatus == 4  && (item.QCStatus == null || item.QCInterview == 0))
+                                                    else if (item.InterviewStatus == 4 && item.QCStatus == null)
                                                     {
                                                         <td>QC Pending(<a style="color:greenyellow;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>
 
                                                     }
-                                                    else if ( item.InterviewStatus == 2 && (item.QCStatus == null || item.QCInterview == 0))
+                                                    else if (item.InterviewStatus == 2 && item.QCStatus == null)
                                                     {
                                                         <td>QC Pending(<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>
 
