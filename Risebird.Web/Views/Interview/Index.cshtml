@@ -566,7 +566,7 @@
                                                     {
                                                         @if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
                                                         {
-                                                            <td>Pending</td>
+                                                            <td>Status Pending</td>
 
                                                         }
                                                         else
@@ -579,23 +579,32 @@
                                                         <td></td>
                                                     }
 
-                                                    @*@if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
-                                                    {
-                                                        <td>Scheduled</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td> @item.MeetingStatusStatusDesc</td>
-                                                    }*@
-                                                    @*<td> @item.intervieweStatusStatDesc</td>*@
 
-                                                    @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+
+                                                    @if (item.InterviewStatus != 4 && item.InterviewStatus != 2)
                                                     {
                                                         <td> @item.intervieweStatusStatDesc</td>
                                                     }
-                                                    else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && (item.QCStatus == null || item.QCInterview == 0))
+                                                    else if ((item.QCInterview > 0 && item.QCStatus == 1 && item.InterviewStatus == 4))
                                                     {
-                                                <td>QC Pending(@item.intervieweStatusStatDesc)</td>
+                                                        <td class="text-center">
+                                                            <a style="color:greenyellow; font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                        </td>
+                                                    }
+                                                    else if ((item.QCInterview > 0 && item.QCStatus == 1 && item.InterviewStatus == 2))
+                                                    {
+                                                        <td class="text-center">
+                                                            <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                        </td>
+                                                    }
+                                                    else if (item.InterviewStatus == 4  && (item.QCStatus == null || item.QCInterview == 0))
+                                                    {
+                                                        <td>QC Pending(<a style="color:greenyellow;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>
+
+                                                    }
+                                                    else if ( item.InterviewStatus == 2 && (item.QCStatus == null || item.QCInterview == 0))
+                                                    {
+                                                        <td>QC Pending(<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>
 
                                                     }
                                                     else
