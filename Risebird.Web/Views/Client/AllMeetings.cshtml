@@ -4,6 +4,8 @@
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
+@using Risebird.CommonHelper
+
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "All Interviews";
@@ -530,6 +532,10 @@
                                                         {
                                                             <td></td>
                                                         }
+
+
+
+
                                                         @if (item.confirmationStatus.Trim() == "Cancelled")
                                                         {
                                                             <td class="text-center">
@@ -541,26 +547,44 @@
                                                         {
                                                             <td class="text-center"> @item.confirmationStatus</td>
                                                         }
-                                                        @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
+
+
+                                                        @if (item.confirmationStatus.Trim() != Risebird.Entities.Enum.ReceiveMeetingStatus.Cancelled.GetDescription())
+                                                        {
+                                                            @if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                                                            {
+                                                                <td>Pending</td>
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>@item.MeetingStatusStatusDesc</td>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
+                                                        @*@if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
                                                         {
                                                             <td>Scheduled</td>
                                                         }
                                                         else
                                                         {
                                                             <td> @item.MeetingStatusStatusDesc</td>
-                                                        }
+                                                        }*@
                                                         @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                                                         {
                                                             <td> @item.intervieweStatusStatDesc</td>
                                                         }
-                                                        else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && (item.QCStatus == null || item.QCInterview == 0 ))
+                                                        else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && (item.QCStatus == null || item.QCInterview == 0))
                                                         {
                                                             <td>QC Pending</td>
 
                                                         }
                                                         else
                                                         {
-                                                            <td>No status</td>
+                                                            <td></td>
                                                         }
                                                         @if ((item.MeetingStatus == 4) && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                                                         {

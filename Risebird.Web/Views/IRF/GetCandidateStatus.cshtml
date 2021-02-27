@@ -70,7 +70,7 @@
                 <div class="pull-right">
                     <div>
                         @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
-                        <i type="submit" class="fa fa-file-excel-o excel-file   pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("GetCandidateStatusExportToExcel", "IRF", new { id = @Model.FirstOrDefault().IRFId, searchValue = @ViewBag.Searchvalue })'"></i>
+                        <i type="submit" class="fa fa-file-excel-o excel-file   pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("GetCandidateStatusExportToExcel", "IRF", new { id = ViewBag.id })'"></i>
                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-toggle="modal" data-target="#filterModal" style="vertical-align:top">
 
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
@@ -81,18 +81,6 @@
 
 
                     </div>
-                    <!--<div id="meeting_filter" class="dataTables_filter mt-20">
-
-            <div class="searchCon">-->
-                    @*<button onclick="searchResult()" type="button" id="search">&nbsp</button>
-            <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()">
-
-
-
-            <button style="display:none;" type="button" id="x">x</button>*@
-
-                    <!--</div>
-        </div>-->
 
                 </div>
             </div>
@@ -120,6 +108,7 @@
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
+                                        <input type="hidden" id="hididvalue" value="@ViewBag.id" />
                                         <form action="@Url.Action("GetCandidateStatus","IRF",new { id= ViewBag.id})" method="post" id="form">
 
                                             <div class="modal-body">
@@ -750,8 +739,8 @@
 
 
     function ResetFilter() {
-
-        window.location.href = "/Candidate/ResetCandidateTimelineFilter";
+        var id = $("#hididvalue").val();
+        window.location.href = "/IRF/ResetCandidateTimelineFilter/" + id;
 
     }
     function ApplySessionFilter() {

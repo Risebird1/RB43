@@ -4349,7 +4349,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("IRFCandidateStatusfilters") != null)
                 {
-                    HttpContext.Session.Remove("IRFCandidateStatusfilters");                   
+                    HttpContext.Session.Remove("IRFCandidateStatusfilters");
                 }
 
                 var model = new List<CandidateTimelineVM>();
@@ -4487,7 +4487,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-       
+
         [HttpPost]
         public async Task<IActionResult> GetCandidateStatus(int id, string irfId, CandidateTimelineFilter filter)
         {
@@ -4667,54 +4667,27 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        public JsonResult GetCandidateTimelineJson(string searchValue)
+        [Authorize]
+        public async Task<IActionResult> ResetCandidateTimelineFilter(int id)
         {
-            int Page = 1;
-            if (HttpContext.Session.GetString("SkillChannelCandidateTimeLine") != null)
+            try
             {
-                var model = JsonConvert.DeserializeObject<List<CandidateTimelineVM>>(HttpContext.Session.GetString("SkillChannelCandidateTimeLine"));
-                if (!String.IsNullOrEmpty(searchValue))
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    searchValue = searchValue.ToUpper();
-                    model = model.Where(x => (!String.IsNullOrEmpty(x.CandidateName) ? x.CandidateName.ToUpper().Contains(searchValue) : x.CandidateName == "") || (!String.IsNullOrEmpty(x.CandidateEmailId) ? x.CandidateEmailId.ToUpper().Contains(searchValue) : x.CandidateEmailId == "")
-                      || (!String.IsNullOrEmpty(x.HREmail) ? x.HREmail.ToUpper().Contains(searchValue) : x.HREmail == "") || ((x.CurrentStatus != null) ? x.CurrentStatus.ToUpper().Contains(searchValue) : x.CurrentStatus == "")).ToList();
-
-                }
-                int totalcount = model.Count;
-                int Pagestart = 0;
-                int Pageend = 0;
-                ViewBag.TotalCount = model.Count;
-
-                Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
-                int a = model.Count / 10;
-                if (model.Count % 10 == 0)
-                {
-                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                    HttpContext.Session.Remove("IRFCandidateStatusfilters");
+                    return RedirectToAction("GetCandidateStatus", new { id = id });
                 }
                 else
                 {
-                    a = a + 1;
-                    if (a == Page)
-                    {
-                        Pageend = model.Count;
-                    }
-                    else
-                    {
-                        Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                    }
-
+                    return RedirectToAction("SignOut", "Session");
                 }
-                if (model.Count == 0)
-                {
-                    Pagestart = 0;
-                    Pageend = 0;
-                }
-                return Json(new { result = model.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count });
             }
-            else
+            catch (Exception ex)
             {
-                return Json("failed");
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("UnassignedInterviews");
             }
+
         }
         public async Task<FileContentResult> GetCandidateStatusExportToExcel(int id, string searchValue)
         {
