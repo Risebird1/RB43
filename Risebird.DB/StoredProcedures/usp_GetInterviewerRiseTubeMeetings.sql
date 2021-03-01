@@ -10,7 +10,7 @@ SET QUOTED_IDENTIFIER ON
 GO
           
           
-Create PROCEDURE [dbo].[usp_GetInterviewerRiseTubeMeetings]             
+Create PROCEDURE [dbo].[usp_GetInterviewerRiseTubeMeetings]          
   @startFromParam int,              
   @endWithParam int,          
   @searchvalue varchar(max)          
@@ -38,7 +38,7 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
    ulc.MobileNumber as MobileNumber, ca.CodedResumeLink as resumeLink,                     
    IRF.id as irfIntId,IRF.JDTiltle,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,                  
    tpc.MeetingPatchCount,              
-   tts.TechSkillScore,irc.PerHourRateIndia,irc.PerHourRateOutside ,irc.Senioritylevel,ag.AssessmentGroup              
+   tts.TechSkillScore,irc.PerHourRateIndia,irc.PerHourRateOutside ,irc.Senioritylevel,ag.AssessmentGroup,isNull(irc.ProfileType,0) as ProfileType,Isnull(irc.CompentencyLevel,0) as  CompentencyLevel            
    from UnApprovedInterviewerMeetings im                      
    inner join [dbo].[InterviewerComments] ic on im.id = ic.InterviewId                    
    inner join UserList ulc on ulc.EmailId = im.candidateEmail                    
@@ -53,7 +53,7 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
    group by im.id,im.ISCId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail,                    
    im.confirmationStatus, im.zoomLink, im.ZoomId, im.interviewer,                      
     im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, ca.NickName ,                    
-   ulc.MobileNumber, ca.CodedResumeLink,IRF.id,IRF.JDTiltle,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id,ic.ThumbnailImage  ,tpc.MeetingPatchCount,tts.TechSkillScore,irc.PerHourRateIndia,irc.PerHourRateOutside ,irc.Senioritylevel,ag.AssessmentGroup)              
+   ulc.MobileNumber, ca.CodedResumeLink,IRF.id,IRF.JDTiltle,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id,ic.ThumbnailImage  ,tpc.MeetingPatchCount,tts.TechSkillScore,irc.PerHourRateIndia,irc.PerHourRateOutside ,irc.Senioritylevel,ag.AssessmentGroup,irc.ProfileType,irc.CompentencyLevel)              
              
  select * from meetings_rows --where row_num>@startFrom and row_num<=@endWith                  
  End        
@@ -67,7 +67,7 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
    ulc.MobileNumber as MobileNumber, ca.CodedResumeLink as resumeLink,                     
    IRF.id as irfIntId,IRF.JDTiltle,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,                  
    tpc.MeetingPatchCount,              
-   tts.TechSkillScore ,irc.PerHourRateIndia,irc.PerHourRateOutside ,irc.Senioritylevel ,ag.AssessmentGroup            
+   tts.TechSkillScore ,irc.PerHourRateIndia,irc.PerHourRateOutside ,irc.Senioritylevel ,ag.AssessmentGroup,isNull(irc.ProfileType,0) as ProfileType,Isnull(irc.CompentencyLevel,0) as  CompentencyLevel
    from UnApprovedInterviewerMeetings im                      
    inner join [dbo].[InterviewerComments] ic on im.id = ic.InterviewId                    
    inner join UserList ulc on ulc.EmailId = im.candidateEmail                    
@@ -82,13 +82,13 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
    group by im.id,im.ISCId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail,                    
    im.confirmationStatus, im.zoomLink, im.ZoomId, im.interviewer, 
    im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, ca.NickName,                    
-   ulc.MobileNumber, ca.CodedResumeLink,IRF.id,IRF.JDTiltle,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id,ic.ThumbnailImage  ,tpc.MeetingPatchCount,tts.TechSkillScore,irc.PerHourRateIndia,irc.PerHourRateOutside ,irc.Senioritylevel ,ag.AssessmentGroup)              
+   ulc.MobileNumber, ca.CodedResumeLink,IRF.id,IRF.JDTiltle,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id,ic.ThumbnailImage  ,tpc.MeetingPatchCount,tts.TechSkillScore,irc.PerHourRateIndia,irc.PerHourRateOutside ,irc.Senioritylevel ,ag.AssessmentGroup,irc.ProfileType,irc.CompentencyLevel)              
              
  select * from meetings_rows --where row_num>@startFrom and row_num<=@endWith              
  END        
               
               
-END                                      
+END                                     
                
       GO
                

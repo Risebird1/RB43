@@ -13,16 +13,9 @@
     string endDte = String.Empty;
     string[] AssessmentGroups = new string[] { };
     string[] Senioritylevel = new string[] { };
-    string[] ClientName = new string[] { };
-    string[] ApprovalStatus = new string[] { };
-    string[] JoiningStatus = new string[] { };
-    string[] OfferStatus = new string[] { };
-    string[] InterviewStatus = new string[] { };
-    string[] CandidateName = new string[] { };
-    string[] CandidateLocation = new string[] { };
-    string[] IsShortListed = new string[] { };
-    string[] IsIntrested = new string[] { };
-    string[] CandidateAvailable = new string[] { };
+    string[] ProfileType = new string[] { };
+    string[] CompentencyLevel = new string[] { };
+
 
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("InterviewerRiseTubefilters") != null)
@@ -32,16 +25,8 @@
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
     AssessmentGroups = filter.AssessmentGroup != null ? filter.AssessmentGroup : new string[] { };
     Senioritylevel = filter.Senioritylevel != null ? filter.Senioritylevel : new string[] { };
-    InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
-    CandidateName = filter.CandidateName != null ? filter.CandidateName : new string[] { };
-    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
-    ApprovalStatus = filter.ApprovalStatus != null ? filter.ApprovalStatus : new string[] { };
-    JoiningStatus = filter.JoiningStatus != null ? filter.JoiningStatus : new string[] { };
-    OfferStatus = filter.OfferStatus != null ? filter.OfferStatus : new string[] { };
-    CandidateLocation = filter.CandidateLocation != null ? filter.CandidateLocation : new string[] { };
-    IsShortListed = filter.IsShortListed != null ? filter.IsShortListed : new string[] { };
-    IsIntrested = filter.IsIntrested != null ? filter.IsIntrested : new string[] { };
-    CandidateAvailable = filter.CandidateAvailable != null ? filter.CandidateAvailable : new string[] { };
+    ProfileType = filter.ProfileType != null ? filter.ProfileType : new string[] { };
+    CompentencyLevel = filter.CompentencyLevel != null ? filter.CompentencyLevel : new string[] { };
 
 }
 
@@ -172,7 +157,7 @@
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="AssessmentGroup" name="AssessmentGroup" class="form-control multiselect" multiple="multiple">
 
-                                                                    @foreach (var item in Model.Select(x => x.AssessmentGroup).Distinct().ToList())
+                                                                    @foreach (var item in ViewBag.AssessmentGroup)
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -191,7 +176,7 @@
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="Senioritylevel" name="Senioritylevel" class="form-control multiselect" multiple="multiple">
 
-                                                                    @foreach (var item in Model.Select(x => x.Senioritylevel).Distinct().ToList())
+                                                                    @foreach (var item in ViewBag.Senioritylevel)
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -203,6 +188,42 @@
                                                             </div>
                                                         </div>
 
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ProfileType">Profile Type</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="ProfileType" name="ProfileType" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.ProfileType)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CompentencyLevel">Compentency Level</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="CompentencyLevel" name="CompentencyLevel" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.CompentencyLevel)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div class="form-group col-md-12 col-sm-12">
 
@@ -656,20 +677,20 @@
 
         });
 
-        
+
         $("#CandidateName").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '100%',
             maxHeight: 200
         });
-        $("#ClientName").multiselect({
+        $("#ProfileType").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '100%',
             maxHeight: 200
         });
-        $("#ApprovalStatus").multiselect({
+        $("#CompentencyLevel").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '100%',
@@ -725,33 +746,15 @@
         var endDte = '@endDte';
         var AssessmentGrouparr = @Html.Raw(Json.Serialize(AssessmentGroups));
         var Senioritylevel =  @Html.Raw(Json.Serialize(Senioritylevel));
-        var interviewStatus =  @Html.Raw(Json.Serialize(InterviewStatus));
-        var approvalStatus = @Html.Raw(Json.Serialize(ApprovalStatus));
-        var joiningStatus = @Html.Raw(Json.Serialize(JoiningStatus));
-        var offerStatus = @Html.Raw(Json.Serialize(OfferStatus));
-        var candidateName =  @Html.Raw(Json.Serialize(CandidateName));
-        var clientName =  @Html.Raw(Json.Serialize(ClientName));
-        var candidateLocation =  @Html.Raw(Json.Serialize(CandidateLocation));
-        var IsShortListed =  @Html.Raw(Json.Serialize(IsShortListed));
-        var IsIntrested =  @Html.Raw(Json.Serialize(IsIntrested));
-        var CandidateAvailable=@Html.Raw(Json.Serialize(CandidateAvailable));
+        var compentencyLevel = @Html.Raw(Json.Serialize(CompentencyLevel));
+        var profileType =  @Html.Raw(Json.Serialize(ProfileType));
 
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
         $("#AssessmentGroup").val(AssessmentGrouparr);
         $("#Senioritylevel").val(Senioritylevel);
-        $("#InterviewStatus").val(interviewStatus);
-        $("#ApprovalStatus").val(approvalStatus);
-        $("#JoiningStatus").val(joiningStatus);
-        $("#OfferStatus").val(offerStatus);
-        $("#CandidateName").val(candidateName);
-        $("#ClientName").val(clientName);
-        $("#CandidateLocation").val(candidateLocation);
-        $("#IsShortListed").val(IsShortListed);
-        $("#IsIntrested").val(IsIntrested);
-        $("#CandidateAvailable").val(CandidateAvailable);
-
-
+        $("#CompentencyLevel").val(compentencyLevel);
+        $("#ProfileType").val(profileType);
     }
 
 

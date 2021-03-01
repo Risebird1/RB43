@@ -1406,6 +1406,22 @@
 
                                                 </div>
                                             </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.ProfileType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                    @Html.DropDownListFor(x => Model.ProfileType, Model.ProfileTypeList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                    @Html.ValidationMessageFor(model => model.ProfileType, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.CompentencyLevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                    @Html.DropDownListFor(x => Model.CompentencyLevel, Model.CompentencyLevelList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                    @Html.ValidationMessageFor(model => model.CompentencyLevel, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
                                             @*<div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
                                                         @Html.LabelFor(model => model.SkillIP, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -1434,9 +1450,9 @@
                                         <div class="col-md-12 mc-button-area">
                                             @if (!string.IsNullOrEmpty(Model.BackUrl))
                                             {
-                                                
+
                                                 <a href="@Model.BackUrl" class="mdc-button mdc-button--raised mdc-ripple-upgraded" role="button">Back to List</a>
-                                               
+
                                             }
                                             else
                                             {
@@ -1500,7 +1516,7 @@
         var behavioralScore = 0;
         var interviwerCommunicationScore = 0;
         var interviewExperienceScore = 0;
- 
+
         var skillQualityVal = document.getElementById("SkillQuality").value;
         if (skillQualityVal != null && skillQualityVal != '') {
             skillQualityScore = parseInt(skillQualityVal);
