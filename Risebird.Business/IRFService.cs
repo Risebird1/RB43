@@ -176,37 +176,45 @@ namespace Risebird.Business
             }
         }
 
-
+        /// <summary>
+        /// TODO Move this code in stored Procedure
+        /// </summary>
+        /// <param name="assessmentgroupid"></param>
+        /// <returns></returns>
         public IEnumerable<Interviewer> GetInterviewersForIRF(string assessmentgroupid)
         {
             try
             {
-                //var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
-                var interviewers = _irfRepository.GetIRFInterviewerSkills();
-                var assessmentgroupidlist = assessmentgroupid.Split(",");
-
-                //skillList.RemoveAt()
-                var list = new List<Interviewer>();
-
-
-                foreach (var item in interviewers ?? new List<Interviewer>())
+                var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
+                // var interviewers = _irfRepository.GetIRFInterviewerSkills();
+                if (assessmentgroupid != null)
                 {
-                    foreach (var groupid in assessmentgroupidlist ?? new List<string>().ToArray())
+                    var assessmentgroupidlist = assessmentgroupid.Split(",");
+
+                    //skillList.RemoveAt()
+                    var list = new List<Interviewer>();
+
+
+                    foreach (var item in interviewers ?? new List<Interviewer>())
                     {
-                        if (String.IsNullOrEmpty(item.AssessmentGroupId))
+                        foreach (var groupid in assessmentgroupidlist ?? new List<string>().ToArray())
                         {
-                            continue;
-                        }
-                        if (item.AssessmentGroupId.Contains(groupid))
-                        {
-                            list.Add(item);
-                            break;
+                            if (String.IsNullOrEmpty(item.AssessmentGroupId))
+                            {
+                                continue;
+                            }
+                            if (item.AssessmentGroupId.Contains(groupid))
+                            {
+                                list.Add(item);
+                                break;
+                            }
                         }
                     }
-                }
-                list = list.Distinct().ToList();
+                    list = list.Distinct().ToList();
 
-                return list;
+                    return list;
+                }
+                return interviewers;
             }
 
             catch (Exception e)

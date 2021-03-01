@@ -681,7 +681,7 @@ namespace Risebird.Web.Controllers
                 var skills = _irfRepository.GetSkills();
                 var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                 //SelectList(interviewers, "UserId", "EmailId");
-                var interviewers = _irfService.GetInterviewersForIRF(AssessmentsGroups.FirstOrDefault().id.ToString());
+                var interviewers = _irfService.GetInterviewersForIRF(AssessmentsGroups.FirstOrDefault()´?.id.ToString());
                 //var interviewers = _irfRepository.GetInterviewers();
                 model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
                 model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
