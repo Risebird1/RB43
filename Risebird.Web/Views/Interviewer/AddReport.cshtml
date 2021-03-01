@@ -1278,18 +1278,21 @@
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.CompanySize, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.DropDownListFor(m => m.CompanySize, Model.CompanySizeList, "Select Company Size", htmlAttributes: new { @class = "select-css form-control webkitEnabled"@*, @required="required"*@ })
-                                                    @*@Html.ValidationMessageFor(model => model.CompanySize, "", new { @class = "text-danger" })*@
+                                                    <div class="mandate">
+                                                        @Html.LabelFor(model => model.CompanySize, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+                                                        @Html.DropDownListFor(m => m.CompanySize, Model.CompanySizeList, "Select Company Size", htmlAttributes: new { @class = "select-css form-control webkitEnabled"@*, @required="required"*@ })
+                                                        @*@Html.ValidationMessageFor(model => model.CompanySize, "", new { @class = "text-danger" })*@
 
-                                                </div>
+                                                    </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.CompanyHeadquarters, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div class="mandate">
+                                                        @Html.LabelFor(model => model.CompanyHeadquarters, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                    </div>
                                                     @Html.DropDownListFor(m => m.CompanyHeadquarters, Model.CountryList, "Select Company Headquarters", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                                 </div>
-                                            </div>
+                                                </div>
                                         </div>
 
 
@@ -1314,18 +1317,21 @@
                                             </div>
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.CompanyStage, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                    <div class="mandate">
+                                                        @Html.LabelFor(model => model.CompanyStage, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span></div>
 
-                                                    @Html.DropDownListFor(x => Model.CompanyStage, Model.CompanyStageList, "Select Company Stage", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                    @Html.ValidationMessageFor(model => model.ProjectsQuality, "", new { @class = "text-danger" })
+                                                        @Html.DropDownListFor(x => Model.CompanyStage, Model.CompanyStageList, "Select Company Stage", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                        @Html.ValidationMessageFor(model => model.ProjectsQuality, "", new { @class = "text-danger" })
+                                                    </div>
                                                 </div>
-                                            </div>
 
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.SkillCategory, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                    <div class="mandate">
+                                                        @Html.LabelFor(model => model.SkillCategory, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                                    </div>
 
                                                     <select id="SkillCategoryArray" name="SkillCategoryArray" class="form-control multiselect" multiple="multiple">
                                                         @foreach (var item in Model.SkillCategoryList.ToList())
@@ -1348,21 +1354,24 @@
                                                     @Html.ValidationMessageFor(model => model.SkillCategory, "", new { @class = "text-danger" })
 
                                                 </div>
-                                            </div>
+                                                </div>
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.Yearsofexperience, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                    <div class="mandate">
+                                                        @Html.LabelFor(model => model.Yearsofexperience, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span></div>
 
-                                                    @Html.DropDownListFor(x => Model.Yearsofexperience, Model.YearsofexperienceList, "Select Experience", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                    @Html.ValidationMessageFor(model => model.Yearsofexperience, "", new { @class = "text-danger" })
+                                                        @Html.DropDownListFor(x => Model.Yearsofexperience, Model.YearsofexperienceList, "Select Experience", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                        @Html.ValidationMessageFor(model => model.Yearsofexperience, "", new { @class = "text-danger" })
+                                                    </div>
                                                 </div>
-                                            </div>
 
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.Senioritylevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                    <div class="mandate">
+                                                        @Html.LabelFor(model => model.Senioritylevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                                    </div>
 
                                                     @Html.DropDownListFor(x => Model.Senioritylevel, Model.SenioritylevelList, "Select Senioritylevel", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                                     @Html.ValidationMessageFor(model => model.Senioritylevel, "", new { @class = "text-danger" })
@@ -1371,66 +1380,74 @@
                                             </div>
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.SkillNature, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                    <div class="mandate">
+                                                        @Html.LabelFor(model => model.SkillNature, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
 
-                                                    @Html.DropDownListFor(x => Model.SkillNature, Model.SkillNatureList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                    @Html.ValidationMessageFor(model => model.SkillNature, "", new { @class = "text-danger" })
+                                                        @Html.DropDownListFor(x => Model.SkillNature, Model.SkillNatureList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                        @Html.ValidationMessageFor(model => model.SkillNature, "", new { @class = "text-danger" })
+                                                    </div>
                                                 </div>
-                                            </div>
 
                                         </div>
 
-
+</div>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.PerHourRateIndia, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.PerHourRateIndia, new { @class = "form-control text-box single-line" })
+                                                    <div class="mandate">
+                                                        @Html.LabelFor(model => model.PerHourRateIndia, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+                                                        @Html.TextBoxFor(m => m.PerHourRateIndia, new { @class = "form-control text-box single-line" })
 
+                                                    </div>
                                                 </div>
-                                            </div>
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.PerHourRateOutside, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div class="mandate">
+                                                        @Html.LabelFor(model => model.PerHourRateOutside, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                    </div>
                                                     @Html.TextBoxFor(m => m.PerHourRateOutside, new { @class = "form-control text-box single-line" })
 
                                                 </div>
-                                            </div>
+                                                </div>
 
 
 
 
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.Domain, new { @class = "form-control text-box single-line" })
+                                                    <div class="mandate">
+                                                        @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+                                                        @Html.TextBoxFor(m => m.Domain, new { @class = "form-control text-box single-line" })
 
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.ProfileType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                                    @Html.DropDownListFor(x => Model.ProfileType, Model.ProfileTypeList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                    @Html.ValidationMessageFor(model => model.ProfileType, "", new { @class = "text-danger" })
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.CompentencyLevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                                    @Html.DropDownListFor(x => Model.CompentencyLevel, Model.CompentencyLevelList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                    @Html.ValidationMessageFor(model => model.CompentencyLevel, "", new { @class = "text-danger" })
-                                                </div>
-                                            </div>
-                                            @*<div class="col-md-6 col-sm-6">
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.SkillIP, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                        @Html.TextBoxFor(m => m.SkillIP, new { @class = "form-control text-box single-line" })
                                                     </div>
-                                                </div>*@
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="mandate">
+                                                        <div class="form-group">
+                                                            @Html.LabelFor(model => model.ProfileType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                                        </div>
 
-                                        </div>
+                                                        @Html.DropDownListFor(x => Model.ProfileType, Model.ProfileTypeList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                        @Html.ValidationMessageFor(model => model.ProfileType, "", new { @class = "text-danger" })
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.CompentencyLevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span></div>
+
+                                                                @Html.DropDownListFor(x => Model.CompentencyLevel, Model.CompentencyLevelList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                                @Html.ValidationMessageFor(model => model.CompentencyLevel, "", new { @class = "text-danger" })
+                                                            </div>
+                                                    </div>
+                                                    @*<div class="col-md-6 col-sm-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.SkillIP, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                @Html.TextBoxFor(m => m.SkillIP, new { @class = "form-control text-box single-line" })
+            </div>
+        </div>*@
+
+                                                </div>
 
                                     </div>
                                 </div>
