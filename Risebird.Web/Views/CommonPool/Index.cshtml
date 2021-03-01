@@ -88,7 +88,9 @@
                                     <div class="searchbox">
                                         <input type="email" id="txtsearch" value="@ViewBag.searchvalue" class="form-control txtsearch1" placeholder="Please enter Skills (or) Name Of candidate">
                                         <span class="input-group-btn">
-                                            <button class="btn btn3" id="btnSearch" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
+                                            <button class="btn btn3" id="btnSearch" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
+
+                                            <span class="refresh" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
                                         </span>
                                     </div>
                                 </div>
@@ -664,7 +666,10 @@
 
 
 <script type="text/javascript">
-
+    function RefreshSearch() {
+        window.location.href = "/commonpool/Index";
+        $('#myForm').trigger("reset");
+    }
     $(document).ready(function () {
             $("#btnSearch").click(function () {
             var value = $("#txtsearch").val();

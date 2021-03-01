@@ -480,6 +480,10 @@ table {
     color: #9A9A9A
 }
 
+#x {
+    border-radius: 10px;
+    background: #000 url(../../Newassets/img/refresh.png) 1px no-repeat;
+}
 .spinner, .spinner .button {
     background: #181818;
 }
