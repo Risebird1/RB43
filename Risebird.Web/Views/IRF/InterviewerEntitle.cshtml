@@ -100,7 +100,7 @@
                                             <td><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.PrimarySkills </a></td>
                                             <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.Assessmentcount</a></td>
                                             <td class="text-right four">
-                                                <span onclick="EditAssessment(@item.id)" title="Assign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                <span onclick="EditAssessment(@item.id)" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
                                             </td>
 
                                         </tr>
@@ -324,11 +324,12 @@
         jQuery("#select").select2({ multiple: true });
     });
     function EditAssessment(assessmentid) {
+
         $.ajax({
             url: '/IRF/EditAssessment',
             data: { 'assessmentid': assessmentid },
             success: function (data) {
-                
+                document.getElementsByClassName("loader").style.display = "block";
                 CreateAssignmetGroup();
                 $("#zskilldetails_AssessmentGroupName").val(data.assessmentname);
                 $("#zskilldetails_id").val(data.id);
@@ -345,12 +346,8 @@
                     }
                     drop.append(option);
                 }
-                
+                document.getElementsByClassName("loader").style.display = "none";
             }
         });
-        //ajax calling
-        //open Model popup
-        //Bind dropdown
-        //bind Assessment value
     }
 </script>
