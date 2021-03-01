@@ -21,10 +21,9 @@ AS
 Begin
 
  
-select userlist.EmailId from [dbo].[TransInterviewer] tr
+select distinct userlist.EmailId from [dbo].[TransInterviewer] tr
 join [dbo].[IRF] irf on tr.IRFId = irf.id
-join [dbo].[Interviewer] interviewer on tr.InterviewerId = interviewer.id
-join [dbo].[UserList] userlist on interviewer.UserId = userlist.id
+join [dbo].[UserList] userlist on tr.UserId = userlist.id
 where irf.IRFId like @IRFID
 
 

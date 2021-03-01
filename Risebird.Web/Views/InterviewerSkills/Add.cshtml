@@ -124,7 +124,7 @@
 
                                             <div class="form-group">
                                                 <div class="mandate">@Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                                @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number", @min = "1" } })
+                                                @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number", @min = "1", @onchange = "PerMinRateInterviewer()" } })
                                                 <!--@Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @class = "text-danger" })-->
                                                 <div class="spinner">
                                                     <button type="button" class="up button">&rsaquo;</button>
@@ -810,5 +810,7 @@
         value--;
         spinner.value = value;
     };
-
+    function PerMinRateInterviewer() {
+        $("#InterviewerCollection_0__PerSuccessRate").val($("#PerMintuteRate").val());
+    }
 </script>

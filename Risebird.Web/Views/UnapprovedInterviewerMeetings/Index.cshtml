@@ -479,7 +479,7 @@
                                                     @if (item.encodedresumeLink != null && item.encodedresumeLink != "")
                                                     {
                                                         <td>
-                                                            <a target="_blank" title="Resume" href=@item.encodedresumeLink>Resume</a>
+                                                            <a target="_blank" title="Resume" href=@item.encodedresumeLink.Replace(" ", "%20")>Resume</a>
                                                         </td>
                                                     }
                                                     else

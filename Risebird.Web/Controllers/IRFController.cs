@@ -3764,6 +3764,30 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        public JsonResult EditAssessment(int assessmentid)
+        {
+            var model = new Assessment();
+            var modellist = _userService.GetInterviewerEntitle();
+            if (modellist == null)
+            {
+                modellist = new List<AssignmentVM>();
+            }
+            var modeldata = modellist.Where(x => x.id == assessmentid).FirstOrDefault();
+            var skillset = _skillService.GetSkills();
+            var primaryskilllist = new List<SelectListItem>();
+
+            foreach (var item in skillset)
+            {
+                bool selected = false;
+                if (modeldata.PrimarySkills != null && modeldata.PrimarySkills.Contains(item.Name.ToUpper()))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem(item.Name, item.id.ToString(), selected);
+                primaryskilllist.Add(selectItem);
+            }
+            return Json(new { id = modeldata.id, Assessmentname = modeldata.AssessmentGroup, primaryskillset = primaryskilllist });
+        }
         /// <summary>
         /// Fetch Assessment Related to Assessment Group
         /// </summary>

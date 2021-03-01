@@ -73,6 +73,8 @@ namespace Risebird.Entities.ViewModel
         public int[] SelectedSkillIds { get; set; }
         [Display(Name = "Assessment Group Name")]
         public string AssessmentGroupName { get; set; }
+        public int id { get; set; }
+        public List<SelectListItem> PrimarySkillsList { get; set; }
     }
     public class AssessmentQuestions
     {

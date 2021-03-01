@@ -1094,7 +1094,11 @@ namespace Risebird.Web.Controllers
                             return x;
                         }).ToList();
                         var IRListModel = _interviewerService.GetInterviewerinteviewReport(model.imid, model.irfIntId).Result;
-
+                        var exprienceyears = _iRFRepository.GetInterviewerExprienceYear();
+                        if (IRListModel != null)
+                        {
+                            IRListModel.Yearsofexperience = "1";
+                        }
                         var modelList = modelList1;
 
                         MeetingVM NewModel = new MeetingVM();

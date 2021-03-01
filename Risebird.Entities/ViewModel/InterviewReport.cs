@@ -292,6 +292,7 @@ namespace Risebird.Entities.ViewModel
         public int ProfileType { get; set; }
         public SelectList CompentencyLevelList { get; set; }
         public int CompentencyLevel { get; set; }
+        public int InterviewerProfileId { get; set; }
     }
     public class RBInterviewDetails
     {

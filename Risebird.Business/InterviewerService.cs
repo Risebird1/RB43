@@ -528,6 +528,8 @@ namespace Risebird.Business
                     reportModel.SkillIP = techInterviewerRecommendation.SkillIP;
                     reportModel.PerHourRateOutside = techInterviewerRecommendation.PerHourRateOutside;
                     reportModel.PerHourRateIndia = techInterviewerRecommendation.PerHourRateIndia;
+                    reportModel.ProfileType = techInterviewerRecommendation.ProfileType;
+                    reportModel.CompentencyLevel = techInterviewerRecommendation.CompentencyLevel;
                     if (!string.IsNullOrEmpty(techInterviewerRecommendation.SkillCategory))
                     {
                         reportModel.SkillCategoryArray = techInterviewerRecommendation.SkillCategory.Split(',');
@@ -547,6 +549,7 @@ namespace Risebird.Business
                 reportModel.IRFName = irfDetails.IRFId;
                 //reportModel.PrimarySkill = irfDetails.JDTiltle.Split("|")[0];
                 reportModel.PrimarySkill = irfDetails.PrimarySkill;
+                reportModel.InterviewerProfileId = interviewDetails.InterviewerProfileId;
                 return reportModel;
             }
 
