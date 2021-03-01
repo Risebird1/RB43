@@ -851,52 +851,52 @@
                                                 <tbody>
                                                     @if (Model.InterviewerQuestionsCollection == null || Model.InterviewerQuestionsCollection.Count() == 0)
                                                     {
-                                                    <tr>
+                                                        <tr>
 
-                                                        <td>
-                                                            @Html.TextBox("InterviewerQuestionsCollection[0].Question", null, new { @class = "form-control" })
+                                                            <td>
+                                                                @Html.TextBox("InterviewerQuestionsCollection[0].Question", null, new { @class = "form-control" })
 
-                                                        </td>
-                                                        <td>
-                                                            @Html.DropDownList("InterviewerQuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownList("InterviewerQuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
 
-                                                        </td>
-                                                        <td>
-                                                            <input class="form-control text-box single-line" id="InterviewerQuestionsCollection_0__Timing" name="InterviewerQuestionsCollection[0].Timing" type="number" min="60" max="5000">
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="InterviewerQuestionsCollection_0__Timing" name="InterviewerQuestionsCollection[0].Timing" type="number" min="60" max="5000">
 
-                                                        </td>
+                                                            </td>
 
-                                                        <td class="action text-center">
-                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                            <td class="action text-center">
+                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                        </td>
-                                                    </tr>
+                                                            </td>
+                                                        </tr>
                                                     }
                                                     else
                                                     {
                                                         for (int i = 0; i < Model.InterviewerQuestionsCollection.Count(); i++)
                                                         {
-                                                <tr style="cursor:pointer">
+                                                            <tr style="cursor:pointer">
 
-                                                    <td>
-                                                        @Html.TextBoxFor(m => m.InterviewerQuestionsCollection[i].Question, new { @class = "form-control text-box single-line" })
-                                                    </td>
-                                                    <td>
-                                                        @Html.DropDownListFor(m => m.InterviewerQuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
-                                                    </td>
-                                                    <td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.InterviewerQuestionsCollection[i].Question, new { @class = "form-control text-box single-line" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DropDownListFor(m => m.InterviewerQuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
+                                                                </td>
+                                                                <td>
 
-                                                        @Html.EditorFor(m => m.InterviewerQuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "60", @max = "5000" } })
+                                                                    @Html.EditorFor(m => m.InterviewerQuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "60", @max = "5000" } })
 
-                                                    </td>
-                                                    <td class="action text-center ">
-                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId','Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                </td>
+                                                                <td class="action text-center ">
+                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId','Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                    </td>
-                                                </tr>
+                                                                </td>
+                                                            </tr>
 
 
                                                         }
@@ -1406,6 +1406,22 @@
 
                                                 </div>
                                             </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.ProfileType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                    @Html.DropDownListFor(x => Model.ProfileType, Model.ProfileTypeList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                    @Html.ValidationMessageFor(model => model.ProfileType, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.CompentencyLevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                    @Html.DropDownListFor(x => Model.CompentencyLevel, Model.CompentencyLevelList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                    @Html.ValidationMessageFor(model => model.CompentencyLevel, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
                                             @*<div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
                                                         @Html.LabelFor(model => model.SkillIP, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -1434,9 +1450,9 @@
                                         <div class="col-md-12 mc-button-area">
                                             @if (!string.IsNullOrEmpty(Model.BackUrl))
                                             {
-                                                
+
                                                 <a href="@Model.BackUrl" class="mdc-button mdc-button--raised mdc-ripple-upgraded" role="button">Back to List</a>
-                                               
+
                                             }
                                             else
                                             {
@@ -1500,7 +1516,7 @@
         var behavioralScore = 0;
         var interviwerCommunicationScore = 0;
         var interviewExperienceScore = 0;
- 
+
         var skillQualityVal = document.getElementById("SkillQuality").value;
         if (skillQualityVal != null && skillQualityVal != '') {
             skillQualityScore = parseInt(skillQualityVal);
@@ -2137,7 +2153,7 @@
 
     }
 
-    function DeleteRow(element, collectionName, tdOne, tdTwo,tdThree) {
+    function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree) {
 
         if ($(element).parents('tbody').find('tr').length === 1) {
 

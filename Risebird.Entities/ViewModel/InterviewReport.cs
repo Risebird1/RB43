@@ -288,6 +288,10 @@ namespace Risebird.Entities.ViewModel
         //public string PerHourRateOutside { get; set; }
         public SelectList CompanySizeList { get; set; }
         public SelectList CountryList { get; set; }
+        public SelectList ProfileTypeList { get; set; }
+        public int ProfileType { get; set; }
+        public SelectList CompentencyLevelList { get; set; }
+        public int CompentencyLevel { get; set; }
     }
     public class RBInterviewDetails
     {

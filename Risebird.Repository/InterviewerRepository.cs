@@ -1346,6 +1346,8 @@ namespace Risebird.Repository
                     //parametersRecomm.Add("@SkillIP", reportDetails.SkillIP);
                     parametersRecomm.Add("@PerHourRateIndia", reportDetails.PerHourRateIndia);
                     parametersRecomm.Add("@PerHourRateOutside", reportDetails.PerHourRateOutside);
+                    parametersRecomm.Add("@ProfileType", reportDetails.ProfileType);
+                    parametersRecomm.Add("@CompentencyLevel", reportDetails.CompentencyLevel);
 
                     paramPersonality.Add("@InterviewId", reportDetails.InterviewId);
                     paramPersonality.Add("@OverallPersonalityScore", reportDetails.OverallPersonalityScore);
