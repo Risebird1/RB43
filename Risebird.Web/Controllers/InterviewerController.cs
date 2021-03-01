@@ -1394,8 +1394,12 @@ namespace Risebird.Web.Controllers
             model.YearsofexperienceList = new SelectList(_iRFRepository.GetInterviewerExprienceYear(), "Id", "Name");
             model.SenioritylevelList = new SelectList(_iRFRepository.GetSenioritylevel(), "Id", "Name");
             model.SkillNatureList = new SelectList(_iRFRepository.GetSkillNature(), "Id", "Name");
-
-
+            var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                             select new { ID = (int)s, Name = s.GetDescription() };
+            var Compentencs = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
+                              select new { ID = (int)s, Name = s.GetDescription() };
+            model.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
+            model.CompentencyLevelList = new SelectList(Compentencs, "ID", "Name");
         }
 
         /// <summary>

@@ -31,6 +31,6 @@ namespace Risebird.Entities.ViewModel
         public string[] CompentencyLevel { get; set; }
         public string[] AssessmentGroup { get; set; }
         public string[] Senioritylevel { get; set; }
-
+        public string[] ProfileType { get; set; }
     }
 }

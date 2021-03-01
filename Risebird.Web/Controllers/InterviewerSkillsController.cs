@@ -851,6 +851,7 @@ namespace Risebird.Web.Controllers
                         int totalMeetings = 0;
 
                         modelList = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsPaged(Page.Value, searchvalue).Result;
+                        modelList = modelList.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); return x; }).ToList();
                         if (HttpContext.Session.GetString("InterviewerRiseTubefilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("InterviewerRiseTubefilters"));
@@ -860,23 +861,34 @@ namespace Risebird.Web.Controllers
                             }
                             filter.AssessmentGroup = filter.AssessmentGroup == null ? filter.AssessmentGroup = modelList.Select(x => x.AssessmentGroup).ToArray() : filter.AssessmentGroup = filter.AssessmentGroup;
                             filter.Senioritylevel = filter.Senioritylevel == null ? filter.Senioritylevel = modelList.Select(x => x.Senioritylevel).ToArray() : filter.Senioritylevel = filter.Senioritylevel;
+                            filter.ProfileType = filter.ProfileType == null ? filter.ProfileType = modelList.Select(x => x.ProfileType).ToArray() : filter.ProfileType = filter.ProfileType;
+                            filter.CompentencyLevel = filter.CompentencyLevel == null ? filter.CompentencyLevel = modelList.Select(x => x.CompentencyLevel).ToArray() : filter.CompentencyLevel = filter.CompentencyLevel;
 
                             modelList = modelList.Where(c =>
                                (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroup) : c.AssessmentGroup == null)
-                              && (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)).ToList();
+                              && (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
+                              && (filter.ProfileType.Count() > 0 ? filter.ProfileType.Contains(c.ProfileType) : c.ProfileType == null)
+                              && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)).ToList();
 
                         }
                         //totalMeetings = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsCount(searchvalue).Result;
-                        modelList = modelList.Take(12).ToList();
-                        totalMeetings = modelList.Count();
-
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
                         foreach (var item in modelList)
                         {
                             int Seniorityid = Convert.ToInt32(item.Senioritylevel);
                             item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
                         }
+                        ViewBag.Senioritylevel = modelList.Select(x => x.Senioritylevel).Distinct();
+                        ViewBag.ProfileType = modelList.Select(x => x.ProfileType).Distinct();
+                        ViewBag.CompentencyLevel = modelList.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
+                        ViewBag.AssessmentGroup = modelList.Select(x => x.AssessmentGroup).Distinct();
+                        modelList = modelList.Take(12).ToList();
+                        totalMeetings = modelList.Count();
+
+                        
+                       
                         ViewBag.ProfileName = profileName;
+
                         if (!String.IsNullOrEmpty(searchvalue))
                         {
                             ViewBag.searchvalue = searchvalue;
@@ -949,27 +961,37 @@ namespace Risebird.Web.Controllers
                             HttpContext.Session.SetString("InterviewerRiseTubefilters", JsonConvert.SerializeObject(filter));
                         }
                         modelList = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsPaged(Page.Value, searchvalue).Result;
+                        modelList = modelList.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); return x; }).ToList();
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
                             modelList = modelList.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
                         }
                         filter.AssessmentGroup = filter.AssessmentGroup == null ? filter.AssessmentGroup = modelList.Select(x => x.AssessmentGroup).ToArray() : filter.AssessmentGroup = filter.AssessmentGroup;
                         filter.Senioritylevel = filter.Senioritylevel == null ? filter.Senioritylevel = modelList.Select(x => x.Senioritylevel).ToArray() : filter.Senioritylevel = filter.Senioritylevel;
+                        filter.ProfileType = filter.ProfileType == null ? filter.ProfileType = modelList.Select(x => x.ProfileType).ToArray() : filter.ProfileType = filter.ProfileType;
+                        filter.CompentencyLevel = filter.CompentencyLevel == null ? filter.CompentencyLevel = modelList.Select(x => x.CompentencyLevel).ToArray() : filter.CompentencyLevel = filter.CompentencyLevel;
 
                         modelList = modelList.Where(c =>
                            (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroup) : c.AssessmentGroup == null)
-                          && (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)).ToList();
+                          && (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
+                          && (filter.ProfileType.Count() > 0 ? filter.ProfileType.Contains(c.ProfileType) : c.ProfileType == null)
+                          && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)).ToList();
 
                         //totalMeetings = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsCount(searchvalue).Result;
-                        modelList = modelList.Take(12).ToList();
-                        totalMeetings = modelList.Count();
-
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
                         foreach (var item in modelList)
                         {
                             int Seniorityid = Convert.ToInt32(item.Senioritylevel);
                             item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
                         }
+                        ViewBag.Senioritylevel = modelList.Select(x => x.Senioritylevel).Distinct();
+                        ViewBag.ProfileType = modelList.Select(x => x.ProfileType).Distinct();
+                        ViewBag.CompentencyLevel = modelList.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
+                        ViewBag.AssessmentGroup = modelList.Select(x => x.AssessmentGroup).Distinct();
+                        modelList = modelList.Take(12).ToList();
+                        totalMeetings = modelList.Count();
+
+                        
                         ViewBag.ProfileName = profileName;
                         if (!String.IsNullOrEmpty(searchvalue))
                         {

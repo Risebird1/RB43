@@ -226,6 +226,8 @@ namespace Risebird.Entities.ViewModel
         public int iscIntId { get; set; }
         public string ZoomId { get; set; }
         public string PrimarySkill { get; set; }
+        public string ProfileType { get; set; }
+        public string CompentencyLevel { get; set; }
 
 
     }
