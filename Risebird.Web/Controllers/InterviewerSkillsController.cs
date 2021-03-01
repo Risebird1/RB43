@@ -872,11 +872,14 @@ namespace Risebird.Web.Controllers
 
                         }
                         //totalMeetings = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsCount(searchvalue).Result;
+                        
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
                         foreach (var item in modelList)
-                        {
-                            int Seniorityid = Convert.ToInt32(item.Senioritylevel);
-                            item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
+                        { if (!String.IsNullOrEmpty(item.Senioritylevel))
+                            {
+                                int Seniorityid = Convert.ToInt32(item.Senioritylevel);
+                                item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
+                            }
                         }
                         ViewBag.Senioritylevel = modelList.Select(x => x.Senioritylevel).Distinct();
                         ViewBag.ProfileType = modelList.Select(x => x.ProfileType).Distinct();
@@ -981,8 +984,11 @@ namespace Risebird.Web.Controllers
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
                         foreach (var item in modelList)
                         {
-                            int Seniorityid = Convert.ToInt32(item.Senioritylevel);
-                            item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
+                            if (!String.IsNullOrEmpty(item.Senioritylevel))
+                            {
+                                int Seniorityid = Convert.ToInt32(item.Senioritylevel);
+                                item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
+                            }
                         }
                         ViewBag.Senioritylevel = modelList.Select(x => x.Senioritylevel).Distinct();
                         ViewBag.ProfileType = modelList.Select(x => x.ProfileType).Distinct();
@@ -1146,7 +1152,10 @@ namespace Risebird.Web.Controllers
                                     }
                                 }
                                 IRListModel.SkillCategory = Skillset;
-                                IRListModel.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
+                                var Seniority_level = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault();
+                                if ((Seniority_level!=null)) 
+                                    IRListModel.Senioritylevel = Seniority_level.Name;
+                              
                             }
                         }
                         NewModel.IreportModel = IRListModel ?? new InterviewReport();
@@ -1268,7 +1277,10 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                             IRListModel.SkillCategory = Skillset;
-                            IRListModel.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
+                            var Seniority_level = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault();
+                            if ((Seniority_level != null))
+                                IRListModel.Senioritylevel = Seniority_level.Name;
+
                         }
                     }
                     NewModel.IreportModel = IRListModel ?? new InterviewReport();

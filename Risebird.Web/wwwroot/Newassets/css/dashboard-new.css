@@ -6359,8 +6359,13 @@ button.close {
     position: absolute;
     top: 7px;
     right: 10px;
-    background: #fff;
+ 
 }
+
+h4.card-title {
+    margin-top: 0px;
+}
+
 
 h4.card-title {
     margin-top: 0px;
@@ -6393,11 +6398,7 @@ h4.card-title {
     position: relative;
     background: #fff;
 }
-
-#candidateTable_filter input[type=search] {
-    border: 1px #ccc solid !important
-}
-
+#candidateTable_filter input[type=search]{border:1px #ccc solid!important}
 .collapse {
     display: none;
 }
