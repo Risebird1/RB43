@@ -81,7 +81,7 @@ namespace Risebird.Repository.Interface
         //bool AddPausedMeetings(int irfId, int meetingId);
         //Task<IEnumerable<MeetingVM>> PlayIRF(string IRFId);
         bool PlayIRF(string IRFId);
-        IEnumerable<Interviewer> GetIRFInterviewerSkills();
+        IEnumerable<Interviewer> GetIRFInterviewerSkills(string assessmentGrp);
         Skill GetSkillById(int id);
         IEnumerable<TransClientUser> GetTransClientUserRole();
         Task<IEnumerable<IRF>> GetAllIRFs(string emailID, string profileName);

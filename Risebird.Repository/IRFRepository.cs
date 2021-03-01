@@ -200,14 +200,16 @@ namespace Risebird.Repository
             return null;
         }
 
-        public IEnumerable<Interviewer> GetIRFInterviewerSkills()
+        public IEnumerable<Interviewer> GetIRFInterviewerSkills(string assessmentgroupid)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+                    DynamicParameters dp = new DynamicParameters();
+                    dp.Add("@assessmentGrpId", assessmentgroupid);
                     return SqlMapper.Query<Interviewer>(
-                        con, "select intp.UserId,intp.AssessmentGroupId, ul.EmailId FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId  where intp.IsApproved=1", null, commandType: Text);
+                        con, "select intp.UserId,intp.AssessmentGroupId, ul.EmailId FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId  where intp.IsApproved=1 and intp.AssessmentGroupId like @assessmentGrpId", dp, commandType: Text);
                 }
             }
             catch (SqlException ex)

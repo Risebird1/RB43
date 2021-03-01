@@ -147,26 +147,26 @@ namespace Risebird.Business
         {
             try
             {
-                var interviewers = _irfRepository.GetIRFInterviewerSkills();
-                var assessmentgroupidlist = assessmentgroupid.Split(",");
-                var list = new List<Interviewer>();
-                foreach (var item in interviewers ?? new List<Interviewer>())
-                {
-                    foreach (var groupid in assessmentgroupidlist ?? new List<string>().ToArray())
-                    {
-                        if (groupid == "" || String.IsNullOrEmpty(item.AssessmentGroupId))
-                        {
-                            continue;
-                        }
-                        if (item.AssessmentGroupId.Contains(groupid))
-                        {
-                            list.Add(item);
-                            break;
-                        }
-                    }
-                }
-                list = list.Distinct().ToList();
-                return list;
+                var interviewers = _irfRepository.GetIRFInterviewerSkills(assessmentgroupid);
+                //var assessmentgroupidlist = assessmentgroupid.Split(",");
+                //var list = new List<Interviewer>();
+                //foreach (var item in interviewers ?? new List<Interviewer>())
+                //{
+                //    foreach (var groupid in assessmentgroupidlist ?? new List<string>().ToArray())
+                //    {
+                //        if (groupid == "" || String.IsNullOrEmpty(item.AssessmentGroupId))
+                //        {
+                //            continue;
+                //        }
+                //        if (item.AssessmentGroupId.Contains(groupid))
+                //        {
+                //            list.Add(item);
+                //            break;
+                //        }
+                //    }
+                //}
+                //list = list.Distinct().ToList();
+                return interviewers;
             }
 
             catch (Exception e)
@@ -185,35 +185,9 @@ namespace Risebird.Business
         {
             try
             {
-                var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
-                // var interviewers = _irfRepository.GetIRFInterviewerSkills();
-                if (assessmentgroupid != null)
-                {
-                    var assessmentgroupidlist = assessmentgroupid.Split(",");
-
-                    //skillList.RemoveAt()
-                    var list = new List<Interviewer>();
-
-
-                    foreach (var item in interviewers ?? new List<Interviewer>())
-                    {
-                        foreach (var groupid in assessmentgroupidlist ?? new List<string>().ToArray())
-                        {
-                            if (String.IsNullOrEmpty(item.AssessmentGroupId))
-                            {
-                                continue;
-                            }
-                            if (item.AssessmentGroupId.Contains(groupid))
-                            {
-                                list.Add(item);
-                                break;
-                            }
-                        }
-                    }
-                    list = list.Distinct().ToList();
-
-                    return list;
-                }
+                //var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
+                 var interviewers = _irfRepository.GetIRFInterviewerSkills(assessmentgroupid);
+                
                 return interviewers;
             }
 
