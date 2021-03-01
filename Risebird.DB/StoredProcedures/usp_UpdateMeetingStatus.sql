@@ -20,10 +20,18 @@ update IRF
 set IsPaused = 1 
 where IRFId=@IRFId
 
+update InterviewComments set MeetingStatus=null where InterviewId in 
+(select id from InterviewMeetings where IRFId=@IRFId and interviewDate>@date)
+
+
+
 UPDATE InterviewMeetings
 SET confirmationStatus = 2
 OUTPUT inserted.interviewer, inserted.candidateEmail, inserted.candidateName, inserted.ClientHrContact, inserted.interviewDate, inserted.id as imid
 WHERE IRFId = @IRFId and interviewDate >= @date
+
+
+
 
 End
 

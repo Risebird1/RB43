@@ -851,52 +851,52 @@
                                                 <tbody>
                                                     @if (Model.InterviewerQuestionsCollection == null || Model.InterviewerQuestionsCollection.Count() == 0)
                                                     {
-                                                        <tr>
+                                                    <tr>
 
-                                                            <td>
-                                                                @Html.TextBox("InterviewerQuestionsCollection[0].Question", null, new { @class = "form-control" })
+                                                        <td>
+                                                            @Html.TextBox("InterviewerQuestionsCollection[0].Question", null, new { @class = "form-control" })
 
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerQuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
+                                                        </td>
+                                                        <td>
+                                                            @Html.DropDownList("InterviewerQuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
 
-                                                            </td>
-                                                            <td>
-                                                                <input class="form-control text-box single-line" id="InterviewerQuestionsCollection_0__Timing" name="InterviewerQuestionsCollection[0].Timing" type="number" min="60" max="5000">
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control text-box single-line" id="InterviewerQuestionsCollection_0__Timing" name="InterviewerQuestionsCollection[0].Timing" type="number" min="60" max="5000">
 
-                                                            </td>
+                                                        </td>
 
-                                                            <td class="action text-center">
-                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                        <td class="action text-center">
+                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-                                                                <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                            </td>
-                                                        </tr>
+                                                        </td>
+                                                    </tr>
                                                     }
                                                     else
                                                     {
                                                         for (int i = 0; i < Model.InterviewerQuestionsCollection.Count(); i++)
                                                         {
-                                                            <tr style="cursor:pointer">
+                                                <tr style="cursor:pointer">
 
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerQuestionsCollection[i].Question, new { @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerQuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
-                                                                </td>
-                                                                <td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => m.InterviewerQuestionsCollection[i].Question, new { @class = "form-control text-box single-line" })
+                                                    </td>
+                                                    <td>
+                                                        @Html.DropDownListFor(m => m.InterviewerQuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
+                                                    </td>
+                                                    <td>
 
-                                                                    @Html.EditorFor(m => m.InterviewerQuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "60", @max = "5000" } })
+                                                        @Html.EditorFor(m => m.InterviewerQuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "60", @max = "5000" } })
 
-                                                                </td>
-                                                                <td class="action text-center ">
-                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId','Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                    </td>
+                                                    <td class="action text-center ">
+                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId','Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                                </td>
-                                                            </tr>
+                                                    </td>
+                                                </tr>
 
 
                                                         }
@@ -2153,7 +2153,7 @@
 
     }
 
-    function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree) {
+    function DeleteRow(element, collectionName, tdOne, tdTwo,tdThree) {
 
         if ($(element).parents('tbody').find('tr').length === 1) {
 
