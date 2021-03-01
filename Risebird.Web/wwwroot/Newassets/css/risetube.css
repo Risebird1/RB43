@@ -926,7 +926,10 @@ textarea::-webkit-scrollbar-thumb {
     background-position: 45% !important;
     z-index: 1000;
 }
-
+.refresh {
+    left: -61px;
+    position: relative;
+}
 .pagination-container > ul > li {
     padding: 5px 12px !important;
     border-radius: 21px !important;
@@ -1145,7 +1148,7 @@ textarea::-webkit-scrollbar-thumb {
 
 
     #myForm input[type=email], #myForm input[type=text] {
-        padding: 0px 10px 0px 20px;
+        padding: 0px 10px 0px 10px;
         height: 35px;
         width: 265px;
         font-family: arial;

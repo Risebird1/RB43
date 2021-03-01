@@ -3376,12 +3376,13 @@ input[type='radio'] {
 }
 */
 .mt50 {
-    margin-top: 55px;
+ /*   margin-top: 55px;*/
 }
 
 .mt-20 {
     margin-top: 20px;
 }
+
 
 .mdc-radio .mdc-radio__native-control:enabled:not(:checked) + .mdc-radio__background .mdc-radio__outer-circle {
     border-color: rgb(146, 146, 146);
@@ -6321,18 +6322,29 @@ button.close {
         display: none;
     }
 
+
+
 #x {
-    border: 0px;
-    background: none;
-    color: #595963;
+    border-radius: 10px;
+  
+    /* color: #595963; */
     font-weight: bold;
     position: absolute;
     right: 11px;
     top: 10px;
+    width: 25px;
+    height: 25px;
+    border: 0px;
 }
-
+.ref-btn {
+  position: absolute;
+    top: 8px;
+    right: 10px;
+    background: #fff;
+}
+h4.card-title{margin-top:0px;}
 #search {
-    right: 25px;
+    right: 40px;
     position: absolute;
     width: 18px;
     height: 19px;
@@ -6344,10 +6356,10 @@ button.close {
 }
 
 .dataTables_filter input[type=search], #meeting_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
-    border: solid 1px #ccc;
+    border: 0px!important;
     padding: 9px 10px 9px 10px;
     width: 190px;
-    height: 40px;
+    height:35px;
     font-family: arial;
     -webkit-border-radius: 10em;
     -moz-border-radius: 10em;
@@ -6358,7 +6370,7 @@ button.close {
     position: relative;
     background: #fff;
 }
-
+#candidateTable_filter input[type=search]{border:1px #ccc solid!important}
 .collapse {
     display: none;
 }
@@ -6384,6 +6396,8 @@ tbody.collapse.in {
 
 .searchCon {
     position: relative;
+    border: solid 1px #ccc !important;
+    border-radius: 20px;
 }
 
 .dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
@@ -6393,7 +6407,7 @@ tbody.collapse.in {
     font-family: arial;
     margin: 3px;
     box-shadow: none !important;
-    border: 1px #ccc solid !important;
+    border:0px #ccc solid !important;
 }
 
 

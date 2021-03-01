@@ -228,6 +228,7 @@ namespace Risebird.Entities.ViewModel
         public string PrimarySkill { get; set; }
         public string ProfileType { get; set; }
         public string CompentencyLevel { get; set; }
+        public int InterviewerProfileId { get; set; }
 
 
     }

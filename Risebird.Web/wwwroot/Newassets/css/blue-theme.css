@@ -275,7 +275,12 @@ textarea::-webkit-scrollbar {
     border-right: 1px #ddd solid !important
 }
 
-.table-bordered {
+
+#x {
+    border-radius: 10px;
+    background: #fff url(../../Newassets/img/refresh.png) 1px no-repeat;
+}
+    .table-bordered {
     border: 1px solid #dee2e6 !important;
 }
 

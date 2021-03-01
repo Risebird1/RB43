@@ -11,6 +11,11 @@ body {
     background: #ebecf1;
 }
 
+#x {
+    border-radius: 10px;
+    background: #fff url(../../Newassets/img/refresh.png) 1px no-repeat;
+}
+
 td.detail-row {
     background-color: #fff;
 }

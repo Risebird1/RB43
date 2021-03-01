@@ -1330,6 +1330,7 @@ namespace Risebird.Repository
                     parameters.Add("@Interviewscompleted", reportDetails.Interviewscompleted);
                     parameters.Add("@Creativity", reportDetails.Creativity);
                     parameters.Add("@OverallInterviewingAbilityScore", reportDetails.OverallInterviewingAbilityScore);
+                    parameters.Add("@InterviewerProfileId", reportDetails.InterviewerProfileId);
 
                     parametersRecomm.Add("@interviewId", reportDetails.InterviewId);
                     parametersRecomm.Add("@CompanySize", reportDetails.CompanySize);
