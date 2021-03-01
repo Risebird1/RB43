@@ -88,6 +88,7 @@
                                         <th width="70%">Assessment Group</th>
                                         <th>Primary Skills</th>
                                         <th>Number Of Assessments</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -98,6 +99,10 @@
                                             <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.AssessmentGroup</a></td>
                                             <td><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.PrimarySkills </a></td>
                                             <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.Assessmentcount</a></td>
+                                            <td class="text-right four">
+                                                <span onclick="EditAssessment(@item.id)" title="Assign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                            </td>
+
                                         </tr>
                                     }
                                 </tbody>
@@ -175,7 +180,7 @@
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                         </div>
-
+                        @Html.HiddenFor(model => model._skilldetails.id)
                         <div class="clearfix">
                             <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
                                 @Html.LabelFor(model => model._skilldetails.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -318,5 +323,34 @@
     jQuery(document).ready(function () {
         jQuery("#select").select2({ multiple: true });
     });
-
+    function EditAssessment(assessmentid) {
+        $.ajax({
+            url: '/IRF/EditAssessment',
+            data: { 'assessmentid': assessmentid },
+            success: function (data) {
+                
+                CreateAssignmetGroup();
+                $("#zskilldetails_AssessmentGroupName").val(data.assessmentname);
+                $("#zskilldetails_id").val(data.id);
+                var drop = $("#select");
+                $("#select option").remove();
+                if (data.primaryskillset.length > 0) {
+                    var option = '';
+                    for (i = 0; i < data.primaryskillset.length; i++) {
+                        if (data.primaryskillset[i].selected) {
+                            option += '<option value="' + data.primaryskillset[i].value + '" selected>' + data.primaryskillset[i].text + '</option>';
+                        } else {
+                            option += '<option value="' + data.primaryskillset[i].value + '">' + data.primaryskillset[i].text + '</option>';
+                        }
+                    }
+                    drop.append(option);
+                }
+                
+            }
+        });
+        //ajax calling
+        //open Model popup
+        //Bind dropdown
+        //bind Assessment value
+    }
 </script>

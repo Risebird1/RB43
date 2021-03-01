@@ -3951,6 +3951,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@AssessmentGroup", _skilldetails.AssessmentGroupName);
                     parameters.Add("@PrimarySkills", _skilldetails.PrimarySkill);
+                    parameters.Add("@id", _skilldetails.id);
                     SqlMapper.QueryAsync(con, "usp_AddAssessmentGroup", parameters,
                         commandType: CommandType.StoredProcedure);
                     return "Success";

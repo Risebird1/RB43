@@ -885,8 +885,8 @@ namespace Risebird.Web.Controllers
                         modelList = modelList.Take(12).ToList();
                         totalMeetings = modelList.Count();
 
-                        
-                       
+
+
                         ViewBag.ProfileName = profileName;
 
                         if (!String.IsNullOrEmpty(searchvalue))
@@ -991,7 +991,7 @@ namespace Risebird.Web.Controllers
                         modelList = modelList.Take(12).ToList();
                         totalMeetings = modelList.Count();
 
-                        
+
                         ViewBag.ProfileName = profileName;
                         if (!String.IsNullOrEmpty(searchvalue))
                         {
@@ -1094,7 +1094,11 @@ namespace Risebird.Web.Controllers
                             return x;
                         }).ToList();
                         var IRListModel = _interviewerService.GetInterviewerinteviewReport(model.imid, model.irfIntId).Result;
-
+                        var exprienceyears = _iRFRepository.GetInterviewerExprienceYear();
+                        if (IRListModel != null)
+                        {
+                            IRListModel.Yearsofexperience = "1";
+                        }
                         var modelList = modelList1;
 
                         MeetingVM NewModel = new MeetingVM();
