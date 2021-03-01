@@ -549,6 +549,7 @@ namespace Risebird.Business
                 reportModel.IRFName = irfDetails.IRFId;
                 //reportModel.PrimarySkill = irfDetails.JDTiltle.Split("|")[0];
                 reportModel.PrimarySkill = irfDetails.PrimarySkill;
+                reportModel.InterviewerProfileId = interviewDetails.InterviewerProfileId;
                 return reportModel;
             }
 

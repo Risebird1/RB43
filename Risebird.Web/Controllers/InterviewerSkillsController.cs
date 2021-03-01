@@ -885,8 +885,8 @@ namespace Risebird.Web.Controllers
                         modelList = modelList.Take(12).ToList();
                         totalMeetings = modelList.Count();
 
-
-
+                        
+                       
                         ViewBag.ProfileName = profileName;
 
                         if (!String.IsNullOrEmpty(searchvalue))
@@ -991,7 +991,7 @@ namespace Risebird.Web.Controllers
                         modelList = modelList.Take(12).ToList();
                         totalMeetings = modelList.Count();
 
-
+                        
                         ViewBag.ProfileName = profileName;
                         if (!String.IsNullOrEmpty(searchvalue))
                         {

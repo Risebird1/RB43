@@ -40,7 +40,8 @@ SELECT im.id as imid
   ,ul.MobileNumber              
   ,InterviewerComments.IsApproved              
   ,InterviewerComments.IsSelected              
-  ,IRF.id as irfIntId              
+  ,IRF.id as irfIntId  
+  ,ca.id as InterviewerProfileId
 FROM [dbo].[UnapprovedInterviewerMeetings] im              
 inner join InterviewerSkillsChannel as IRF on im .ISCId = IRF.InterviewerSkillId              
 left join InterviewerComments on im.id=InterviewerComments.InterviewId           

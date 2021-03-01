@@ -195,18 +195,21 @@ namespace Risebird.Web.Controllers
                         {
                             if (interviewerProfile.ResumeFile != null)
                             {
-                                await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
+                                var resumeFileName = interviewerProfile.ResumeFile.FileName.Replace(" ", "_");
+                                await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", interviewerProfile.ResumeFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
+                                var blob = containerRef.GetBlockBlobReference(resumeFileName);
                                 uploadedFileURL = blob.Uri.ToString();
                                 interviewerProfile.ResumeLink = uploadedFileURL;
 
                             }
                             else if (interviewerProfile.CodedResumeFile != null)
                             {
-                                await _azureStorageHelper.InsertBlob(interviewerProfile.CodedResumeFile.FileName, "resumes", interviewerProfile.CodedResumeFile);
+                                var codedResumeFileName = interviewerProfile.CodedResumeFile.FileName.Replace(" ", "_");
+
+                                await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", interviewerProfile.CodedResumeFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(interviewerProfile.CodedResumeFile.FileName);
+                                var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
                                 uploadedFileURL = blob.Uri.ToString();
                                 interviewerProfile.CodedResumeLink = uploadedFileURL;
                             }
@@ -301,18 +304,22 @@ namespace Risebird.Web.Controllers
                         {
                             if (interviewerProfile.ResumeFile != null)
                             {
-                                await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
+                                var resumeFileName = interviewerProfile.ResumeFile.FileName.Replace(" ", "_");
+
+                                await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", interviewerProfile.ResumeFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
+                                var blob = containerRef.GetBlockBlobReference(resumeFileName);
                                 uploadedFileURL = blob.Uri.ToString();
                                 interviewerProfile.ResumeLink = uploadedFileURL;
 
                             }
                             else if (interviewerProfile.CodedResumeFile != null)
                             {
-                                await _azureStorageHelper.InsertBlob(interviewerProfile.CodedResumeFile.FileName, "resumes", interviewerProfile.CodedResumeFile);
+                                var codedResumeFileName = interviewerProfile.CodedResumeFile.FileName.Replace(" ", "_");
+
+                                await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", interviewerProfile.CodedResumeFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(interviewerProfile.CodedResumeFile.FileName);
+                                var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
                                 uploadedFileURL = blob.Uri.ToString();
                                 interviewerProfile.CodedResumeLink = uploadedFileURL;
                             }
