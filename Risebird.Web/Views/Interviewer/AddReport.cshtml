@@ -1279,14 +1279,15 @@
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.CompanySize, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.DropDownListFor(m => m.CompanySize, Model.CompanySizeList, "Select Company Stage", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                    @Html.DropDownListFor(m => m.CompanySize, Model.CompanySizeList, "Select Company Size", htmlAttributes: new { @class = "select-css form-control webkitEnabled"@*, @required="required"*@ })
+                                                    @*@Html.ValidationMessageFor(model => model.CompanySize, "", new { @class = "text-danger" })*@
 
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.CompanyHeadquarters, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.DropDownListFor(m => m.CompanyHeadquarters, Model.CountryList, "Select Company Stage", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                    @Html.DropDownListFor(m => m.CompanyHeadquarters, Model.CountryList, "Select Company Headquarters", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                                 </div>
                                             </div>
                                         </div>
@@ -1443,6 +1444,7 @@
                                 @Html.HiddenFor(m => m.IsQC)
                                 @Html.HiddenFor(m => m.IRFName)
                                 @Html.HiddenFor(m => m.PrimarySkill)
+                                @Html.HiddenFor(m => m.InterviewerProfileId)
 
                                 <div class="card-footer ">
                                     <div class="row">
@@ -1460,7 +1462,7 @@
 
                                             }
 
-                                            @if (Model.ProfileName == "Interviewer")
+                                            @if (Model.ProfileName == "Interviewer" || Model.ProfileName=="Admin")
                                             {
                                                 @if (Model.IsEdited)
                                                 {
