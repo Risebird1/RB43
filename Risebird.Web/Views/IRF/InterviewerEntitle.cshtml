@@ -328,7 +328,6 @@
             url: '/IRF/EditAssessment',
             data: { 'assessmentid': assessmentid },
             success: function (data) {
-                CreateAssignmetGroup();
                 $("#zskilldetails_AssessmentGroupName").val(data.assessmentname);
                 $("#zskilldetails_id").val(data.id);
                 var drop = $("#select");
@@ -344,6 +343,7 @@
                     }
                     drop.append(option);
                 }
+                CreateAssignmetGroup();
             }
         });
     }
