@@ -157,6 +157,7 @@ namespace Risebird.Entities.ViewModel
         public string PrimarySkill { get; set; }
         [Display(Name = "Assessment Group Id")]
         public string AssessmentGroupId { get; set; }
+        [Required]
         public string[] AssessmentGroupArray { get; set; }
         public List<SelectListItem> AssessmentGroupList { get; set; }
     }

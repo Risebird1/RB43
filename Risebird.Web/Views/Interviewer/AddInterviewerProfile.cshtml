@@ -39,7 +39,7 @@
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section interviewer">
 
-                        @using (Html.BeginForm("AddInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        @using (Html.BeginForm("AddInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return Checkvalidation();" }))
                         {
                             @Html.AntiForgeryToken()
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -169,7 +169,7 @@
                                                           new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
                                         @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
                                     </div>
-                                    
+
                                 </div>
                                 <div class="col-lg-4  col-md-4 col-sm-4 pl-1">
                                     <div class="form-group">
@@ -1159,5 +1159,11 @@
 
         }
 
+    }
+    function Checkvalidation() {
+        if ($(".multiselect-selected-text").text() != "None selected" || $(".multiselect-selected-text").text() != "") {
+            return true;
+        }
+        return false;
     }
 </script>
