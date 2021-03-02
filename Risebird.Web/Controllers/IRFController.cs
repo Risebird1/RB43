@@ -1444,6 +1444,9 @@ namespace Risebird.Web.Controllers
                     if (String.IsNullOrEmpty(model.AssessmentGroupId))
                     {
                         model.InterviewerMembers = _irfService.GetIRFInterviewerMembers(Convert.ToInt16(id)).Result;
+                        model.InterviewerCollection = new List<TransInterviewer>();
+                        model.EmergencyInterviewerCollection = new List<TransEmergencyInterviewer>();
+                        model.QualityController = new List<TransQualityController>();
                     }
                     else
                     {
@@ -3772,7 +3775,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-        public JsonResult EditAssessment(int assessmentid)
+        public ActionResult EditAssessment(int assessmentid)
         {
             var model = new Assessment();
             var modellist = _userService.GetInterviewerEntitle();
@@ -3781,20 +3784,36 @@ namespace Risebird.Web.Controllers
                 modellist = new List<AssignmentVM>();
             }
             var modeldata = modellist.Where(x => x.id == assessmentid).FirstOrDefault();
+            model._assessment = modellist.Where(x => x.id == assessmentid).ToList();
             var skillset = _skillService.GetSkills();
             var primaryskilllist = new List<SelectListItem>();
-
+            model._skilldetails.PrimarySkills = new SelectList(skillset, "id", "Name");
             foreach (var item in skillset)
             {
                 bool selected = false;
-                if (modeldata.PrimarySkills != null && modeldata.PrimarySkills.Contains(item.Name.ToUpper()))
+                if (modeldata != null)
                 {
-                    selected = true;
+                    if (modeldata.PrimarySkills != null && modeldata.PrimarySkills.Contains(item.Name))
+                    {
+                        selected = true;
+                    }
                 }
                 var selectItem = new SelectListItem(item.Name, item.id.ToString(), selected);
                 primaryskilllist.Add(selectItem);
             }
-            return Json(new { id = modeldata.id, Assessmentname = modeldata.AssessmentGroup, primaryskillset = primaryskilllist });
+            model._skilldetails.PrimarySkillsList = primaryskilllist;
+            if (modeldata != null)
+            {
+                model._skilldetails.id = modeldata.id;
+                model._skilldetails.AssessmentGroupName = modeldata.AssessmentGroup;
+            }
+            else
+            {
+                model._skilldetails.id = 0;
+                model._skilldetails.AssessmentGroupName = "";
+            }
+            return PartialView(model);
+            //return Json(new { id = modeldata.id, Assessmentname = modeldata.AssessmentGroup, primaryskillset = primaryskilllist });
         }
         /// <summary>
         /// Fetch Assessment Related to Assessment Group

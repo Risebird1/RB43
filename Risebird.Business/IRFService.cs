@@ -147,7 +147,7 @@ namespace Risebird.Business
         {
             try
             {
-                var interviewers = _irfRepository.GetIRFInterviewerSkills();
+                var interviewers = _irfRepository.GetIRFInterviewerSkills(assessmentgroupid);
                 var assessmentgroupidlist = assessmentgroupid.Split(",");
                 var list = new List<Interviewer>();
                 foreach (var item in interviewers ?? new List<Interviewer>())
@@ -182,33 +182,9 @@ namespace Risebird.Business
             try
             {
                 //var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
-                var interviewers = _irfRepository.GetIRFInterviewerSkills();
-                string[] assessmentgroupidlist = new List<string>().ToArray();
-                if (!String.IsNullOrEmpty(assessmentgroupid))
-                    assessmentgroupidlist = assessmentgroupid.Split(",");
-
-                //skillList.RemoveAt()
-                var list = new List<Interviewer>();
-
-
-                foreach (var item in interviewers ?? new List<Interviewer>())
-                {
-                    foreach (var groupid in assessmentgroupidlist ?? new List<string>().ToArray())
-                    {
-                        if (String.IsNullOrEmpty(item.AssessmentGroupId))
-                        {
-                            continue;
-                        }
-                        if (item.AssessmentGroupId.Contains(groupid))
-                        {
-                            list.Add(item);
-                            break;
-                        }
-                    }
-                }
-                list = list.Distinct().ToList();
-
-                return list;
+                var interviewers = _irfRepository.GetIRFInterviewerSkills(assessmentgroupid);
+                interviewers = interviewers.Distinct().ToList();
+                return interviewers;
             }
 
             catch (Exception e)

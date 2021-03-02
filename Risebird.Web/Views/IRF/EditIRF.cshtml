@@ -39,7 +39,7 @@
                 <div class="mdc-card card bl-bg">
 
                     <div class="mdc-card-wrapper__text-section">
-                        <form action="/IRF/EditIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid" id="irfForm" onsubmit="return CheckTotalWeightage()">
+                        <form action="/IRF/EditIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid" id="irfForm" onclick="return CheckTotalWeightage()">
 
 
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -86,15 +86,15 @@
                                 <div class="col-md-3 col-sm-3 pr-r">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.BillingOwner, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(model => model.BillingOwner, (SelectList)ViewBag.ClientUser, new { @class = "form-control select-css" })
+                                        @Html.DropDownListFor(model => model.BillingOwner, (SelectList)ViewBag.ClientUser, "Select Billing Owner", new { @class = "form-control select-css" })
 
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-3 pr-r">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, new { @class = "form-control select-css", @onchange = "TechSkillChanged()" })
-
+                                        @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "form-control select-css", @onchange = "TechSkillChanged()" })
+                                        @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
                             </div>
@@ -1559,7 +1559,9 @@
 
             return false;
         }
-
+        if ($("#AssessmentGroupId").val() == "") {
+            return false;
+        }
     }
 
 

@@ -200,14 +200,16 @@ namespace Risebird.Repository
             return null;
         }
 
-        public IEnumerable<Interviewer> GetIRFInterviewerSkills()
+        public IEnumerable<Interviewer> GetIRFInterviewerSkills(string assessmentgroupid)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<Interviewer>(
-                        con, "select intp.UserId,intp.AssessmentGroupId, ul.EmailId FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId  where intp.IsApproved=1", null, commandType: Text);
+                    DynamicParameters dp = new DynamicParameters();
+                    dp.Add("@assessmentgroupid", assessmentgroupid);
+                    return con.Query<Interviewer>(
+                         "select intp.UserId,intp.AssessmentGroupId, ul.EmailId FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId  where intp.IsApproved=1 and intp.AssessmentGroupId like '%'+@assessmentgroupid+'%'", dp);
                 }
             }
             catch (SqlException ex)
@@ -4092,7 +4094,7 @@ namespace Risebird.Repository
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@InterviewId", interviewId);
                 parameters.Add("@Date", DateTime.Now);
-                parameters.Add("@PerformedBy",performedBy);
+                parameters.Add("@PerformedBy", performedBy);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
