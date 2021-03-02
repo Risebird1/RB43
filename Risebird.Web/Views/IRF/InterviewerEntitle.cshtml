@@ -100,7 +100,8 @@
                                             <td><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.PrimarySkills </a></td>
                                             <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.Assessmentcount</a></td>
                                             <td class="text-right four">
-                                                <span onclick="EditAssessment(@item.id)" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                    <span onclick="EditAssessment(@item.id)" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></span></button>
                                             </td>
 
                                         </tr>
@@ -168,8 +169,8 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span onclick="closeAssessmentgroupModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
             </button>
-            <div class="modal-body" style="padding-bottom:0px">
-                @using (Html.BeginForm("InterviewerEntitle", "IRF", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            <div class="modal-body" style="padding-bottom:0px" id="assessmentgrouplist">
+                @*@using (Html.BeginForm("InterviewerEntitle", "IRF", FormMethod.Post, new { enctype = "multipart/form-data" }))
                 {
 
                     @Html.AntiForgeryToken()
@@ -205,7 +206,7 @@
                         </div>
                     </div>
 
-                }
+                }*@
             </div>
         </div>
     </div>
@@ -328,21 +329,8 @@
             url: '/IRF/EditAssessment',
             data: { 'assessmentid': assessmentid },
             success: function (data) {
-                $("#zskilldetails_AssessmentGroupName").val(data.assessmentname);
-                $("#zskilldetails_id").val(data.id);
-                var drop = $("#select");
-                $("#select option").remove();
-                if (data.primaryskillset.length > 0) {
-                    var option = '';
-                    for (i = 0; i < data.primaryskillset.length; i++) {
-                        if (data.primaryskillset[i].selected) {
-                            option += '<option value="' + data.primaryskillset[i].value + '" selected>' + data.primaryskillset[i].text + '</option>';
-                        } else {
-                            option += '<option value="' + data.primaryskillset[i].value + '">' + data.primaryskillset[i].text + '</option>';
-                        }
-                    }
-                    drop.append(option);
-                }
+                $('#assessmentgrouplist').html('');
+                $('#assessmentgrouplist').html(data);
                 CreateAssignmetGroup();
             }
         });

@@ -130,7 +130,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Assessment Group Id")]
         public string AssessmentGroupId { get; set; }
         public SelectList AssessmentGroupList { get; set; }
-
+        public IEnumerable<IRFInterviewerMembers> InterviewerMembers { get; set; }
     }
     public class InterviewerIds
     {
