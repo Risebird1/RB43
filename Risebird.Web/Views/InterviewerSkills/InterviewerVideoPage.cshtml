@@ -351,8 +351,6 @@
 
                                                                                             </div>
                                                                                         </div>
-
-
                                                                                     </div>
                                                                                     <!-- #tab1 -->
                                                                                     <h3 class="tab_drawer_heading" rel="link2">Interviewer Details</h3>
@@ -540,7 +538,7 @@
                                                                                                             {
                                                                                                                 <tr>
                                                                                                                     <td>
-                                                                                                                        @Html.DropDownList("InterviewerQuestionsCollection[0].Question", (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                                                                        @Html.DropDownList("InterviewerQuestionsCollection[0].Question", (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @readonly = "readonly" })
 
                                                                                                                     </td>
                                                                                                                     <td>
@@ -548,7 +546,7 @@
 
                                                                                                                     </td>
                                                                                                                     <td>
-                                                                                                                        <input class="form-control text-box single-line" id="InterviewerQuestionsCollection_0__Timing" name="InterviewerQuestionsCollection[0].Timing" type="number" min="60" max="5000">
+                                                                                                                        <input readonly="readonly" class="form-control text-box single-line" id="InterviewerQuestionsCollection_0__Timing" name="InterviewerQuestionsCollection[0].Timing" type="number" min="60" max="5000">
 
                                                                                                                     </td>
 
@@ -557,20 +555,20 @@
                                                                                                             else
                                                                                                             {
                                                                                                                 @if (Model.MeetingPatch.Count() == 0)
-                                                                                                                {
-                                                                                                                    for (int i = 0; i < Model.IreportModel.InterviewerQuestionsCollection.Count(); i++)
-                                                                                                                    {
+                                                                                                                        {
+                                                                                                                            for (int i = 0; i < Model.IreportModel.InterviewerQuestionsCollection.Count(); i++)
+                                                                                                                            {
                                                                                                                         <tr onclick="switchtoquestionVideo(@Model.IreportModel.InterviewerQuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                                                                             <td>
                                                                                                                                 @*@Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })*@
-                                                                                                                                @Html.TextBoxFor(m => m.IreportModel.InterviewerQuestionsCollection[i].Question, new { ID = "drop", @class = "dropques form-control text-box single-line " })
+                                                                                                                                @Html.TextBoxFor(m => m.IreportModel.InterviewerQuestionsCollection[i].Question, new { ID = "drop", @class = "dropques form-control text-box single-line ", @readonly = "readonly" })
                                                                                                                             </td>
                                                                                                                             <td>
                                                                                                                                 @Html.DropDownListFor(m => m.IreportModel.InterviewerQuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating", disabled = "disabled" })
                                                                                                                             </td>
                                                                                                                             <td>
 
-                                                                                                                                @Html.TextBoxFor(m => m.IreportModel.InterviewerQuestionsCollection[i].Timing, new { ID = "drop", @class = "dropques form-control text-box single-line " })
+                                                                                                                                @Html.TextBoxFor(m => m.IreportModel.InterviewerQuestionsCollection[i].Timing, new { ID = "drop", @class = "dropques form-control text-box single-line ", @readonly = "readonly" })
                                                                                                                             </td>
                                                                                                                         </tr>
                                                                                                                     }

@@ -137,8 +137,8 @@ table th {
 }
 
 .panel-header-sm {
-    height: 85px;
-    padding-top: 65px;
+/*    height: 85px;
+    padding-top: 65px;*/
     background: none !important;
 }
 
@@ -366,8 +366,8 @@ input[type=number] {
 
 
 .panel-header-sm {
-    height: 85px;
-    padding-top: 65px;
+/*    height: 85px;
+    padding-top: 65px;*/
     background: none !important;
 }
 
@@ -612,8 +612,8 @@ input[type=number] {
 }
 
 .panel-header-sm {
-    height: 85px;
-    padding-top: 65px;
+/*    height: 85px;
+    padding-top: 65px;*/
     background: none !important;
 }
 
@@ -702,11 +702,12 @@ input[type=number] {
 }
 
 #irf-card-footer {
-    padding-left: 25px;
+    padding-left: 17px;
     padding-top: 10px;
     padding-right: 0px;
+    font-size:13px;
 }
-
+#nonExistingModal{z-index:1000!important}
 
 .card-header-buttons {
     padding: 5px 5px 0px 0px;

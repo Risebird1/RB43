@@ -478,9 +478,9 @@ table {
     border-right: 1px dotted #ccc;
 }
 
-.mt50 {
+/*.mt50 {
     margin-top: 60px;
-}
+}*/
 
 .caret {
     display: none !important;

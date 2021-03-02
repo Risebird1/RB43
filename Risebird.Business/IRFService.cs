@@ -148,25 +148,25 @@ namespace Risebird.Business
             try
             {
                 var interviewers = _irfRepository.GetIRFInterviewerSkills(assessmentgroupid);
-                var assessmentgroupidlist = assessmentgroupid.Split(",");
-                var list = new List<Interviewer>();
-                foreach (var item in interviewers ?? new List<Interviewer>())
-                {
-                    foreach (var groupid in assessmentgroupidlist ?? new List<string>().ToArray())
-                    {
-                        if (groupid == "" || String.IsNullOrEmpty(item.AssessmentGroupId))
-                        {
-                            continue;
-                        }
-                        if (item.AssessmentGroupId.Contains(groupid))
-                        {
-                            list.Add(item);
-                            break;
-                        }
-                    }
-                }
-                list = list.Distinct().ToList();
-                return list;
+                //var assessmentgroupidlist = assessmentgroupid.Split(",");
+                //var list = new List<Interviewer>();
+                //foreach (var item in interviewers ?? new List<Interviewer>())
+                //{
+                //    foreach (var groupid in assessmentgroupidlist ?? new List<string>().ToArray())
+                //    {
+                //        if (groupid == "" || String.IsNullOrEmpty(item.AssessmentGroupId))
+                //        {
+                //            continue;
+                //        }
+                //        if (item.AssessmentGroupId.Contains(groupid))
+                //        {
+                //            list.Add(item);
+                //            break;
+                //        }
+                //    }
+                //}
+                //list = list.Distinct().ToList();
+                return interviewers;
             }
 
             catch (Exception e)
@@ -176,7 +176,11 @@ namespace Risebird.Business
             }
         }
 
-
+        /// <summary>
+        /// TODO Move this code in stored Procedure
+        /// </summary>
+        /// <param name="assessmentgroupid"></param>
+        /// <returns></returns>
         public IEnumerable<Interviewer> GetInterviewersForIRF(string assessmentgroupid)
         {
             try

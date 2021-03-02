@@ -41,16 +41,16 @@
                         <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Interviewer" onclick="location.href='@Url.Action("AddInterviewerProfile","Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Add Interviewer</font></span>
                     </button>
 
-                    <div id="meeting_filter" class="dataTables_filter pull-left  mt-20">
+                    <div id="meeting_filter" class="dataTables_filter pull-left ">
 
                         <div class="searchCon" style="margin-right:10px;">
 
                             <button onclick="searchResult()" type="button" id="search">&nbsp</button>
                             <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.Searchvalue">
 
+                            <span class="ref-btn" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
 
-
-                            <button style="display:none;" type="button" id="x">x</button>
+                            @*<button style="display:none;" type="button" id="x">x</button>*@
 
                         </div>
                     </div>
@@ -542,6 +542,11 @@
 </script>
 
 <script>
+
+    function RefreshSearch() {
+        $(".dataTables_filter input").val('');
+        searchResult();
+    }
     $(document).ready(function () {
 
         $(".dataTables_filter").keyup(function (e) {
@@ -749,85 +754,85 @@
                 html += ' <td>No Coded Resume</td>';
             }
 
-if (data[i].isApproved == true) {
-    html += '<td>Approved</td>';
-}
-else {
-    html += ' <td>Not Approved</td>';
-}
-html += ' <td>' + data[i].city + '</td>';
-html += ' <td >' + data[i].currentRole + '</td>';
-html += ' <td>' + data[i].experience + '</td>';
-html += ' <td>' + data[i].preferredDomain + '</td>';
-if (data[i].gitHubLink != null && data[i].gitHubLink != "") {
-    html += '<td><a id="githubId" target="_blank" title="Github" href=' + data[i].gitHubLink + '>Github</a> </td>';
+            if (data[i].isApproved == true) {
+                html += '<td>Approved</td>';
+            }
+            else {
+                html += ' <td>Not Approved</td>';
+            }
+            html += ' <td>' + data[i].city + '</td>';
+            html += ' <td >' + data[i].currentRole + '</td>';
+            html += ' <td>' + data[i].experience + '</td>';
+            html += ' <td>' + data[i].preferredDomain + '</td>';
+            if (data[i].gitHubLink != null && data[i].gitHubLink != "") {
+                html += '<td><a id="githubId" target="_blank" title="Github" href=' + data[i].gitHubLink + '>Github</a> </td>';
 
-}
-else {
-    html += ' <td>No Github</td>';
-}
-if (data[i].linkedinLink != null && data[i].linkedinLink != "") {
-    html += ' <td><a id="linkedInId" target="_blank" title="LinkedIn" href=' + data[i].linkedinLink + '>LinkedIn</a> </td>';
+            }
+            else {
+                html += ' <td>No Github</td>';
+            }
+            if (data[i].linkedinLink != null && data[i].linkedinLink != "") {
+                html += ' <td><a id="linkedInId" target="_blank" title="LinkedIn" href=' + data[i].linkedinLink + '>LinkedIn</a> </td>';
 
-}
-else {
-    html += '  <td>No LinkedIn</td>';
-}
-if (data[i].stackOverflowLink != null && data[i].stackOverflowLink != "") {
-    html += '   <td><a id="stackOverFlowId" target="_blank" title="Stackoverflow" href=' + data[i].stackOverflowLink + '>Stackoverflow</a> </td>';
+            }
+            else {
+                html += '  <td>No LinkedIn</td>';
+            }
+            if (data[i].stackOverflowLink != null && data[i].stackOverflowLink != "") {
+                html += '   <td><a id="stackOverFlowId" target="_blank" title="Stackoverflow" href=' + data[i].stackOverflowLink + '>Stackoverflow</a> </td>';
 
-}
-else {
-    html += '   <td>No Stackoverflow</td>';
-}
-if (data[i].blog != null && data[i].blog != "") {
+            }
+            else {
+                html += '   <td>No Stackoverflow</td>';
+            }
+            if (data[i].blog != null && data[i].blog != "") {
 
-    html += '  <td><a id="blogId" target="_blank" title="Blog" href=' + data[i].blog + '>Blog</a> </td>';
+                html += '  <td><a id="blogId" target="_blank" title="Blog" href=' + data[i].blog + '>Blog</a> </td>';
 
-}
-else {
-    html += ' <td>No Blog</td>';
-}
-html += '  </tr>';
+            }
+            else {
+                html += ' <td>No Blog</td>';
+            }
+            html += '  </tr>';
 
-html += '   </table>';
-html += '   </td>';
-html += '   </tr>';
+            html += '   </table>';
+            html += '   </td>';
+            html += '   </tr>';
 
 
-}
-$("#tblbodyInterviewerProfile").empty().html(html);
-}
-function bindPages(pagecount, startpage, endpage, totalcount) {
-var html = '';
-html += '<div class="pagination-container">';
-html += '<ul class="pagination">';
-for (var i = 1; i <= pagecount; i++) {
-if (i == 1) {
-    html += '   <li class="active"><span>1</span></li>';
-} else if (i <= 10) {
-    html += '<li><a href="/Interviewer/Index?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
-} else if (i == 11) {
-    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-    html += '<li class="PagedList-skipToNext"><a href="/Interviewer/Index?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-    html += '<li class="PagedList-skipToLast"><a href="/Interviewer/Index?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-} else {
-    break;
-}
-if (pagecount <= 10 && i == pagecount && i != 1) {
-    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-    html += '<li class="PagedList-skipToNext"><a href="/Interviewer/Index?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-    html += '<li class="PagedList-skipToLast"><a href="/Interviewer/Index?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-}
-}
-html += '</ul>';
-html += '</div>';
-$("#divmeetingpages").empty().html(html);
-var pagestartdetails = '';
-pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
-$("#divmeetingentries").empty().html(pagestartdetails);
+        }
+        $("#tblbodyInterviewerProfile").empty().html(html);
+    }
+    function bindPages(pagecount, startpage, endpage, totalcount) {
+        var html = '';
+        html += '<div class="pagination-container">';
+        html += '<ul class="pagination">';
+        for (var i = 1; i <= pagecount; i++) {
+            if (i == 1) {
+                html += '   <li class="active"><span>1</span></li>';
+            } else if (i <= 10) {
+                html += '<li><a href="/Interviewer/Index?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+            } else if (i == 11) {
+                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Interviewer/Index?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Interviewer/Index?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            } else {
+                break;
+            }
+            if (pagecount <= 10 && i == pagecount && i != 1) {
+                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Interviewer/Index?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Interviewer/Index?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            }
+        }
+        html += '</ul>';
+        html += '</div>';
+        $("#divmeetingpages").empty().html(html);
+        var pagestartdetails = '';
+        pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
+        $("#divmeetingentries").empty().html(pagestartdetails);
 
-}
+    }
 </script>
 
 <script>

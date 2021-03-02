@@ -220,7 +220,7 @@ table {
     overflow: hidden !important;
     text-overflow: ellipsis;
 }
-.mt50{margin-top:60px;}
+/*.mt50{margin-top:60px;}*/
 .multiple_row > h2 {
     font-size: 18px;
     background-color: #5f95b1;
