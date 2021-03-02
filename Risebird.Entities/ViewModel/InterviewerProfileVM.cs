@@ -9,6 +9,10 @@ namespace Risebird.Entities.ViewModel
 {
     public class InterviewerProfileVM
     {
+        public InterviewerProfileVM()
+        {
+            DOB = DateTime.Now;
+        }
         public int id { get; set; }
         public int UserId { get; set; }
         [Required(ErrorMessage = "Please enter First Name")]
@@ -35,10 +39,10 @@ namespace Risebird.Entities.ViewModel
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
         ErrorMessage = "Please Enter Correct Email Address")]
         public string AltEmailId { get; set; }
-        [Display(Name = "Date Of Birth")]
-        [Required(ErrorMessage = "Please Enter Date Of Birth")]
+        [Display(Name = "Date of Birth")]
+        //[Required(ErrorMessage = "Please Enter Date Of Birth")]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
+        //[DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DOB { get; set; }
         [Display(Name = "Gender")]
         public string Gender { get; set; }
@@ -64,7 +68,7 @@ namespace Risebird.Entities.ViewModel
         public decimal Experience { get; set; }
 
         [Display(Name = "Preferred Domain")]
-        [Required(ErrorMessage = "Please enter Preferred Domain")]
+        //[Required(ErrorMessage = "Please enter Preferred Domain")]
         public string PreferredDomain { get; set; }
 
         [Display(Name = "Resume Link")]

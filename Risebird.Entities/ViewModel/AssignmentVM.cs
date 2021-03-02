@@ -48,7 +48,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList Evaluationlist { get; set; }
         public SelectList EmployerStagelist { get; set; }
         public SelectList EmployerSizelist { get; set; }
-       
+
         public SelectList YearsofExpriencelist { get; set; }
         public SelectList AssessmentLevellist { get; set; }
         public SelectList AssessmentGrouplist { get; set; }

@@ -6359,8 +6359,11 @@ button.close {
     position: absolute;
     top: 7px;
     right: 10px;
+    background:#fff;
  
 }
+
+#trigger-update{right:45px;}
 
 h4.card-title {
     margin-top: 0px;
@@ -6398,7 +6401,56 @@ h4.card-title {
     position: relative;
     background: #fff;
 }
-#candidateTable_filter input[type=search]{border:1px #ccc solid!important}
+#candidateTable_filter input[type=search], .interview #meeting_filter input[type=search], #MyInterviewList_filter input[type=search], #interviewer_filter input[type=search], #OpeninterviewList_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
+    border: 1px #ccc solid !important
+}
+
+#meeting input[type=search], #MyInterviewList_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
+    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 78% 9px;
+}
+
+.toggle-box {
+    display: none;
+}
+
+    .toggle-box + label {
+        cursor: pointer;
+        display: block;
+        font-weight: bold;
+        line-height: 21px;
+        margin-bottom: 5px;
+        padding: 0px;
+    }
+
+        .toggle-box + label + div {
+            display: none;
+            margin-bottom: 10px;
+        }
+
+    .toggle-box:checked + label + div {
+        display: block;
+    }
+    .toggle-box + label:before {
+        /* background-color: #4F5150; */
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 20px;
+        color: #FFFFFF;
+        content: "+";
+        display: block;
+        float: right;
+        font-weight: bold;
+        height: 20px;
+        line-height: 29px;
+        margin-right: 17px;
+        font-size: 32px;
+        text-align: center;
+        width: 20px;
+    }
+
+    .toggle-box:checked + label:before {
+        content: "\2212";
+    }
 .collapse {
     display: none;
 }
