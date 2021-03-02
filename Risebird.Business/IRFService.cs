@@ -183,7 +183,9 @@ namespace Risebird.Business
             {
                 //var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
                 var interviewers = _irfRepository.GetIRFInterviewerSkills();
-                var assessmentgroupidlist = assessmentgroupid.Split(",");
+                string[] assessmentgroupidlist = new List<string>().ToArray();
+                if (!String.IsNullOrEmpty(assessmentgroupid))
+                    assessmentgroupidlist = assessmentgroupid.Split(",");
 
                 //skillList.RemoveAt()
                 var list = new List<Interviewer>();

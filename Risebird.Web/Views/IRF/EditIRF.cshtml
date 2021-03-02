@@ -821,7 +821,52 @@
                                     </div>
                                 </div><!--end of col-md-12-->
                             </div>
+                            @if (Model.InterviewerMembers != null && Model.InterviewerMembers.Count() != 0)
+                            {
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Present All Interviewer</h2>
+                                        </div><!--end of multiple location-->
+                                    </div><!--end of col-md-12-->
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="table-responsive-sm">
+                                            <table class="table table-bordered table-striped" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>EmailId</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
 
+
+                                                    @foreach (var item in Model.InterviewerMembers)
+                                                    {
+                                                        <tr>
+                                                            @if (item.Type == "Interviewer")
+                                                            {
+                                                                <td style="color: #17c317">@item.Type</td>
+                                                            }
+                                                            @if (item.Type == "Emergency Interviewer")
+                                                            {
+                                                                <td style="color: #ff7bf5">@item.Type</td>
+                                                            }
+                                                            @if (item.Type == "QCInterviewer")
+                                                            {
+                                                                <td style="color:yellow">@item.Type</td>
+                                                            }
+                                                            <td>@item.EmailId</td>
+                                                        </tr>
+                                                    }
+
+                                                </tbody>
+                                            </table>
+                                            <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
+                                        </div>
+                                    </div><!--end of col-md-12-->
+                                </div>
+                            }
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
@@ -1520,12 +1565,12 @@
 
     function TechSkillChanged() {
         var Assessmentgroupid = $("#AssessmentGroupId").val();
-        
+
         var interviewerSkills;
         $.ajax({
             type: "GET",
             url: "/IRF/GetInterviewers",
-            data: { 'assessmentgroupid': Assessmentgroupid  },
+            data: { 'assessmentgroupid': Assessmentgroupid },
             success: function (data) {
                 $.ajax({
                     type: "GET",

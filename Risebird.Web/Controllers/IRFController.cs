@@ -1441,6 +1441,14 @@ namespace Risebird.Web.Controllers
                         model.Type = "B2B";
                     }
                     model.IsClone = isClone;
+                    if (String.IsNullOrEmpty(model.AssessmentGroupId))
+                    {
+                        model.InterviewerMembers = _irfService.GetIRFInterviewerMembers(Convert.ToInt16(id)).Result;
+                    }
+                    else
+                    {
+                        model.InterviewerMembers = new List<IRFInterviewerMembers>();
+                    }
                     return View(model);
                 }
                 else
