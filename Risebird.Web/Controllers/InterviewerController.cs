@@ -455,18 +455,8 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-
-                    if (_interviewerService.DeleteInterviewerProfile(UserId).Result)
-                    {
-                        TempData["InterviewerEmployerMessage"] = "Successfully Deleted";
-                        //return RedirectToAction("Index");
-                        return Json(new { url = Url.Action("Index", "Interviewer") });
-                    }
-                    else
-                    {
-                        TempData["InterviewerEmployerMessage"] = "Failed to Delete";
-                        return Json(new { url = Url.Action("Index", "Interviewer") });
-                    }
+                    var result = await  _interviewerService.DeleteInterviewerProfile(UserId);
+                    return Json(result);
                 }
                 else
                 {
@@ -476,8 +466,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["InterviewerEmployerMessage"] = "Failed to Delete";
-                return Json(new { url = Url.Action("Index", "Interviewer") });
+                return Json(false);
             }
         }
 

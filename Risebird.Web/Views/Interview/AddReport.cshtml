@@ -1608,28 +1608,31 @@
             categoryAxis.renderer.minGridDistance = 30;
             chart.fontSize = 13;
             categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            valueAxis.min = 0;
-            valueAxis.max = 30;
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
                     return dy;
                 }
                 return dy;
             });
-            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            categoryAxis.renderer.labels.template.paddingBottom = 165;
-            categoryAxis.renderer.grid.template.disabled = true;
-            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-            valueAxis.renderer.grid.template.disabled = true;
 
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+            categoryAxis.renderer.grid.template.disabled = true;
+            valueAxis.renderer.grid.template.disabled = true;
+            valueAxis.min = 0;
+            valueAxis.max = 30;
+            categoryAxis.renderer.labels.template.paddingBottom = 165;
+
+            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
             series.dataFields.valueY = "visits";
             series.dataFields.categoryX = "country";
             series.name = "Visits";
             series.colorField = "color";
-             series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
-              series.tooltip.label.adapter.add("text", function (text, target) {
+
+            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
+            series.tooltip.label.adapter.add("text", function (text, target) {
                 if (target.dataItem && target.dataItem.valueY == 0) {
 
                     return "";
@@ -1640,25 +1643,24 @@
                 }
             });
             series.columns.template.fillOpacity = .8;
-   series.columns.template.tooltipY = 0;
+            series.columns.template.tooltipY = 8;
             series.tooltip.background.strokeOpacity = 0
             series.tooltip.pointerOrientation = "vertical";
             series.columns.template.showTooltipOn = "always";
             series.tooltip.background.filters.clear();
             series.tooltip.getFillFromObject = false;
-
             series.tooltip.label.fill = am4core.color("#9a9a9a");
             series.tooltip.background.cornerRadius = 0;
             series.tooltip.label.textAlign = "middle";
             series.tooltip.background.fill = 0;
             var columnTemplate = series.columns.template;
-            columnTemplate.strokeWidth = 0;
-            columnTemplate.strokeOpacity = 1;//07BEF3
+            columnTemplate.strokeWidth = 2;
+            columnTemplate.strokeOpacity = 1;
             chart.colors.list = [
                 am4core.color("#07BEF3"),
                 am4core.color("#00F96B"),
                 am4core.color("#F64042"),
-                am4core.color("#ffbc50")
+                am4core.color("#00A8B0")
 
             ];
             series.columns.template.events.once("inited", function (event) {
@@ -1960,138 +1962,12 @@
 
     });
 
-    $(document).on('click', '.delete-row', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Skill');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-joinability', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Row');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-skillgeneral', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Row');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-client', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Row');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-interviewer', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Interviewers');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-qualityController', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Quality Controller');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-controller', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Quality Controller');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
 </script>
 
 <script>
 
     window.onload = function () {
-
+        
         var totalScore = 0;
         var arr = [];
         var obj = { y: "", legendText: "", label: "" }
