@@ -39,7 +39,7 @@
                 <div class="mdc-card card bl-bg">
 
                     <div class="mdc-card-wrapper__text-section">
-                        <form action="/IRF/EditIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid" id="irfForm" onclick="return CheckTotalWeightage()">
+                        <form action="/IRF/EditIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid" id="irfForm" onsubmit="return CheckTotalWeightage()">
 
 
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
