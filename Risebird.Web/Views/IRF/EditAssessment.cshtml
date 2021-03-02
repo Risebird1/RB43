@@ -1,0 +1,63 @@
+﻿@model Risebird.Entities.ViewModel.Assessment
+
+@using (Html.BeginForm("InterviewerEntitle", "IRF", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+    @Html.AntiForgeryToken()
+
+
+    <div class="form-horizontal w-full">
+        <div class="clearfix">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        </div>
+        @Html.HiddenFor(model => model._skilldetails.id)
+        <div class="clearfix">
+            <div class="form-group col-lg-12  col-md-12 col-sm-12  pull-left">
+                @Html.LabelFor(model => model._skilldetails.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                @*@Html.DropDownListFor(m => m._skilldetails.SelectedSkillIds, new SelectList(Model._skilldetails.PrimarySkills, "Value", "Text", Model._skilldetails.SelectedSkillIds), new { @id = "select", @class = "form-control" })*@
+                <select id="zskilldetails_SelectedSkillIds" name="_skilldetails.SelectedSkillIds" class="form-control multiselect" multiple="multiple" style="width:100%">
+                    @foreach (var item in Model._skilldetails.PrimarySkillsList.ToList())
+                    {
+                        @if (item != null)
+                        {
+                            @if (item.Selected)
+                            {
+                                <option value="@item.Value" selected>@item.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    }
+
+                </select>
+                @Html.ValidationMessageFor(model => model._skilldetails.SelectedSkillIds, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-lg-12  col-md-12 col-sm-12 pull-left">
+                @Html.LabelFor(model => model._skilldetails.AssessmentGroupName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                @Html.EditorFor(model => model._skilldetails.AssessmentGroupName, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
+                @Html.ValidationMessageFor(model => model._skilldetails.AssessmentGroupName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div>
+            <div class="card-footer" style="margin-top: 15px;">
+                <div class="row">
+                    <div class="col-md-12 mc-button-area">
+                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="closeAssessmentgroupModel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        jQuery("#zskilldetails_SelectedSkillIds").select2({ multiple: true });
+    });
+</script>

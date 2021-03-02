@@ -106,7 +106,7 @@
                                 <div class="col-md-3 col-sm-3 pl-1">
                                     <div class="form-group" style="margin-bottom:0px;">
                                         @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, new { @class = "select-css form-control", @onchange = "TechSkillChanged()" })
+                                        @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList,"Select Assessment Group", new { @class = "select-css form-control", @onchange = "TechSkillChanged()" })
 
                                     </div>
                                 </div>
@@ -1121,7 +1121,9 @@
             }
             return false;
         }
-
+        if ($("#AssessmentGroupId").val() == "") {
+            return false;
+        }
 
     }
 
