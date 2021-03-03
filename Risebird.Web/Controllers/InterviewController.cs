@@ -302,11 +302,11 @@ namespace Risebird.Web.Controllers
                         //Sheet.Cells[i, 9].Value = item.MeetingStatusStatusDesc;
 
 
-                        if((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                        if((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                         {
                             Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
                         }
-                        else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && (item.QCStatus == null || item.QCInterview == 0))
+                        else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null )
                         {
                             Sheet.Cells[i, 10].Value = "QC Pending";
 
@@ -4109,6 +4109,7 @@ namespace Risebird.Web.Controllers
                 }
                 //myInterview = myInterview.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
                 myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                myInterview = myInterview.Select(x => { x.InterviewStatusDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.MeetingStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
                 if (HttpContext.Session.GetString("MyInterviewfilters") != null)
                 {
                     var filter = JsonConvert.DeserializeObject<MyInterviewFilter>(HttpContext.Session.GetString("MyInterviewfilters"));

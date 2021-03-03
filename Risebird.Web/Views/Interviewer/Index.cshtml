@@ -455,14 +455,12 @@
 <script>
 
     function DeleteEntityfromEnvironmentJson(userId) {
-        debugger;
         var firstnamne = $('#hidfirstname' + userId).val();
         DeleteEntityfromEnvironment(userId, firstnamne);
 
     }
 
     function DeleteEntityfromEnvironment(UserId, FirstName) {
-        debugger;
         swal.fire({
             title: 'Are you sure you want to delete interviewer ' + FirstName + '?',
             text: "It will be permanently deleted!",
@@ -478,7 +476,14 @@
                         data: { 'UserId': UserId },
                         type: 'Delete',
                         success: function (result) {
-                            resolve(result)
+                            if (result == true) {
+                                resolve(result)
+
+                            }
+                            else {
+                                swal.fire("Error deleting!", "Please try again", "error");
+
+                            }
 
                         },
                         error: function () {
