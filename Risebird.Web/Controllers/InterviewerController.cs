@@ -1259,7 +1259,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model.UserDetails = emailid;
-                    if (/*profileName == "Admin" || profileName == "HR" ||*/ profileName == "Interviewer")
+                    if (profileName == "Admin" || profileName == "Interviewer")
                     {
                         if (model.AudioFile != null)
                         {

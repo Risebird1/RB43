@@ -286,7 +286,7 @@ namespace Risebird.Web.Controllers
                         {
                             if(item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
                             {
-                                Sheet.Cells[i, 9].Value = "Pending";
+                                Sheet.Cells[i, 9].Value = "Status Pending";
 
                             }
                             else
@@ -302,14 +302,29 @@ namespace Risebird.Web.Controllers
                         //Sheet.Cells[i, 9].Value = item.MeetingStatusStatusDesc;
 
 
-                        if((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                        //if((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                        //{
+                        //    Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
+                        //}
+                        //else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null )
+                        //{
+                        //    Sheet.Cells[i, 10].Value = "QC Pending";
+
+                        //}
+                        //else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
+                        //{
+                        //    Sheet.Cells[i, 10].Value = "QC Fail(" + item.intervieweStatusStatDesc +")";
+
+                        //}
+                        //else
+                        //{
+                        //    Sheet.Cells[i, 10].Value = string.Empty;
+
+                        //}
+
+                        if(!string.IsNullOrEmpty(item.intervieweStatusStatDesc))
                         {
                             Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
-                        }
-                        else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null )
-                        {
-                            Sheet.Cells[i, 10].Value = "QC Pending";
-
                         }
                         else
                         {

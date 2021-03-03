@@ -289,8 +289,13 @@ namespace Risebird.Entities.ViewModel
         public SelectList CompanySizeList { get; set; }
         public SelectList CountryList { get; set; }
         public SelectList ProfileTypeList { get; set; }
+
+        [Display(Name = "Profile Type")]
+
         public int ProfileType { get; set; }
         public SelectList CompentencyLevelList { get; set; }
+        [Display(Name = "Competency Level")]
+
         public int CompentencyLevel { get; set; }
         public int InterviewerProfileId { get; set; }
     }

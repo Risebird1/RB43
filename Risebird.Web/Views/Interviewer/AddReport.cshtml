@@ -1279,11 +1279,14 @@
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     <div class="mandate">
-                                                        @Html.LabelFor(model => model.CompanySize, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                                        @Html.DropDownListFor(m => m.CompanySize, Model.CompanySizeList, "Select Company Size", htmlAttributes: new { @class = "select-css form-control webkitEnabled"@*, @required="required"*@ })
-                                                        @*@Html.ValidationMessageFor(model => model.CompanySize, "", new { @class = "text-danger" })*@
-
+                                                        @Html.LabelFor(model => model.CompanySize, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                     </div>
+                                                    @Html.DropDownListFor(m => m.CompanySize, Model.CompanySizeList, "Select Company Size", htmlAttributes: new { @class = "select-css form-control webkitEnabled"@*, @required="required"*@ })
+
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="text-danger" id="CompanySize_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
@@ -1292,7 +1295,10 @@
                                                     </div>
                                                     @Html.DropDownListFor(m => m.CompanyHeadquarters, Model.CountryList, "Select Company Headquarters", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                                 </div>
+                                                <div class="form-group">
+                                                    <label class="text-danger" id="CompanyHeadquarters_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
                                                 </div>
+                                            </div>
                                         </div>
 
 
@@ -1318,12 +1324,17 @@
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     <div class="mandate">
-                                                        @Html.LabelFor(model => model.CompanyStage, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span></div>
-
-                                                        @Html.DropDownListFor(x => Model.CompanyStage, Model.CompanyStageList, "Select Company Stage", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                        @Html.ValidationMessageFor(model => model.ProjectsQuality, "", new { @class = "text-danger" })
+                                                        @Html.LabelFor(model => model.CompanyStage, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
                                                     </div>
+
+                                                    @Html.DropDownListFor(x => Model.CompanyStage, Model.CompanyStageList, "Select Company Stage", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                                 </div>
+                                                <div class="form-group">
+                                                    <label class="text-danger" id="CompanyStage_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                </div>
+                                            </div>
+                                            
+
 
                                         </div>
                                         <div class="row">
@@ -1351,19 +1362,24 @@
 
                                                     </select>
 
-                                                    @Html.ValidationMessageFor(model => model.SkillCategory, "", new { @class = "text-danger" })
 
                                                 </div>
+                                                <div class="form-group">
+                                                    <label class="text-danger" id="SkillCategory_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
                                                 </div>
+                                            </div>
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     <div class="mandate">
-                                                        @Html.LabelFor(model => model.Yearsofexperience, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span></div>
-
-                                                        @Html.DropDownListFor(x => Model.Yearsofexperience, Model.YearsofexperienceList, "Select Experience", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                        @Html.ValidationMessageFor(model => model.Yearsofexperience, "", new { @class = "text-danger" })
+                                                        @Html.LabelFor(model => model.Yearsofexperience, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
                                                     </div>
+
+                                                    @Html.DropDownListFor(x => Model.Yearsofexperience, Model.YearsofexperienceList, "Select Experience", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                                 </div>
+                                                <div class="form-group">
+                                                    <label class="text-danger" id="Yearsofexperience_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                </div>
+                                            </div>
 
                                         </div>
                                         <div class="row">
@@ -1377,6 +1393,9 @@
                                                     @Html.ValidationMessageFor(model => model.Senioritylevel, "", new { @class = "text-danger" })
 
                                                 </div>
+                                                <div class="form-group">
+                                                    <label class="text-danger" id="Senioritylevel_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
@@ -1387,19 +1406,26 @@
                                                         @Html.ValidationMessageFor(model => model.SkillNature, "", new { @class = "text-danger" })
                                                     </div>
                                                 </div>
+                                                <div class="form-group">
+                                                    <label class="text-danger" id="SkillNature_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                </div>
 
-                                        </div>
+                                            </div>
 
 </div>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     <div class="mandate">
-                                                        @Html.LabelFor(model => model.PerHourRateIndia, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                                        @Html.TextBoxFor(m => m.PerHourRateIndia, new { @class = "form-control text-box single-line" })
-
+                                                        @Html.LabelFor(model => model.PerHourRateIndia, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                     </div>
+                                                    @Html.TextBoxFor(m => m.PerHourRateIndia, new { @class = "form-control text-box single-line" })
+
                                                 </div>
+                                                <div class="form-group">
+                                                    <label class="text-danger" id="PerHourRateIndia_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                </div>
+                                            </div>
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     <div class="mandate">
@@ -1408,7 +1434,10 @@
                                                     @Html.TextBoxFor(m => m.PerHourRateOutside, new { @class = "form-control text-box single-line" })
 
                                                 </div>
+                                                <div class="form-group">
+                                                    <label class="text-danger" id="PerHourRateOutside_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
                                                 </div>
+                                            </div>
 
 
 
@@ -1416,42 +1445,46 @@
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     <div class="mandate">
-                                                        @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                                        @Html.TextBoxFor(m => m.Domain, new { @class = "form-control text-box single-line" })
+                                                        @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                    </div>
+                                                    @Html.TextBoxFor(m => m.Domain, new { @class = "form-control text-box single-line" })
 
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="text-danger" id="Domain_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="mandate">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.ProfileType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                                    </div>
+
+                                                    @Html.DropDownListFor(x => Model.ProfileType, Model.ProfileTypeList, "Select Profile Type", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                    <div class="form-group">
+                                                        <label class="text-danger" id="ProfileType_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 col-sm-6">
+                                            </div>
+
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
                                                     <div class="mandate">
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(model => model.ProfileType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
-                                                        </div>
-
-                                                        @Html.DropDownListFor(x => Model.ProfileType, Model.ProfileTypeList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                        @Html.ValidationMessageFor(model => model.ProfileType, "", new { @class = "text-danger" })
+                                                        @Html.LabelFor(model => model.CompentencyLevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
                                                     </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.CompentencyLevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span></div>
 
-                                                                @Html.DropDownListFor(x => Model.CompentencyLevel, Model.CompentencyLevelList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                                @Html.ValidationMessageFor(model => model.CompentencyLevel, "", new { @class = "text-danger" })
-                                                            </div>
-                                                    </div>
-                                                    @*<div class="col-md-6 col-sm-6">
-            <div class="form-group">
-                @Html.LabelFor(model => model.SkillIP, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                @Html.TextBoxFor(m => m.SkillIP, new { @class = "form-control text-box single-line" })
-            </div>
-        </div>*@
-
+                                                    @Html.DropDownListFor(x => Model.CompentencyLevel, Model.CompentencyLevelList, "Select Competency Level", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                                 </div>
+                                                <div class="form-group">
+                                                    <label class="text-danger" id="CompentencyLevel_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                </div>
+                                            </div>
+
+                                        </div>
 
                                     </div>
                                 </div>
-                                <label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
 
 
                                 @Html.HiddenFor(m => m.id)
@@ -2234,7 +2267,7 @@
     }
 
     function CheckConditions() {
-        return (CheckInterviewerComments() && CheckQuestions()) && CheckScores();
+        return (CheckRecommendationValues() && CheckInterviewerComments() && CheckQuestions()) && CheckScores();
     }
 
     function CheckScores() {
@@ -2298,6 +2331,115 @@
             return true;
     }
 
+
+
+    function CheckRecommendationValues() {
+        
+        var elementId = '';
+        if (document.getElementById("CompentencyLevel").value == null || document.getElementById("CompentencyLevel").value == '') {
+            document.getElementById("CompentencyLevel_Error").innerHTML = "This field is required.";
+            elementId = 'CompentencyLevel';
+        }
+        else {
+            document.getElementById("CompentencyLevel_Error").innerHTML = "";
+        }
+
+        if (document.getElementById("ProfileType").value == null || document.getElementById("ProfileType").value == '') {
+            document.getElementById("ProfileType_Error").innerHTML = "This field is required.";
+            elementId = 'ProfileType';
+        }
+        else {
+            document.getElementById("ProfileType_Error").innerHTML = "";
+        }
+
+        if (document.getElementById("Domain").value == null || document.getElementById("Domain").value == '') {
+            document.getElementById("Domain_Error").innerHTML = "This field is required.";
+            elementId = 'Domain';
+        }
+        else {
+            document.getElementById("Domain_Error").innerHTML = "";
+        }
+
+        if (document.getElementById("PerHourRateOutside").value == null || document.getElementById("PerHourRateOutside").value == '') {
+            document.getElementById("PerHourRateOutside_Error").innerHTML = "This field is required.";
+            elementId = 'PerHourRateOutside';
+        }
+        else {
+            document.getElementById("PerHourRateOutside_Error").innerHTML = "";
+        }
+
+        if (document.getElementById("PerHourRateIndia").value == null || document.getElementById("PerHourRateIndia").value == '') {
+            document.getElementById("PerHourRateIndia_Error").innerHTML = "This field is required.";
+            elementId = 'PerHourRateIndia';
+        }
+        else {
+            document.getElementById("PerHourRateIndia_Error").innerHTML = "";
+        }
+
+        if (document.getElementById("SkillNature").value == null || document.getElementById("SkillNature").value == '') {
+            document.getElementById("SkillNature_Error").innerHTML = "This field is required.";
+            elementId = 'SkillNature';
+        }
+        else {
+            document.getElementById("SkillNature_Error").innerHTML = "";
+        }
+
+        if (document.getElementById("Senioritylevel").value == null || document.getElementById("Senioritylevel").value == '') {
+            document.getElementById("Senioritylevel_Error").innerHTML = "This field is required.";
+            elementId = 'Senioritylevel';
+        }
+        else {
+            document.getElementById("Senioritylevel_Error").innerHTML = "";
+        }
+
+        if (document.getElementById("Yearsofexperience").value == null || document.getElementById("Yearsofexperience").value == '') {
+            document.getElementById("Yearsofexperience_Error").innerHTML = "This field is required.";
+            elementId = 'Yearsofexperience';
+        }
+        else {
+            document.getElementById("Yearsofexperience_Error").innerHTML = "";
+        }
+
+        if (document.getElementById("SkillCategoryArray").value == null || document.getElementById("SkillCategoryArray").value == '') {
+            document.getElementById("SkillCategory_Error").innerHTML = "This field is required.";
+            elementId = 'SkillCategoryArray';
+        }
+        else {
+            document.getElementById("SkillCategory_Error").innerHTML = "";
+        }
+
+        if (document.getElementById("CompanyStage").value == null || document.getElementById("CompanyStage").value == '') {
+            document.getElementById("CompanyStage_Error").innerHTML = "This field is required.";
+            elementId = 'CompanyStage';
+        }
+        else {
+            document.getElementById("CompanyStage_Error").innerHTML = "";
+        }
+
+        if (document.getElementById("CompanyHeadquarters").value == null || document.getElementById("CompanyHeadquarters").value == '') {
+            document.getElementById("CompanyHeadquarters_Error").innerHTML = "This field is required.";
+            elementId = 'CompanyHeadquarters';
+        }
+        else {
+            document.getElementById("CompanyHeadquarters_Error").innerHTML = "";
+        }
+
+        if (document.getElementById("CompanySize").value == null || document.getElementById("CompanySize").value == '') {
+            document.getElementById("CompanySize_Error").innerHTML = "This field is required.";
+            elementId = 'CompanySize';
+        }
+        else {
+            document.getElementById("CompanySize_Error").innerHTML = "";
+        }
+       
+        if (elementId != '') {
+            document.getElementById(elementId).focus();
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
 
 
     //function CheckRecommendationValues() {
