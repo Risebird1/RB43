@@ -155,9 +155,9 @@
 
                                     <div class="form-group">
                                         <div class="mandate">
-                                            @Html.LabelFor(model => model.PreferredDomain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                            @Html.LabelFor(model => model.PreferredDomain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         </div>
-                                        @Html.EditorFor(model => model.PreferredDomain, new { htmlAttributes = new { id = "txt_PreferredDomain", @class = "form-control text-box single-line", @type = "text", @required = "required" } })
+                                        @Html.EditorFor(model => model.PreferredDomain, new { htmlAttributes = new { id = "txt_PreferredDomain", @class = "form-control text-box single-line", @type = "text"} })
                                         @Html.ValidationMessageFor(model => model.PreferredDomain, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">

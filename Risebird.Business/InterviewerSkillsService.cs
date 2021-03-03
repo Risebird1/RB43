@@ -382,7 +382,7 @@ namespace Risebird.Business
                         _interviewerSkillsRepository.UpdateInterviewerInvites(iscId, interviewerProfileId);
                         return true;
                     }
-                    
+
                 }
                 return false;
             }
@@ -417,7 +417,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page,string searchvalue)
+        public async Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page, string searchvalue)
         {
             try
             {
@@ -471,7 +471,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        
+
         public async Task<List<string>> FetchAdminList()
         {
             try
@@ -484,5 +484,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<MeetingVM>> GetInterviewerSkillInterviewMeetings(int id)
+        {
+            try
+            {
+                var result = (await _interviewerSkillsRepository.GetInterviewerSkillInterviewMeetings(id)).OrderByDescending(x => x.interviewDate).ToList();
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        
     }
 }

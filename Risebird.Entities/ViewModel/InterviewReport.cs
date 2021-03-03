@@ -99,7 +99,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Uploaded Resume")]
         public string resumeLink { get; set; }
-        [Display(Name = "Uploaded Candidate EncodedResume")]
+        [Display(Name = "Uploaded Resume(Encoded)")]
         public string encodedresumeLink { get; set; }
         [Display(Name = "Verified Aadhar Information")]
         public string AadharFileLink { get; set; }
