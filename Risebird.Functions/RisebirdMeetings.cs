@@ -368,6 +368,7 @@ namespace Risebird.Functions
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add(new SqlParameter("@candidateEmail", candidateEmail));
                         cmd.Parameters.Add(new SqlParameter("@interviewDate", interviewDate));
+                        cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
                         var reader = cmd.ExecuteReader();
                         masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
                         while (reader.Read())
