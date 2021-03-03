@@ -315,8 +315,15 @@ table.journey {
     border-color: #929292 !important;
     color: #929292 !important;
 }
+.interviewer .multiselect {
+    background: #dddddf !important;
+}
+
+.sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
+    color: #fff;
+}
 [type="datetime-local"] {
-    background: #f5f5f5 url(../img/grey-timdate.png) 97% 50% no-repeat !important;
+    background: #dddddf url(../img/grey-timdate.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
 }
 .btnmeeting, .btnmeeting:hover{

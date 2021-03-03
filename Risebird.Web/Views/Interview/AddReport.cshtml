@@ -195,6 +195,9 @@
                                             @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
                                         </div>
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            <label class="text-danger" id="interviewStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -1881,7 +1884,7 @@
 
     function CheckConditions() {
 
-        return (CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestionsTiming());
+        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestionsTiming());
     }
 
     function CheckInterviewerComments() {
@@ -1947,6 +1950,23 @@
             
         }
 
+    }
+
+    function CheckInterviewStatus() {
+        var meetingStatusElem = document.getElementById("MeetingStatus");
+        if (meetingStatusElem.value == 4) {
+            var interviewStatusElem = document.getElementById("InterviewStatus");
+            if (interviewStatusElem.value == null || interviewStatusElem.value == '') {
+                document.getElementById("interviewStatus_Error").innerHTML = "Kindly change the Interview Status to an appropriate value.";
+                interviewStatusElem.focus();
+                return false;
+            }
+            else {
+                document.getElementById("interviewStatus_Error").innerHTML = '';
+            }
+
+        }
+        return true;
     }
 
     $(document).ready(function () {

@@ -26,9 +26,9 @@ Begin Try
 		BEGIN  
 		IF EXISTS(SELECT 1 FROM InterviewComments where interviewId= @InterviewId)  
 			BEGIN  
-     UPDATE [InterviewComments] SET interviewStatus = ISNULL(@InterviewStatus,interviewStatus) ,  
+     UPDATE [InterviewComments] SET interviewStatus = @interviewStatus ,  
           interviewerComment =  ISNULL(@interviewerComment,interviewerComment),  
-          MeetingStatus = ISNULL(@MeetingStatus,MeetingStatus), 
+          MeetingStatus = @MeetingStatus, 
           AudioLink = ISNULL(@audiolink,AudioLink) ,  
           VideoLink = ISNULL(@videolink, VideoLink) ,
 		  ThumbnailImage=ISNULL(@ThumbnailImage,ThumbnailImage),
@@ -87,24 +87,6 @@ Begin Catch
  Rollback;  
 End Catch  
   
-  
-  
-  
-  
-  
-
-
-
-
-  
-  
-  
-  
-  
-  
-
-
-
 
 GO
   

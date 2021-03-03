@@ -91,12 +91,14 @@ namespace Risebird.Repository.Interface
         ////bool AddPausedMeetings(int InterviewerSkillId, int meetingId);
         ////Task<IEnumerable<MeetingVM>> PlayIRF(string InterviewerSkillId);
         //IEnumerable<TransClientUser> GetTransClientUserRole();
-        Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page,string searchvalue);
+        Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page, string searchvalue);
         Task<int> GetInterviewerRiseTubeMeetingsCount(string searchvalue);
         Task<MeetingVM> GetMeetingbyid(int id, string Email);
         Task<IEnumerable<MeetingVM>> GetInterviewerRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern);
         Task<IEnumerable<TransSkill>> GetSkillsbyIRFid(int id);
         int GetCandidateId(int id, string irfName);
         Task<List<string>> FetchAdminList();
+        Task<IEnumerable<MeetingVM>> GetInterviewerSkillInterviewMeetings(int id);
+        
     }
 }

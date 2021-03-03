@@ -95,6 +95,6 @@ namespace Risebird.Entities.Data
         public string StaffingAgencyMobile { get; set; }
         public string HRImageFileURL { get; set; }
         public string ISCId { get; set; }
-
+        public string ZoomId { get; set; }
     }
 }
