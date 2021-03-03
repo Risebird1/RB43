@@ -565,20 +565,29 @@
                                                         {
                                                             <td></td>
                                                         }
-                                                       
+
                                                         @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                                                         {
                                                             <td> @item.intervieweStatusStatDesc</td>
                                                         }
-                                                        else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && (item.QCInterview == 0))
+                                                        else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && (item.QCStatus == null || item.QCInterview == 0 || item.QCStatus == 2))
                                                         {
                                                             <td>QC Pending</td>
 
                                                         }
                                                         else
                                                         {
-                                                            <td>QC Pending</td>
+                                                            <td></td>
                                                         }
+                                                        @*else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && (item.QCStatus == 2))
+        {
+            <td>QC Pending</td>
+
+        }*@
+                                                        @*else
+        {
+            <td>QC Pending</td>
+        }*@
                                                         @if ((item.MeetingStatus == 4) && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                                                         {
 
@@ -933,17 +942,25 @@
                 html += '<td class="text-center"> '+data[i].confirmationStatus+'</td>';
             }
 
-            if (data[i].interviewDate > new Date() && data[i].confirmationStatus.trim() != "Cancelled") {
-                html += '                                        <td>Scheduled</td>';
-            }
-            else if (data[i].meetingStatusStatusDesc == null)
+            if (data[i].confirmationStatus.trim() != 'Cancelled')
             {
-                html += '<td></td>';
-               }
-                                                    else
-                                                    {
-                html += '<td>'+ data[i].meetingStatusStatusDesc+'</td>';
-                                                    }
+
+                if (Date.parse(data[i].interviewDate) < Date.parse('@ViewBag.Date') && data[i].meetingStatusStatusDesc == "Scheduled")
+                {
+                    html += '<td>Status Pending</td>'
+
+                }
+                else
+                {
+                    html += '<td>' + data[i].meetingStatusStatusDesc + '</td>';
+                }
+            }
+            else
+            {
+                html += '<td></td>'
+            }
+
+
             if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
                 if (data[i].intervieweStatusStatDesc == null) {
                     html += '<td></td>';
@@ -952,7 +969,7 @@
                     html += '  <td> ' + data[i].intervieweStatusStatDesc + '</td>';
                 }
             }
-            else if ((data[i].interviewStatus == 4 || data[i].interviewStatus == 2) && (data[i].qcStatus == null || data[i].qcInterview == 0 )) {
+            else if ((data[i].interviewStatus == 4 || data[i].interviewStatus == 2) && (data[i].qcStatus == null || data[i].qcInterview == 0 || data.qcStatus == 2)) {
                 html += '<td>QC Pending</td>';
 
             }

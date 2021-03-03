@@ -609,6 +609,18 @@
                                                         <td>QC Pending(<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>
 
                                                     }
+                                                    else if (item.QCStatus == 2 && item.InterviewStatus == 4)
+                                                    {
+                                                        <td class="text-center">
+                                                            QC Failed(<a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>)
+                                                        </td>
+                                                    }
+                                                    else if (item.QCStatus == 2 && item.InterviewStatus == 2)
+                                                    {
+                                                        <td class="text-center">
+                                                            QC Failed(<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>)
+                                                        </td>
+                                                    }
                                                     else
                                                     {
                                                         <td></td>
