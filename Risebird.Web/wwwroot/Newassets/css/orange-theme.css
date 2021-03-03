@@ -510,9 +510,15 @@ table.journey {
 #ProctoringTable .label-type {
     background: #ffb23630 !important;
 }
-
+.interviewer .multiselect {
+    background: #dddddf !important;
+   
+}
+.sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
+    color: #fff;
+}
 [type="datetime-local"] {
-    background: #f5f5f5 url(../img/orange-timdate.png) 94% 50% no-repeat !important;
+    background: #dddddf url(../img/orange-timdate.png) 94% 50% no-repeat !important;
     background-size: 5% !important;
 }
 

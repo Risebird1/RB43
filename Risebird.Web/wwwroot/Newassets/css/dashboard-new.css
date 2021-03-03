@@ -1189,10 +1189,15 @@ table.journey td.cadSkill {
     border: 1px solid #dee2e6;
 }
 
-.table-bordered.interviewertable th, .table-bordered th {
-    background: #dcdcdc4d;
+ .table-bordered th {
+    background: #4a4a4a47;
 }
-
+.table-bordered.interviewertable th {
+    background: rgba(220, 220, 220, 0.3);
+}
+.table-striped.table-bordered th {
+    background: rgba(220, 220, 220, 0.3)!important;
+}
 table {
     border-collapse: inherit;
 }
@@ -3057,9 +3062,7 @@ textarea {
             color: #888;
         }
 
-.interviewer .multiselect {
-    background: #ececee !important;
-}
+
 
 
     .interviewer .multiselect .multiselect-selected-text {
@@ -6401,19 +6404,19 @@ h4.card-title {
     position: relative;
     background: #fff;
 }
-#candidateTable_filter input[type=search], .interview #meeting_filter input[type=search], #MyInterviewList_filter input[type=search], #interviewer_filter input[type=search], #OpeninterviewList_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
-    border: 1px #ccc solid !important
-}
+    #candidateTable_filter input[type=search], #dupmeeting_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #MyInterviewList_filter input[type=search], #interviewer_filter input[type=search], #OpeninterviewList_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
+        border: 1px #ccc solid !important
+    }
 
-#meeting input[type=search], #MyInterviewList_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
-    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 78% 9px;
-}
+        #meeting input[type=search], #MyInterviewList_filter input[type=search], #meeting_filter input[type=search],.interview #meeting_filter input[type=search], #dupmeeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
+            background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 78% 9px;
+        }
 
-.toggle-box {
+.sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1, .toggle-box {
     display: none;
 }
 
-    .toggle-box + label {
+    .toggle-box + label, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label {
         cursor: pointer;
         display: block;
         font-weight: bold;
@@ -6422,15 +6425,15 @@ h4.card-title {
         padding: 0px;
     }
 
-        .toggle-box + label + div {
+        .toggle-box + label + div, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label + div {
             display: none;
             margin-bottom: 10px;
         }
 
-    .toggle-box:checked + label + div {
-        display: block;
-    }
-    .toggle-box + label:before {
+.toggle-box:checked + label + div, .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu .toggle-box1:checked + label + div {
+    display: block;
+}
+    .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label:before, .toggle-box + label:before {
         /* background-color: #4F5150; */
         -webkit-border-radius: 10px;
         -moz-border-radius: 10px;
@@ -6441,14 +6444,14 @@ h4.card-title {
         float: right;
         font-weight: bold;
         height: 20px;
-        line-height: 29px;
+        line-height: 35px;
         margin-right: 17px;
         font-size: 32px;
         text-align: center;
         width: 20px;
     }
 
-    .toggle-box:checked + label:before {
+    .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1:checked + label:before, .toggle-box:checked + label:before {
         content: "\2212";
     }
 .collapse {

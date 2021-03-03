@@ -371,8 +371,14 @@ textarea::-webkit-scrollbar-thumb {
     color: #000;
 }
 
-[type="datetime-local"] {
-    background: #f5f5f5 url(../img/blue-timdate.png) 97% 50% no-repeat !important;
+.sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
+    color: #97d1f9;
+}
+.interviewer .multiselect {
+    background: #ececee !important;
+}
+    [type="datetime-local"] {
+    background: #ececee url(../img/blue-timdate.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
 }
 

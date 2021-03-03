@@ -2289,7 +2289,10 @@ body {
     -ms-transition: all 300ms ease 0s;
     transition: all 300ms ease 0s;
 }
-
+.sidebar .nav, .off-canvas-sidebar .nav {
+ /*   margin-top: 10px;*/
+    display: block;
+}
     .sidebar .nav a i {
         font-family: FontAwesome
     }
@@ -3736,10 +3739,11 @@ Created using IcoMoon - icomoon.io
     padding: 12px 5px;
     vertical-align: middle;
 }
+    .table > tfoot > tr > th{text-align:left}
 
-.table .th-description {
-    max-width: 150px;
-}
+    .table .th-description {
+        max-width: 150px;
+    }
 
 .table .td-price {
     font-size: 26px;
@@ -6709,11 +6713,7 @@ Created using IcoMoon - icomoon.io
             height: 60px;
         }
 
-    .sidebar .nav,
-    .off-canvas-sidebar .nav {
-        margin-top: 20px;
-        display: block;
-    }
+ 
 
         .sidebar .nav .caret,
         .off-canvas-sidebar .nav .caret {
@@ -6727,25 +6727,45 @@ Created using IcoMoon - icomoon.io
             margin-top: 7px;
         }
 
-        .sidebar .nav li > a, .nav li.dropmenu,
-        .off-canvas-sidebar .nav li > a {
-            margin: 10px 15px 0;
-            border-radius: 30px;
-            color: #FFFFFF;
-            display: block;
-            text-decoration: none;
-            position: relative;
-            text-transform: uppercase;
-            cursor: pointer;
-            font-size: 0.7142em;
-            padding: 10px 8px;
-            line-height: 1.625rem;
-        }
+    .sidebar .nav li > a,
+    .off-canvas-sidebar .nav li > a {
+        /*  margin: 10px 15px 0;*/
+        /*     border-radius: 30px;*/
+        margin: 0px 15px 0;
+        color: #FFFFFF;
+        display: block;
+        text-decoration: none;
+        position: relative;
+        text-transform: uppercase;
+        cursor: pointer;
+        font-size: 0.7142em;
+        padding: 10px 8px;
+        line-height: 1.625rem;
+    
+    }
+    .sidebar:hover .nav li > a, .sidebar:hover .nav li.dropmenu {
+        border-bottom: 1px dotted #fff;
+    }
+    .sidebar .nav li.dropmenu {
+        margin: 0px 15px 0;
+        /*    border-radius: 30px;*/
+        color: #FFFFFF;
+        display: block;
+        text-decoration: none;
+        position: relative;
+        text-transform: uppercase;
+        cursor: pointer;
+        font-size: 0.7142em;
+        padding: 10px 8px;
+        line-height: 1.625rem;
+  
+    }
+.sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu a{border:0px!important}
 
-        .sidebar .nav li:first-child > a,
-        .off-canvas-sidebar .nav li:first-child > a {
-            margin: 0 15px;
-        }
+.sidebar .nav li:first-child > a,
+.off-canvas-sidebar .nav li:first-child > a {
+    margin: 0 15px;
+}
 
         .sidebar .nav li:hover:not(.active) > a,
         .sidebar .nav li:focus:not(.active) > a,
@@ -7291,7 +7311,7 @@ input.theatre-btn:focus {
         }
 
     
-        .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box + label:before {
+        .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label:before {
             opacity: 0;
         }
             .sidebar-mini .sidebar:hover {
@@ -7336,7 +7356,7 @@ input.theatre-btn:focus {
                     opacity: 1;
                 }
 
-                .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu .toggle-box + label:before {
+                .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label:before {
                     -webkit-transform: translate3d(0px, 0, 0);
                     -moz-transform: translate3d(0px, 0, 0);
                     -o-transform: translate3d(0px, 0, 0);
@@ -7345,17 +7365,18 @@ input.theatre-btn:focus {
                     opacity: 1;
                 }
 
-                .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box + label {
+                .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label {
                     margin-bottom: 0px;
                 }
         .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a {
-            margin: 0 0px;
+            margin: 5px 0px;
             background: none !important;
-            padding: 0px 18px;
+            padding: 0px 10px;
+            line-height: 15px;
             font-size: 10px;
             opacity: 1;
         }
-            .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa{font-size:13px; margin-right:10px;}
+            .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa{font-size:17px; margin-right:10px;}
             .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu a {
                 opacity: 0;
             }
@@ -7365,7 +7386,7 @@ input.theatre-btn:focus {
         margin: 0 !important;
     }
 
-    .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box + label:before {
+    .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label:before {
         /* background-color: #4F5150; */
         -webkit-border-radius: 10px;
         -moz-border-radius: 10px;
@@ -7375,13 +7396,13 @@ input.theatre-btn:focus {
         display: block;
         float: right;
         font-weight: bold;
-        height: 23px;
+       /* height: 23px;*/
         line-height: 18px;
         margin-right: 15px;
         font-size: 18px;
         text-align: center;
-        width: 23px;
-        background: #ffffff3b;
+   /*     width: 23px;*/
+    /*    background: #ffffff3b;*/
     }
 
     .panel-header {
@@ -11055,10 +11076,10 @@ svg {
 }
 
 
-.table-responsive-sm .table > thead > tr > th {
-    /*    font-size: 14px;*/
-    color: #5f5c5c !important;
-}
+    .table-responsive-sm .table > thead > tr > th {
+        /*    font-size: 14px;*/
+        color: #796f6f !important;
+    }
 
 .trash-btn {
     background: #d20505 !important;
@@ -11089,8 +11110,8 @@ svg {
 #dupmeeting_filter input[type=search] {
     background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
     border: solid 1px #ccc;
-    padding: 9px 10px 9px 32px;
-    width: 135px;
+    padding: 9px 10px 9px 12px;
+   
     font-family: arial;
     -webkit-border-radius: 10em;
     -moz-border-radius: 10em;
