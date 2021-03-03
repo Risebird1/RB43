@@ -320,11 +320,14 @@ namespace Risebird.Web.Controllers
                         //{
                         //    Sheet.Cells[i, 10].Value = string.Empty;
 
-                        //}
-
-                        if(!string.IsNullOrEmpty(item.intervieweStatusStatDesc))
+                        if((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                         {
                             Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
+                        }
+                        else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null )
+                        {
+                            Sheet.Cells[i, 10].Value = "QC Pending";
+
                         }
                         else
                         {
