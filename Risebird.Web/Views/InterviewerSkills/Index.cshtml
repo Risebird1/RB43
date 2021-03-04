@@ -152,9 +152,6 @@
                                                         <div class="row">
                                                             <span>Approved Interviewers:</span> @item.ApprovedInterviewers
                                                         </div> <br />
-                                                        <div class="row">
-                                                            <span>Risebird Hr:</span> @(item.HREmailId!= null ? item.HREmailId : "")
-                                                        </div> <br />
                                                         @if (Model.Profile != "Recruiter")
                                                         {
                                                             <div class="row">
@@ -194,7 +191,7 @@
                                                     </button>
                                                     <button class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
                                                         <span onclick="location.href='@Url.Action("ShowCalendly", "InterviewerSkills" , new
-                                                 {irfName=item.InterviewerSkillId, calendlyLink=item.CalendlyLink})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                                                 {InterviewerSkillName=item.InterviewerSkillId, calendlyLink=item.CalendlyLink})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                     </button>
                                                     <button class="mdc-fab app-fab--absolute item1" aria-label="InterviewerList">
                                                         <span onclick="javascript:InterviewerList('@item.id', '@item.InterviewerSkillId');" title="InterviewerList" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
