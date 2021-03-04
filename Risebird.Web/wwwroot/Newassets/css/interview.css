@@ -329,7 +329,19 @@
     margin: 0;
 }
 #interviewerMemberModal .modal-lg {
-    max-width: 830px !important;
+    max-width: 870px !important;
+ 
+}
+#interviewerMemberModal .scrollers {
+ height: 430px;
+}
+
+#interviewerMemberModal #style-2::-webkit-scrollbar {
+    width: 12px;
+}
+
+#interviewerMemberModal .sb-scrollbar {
+    width: 10px;
 }
 
 .callsubmit {
@@ -859,7 +871,7 @@ input[type=number] {
 }
 
 #style-2::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
 }
 
 #style-2::-webkit-scrollbar-thumb {
