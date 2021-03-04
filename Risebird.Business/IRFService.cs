@@ -1303,7 +1303,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _irfRepository.Addassignmentgroup(_skilldetails);
+                return _irfRepository.Addassignmentgroup(_skilldetails).Result;
             }
 
             catch (Exception e)
