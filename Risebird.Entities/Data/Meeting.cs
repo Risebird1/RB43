@@ -96,5 +96,6 @@ namespace Risebird.Entities.Data
         public string HRImageFileURL { get; set; }
         public string ISCId { get; set; }
         public string ZoomId { get; set; }
+        public string NickName { get; set; }
     }
 }

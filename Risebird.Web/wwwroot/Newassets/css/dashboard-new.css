@@ -23,7 +23,21 @@
     margin-right: 10px;
     margin-top:20px!important;
 }
-
+.mobile-view-chn, .mobile-view-ac {
+    display: none
+}
+.mobile-view-ac {
+    position: absolute;
+    right: 6px;
+    top: 19px;
+    font-size: 10px;
+}
+    .mobile-view-chn {
+    font-size: 10px;
+    position: absolute;
+    right: 107px;
+    top: 20px;
+}
 .multiple_row > h2 {
     font-size: 18px;
     padding: 8px 10px;
@@ -3254,6 +3268,7 @@ button.btn {
     .timer {
         font-size: 15px !important;
     }
+    .mobpad{padding:0px!important;}
 
     .navbar {
         padding-top: 0;
@@ -8180,6 +8195,11 @@ div.tagsinput {
     .mobile-view {
         display: block;
     }
+
+    .mobile-view-chn, .mobile-view-ac {
+        display:block
+    }
+
 
     .desktop-view {
         display: none;

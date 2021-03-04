@@ -123,7 +123,7 @@ namespace Risebird.Repository.Interface
         string pickInterviewerSills(string Interviewerids);
         Task<IEnumerable<IRFInterviewerMembers>> GetIRFInterviewerMembers(int irfId);
         IEnumerable<InterviewerVM> GetSkillDetails();
-        string Addassignmentgroup(Skilldetails _skilldetails);
+        Task<string> Addassignmentgroup(Skilldetails _skilldetails);
         IEnumerable<AssignmentVM> FetchAssessmentdetails(int id);
         string AssessmentLike(int id, string emailid);
         Task<IEnumerable<string>> GetPrimarySkillFromIRF();
@@ -135,7 +135,7 @@ namespace Risebird.Repository.Interface
         Task<int> GetCandidateIdByEmail(string emailId);
         Task<IEnumerable<string>> GetIRFClientsEmail(int irfId);
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewersByTag(string tag);
-        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null,int id=0);
+        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null, int id = 0);
         Task<bool> AddQCCandidateStatus(int interviewId, string performedBy);
     }
 }

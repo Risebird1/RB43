@@ -2289,10 +2289,7 @@ body {
     -ms-transition: all 300ms ease 0s;
     transition: all 300ms ease 0s;
 }
-.sidebar .nav, .off-canvas-sidebar .nav {
- /*   margin-top: 10px;*/
-    display: block;
-}
+
     .sidebar .nav a i {
         font-family: FontAwesome
     }
@@ -2464,7 +2461,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
     }
 
     .navbar.navbar-absolute {
-    /*    position: absolute;*/
+        /*  position: absolute;*/
         width: 100%;
         padding-top: 10px;
         z-index: 1;
@@ -3739,11 +3736,10 @@ Created using IcoMoon - icomoon.io
     padding: 12px 5px;
     vertical-align: middle;
 }
-    .table > tfoot > tr > th{text-align:left}
 
-    .table .th-description {
-        max-width: 150px;
-    }
+.table .th-description {
+    max-width: 150px;
+}
 
 .table .td-price {
     font-size: 26px;
@@ -6598,7 +6594,7 @@ Created using IcoMoon - icomoon.io
     height: 100%;
     bottom: 0;
     width: 260px;
-    left: 0;
+    /* left: 0; */
     z-index: 9999;
     box-shadow: 0px 2px 22px 0 rgba(0, 0, 0, 0.2), 0px 2px 30px 0 rgba(0, 0, 0, 0.35);
 }
@@ -6713,7 +6709,11 @@ Created using IcoMoon - icomoon.io
             height: 60px;
         }
 
- 
+    .sidebar .nav,
+    .off-canvas-sidebar .nav {
+        margin-top: 0px;
+        display: block;
+    }
 
         .sidebar .nav .caret,
         .off-canvas-sidebar .nav .caret {
@@ -6726,26 +6726,26 @@ Created using IcoMoon - icomoon.io
         .off-canvas-sidebar .nav li > a + div .nav li > a {
             margin-top: 7px;
         }
+        .sidebar .nav li > a,
+        .off-canvas-sidebar .nav li > a {
+            /*  margin: 10px 15px 0;*/
+            /*     border-radius: 30px;*/
+            margin: 0px 15px 0;
+            color: #FFFFFF;
+            display: block;
+            text-decoration: none;
+            position: relative;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-size: 0.7142em;
+            padding: 10px 8px;
+            line-height: 1.625rem;
+        }
 
-    .sidebar .nav li > a,
-    .off-canvas-sidebar .nav li > a {
-        /*  margin: 10px 15px 0;*/
-        /*     border-radius: 30px;*/
-        margin: 0px 15px 0;
-        color: #FFFFFF;
-        display: block;
-        text-decoration: none;
-        position: relative;
-        text-transform: uppercase;
-        cursor: pointer;
-        font-size: 0.7142em;
-        padding: 10px 8px;
-        line-height: 1.625rem;
-    
-    }
     .sidebar:hover .nav li > a, .sidebar:hover .nav li.dropmenu {
         border-bottom: 1px dotted #fff;
     }
+
     .sidebar .nav li.dropmenu {
         margin: 0px 15px 0;
         /*    border-radius: 30px;*/
@@ -6758,24 +6758,26 @@ Created using IcoMoon - icomoon.io
         font-size: 0.7142em;
         padding: 10px 8px;
         line-height: 1.625rem;
-  
     }
 
-.sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu a{border:0px!important}
+    .sidebar .signout .nav li > a {
+        border-bottom: 0PX;
+    }
 
-.sidebar .nav li:first-child > a,
-.off-canvas-sidebar .nav li:first-child > a {
-    margin: 0 15px;
+    .sidebar .nav li:first-child > a,
+    .off-canvas-sidebar .nav li:first-child > a {
+       
+        margin-top: 4px;
+    }
+
+.sidebar .nav li:hover:not(.active) > a,
+.sidebar .nav li:focus:not(.active) > a,
+.sidebar .nav li.dropmenu:hover:not(.active),
+.sidebar .nav li.dropmenu:focus:not(.active),
+.off-canvas-sidebar .nav li:hover:not(.active) > a,
+.off-canvas-sidebar .nav li:focus:not(.active) > a {
+    background-color: rgba(255, 255, 255, 0.1);
 }
-
-        .sidebar .nav li:hover:not(.active) > a,
-        .sidebar .nav li:focus:not(.active) > a,
-        .sidebar .nav li.dropmenu:hover:not(.active),
-        .sidebar .nav li.dropmenu:focus:not(.active),
-        .off-canvas-sidebar .nav li:hover:not(.active) > a,
-        .off-canvas-sidebar .nav li:focus:not(.active) > a {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
 
             .sidebar .nav li:hover:not(.active) > a i,
             .sidebar .nav li:focus:not(.active) > a i,
@@ -6823,15 +6825,16 @@ Created using IcoMoon - icomoon.io
                     z-index: 0;
                 }
 
-        .sidebar .nav p, .sidebar .nav li.dropmenu
-        .off-canvas-sidebar .nav p {
-            margin: 0;
-            line-height: 30px;
-            position: relative;
-            display: block;
-            height: auto;
-            white-space: nowrap;
-        }
+.sidebar .nav p, .sidebar .nav li.dropmenu
+.off-canvas-sidebar .nav p
+{
+    margin: 0;
+    line-height: 30px;
+    position: relative;
+    display: block;
+    height: auto;
+    white-space: nowrap;
+}
 
         .sidebar .nav i,
         .off-canvas-sidebar .nav i {
@@ -7051,8 +7054,8 @@ Created using IcoMoon - icomoon.io
 
     .sidebar .user,
     .off-canvas-sidebar .user {
-        padding-bottom: 20px;
-        margin: 20px auto 0;
+        padding-bottom: 10px;
+        margin: 10px auto 0PX AUTO;
         position: relative;
     }
 
@@ -7301,6 +7304,8 @@ input.theatre-btn:focus {
 
         .sidebar-mini .sidebar .sidebar-wrapper > .nav [data-toggle="collapse"] ~ div > ul > li > a .sidebar-normal,
         .sidebar-mini .sidebar .sidebar-wrapper .user .info [data-toggle="collapse"] ~ div > ul > li > a .sidebar-normal,
+        .sidebar-mini .sidebar .sidebar-wrapper .user .info > a > span,
+        .sidebar-mini .sidebar .sidebar-wrapper > .nav li > a p,
         .sidebar-mini .sidebar .sidebar-wrapper .user .info > a > span, .sidebar .nav li.dropmenu a,
         .sidebar-mini .sidebar .sidebar-wrapper > .nav li > a p, .sidebar-mini .sidebar .sidebar-wrapper > .nav li.dropmenu label p {
             -webkit-transform: translate3d(-25px, 0, 0);
@@ -7311,11 +7316,12 @@ input.theatre-btn:focus {
             opacity: 0;
         }
 
-    
+
         .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label:before {
             opacity: 0;
         }
-            .sidebar-mini .sidebar:hover {
+
+        .sidebar-mini .sidebar:hover {
             width: 260px;
         }
 
@@ -7336,11 +7342,10 @@ input.theatre-btn:focus {
                 width: 260px;
             }
 
-                .sidebar-mini .sidebar:hover .sidebar-wrapper > .nav li > a p, .sidebar-mini .sidebar:hover .sidebar-wrapper > .nav li > a p,
-                .sidebar-mini sidebar:hover .sidebar-wrapper > .nav li.dropmenu label p,
+                .sidebar-mini .sidebar:hover .sidebar-wrapper > .nav li > a p, .sidebar-mini sidebar:hover .sidebar-wrapper > .nav li.dropmenu label p,
                 .sidebar-mini .sidebar:hover .sidebar-wrapper > .nav [data-toggle="collapse"] ~ div > ul > li > a .sidebar-normal,
                 .sidebar-mini .sidebar:hover .sidebar-wrapper .user .info [data-toggle="collapse"] ~ div > ul > li > a .sidebar-normal,
-                .sidebar-mini .sidebar:hover .sidebar-wrapper .user .info > a > span, .sidebar .nav li.dropmenu a {
+                .sidebar-mini .sidebar:hover .sidebar-wrapper .user .info > a > span, .sidebar-mini .sidebar:hover .sidebar-wrapper .user .info > a > span, .sidebar .nav li.dropmenu a {
                     -webkit-transform: translate3d(0px, 0, 0);
                     -moz-transform: translate3d(0px, 0, 0);
                     -o-transform: translate3d(0px, 0, 0);
@@ -7348,6 +7353,7 @@ input.theatre-btn:focus {
                     transform: translate3d(0px, 0, 0);
                     opacity: 1;
                 }
+
                 .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu label p {
                     -webkit-transform: translate3d(0px, 0, 0);
                     -moz-transform: translate3d(0px, 0, 0);
@@ -7366,9 +7372,10 @@ input.theatre-btn:focus {
                     opacity: 1;
                 }
 
-                .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label {
-                    margin-bottom: 0px;
-                }
+        .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label {
+            margin-bottom: 0px;
+        }
+
         .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a {
             margin: 5px 0px;
             background: none !important;
@@ -7377,10 +7384,16 @@ input.theatre-btn:focus {
             font-size: 10px;
             opacity: 1;
         }
-            .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa{font-size:17px; margin-right:10px;}
-            .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu a {
-                opacity: 0;
+
+            .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
+                font-size: 17px;
+                margin-right: 10px;
             }
+
+        .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu a {
+            opacity: 0;
+        }
+
     .drop-wrap {
         position: relative;
         top: -10px;
@@ -7397,27 +7410,28 @@ input.theatre-btn:focus {
         display: block;
         float: right;
         font-weight: bold;
-       /* height: 23px;*/
+        /* height: 23px;*/
         line-height: 18px;
         margin-right: 15px;
         font-size: 18px;
         text-align: center;
-   /*     width: 23px;*/
-    /*    background: #ffffff3b;*/
+        /*     width: 23px;*/
+        /*    background: #ffffff3b;*/
     }
+}
 
-    .panel-header {
-        /*height: 260px;
+.panel-header {
+    /*height: 260px;
     /* padding-top: 80px;*/
-        padding-bottom: 45px;
-        background: #141E30;
-        /* fallback for old browsers */
-        background: -webkit-gradient(linear, left top, right top, from(#0c2646), color-stop(60%, #204065), to(#2a5788));
-        background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%);
-        position: relative;
-        overflow: hidden;
-        /*   height: 135px;*/
-    }
+    padding-bottom: 45px;
+    background: #141E30;
+    /* fallback for old browsers */
+    background: -webkit-gradient(linear, left top, right top, from(#0c2646), color-stop(60%, #204065), to(#2a5788));
+    background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%);
+    position: relative;
+    overflow: hidden;
+    height: 135px;
+}
 
     .panel-header .header .title {
         color: #FFFFFF;
@@ -7433,13 +7447,11 @@ input.theatre-btn:focus {
         .panel-header .header .category a {
             color: #FFFFFF;
         }
-/*
-    .panel-header-sm {
-    height: 135px;
+
+.panel-header-sm {
+    height: 0px !important;
 }
 
-
-*/
 
 .panel-header-lg {
     height: 380px;
@@ -7752,10 +7764,10 @@ input.theatre-btn:focus {
 .control-label, .control-labeled {
     color: #5f5c5c !important;
     font-weight: normal !important;
-    font-size: 15px !important;
+    font-size: 14px !important;
 }
 
-.prtop{margin-top:20px;}
+
 
 .card .card-footer .stats i {
     margin-right: 5px;
@@ -11077,10 +11089,9 @@ svg {
 }
 
 
-    .table-responsive-sm .table > thead > tr > th {
-        /*    font-size: 14px;*/
-        color: #796f6f !important;
-    }
+.table-responsive-sm .table > thead > tr > th {
+    font-size: 14px;
+}
 
 .trash-btn {
     background: #d20505 !important;
@@ -11111,8 +11122,8 @@ svg {
 #dupmeeting_filter input[type=search] {
     background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
     border: solid 1px #ccc;
-    padding: 9px 10px 9px 12px;
-   
+    padding: 9px 10px 9px 32px;
+    width: 135px;
     font-family: arial;
     -webkit-border-radius: 10em;
     -moz-border-radius: 10em;
@@ -11462,7 +11473,7 @@ div.dataTables_scrollFoot table {
     }
 
     .dataTables_wrapper .collapsed .child .child {
-        padding-left: 6px !important;
+        padding-left: 10px !important;
     }
 
         .dataTables_wrapper .collapsed .child .child .dtr-data, .dataTables_wrapper .collapsed .child .child .dtr-title {
@@ -11471,7 +11482,6 @@ div.dataTables_scrollFoot table {
 
     .dataTables_wrapper .collapsed tr.child ul {
         display: block;
-        text-align:left;
     }
 
 
@@ -11481,9 +11491,9 @@ div.dataTables_scrollFoot table {
         font-weight: bold;
         box-shadow: 0 3px #5794d4;
     }
-   
+
     .navbar .navbar-brand {
-        font-size: 8.9px !important;
+        font-size: 10px !important;
     }
 
     .swal2-popup .swal2-title {
@@ -11522,10 +11532,7 @@ div.dataTables_scrollFoot table {
         margin: 0px 0px 10px 0px !important;
         width: calc(100% - 0px) !important;
     }
-    .table-responsive-sm .table > thead > tr > th.table_heading {
-        color: #5f5c5c !important;
-        font-size: 14px !important;
-    }
+
     .table-responsive-sm th, .table-responsive-sm th.table_heading {
         font-size: 12px !important;
     }
@@ -14959,7 +14966,7 @@ be a descendant of the grid when it is being dragged.
         height: 100%;
         width: 260px;
         right: auto;
-        left: 0;
+        /* left: 0; */
         z-index: 1032;
         visibility: visible;
         overflow-y: visible;
