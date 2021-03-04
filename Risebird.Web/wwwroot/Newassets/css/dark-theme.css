@@ -702,8 +702,12 @@ select * {
     color: #9A9A9A;
 }
 
-
-
+.interviewer .multiselect {
+    background: #181818 !important;
+}
+.sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
+    color: #fff;
+}
 .talk-bubble {
     background-color: #181818;
     border: 1px #77737359 solid !important;

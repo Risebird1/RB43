@@ -203,7 +203,7 @@ namespace Risebird.Web.Controllers
                                 interviewerProfile.ResumeLink = uploadedFileURL;
 
                             }
-                            else if (interviewerProfile.CodedResumeFile != null)
+                            if (interviewerProfile.CodedResumeFile != null)
                             {
                                 var codedResumeFileName = interviewerProfile.CodedResumeFile.FileName.Replace(" ", "_");
 
@@ -313,7 +313,7 @@ namespace Risebird.Web.Controllers
                                 interviewerProfile.ResumeLink = uploadedFileURL;
 
                             }
-                            else if (interviewerProfile.CodedResumeFile != null)
+                            if (interviewerProfile.CodedResumeFile != null)
                             {
                                 var codedResumeFileName = interviewerProfile.CodedResumeFile.FileName.Replace(" ", "_");
 
@@ -327,12 +327,12 @@ namespace Risebird.Web.Controllers
 
                         if (_interviewerService.EditInterviewerProfile(interviewerProfile).Result)
                         {
-                            TempData["MessageInterviewer"] = "Edit Interviewer Successful";
+                            TempData["MessageInterviewer"] = "Interviewer updated Successfully";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["MessageInterviewer"] = " Edit Interviewer is Failed";
+                            TempData["MessageInterviewer"] = "Failed to update the Interviewer";
                             return RedirectToAction("Index");
                         }
                     }
@@ -349,7 +349,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["MessageInterviewer"] = "Interviewer Profile Edit is Failed";
+                TempData["MessageInterviewer"] = "Failed to update the Interviewer";
                 return RedirectToAction("Index");
             }
         }
@@ -1031,7 +1031,6 @@ namespace Risebird.Web.Controllers
                                 try
                                 {
                                     item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
-
                                 }
                                 catch (Exception)
                                 {
@@ -1260,7 +1259,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model.UserDetails = emailid;
-                    if (/*profileName == "Admin" || profileName == "HR" ||*/ profileName == "Interviewer")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer")
                     {
                         if (model.AudioFile != null)
                         {

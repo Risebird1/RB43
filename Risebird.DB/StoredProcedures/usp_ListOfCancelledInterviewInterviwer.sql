@@ -11,15 +11,20 @@ GO
 
 CREATE PROCEDURE [dbo].[usp_ListOfCancelledInterviewInterviwer]      
 @candidateEmail varchar(200),    
-@interviewDate  varchar(200)    
+@interviewDate  varchar(200),
+@IRFID varchar(200)
 AS      
-Begin      
+Begin   
+
+IF EXISTS (Select 1 from IRF where IRFId =@IRFId)
+	BEGIN
+		select interviewer from [dbo].[InterviewMeetings]      
+		where candidateEmail = @candidateEmail and interviewDate= @interviewDate and confirmationStatus =2 
+	END
+ELSE
+	BEGIN
+		select interviewer from [dbo].[UnapprovedInterviewerMeetings]      
+		where candidateEmail = @candidateEmail and interviewDate= @interviewDate and confirmationStatus =2 
+	END
       
-       
-select interviewer from [dbo].[UnapprovedInterviewerMeetings]      
-where candidateEmail = @candidateEmail and interviewDate= @interviewDate and confirmationStatus =2     
-      
-      
-       
-       
 End 

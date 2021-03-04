@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using X.PagedList;
+
 namespace Risebird.Web.Controllers
 {
     [Authorize]
@@ -872,10 +874,11 @@ namespace Risebird.Web.Controllers
 
                         }
                         //totalMeetings = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsCount(searchvalue).Result;
-                        
+
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
                         foreach (var item in modelList)
-                        { if (!String.IsNullOrEmpty(item.Senioritylevel))
+                        {
+                            if (!String.IsNullOrEmpty(item.Senioritylevel))
                             {
                                 int Seniorityid = Convert.ToInt32(item.Senioritylevel);
                                 item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
@@ -888,8 +891,8 @@ namespace Risebird.Web.Controllers
                         modelList = modelList.Take(12).ToList();
                         totalMeetings = modelList.Count();
 
-                        
-                       
+
+
                         ViewBag.ProfileName = profileName;
 
                         if (!String.IsNullOrEmpty(searchvalue))
@@ -997,7 +1000,7 @@ namespace Risebird.Web.Controllers
                         modelList = modelList.Take(12).ToList();
                         totalMeetings = modelList.Count();
 
-                        
+
                         ViewBag.ProfileName = profileName;
                         if (!String.IsNullOrEmpty(searchvalue))
                         {
@@ -1103,7 +1106,10 @@ namespace Risebird.Web.Controllers
                         var exprienceyears = _iRFRepository.GetInterviewerExprienceYear();
                         if (IRListModel != null)
                         {
-                            IRListModel.Yearsofexperience = "1";
+                            int expreinece_year = Convert.ToInt32(IRListModel.Yearsofexperience);
+                            var years_expreince = exprienceyears.Where(x => x.Id == expreinece_year).FirstOrDefault();
+                            if (years_expreince != null)
+                                IRListModel.Yearsofexperience = years_expreince.Description;
                         }
                         var modelList = modelList1;
 
@@ -1153,9 +1159,9 @@ namespace Risebird.Web.Controllers
                                 }
                                 IRListModel.SkillCategory = Skillset;
                                 var Seniority_level = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault();
-                                if ((Seniority_level!=null)) 
+                                if ((Seniority_level != null))
                                     IRListModel.Senioritylevel = Seniority_level.Name;
-                              
+
                             }
                         }
                         NewModel.IreportModel = IRListModel ?? new InterviewReport();
@@ -1398,5 +1404,266 @@ namespace Risebird.Web.Controllers
 
             model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
         }
+        public async Task<IActionResult> ISCInterviewMeetings(string id, string irfId, int? Page, string searchValue)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        var meetings = await _iInterviewerSkillsService.GetInterviewerSkillInterviewMeetings(Convert.ToInt16(id));
+                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        ViewBag.IRF = irfId;
+                        ViewBag.IRFintId = id;
+
+                        foreach (var m in meetings)
+                        {
+                            if (m.InterviewStatus.HasValue)
+                            {
+                                m.intervieweStatusStatDesc = ((InterviewerApproved)(m.InterviewStatus)).GetDescription();
+                            }
+                            if (m.L2InterviewStatus.HasValue)
+                            {
+                                m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                            }
+                            if (m.L2InterviewStatus.HasValue)
+                            {
+                                m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                            }
+                            if (m.JoiningStatus.HasValue)
+                            {
+                                m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                            }
+                            if (m.PreparationStatus.HasValue)
+                            {
+                                m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                            }
+                            if (m.OfferStatus.HasValue)
+                            {
+                                m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                            }
+                            if (m.MeetingStatus.HasValue)
+                            {
+                                m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                            }
+                            if (m.QCStatus.HasValue)
+                            {
+                                m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                            }
+
+                        }
+                        var list = new SelectList(new[]
+{
+    new { ID = "Today", Name = "Today"},
+    new { ID = "Tomorrow", Name = "Tomorrow"  },
+    new { ID = "Yesterday", Name = "Yesterday"  },
+    new { ID = "Next Seven Days", Name = "Next Seven Days" },
+    new { ID = "All", Name = "All"},
+},
+"ID", "Name", "All");
+
+                        ViewData["list"] = list;
+                        meetings = meetings.OrderByDescending(x => x.interviewDate).ToList();
+
+                        if (!String.IsNullOrEmpty(searchValue))
+                        {
+                            searchValue = searchValue.ToUpper();
+                            meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
+                            || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")
+                            || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+
+                        }
+                        ViewBag.TotalCount = meetings.Count;
+
+                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                        int a = meetings.Count / 10;
+                        if (meetings.Count % 10 == 0)
+                        {
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                        }
+                        else
+                        {
+                            a = a + 1;
+                            if (a == Page)
+                            {
+                                ViewBag.PageEndCount = meetings.Count;
+                            }
+                            else
+                            {
+                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                            }
+
+                        }
+                        if (meetings.Count == 0)
+                        {
+                            ViewBag.PageStartCount = 0;
+                            ViewBag.PageEndCount = 0;
+                        }
+                        //_modelDetail = meetings;
+                        //ViewBag.IRFId =id;
+                        return View(meetings.ToPagedList(Page ?? 1, 10));
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ISCSelectedInterviewMeetings(string id, string irfId, int? Page, string searchValue)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var selectedMeeting = new List<MeetingVM>();
+                        var meetings = (await _iInterviewerSkillsService.GetInterviewerSkillInterviewMeetings(Convert.ToInt16(id)));
+                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        ViewBag.IRF = irfId;
+                        ViewBag.IRFintId = id;
+
+                        foreach (var m in meetings)
+                        {
+                            if (m.InterviewStatus.HasValue && m.InterviewStatus.Value == 2)
+                            {
+                                m.intervieweStatusStatDesc = ((InterviewerApproved)(m.InterviewStatus)).GetDescription();
+                            }
+                            else
+                            {
+                                continue;
+                            }
+
+                            if (m.L2InterviewStatus.HasValue)
+                            {
+                                m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                            }
+                            if (m.L2InterviewStatus.HasValue)
+                            {
+                                m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                            }
+                            if (m.JoiningStatus.HasValue)
+                            {
+                                m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                            }
+                            if (m.PreparationStatus.HasValue)
+                            {
+                                m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                            }
+                            if (m.OfferStatus.HasValue)
+                            {
+                                m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                            }
+                            if (m.MeetingStatus.HasValue)
+                            {
+                                m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                            }
+                            if (m.QCStatus.HasValue)
+                            {
+                                m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                            }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                            }
+                            if (m.IsSelected.HasValue)
+                            {
+                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
+                            }
+                            selectedMeeting.Add(m);
+                        }
+                        var list = new SelectList(new[]
+{
+    new { ID = "Today", Name = "Today"},
+    new { ID = "Tomorrow", Name = "Tomorrow"  },
+    new { ID = "Yesterday", Name = "Yesterday"  },
+    new { ID = "Next Seven Days", Name = "Next Seven Days" },
+    new { ID = "All", Name = "All"},
+},
+"ID", "Name", "All");
+
+                        ViewData["list"] = list;
+                        ViewBag.ProfileName = profileName.ToLower();
+                        if (!String.IsNullOrEmpty(searchValue))
+                        {
+                            searchValue = searchValue.ToUpper();
+                            selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+
+                        }
+                        ViewBag.TotalCount = selectedMeeting.Count;
+
+                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                        int a = selectedMeeting.Count / 10;
+                        if (selectedMeeting.Count % 10 == 0)
+                        {
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                        }
+                        else
+                        {
+                            a = a + 1;
+                            if (a == Page)
+                            {
+                                ViewBag.PageEndCount = selectedMeeting.Count;
+                            }
+                            else
+                            {
+                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                            }
+
+                        }
+                        if (selectedMeeting.Count == 0)
+                        {
+                            ViewBag.PageStartCount = 0;
+                            ViewBag.PageEndCount = 0;
+                        }
+                        //_modelDetail = selectedMeeting;
+                        ViewBag.IRFId = id;
+                        return View(selectedMeeting.ToPagedList(Page ?? 1, 10));
+
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+        }
+
     }
 }

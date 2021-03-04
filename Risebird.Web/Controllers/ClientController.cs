@@ -942,6 +942,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.PageEndCount = 0;
                         }
                         _modelDetails = meetings;
+                        ViewBag.Date = DateTime.Now;
                         return View(meetings.ToPagedList(Page ?? 1, 10));
                     }
                     else
@@ -1105,6 +1106,7 @@ namespace Risebird.Web.Controllers
                         }
 
                         _modelDetails = meetings;
+                        ViewBag.Date = DateTime.Now;
                         return View(meetings.ToPagedList(Page ?? 1, 10));
                     }
                     else
@@ -1451,7 +1453,7 @@ namespace Risebird.Web.Controllers
                         {
                             if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
                             {
-                                Sheet.Cells[i, 7].Value = "Pending";
+                                Sheet.Cells[i, 7].Value = "Status Pending";
 
                             }
                             else
@@ -1470,7 +1472,7 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
                         }
-                        else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && (item.QCStatus == null || item.QCInterview == 0))
+                        else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && (item.QCStatus == null || item.QCInterview == 0 || item.QCStatus==2))
                         {
                             Sheet.Cells[i, 8].Value = "QC Pending";
 

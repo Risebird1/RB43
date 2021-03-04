@@ -217,7 +217,7 @@
                                                                     <tr>
 
                                                                         <td> @item.HRCoordinatorEmailId</td>
-                                                                        <td>@item.risebirdHR</td>
+                                                                        <td>@item.ZoomId</td>
                                                                         <td>@item.MeetingStatusDesc</td>
                                                                         <td>@item.InterviewStatusDesc</td>
                                                                     </tr>
@@ -767,8 +767,8 @@ html += '  <tr>';
             else {
                 html += '  <td></td>';
             }
-            if (data[i].risebirdHR != null && data[i].risebirdHR != "") {
-                html += ' <td>' + data[i].risebirdHR + '</td>';
+            if (data[i].zoomId != null && data[i].zoomId != "") {
+                html += ' <td>' + data[i].zoomId + '</td>';
             }
             else {
                 html += '  <td></td>';

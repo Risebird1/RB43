@@ -37,6 +37,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@Profile", profileName);
                     parameters.Add("@EmailId", emailId);
+                    parameters.Add("@timeNow", DateTime.Now);
                     return await SqlMapper.QueryAsync<InterviewerSkillsChannelModel>(con, "usp_GetAllInterviewerSkillsChannel", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
@@ -940,7 +941,7 @@ namespace Risebird.Repository
             }
 
         }
-        public async Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page,string searchvalue)
+        public async Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsPaged(int Page, string searchvalue)
         {
             try
             {
@@ -998,7 +999,7 @@ namespace Risebird.Repository
                 {
                     var result = await SqlMapper.QueryFirstAsync<MeetingVM>(con, "usp_GetInterviewerVideoMeetingsbyId", parameters,
                         commandType: CommandType.StoredProcedure);
-                  //Update Table For Interviewer
+                    //Update Table For Interviewer
                     var query = "Select InterviewId,VideoTitle,VideoLink,Priority,ThumbnailLink from VideoQuestionDetails Where InterViewid=@InterViewid and NULLIF(VideoLink, '') IS NOT NULL";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@InterViewid", id);
@@ -1045,9 +1046,9 @@ namespace Risebird.Repository
             }
             return null;
         }
-       
-        
-        
+
+
+
         public async Task<IEnumerable<TransSkill>> GetSkillsbyIRFid(int id)
         {
             try
@@ -1091,7 +1092,7 @@ namespace Risebird.Repository
                 return result;
             }
         }
-        
+
         public async Task<List<string>> FetchAdminList()
         {
             try
@@ -1114,5 +1115,31 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<IEnumerable<MeetingVM>> GetInterviewerSkillInterviewMeetings(int id)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetISCInterviewMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }
