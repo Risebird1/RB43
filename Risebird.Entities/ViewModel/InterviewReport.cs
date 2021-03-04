@@ -191,7 +191,7 @@ namespace Risebird.Entities.ViewModel
         public string Interviewexperience { get; set; }
         public SelectList InterviewexperienceList { get; set; }
 
-        [Display(Name = "Number of interviews completed")]
+        [Display(Name = "Interview Conducted")]
         public string Interviewscompleted { get; set; }
         [Display(Name = "Ready-made Assessment")]
         public string ReadymadeAssessment { get; set; }
@@ -273,6 +273,7 @@ namespace Risebird.Entities.ViewModel
         public int? Conscientiousness { get; set; }
         public int? Extroversion { get; set; }
         public int? Agreeableness { get; set; }
+        [Display(Name = "Sensitivity")]
         public int? Neuroticism { get; set; }
 
         [Display(Name = "Overall Profile Score")]
