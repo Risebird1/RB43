@@ -328,7 +328,9 @@
     font-size: 2.5rem;
     margin: 0;
 }
-
+#interviewerMemberModal .modal-lg {
+    max-width: 830px !important;
+}
 
 .callsubmit {
     border: 0px;

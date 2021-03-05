@@ -29,7 +29,8 @@ else
             @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Logo")))
             {
                 <img style="position:relative;top:0px;" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />}
-            else { <img style="position:relative;top:0px;" src="@HttpContextAccessor.HttpContext.Session.GetString("Logo")" />}
+            else
+            { <img style="position:relative;top:0px;" src="@HttpContextAccessor.HttpContext.Session.GetString("Logo")" />}
 
         </a>
         <a href="#" class="simple-text logo-normal">
@@ -41,7 +42,7 @@ else
             { <img class="logoimage" style=" width: 75%; padding-top: 3px;" src="@HttpContextAccessor.HttpContext.Session.GetString("Logo")" />}
 
 
-            
+
         </a>
         <div class="navbar-minimize">
             <button id="minimizeSidebar" class="btn btn-simple btn-icon btn-neutral btn-round">
@@ -81,7 +82,7 @@ else
 
                 </a>
                 <div class="clearfix"></div>
-                <div class="collapse" id="collapseExample">
+                <div class="collapse signout" id="collapseExample">
                     <ul class="nav">
 
                         <li><a asp-area="" asp-controller="Session" asp-action="SignOut">Sign out</a></li>
@@ -351,78 +352,78 @@ else
                     {
 
 
-        <li class="dropmenu">
+                        <li class="dropmenu">
 
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path d="M9 8c1.66 0 2.99-1.34 2.99-3S10.66 2 9 2C7.34 2 6 3.34 6 5s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg>
-            <input class="toggle-box1" id="admin" type="checkbox">
-            <label for="admin">
-                <p>
-                    @m.functionName
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path d="M9 8c1.66 0 2.99-1.34 2.99-3S10.66 2 9 2C7.34 2 6 3.34 6 5s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg>
+                            <input class="toggle-box1" id="admin" type="checkbox">
+                            <label for="admin">
+                                <p>
+                                    @m.functionName
 
-                </p>
-                </label>
-                <div class="drop-wrap">
-                    <ul class="nav">
-                        @foreach (var item in adminMenuList)
-                        {
-                            <li>
-                                <a href="@item.sUrl">
-                                    <span class="@item.sIcon"></span>
-                                    <span class="sidebar-normal">     @item.functionName </span>
-                                </a>
-                            </li>
-                        }
+                                </p>
+                            </label>
+                            <div class="drop-wrap">
+                                <ul class="nav">
+                                    @foreach (var item in adminMenuList)
+                                    {
+                                        <li>
+                                            <a href="@item.sUrl">
+                                                <span class="@item.sIcon"></span>
+                                                <span class="sidebar-normal">     @item.functionName </span>
+                                            </a>
+                                        </li>
+                                    }
 
-                    </ul>
-                </div>
-        </li>
-                        
+                                </ul>
+                            </div>
+                        </li>
+
 
                     }
                     else if (m.functionName == "Interviewer")
                     {
-        <li class="dropmenu">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path d="M9 8c1.66 0 2.99-1.34 2.99-3S10.66 2 9 2C7.34 2 6 3.34 6 5s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg>
-            <input class="toggle-box1" id="menu_Interviewer" type="checkbox">
-            <label for="menu_Interviewer">
-                <p>   @m.functionName</p>
+                        <li class="dropmenu">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path d="M9 8c1.66 0 2.99-1.34 2.99-3S10.66 2 9 2C7.34 2 6 3.34 6 5s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg>
+                            <input class="toggle-box1" id="menu_Interviewer" type="checkbox">
+                            <label for="menu_Interviewer">
+                                <p>   @m.functionName</p>
 
-            </label>
-            <div class="drop-wrap">
-                <ul class="nav">
-                    @foreach (var item in interviewerMenuList)
-                    {
-                        <li>
-                            <a href="@item.sUrl">
-                                <span class="@item.sIcon"> </span>
-                                <span class="sidebar-normal">     @item.functionName </span>
-                            </a>
+                            </label>
+                            <div class="drop-wrap">
+                                <ul class="nav">
+                                    @foreach (var item in interviewerMenuList)
+                                    {
+                                        <li>
+                                            <a href="@item.sUrl">
+                                                <span class="@item.sIcon"> </span>
+                                                <span class="sidebar-normal">     @item.functionName </span>
+                                            </a>
+                                        </li>
+                                    }
+
+                                </ul>
+                            </div>
+
+
+                            @*<div>
+                                    <input class="toggle-box" id="menu_Interviewer" type="checkbox">
+                                    <label for="menu_Interviewer">Interviewer</label>
+                                    <div>
+                                        <ul class="nav">
+                                            @foreach (var item in interviewerMenuList)
+                                            {
+                                                <li>
+                                                    <a href="@item.sUrl">
+                                                        <span class="sidebar-mini-icon">  @(new string(item.functionName.ToString().Split(' ').Select(x => x[0]).ToArray()))</span>
+                                                        <span class="sidebar-normal">     @item.functionName </span>
+                                                    </a>
+                                                </li>
+                                            }
+
+                                        </ul>
+                                    </div>
+                                </div>*@
                         </li>
-                    }
-
-                </ul>
-            </div>
-
-
-            @*<div>
-            <input class="toggle-box" id="menu_Interviewer" type="checkbox">
-            <label for="menu_Interviewer">Interviewer</label>
-            <div>
-                <ul class="nav">
-                    @foreach (var item in interviewerMenuList)
-                    {
-                        <li>
-                            <a href="@item.sUrl">
-                                <span class="sidebar-mini-icon">  @(new string(item.functionName.ToString().Split(' ').Select(x => x[0]).ToArray()))</span>
-                                <span class="sidebar-normal">     @item.functionName </span>
-                            </a>
-                        </li>
-                    }
-
-                </ul>
-            </div>
-        </div>*@
-        </li>
 
                     }
 
