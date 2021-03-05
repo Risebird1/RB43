@@ -3457,9 +3457,9 @@ input[type='radio'] {
     padding-top: 30px;
 }*/
 
-.mt50 {
+/*.mt50 {
     margin-top: 55px;
-}
+}*/
 
 .mt-20 {
     margin-top: 20px;
@@ -6485,7 +6485,10 @@ h4.card-title {
     background: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat right;
     z-index: 1;
 }
-
+.client-ms #meeting_filter input[type=search] {
+    background: #fff;
+    border: 0px !important;
+}
 .dataTables_filter input[type=search], #meeting_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
     border: 0px !important;
     padding: 9px 10px 9px 10px;
