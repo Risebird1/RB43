@@ -71,7 +71,7 @@
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.Label("Interviewer's Name", "Interviewer's Name", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @if (Model.IsInterviewer && Model.CandidateName != null)
                                             {
                                                 @Regex.Replace(@Model.CandidateName, "[a-zA-Z0-9]", "*")
@@ -152,6 +152,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.SkillQuality, htmlAttributes: new { @class = "control-label  desp-label" })
                                             <a class="info" href="#"><span>Select Skill Quality, Multiple tracks at same time </span></a>
+
                                             <!--   @Html.DropDownListFor(x => Model.SkillQuality, Model.SkillQualityList, "Select Skill Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
 
                                             @Html.HiddenFor(m => m.SkillQuality)
@@ -176,6 +177,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.CertificationQuality, htmlAttributes: new { @class = "control-label desp-label" })
                                             <a class="info" href="#"><span>Relevant, Not Relevant, Not Done </span></a>
+
                                             <!--@Html.DropDownListFor(x => Model.CertificationQuality, Model.CertificationQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
 
 
@@ -202,6 +204,7 @@
 
                                             @Html.LabelFor(model => model.EducationQuality, htmlAttributes: new { @class = "control-label  desp-label" })
                                             <a class="info" href="#"><span>Full Time, Tech Education, Distance learning,Non tech-Bcom,Bsc,MBA </span></a>
+
                                             <!--  @Html.DropDownListFor(x => Model.EducationQuality, Model.EducationQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
                                             @Html.HiddenFor(m => m.EducationQuality)
                                             <div class="star-rating">
@@ -228,6 +231,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.EmployersQuality, htmlAttributes: new { @class = "control-label  desp-label" })
                                             <a class="info" href="#"><span>Relevant, Not Relevant</span></a>
+
                                             <!--  @Html.DropDownListFor(x => Model.EmployersQuality, Html.GetEnumSelectList<EmployerQualityOptions>(), "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
                                             @Html.HiddenFor(m => m.EmployersQuality)
                                             <div class="star-rating">
@@ -249,6 +253,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.CareerProgression, htmlAttributes: new { @class = "control-label  desp-label" })
                                             <a class="info" href="#"><span>Stuck in small company for long time, Freelancer, Teacher, Project manager, Delivery manager, People Management, Administrative</span></a>
+
                                             <!---  @Html.DropDownListFor(x => Model.CareerProgression, Model.CareerProgressionList, "Select Career", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
 
                                             @Html.HiddenFor(m => m.CareerProgression)
@@ -275,6 +280,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.ProjectsQuality, htmlAttributes: new { @class = "control-label  desp-label" })
                                             <a class="info" href="#"><span>Relevant, Not Relevant</span></a>
+
                                             <!---  @Html.DropDownListFor(x => Model.ProjectsQuality, Html.GetEnumSelectList<ProjectQualityOptions>(), "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
                                             @Html.HiddenFor(m => m.ProjectsQuality)
                                             <div class="star-rating">
@@ -299,6 +305,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.OnlinePresence, htmlAttributes: new { @class = "control-label  desp-label" })
                                             <a class="info" href="#"><span>Yes, No</span></a>
+
                                             <!-- @Html.DropDownListFor(x => Model.OnlinePresence, Html.GetEnumSelectList<OnlinePresenceOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
                                             @Html.HiddenFor(m => m.OnlinePresence)
                                             <div class="star-rating">
@@ -320,6 +327,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.BehavioralScore, htmlAttributes: new { @class = "control-label desp-label" })
                                             <a class="info" href="#"><span>Not listening, Talking too general, Too busy, not taking seriously, High tantrums </span></a>
+
                                             <!-- @Html.DropDownListFor(x => Model.BehavioralScore, Model.BehavioralScoreList, "Select Score", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
                                             @Html.HiddenFor(m => m.BehavioralScore)
                                             <div class="star-rating">
@@ -342,6 +350,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InterviwerCommunication, htmlAttributes: new { @class = "control-label  desp-label" })
                                             <a class="info" href="#"><span>Poor,Good, Very Good </span></a>
+
                                             <!--- @Html.DropDownListFor(x => Model.InterviwerCommunication, Html.GetEnumSelectList<InterviewerCommunicationOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
                                             @Html.HiddenFor(m => m.InterviwerCommunication)
 
@@ -368,6 +377,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.Interviewexperience, htmlAttributes: new { @class = "control-label  desp-label" })
                                             <a class="info" href="#"><span>Poor,Good, Very Good </span></a>
+
                                             <!--  @Html.DropDownListFor(x => Model.Interviewexperience, Html.GetEnumSelectList<InterviewExperienceOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
                                             @Html.HiddenFor(m => m.Interviewexperience)
                                             <div class="star-rating">
@@ -406,6 +416,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.Conscientiousness, htmlAttributes: new { @class = "control-label desp-label" })
                                             <a class="info" href="#"><span>Efficient/Organized, Easy-going/Careless</span></a>
+
                                             <!--   @Html.DropDownListFor(x => Model.Conscientiousness, Html.GetEnumSelectList<ConscientiousnessOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
                                             @Html.HiddenFor(m => m.Conscientiousness)
                                             <div class="star-rating">
@@ -427,6 +438,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.Extroversion, htmlAttributes: new { @class = "control-label desp-label" })
                                             <a class="info" href="#"><span>Outgoing/Energetic, Solitary/Reserved</span></a>
+
                                             <!--  @Html.DropDownListFor(x => Model.Extroversion, Html.GetEnumSelectList<ExtroversionOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
                                             @Html.HiddenFor(m => m.Extroversion)
 
@@ -449,6 +461,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.Agreeableness, htmlAttributes: new { @class = "control-label  desp-label" })
                                             <a class="info" href="#"><span>Friendly/Compassionate, Challenging/Detached</span></a>
+
                                             <!--  @Html.DropDownListFor(x => Model.Agreeableness, Html.GetEnumSelectList<AgreeablenessOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
                                             @Html.HiddenFor(m => m.Agreeableness)
                                             <div class="star-rating">
@@ -474,6 +487,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.Neuroticism, htmlAttributes: new { @class = "control-label  desp-label" })
                                             <a class="info" href="#"><span>Sensitive/Nervous, Secure/Confident</span></a>
+
                                             <!--  @Html.DropDownListFor(x => Model.Neuroticism, Html.GetEnumSelectList<NeuroticismOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })--->
                                             @Html.HiddenFor(m => m.Neuroticism)
                                             <div class="star-rating">
@@ -495,6 +509,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.Openness, htmlAttributes: new { @class = "control-label  desp-label" })
                                             <a class="info" href="#"><span>Inventive/Curious, Consistent/Cautious</span></a>
+
                                             <!-- @Html.DropDownListFor(x => Model.Openness, Html.GetEnumSelectList<OpennessOptions>(), "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
                                             @Html.HiddenFor(m => m.Openness)
                                             <div class="star-rating">
@@ -851,52 +866,52 @@
                                                 <tbody>
                                                     @if (Model.InterviewerQuestionsCollection == null || Model.InterviewerQuestionsCollection.Count() == 0)
                                                     {
-                                                    <tr>
+                                                        <tr>
 
-                                                        <td>
-                                                            @Html.TextBox("InterviewerQuestionsCollection[0].Question", null, new { @class = "form-control" })
+                                                            <td>
+                                                                @Html.TextBox("InterviewerQuestionsCollection[0].Question", null, new { @class = "form-control" })
 
-                                                        </td>
-                                                        <td>
-                                                            @Html.DropDownList("InterviewerQuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownList("InterviewerQuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
 
-                                                        </td>
-                                                        <td>
-                                                            <input class="form-control text-box single-line" id="InterviewerQuestionsCollection_0__Timing" name="InterviewerQuestionsCollection[0].Timing" type="number" min="60" max="5000">
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="InterviewerQuestionsCollection_0__Timing" name="InterviewerQuestionsCollection[0].Timing" type="number" min="60" max="5000">
 
-                                                        </td>
+                                                            </td>
 
-                                                        <td class="action text-center">
-                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                            <td class="action text-center">
+                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                        </td>
-                                                    </tr>
+                                                            </td>
+                                                        </tr>
                                                     }
                                                     else
                                                     {
                                                         for (int i = 0; i < Model.InterviewerQuestionsCollection.Count(); i++)
                                                         {
-                                                <tr style="cursor:pointer">
+                                                            <tr style="cursor:pointer">
 
-                                                    <td>
-                                                        @Html.TextBoxFor(m => m.InterviewerQuestionsCollection[i].Question, new { @class = "form-control text-box single-line" })
-                                                    </td>
-                                                    <td>
-                                                        @Html.DropDownListFor(m => m.InterviewerQuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
-                                                    </td>
-                                                    <td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.InterviewerQuestionsCollection[i].Question, new { @class = "form-control text-box single-line" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DropDownListFor(m => m.InterviewerQuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
+                                                                </td>
+                                                                <td>
 
-                                                        @Html.EditorFor(m => m.InterviewerQuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "60", @max = "5000" } })
+                                                                    @Html.EditorFor(m => m.InterviewerQuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "60", @max = "5000" } })
 
-                                                    </td>
-                                                    <td class="action text-center ">
-                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId','Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                </td>
+                                                                <td class="action text-center ">
+                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId','Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                    </td>
-                                                </tr>
+                                                                </td>
+                                                            </tr>
 
 
                                                         }
@@ -1333,7 +1348,7 @@
                                                     <label class="text-danger" id="CompanyStage_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
                                                 </div>
                                             </div>
-                                            
+
 
 
                                         </div>
@@ -1412,7 +1427,7 @@
 
                                             </div>
 
-</div>
+                                        </div>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
@@ -1512,7 +1527,7 @@
 
                                             }
 
-                                            @if (Model.ProfileName == "Interviewer" || Model.ProfileName=="Admin")
+                                            @if (Model.ProfileName == "Interviewer" || Model.ProfileName == "Admin")
                                             {
                                                 @if (Model.IsEdited)
                                                 {
@@ -2205,7 +2220,7 @@
 
     }
 
-    function DeleteRow(element, collectionName, tdOne, tdTwo,tdThree) {
+    function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree) {
 
         if ($(element).parents('tbody').find('tr').length === 1) {
 
@@ -2334,7 +2349,7 @@
 
 
     function CheckRecommendationValues() {
-        
+
         var elementId = '';
         if (document.getElementById("CompentencyLevel").value == null || document.getElementById("CompentencyLevel").value == '') {
             document.getElementById("CompentencyLevel_Error").innerHTML = "This field is required.";
@@ -2431,7 +2446,7 @@
         else {
             document.getElementById("CompanySize_Error").innerHTML = "";
         }
-       
+
         if (elementId != '') {
             document.getElementById(elementId).focus();
             return false;
