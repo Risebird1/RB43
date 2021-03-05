@@ -253,9 +253,11 @@
                                                             <th>Slot</th>
                                                             <th style="text-align:center">Call Interviewer</th>
                                                             <th style="text-align:center">Call Candidate</th>
+                                                            <th>Skill Channel</th>
                                                             <th>Candidate Name</th>
                                                             <th>Interviewer</th>
                                                             <th>Candidate Email</th>
+                                                            <th>Client Name</th>
                                                             <th>ClientHR</th>
                                                             <th class="disabled-sorting text-right">Actions</th>
 
@@ -268,9 +270,11 @@
                                                             <th>Slot</th>
                                                             <th style="text-align:center">Call Interviewer</th>
                                                             <th style="text-align:center">Call Candidate</th>
+                                                            <th>Skill Channel</th>
                                                             <th>Candidate Name</th>
                                                             <th>Interviewer</th>
                                                             <th>Candidate Email</th>
+                                                            <th>Client Name</th>
                                                             <th>ClientHR</th>
                                                             <th class="disabled-sorting text-right">Actions</th>
 
@@ -300,6 +304,7 @@
 
 
                                                             </td>
+                                                            <td style="text-align: center"> @item.IRFID </td>
                                                             <td style="text-align: center">
                                                                 @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                 {
@@ -422,36 +427,23 @@
                                                                 <td></td>
                                                             }
 
-
+                                                            <td style="text-align: center"> @item.ClientName </td>
 
                                                             @if (item.ClientHrContact != null && item.ClientHrContact != "")
                                                             {
-
-
-
                                                                 @if (item.ClientHrContact.Length > 18)
                                                                 {
-
-
                                                                     <td class="cadEmail">
                                                                         <a onclick="" data-tooltip="@item.ClientHrContact"> @item.ClientHrContact.Substring(0, 18)... </a>
                                                                     </td>
                                                                 }
-
-
                                                                 else
                                                                 {
                                                                     <td class="cadEmail">
                                                                         <a onclick=""> @item.ClientHrContact </a>
                                                                     </td>
                                                                 }
-
-
-
-
-
                                                             }
-
                                                             else
                                                             {
 
@@ -459,7 +451,7 @@
                                                             }
 
 
-                                                      
+
 
                                                             <td class="text-right">
 

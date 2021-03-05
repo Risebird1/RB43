@@ -15,7 +15,7 @@ AS
 BEGIN
 select im.id, im.IRFId,irf.Id as irfIntId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,
 im.confirmationStatus, im.interviewer, im.candidateName, im.QCInterviewer,
-ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,
+ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,irf.ClientName,
 irf.JDLink from InterviewMeetings im  
 inner join IRF irf on im.IRFId=irf.IRFId   
 left join [dbo].[UserList] ul on im.candidateEmail = ul.EmailId
