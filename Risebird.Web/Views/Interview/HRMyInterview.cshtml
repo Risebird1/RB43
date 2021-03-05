@@ -250,7 +250,7 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th id='start'>Date</th>
-                                                            <th>Slot</th>
+                                                            <th style="text-align:center">Slot</th>
                                                             <th style="text-align:center">Call Interviewer</th>
                                                             <th style="text-align:center">Call Candidate</th>
                                                             <th>Skill Channel</th>
@@ -267,7 +267,7 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th>Date</th>
-                                                            <th>Slot</th>
+                                                            <th style="text-align:center">Slot</th>
                                                             <th style="text-align:center">Call Interviewer</th>
                                                             <th style="text-align:center">Call Candidate</th>
                                                             <th>Skill Channel</th>
@@ -290,7 +290,15 @@
                                                         <tr id=@item.id data-changes="1">
                                                             <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
                                                             <td> @item.interviewDate </td>
-                                                            <td> @item.interviewSlot </td>
+                                                            @if (@item.interviewSlot == "Morning")
+                                                            {
+                                                                <td><a style="color:darkorange;font-weight: bold"> @item.interviewSlot</a></td>
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <td><a style="color:darkblue;font-weight: bold"> @item.interviewSlot</a></td>
+                                                            }
                                                             <td style="text-align: center">
                                                                 @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
                                                                 {

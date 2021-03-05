@@ -101,6 +101,7 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th>Date</th>
+                                                            <th style="text-align:center">Slot</th>
                                                             <th>Skill Channel</th>
                                                             <th>Candidate Name</th>
                                                             <th>Resume</th>
@@ -115,6 +116,7 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th>Date</th>
+                                                            <th style="text-align:center">Slot</th>
                                                             <th>Skill Channel</th>
                                                             <th>Candidate Name</th>
                                                             <th>Resume</th>
@@ -131,6 +133,15 @@
                                                         <tr id=@item.id data-changes="1">
                                                             <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
                                                             <td> @item.interviewDate </td>
+                                                            @if (@item.interviewSlot == "Morning")
+                                                            {
+                                                                <td><a style="color:darkorange;font-weight: bold"> @item.interviewSlot</a></td>
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <td><a style="color:darkblue;font-weight: bold"> @item.interviewSlot</a></td>
+                                                            }
                                                             <td style="text-align: center"> @item.IRFID </td>
                                                             @if (item.candidateName != null && item.candidateName != "")
                                                             {
@@ -173,7 +184,7 @@
                                                                 <td>No JD</td>
                                                             }
 
-                                                          <th style="text-align: center">@item.ClientName</th>
+                                                            <th style="text-align: center">@item.ClientName</th>
                                                             @if (item.ClientHrContact != null && item.ClientHrContact != "")
                                                             {
                                                                 @if (item.ClientHrContact.Length > 25)
@@ -245,7 +256,7 @@
                                                                     <table class="table table-striped">
                                                                         <tr>
                                                                             <th>Quality Controller</th>
-                                                                            <th>Slot</th>
+                                                                            
                                                                             <th>Duration</th>
                                                                         </tr>
                                                                         <tr>
@@ -258,14 +269,7 @@
                                                                                 <td></td>
                                                                             }
 
-                                                                            @if (item.interviewSlot != null && item.interviewSlot != "")
-                                                                            {
-                                                                                <td> @item.interviewSlot </td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }
+                                                                            
 
                                                                             @if (item.interviewDuration != null && item.interviewDuration != "")
                                                                             {
