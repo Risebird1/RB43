@@ -11,22 +11,22 @@ GO
 
     
       
-CREATE PROCEDURE [dbo].[usp_MyInterviewerAssessment]             
-@emailID varchar(200)                
-AS              
-BEGIN              
- select distinct im.*, Skill.[Name] as PrimarySkill, isc.JDTiltle,isc.id as iscIntId, ic.IsApproved,          
-  ic.InterviewStatus, ic.IsSelected, ic.MeetingStatus, ic.VideoLink,inp.CodedResumeLink as resumeLink,inp.NickName from TransInterviewerSkillsLeadInterviewer tisli          
-  join UserList ul on tisli.UserId = ul.id          
-  join InterviewerSkillsChannel isc on isc.id = tisli.InterviewerSkillId          
-  inner join UnapprovedInterviewerMeetings im on  im.ISCId=isc.InterviewerSkillId          
-  left join InterviewerComments ic on ic.InterviewId = im.id          
-  join Skill on isc.PrimarySkill=Skill.id   
-  left join InterviewerProfile inp on inp.Userid=ul.id  
-  where ul.EmailId= @emailID and im.interviewer=@emailID and im.confirmationStatus=1       
-              
-END     
- 
+CREATE PROCEDURE [dbo].[usp_MyInterviewerAssessment]               
+@emailID varchar(200)                  
+AS                
+BEGIN                
+ select distinct im.*, Skill.[Name] as PrimarySkill, isc.JDTiltle,isc.id as iscIntId, ic.IsApproved,            
+  ic.InterviewStatus, ic.IsSelected, ic.MeetingStatus, ic.VideoLink,inp.CodedResumeLink as resumeLink,inp.NickName from TransInterviewerSkillsLeadInterviewer tisli            
+  join UserList ul on tisli.UserId = ul.id            
+  join InterviewerSkillsChannel isc on isc.id = tisli.InterviewerSkillId            
+  inner join UnapprovedInterviewerMeetings im on  im.ISCId=isc.InterviewerSkillId            
+  left join InterviewerComments ic on ic.InterviewId = im.id            
+  join Skill on isc.PrimarySkill=Skill.id    
+  left join UserList unl on im.candidateEmail=unl.EmailId
+  left join InterviewerProfile inp on inp.Userid=unl.id    
+  where ul.EmailId= @emailID and im.interviewer=@emailID and im.confirmationStatus=1         
+                
+END        
 
 GO
 

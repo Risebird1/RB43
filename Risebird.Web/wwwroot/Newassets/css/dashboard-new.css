@@ -3309,6 +3309,7 @@ button.btn {
     .timer {
         font-size: 15px !important;
     }
+    .mobpad{padding:0px!important;}
 
     .mobpad {
         padding: 0px !important;
