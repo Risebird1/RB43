@@ -1,4 +1,5 @@
-﻿@charset "UTF-8";
+﻿/* CSS Document */
+@charset "UTF-8";
 
 
 
@@ -21,23 +22,27 @@
 .ch-btn {
     width: 220px;
     margin-right: 10px;
-    margin-top:20px!important;
+    margin-top: 20px !important;
 }
+
 .mobile-view-chn, .mobile-view-ac {
     display: none
 }
+
 .mobile-view-ac {
     position: absolute;
     right: 6px;
     top: 19px;
     font-size: 10px;
 }
-    .mobile-view-chn {
+
+.mobile-view-chn {
     font-size: 10px;
     position: absolute;
     right: 107px;
     top: 20px;
 }
+
 .multiple_row > h2 {
     font-size: 18px;
     padding: 8px 10px;
@@ -1071,7 +1076,7 @@ table.journey td.cadSkill {
     border-radius: .25em;
 }
 
-.talk-bubble [data-tooltip], .video-info [data-tooltip], .video-title [data-tooltip], .jd-title [data-tooltip], .cadName [data-tooltip], .cadName [data-tooltip], .cadSkill [data-tooltip], .cadSkill[data-tooltip], .cadEmail [data-tooltip], .cadEmail [data-tooltip] {
+.talk-bubble [data-tooltip], .video-info [data-tooltip], .video-title [data-tooltip], .jd-title [data-tooltip], .cadName [data-tooltip], .cadName [data-tooltip], .cadSkill [data-tooltip], .cadSkill[data-tooltip], .cadEmail [data-tooltip], .cadEmail [data-tooltip], [data-tooltip] {
     position: relative;
     z-index: 2;
     cursor: pointer;
@@ -1086,7 +1091,8 @@ table.journey td.cadSkill {
     .jd-title [data-tooltip]:after, .cadName [data-tooltip]:before,
     .cadName [data-tooltip]:after, .cadSkill [data-tooltip]:before,
     .cadSkill [data-tooltip]:after, .cadEmail [data-tooltip]:before,
-    .cadEmail [data-tooltip]:after {
+    .cadEmail [data-tooltip]:after, [data-tooltip]:before,
+    [data-tooltip]:after {
         visibility: hidden;
         -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
         filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
@@ -1144,7 +1150,12 @@ table.journey td.cadSkill {
     left: 50%;
 }
 
-.cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
+.jd [data-tooltip]:before {
+    margin-left: -20px;
+}
+
+
+.cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before, [data-tooltip]:before {
     position: absolute;
     bottom: 90%;
     left: 10%;
@@ -1203,15 +1214,18 @@ table.journey td.cadSkill {
     border: 1px solid #dee2e6;
 }
 
- .table-bordered th {
+.table-bordered th {
     background: #4a4a4a47;
 }
+
 .table-bordered.interviewertable th {
     background: rgba(220, 220, 220, 0.3);
 }
+
 .table-striped.table-bordered th {
-    background: rgba(220, 220, 220, 0.3)!important;
+    background: rgba(220, 220, 220, 0.3) !important;
 }
+
 table {
     border-collapse: inherit;
 }
@@ -1317,7 +1331,7 @@ table.interviewertable th, table.interviewertable td {
 
 
 /* Triangle hack to make tooltip look like a speech bubble */
-.talk-bubble [data-tooltip]:after, .cadName [data-tooltip]:after, .cadSkill [data-tooltip]:after, .cadEmail [data-tooltip]:after {
+.talk-bubble [data-tooltip]:after, .cadName [data-tooltip]:after, .cadSkill [data-tooltip]:after, .cadEmail [data-tooltip]:after, [data-tooltip]:after {
     position: absolute;
     bottom: 70%;
     left: 50%;
@@ -1373,6 +1387,11 @@ table.interviewertable th, table.interviewertable td {
     float: left;
     font-weight: bold;
     padding-right: 4px;
+    margin-bottom: 10px;
+}
+
+.assesment .card-blue .card-body .client-field {
+    margin-bottom: 5px;
 }
 
 .can-details {
@@ -1411,12 +1430,24 @@ table.interviewertable th, table.interviewertable td {
     right: -.3rem;
 }
 
+.hopscotch-arrow.down .commonpool_menu {
+    transform: rotate( 1deg );
+    top: 6.9rem;
+    right: -.3rem;
+}
+
+.hopscotch-arrow.down {
+    transform: rotate( 1deg );
+    top: 7.9rem;
+    right: -.3rem;
+}
 /* Show tooltip content on hover */
 .talk-bubble [data-tooltip]:hover:before,
 .talk-bubble [data-tooltip]:hover:after, .video-info [data-tooltip]:hover:before, .video-info [data-tooltip]:hover:after, .video-title [data-tooltip]:hover:before, .video-title [data-tooltip]:hover:after, .jd-title [data-tooltip]:hover:before, .jd-title [data-tooltip]:hover:after, .cadName [data-tooltip]:hover:before,
 .cadName [data-tooltip]:hover:after, .cadEmail [data-tooltip]:hover:before,
 .cadEmail [data-tooltip]:hover:after, .cadSkill [data-tooltip]:hover:before,
-.cadSkill [data-tooltip]:hover:after {
+.cadSkill [data-tooltip]:hover:after, [data-tooltip]:hover:before,
+[data-tooltip]:hover:after {
     visibility: visible;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
     filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
@@ -2017,10 +2048,15 @@ a.list-group-item:focus {
 
             .panel .panel-heading .panel-title-box span {
                 font-size: 12px;
-                color: #586377;
-                font-weight: 400;
+                color: #000;
+                font-weight: 600;
                 line-height: 12px;
             }
+
+                .panel .panel-heading .panel-title-box span.overlay-relative {
+                    color: #fff;
+                    font-weight: normal
+                }
 
     .panel .panel-heading,
     .panel .panel-footer,
@@ -3079,12 +3115,17 @@ textarea {
 
 
 
-    .interviewer .multiselect .multiselect-selected-text {
-        color: #807e7e !important;
-        font-size: 13px !important;
-        float: left !important;
-    }
-
+.interviewer .multiselect .multiselect-selected-text {
+    color: #807e7e !important;
+    font-size: 13px !important;
+    float: left !important;
+}
+.note-filter {
+    width: 100%;
+    float: left;
+    color: #0b8c0b;
+    padding-top: 4px;
+}
 .mandate {
     position: relative;
     width: auto;
@@ -3270,6 +3311,10 @@ button.btn {
     }
     .mobpad{padding:0px!important;}
 
+    .mobpad {
+        padding: 0px !important;
+    }
+
     .navbar {
         padding-top: 0;
     }
@@ -3410,11 +3455,11 @@ input[type='radio'] {
 
 /*.pt30 {
     padding-top: 30px;
-}
-*/
-.mt50 {
-    /*   margin-top: 55px;*/
-}
+}*/
+
+/*.mt50 {
+    margin-top: 55px;
+}*/
 
 .mt-20 {
     margin-top: 20px;
@@ -3433,6 +3478,41 @@ input[type='radio'] {
 .Funnelid {
     height: 525px;
     width: 100%;
+}
+
+div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
+    top: -22px;
+    left: 10px;
+    -webkit-transform: rotate( 90deg );
+    -moz-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate( 360deg );
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.8);
+    z-index: 5;
+}
+
+.overlay-relative {
+    position: relative;
+    z-index: 7;
+}
+
+.helper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 5px;
+    /* background: #FFF;*/
+    border-radius: 4px;
+    z-index: 6;
 }
 
 .checkbox.pull-left, .checkbox.pull-right, .radio.pull-left, .radio.pull-right {
@@ -4020,6 +4100,7 @@ blockquote {
             .switch.switch-small span:after {
                 width: 16px;
             }
+
 /* END SWITCH */
 
 /* POPOVER */
@@ -6377,11 +6458,12 @@ button.close {
     position: absolute;
     top: 7px;
     right: 10px;
-    background:#fff;
- 
+    background: #fff;
 }
 
-#trigger-update{right:45px;}
+#trigger-update {
+    right: 45px;
+}
 
 h4.card-title {
     margin-top: 0px;
@@ -6403,7 +6485,10 @@ h4.card-title {
     background: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat right;
     z-index: 1;
 }
-
+.client-ms #meeting_filter input[type=search] {
+    background: #fff;
+    border: 0px !important;
+}
 .dataTables_filter input[type=search], #meeting_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
     border: 0px !important;
     padding: 9px 10px 9px 10px;
@@ -6419,36 +6504,39 @@ h4.card-title {
     position: relative;
     background: #fff;
 }
-    #candidateTable_filter input[type=search], #dupmeeting_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #MyInterviewList_filter input[type=search], #interviewer_filter input[type=search], #OpeninterviewList_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
-        border: 1px #ccc solid !important
-    }
 
-        #meeting input[type=search], #MyInterviewList_filter input[type=search], #meeting_filter input[type=search],.interview #meeting_filter input[type=search], #dupmeeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
-            background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 78% 9px;
-        }
+#candidateTable_filter input[type=search], #dupmeeting_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #MyInterviewList_filter input[type=search], #interviewer_filter input[type=search], #OpeninterviewList_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
+    border: 1px #ccc solid !important
+}
 
-.sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1, .toggle-box {
+#meeting input[type=search], #MyInterviewList_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #dupmeeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
+    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 78% 9px;
+}
+
+.sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1, .toggle-box,  .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1, .toggle-box {
     display: none;
 }
 
-    .toggle-box + label, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label {
+    .toggle-box + label, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label,  .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label {
         cursor: pointer;
         display: block;
-        font-weight: bold;
+        font-weight: normal;
         line-height: 21px;
         margin-bottom: 5px;
         padding: 0px;
+        font-size: 11px;
     }
 
-        .toggle-box + label + div, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label + div {
+        .toggle-box + label + div, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label + div, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label + div {
             display: none;
             margin-bottom: 10px;
         }
 
-.toggle-box:checked + label + div, .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu .toggle-box1:checked + label + div {
-    display: block;
-}
-    .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label:before, .toggle-box + label:before {
+    .toggle-box:checked + label + div, .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu .toggle-box1:checked + label + div,  .sidebar:hover .sidebar-wrapper .nav li.dropmenu .toggle-box1:checked + label + div {
+        display: block;
+    }
+
+    .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label:before, .toggle-box + label:before, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label:before {
         /* background-color: #4F5150; */
         -webkit-border-radius: 10px;
         -moz-border-radius: 10px;
@@ -6459,16 +6547,17 @@ h4.card-title {
         float: right;
         font-weight: bold;
         height: 20px;
-        line-height: 35px;
+        line-height: 27px;
         margin-right: 17px;
         font-size: 32px;
         text-align: center;
         width: 20px;
     }
 
-    .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1:checked + label:before, .toggle-box:checked + label:before {
+    .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1:checked + label:before, .toggle-box:checked + label:before,  .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1:checked + label:before {
         content: "\2212";
     }
+
 .collapse {
     display: none;
 }
@@ -8165,6 +8254,7 @@ div.tagsinput {
     }
 
 
+
         .PieId .canvasjs-chart-canvas {
             height: auto !important;
             width: 100% !important;
@@ -8197,7 +8287,7 @@ div.tagsinput {
     }
 
     .mobile-view-chn, .mobile-view-ac {
-        display:block
+        display: block
     }
 
 

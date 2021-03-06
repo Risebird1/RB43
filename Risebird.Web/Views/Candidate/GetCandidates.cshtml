@@ -48,9 +48,18 @@
                 <div class="pull-right">
                     <div>
 
+
                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates</font></span>
-                            </button>*@
+            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates</font></span>
+        </button>*@
+
+
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick(false)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates</font></span>
+                        </button>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file and send invitation." onclick="ModalButtonClick(true)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates(Invite)</font></span>
+                        </button>
 
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add a Candidate." onclick="location.href='@Url.Action("Add", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidate</font></span>
@@ -224,7 +233,7 @@
                                                                 else
                                                                 {
                                                                     <td></td>
-}
+                                                                }
 
 
                                                                 @if (item.EncodedResumeLink != null && item.EncodedResumeLink != "")
@@ -407,7 +416,7 @@
                                                                             else
                                                                             {
                                                                                 <td></td>
-}
+                                                                            }
                                                                             @if (item.ClientHRAttemptContact != null && item.ClientHRAttemptContact.Length > 13)
                                                                             {
                                                                                 <td class="text-center">@item.ClientHRAttemptContact.Substring(0, 13)... </td>
@@ -577,23 +586,16 @@
 
                             <div class="modal-body">
                                 <div class="form-group text-center">
-                                    <h5 style="font-size:20px;"> Download the template  <span onclick="location.href='@Url.Action("DownloadTemplate", "IRF")'"><svg style="fill:#53a5f5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg></span></h5>
+                                    <h5 style="font-size:20px;"> Download the template  <span onclick="location.href='@Url.Action("DownloadTemplate", "Candidate")'"><svg style="fill:#53a5f5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg></span></h5>
 
-                                    <!-- <button class="btn default" onclick="location.href='@Url.Action("DownloadTemplate", "IRF")'">Download Template</button-->
 
                                 </div>
 
-                                @using (Html.BeginForm("ImportCandidates", "IRF", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                @using (Html.BeginForm("ImportQuickCandidates", "Candidate", FormMethod.Post, new { enctype = "multipart/form-data" }))
                                 {
                                     <div class="form-group">
 
-                                        <!--   <label class="uploadfile" for="UploadedFile">
-                                            <b>
-                                                <i class="fas fa-file"></i>
-                                                Click here to choose file
-                                            </b>
-                                        </label>-->
-
+                                       
 
                                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" for="UploadedFile" style="margin:0px auto; display:block;">
 
@@ -601,20 +603,15 @@
                                             <div class="mdc-button__ripple"></div>
                                         </button>
 
-
-
-
-
-
-
                                         <input type="file" accept=".xls, .xlsx" name="UploadedFile" />
                                     </div>
                                     <div class="">
-                                        <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;
-    display: block;" id="btnImport" value="Import">
+                                        <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnImport" value="Import">
+                                            
                                     </div>
                                     <input type="hidden" id="IRFId" name="IRFId" value='@ViewBag.IRFId'>
                                     <input type="hidden" id="IRFName" name="IRFName" value='@ViewBag.IRFName'>
+                                    <input type="hidden" id="IsSendInvite" name="IsSendInvite">
 
                                 }
 
@@ -715,10 +712,15 @@
                 </div>
             </div>
 
+
+            
+
             <!-- end row -->
         </div>
 
     </div>
+
+
 
     @if (ViewBag.Message != null)
     {
@@ -773,7 +775,6 @@
         </script>
 
     }
-
 
 
 
@@ -877,7 +878,9 @@
         var irfId;
     </script>
     <script>
-        function ModalButtonClick() {
+        function ModalButtonClick(value) {
+            debugger;
+            document.getElementById("IsSendInvite").value=value;
 
             // Get the modal
             var modal = document.getElementById("myModal");
