@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+
+namespace Risebird.Entities.ViewModel
+{
+    public class CandidateQuickAddModel
+    {
+        public int IRFId { get; set; }
+        public string IRFName { get; set; }
+        [Required]
+        [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
+        ErrorMessage = "Please Enter Correct Email Address")]
+        [Display(Name = "Email")]
+        public string EmailId { get; set; }
+        [Required]
+        public string Name { get; set; }
+        [Required]
+        public string Phone { get; set; }
+        [Required]
+        [Display(Name = "Resume Link")]
+        public string ResumeLink { get; set; }
+        public bool IsSendInvite { get; set; }
+        public int AddedByUserId { get; set; }
+    }
+}

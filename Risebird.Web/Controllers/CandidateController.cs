@@ -2333,5 +2333,119 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Interviews");
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public FileContentResult DownloadTemplate()
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Import Template");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Import_Template" + ".xlsx";
+            try
+            {
+
+                Sheet.Cells["A1:P1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:P1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:P1"].Style.WrapText = true;
+                int startColumn = 1; int endColumn = 6;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 35;
+                }
+                Sheet.Cells[1, 1].Value = "Name";
+                Sheet.Cells[1, 2].Value = "EmailId";
+                Sheet.Cells[1, 3].Value = "Resume Link";
+                Sheet.Cells[1, 4].Value = "Phone(With Country code)";
+                
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Download failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+
+        }
+
+        public ActionResult ImportQuickCandidates(IFormCollection formCollection)
+        {
+            var IRFId = Convert.ToInt32((formCollection["IRFId"].ToString()));
+            var isSendInvite = Convert.ToBoolean((formCollection["IsSendInvite"].ToString()));
+            var IRFName = formCollection["IRFName"].ToString();
+            try
+            {
+                
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+
+                    if (Request != null)
+                    {
+                        var file = formCollection.Files[0];
+                        
+                        if ((file != null) && (file.Length > 0) && !string.IsNullOrEmpty(file.FileName))
+                        {
+
+                            string fileName = file.FileName;
+                            string fileContentType = file.ContentType;
+                            byte[] fileBytes = new byte[file.Length];
+                            var data = file.OpenReadStream();
+                            var candidateList = new List<CandidateQuickAddModel>();
+                            using (var package = new ExcelPackage(file.OpenReadStream()))
+                            {
+                                var currentSheet = package.Workbook.Worksheets;
+                                var workSheet = currentSheet.First();
+                                var noOfCol = workSheet.Dimension.End.Column;
+                                var noOfRow = workSheet.Dimension.End.Row;
+                                for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
+                                {
+                                    var candidate = new CandidateQuickAddModel
+                                    {
+                                        Name = (workSheet.Cells[rowIterator, 1] != null) ? workSheet.Cells[rowIterator, 1].Value.ToString() : "",
+                                        EmailId = workSheet.Cells[rowIterator, 2].Value.ToString(),
+                                        ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null) ? workSheet.Cells[rowIterator, 3].Value.ToString() : "",         //workSheet.Cells[rowIterator, 3].Value.ToString();
+                                        Phone = (workSheet.Cells[rowIterator, 4].Value != null) ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString()) : "",                  // "+" + workSheet.Cells[rowIterator, 10].Value.ToString();
+                                        IRFId = IRFId
+                                    };
+                                    candidateList.Add(candidate);
+                                }
+
+                            }
+                            var result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite).Result;
+                            TempData["SuccessErrorMessageCandidate"] = result;
+                            return RedirectToAction("GetCandidates", new { id = IRFId, irfName = IRFName });
+
+
+                        }
+
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
+                            return RedirectToAction("GetCandidates", new { id = IRFId, irfName = IRFName });
+
+                        }
+                    }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
+                return RedirectToAction("GetCandidates", new { id = IRFId, irfName = IRFName });
+            }
+            return null;
+        }
+
+
+
+
+
     }
 }

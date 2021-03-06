@@ -2923,6 +2923,7 @@ table {
 
     .newsletter .input-group.card-title-space {
         margin: 0px;
+        width:100%;
     }
 
     .comment-area .talk-bubble {
@@ -2997,8 +2998,9 @@ table {
     }
 
     #myForm .searchbox input[type=email] {
-        width: 250px !important;
-        height: auto;
+        width: 260px !important;
+        padding-left: 4px;
+        /* height: auto;*/
     }
 }
 

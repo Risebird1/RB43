@@ -25,7 +25,7 @@ if(@roleId=1)
   
    select  
   
-   (select count(distinct candidateEmail) from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id) where im.ClientHrContact=@emailId and im.confirmationStatus=1) as TotalCandidates,  
+   (select count( candidateEmail) from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id) where im.ClientHrContact=@emailId and im.confirmationStatus=1) as TotalCandidates,  
      
    (select count(im.id) from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id) where im
 .ClientHrContact=@emailId and im.confirmationStatus=1) as TotalConfirmations,  
@@ -56,7 +56,7 @@ else if(@roleId=4)
   
    select  
   
-   (select count(distinct candidateEmail) from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id) where im.staffingAgency=@emailId and im.confirmationStatus=1) as TotalCandidates,  
+   (select count( candidateEmail) from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id) where im.staffingAgency=@emailId and im.confirmationStatus=1) as TotalCandidates,  
      
    (select count(im.id) from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id) where staffingAgency=@emailId and confirmationStatus=1) as TotalConfirmations,  
   
@@ -92,7 +92,7 @@ else
    select  
   
      
-   (select count(distinct cm.UserId) from TransClientUser tcu join irf on irf.id= tcu.IRFId  
+   (select count( cm.UserId) from TransClientUser tcu join irf on irf.id= tcu.IRFId  
     join Candidate ca on ca.IRFId=irf.id join CandidatesMaster cm on cm.id=ca.CandidateMasterId  
     where tcu.ClientUserId=@userId) as TotalCandidates,  
      

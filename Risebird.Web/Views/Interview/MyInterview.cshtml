@@ -84,8 +84,9 @@
                             <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="MyInterview" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
                         </button>
                         <i type="submit" class="fa fa-file-excel-o excel-file card-title-space" style="margin-right:10px;float:right;margin-left:3px;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i>
-
+                       
                     </div>
+                    <div class="note-filter"> Note: To visualize the previous date data please apply filter</div>
                 </div>
             </div>
         </div>
@@ -294,11 +295,13 @@
                                                     <tr>
                                                         <th style="border-right: 0px !important;"></th>
                                                         <th style="border-left: 0px !important;">Date</th>
+                                                        <th style="text-align:center">Slot</th>
                                                         <th style="text-align:center">Call Candidate</th>
                                                         <th style="text-align:center">Call Coordinating HR</th>
                                                         <th>Candidate Name</th>
                                                         <th>Duration</th>
                                                         <th>JD Link</th>
+                                                        <th>Skill Channel</th>
                                                         <th>Resume</th>
                                                         <th>Zoom ID</th>
                                                         <th class="disabled-sorting text-right">Actions</th>
@@ -310,11 +313,13 @@
                                                     <tr>
                                                         <th style="border-right: 0px !important;"></th>
                                                         <th style="border-left: 0px !important;">Date</th>
+                                                        <th style="text-align:center">Slot</th>
                                                         <th style="text-align:center">Call Candidate</th>
                                                         <th style="text-align:center">Call Coordinating HR</th>
                                                         <th>Candidate Name</th>
                                                         <th>Duration</th>
                                                         <th>JD Link</th>
+                                                        <th>Skill Channel</th>
                                                         <th>Resume</th>
                                                         <th>Zoom ID</th>
                                                         <th class="disabled-sorting text-right">Actions</th>
@@ -337,6 +342,16 @@
                                                 <tr id=@item.id>
                                                     <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row">&nbsp;</td>
                                                     <td> @item.interviewDate </td>
+                                                    @if (@item.interviewSlot == "Morning")
+                                                    {
+                                                        <td><a style="color:darkorange;font-weight: bold"> @item.interviewSlot</a></td>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <td><a style="color:darkblue;font-weight: bold"> @item.interviewSlot</a></td>
+                                                    }
+                                                    
                                                     <td class="callcandidatebtn" style="text-align:center">
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                                         {
@@ -375,7 +390,7 @@
                                                     {
                                                         <td>No JD</td>
                                                     }
-
+                                                    <td style="text-align: center"> @item.IRFID </td>
                                                     @if (item.resumeLink != null && item.resumeLink != "")
                                                     {
                                                         <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
