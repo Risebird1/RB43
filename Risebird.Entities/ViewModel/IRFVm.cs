@@ -128,6 +128,7 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public int BillingOwner { get; set; }
         [Display(Name = "Assessment Group Id")]
+        [Required]
         public string AssessmentGroupId { get; set; }
         public SelectList AssessmentGroupList { get; set; }
         public IEnumerable<IRFInterviewerMembers> InterviewerMembers { get; set; }
