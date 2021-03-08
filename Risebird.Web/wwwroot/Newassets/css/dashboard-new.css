@@ -49,19 +49,127 @@
 #MyRibbonDetailsPopup .modal-lg {
     max-width:800px !important;
 }
+.countdown__timer.front-card:after {
+    border-top: solid 1px #22222226;
+}
+
+.countdown__timer.front-card:after {
+    content: '';
+    z-index: 2;
+    position: absolute;
+    bottom: -1px;
+    left: 0px;
+    width: 57px;
+    height: 20px;
+    border-radius: 0px 0px 4px 4px;
+}
+.countdown__timer.front-card .card-title {
+    background: -webkit-linear-gradient(#2e2e2c, #797976);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.flipper {
+    position: relative;
+    top: -8px;
+    left: -8px;
+}
+
+.flipper {
+    perspective: 600px;
+    -webkit-perspective: 600px;
+    -moz-perspective: 600px;
+    -webkit-transform-origin: 100% center;
+    -moz-transform-origin: 100% center;
+    -ms-transform-origin: 100% center;
+    transform-origin: 100% center;
+}
+
+.front-card, .back-card {
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -o-transition: transform 1s ease-in-out;
+    -moz-transition: transform 1s ease-in-out;
+    -webkit-transition: transform 1s ease-in-out;
+    transition: transform 1s ease-in-out;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.front-card {
+    z-index: 2;
+    -webkit-transform: rotateX(0deg);
+    -moz-transform: rotateX(0deg);
+    transform: rotateX(0deg);
+    color: #544f4f;
+    background: #DDDDDD;
+    background: -webkit-linear-gradient(to top, #DDDDDD 0%, #8F8F8F 100%);
+    background: -moz-linear-gradient(to top, #DDDDDD 0%, #8F8F8F 100%);
+    background: linear-gradient(to top, #DDDDDD 0%, #8F8F8F 100%);
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.flipper.flip .front-card {
+    -webkit-transform: rotateX(180deg);
+    -moz-transform: rotateX(180deg);
+    transform: rotateX(180deg);
+}
+
+.back-card {
+    -webkit-transform: rotateX(-180deg);
+    -moz-transform: rotateX(-180deg);
+    transform: rotateX(-180deg);
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.flipper.flip .back-card {
+    -webkit-transform: rotateX(0deg);
+    -moz-transform: rotateX(0deg);
+    transform: rotateX(0deg);
+    color: #544f4f;
+    background: #FFFFFF;
+    background: -webkit-linear-gradient(to top, #FFFFFF 0%, #EDF7DA 100%);
+    background: -moz-linear-gradient(to top, #FFFFFF 0%, #EDF7DA 100%);
+    background: linear-gradient(to top, #FFFFFF 0%, #EDF7DA 100%);
+}
+.un-left{padding-left:25px!important;}
+/*Styling*/
+.header-front {
+    color: #544f4f;
+    background: #DDDDDD;
+    background: -webkit-linear-gradient(to top, #DDDDDD 0%, #8F8F8F 100%);
+    background: -moz-linear-gradient(to top, #DDDDDD 0%, #8F8F8F 100%);
+    background: linear-gradient(to top, #DDDDDD 0%, #8F8F8F 100%);
+}
+
+.header-back {
+    color: #544f4f;
+    background: #FFFFFF;
+    background: -webkit-linear-gradient(to top, #FFFFFF 0%, #EDF7DA 100%);
+    background: -moz-linear-gradient(to top, #FFFFFF 0%, #EDF7DA 100%);
+    background: linear-gradient(to top, #FFFFFF 0%, #EDF7DA 100%);
+}
+
+
 
 .countdown__timer {
     padding: .25em;
-
-    border: 1px solid black;
-    border-radius: 3px;
-    font-weight: bold;
-    font-size: 2em;
-    width: 35px;
-    height: 35px;
+    border: 0px solid black;
+    border-radius: 1px;
+    font-weight: bolder;
+    font-size: 42px;
+    width: 57px;
+    height: 45px;
     margin: 0px auto;
-    line-height: 16px;
+    line-height: 25px;
     text-align: center;
+    border-radius: 3px !important;
 }
 .background-colorful {
     background: linear-gradient(left, #E04B4A 0%, #1caf9a 50%, #95b75d 100%);
@@ -72,19 +180,7 @@
     background: -webkit-gradient(linear, left top, right top, color-stop(0, #E04B4A), color-stop(0.5, #1caf9a), color-stop(1, #95b75d));
 }
 /* EOF PREDEFINED CLASSES */
-html * {
-    outline: none !important;
-}
 
-html,
-body {
-    min-height: 100%;
-    padding: 0px;
-    margin: 0px;
-    position: relative;
-    color: #22262e;
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji!important";
-}
 
 .body-full-height {
     height: 100%;
