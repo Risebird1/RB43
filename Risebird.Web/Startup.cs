@@ -212,6 +212,7 @@ namespace Risebird.Web
             services.AddScoped<IActivityTrackerService, ActivityTrackerService>();
             services.AddScoped<IUnapprovedInterviewerMeetingsService, UnapprovedInterviewerMeetingsService>();
             services.AddScoped<IUnapprovedInterviewerMeetingsRepository, UnapprovedInterviewerMeetingsRepository>();
+            services.AddScoped<IB2CClientService, B2CClientService>();
 
         }
     }

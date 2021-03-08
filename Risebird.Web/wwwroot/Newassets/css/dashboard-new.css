@@ -60,6 +60,11 @@
     background: -ms-linear-gradient(left, #E04B4A 0%, #1caf9a 50%, #95b75d 100%);
     background: -webkit-gradient(linear, left top, right top, color-stop(0, #E04B4A), color-stop(0.5, #1caf9a), color-stop(1, #95b75d));
 }
+.secret-pass {
+    float: left;
+    padding-left: 30px;
+    line-height: 13px;
+}
 /* EOF PREDEFINED CLASSES */
 html * {
     outline: none !important;
