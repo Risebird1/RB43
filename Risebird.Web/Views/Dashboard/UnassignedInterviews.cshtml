@@ -14,7 +14,7 @@
     string strtDte = String.Empty;
     string endDte = String.Empty;
     string[] Status = new string[] { };
-   
+
 
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
@@ -22,9 +22,9 @@
     filter = JsonConvert.DeserializeObject<UnassignedInterviewsFilter>(HttpContextAccessor.HttpContext.Session.GetString("UnassignedInterviewsFilters"));
     strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
-    
+
     Status = filter.Status != null ? filter.Status : new string[] { };
-    
+
 }
 
 
@@ -64,7 +64,7 @@
                 </div>
 
                 <div class="pull-right">
-                    
+
                     <div>
                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#filterModal">
 
@@ -91,7 +91,7 @@
                         <div class="dataloading">
 
                             <div class="toolbar">
-
+                                <input type="hidden" value="@ViewBag.actionstatus" id="hidactionstatus" />
                                 <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-lg" role="document">
                                         <div class="modal-content">
@@ -104,7 +104,7 @@
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            <form action="@Url.Action("UnassignedInterviews","Dashboard")" method="post" id="form">
+                                            <form action="@Url.Action("UnassignedInterviews","Dashboard",new { actionstatus=ViewBag.actionstatus})" method="post" id="form">
 
                                                 <div class="modal-body">
                                                     <div class="row">
@@ -132,30 +132,31 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                        @*<div class="col-md-6 col-sm-6 border-rv">
 
-                                                            
-                                                            
 
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Status">
-                                                                    Status
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="Status" name="Status" class="form-control multiselect" multiple="multiple">
-                                                                        <option value="@(UnassignedInterviewsTypes.Unassigned.GetDescription())">@(UnassignedInterviewsTypes.Unassigned.GetDescription())</option>
-                                                                        <option value="@(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription())">@(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription())</option>
-                                                                        <option value="@(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription())">@(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription())</option>
-                                                                        <option value="@(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription())">@(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription())</option>
-                                                                    </select>
+
+
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="Status">
+                                                                        Status
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="Status" name="Status" class="form-control multiselect" multiple="multiple">
+                                                                            <option value="@(UnassignedInterviewsTypes.Unassigned.GetDescription())">@(UnassignedInterviewsTypes.Unassigned.GetDescription())</option>
+                                                                            <option value="@(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription())">@(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription())</option>
+                                                                            <option value="@(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription())">@(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription())</option>
+                                                                            <option value="@(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription())">@(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription())</option>
+                                                                        </select>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            
-                                                            
-                                                        </div>
+
+
+                                                            </div>*@
+
                                                         <div class="col-md-6 col-sm-6">
 
-                                                            
+
                                                             <div class="form-group">
                                                                 <div>
                                                                     <div class="col-md-12 col-sm-12">
@@ -264,7 +265,7 @@
 
 
 
-                                                      
+
                                                         <td>@item.HRCoordinatorEmailId</td>
 
                                                     </tr>
@@ -320,12 +321,13 @@
                 maxHeight: 200
             });
 
-            
+
 
         });
 
-        function ResetFilter() {
-            window.location.href = "/Dashboard/ResetUnassignedInterviewsFilter";
+    function ResetFilter() {
+        var value=$("#hidactionstatus").val();
+        window.location.href = "/Dashboard/ResetUnassignedInterviewsFilter?actionstatus=" + value;
 
         }
         function ApplySessionFilter() {
@@ -333,13 +335,13 @@
             var strtDte = '@strtDte';
             var endDte = '@endDte';
             var status =  @Html.Raw(Json.Serialize(Status));
-           
+
 
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
             $("#Status").val(status);
-           
+
             var form = $("#form").serialize();
 
         }

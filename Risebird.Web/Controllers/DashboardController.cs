@@ -862,7 +862,7 @@ namespace Risebird.Web.Controllers
         #endregion
 
         [Authorize]
-        public async Task<IActionResult> UnassignedInterviews()
+        public async Task<IActionResult> UnassignedInterviews(string actionstatus)
         {
             try
             {
@@ -873,57 +873,32 @@ namespace Risebird.Web.Controllers
 
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        var modelList = await _dashboardService.GetNotUpdatedMeetings();
-
-
+                        //var modelList = await _dashboardService.GetNotUpdatedMeetings();
+                        var modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus);
+                        ViewBag.actionstatus = actionstatus;
                         if (HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<UnassignedInterviewsFilter>(HttpContext.Session.GetString("UnassignedInterviewsFilters"));
                             if (filter.StartDate != null && filter.EndDate != null)
                             {
-                                modelList = modelList.Where(x => x.interviewDate >= filter.StartDate && x.interviewDate <= filter.EndDate);
+                                modelList = modelList.Where(x => x.interviewDate >= filter.StartDate && x.interviewDate <= filter.EndDate).ToList();
                             }
                             modelList = modelList.Select(x =>
                             {
                                 x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
                                 return x;
                             }).ToList();
-
-                            if (filter.Status != null)
-                            {
-                                if (filter.Status.Contains(UnassignedInterviewsTypes.Unassigned.GetDescription()))
-                                {
-                                    modelList = modelList.Where(x => string.IsNullOrEmpty(x.interviewer));
-                                }
-                                if (filter.Status.Contains(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription()))
-                                {
-                                    modelList = modelList.Where(x => x.MeetingStatus == null);
-                                }
-                                if (filter.Status.Contains(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription()))
-                                {
-                                    modelList = modelList.Where(x => x.InterviewStatus == null);
-                                }
-                                if (filter.Status.Contains(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription()))
-                                {
-                                    modelList = modelList.Where(x => string.IsNullOrEmpty(x.InterviewerComment));
-                                }
-                            }
-
-
                         }
                         else
                         {
-
                             modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
                         }
-
                         return View(modelList);
                     }
                     else
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-
                 }
                 else
                 {
@@ -938,7 +913,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> UnassignedInterviews(UnassignedInterviewsFilter filter)
+        public async Task<IActionResult> UnassignedInterviews(UnassignedInterviewsFilter filter, string actionstatus)
         {
             try
             {
@@ -953,39 +928,17 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.SetString("UnassignedInterviewsFilters", JsonConvert.SerializeObject(filter));
                         }
-                        var modelList = await _dashboardService.GetNotUpdatedMeetings();
-
+                        var modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus);
+                        ViewBag.actionstatus = actionstatus;
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            modelList = modelList.Where(x => x.interviewDate >= filter.StartDate && x.interviewDate <= filter.EndDate);
+                            modelList = modelList.Where(x => x.interviewDate >= filter.StartDate && x.interviewDate <= filter.EndDate).ToList();
                         }
                         modelList = modelList.Select(x =>
                         {
                             x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
                             return x;
                         }).ToList();
-
-                        if (filter.Status != null)
-                        {
-                            if (filter.Status.Contains(UnassignedInterviewsTypes.Unassigned.GetDescription()))
-                            {
-                                modelList = modelList.Where(x => string.IsNullOrEmpty(x.interviewer));
-                            }
-                            if (filter.Status.Contains(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription()))
-                            {
-                                modelList = modelList.Where(x => x.MeetingStatus == null);
-                            }
-                            if (filter.Status.Contains(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription()))
-                            {
-                                modelList = modelList.Where(x => x.InterviewStatus == null);
-                            }
-                            if (filter.Status.Contains(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription()))
-                            {
-                                modelList = modelList.Where(x => string.IsNullOrEmpty(x.InterviewerComment));
-                            }
-                        }
-
-
                         return View(modelList);
                     }
                     else
@@ -1007,14 +960,14 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> ResetUnassignedInterviewsFilter()
+        public async Task<IActionResult> ResetUnassignedInterviewsFilter(string actionstatus)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     HttpContext.Session.Remove("UnassignedInterviewsFilters");
-                    return RedirectToAction("UnassignedInterviews");
+                    return RedirectToAction("UnassignedInterviews", new { actionstatus = actionstatus });
                 }
                 else
                 {
@@ -1032,11 +985,6 @@ namespace Risebird.Web.Controllers
         {
             var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCount();
             return Json(Ribbonmodel);
-        }
-        public async Task<JsonResult> FetchRibbonDetailsValues(string actionstatus)
-        {
-            var model = await _dashboardService.FetchRibbonDetailsValues(actionstatus);
-            return Json(model);
         }
     }
 }

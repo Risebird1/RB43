@@ -713,24 +713,6 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<MeetingVM>> GetNotUpdatedMeetings()
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetNotUpdatedMeetings",
-                        commandType: CommandType.StoredProcedure);
-                    return result;
-                }
-
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
         public async Task<List<string>> FetchHRList(string searchterm)
         {
             try
@@ -886,13 +868,52 @@ namespace Risebird.Repository
                 {
                     query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
                 }
-                else if (actionstatus == "InterviewStatus")
+                else if (actionstatus == "QcPending")
                 {
-                    query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId = im.id where confirmationStatus = 1 and interviewer is not null and ic.MeetingStatus = 4 and ic.InterviewStatus is null and DATEDIFF(DAY, interviewDate, GETDATE()) < 7";
+                    query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus=4 and ic.QCStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
                 }
-                else if (actionstatus == "UnfilledComment")
+                else if (actionstatus == "UnAssignedCoordianter")
                 {
-                    query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus=4 and ic.InterviewerComment is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
+                    query = "select * from InterviewMeetings im  where confirmationStatus=1 and risebirdHR is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
+                }
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<MeetingVM>(query, null);
+                    return (List<MeetingVM>)results;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus)
+        {
+            try
+            {
+                string query = string.Empty;
+                if (actionstatus == "InterviewCount")
+                {
+                    query = "select * from InterviewMeetings im  where confirmationStatus=1 and interviewer is null";
+                }
+                else if (actionstatus == "MeetingStatus")
+                {
+                    query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus is null";
+                }
+                else if (actionstatus == "QcPending")
+                {
+                    query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus=4 and ic.QCStatus is null";
+                }
+                else if (actionstatus == "UnAssignedCoordianter")
+                {
+                    query = "select * from InterviewMeetings im  where confirmationStatus=1 and risebirdHR is null";
                 }
 
                 using (SqlConnection con = new SqlConnection(connectionString))

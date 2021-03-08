@@ -354,18 +354,6 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<MeetingVM>> GetNotUpdatedMeetings()
-        {
-            try
-            {
-                return await _dashboardRespository.GetNotUpdatedMeetings();
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
         public async Task<List<string>> FetchHRList(string searchterm)
         {
             try
@@ -448,6 +436,18 @@ namespace Risebird.Business
             try
             {
                 return await _dashboardRespository.FetchRibbonDetailsValues(actionstatus);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus)
+        {
+            try
+            {
+                return await _dashboardRespository.FetchRibbonDetailsValuesbydate(actionstatus);
             }
             catch (Exception ex)
             {
