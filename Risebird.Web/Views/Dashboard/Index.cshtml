@@ -19,7 +19,129 @@
 <!-- END THIS PAGE PLUGINS-->
 <!-- START TEMPLATE -->
 
+<style>
+    .flipper {
+        position: relative;
+    }
 
+    .flipper {
+        perspective: 600px;
+        -webkit-perspective: 600px;
+        -moz-perspective: 600px;
+        -webkit-transform-origin: 100% center;
+        -moz-transform-origin: 100% center;
+        -ms-transform-origin: 100% center;
+        transform-origin: 100% center;
+    }
+
+    .front-card, .back-card {
+        -webkit-transform-style: preserve-3d;
+        -moz-transform-style: preserve-3d;
+        transform-style: preserve-3d;
+        -webkit-backface-visibility: hidden;
+        -moz-backface-visibility: hidden;
+        backface-visibility: hidden;
+        -o-transition: transform 1s ease-in-out;
+        -moz-transition: transform 1s ease-in-out;
+        -webkit-transition: transform 1s ease-in-out;
+        transition: transform 1s ease-in-out;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .front-card {
+        z-index: 2;
+        -webkit-transform: rotateX(0deg);
+        -moz-transform: rotateX(0deg);
+        transform: rotateX(0deg);
+    }
+
+    .flipper.flip .front-card {
+        -webkit-transform: rotateX(180deg);
+        -moz-transform: rotateX(180deg);
+        transform: rotateX(180deg);
+        color: #FFFFFF;
+        background-color: #151515;
+    }
+
+    .back-card {
+        -webkit-transform: rotateX(-180deg);
+        -moz-transform: rotateX(-180deg);
+        transform: rotateX(-180deg);
+    }
+
+    .flipper.flip .back-card {
+        -webkit-transform: rotateX(0deg);
+        -moz-transform: rotateX(0deg);
+        transform: rotateX(0deg);
+        color: #222222;
+        background-color: #DDDDDD;
+    }
+
+    /*Styling*/
+    .header-front {
+        color: #FFFFFF;
+        background-color: #151515;
+    }
+
+    .header-back {
+        color: #222222;
+        background-color: #DDDDDD;
+    }
+
+    .card {
+        margin-top: 10px;
+        box-sizing: border-box;
+        border-radius: 2px;
+        background-clip: padding-box;
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    }
+
+        .card span.card-title {
+            color: #fff;
+            font-size: 24px;
+            font-weight: 300;
+            text-transform: uppercase;
+        }
+
+        .card .card-image {
+            position: relative;
+            overflow: hidden;
+        }
+
+            .card .card-image .header-front, .card .card-image .header-back {
+                border-radius: 2px 2px 0 0;
+                background-clip: padding-box;
+                position: relative;
+                z-index: -1;
+                width: 500px;
+                height: 150px;
+            }
+
+            .card .card-image span.card-title {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                padding: 16px;
+            }
+
+        .card .card-content {
+            padding: 16px;
+            border-radius: 0 0 2px 2px;
+            background-clip: padding-box;
+            box-sizing: border-box;
+        }
+
+            .card .card-content p {
+                margin: 0;
+                color: inherit;
+            }
+
+            .card .card-content span.card-title {
+                line-height: 48px;
+            }
+</style>
 
 
 <div class="main-panel" id="main-panel">
@@ -87,16 +209,16 @@
                                             <td width="10%" class="un-right">
                                                 @*<div class="countdown__timer flip" style="cursor:pointer" onclick="OpenRibbonDetails('InterviewCount')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunassignedinterviewcount">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span></strong></div>*@
                                                 <div class="flipper">
-                                                    <div class="front-card card">
+                                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('InterviewCount')">
                                                         <div class="card-image">
                                                             <div class="header-front"></div>
-                                                            <span class="card-title">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span>
+                                                            <span id="ribbonunassignedinterviewcount" class="card-title">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span>
                                                         </div>
                                                     </div>
-                                                    <div class="back-card card">
+                                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('InterviewCount')">
                                                         <div class="card-image">
                                                             <div class="header-back"></div>
-                                                            <span class="card-title"></span>
+                                                            <span id="ribbonunassignedinterviewcount_1" class="card-title">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -999,13 +1121,18 @@
                 $("#ribbonunfilledmeetingstatuscount").text(data.unfilledMeetingStatusCount);
                 $("#ribbonunfilledinterviewstatuscount").text(data.unfilledInterviewStatusCount);
                 $("#ribbonunfilledcommentscount").text(data.unfilledCommentsCount);
+
+                $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
+                //$("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
+                //$("#ribbonunfilledinterviewstatuscount_1").text(data.unfilledInterviewStatusCount);
+                //$("#ribbonunfilledcommentscount_1").text(data.unfilledCommentsCount);
             }
         });
-        $(".flipper").addClass("flip");
+        $(".flipper").toggleClass("flip");
         setTimeout(setRibbon, 10000);
-        setTimeout(function () {
-            $(".flipper").removeClass("flip");
-        }, 1000);
+        //setTimeout(function () {
+        //    $(".flipper").removeClass("flip");
+        //}, 1000);
         
     }
     function OpenRibbonDetails(actionstatus) {
@@ -1013,120 +1140,3 @@
     }
 </script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-<style>
-    .flipper {
-        position: relative;
-    }
-
-    .flipper {
-        perspective: 600px;
-        -webkit-perspective: 600px;
-        -moz-perspective: 600px;
-        -webkit-transform-origin: 100% center;
-        -moz-transform-origin: 100% center;
-        -ms-transform-origin: 100% center;
-        transform-origin: 100% center;
-    }
-
-    .front-card, .back-card {
-        -webkit-transform-style: preserve-3d;
-        -moz-transform-style: preserve-3d;
-        transform-style: preserve-3d;
-        -webkit-backface-visibility: hidden;
-        -moz-backface-visibility: hidden;
-        backface-visibility: hidden;
-        -o-transition: transform .6s ease-in-out;
-        -moz-transition: transform .6s ease-in-out;
-        -webkit-transition: transform .6s ease-in-out;
-        transition: transform .6s ease-in-out;
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
-
-    .front-card {
-        z-index: 2;
-        -webkit-transform: rotateX(0deg);
-        -moz-transform: rotateX(0deg);
-        transform: rotateX(0deg);
-    }
-
-    .flipper.flip .front-card {
-        -webkit-transform: rotateX(180deg);
-        -moz-transform: rotateX(180deg);
-        transform: rotateX(180deg);
-    }
-
-    .back-card {
-        -webkit-transform: rotateX(-180deg);
-        -moz-transform: rotateX(-180deg);
-        transform: rotateX(-180deg);
-    }
-
-    .flipper.flip .back-card {
-        -webkit-transform: rotateX(0deg);
-        -moz-transform: rotateX(0deg);
-        transform: rotateX(0deg);
-    }
-
-    /*Styling*/
-    .header-front {
-        background: SteelBlue;
-    }
-
-    .header-back {
-        background: white;
-    }
-
-    .card {
-        margin-top: 10px;
-        box-sizing: border-box;
-        border-radius: 2px;
-        background-clip: padding-box;
-        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-    }
-
-        .card span.card-title {
-            color: #fff;
-            font-size: 24px;
-            font-weight: 300;
-            text-transform: uppercase;
-        }
-
-        .card .card-image {
-            position: relative;
-            overflow: hidden;
-        }
-
-            .card .card-image .header-front, .card .card-image .header-back {
-                border-radius: 2px 2px 0 0;
-                background-clip: padding-box;
-                position: relative;
-                z-index: -1;
-                width: 500px;
-                height: 150px;
-            }
-
-            .card .card-image span.card-title {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                padding: 16px;
-            }
-
-        .card .card-content {
-            padding: 16px;
-            border-radius: 0 0 2px 2px;
-            background-clip: padding-box;
-            box-sizing: border-box;
-        }
-
-            .card .card-content p {
-                margin: 0;
-                color: inherit;
-            }
-
-            .card .card-content span.card-title {
-                line-height: 48px;
-            }
-</style>
