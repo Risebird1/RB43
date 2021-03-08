@@ -359,6 +359,7 @@ namespace Risebird.Repository
             parameters.Add("@userLastName", entity.LastName);
             parameters.Add("@userEmailId", entity.EmailId);
             parameters.Add("@userMobileNumber", entity.MobileNumber);
+            parameters.Add("@UserPassword", entity.UserPassword);
             if (isAdd)
             {
                 parameters.Add("@message", SqlDbType.VarChar, direction: ParameterDirection.Output);
