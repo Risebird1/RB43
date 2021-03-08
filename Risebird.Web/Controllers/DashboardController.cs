@@ -879,6 +879,7 @@ namespace Risebird.Web.Controllers
                         if (HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<UnassignedInterviewsFilter>(HttpContext.Session.GetString("UnassignedInterviewsFilters"));
+                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus);
                             if (filter.StartDate != null && filter.EndDate != null)
                             {
                                 modelList = modelList.Where(x => x.interviewDate >= filter.StartDate && x.interviewDate <= filter.EndDate).ToList();
