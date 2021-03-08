@@ -203,7 +203,7 @@ namespace Risebird.Business
                     }
 
                     countObj.NotYetScheduled = obj.Where(x => x.Status != (int)CandidateStatusOptions.Scheduled && x.Comments != "Meeting Status" && x.Comments != "Interview Status" && x.Status != (int)CandidateStatusOptions.QCPending)?.Count();
-                    
+
                     countObj.Scheduled = obj.Where(x => x.Status == (int)CandidateStatusOptions.Scheduled)?.Count();
                     countObj.QCPending = obj.Where(x => x.Status == (int)CandidateStatusOptions.QCPending)?.Count();
 
@@ -434,13 +434,25 @@ namespace Risebird.Business
         {
             try
             {
-                return _dashboardRespository.ChannelInterviewerAction(id,action).Result;
+                return _dashboardRespository.ChannelInterviewerAction(id, action).Result;
             }
 
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+        public async Task<List<MeetingVM>> FetchRibbonDetailsValues(string actionstatus)
+        {
+            try
+            {
+                return await _dashboardRespository.FetchRibbonDetailsValues(actionstatus);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
 

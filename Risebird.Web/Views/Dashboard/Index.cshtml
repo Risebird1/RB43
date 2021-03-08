@@ -64,7 +64,7 @@
                     </div>
                 </div>
 
-                <span class="mobile-view-chn fa fa-tasks" style="font-size:15px;"  onclick="location.href='@Url.Action("RequirementManagement", "DashBoard")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Channel Management</font></span>
+                <span class="mobile-view-chn fa fa-tasks" style="font-size:15px;" onclick="location.href='@Url.Action("RequirementManagement", "DashBoard")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Channel Management</font></span>
                 <span class="mobile-view-ac" onclick="location.href='@Url.Action("Index", "ActivityTracker")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M19.07 4.93l-1.41 1.41C19.1 7.79 20 9.79 20 12c0 4.42-3.58 8-8 8s-8-3.58-8-8c0-4.08 3.05-7.44 7-7.93v2.02C8.16 6.57 6 9.03 6 12c0 3.31 2.69 6 6 6s6-2.69 6-6c0-1.66-.67-3.16-1.76-4.24l-1.41 1.41C15.55 9.9 16 10.9 16 12c0 2.21-1.79 4-4 4s-4-1.79-4-4c0-1.86 1.28-3.41 3-3.86v2.14c-.6.35-1 .98-1 1.72 0 1.1.9 2 2 2s2-.9 2-2c0-.74-.4-1.38-1-1.72V2h-1C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10c0-2.76-1.12-5.26-2.93-7.07z" /></svg><font style="font-family:arial;"> ActivityTracker</font></span>
 
 
@@ -75,6 +75,55 @@
             </div>
             <!-- PAGE CONTENT WRAPPER -->
             <div class="page-content-wrap dashboard">
+
+                <div class="table-responsive" style="margin-bottom:0px">
+                    <table class="table table-bordered table-striped" style="margin-bottom:0px">
+                        <tbody>
+                            <tr>
+                                <td style="border:0px;padding:0px;">
+                                    <table>
+                                        <tr>
+                                            <td width="30%" class="text-left un-left"><strong>Unassigned <br />Interview Count</strong></td>
+                                            <td width="10%" class="un-right">
+                                                <span class="label-num-unassigned" onclick="OpenRibbonDetails('InterviewCount')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunassignedinterviewcount">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span></strong></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="border:0px;padding:0px;">
+                                    <table>
+                                        <tr>
+                                            <td width="30%" class="text-left un-left"><strong>Unfilled <br /> Meeting Status Count</strong></td>
+                                            <td width="10%" class="un-right">
+                                                <span class="label-num-unassigned" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="border:0px;padding:0px;">
+                                    <table>
+                                        <tr>
+                                            <td width="30%" class="text-left un-left"><strong>Unfilled Interview <br />Status  Count</strong></td>
+                                            <td width="10%" class="un-right">
+                                                <span class="label-num-unassigned" onclick="OpenRibbonDetails('InterviewStatus')"><strong title="Unassigned Interview Count: 0"><span id="ribbonunfilledinterviewstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledInterviewStatusCount</span></strong></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="border:0px;padding:0px;">
+                                    <table>
+                                        <tr>
+                                            <td width="30%" class="text-left un-left"><strong>Unfilled Comment<br /> Count</strong></td>
+                                            <td width="10%" class="un-right">
+                                                <span class="label-num-unassigned" onclick="OpenRibbonDetails('UnfilledComment')"><strong title="Unassigned Interview Count: 0"><span id="ribbonunfilledcommentscount">@Model.NotUpdatedMeetingsObj.UnfilledCommentsCount</span></strong></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
                 <!-- START DASHBOARD CHART -->
                 <div class="row">
@@ -183,7 +232,7 @@
                                 </ul>
                             </div>
                             <div id="slotsId">
-                                <div class="panel-body panel-body-table" >
+                                <div class="panel-body panel-body-table">
                                     @if (Model.DailyInterviewSlots != null && Model.DailyInterviewSlots.Count() > 0)
                                     {
                                         <div class="sb-container scroller">
@@ -268,77 +317,77 @@
 
                         </div>
                         <!-- END IRF BLOCK -->
-                        <div class="table-responsive" style="margin-bottom:0px">
-                            <table class="table table-bordered table-striped" style="margin-bottom:0px">
-                                
-                                <tbody>
-                                    <tr>
+                        @*<div class="table-responsive" style="margin-bottom:0px">
+                                <table class="table table-bordered table-striped" style="margin-bottom:0px">
 
-                                        <td style="border:0px;padding:0px;">
-                                            <table>
-                                                <tr>
+                                    <tbody>
+                                        <tr>
 
-                                                    <td width="30%" class="text-left un-left"><strong>Unassigned <br/>Interview Count</strong></td>
-                                                    <td  width="10%" class="un-right">
-                                                        <span class="label-num-unassigned"><strong title="Unassigned Interview Count" style="color: red">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</strong></span>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
+                                            <td style="border:0px;padding:0px;">
+                                                <table>
+                                                    <tr>
 
-                                        <td style="border:0px;padding:0px;">
-                                            <table >
-                                                <tr>
+                                                        <td width="30%" class="text-left un-left"><strong>Unassigned <br/>Interview Count</strong></td>
+                                                        <td  width="10%" class="un-right">
+                                                            <span class="label-num-unassigned"><strong title="Unassigned Interview Count" style="color: red">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</strong></span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
 
-                                                    <td width="30%" class="text-left un-left"><strong>Unfilled <br /> Meeting Status Count</strong></td>
-                                                    <td width="10%" class="un-right">
-                                                        <span class="label-num-unassigned"><strong title="Unassigned Interview Count" style="color: red">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</strong></span>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
+                                            <td style="border:0px;padding:0px;">
+                                                <table >
+                                                    <tr>
 
-                                        <td style="border:0px;padding:0px;">
-                                            <table>
-                                                <tr>
+                                                        <td width="30%" class="text-left un-left"><strong>Unfilled <br /> Meeting Status Count</strong></td>
+                                                        <td width="10%" class="un-right">
+                                                            <span class="label-num-unassigned"><strong title="Unassigned Interview Count" style="color: red">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</strong></span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
 
-                                                    <td width="30%" class="text-left un-left"><strong>Unfilled Interview <br />Status  Count</strong></td>
-                                                    <td width="10%" class="un-right">
-                                                        <span class="label-num-unassigned"><strong title="Unassigned Interview Count: 0">@Model.NotUpdatedMeetingsObj.UnfilledInterviewStatusCount</strong></span>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
+                                            <td style="border:0px;padding:0px;">
+                                                <table>
+                                                    <tr>
 
-
-                                        <td style="border:0px;padding:0px;">
+                                                        <td width="30%" class="text-left un-left"><strong>Unfilled Interview <br />Status  Count</strong></td>
+                                                        <td width="10%" class="un-right">
+                                                            <span class="label-num-unassigned"><strong title="Unassigned Interview Count: 0">@Model.NotUpdatedMeetingsObj.UnfilledInterviewStatusCount</strong></span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
 
 
-                                            <table>
-                                                <tr>
+                                            <td style="border:0px;padding:0px;">
 
 
-                                                    <td width="30%" class="text-left un-left"><strong>Unfilled Comment<br /> Count</strong></td>
-                                                    <td width="10%" class="un-right">
-                                                        <span class="label-num-unassigned"><strong title="Unassigned Interview Count: 0">@Model.NotUpdatedMeetingsObj.UnfilledCommentsCount</strong></span>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
+                                                <table>
+                                                    <tr>
 
 
-
-
-                                    </tr>
-                                </tbody>
-                            </table>
+                                                        <td width="30%" class="text-left un-left"><strong>Unfilled Comment<br /> Count</strong></td>
+                                                        <td width="10%" class="un-right">
+                                                            <span class="label-num-unassigned"><strong title="Unassigned Interview Count: 0">@Model.NotUpdatedMeetingsObj.UnfilledCommentsCount</strong></span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
 
 
 
 
-                        </div>
+                                        </tr>
+                                    </tbody>
+                                </table>
 
-                        <a class="view-unassigned" href="/Dashboard/UnassignedInterviews"><i class="fa fa-arrow-circle-right"></i> View 911 Dashboard</a> 
+
+
+
+                            </div>
+
+                            <a class="view-unassigned" href="/Dashboard/UnassignedInterviews"><i class="fa fa-arrow-circle-right"></i> View 911 Dashboard</a>*@
                     </div>
 
 
@@ -513,45 +562,45 @@
                         <!-- END INTERVIEW BLOCK -->
 
                     </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 nopad">
-                            <div class="col-lg-4 col-md-4 col-sm-4">
+                </div>
+                <div class="row">
+                    <div class="col-md-12 nopad">
+                        <div class="col-lg-4 col-md-4 col-sm-4">
 
-                                <div class="card">
-                                    <div class="card-body">
-                                        <p class="card-text">Total Candidates : <span><strong>@Model.CandidatesCountObj.TotalCandidates</strong></span></p>
-                                        <div>
-                                            <div id="candidatesPieId" class="PieId"></div>
-                                        </div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="card-text">Total Candidates : <span><strong>@Model.CandidatesCountObj.TotalCandidates</strong></span></p>
+                                    <div>
+                                        <div id="candidatesPieId" class="PieId"></div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4">
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4">
 
-                                <div class="card">
-                                    <div class="card-body">
-                                        <p class="card-text">Total Interviewers : <span><strong>@Model.InterviewerCountObj.InterviewerCount</strong></span></p>
-                                        <div>
-                                            <div id="interviewers" class="PieId"></div>
-                                        </div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="card-text">Total Interviewers : <span><strong>@Model.InterviewerCountObj.InterviewerCount</strong></span></p>
+                                    <div>
+                                        <div id="interviewers" class="PieId"></div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="col-lg-4 col-md-4 col-sm-4">
+                        <div class="col-lg-4 col-md-4 col-sm-4">
 
-                                <div class="card">
-                                    <div class="card-body">
-                                        <p class="card-text">Total Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
-                                        <div>
-                                            <div id="meetingsCountId" class="PieId"></div>
-                                        </div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="card-text">Total Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
+                                    <div>
+                                        <div id="meetingsCountId" class="PieId"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
             </div>
 
@@ -603,6 +652,32 @@
     <!-- END PAGE CONTENT -->
 </div>
 <!-- END PAGE CONTAINER -->
+<div id="MyRibbonDetailsPopup" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="width:900px">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 26"><path fill="rgb(255,255,255)" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left"><span id="txtribbonheader">Details</span></h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeMyRibbonDetailsPopup()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12" id="divribbondetailsfields">
+
+                </div>
+                <div class="col-md-12">
+                    <div class=" text-right">
+
+                        <input style="color:#fff;line-height: 13px;" type="button" onclick="closeMyRibbonDetailsPopup()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -897,7 +972,81 @@
 
 <script>
     $(document).ready(function () {
+        setRibbon();
         $('[data-toggle="tooltip"]').tooltip();
     });
+</script>
+<script>
+    function setRibbon() {
+        $.ajax({
+            url: '/Dashboard/FetchRibbonValues',
+            success: function (data) {
+                $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
+                $("#ribbonunfilledmeetingstatuscount").text(data.unfilledMeetingStatusCount);
+                $("#ribbonunfilledinterviewstatuscount").text(data.unfilledInterviewStatusCount);
+                $("#ribbonunfilledcommentscount").text(data.unfilledCommentsCount);
+            }
+        });
+        setTimeout(setRibbon, 10000);
+    }
+    function OpenRibbonDetails(actionstatus) {
+        $.ajax({
+            url: '/Dashboard/FetchRibbonDetailsValues',
+            data: { actionstatus: actionstatus },
+            success: function (data) {
+                if (actionstatus == "InterviewCount") {
+                    $("#txtribbonheader").text("UnAssigned Interviews");
+                } else if (actionstatus == "MeetingStatus") {
+                    $("#txtribbonheader").text("UnAssigned Meeting Status");
+                }
+                else if (actionstatus == "InterviewStatus") {
+                    $("#txtribbonheader").text("UnAssigned Interview Status");
+                } else if (actionstatus == "UnfilledComment") {
+                    $("#txtribbonheader").text("Unfilled Comments");
+                }
+                bindRibbondata(data);
+                openMyRibbonDetailsPopup();
+                //divribbondetailsfields
+            }
+        });
+    }
+    function closeMyRibbonDetailsPopup() {
+        var modal = document.getElementById("MyRibbonDetailsPopup");
+        modal.style.display = "none";
+    }
+    function openMyRibbonDetailsPopup() {
+        var modal = document.getElementById("MyRibbonDetailsPopup");
+        modal.style.display = "block";
+    }
+    function bindRibbondata(data) {
+        var html = '';
+        html += ' <table class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">';
+        html += '    <thead>';
+        html += '<tr>';
+        html += '<th>Interview Date</th>';
+        html += '<th>IRFId</th>';
+        html += '<th>Candidate Email</th>';
+        html += '<th>RiseBird HR</th>';
+        html += '<th>Client HR</th>';
+        html += '</tr>';
+        html += '</thead>';
+        html += '<tbody>';
+        for (var i = 0; i < data.length; i++) {
+            html += '<tr>';
+            html += '   <td>' + data[i].interviewDate + '</td>';
+            html += '   <td>' + data[i].irfId + '</td>';
+            html += '   <td>' + data[i].candidateEmail + '</td>';
+            html += '   <td>' + data[i].risebirdHR + '</td>';
+            html += '   <td>' + data[i].clientHrContact + '</td>';
+            html += '</tr>';
+        }
+        if (data.length == 0) {
+            html += '<tr><td colspan="5">No Record Found</td>';
+            html += '</tr>';
+        }
+        html += '    </tbody>';
+        html += '   </table>';
+        $("#divribbondetailsfields").empty().html(html);
+    }
 </script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>

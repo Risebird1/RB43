@@ -873,5 +873,44 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<List<MeetingVM>> FetchRibbonDetailsValues(string actionstatus)
+        {
+            try
+            {
+                string query = string.Empty;
+                if (actionstatus == "InterviewCount")
+                {
+                    query = "select * from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<7 ";
+                }
+                else if (actionstatus == "MeetingStatus")
+                {
+                    query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
+                }
+                else if (actionstatus == "InterviewStatus")
+                {
+                    query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId = im.id where confirmationStatus = 1 and interviewer is not null and ic.MeetingStatus = 4 and ic.InterviewStatus is null and DATEDIFF(DAY, interviewDate, GETDATE()) < 7";
+                }
+                else if (actionstatus == "UnfilledComment")
+                {
+                    query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus=4 and ic.InterviewerComment is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
+                }
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<MeetingVM>(query, null);
+                    return (List<MeetingVM>)results;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

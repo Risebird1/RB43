@@ -858,7 +858,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("GetISCInterviewers", new { id = channelid, channelname = channelName });
             }
         }
-        
+
         #endregion
 
         [Authorize]
@@ -1027,6 +1027,16 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("UnassignedInterviews");
             }
 
+        }
+        public async Task<JsonResult> FetchRibbonValues()
+        {
+            var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCount();
+            return Json(Ribbonmodel);
+        }
+        public async Task<JsonResult> FetchRibbonDetailsValues(string actionstatus)
+        {
+            var model = await _dashboardService.FetchRibbonDetailsValues(actionstatus);
+            return Json(model);
         }
     }
 }
