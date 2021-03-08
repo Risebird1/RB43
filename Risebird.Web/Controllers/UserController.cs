@@ -107,6 +107,9 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
+                        user.FirstName = user.FirstName.Trim();
+                        user.LastName = user.LastName.Trim();
+                        user.EmailId = user.EmailId.Trim();
                         user.EmailId = user.EmailId.ToLower();
                         if (_userService.AddUser(user))
                         {
@@ -189,6 +192,9 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
+                        user.FirstName = user.FirstName.Trim();
+                        user.LastName = user.LastName.Trim();
+                        user.EmailId = user.EmailId.Trim();
                         user.EmailId = user.EmailId.ToLower();
                         if (_userService.UpdateUser(user))
                         {
