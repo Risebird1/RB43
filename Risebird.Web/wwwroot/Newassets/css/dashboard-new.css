@@ -3509,7 +3509,9 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     position: relative;
     z-index: 7;
 }
-
+#statusListModal .scrollers {
+    height: 430px;
+}
 .helper {
     position: absolute;
     top: 0;
