@@ -45,8 +45,8 @@ namespace Risebird.Entities.Enum
         [Description("Added")]
         Added,
 
-        [Display(Name = "Profile Updated")]
-        [Description("Profile Updated")]
+        [Display(Name = "Reminder Call")]
+        [Description("Reminder Call")]
         Updated,
 
         [Display(Name = "Meeting Status")]

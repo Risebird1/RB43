@@ -708,6 +708,20 @@ select * {
 .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa, .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
     color: #fff;
 }
+#candidateStatusModal .file-upload-wrapper:before {
+    background: #353434;
+}
+
+#candidateStatusModal .file-upload-wrapper:hover:before {
+    background: #121212;
+}
+
+
+#candidateStatusModal .file-upload-wrapper:after {
+    background: #181818;
+    color: #ada2a2f2;
+    border: 1px #181818 solid;
+}
 .talk-bubble {
     background-color: #181818;
     border: 1px #77737359 solid !important;

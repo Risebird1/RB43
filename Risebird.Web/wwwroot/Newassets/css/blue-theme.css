@@ -371,6 +371,14 @@ textarea::-webkit-scrollbar-thumb {
     color: #000;
 }
 
+#candidateStatusModal .file-upload-wrapper:before {
+    background: #54a5f5;
+}
+
+#candidateStatusModal .file-upload-wrapper:hover:before {
+    background: #2c8eef;
+}
+
 .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa, .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
     color: #97d1f9;
 }
