@@ -137,26 +137,47 @@
 
 
 
-                                                                <div class="form-group">
-                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="Status">
-                                                                        Status
-                                                                    </label>
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <select id="Status" name="Status" class="form-control multiselect" multiple="multiple">
-                                                                            <option value="@(UnassignedInterviewsTypes.Unassigned.GetDescription())">@(UnassignedInterviewsTypes.Unassigned.GetDescription())</option>
-                                                                            <option value="@(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription())">@(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription())</option>
-                                                                            <option value="@(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription())">@(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription())</option>
-                                                                            <option value="@(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription())">@(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription())</option>
-                                                                        </select>
-                                                                    </div>
+            <div class="form-group">
+                <label class="control-label col-md-12 col-sm-12 desp-label" for="Status">
+                    Status
+                </label>
+                <div class="col-md-12 col-sm-12">
+                    <select id="Status" name="Status" class="form-control multiselect" multiple="multiple">
+                        <option value="@(UnassignedInterviewsTypes.Unassigned.GetDescription())">@(UnassignedInterviewsTypes.Unassigned.GetDescription())</option>
+                        <option value="@(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription())">@(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription())</option>
+                        <option value="@(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription())">@(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription())</option>
+                        <option value="@(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription())">@(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription())</option>
+                    </select>
+                </div>
+            </div>
+
+
+        </div>*@
+
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                    Client
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <!---code dropdown-->
                                                                 </div>
+                                                            </div>
 
 
-                                                            </div>*@
 
-                                                        <div class="col-md-6 col-sm-6">
+                                                        </div>
 
 
+                                                        <div class="col-md-6 col-sm-6 ">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                    Client HR
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <!---code dropdown-->
+                                                                </div>
+                                                            </div>
                                                             <div class="form-group">
                                                                 <div>
                                                                     <div class="col-md-12 col-sm-12">
@@ -177,7 +198,10 @@
                                                                 </div>
                                                             </div>
 
+
                                                         </div>
+
+                                                        
                                                     </div>
 
                                                 </div>
@@ -353,7 +377,24 @@
 
 
 <script>
+
+    function RefreshSearch() {
+        $('#meetingTable').DataTable().destroy();
+
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
     $(document).ready(function () {
+
+        applyDataTable();
+
+    });
+
+
+
+    function applyDataTable() {
         $('#meetingTable').DataTable({
             "pagingType": "full_numbers",
             "lengthMenu": [
@@ -368,26 +409,19 @@
                 searchPlaceholder: "Search records",
             },
             "fnInitComplete": function () {
-                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter input:eq(0)").after("<span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
                 $(".dataTables_filter").keyup(function (e) {
                     if ($(this).val() != "") {
-                        $("#x").hide();
+                        $("#x").show();
 
                     }
-                    else { $("#x").hide(); }
+                    else { $("#x").show(); }
                 });
             }
 
         });
 
-
-        var table = $('#meetingTable').DataTable();
-
-
-    });
-
-
-
+    }
 
 
 

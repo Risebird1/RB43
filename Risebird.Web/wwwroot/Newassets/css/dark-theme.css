@@ -733,7 +733,12 @@ select * {
 .special-text svg {
     fill: rgb(119, 115, 115) !important;
 }
-
+.un-left {
+    background: #252424;
+}
+table.bod {
+    border: 0px !important;
+}
 .public-share {
     background-image: url('../../img/share-3g.png') !important;
     color: #a9a5a5 !important;
