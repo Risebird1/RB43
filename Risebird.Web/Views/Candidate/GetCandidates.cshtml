@@ -263,7 +263,7 @@
 
 
 
-                                                                <td class="text-right action">
+                                                                <td class="text-left action">
 
                                                                     @if (ViewBag.Profile != "Recruiter")
 
@@ -361,10 +361,10 @@
 
                                                                 </td>
 
-                                                                <td>
+                                                                <td class="text-center">
                                                                     @if (item.Phone != null && item.Phone != string.Empty)
                                                                     {
-                                                                        <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to place a reeminder call to the candidate." onclick="AutoCallCandidate('@item.Phone','@item.IRFId', '@item.CandidateMasterId', '@item.Name')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
+                                                                        <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to place a reeminder call to the candidate." onclick="AutoCallCandidate('@item.Phone','@item.IRFId', '@item.CandidateMasterId', '@item.Name')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-square"></span></span></span>
                                                                     }
 
                                                                 </td>
@@ -1313,6 +1313,13 @@
                 }
 
                 html += '  </td>';
+
+                html += ' <td class="text-center">';
+
+                if (data[i].phone != null && data[i].phone != "") {
+                    html += '<input type="hidden" id="hidphone' + data[i].id + '" value="' + data[i].phone + '"/><input type="hidden" id="hiditem' + data[i].irfId + '" value="' + data[i].name +'"/><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to place a reeminder call to the candidate." onclick="AutoCallCandidatejson(' + data[i].irfId +', ' + data[i].candidateMasterId +')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-square"></span></span></span>';
+                                                                    }
+                html += '</td>';
                 html += '<td>';
                 if (data[i].phone != null && data[i].phone != "") {
 
@@ -1689,9 +1696,15 @@
 
     </script>
     <script>
+
+        function AutoCallCandidatejson(irfId, candidateId) {
+            var mobile = $("#hidphone" + id).val();
+            var itemname = $('#hiditem' + irfId).val();
+            AutoCallCandidate(mobile,irfId, candidateId, itemname);
+
+        }
         function AutoCallCandidate(phoneNumber, irfId, candidateId, candidateName) {
-            debugger;
-            phoneNumber = '+919830929409';
+          
             swal.fire({
                 title: 'Call ' + candidateName + '?',
                 text: "A system generated reminder call will be placed to the candidate.",
