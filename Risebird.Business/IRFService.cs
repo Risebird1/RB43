@@ -1510,9 +1510,9 @@ namespace Risebird.Business
                     if (duplicate != null && duplicate.Any())
                     {
 
-                        //candidateList.Remove(candidate);
-                        result= "Sorry! One or more candidates already exist for the IRF.";
-                        return result;
+                        candidateList.Remove(candidate);
+                        //result= "Sorry! One or more candidates already exist for the IRF.";
+                        //return result;
                     }
                 }
                 var userId = _irfRepository.GetUserId(emailId, profile);

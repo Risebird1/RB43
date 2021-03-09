@@ -4327,10 +4327,12 @@ namespace Risebird.Repository
                             SqlMapper.Query<string>(con, "usp_AddQuickCandidate", parameters, commandType: CommandType.StoredProcedure);
 
                         }
+                        return "Candidates imported successfully.";
+
                     }
 
+                    return "No candidates to import.";
 
-                    return "Candidates imported successfully.";
                 }
 
             }
