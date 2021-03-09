@@ -49,21 +49,28 @@
 #MyRibbonDetailsPopup .modal-lg {
     max-width:800px !important;
 }
-.countdown__timer.front-card:after {
+.countdown__timer.front-card:after, .countdown__timer.back-card:after {
     border-top: solid 1px #22222226;
 }
 
-.countdown__timer.front-card:after {
+.countdown__timer.front-card:after, .countdown__timer.back-card:after {
     content: '';
     z-index: 2;
     position: absolute;
-    bottom: -1px;
+    bottom: 2px;
     left: 0px;
     width: 57px;
     height: 20px;
     border-radius: 0px 0px 4px 4px;
 }
 .countdown__timer.front-card .card-title {
+    background: -webkit-linear-gradient(#2e2e2c, #797976);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+.countdown__timer.back-card .card-title {
     background: -webkit-linear-gradient(#2e2e2c, #797976);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -138,7 +145,15 @@
     background: -moz-linear-gradient(to top, #FFFFFF 0%, #EDF7DA 100%);
     background: linear-gradient(to top, #FFFFFF 0%, #EDF7DA 100%);
 }
-.un-left{padding-left:25px!important;}
+.un-left {
+    width: 83%; padding-left: 20px !important;
+}
+.un-right {
+
+    width: 57px;
+    float: right;
+    height: 46px;
+}
 /*Styling*/
 .header-front {
     color: #544f4f;
@@ -169,7 +184,12 @@
     margin: 0px auto;
     line-height: 25px;
     text-align: center;
-    border-radius: 3px !important;
+
+}
+.un-left strong {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: bold;
 }
 .background-colorful {
     background: linear-gradient(left, #E04B4A 0%, #1caf9a 50%, #95b75d 100%);
