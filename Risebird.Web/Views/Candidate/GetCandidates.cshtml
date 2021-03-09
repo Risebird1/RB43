@@ -1316,7 +1316,7 @@
                 html += ' <td class="text-center">';
 
                 if (data[i].phone != null && data[i].phone != "") {
-                    html += '<input type="hidden" id="hidphone' + data[i].id + '" value="' + data[i].phone + '"/><input type="hidden" id="hiditem' + data[i].irfId + '" value="' + data[i].name +'"/><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to place a reeminder call to the candidate." onclick="AutoCallCandidatejson(' + data[i].irfId +', ' + data[i].candidateMasterId +')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-square"></span></span></span>';
+                    html += '<input type="hidden" id="hidphone' + data[i].irfId + '" value="' + data[i].phone + '"/><input type="hidden" id="hiditem' + data[i].irfId + '" value="' + data[i].name +'"/><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to place a reeminder call to the candidate." onclick="AutoCallCandidatejson(' + data[i].irfId +', ' + data[i].candidateMasterId +')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-square"></span></span></span>';
                                                                     }
                 html += '</td>';
                 html += '<td>';
@@ -1697,7 +1697,7 @@
     <script>
 
         function AutoCallCandidatejson(irfId, candidateId) {
-            var mobile = $("#hidphone" + id).val();
+            var mobile = $("#hidphone" + irfId).val();
             var itemname = $('#hiditem' + irfId).val();
             AutoCallCandidate(mobile,irfId, candidateId, itemname);
 
