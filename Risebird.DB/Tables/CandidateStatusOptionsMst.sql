@@ -26,12 +26,14 @@ GO
 --INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (8, N'Got Another Offer')
 --INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (9, N'Cold')
 --INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (10, N'Hold')
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (11, N'Invitation Sent')
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (12, N'Added')
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (13, N'Updated')
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (14, N'Meeting Status')
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (15, N'Interview Status')
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (16, N'Called')
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (17, N'Not Responding')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (11, N'Invitation Sent')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (12, N'Added')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (13, N'Updated')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (14, N'Meeting Status')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (15, N'Interview Status')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (16, N'Called')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (17, N'Not Responding')
 
+
+update CandidateStatusOptionsMst set StatusValue='Reminder Call' where id=13
 

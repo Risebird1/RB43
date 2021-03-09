@@ -45,7 +45,7 @@
                     <div class="mobile-view"> <h4 class="card-title"> Candidates for <strong>'@ViewBag.IRFName'</strong></h4></div>
                 </div>
 
-                <div class="pull-right">
+                <div class="pull-right client-ms">
                     <div>
 
 
@@ -128,7 +128,7 @@
                                                             <th>Candidate Email</th>
                                                             <th>RB Attempts</th>
                                                             <th>Resume</th>
-                                                            <th>Coded Resume</th>
+                                                          
                                                             <th>Invite Sent</th>
                                                             <th>Confirmation</th>
 
@@ -148,7 +148,7 @@
                                                             <th>Candidate Email</th>
                                                             <th>RB Attempts</th>
                                                             <th>Resume</th>
-                                                            <th>Coded Resume</th>
+                                                           
                                                             <th>Invite Sent</th>
                                                             <th>Confirmation</th>
                                                             <th>Joinability</th>
@@ -240,14 +240,6 @@
                                                             }
 
 
-                                                            @if (item.EncodedResumeLink != null && item.EncodedResumeLink != "")
-                                                            {
-                                                                <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=@item.EncodedResumeLink>Coded Resume</a> </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No Coded Resume</td>
-                                                            }
 
 
                                                             <td class="text-center">@item.TotalInvites</td>
@@ -309,20 +301,32 @@
                                                                         <button class="mdc-fab app-fab--absolute mdc-fab-secondary" aria-label="Audio files">
                                                                             <span onclick="location.href = '@Url.Action("UploadAudio", "Candidate", new { candidateId = item.CandidateMasterId, irfId= item.IRFId, rfName=ViewBag.IRFName})'" title="Audio files" class="mdc-fab__icon material-icons">
 
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>
-                                                                            </span>
-                                                                        </button>}
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>
+                                                                                </span>
+                                                                            </button>
+
+                                                                        <button class="mdc-fab app-fab--absolute itemques" aria-label="Add Candidate Status">
+                                                                            <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
+                                                                        </button>
+
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
+                                                                                <span onclick="javascript:GetCandidateStatusList('@item.IRFId', '@item.CandidateMasterId', '@ViewBag.IRFName', '@item.Name');" title="Candidate Status List" class="mdc-fab__icon material-icons">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg>
+                                                                                </span>
+                                                                            </button>
+
+                                                                        }
 
 
-                                                                }
+                                                                    }
 
 
 
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                                    <span onclick="location.href = '@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
-                                                                    </span>
-                                                                </button>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                        <span onclick="location.href = '@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                                                                        </span>
+                                                                    </button>
 
                                                                 @if (ViewBag.profile != "Client")
                                                                 {
@@ -342,8 +346,11 @@
                                                                     </button>
                                                                 }
 
-                                                                @if (ViewBag.profile != "Client")
-                                                                {
+
+
+
+                                                                    @if (ViewBag.profile != "Client")
+                                                                    {
 
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
                                                                         <span onclick="location.href = '@Url.Action("StatusList", "Candidate", new { irfId= item.IRFId, candidateId = item.CandidateMasterId,  irfName=ViewBag.IRFName, candidateName=item.Name})'" title="Candidate Status" class="mdc-fab__icon material-icons">
@@ -383,6 +390,7 @@
                                                                         <tr>
                                                                             <th style="border-left: 0px !important;">Candidate Name</th>
                                                                             <th>Client HR</th>
+                                                                            <th>Coded Resume</th>
                                                                             <th>Type</th>
                                                                             <th>Location(Applied for)</th>
                                                                             @*<th>Skill</th>*@
@@ -438,6 +446,14 @@
                                                                             }
 
 
+                                                                            @if (item.EncodedResumeLink != null && item.EncodedResumeLink != "")
+                                                                            {
+                                                                                <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=@item.EncodedResumeLink>Coded Resume</a> </td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td>No Coded Resume</td>
+                                                                            }
 
                                                                             <td>@item.Type</td>
 
@@ -605,7 +621,7 @@
                                 {
                                     <div class="form-group">
 
-                                       
+
 
                                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" for="UploadedFile" style="margin:0px auto; display:block;">
 
@@ -675,9 +691,9 @@
             </div>
 
 
-            <div id="statusModal" class="modal modal-bg">
-                <!-- Modal content -->
-                <div class="modal-dialog modal-lg" role="document">
+            <!--<div id="statusModal" class="modal modal-bg">-->
+            <!-- Modal content -->
+            <!--<div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
 
 
@@ -720,7 +736,23 @@
                     </div>
 
                 </div>
-            </div>
+            </div>-->
+
+            <div id="candidateStatusModal" class="modal modal-bg">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+
+
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon fas fa-user-friends fa-2x"></span>
+                            </div>
+                            <h5 class="modal-title pull-left" id="candidateStatusHeading"> </h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" id="candidateStatusPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
 
 
             
@@ -878,12 +910,12 @@
             var modal = document.getElementById("myModal");
             modal.style.display = "none";
         }
-        var closeStatus = document.getElementById("statusPopUp");
-        // When the user clicks on <span> (x), close the modal
-        closeStatus.onclick = function () {
-            var modal = document.getElementById("statusModal");
-            modal.style.display = "none";
-        }
+        //var closeStatus = document.getElementById("statusPopUp");
+        //// When the user clicks on <span> (x), close the modal
+        //closeStatus.onclick = function () {
+        //    var modal = document.getElementById("statusModal");
+        //    modal.style.display = "none";
+        //}
         var candidateId;
         var irfId;
     </script>
@@ -900,35 +932,35 @@
 
         }
 
-        function OpenStatusModal(id, name, status) {
-            candidateId = id;
-            // Get the modal
-            var modal = document.getElementById("statusModal");
+        //function OpenStatusModal(id, name, status) {
+        //    candidateId = id;
+        //    // Get the modal
+        //    var modal = document.getElementById("statusModal");
 
-            document.getElementById("statusHeading").innerHTML = "Status for " + name;
+        //    document.getElementById("statusHeading").innerHTML = "Status for " + name;
 
-            if (status != null && status != "") {
-                $("#statusDrpDwn").val(status);
-            }
-            // When the user clicks the button, open the modal
-            modal.style.display = "block";
+        //    if (status != null && status != "") {
+        //        $("#statusDrpDwn").val(status);
+        //    }
+        //    // When the user clicks the button, open the modal
+        //    modal.style.display = "block";
 
 
-        }
-        function SaveStatusPopUp() {
-            var statusValue = document.getElementById("statusDrpDwn").value;
+        //}
+        //function SaveStatusPopUp() {
+        //    var statusValue = document.getElementById("statusDrpDwn").value;
 
-            $.ajax({
-                type: "GET",
-                url: "/IRF/SaveCandidateStatus",
-                data: { 'candidateId': candidateId, 'statusValue': statusValue },
-                success: function (data) {
+        //    $.ajax({
+        //        type: "GET",
+        //        url: "/IRF/SaveCandidateStatus",
+        //        data: { 'candidateId': candidateId, 'statusValue': statusValue },
+        //        success: function (data) {
 
-                    location.reload(true);
+        //            location.reload(true);
 
-                }
-            });
-        }
+        //        }
+        //    });
+        //}
 
     </script>
     <script>
@@ -1099,7 +1131,8 @@
                     }
                 }
                 else {
-                    html += '   <td></td>'; }
+                    html += '   <td></td>';
+                }
 
                 html += ' <td class="text-center">' + data[i].attemptsCount + '</td>';
 
@@ -1110,12 +1143,7 @@
                     html += '   <td>No Resume</td>';
                 }
 
-                if (data[i].encodedResumeLink != null && data[i].encodedResumeLink != "") {
-                    html += '    <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=' + data[i].encodedResumeLink + '>Coded Resume</a> </td>';
-                }
-                else {
-                    html += '   <td>No Coded Resume</td>';
-                }
+
                 html += '  <td class="text-center">' + data[i].totalInvites + '</td>';
 
                 html += ' <td class="text-center">' + data[i].inviteConfirmation + '</td>';
@@ -1162,6 +1190,11 @@
                         html += '   <a href = "/Candidate/UploadAudio?candidateId=' + data[i].candidateMasterId + '&irfId=' + data[i].irfId + '&irfName=' + irfname + '" title="Audio files" class="mdc-fab__icon material-icons">';
                         html += '    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>';
                         html += '  </a> </button>';
+
+                        html += '  <input type="hidden" id="hidcandidatestatus' + data[i].irfId + '" value="' + data[i].irfName + '"/><input type="hidden" id="hiditem' + data[i].irfId + '" value="' + data[i].name +'"/> <button class="mdc-fab app-fab--absolute itemques" aria-label="Add Candidate Status"><span onclick="OpenStatusModalJson(' + data[i].irfId + ',' + data[i].candidateMasterId +')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span></button>';
+
+                        html += '  <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status"> <span onclick="javascript:GetCandidateStatusListJson('+ data[i].irfId + ',' + data[i].candidateMasterId +');" title="Candidate Status List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg> </span></button>';
+
                     }
 
 
@@ -1224,6 +1257,7 @@
                 html += '  <tr>';
                 html += '   <th>Candidate Name</th>';
                 html += '   <th>Client HR</th>';
+                html += '   <th>Coded Resume</th>';
                 html += '     <th>Type</th>';
                 html += '     <th>Location(Applied for)</th>';
                 //html += '    <th>Skill</th>';
@@ -1257,7 +1291,8 @@
                     }
                 }
                 else {
-                    html += '<td></td>'; }
+                    html += '<td></td>';
+                }
 
 
 
@@ -1267,6 +1302,13 @@
                 }
                 else {
                     html += '    <td></td>';
+                }
+
+                if (data[i].encodedResumeLink != null && data[i].encodedResumeLink != "") {
+                    html += '    <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=' + data[i].encodedResumeLink + '>Coded Resume</a> </td>';
+                }
+                else {
+                    html += '   <td>No Coded Resume</td>';
                 }
                 if (data[i].type == null) {
                     html += ' <td></td>';
@@ -1471,6 +1513,102 @@
 
 
     </script>
+
+    <script>
+        var irfStatusId;//since the property irfId already exists above, hence this name
+        var candidateStatusId;
+        var irfStatusName;
+        var candidateStatusName;
+        var spanStatusModal = document.getElementById("candidateStatusPopUp");
+        // When the user clicks on <span> (x), close the modal
+        spanStatusModal.onclick = function () {
+            var modal = document.getElementById("candidateStatusModal");
+            modal.style.display = "none";
+        }
+
+        function OpenStatusModalJson(irfId, candidateId) {
+            var irfname = $('#hidcandidatestatus' + irfId).val();
+            var itemname = $('#hiditem' + irfId).val();
+            OpenStatusModal(irfId, candidateId, irfname, itemname);
+        }
+
+        function OpenStatusModal(irfId, candidateId, irfName, candidateName) {
+            irfStatusId = irfId;
+            candidateStatusId = candidateId;
+            irfStatusName = irfName;
+            candidateStatusName = candidateName;
+
+            // Get the modal
+            var modal = document.getElementById("candidateStatusModal");
+
+            document.getElementById("candidateStatusHeading").innerHTML = "Add status for " + candidateName;
+
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+
+        }
+
+     
+        function SaveCandidateStatus() {
+            var comment = document.getElementById("idComments").value;
+            var audio_file = $("#idAudioFile")[0].files[0];
+            var statusValue = document.getElementById("statusDrpDwn").value;
+
+
+            var formdata = new FormData();
+            formdata.append('irfId', irfStatusId);
+            formdata.append('candidateId', candidateStatusId);
+            formdata.append('comment', comment);
+            formdata.append('audio_file', audio_file);
+            formdata.append('status', statusValue);
+            formdata.append('candidateName', candidateStatusName);
+            formdata.append('irfName', irfStatusName);
+
+            $.ajax({
+                type: "POST",
+                url: "/Candidate/AddStatus",
+                contentType: false,
+                processData: false,
+                data: formdata,
+                success: function (data) {
+                    location.reload(true);
+                }
+            });
+        }
+    </script>
+    <script>
+        var closeStatusList = document.getElementById("statusListPopUp");
+        closeStatusList.onclick = function () {
+            var modal = document.getElementById("statusListModal");
+            modal.style.display = "none";
+        }
+        function GetCandidateStatusListJson(irfId, candidateId) {
+           
+            var itemname = $('#hiditem' + irfId).val();
+            var irfname = $('hidirfname').val();
+            GetCandidateStatusList(irfId, candidateId, irfname, itemname);
+        }
+
+        function GetCandidateStatusList(irfId, candidateId, irfName, candidateName) {
+            $.ajax({
+                url: '/Candidate/GetCandidateStatusList',
+                data: { 'irfId': irfId, 'candidateId': candidateId, 'irfName': irfName, 'candidateName': candidateName},
+                success: function (data) {
+                    var modal = document.getElementById("statusListModal");
+                    modal.style.display = "block";
+                    var appendText = 'Status list for ' + candidateName;
+                    $('#statusListHeading').html('');
+                    $('#statusListHeading').html(appendText);
+                    $('#statusListTableBody').html('');
+                    $('#statusListTableBody').html(data);
+
+
+                }
+            });
+        }
+
+
+    </script>
     <script>
         function AutoCallCandidate(phoneNumber, irfId, candidateId, candidateName) {
             swal.fire({
@@ -1530,3 +1668,5 @@
         }
 
     </script>
+
+

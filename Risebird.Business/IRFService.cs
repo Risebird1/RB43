@@ -1536,26 +1536,33 @@ namespace Risebird.Business
                         {
                             if (item.EmailId != null && calendlyLink != null)
                             {
-
+                                string mailResult = string.Empty;
                                 if (irf.BussinessType == "B2B")
                                 {
-                                    _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, item.EmailId, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink);
+                                    mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, item.EmailId, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink);
 
                                 }
                                 else
                                 {
-                                    _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, item.EmailId, candidate.Name, candidate.ClientHRAttemptContact);
+                                    mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, item.EmailId, candidate.Name, candidate.ClientHRAttemptContact);
 
                                 }
-                                if (candidate.TotalInvites == 0)
+                                if (mailResult.ToLower().Contains("success"))
                                 {
-                                    _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
+                                    if (candidate.TotalInvites == 0)
+                                    {
+                                        _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
+
+                                    }
+
+                                    _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
+
+                                    await AddCandidateStatus(emailId, candidate.CandidateMasterId, irfId, "Invitation sent", (int)CandidateStatusOptions.InvitationSent);
 
                                 }
-                                _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
+
 
                                 //add candidate status
-                                await AddCandidateStatus(emailId, candidate.CandidateMasterId, irfId, "Invitation sent", (int)CandidateStatusOptions.InvitationSent);
 
 
                             }
