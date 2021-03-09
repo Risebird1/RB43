@@ -4331,7 +4331,7 @@ namespace Risebird.Repository
 
                     }
 
-                    return "No candidates to import.";
+                    return "No new candidates to import.";
 
                 }
 
