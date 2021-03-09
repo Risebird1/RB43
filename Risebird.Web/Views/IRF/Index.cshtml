@@ -1331,10 +1331,10 @@
 <script type="text/javascript">
     $(".sb-container").scrollBox();
 </script>
+
 <script>
     $("#minimizeSidebar").click(function () {
-        $(this).toggleClass("on");
-        $(".sidebar-wrapper").addCss('width', '260px');
+        $('body').removeClass('sidebar-mini');
     });
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")

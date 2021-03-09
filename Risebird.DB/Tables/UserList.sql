@@ -13,6 +13,7 @@ CREATE TABLE [dbo].[UserList](
 			[IsActive] [bit] NULL,			
 			[ImageURL] [nvarchar](1000) NULL,
 			[Isonline] [bit] NULL,	
+			[UserPassword] [nvarchar](60) NULL,
 			CONSTRAINT [FK_User_Group] FOREIGN KEY (idProfile) REFERENCES Profile(id),
  CONSTRAINT [PK_UserList] PRIMARY KEY CLUSTERED 					
 (					
@@ -31,6 +32,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE UserList
     Add [Isonline] [bit] NULL
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'UserPassword')
+      AND Object_ID = Object_ID(N'UserList'))
+BEGIN
+    ALTER TABLE UserList
+    Add [UserPassword] [nvarchar](60) NULL
 END
 END
 

@@ -319,12 +319,24 @@ table.journey {
     background: #dddddf !important;
 }
 
-.sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
+.sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa,  .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
     color: #fff;
 }
 [type="datetime-local"] {
     background: #dddddf url(../img/grey-timdate.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
+}
+#candidateStatusModal .file-upload-wrapper:before {
+    background: #929292;
+}
+
+#candidateStatusModal .file-upload-wrapper:after {
+    background: #181818;
+    color: #ada2a2f2;
+    border: 1px #181818 solid;
+}
+#candidateStatusModal .file-upload-wrapper:hover:before {
+    background: #777474;
 }
 .btnmeeting, .btnmeeting:hover{
     background: #929292;

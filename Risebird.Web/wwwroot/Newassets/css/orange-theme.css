@@ -513,14 +513,20 @@ table.journey {
     background: #dddddf !important;
    
 }
-.sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
+.sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa,  .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
     color: #fff;
 }
 [type="datetime-local"] {
     background: #dddddf url(../img/orange-timdate.png) 94% 50% no-repeat !important;
     background-size: 5% !important;
 }
+#candidateStatusModal .file-upload-wrapper:before {
+    background: #e96e28;
+}
 
+#candidateStatusModal .file-upload-wrapper:hover:before {
+    background: #e0590c;
+}
 .btnmeeting, .btnmeeting:hover {
     background: #ea6e28;
     border: 2px #ea6e2894 double;

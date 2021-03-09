@@ -15,11 +15,12 @@ namespace Risebird.Business
     {
         private readonly IUserRepository _userRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-
-        public UserService(IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger)
+        private readonly IB2CClientService _b2CClientService;
+        public UserService(IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IB2CClientService b2CClientService)
         {
             _userRepository = userRepository;
             _applicationErrorLogger = applicationErrorLogger;
+            _b2CClientService = b2CClientService;
         }
 
         public List<Menu> GetMenuBasedOnUserEmailld(string emailId)
@@ -151,6 +152,7 @@ namespace Risebird.Business
         {
             try
             {
+                clientUser.UserPassword = GenerateUserPassword(clientUser).Result;
                 return _userRepository.AddClientUser(clientUser).Result;
             }
 
@@ -159,6 +161,26 @@ namespace Risebird.Business
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
+        }
+
+        private async Task<string> GenerateUserPassword(ClientUserVM clientUser)
+        {
+            Random rand = new Random(); // <-- Make this static somewhere
+
+            const int maxValue = 999;
+            string number = rand.Next(maxValue + 1).ToString("D3");
+            var userobj = new UserList
+            {
+                FirstName = clientUser.FirstName,
+                LastName = clientUser.LastName,
+                EmailId = clientUser.EmailId,
+                UserPassword = clientUser.FirstName.ToUpper() + "@" + number
+            };
+            if( await _b2CClientService.CreateUser(userobj))
+            {
+                return userobj.UserPassword;
+            }
+            return string.Empty;
         }
 
         public bool DeleteClientUser(int id)

@@ -1496,5 +1496,93 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite)
+        {
+            try
+            {
+                var result = string.Empty;
+                var candidates = await _irfRepository.GetIRFCandidates(irfId);
+                foreach (var candidate in candidateList ?? new List<CandidateQuickAddModel>())
+                {
+                    //check if the candidate email exists for the IRFId
+                    var duplicate = candidates.Where(x => x.EmailId == candidate.EmailId);
+                    if (duplicate != null && duplicate.Any())
+                    {
+
+                        //candidateList.Remove(candidate);
+                        result= "Sorry! One or more candidates already exist for the IRF.";
+                        return result;
+                    }
+                }
+                var userId = _irfRepository.GetUserId(emailId, profile);
+                result = _irfRepository.AddQuickMultipleCandidates(candidateList, userId).Result;
+                if (result.Contains("successfully"))
+                {
+                    var irf = _irfRepository.GetIRFbyId(irfId);
+                    var inviteCount = irf.TotalInvites;
+                    var calendlyLink = irf.CalendlyLink;
+                    var jdLink = irf.JDLink;
+                    var client = _clientService.GetClient(irf.ClientId);
+                    var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
+                    string primarySkill = string.Empty;
+                    primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
+
+                    foreach (var item in candidateList)
+                    {
+                        var candidate = await _irfRepository.GetCandidateByIRF(irfId, item.EmailId);
+                        await AddCandidateStatus(emailId, candidate.CandidateMasterId, irfId, "Candidate added", (int)CandidateStatusOptions.Added);
+                        if (isSendInvite)
+                        {
+                            if (item.EmailId != null && calendlyLink != null)
+                            {
+                                string mailResult = string.Empty;
+                                if (irf.BussinessType == "B2B")
+                                {
+                                    mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, item.EmailId, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink);
+
+                                }
+                                else
+                                {
+                                    mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, item.EmailId, candidate.Name, candidate.ClientHRAttemptContact);
+
+                                }
+                                if (mailResult.ToLower().Contains("success"))
+                                {
+                                    if (candidate.TotalInvites == 0)
+                                    {
+                                        _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
+
+                                    }
+
+                                    _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
+
+                                    await AddCandidateStatus(emailId, candidate.CandidateMasterId, irfId, "Invitation sent", (int)CandidateStatusOptions.InvitationSent);
+
+                                }
+
+
+                                //add candidate status
+
+
+                            }
+                        }
+                    }
+
+                }
+                
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Sorry! Could not import candidates.";
+            }
+        }
+
+
+        
+
     }
 }
