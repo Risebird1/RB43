@@ -624,8 +624,8 @@
                                         <input type="file" accept=".xls, .xlsx" name="UploadedFile" />
                                     </div>
                                     <div class="">
-                                        <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;
-    display: block;" id="btnImport" value="Import">
+                                        <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnImport" value="Import">
+                                            
                                     </div>
                                     <input type="hidden" id="IRFId" name="IRFId" value='@ViewBag.IRFId'>
                                     <input type="hidden" id="IRFName" name="IRFName" value='@ViewBag.IRFName'>
@@ -745,6 +745,9 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true" id="candidateStatusPopUp" style="cursor:pointer;">&times;</span>
                         </button>
+
+
+            
 
             <!-- end row -->
         </div>
@@ -909,7 +912,9 @@
         var irfId;
     </script>
     <script>
-        function ModalButtonClick() {
+        function ModalButtonClick(value) {
+            debugger;
+            document.getElementById("IsSendInvite").value=value;
 
             // Get the modal
             var modal = document.getElementById("myModal");
