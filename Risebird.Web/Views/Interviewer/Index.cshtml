@@ -823,7 +823,11 @@
             html += ' <td>' + data[i].city + '</td>';
             html += ' <td >' + data[i].currentRole + '</td>';
             html += ' <td>' + data[i].experience + '</td>';
-            html += ' <td>' + data[i].preferredDomain + '</td>';
+            if (data[i].preferredDomain != "" && data[i].preferredDomain != null) {
+                html += ' <td>' + data[i].preferredDomain + '</td>';
+            } else {
+                html += ' <td></td>';
+            }
             if (data[i].gitHubLink != null && data[i].gitHubLink != "") {
                 html += '<td><a id="githubId" target="_blank" title="Github" href=' + data[i].gitHubLink + '>Github</a> </td>';
 
