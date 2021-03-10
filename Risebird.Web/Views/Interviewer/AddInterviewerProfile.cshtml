@@ -111,7 +111,7 @@
                                         @Html.ValidationMessageFor(model => model.IsLeadInterviewer, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        <div class="mandate">  @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
                                         <select id="AssessmentGroupArray" name="AssessmentGroupArray" class="form-control multiselect" multiple="multiple">
                                             @foreach (var item in Model.AssessmentGroupList.ToList())
                                             {
