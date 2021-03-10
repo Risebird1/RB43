@@ -2584,7 +2584,28 @@ namespace Risebird.Web.Controllers
 
         }
 
-
+        public async Task<IActionResult> AutoCallCandidate(string phoneNumber, int irfId, int candidateId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var result = await _candidateService.AutoCallCandidate(phoneNumber, irfId, candidateId, emailid);
+                    return Json(result);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+        }
 
 
     }
