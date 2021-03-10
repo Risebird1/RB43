@@ -265,7 +265,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult EditInterviewerSkills(string id)
+        public IActionResult EditInterviewerSkills(string id, bool isClone=false)
         {
             try
             {
@@ -284,6 +284,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model.LoggedEmail = emailid;
+                    model.IsClone = isClone;
                     return View(model);
                 }
                 else

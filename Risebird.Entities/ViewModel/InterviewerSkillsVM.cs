@@ -71,6 +71,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsDeleted { get; set; }
         [DisplayName("Profile Type")]
         public int? HeuristicProfileType { get; set; }
+        public bool IsClone { get; set; }
 
     }
 
