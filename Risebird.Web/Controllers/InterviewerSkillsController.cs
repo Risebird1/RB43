@@ -211,8 +211,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.Interviewers = new SelectList(interviewers, "id", "EmailId");
                 ViewBag.LevelTech = new SelectList(_interviewerSkillsRepository.GetLevelTech(), "id", "Name");
                 ViewBag.Skill = new SelectList(_interviewerSkillsRepository.GetSkills(), "id", "Name");
-
-
+                var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                ViewBag.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
                 return View(model);
             }
             else
@@ -265,7 +265,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult EditInterviewerSkills(string id, bool isClone=false)
+        public IActionResult EditInterviewerSkills(string id, bool isClone = false)
         {
             try
             {

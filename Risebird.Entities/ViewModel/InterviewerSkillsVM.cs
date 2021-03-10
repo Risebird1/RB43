@@ -72,7 +72,9 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Profile Type")]
         public int? HeuristicProfileType { get; set; }
         public bool IsClone { get; set; }
-
+        [Display(Name ="Assessment Group")]
+        [Required]
+        public string AssessmentGroupId { get; set; }
     }
 
     public class InterviewerSkillsChannelModel

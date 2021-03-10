@@ -66,15 +66,16 @@
                                         <div class="col-lg-6  col-md-6 col-sm-6 pr-1 pull-left">
                                             <div class="form-group">
                                                 <div class="mandate">
-                                                    @Html.LabelFor(model => model.InterviewerSkillId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                                    @*<label class="control-label col-md-4 col-sm-2 desp-label" for="irfid">irf id</label>*@
-
-                                                    @Html.EditorFor(model => model.InterviewerSkillId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
-                                                    <!--<label class="text-danger" id="uniqueMsg" style="color:red"></label>-->
-                                                    @Html.ValidationMessageFor(model => model.InterviewerSkillId, "", new { @class = "text-danger" })
-                                                    @*<input class="form-control text-box single-line" id="IRFId" name="IRFId" type="text" value="">*@
-
+                                                    @Html.LabelFor(model => model.InterviewerSkillId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                 </div>
+                                                @*<label class="control-label col-md-4 col-sm-2 desp-label" for="irfid">irf id</label>*@
+
+                                                @Html.EditorFor(model => model.InterviewerSkillId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
+                                                <!--<label class="text-danger" id="uniqueMsg" style="color:red"></label>-->
+                                                @Html.ValidationMessageFor(model => model.InterviewerSkillId, "", new { @class = "text-danger" })
+                                                @*<input class="form-control text-box single-line" id="IRFId" name="IRFId" type="text" value="">*@
+
+                                            </div>
                                         </div>
                                         <div class="col-lg-6  col-md-6 col-sm-6 px-1 pull-left">
                                             <div class="form-group">
@@ -82,6 +83,16 @@
 
                                                 @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                 @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @class = "text-danger" })
+
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6  col-md-6 col-sm-6 pr-1 pull-left">
+                                            <div class="form-group">
+                                                <div class="mandate">
+                                                    @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                </div>
+                                                @Html.DropDownListFor(m => m.AssessmentGroupId, (SelectList)ViewBag.AssessmentGroupList, "Select Assessment Group", new { @class = "select-css form-control", @onchange = "TechSkillChanged()" })
+                                                @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new { @class = "text-danger" })
 
                                             </div>
                                         </div>
@@ -672,21 +683,22 @@
 
     $(document).ready(function () {
 
-        SkillChanged();
+        //SkillChanged();
+        TechSkillChanged();
         //Perform Ajax request.
 
-        var id = $("#InterviewerCollection_0__UserId").val();
-        $.ajax({
-            type: "GET",
-            url: "/InterviewerSkills/GetInterviewerSkills",
-            data: { 'id': id },
-            success: function (data) {
+        //var id = $("#InterviewerCollection_0__UserId").val();
+        //$.ajax({
+        //    type: "GET",
+        //    url: "/InterviewerSkills/GetInterviewerSkills",
+        //    data: { 'id': id },
+        //    success: function (data) {
       
-                $("#InterviewerCollection_0__SkillId").val(data);
+        //        $("#InterviewerCollection_0__SkillId").val(data);
 
 
-            }
-        });
+        //    }
+        //});
 
 
 
@@ -792,8 +804,62 @@
 
 
     }
-
-
+    function TechSkillChanged() {
+        var Assessmentgroupid = $("#AssessmentGroupId").val();
+        var skills = "";
+        var interviewerSkills;
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetInterviewers",
+            data: { 'assessmentgroupid': Assessmentgroupid },
+            success: function (data) {
+                $.ajax({
+                    type: "GET",
+                    async: false,
+                    url: "/IRF/GetInterviewerSkills",
+                    data: { 'id': data[0].value },
+                    success: function (result) {
+                        interviewerSkills = result;
+                    }
+                });
+                var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
+                for (i = 0; i < drpdowns.length; i++) {
+                    $("#" + drpdowns[i].id + " option").remove();
+                }
+                if (data.length > 0) {
+                    for (i = 0; i < drpdowns.length; i++) {
+                        $(data).each(function () {
+                            var option = $("<option />");
+                            option.html(this.text);
+                            option.val(this.value);
+                            $("#" + drpdowns[i].id).append(option);
+                        });
+                        //interviewerids = $("#txtinterviewerids").val();
+                        //if (interviewerids != "") {
+                        //    var interviewer = interviewerids.split(',');
+                        //    for (var j = 0; j < interviewer.length; j++) {
+                        //        var createid = "InterviewerCollection_" + j + "__UserId";
+                        //        var options = createid + " option[value='" + interviewer[j] + "']";
+                        //        $("#" + options).attr('selected', 'selected');
+                        //        InterviewerChanged(interviewer[j], createid);
+                        //        if (j < (interviewer.length - 1)) {
+                        //            AddRowInterviewer();
+                        //        }
+                        //    }
+                        //}
+                        InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
+                    }
+                }
+            }
+        });
+    }
+    function BindSkills(id, data) {
+        var num = id.match(/(\d+)/);
+        var index = num[0];
+        var idArray = id.split('_');
+        var skillElementid = idArray[0] + '_' + index + '__SkillId';
+        $("#" + skillElementid).val(data);
+    }
 
 </script>
 
