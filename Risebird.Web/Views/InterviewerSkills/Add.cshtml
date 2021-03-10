@@ -1,4 +1,5 @@
 ﻿@model Risebird.Entities.ViewModel.InterviewerSkillsVM
+@using Risebird.Entities.Enum
 
 @{
     ViewData["Title"] = "Add Interviewer Skills";
@@ -95,15 +96,22 @@
                                         <div class="col-md-4 col-sm-4 pr-1 pull-left">
                                             <div class="form-group">
                                                 <div class="mandate">
-                                                    @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                                    @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                    @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @class = "text-danger" })
+                                                    @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                 </div>
+                                                @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @class = "text-danger" })
+                                            </div>
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                 @Html.DropDownList("PrimarySkill", (SelectList)ViewBag.Skill, new { @class = "select-css form-control", @onchange = "SkillChanged()" })
                                                 @Html.ValidationMessageFor(model => model.PrimarySkill, "", new { @class = "text-danger" })
                                             </div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.HeuristicProfileType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.DropDownListFor(m=>m.HeuristicProfileType, Html.GetEnumSelectList<Heuristicsscorelevel>(), "Select Profile Type", new { @class = "select-css form-control", @onchange = "SkillChanged()" })
+                                                @Html.ValidationMessageFor(model => model.HeuristicProfileType, "", new { @class = "text-danger" })
+                                            </div>
+
                                         </div>
                                         <div class="col-md-4 col-sm-4 px-1 pull-left">
                                             <div class="form-group">

@@ -22,7 +22,8 @@ CREATE PROCEDURE [dbo].[usp_AddInterviewerSkillsChannel]
 @RisebirdHr int,
 @PerMintuteRate real,
 @CalendlyLink varchar(500),
-@PrimarySkill int
+@PrimarySkill int,
+@HeuristicProfileType int
 
 AS
 Begin
@@ -36,6 +37,7 @@ INSERT INTO [dbo].[InterviewerSkillsChannel]
            ,[PerMintuteRate]  
 		   ,[CalendlyLink]
 		   ,[PrimarySkill]
+		   ,[HeuristicProfileType]
 		   )
        VALUES
            (@InterviewerSkillId,
@@ -45,7 +47,8 @@ INSERT INTO [dbo].[InterviewerSkillsChannel]
 @RisebirdHr,
 @PerMintuteRate,
 @CalendlyLink,
-@PrimarySkill
+@PrimarySkill,
+@HeuristicProfileType
 )
 
 End

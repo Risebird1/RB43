@@ -203,6 +203,7 @@ namespace Risebird.Business
                 model.CalendlyLink = InterviewerSkills.CalendlyLink;
                 model.RisebirdHr = InterviewerSkills.RisebirdHr;
                 model.PrimarySkill = InterviewerSkills.PrimarySkill;
+                model.HeuristicProfileType = InterviewerSkills.HeuristicProfileType;
                 //var skillCount = transTechSkills.Count();
                 return model;
 

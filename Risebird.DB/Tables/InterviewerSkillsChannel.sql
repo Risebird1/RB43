@@ -23,6 +23,23 @@ CREATE TABLE [dbo].[InterviewerSkillsChannel](
 
 
 END
+
+Else
+
+	Begin
+		IF NOT EXISTS(
+		SELECT *
+		FROM sys.columns
+		WHERE Name IN (N'HeuristicProfileType')
+		  AND Object_ID = Object_ID(N'InterviewerSkillsChannel'))
+		BEGIN
+			ALTER TABLE InterviewerSkillsChannel
+			Add [HeuristicProfileType] INT null
+		END
+ 
+	End
+
+
 GO
 
 
