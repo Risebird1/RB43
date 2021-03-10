@@ -1038,9 +1038,6 @@ div.dataTables_wrapper div.dataTables_processing {
 }
 
 
-.borderline {
-    background: yellow;
-}
 
 .noshow {
     background: grey
@@ -1066,7 +1063,7 @@ div.dataTables_wrapper div.dataTables_processing {
     background: orange;
 }
 
-.boderline {
+.borderline {
     background: yellow;
 }
 

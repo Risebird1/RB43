@@ -312,8 +312,8 @@ textarea::-webkit-scrollbar-thumb {
     background: #fff !important;
 }
 
-.share-btn {
-    color: #000 !important
+.share-btn, .view-video {
+    color: #717070 !important;
 }
 
 .single-video-right .video-card-image {
