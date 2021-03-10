@@ -402,7 +402,7 @@ namespace Risebird.Business
             {
                 var status = Convert.ToInt16(qcStatus);
                 //var oldStatus = Convert.ToInt16(oldQcStatus);
-                if(status == (int)QCStatus.Passed && (oldQcStatus==null || Convert.ToInt16(oldQcStatus)!= (int)QCStatus.Passed))
+                if (status == (int)QCStatus.Passed && (oldQcStatus == null || Convert.ToInt16(oldQcStatus) != (int)QCStatus.Passed))
                 {
                     //add candidate status
                     _irfRepository.AddQCCandidateStatus(Convert.ToInt32(imid), performedBy);
@@ -736,12 +736,12 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public bool UpdateComments(InterviewComments comments, string performedBy=null)
+        public bool UpdateComments(InterviewComments comments, string performedBy = null)
         {
             try
             {
                 var result = _meetingRespository.UpdateComments(comments).Result;
-                if(comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Passed && (comments.OldQCStatus==null || comments.OldQCStatus != (int)QCStatus.Passed))
+                if (comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Passed && (comments.OldQCStatus == null || comments.OldQCStatus != (int)QCStatus.Passed))
                 {
                     //add candidate status
                     _irfRepository.AddQCCandidateStatus(comments.InterviewId, performedBy);
@@ -796,7 +796,7 @@ namespace Risebird.Business
                 }
                 else
                 {
-                    var model = interviewReport.Any() ? interviewReport.FirstOrDefault() : new InterviewReport();
+                    var model = interviewReport != null ? interviewReport.FirstOrDefault() : new InterviewReport();
                     model.IsEdited = model.InterviewId > 0;
 
                     //get all values from database
@@ -870,7 +870,7 @@ namespace Risebird.Business
                 //get candidateId
                 reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfDetails.IRFId);
                 reportModel.CandidateName = interviewDetails.candidateName;
-                reportModel.TotalExperience = interviewDetails.TotalExperience+" Years";
+                reportModel.TotalExperience = interviewDetails.TotalExperience + " Years";
                 reportModel.SelectabilityComments = await _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
                 reportModel.CandidateEmail = interviewDetails.candidateEmail;
                 reportModel.CandidateVisa = interviewDetails.CandidateVisa;
@@ -954,7 +954,7 @@ namespace Risebird.Business
             {
                 var techSkillsDetails = await _meetingRespository.GetSkillsbyIRFid(model.IRFId);
                 var techSkillList = new List<TechSkillReport>();
-                var levelTech =await  _meetingRespository.GetLevelTech();
+                var levelTech = await _meetingRespository.GetLevelTech();
                 var skills = await _meetingRespository.GetSkills();
 
                 //assign values to model
@@ -1006,14 +1006,14 @@ namespace Risebird.Business
                 {
                     if (!reportModel.IsEdited)
                     {
-                        if (reportModel.MeetingStatus.HasValue && reportModel.MeetingStatus.Value!=(int)MeetingStatus.Scheduled)
+                        if (reportModel.MeetingStatus.HasValue && reportModel.MeetingStatus.Value != (int)MeetingStatus.Scheduled)
                         {
                             await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription(), (int)CandidateStatusOptions.MeetingStatus);
                             if (reportModel.MeetingStatus.Value == (int)MeetingStatus.Completed)
                             {
                                 //await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus);
-                                
-                                if(reportModel.InterviewStatus.HasValue)
+
+                                if (reportModel.InterviewStatus.HasValue)
                                 {
                                     if (reportModel.InterviewStatus.Value == (int)InterviewStatus.Proxy || reportModel.InterviewStatus.Value == (int)InterviewStatus.Rejected)
                                     {
@@ -1026,7 +1026,7 @@ namespace Risebird.Business
 
                                     }
                                 }
-                                
+
                             }
 
                         }
@@ -1061,7 +1061,7 @@ namespace Risebird.Business
 
                                     }
                                 }
-                                    
+
                             }
                         }
                     }
@@ -1080,7 +1080,7 @@ namespace Risebird.Business
                                 mailIds.Add(item.EmailId);
                             }
                         }
-                        
+
                         _notificationHelper.SendQCInterviewerMail(mailIds, reportModel.interviewDate);
 
                         if (reportModel.InterviewStatus.Value == 2)
@@ -1432,7 +1432,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink, int candidateType =0)
+        public bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink, int candidateType = 0)
         {
             try
             {
@@ -1450,7 +1450,7 @@ namespace Risebird.Business
         {
             try
             {
-                
+
                 //check the receiver and get all their emails from the db
                 var receiverEmails = _meetingRespository.GetEmailsforBroadcast(model.BroadcastReciever).Result;
 
@@ -1797,7 +1797,7 @@ namespace Risebird.Business
                 var techSkillsDetails = await _meetingRespository.GetSkillsbyIRFid(model.IRFId);
                 var techSkillList = new List<TechSkillReport>();
                 var levelTech = await _meetingRespository.GetLevelTech();
-                var skills = await  _meetingRespository.GetSkills();
+                var skills = await _meetingRespository.GetSkills();
 
                 //assign values to model
                 foreach (var item in techSkillsDetails ?? new List<TransSkill>())
@@ -2213,7 +2213,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<RBInterviewDetails>> RBInterviewerDetails(int interviewerid,int flag)
+        public async Task<List<RBInterviewDetails>> RBInterviewerDetails(int interviewerid, int flag)
         {
             try
             {
@@ -2241,7 +2241,7 @@ namespace Risebird.Business
                 return "";
             }
         }
-        public async Task<string> RBConfirmPayment(int interviewerid,int index)
+        public async Task<string> RBConfirmPayment(int interviewerid, int index)
         {
             try
             {
@@ -2284,7 +2284,7 @@ namespace Risebird.Business
         {
             try
             {
-                var result = _meetingRespository.FNGenerateInvoiceDetails(st,se);
+                var result = _meetingRespository.FNGenerateInvoiceDetails(st, se);
                 return result.Result;
             }
             catch (Exception e)
