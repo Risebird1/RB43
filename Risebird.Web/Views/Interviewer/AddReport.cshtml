@@ -2331,14 +2331,14 @@
         var interviewStatusElem = document.getElementById("InterviewStatus");
         if (interviewStatusElem.value == 2 || interviewStatusElem.value == 4) {
             var comments = document.getElementById("InterviewerComment").value;
-            if (comments.length >= 250) {
+            if (comments.length >= 250 && comments.length<=2000) {
                 document.getElementById("interviewerComment_Error").innerHTML = "";
                 return true;
             }
             else {
                 //interviewerComment_Error
                 document.getElementById("InterviewerComment").focus();
-                document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 250 characters.";
+                document.getElementById("interviewerComment_Error").innerHTML = "The comment should be a minimum of 250 characters long and should not exceed 2000 characters.";
                 return false;
             }
         }

@@ -211,8 +211,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.Interviewers = new SelectList(interviewers, "id", "EmailId");
                 ViewBag.LevelTech = new SelectList(_interviewerSkillsRepository.GetLevelTech(), "id", "Name");
                 ViewBag.Skill = new SelectList(_interviewerSkillsRepository.GetSkills(), "id", "Name");
-
-
+                var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                ViewBag.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
                 return View(model);
             }
             else
@@ -233,6 +233,17 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
+                        string uploadedFileURL = string.Empty;
+                        if (InterviewerSkillsDetails.JDFile != null)
+                        {
+                            var fileName = InterviewerSkillsDetails.JDFile.FileName.Replace(" ", "_");
+
+                            await _azureStorageHelper.InsertBlob(fileName, "resumes", InterviewerSkillsDetails.JDFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(fileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            InterviewerSkillsDetails.JDLink = uploadedFileURL;
+                        }
                         if (_iInterviewerSkillsService.AddInterviewerSkillsDetails(InterviewerSkillsDetails).Result)
                         {
                             TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel is added successfully!";
@@ -265,7 +276,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult EditInterviewerSkills(string id)
+        public IActionResult EditInterviewerSkills(string id, bool isClone = false)
         {
             try
             {
@@ -280,10 +291,14 @@ namespace Risebird.Web.Controllers
                     ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
                     ViewBag.LevelTech = new SelectList(_interviewerSkillsRepository.GetLevelTech(), "id", "Name");
                     ViewBag.Skill = new SelectList(_interviewerSkillsRepository.GetSkills(), "id", "Name");
+                    var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                    ViewBag.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
                     TempData["EditInterviewerSkillId"] = model.InterviewerSkillId;
+                    TempData["InterviewerJDLink"] = model.JDLink;
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model.LoggedEmail = emailid;
+                    model.IsClone = isClone;
                     return View(model);
                 }
                 else
@@ -311,6 +326,27 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
+
+                        if ((model.JDFile != null))
+                        {
+                            var fileName = model.JDFile.FileName.Replace(" ", "_");
+                            await _azureStorageHelper.InsertBlob(fileName, "resumes", model.JDFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(fileName);
+                            string uploadedFileURL = blob.Uri.ToString();
+                            if (uploadedFileURL == null)
+                            {
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Could not upload JD file.";
+                                return RedirectToAction("Index");
+
+                            }
+
+                            model.JDLink = uploadedFileURL;
+                        }
+                        else if (model.JDLink == null || model.JDLink == "")
+                        {
+                            model.JDLink = TempData["InterviewerJDLink"]?.ToString();
+                        }
                         if (TempData["EditInterviewerSkillId"] != null && (TempData["EditInterviewerSkillId"].ToString() != model.InterviewerSkillId))
                         {
                             if (!(_iInterviewerSkillsService.CheckUniqueness(model.InterviewerSkillId)))
