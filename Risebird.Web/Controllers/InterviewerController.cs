@@ -981,7 +981,28 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         var meetings = _interviewerService.GetOpenInterviewerAssessment(emailid);
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-
+                        foreach (var item in meetings)
+                        {
+                            if (!string.IsNullOrEmpty(item.JDLink))
+                            {
+                                try
+                                {
+                                    item.JDLink = new Uri(item.JDLink, UriKind.Absolute).ToString();
+                                }
+                                catch (Exception)
+                                {
+                                    item.JDLink = "";
+                                }
+                            }
+                            else
+                            {
+                                item.JDLink = "";
+                            }
+                            if (item.HeuristicProfileType.HasValue)
+                            {
+                                item.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)(item.HeuristicProfileType)).GetDescription();
+                            }
+                        }
 
                         if (TempData["SuccessErrorMessageLeadInterviewer"] != null)
                         {
@@ -1041,7 +1062,25 @@ namespace Risebird.Web.Controllers
                             {
                                 item.resumeLink = "";
                             }
-
+                            if (!string.IsNullOrEmpty(item.JDLink))
+                            {
+                                try
+                                {
+                                    item.JDLink = new Uri(item.JDLink, UriKind.Absolute).ToString();
+                                }
+                                catch (Exception)
+                                {
+                                    item.JDLink = "";
+                                }
+                            }
+                            else
+                            {
+                                item.JDLink = "";
+                            }
+                            if (item.HeuristicProfileType.HasValue)
+                            {
+                                item.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)(item.HeuristicProfileType)).GetDescription();
+                            }
                             if (item.InterviewStatus.HasValue)
                             {
                                 item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();

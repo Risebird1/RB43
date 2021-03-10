@@ -1790,6 +1790,7 @@ namespace Risebird.Web.Controllers
                     model.CandidateId = candidateId;
                     model.PerformedBy = emailid;
                     model.Status = status;
+                    model.Comments = comment;
 
                     if (profileName != "Client")
                     {
