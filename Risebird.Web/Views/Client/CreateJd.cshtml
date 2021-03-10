@@ -1,13 +1,16 @@
 ﻿@*@model IEnumerable<Risebird.Entities.ViewModel.ClientDetails>*@
 @model Risebird.Entities.ViewModel.ClientDetails
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "RB Matches";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interviewer.css?v=8" />
+
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/risetube.css?v=8" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
-
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 
@@ -39,7 +42,9 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">RB Matches</a>
+                <div id="rbmatches_1">
+                    <a  class="navbar-brand">RB Matches</a>
+                </div>
             </div>
         </div>
     </nav>
@@ -180,26 +185,26 @@
                                 {
                                     <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
                                         <div class="card-content-holder border card-blue">
-                                            <div class="card-header">
+                                            <div class="card-header jd">
                                                 <div class="row">
-                                                    <div class=" col-md-6 col-sm-6 first">
-
-                                                        @if (@item.JDTitle.Length > 10)
-                                                        {
-                                                            <a style="text-decoration: none;
+                                                    <div id="rbmatches_2"  class="col-md-6 col-sm-6 first">
+                                                       
+                                                            @if (@item.JDTitle.Length > 10)
+                                                            {
+                                                                <a style="text-decoration: none;
         cursor: pointer;
 " data-tooltip="@item.JDTitle"><h6 class="jd-name assessment-grp">@item.JDTitle</h6> </a>
-}
-else
-{
-<h6 class="assessment-grp">
-    @item.JDTitle
-</h6>
-}
+                                                    }
+                                                    else
+                                                    {
+                                                        <h6 class="assessment-grp">
+                                                            @item.JDTitle
+                                                        </h6>
+                                                    }
 
 
 
-                                                    </div>
+                                                             </div>
 
                                                     <div class="col-md-6 col-sm-6 card-header-buttons action text-right">
                                                         @if (!Model._clientjddetails.isClientUser)
@@ -227,38 +232,50 @@ else
                                             <div class="card-body">
                                                 <div class="statusInfo">
                                                     <div class="group inner list-group-item-text">
-                                                        <div class="second" style="margin-bottom:10px;">
-                                                            <div class="client-field"> Start Date:<span style="font-weight:normal">@item.StartDate</span></div>
+                                                        <div id="rbmatches_3" class="second clearfix">
+                                                            <div  class="client-field"><span> Start Date:</span><span style="font-weight:normal">@item.StartDate</span></div>
                                                         </div>
-                                                        <br />
-                                                        <div class="three"> <span><b>End Date:</b></span>@item.EndDate</div>
-                                                        @if (!Model._clientjddetails.isClientUser)
-                                                        {
-                                                            <div>
-                                                                <span><b>Client:</b></span> @item.Name
-                                                            </div>
-                                                        }
-                                                        <div>
-                                                            <span><b>Assessment Group:</b></span> @item.AssessmentGroupName
+                                                        <div id="rbmatches_4" class="three clearfix">
+                                                            <div class="client-field">
+                                                                <span><b>End Date:</b></span><span style="font-weight:normal">@@item.EndDate</span>
+</div>
                                                         </div>
-                                                        <div>
-                                                            <span><b>JD Link:</b></span>
-                                                            @if (!String.IsNullOrEmpty(item.Filelink))
+                                                            @if (!Model._clientjddetails.isClientUser)
                                                             {
-                                                                <a href="@item.Filelink" target="_blank">Click Here</a>
+                                                                <div>
+                                                                    <span><b>Client:</b></span> @item.Name
+                                                                </div>
                                                             }
+                                                            <div id="rbmatches_5" class="clearfix">
+                                                                <div class="client-field">
+                                                                    <span><b>Assessment Group:</b></span><span style="font-weight:normal"> @item.AssessmentGroupName</span>
+</div>
+                                                            </div>
+                                                            <div id="rbmatches_6" class="clearfix">
+                                                                <div class="client-field">
+                                                                    <span><b>JD Link:</b></span>
+                                                                    @if (!String.IsNullOrEmpty(item.Filelink))
+                                                                    {
+                                                                        <a href="@item.Filelink" target="_blank">Click Here</a>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                            <div id="rbmatches_7" class="clearfix">
+                                                                <div class="client-field">
+                                                                    <span><b>Role:</b></span><span style="font-weight:normal"> @item.JobRole</span>
+</div>
+                                                            </div>
+                                                            <div id="rbmatches_8" class="clearfix">
+                                                                <div class="client-field">
+                                                                    <span><b>Salary Range:</b></span><span style="font-weight:normal"> @item.JDBudget</span>
+</div>
+                                                            </div>
+                                                            <div id="rbmatches_9" class="clearfix">
+                                                                <div class="client-field">
+                                                                    <span><b>Location:</b></span><span style="font-weight:normal"> @item.Location</span>
+</div>
+                                                            </div>
                                                         </div>
-                                                        <div>
-                                                            <span><b>Role:</b></span> @item.JobRole
-                                                        </div>
-                                                        <div>
-                                                            <span><b>Salary Range:</b></span> @item.JDBudget
-                                                        </div>
-                                                        <div>
-                                                            <span><b>Location:</b></span> @item.Location
-                                                        </div>
-
-                                                    </div>
                                                 </div>
 
 
@@ -284,16 +301,16 @@ else
                                                     </div>
 
                                                     <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 text-right ">
-                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="All">
+                                                        <button id="rbmatches_10" class="mdc-fab app-fab--absolute item1" aria-label="All">
                                                             <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="ALL"})'" title="All Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
                                                         </button>
-                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="ShortListed">
+                                                        <button id="rbmatches_11" class="mdc-fab app-fab--absolute item1" aria-label="ShortListed">
                                                             <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="SHORTLIST"})'" title="Shortlisted Candidates" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg></span>
                                                         </button>
-                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="Interest-Send">
+                                                        <button id="rbmatches_12" class="mdc-fab app-fab--absolute item1" aria-label="Interest-Send">
                                                             <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="INTRESTED"})'" title="Interest Sent Candidates" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg></span>
                                                         </button>
-                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="Interest-Accept">
+                                                        <button id="rbmatches_13" class="mdc-fab app-fab--absolute item1" aria-label="Interest-Accept">
                                                             <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="ACCEPT"})'" title="Interest Accepted Candidates" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg></span>
                                                         </button>
                                                     </div>
@@ -596,3 +613,372 @@ else
         }
     }
 </script>
+
+@*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
+{
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+        hopscotch.registerHelper('addOverlay', function () {
+            $('body').append('<div class="overlay"></div>');
+        });
+
+        hopscotch.registerHelper('removeOverlay', function () {
+            $('.overlay').fadeOut(function () {
+                $(this).remove();
+                $('.helper').remove();
+            });
+        });
+
+        hopscotch.listen('show', function () {
+            var elementObject = $(hopscotch.getCurrTarget(tour));
+            var element = $('#' + elementObject[0].id);
+
+            element.prev().removeClass('overlay-relative');
+            element.addClass('overlay-relative');
+
+            if ($('.helper').length !== 0) {
+
+
+                // Use Helper Layer for hilight target element.
+                var helper = $('.helper');
+                var padding = 5;
+                var helperPosX = element.position().left - padding;
+                var helperPosY = element.position().top - padding;
+                var targetWidth = element.outerWidth();
+                var targetHeight = element.outerHeight();
+
+                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                helper.css('width', targetWidth);
+                helper.css('height', targetHeight);
+                helper.offset({ left: helperPosX, top: helperPosY });
+
+            } else {
+
+                // Add Helper Layer for highlight target element.
+                var newHelper = '<div class="helper"></div>';
+                $('body').append(newHelper);
+
+                var helper = $('.helper');
+                var padding = 5;
+                var helperPosX = element.position().left - padding;
+                var helperPosY = element.position().top - padding;
+                var targetWidth = element.outerWidth();
+                var targetHeight = element.outerHeight();
+
+                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                helper.css('width', targetWidth);
+                helper.css('height', targetHeight);
+                helper.offset({ left: helperPosX, top: helperPosY });
+            }
+
+        });
+
+        var tour = {
+            id: "hello-hopscotch",
+            showCloseButton: false,
+            steps: [
+                {
+                    title: "RB Matches",
+                    content: "View the job description of upcoming requirements",
+                    target: "rbmatches_1",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    highlight: true,
+                    zindex: 999999,
+                   yOffset: -10,
+                   xOffset: 0,
+                    onCTA: function () {
+                        hopscotch.showStep(2);
+                        $('#rbmatches_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onNext: function () {
+                        $('#rbmatches_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+
+                    }
+                },
+                {
+                    title: "Job Tilte",
+                    content: "Here showing the job title ",
+                    target: "rbmatches_2",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    yOffset: -10,
+                    xOffset: 0,
+                    onPrev: function () {
+
+                        $('#rbmatches_2').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('#rbmatches_2').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Start Date",
+                    content: "Here showing the start date when the job is created",
+                    target: "rbmatches_3",
+                    placement: "right",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    xOffset: -140,
+                    yOffset: -20,
+                    onPrev: function () {
+
+                        $('#rbmatches_3').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('#rbmatches_3').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+                {
+                    title: "End Date",
+                    content: "Here showing the end date till the job is vaild",
+                    target: "rbmatches_4",
+                    showPrevButton: true,
+                    placement: "right",
+                    zindex: 999999,
+                    xOffset: -140,
+                    yOffset: -20,
+                    onPrev: function () {
+
+                        $('#rbmatches_4').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onNext: function () {
+
+                        $('#rbmatches_4').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                },
+                {
+                    title: "Assessment Group",
+                    content: "Here showing the name of Assesment Group",
+                    target: "rbmatches_5",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "right",
+                    zindex: 999999,
+                    xOffset: -180,
+                    yOffset: -20,
+                    onNext: function () {
+                        $('#rbmatches_5').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#rbmatches_5').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "JD Link",
+                    content: "Click here to view the job description",
+                    target: "rbmatches_6",
+                    placement: "right",
+                    xOffset: -200,
+                    yOffset: -20,
+                    showPrevButton: true,
+                    zindex: 999999,
+                   
+                    onNext: function () {
+                        $('#rbmatches_6').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#rbmatches_6').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Role",
+                    content: "Describes the role of the job",
+                    target: "rbmatches_7",
+                    placement: "right",
+                    xOffset: -250,
+                    yOffset: -20,
+                    showPrevButton: true,
+                    zindex: 999999,
+                    
+                    onNext: function () {
+                        $('#rbmatches_7').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#rbmatches_7').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Salary Range",
+                    content: "Here showing the salary range of the available job",
+                    target: "rbmatches_8",
+                    placement: "right",
+                    xOffset: -200,
+                    yOffset: -20,
+                    showPrevButton: true,
+                    zindex: 999999,
+                
+                    onNext: function () {
+                        $('#rbmatches_8').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#rbmatches_8').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+                {
+                    title: "Location",
+                    content: "Name of the location where jobs are available",
+                    target: "rbmatches_9",
+                    placement: "right",
+                    xOffset: -200,
+                    yOffset: -20,
+                    showPrevButton: true,
+                    zindex: 999999,
+                
+                    onNext: function () {
+                        $('#rbmatches_9').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#rbmatches_9').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "All Candidates",
+                    content: "Click here to see all the candidates applicable for the job ",
+                    target: "rbmatches_10",
+                    placement: "bottom",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    yOffset: -20,
+                    xOffset: 10,
+                    onNext: function () {
+                        $('#rbmatches_10').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#rbmatches_10').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Shortlisted Candidates",
+                    content: "Click here to see all the candidates selected for the job",
+                    target: "rbmatches_11",
+                    placement: "bottom",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    yOffset: -20,
+                    xOffset: 10,
+                    onNext: function () {
+                        $('#rbmatches_11').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#rbmatches_11').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Interest Sent Candidates",
+                    content: "Click here to see the candidate to whom interest is sent",
+                    target: "rbmatches_12",
+                    placement: "bottom",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    yOffset: -20,
+                    xOffset: 10,
+                    onNext: function () {
+                        $('#rbmatches_12').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#rbmatches_12').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Interest Accepted Candidates",
+                    content: "Click here to see the candidates who accepted the interest",
+                    target: "rbmatches_13",
+                    placement: "bottom",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    yOffset: -20,
+                    xOffset: 10,
+                    onNext: function () {
+                        $('#rbmatches_13').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#rbmatches_13').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "RB Pay Menu",
+                    content: "Click on RB Pay menu to see its features",
+                    target: "rbpay_menu",
+                    placement: "top",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    yOffset: 0,
+                    xOffset: 10,
+                    onNext: function () {
+                        $('#rbpay_menu').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#rbpay_menu').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+            ],
+            onStart: ["addOverlay"],
+            onEnd: ["removeOverlay"],
+        };
+
+        hopscotch.startTour(tour);
+
+    </script>
+
+}*@
+

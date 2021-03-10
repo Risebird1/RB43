@@ -48,6 +48,7 @@
 
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" defer />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <script>
     amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
     amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
@@ -71,7 +72,7 @@
                 <div class="navbar-toggle">
                     <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
                 </div>
-                <a class="navbar-brand card-title">Risetube</a>
+                <a  class="navbar-brand card-title">Risetube</a>
                 @if (!String.IsNullOrEmpty(Model.LogoUrl))
                 {
                     <img src="@Model.LogoUrl" style="width:60px;height:60px" />
@@ -100,7 +101,7 @@
 
                             @if (ViewBag.actionstatus != "SkillChannel")
                             {
-                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1 card-title-space" data-toggle="modal" data-target="#filterModal">
+                                <button  class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-toggle="modal" data-target="#filterModal">
                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                     <div class="mdc-button__ripple"></div>
                                 </button>
@@ -109,20 +110,20 @@
                             @*@Html.ActionLink("Video Detail View", "VideoDetailView", "Risetube", new { interviewid = Model.imid }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;margin-right:3px;" })*@
                             @if (ViewBag.actionstatus == "SkillChannelDetails")
                             {
-                                <a href="/Client/CreateJd" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back to List</a>
+                                <a href="/Client/CreateJd" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back to List</a>
                             }
                             else if (ViewBag.actionstatus == "SkillChannel" && ViewBag.CuratedGroupId != null)
                             {
-                                <a href="/IRF/CuratedIndex" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back to List</a>
+                                <a href="/IRF/CuratedIndex" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back to List</a>
                             }
                             else if (ViewBag.actionstatus == "SkillChannel")
                             {
-                                <a href="/IRF/CuratedIndex" class="mdc-button mdc-button--raised mdc-ripple  -upgraded card-title-space">Back to List</a>
+                                <a href="/IRF/CuratedIndex" class="mdc-button mdc-button--raised mdc-ripple  -upgraded">Back to List</a>
                             }
 
                             else
                             {
-                                @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                                @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                             }
                             @*<a href="/RiseTube/VideoDetailView" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Video Detail View</a>*@
 
@@ -426,7 +427,7 @@
                                                                 {
                                                                     @if (@Model.VideoLink.Contains(".mp4") || @Model.VideoLink.Contains(".org"))
                                                                     {
-                                                                        <video controls class="vjs-tech video-width btnvideo" controlsList="nodownload" autoplay>
+                                                                        <video id="risetubevideo_3" controls class="vjs-tech video-width" controlsList="nodownload" autoplay>
                                                                             <source src="@Model.VideoLink" type="video/mp4">"  autoplay>
                                                                             <source src="@Model.VideoLink" type="video/mp4">
                                                                         </video>
@@ -506,32 +507,57 @@
                                                                     <div class="k col-md-2">
                                                                         @if (Model.IsLike == "Liked")
                                                                         {
-                                                                            <div class="btn2">
-                                                                                <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click" style="line-height: 42px;">
-                                                                                    <label id="pTotalvideolike">@Model.TotalVedioLike</label>
-                                                                                </i> <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1">
-                                                                                    <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
-                                                                                </i>
+                                                                            <div>
+                                                                                <span class="pull-left">
+                                                                                    <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click" style="line-height: 42px;">
+                                                                                        <label id="pTotalvideolike">@Model.TotalVedioLike</label>
+                                                                                    </i>
+                                                                                </span> <span class="pull-left">
+                                                                                    <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1">
+                                                                                        <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
+                                                                                    </i>
+                                                                                </span>
                                                                             </div>
                                                                         }
                                                                         else if (Model.IsLike == "Disliked")
                                                                         {
-                                                                            <div class="btn3">
-                                                                                <i class="fa fa-thumbs-up fa-5px " aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px;padding-right:0px">
+                                                                            <div>
+                                                                                <span class="pull-left">
+                                                                                    <span >
+                                                                                        <i class="fa fa-thumbs-up fa-5px " aria-hidden="true" id="toggle-click" style="color: #504d4d;font-size: 24px;padding-right: 0px">
 
-                                                                                    <label id="pTotalvideolike">@Model.TotalVedioLike</label>
-                                                                                </i> <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: blue; font-size: 24px;padding-right:0px">
-                                                                                    <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
-                                                                                </i>
+                                                                                            <label id="pTotalvideolike">@Model.TotalVedioLike</label>
+                                                                                        </i>
+                                                                                    </span>
+                                                                                </span>
+                                                                                <span class="pull-left">
+                                                                                    <span>
+                                                                                        <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: blue; font-size: 24px;padding-right:0px">
+                                                                                            <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
+                                                                                        </i>
+                                                                                    </span>
+                                                                                </span>
                                                                             </div>
                                                                         }
                                                                         else
-                                                                        { <i class="fa fa-thumbs-up fa-5px btn2" aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px; padding-right: 0px">
-
-                                                                                <label id="pTotalvideolike">@Model.TotalVedioLike</label>
-                                                                            </i> <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:0px">
-                                                                                <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
-                                                                            </i>}
+                                                                        { <span class="pull-left">
+                                                                                <span >
+                                                                                    <i class="fa fa-thumbs-up fa-5px btn2" aria-hidden="true" id="toggle-click" style="color: #504d4d;
+        font-size: 24px;
+        padding-right: 0px">
+                                                                                        <label id="pTotalvideolike">@Model.TotalVedioLike</label>
+                                                                                    </i>
+                                                                                </span>
+                                                                            </span><span class="pull-left">
+                                                                                <span>
+                                                                                    <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style="color: #504d4d;
+        font-size: 24px;
+        padding-right: 0px">
+                                                                                        <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
+                                                                                    </i>
+                                                                                </span>
+                                                                            </span>
+                                                                        }
                                                                     </div>
                                                                 }
 
@@ -543,7 +569,7 @@
                                                                         {
                                                                             <div class="col-md-2 share">
                                                                                 <div class="btn-group">
-                                                                                    <button type="button" class="share-btn sharebtn1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                                    <button id="risetubevideo_6" type="button" class="share-btn sharebtn1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
                                                                                         <img src="../../img/share-tweet-icon.png" style=" width: 28px;padding-left:4px;"> Share
                                                                                     </button>
                                                                                     <div class="dropdown-menu">
@@ -602,7 +628,7 @@
                                                                             else
                                                                             {
                                                                                 <div class="btn-group">
-                                                                                    <button type="button" class="share-btn sharebtn1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                                    <button id="risetubevideo_6" type="button" class="share-btn sharebtn1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
                                                                                         <img class="tweet-icon" src="../../img/share-tweet-icon.png">  Share
                                                                                     </button>
                                                                                     <div class="dropdown-menu">
@@ -632,11 +658,12 @@
                                                                 }
                                                                 else
                                                                 {
-                                                                    <div class="col-md-4 views tooltip1" style="text-align: end;">
-                                                                        <i class="fa fa-video video-icon"></i>
+                                                                    <div  class="col-md-4 views tooltip1" style="text-align: end;">
+                                                                        <span id="risetubevideo_7">
+                                                                            <i class="fa fa-video video-icon"></i>
 
-                                                                        <input class="view-video" type="button" onclick="openVideoDetailsModel()" value="Share/View Details" />
-
+                                                                            <input class="view-video" type="button" onclick="openVideoDetailsModel()" value="Share/View Details" />
+                                                                        </span>
                                                                     </div>
                                                                 }
                                                             </div>
@@ -652,7 +679,7 @@
                                                                                         var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
                                                                                         @if (Model.MeetingPatch.FirstOrDefault().Priority == videolist.Priority)
                                                                                         {
-                                                                                            <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
+                                                                                            <div id="risetubevideo_19" class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
                                                                                                 <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
                                                                                                 <div class="video-card-image active-video" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)" disabled="true">
 
@@ -683,7 +710,7 @@
                                                                                         }
                                                                                         else
                                                                                         {
-                                                                                            <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
+                                                                                            <div id="risetubevideo_19" class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
                                                                                                 <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
                                                                                                 <div class="video-card-image" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)">
 
@@ -729,13 +756,13 @@
                                                                 <div>
                                                                     <div>
                                                                         <ul class="nav nav-pills nav-pills-primary tabs">
-                                                                            <li class="nav-link active item1" rel="link1">Report Summary</li>
-                                                                            <li class="nav-link item2" rel="link2">Candidate Details</li>
-                                                                            <li class="nav-link item3" rel="link3"> Tech Skill Report</li>
-                                                                            <li class="nav-link item4" rel="link4"> Questions Discussed</li>
-                                                                            <li class="nav-link item5" rel="link5">General Skill Report</li>
-                                                                            <li class="nav-link item6" rel="link6"> Joinability Report</li>
-                                                                            <li class="nav-link item7" rel="link7"> Selectability Report</li>
+                                                                            <li id="risetubevideo_8" class="nav-link active item1" rel="link1">Report Summary</li>
+                                                                            <li id="risetubevideo_12" class="nav-link item2" rel="link2">Candidate Details</li>
+                                                                            <li id="risetubevideo_13" class="nav-link item3" rel="link3"> Tech Skill Report</li>
+                                                                            <li id="risetubevideo_14" class="nav-link item4" rel="link4"> Questions Discussed</li>
+                                                                            <li id="risetubevideo_15" class="nav-link item5" rel="link5">General Skill Report</li>
+                                                                            <li id="risetubevideo_16" class="nav-link item6" rel="link6"> Joinability Report</li>
+                                                                            <li id="risetubevideo_17" class="nav-link item7" rel="link7"> Selectability Report</li>
                                                                             @if (Model.IsBiometricEnabled)
                                                                             {
                                                                                 <li class="nav-link item8" rel="link8" onclick="GetSentimentAnalysis('@Model.imid')"> Sentiment Analysis</li>
@@ -750,7 +777,7 @@
                                                                                 <div class="row">
                                                                                     <div class="left-chart">
 
-                                                                                        <div class="chart-box itemchart">
+                                                                                        <div id="risetubevideo_9" class="chart-box itemchart">
                                                                                             <p class="card-text">Overall Score: <span class="toscore" id="totScore"></span></p>
                                                                                             <div class="col-lg-12 col-md-12 col-sm-12 nopad">
                                                                                                 <div id="scoreChart" style="height: 200px; width: 100%;">
@@ -771,10 +798,10 @@
                                                                                             </div>
                                                                                         }
                                                                                     </div>
-                                                                                    <div class="interviewer-comment itemcomment">
+                                                                                    <div  class="interviewer-comment itemcomment">
 
                                                                                         <div class="form-group" style="margin-bottom:0px; ">
-                                                                                            @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12" })
+                                                                                            @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12 card-text-label" })
 
 
                                                                                             <div class="talk-bubble tri-right border-bubble right-in inComment" style="width:100%;">
@@ -1408,7 +1435,7 @@
                                                                                             <div id="words"></div>
                                                                                         </div>
                                                                                     </div>
-                                                                                    <div class="button-group pull-right"> <a href="#" class="mdc-button mdc-button--raised mdc-ripple-upgraded post " id="btnComment">POST</a> </div>
+                                                                                    <div  class="button-group pull-right"> <a href="#" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnComment">POST</a> </div>
                                                                                 </div>
                                                                             </form>
                                                                             <div id="divcomments">
@@ -1447,7 +1474,7 @@
                                                                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
                                                                             @if (Model.MeetingPatch.FirstOrDefault().Priority == videolist.Priority)
                                                                             {
-                                                                                <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
+                                                                                <div id="risetubevideo_19" class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
                                                                                     <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
                                                                                     <div class="video-card-image active-video" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)" disabled="true">
 
@@ -1478,7 +1505,7 @@
                                                                             }
                                                                             else
                                                                             {
-                                                                                <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
+                                                                                <div id="risetubevideo_19" class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
                                                                                     <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
                                                                                     <div class="video-card-image" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)">
 
@@ -1531,7 +1558,7 @@
                                                                             @foreach (var videolist in Model.SubVideo_List)
                                                                             {
                                                                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
-                                                                                <div class="video-card video-card-list videosidelist">
+                                                                                <div id="risetubevideo_19" class="video-card video-card-list videosidelist">
                                                                                     <div class="video-card-image">
                                                                                         @if (videolist.MeetingPatchCount > 0)
                                                                                         {
@@ -1667,7 +1694,7 @@
                                                                     var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
 
                                                                     <td class="relatedvideo rvdio" style="width:33.3%">
-                                                                        <div class="video-card video-card-list  videosidelist">
+                                                                        <div id="risetubevideo_19" class="video-card video-card-list  videosidelist">
                                                                             <div class="video-card-image">
                                                                                 @if (videolist.MeetingPatchCount > 0)
                                                                                 {
@@ -1788,7 +1815,7 @@
                                                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
 
 
-                                                            <div class="video-card video-card-list  videosidelist">
+                                                            <div id="risetubevideo_19" class="video-card video-card-list  videosidelist">
 
                                                                 <div class="video-card-image">
                                                                     @if (videolist.MeetingPatchCount > 0)
@@ -3632,7 +3659,7 @@
             else {
                 $(this).attr('data-click-state', 1);
                 $(this).css('color', 'blue');
-                $('#toggle-click1').css('color', 'black');
+                $('#toggle-click1').css('color', '#504d4d');
                 $.ajax({
                     type: "POST",
                     url: "/RiseTube/VideoLike",
@@ -3653,7 +3680,7 @@
             else {
                 $(this).attr('data-click-state', 1);
                 $(this).css('color', 'blue');
-                $('#toggle-click').css('color', 'black');
+                $('#toggle-click').css('color', '#504d4d');
                 $.ajax({
                     type: "POST",
                     url: "/RiseTube/VideoLike",
@@ -4079,124 +4106,499 @@
     pfName = pfName.Replace("\"", "");
     @if (pfName == "Client")
     {
-        <script src="~/Newassets/js/enjoyhint.min.js"></script>
-        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
 
-        <script>
+        <script type="text/javascript">
+            hopscotch.registerHelper('addOverlay', function () {
+                $('body').append('<div class="overlay"></div>');
+            });
 
-            var enjoyhint_instance = new EnjoyHint({});
+            hopscotch.registerHelper('removeOverlay', function () {
+                $('.overlay').fadeOut(function () {
+                    $(this).remove();
+                    $('.helper').remove();
+                });
+            });
 
-            var enjoyhint_script_steps = [
-                {
-                    'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
-                    'nextButton': { className: "myNext", text: "Continue" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btn1': 'Filter here based on available attributes or reset filter if applied earlier',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btnvideo': 'Candidate Video',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btn2': 'Click here to like the Candidate Video',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btn3': 'Click here to unlike Candidate Video',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
+            hopscotch.listen('show', function () {
+                var elementObject = $(hopscotch.getCurrTarget(tour));
+                var element = $('#' + elementObject[0].id);
 
+                element.prev().removeClass('overlay-relative');
+                element.addClass('overlay-relative');
 
-                {
-                    'next .sharebtn1': 'Share the video by clicking here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .item1': 'Interview Report Summary',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                if ($('.helper').length !== 0) {
 
-                },
-                {
-                    'next .itemchart': 'Check candidate overall score here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                    // Use Helper Layer for hilight target element.
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
 
-                },
-                {
-                    'next .itemcomment': 'Check interviewer comments here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-                },
-                {
-                    'next .item2': 'Candidate Details',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
 
-                },
-                {
-                    'next .item3': 'Tech Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                } else {
 
-                },
-                {
-                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                    // Add Helper Layer for highlight target element.
+                    var newHelper = '<div class="helper"></div>';
+                    $('body').append(newHelper);
 
-                },
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
 
-                {
-                    'next .item5': 'General Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-                },
-                {
-                    'next .item6': 'Joinability Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item7': 'Selectability Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .post': 'Collaborative decision making.Write your comment and click post',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .videosidelist': 'Same skill Candidates Video ',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
                 }
 
-            ];
-            setTimeout(function () {
-                enjoyhint_instance.set(enjoyhint_script_steps);
-                enjoyhint_instance.run();
-            }, 10000)
+            });
+
+            var tour = {
+                id: "hello-hopscotch",
+                showCloseButton: false,
+                steps: [
+                    
+                    
+                    {
+                        title: "Candidate Video",
+                        content: "Candidate Video will be played here",
+                        target: "risetubevideo_3",
+                        showPrevButton: true,
+                        placement: "right",
+                        zindex: 999999,
+                        xOffset: 5,
+                        yOffset: 20,
+                        onPrev: function () {
+
+                            $('#risetubevideo_3').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onNext: function () {
+
+                            $('#risetubevideo_3').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+
+                    },
+                    
+
+                    
+
+                    {
+                        title: "Share",
+                        content:"Click here to generate public share URL of the candidate",
+                        target: "risetubevideo_6",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_6').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_6').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                    {
+                        title: "Share/View Details",
+                        content: "Click here to check video view stats",
+                        target: "risetubevideo_7",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_7').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_7').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+
+                    {
+                        title: "Report Summary",
+                        content: "View the Candidate Report Summary",
+                        target: "risetubevideo_8",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_8').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_8').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Overall Score",
+                        content: "Check Candidate Overall Score here",
+                        target: "risetubevideo_9",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_9').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_9').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Interviewer Comment",
+                        content: "Check Interviewer Comments here",
+                        target: "risetubevideo_10",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_10').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_10').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                    
+
+                    {
+                        title: "Candidate Details",
+                        content: "View the Candidate details",
+                        target: "risetubevideo_12",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_12').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_12').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Tech Skill Report",
+                        content: "View the Tech Skill Report ",
+                        target: "risetubevideo_13",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_13').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_13').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+
+                    {
+                        title: "Questions Discussed",
+                        content: "Questions discussed during interview and see the specific part of the video by clicking on the question ",
+                        target: "risetubevideo_14",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_14').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_14').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "General Skill Report",
+                        content: "View the General Skill Report",
+                        target: "risetubevideo_15",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_15').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_15').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+
+                    {
+                        title: "Joinability Report",
+                        content: "View the Joinability Report",
+                        target: "risetubevideo_16",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_16').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_16').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Selectability Report",
+                        content: "View the Selectability Report",
+                        target: "risetubevideo_17",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_17').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_17').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                   
+
+                    {
+                        title: "Similar Skill Video",
+                        content: "Checkout Similar Skill Candidates Video",
+                        target: "risetubevideo_19",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_19').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_19').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+                    {
+                        title: "Skill",
+                        content: "Click on Skill menu to see its features",
+                        target: "skillchannel_menu",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 10,
+                        yOffset: -20,
+                        onNext: function () {
+                            $('#skillchannel_menu').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skillchannel_menu').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                ],
+                onStart: ["addOverlay"],
+                onEnd: ["removeOverlay"],
+            };
+
+            hopscotch.startTour(tour);
+
         </script>
+
     }
+
+
 }
+
+
+
+
+
+@*<script src="~/Newassets/js/enjoyhint.min.js"></script>
+    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+
+
+    <script>
+
+        var enjoyhint_instance = new EnjoyHint({});
+
+        var enjoyhint_script_steps = [
+            {
+                'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
+                'nextButton': { className: "myNext", text: "Continue" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .btn1': 'Filter here based on available attributes or reset filter if applied earlier',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .btnvideo': 'Candidate Video',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .btn2': 'Click here to like the Candidate Video',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .btn3': 'Click here to unlike Candidate Video',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+
+
+            {
+                'next .sharebtn1': 'Share the video by clicking here',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .item1': 'Interview Report Summary',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+
+            },
+            {
+                'next .itemchart': 'Check candidate overall score here',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+
+            },
+            {
+                'next .itemcomment': 'Check interviewer comments here',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+
+            },
+            {
+                'next .item2': 'Candidate Details',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+
+            },
+            {
+                'next .item3': 'Tech Skill Report',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+
+            },
+            {
+                'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+
+            },
+
+            {
+                'next .item5': 'General Skill Report',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+
+            },
+            {
+                'next .item6': 'Joinability Report',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+
+            },
+            {
+                'next .item7': 'Selectability Report',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+
+            },
+            {
+                'next .post': 'Collaborative decision making.Write your comment and click post',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .videosidelist': 'Same skill Candidates Video ',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
+            }
+
+        ];
+        setTimeout(function () {
+            enjoyhint_instance.set(enjoyhint_script_steps);
+            enjoyhint_instance.run();
+        }, 10000)
+    </script>*@
+
+
+
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {
     var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");

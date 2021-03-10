@@ -6,6 +6,9 @@ body {
 .main-panel {
     background: #ebecf1;
 }
+.share-btn, .view-video {
+    color: #504d4d !important
+}
 
 .bl-bg {
     background: #ebecf1;
