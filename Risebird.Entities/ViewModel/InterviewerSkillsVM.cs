@@ -69,6 +69,9 @@ namespace Risebird.Entities.ViewModel
         public string HREmailId { get; set; }
         public int UserId { get; set; }
         public bool IsDeleted { get; set; }
+        [DisplayName("Profile Type")]
+        public int? HeuristicProfileType { get; set; }
+        public bool IsClone { get; set; }
 
     }
 
@@ -93,6 +96,8 @@ namespace Risebird.Entities.ViewModel
         public int TotalMeetings { get; set; }
         public int ScheduledMeetings { get; set; }
         public int ApprovedInterviewers { get; set; }
+        public int? HeuristicProfileType { get; set; }
+
 
     }
 }

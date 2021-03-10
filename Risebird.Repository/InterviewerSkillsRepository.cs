@@ -320,6 +320,7 @@ namespace Risebird.Repository
             parameters.Add("@PerMintuteRate", entity.PerMintuteRate);
             parameters.Add("@PrimarySkill", entity.PrimarySkill);
             parameters.Add("@CalendlyLink", entity.CalendlyLink);
+            parameters.Add("@HeuristicProfileType", entity.HeuristicProfileType);
 
             return parameters;
         }
