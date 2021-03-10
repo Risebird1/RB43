@@ -1469,6 +1469,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditIRF(IRFVm model)
         {
             try

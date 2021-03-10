@@ -45,6 +45,7 @@ namespace Risebird.Entities.ViewModel
         //[DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DOB { get; set; }
         [Display(Name = "Gender")]
+        [Required]
         public string Gender { get; set; }
 
         [Display(Name = "Annual Salary")]

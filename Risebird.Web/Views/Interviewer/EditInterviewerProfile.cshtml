@@ -40,7 +40,7 @@
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section interviewer">
 
-                        @using (Html.BeginForm("EditInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data",@onsubmit= "return Checkvalidation();" }))
+                        @using (Html.BeginForm("EditInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return Checkvalidation();" }))
                         {
                             @Html.AntiForgeryToken()
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -200,7 +200,7 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.Gender, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(model => model.Gender, (SelectList)Model.GenderList, new { id = "drp_Gender", @class = "select-css form-control text-box single-line" })
+                                        @Html.DropDownListFor(model => model.Gender, (SelectList)Model.GenderList, "Select", new { id = "drp_Gender", @class = "select-css form-control text-box single-line" })
                                         @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
                                     </div>
 
@@ -981,8 +981,8 @@
 
                                     <div class="col-md-12 mc-button-area">
                                         @Html.ActionLink("Back to List", "Index", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                        <input type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
-
+                                        @*<input type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />*@
+                                        <input type="submit" value="Submit" id="btnUpload" onclick="return CheckvalidationforProfile();" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
 
                                     </div>
                                 </div>
@@ -1519,9 +1519,16 @@
 
         }
         function Checkvalidation() {
-            if ($(".multiselect-selected-text").text() != "None selected" || $(".multiselect-selected-text").text() != "") {
+            //if ($(".multiselect-selected-text").text() != "None selected" || $(".multiselect-selected-text").text() != "") {
+            //    return true;
+            //}
+            //return false;
+        }
+        function CheckvalidationforProfile() {
+            if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
                 return true;
             }
+            $(".multiselect-selected-text").focus();
             return false;
         }
     </script>

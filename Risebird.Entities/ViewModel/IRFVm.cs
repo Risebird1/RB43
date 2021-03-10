@@ -34,6 +34,7 @@ namespace Risebird.Entities.ViewModel
         public string BudgetConsumed { get; set; }
 
         [DisplayName("Job Level")]
+        [Required]
         public int? JobLevel { get; set; }
         public int ClientId { get; set; }
         [DisplayName("Job Country")]
@@ -63,6 +64,7 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public int NoOfPosition { get; set; }
         [DisplayName("Client Profile Type")]
+        [Required]
         public int Heuristicsscore { get; set; }
 
         [DisplayName("No of Interviews")]
@@ -128,6 +130,7 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public int BillingOwner { get; set; }
         [Display(Name = "Assessment Group Id")]
+        [Required]
         public string AssessmentGroupId { get; set; }
         public SelectList AssessmentGroupList { get; set; }
         public IEnumerable<IRFInterviewerMembers> InterviewerMembers { get; set; }

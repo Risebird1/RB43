@@ -6,6 +6,9 @@ body {
 .main-panel {
     background: #ebecf1;
 }
+.share-btn, .view-video {
+    color: #504d4d !important
+}
 
 .bl-bg {
     background: #ebecf1;
@@ -283,9 +286,8 @@ textarea::-webkit-scrollbar {
         background-color: #fcfcfc!important;
         border: 0px!important;
     }
-
 .un-left {
-    background: #eaeaea;
+    background: #dedede;
 }
 
 .un-right {

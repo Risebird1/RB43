@@ -40,7 +40,7 @@ textarea::-webkit-scrollbar-thumb {
     border: 1px solid #acacad !important;
 }
 .un-left {
-    background: #eaeaea;
+    background: #dedede;
 }
 
 .un-right {
@@ -69,6 +69,11 @@ textarea::-webkit-scrollbar-thumb {
     .file-upload .file-select .file-select-button {
         background: #e4e2e2;
     }
+
+.share-btn, .view-video {
+    color: #504d4d !important
+}
+
 .click-btn, .click-btn:hover {
     background: #b1aeae;
     color: #fff !important;
