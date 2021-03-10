@@ -1170,28 +1170,7 @@
 
     function TechSkillChanged() {
         var Assessmentgroupid = $("#AssessmentGroupId").val();
-        //var interviewerskills = $("#txtinterviewerskills").val();
-        //if (interviewerskills != "") {
-        //    var interviewerskill = interviewerskills.split(',');
-        //    for (var j = 0; j < interviewerskill.length; j++) {
-        //        var createid = "SkillCollection_" + j + "__SkillId";
-        //        var SkillLabel = "SkillCollection_" + j + "__LevelId";
-        //        var options = createid + " option[value='" + interviewerskill[j] + "']";
-        //        $("#" + options).attr('selected', 'selected');
-        //        $("#" + SkillLabel + " option[value='1']").attr('selected', 'selected');
-
-        //        if (j < (interviewerskill.length - 1)) {
-        //            AddRow();
-        //        }
-        //    }
-        //}
-        ////var index = id.charAt(16);
-        //var techSkills = $('[id^="SkillCollection"][id$="SkillId"]');
-        ////var arr = [];
         var skills = "";
-        //for (i = 0; i < techSkills.length; i++) {
-        //    skills = skills + ',' + techSkills[i].value;
-        //}
         var interviewerSkills;
         $.ajax({
             type: "GET",
