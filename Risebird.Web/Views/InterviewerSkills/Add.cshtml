@@ -122,11 +122,55 @@
                                             </div>
                                             <div class="form-group">
                                                 <div class="mandate">
-                                                    @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
-                                                    <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></label>
-                                                    @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                                                    @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                 </div>
+                                                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
+                                                <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></label>
+                                                @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                Upload JD
+
+
+                                                <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+    
+                                                    <div class="mdc-radio mdc-radio--touch">
+                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
+                                                        <div class="mdc-radio__background">
+                                                            <div class="mdc-radio__outer-circle"></div>
+                                                            <div class="mdc-radio__inner-circle"></div>
+                                                        </div>
+                                                        <div class="mdc-radio__ripple"></div>
+                                                    </div>
+                                                </div>
+                                                Provide JD Link
+
+                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                    <div class="mdc-radio mdc-radio--touch">
+                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
+                                                        <div class="mdc-radio__background">
+                                                            <div class="mdc-radio__outer-circle"></div>
+                                                            <div class="mdc-radio__inner-circle"></div>
+                                                        </div>
+                                                        <div class="mdc-radio__ripple"></div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="form-group" style="display:none" id="linkDiv">
+                                                @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
+
+                                            </div>
+                                            <div class="" style="display:none" id="uploadDiv">
+                                                @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+
+                                            </div>
                                         </div>
                                         <div class="col-md-4 col-sm-4 pl-1 pull-left">
 

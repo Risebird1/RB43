@@ -321,6 +321,7 @@ namespace Risebird.Repository
             parameters.Add("@PrimarySkill", entity.PrimarySkill);
             parameters.Add("@CalendlyLink", entity.CalendlyLink);
             parameters.Add("@HeuristicProfileType", entity.HeuristicProfileType);
+            parameters.Add("@JDLink", entity.JDLink);
 
             return parameters;
         }

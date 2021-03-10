@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -73,6 +74,11 @@ namespace Risebird.Entities.ViewModel
         public int? HeuristicProfileType { get; set; }
         public bool IsClone { get; set; }
 
+        [DisplayName("JD Link")]
+        //[Required]
+        public string JDLink { get; set; }
+        public IFormFile JDFile { get; set; }
+
     }
 
     public class InterviewerSkillsChannelModel
@@ -97,7 +103,7 @@ namespace Risebird.Entities.ViewModel
         public int ScheduledMeetings { get; set; }
         public int ApprovedInterviewers { get; set; }
         public int? HeuristicProfileType { get; set; }
-
+        public string JDLink { get; set; }
 
     }
 }

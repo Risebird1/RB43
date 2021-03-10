@@ -22,7 +22,9 @@ CREATE PROCEDURE [dbo].[usp_UpdateInterviewerSkillsChannel]
 @PerMintuteRate real,
 @CalendlyLink varchar(500),
 @PrimarySkill int,
-@HeuristicProfileType int
+@HeuristicProfileType int,
+@JDLink varchar(2000)
+
 
 AS
 Begin
@@ -38,7 +40,7 @@ set
 		   ,[CalendlyLink] =@CalendlyLink
 		   ,[PrimarySkill]=@PrimarySkill
 		   ,[HeuristicProfileType]=@HeuristicProfileType
-
+		   ,[JDLink]=@JDLink
 Where id =@id
 
 delete from TransInterviewerSkillsLeadInterviewer where InterviewerSkillId=@id

@@ -204,6 +204,7 @@ namespace Risebird.Business
                 model.RisebirdHr = InterviewerSkills.RisebirdHr;
                 model.PrimarySkill = InterviewerSkills.PrimarySkill;
                 model.HeuristicProfileType = InterviewerSkills.HeuristicProfileType;
+                model.JDLink = InterviewerSkills.JDLink;
                 //var skillCount = transTechSkills.Count();
                 return model;
 
