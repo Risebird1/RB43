@@ -121,6 +121,71 @@
                                                 <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></span>
                                                 @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
                                             </div>
+
+                                            <div class="form-group mb-0">
+
+                                                Upload JD
+
+                                                <div class="mdc-touch-target-wrapper" style="top: 4px;  position: relative;">
+                                                    <div class="mdc-radio mdc-radio--touch">
+                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
+                                                        <div class="mdc-radio__background">
+                                                            <div class="mdc-radio__outer-circle"></div>
+                                                            <div class="mdc-radio__inner-circle"></div>
+                                                        </div>
+                                                        <div class="mdc-radio__ripple"></div>
+                                                    </div>
+                                                </div>
+
+
+
+                                                Provide JD link
+
+                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                    <div class="mdc-radio mdc-radio--touch">
+                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
+                                                        <div class="mdc-radio__background">
+                                                            <div class="mdc-radio__outer-circle"></div>
+                                                            <div class="mdc-radio__inner-circle"></div>
+                                                        </div>
+                                                        <div class="mdc-radio__ripple"></div>
+                                                    </div>
+                                                </div>
+
+                                                None
+
+                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                    <div class="mdc-radio mdc-radio--touch">
+                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="None" checked="checked" onclick="RadioChanged(this.value)">
+                                                        <div class="mdc-radio__background">
+                                                            <div class="mdc-radio__outer-circle"></div>
+                                                            <div class="mdc-radio__inner-circle"></div>
+                                                        </div>
+                                                        <div class="mdc-radio__ripple"></div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="form-group mb-0" style="display:none" id="linkDiv">
+                                                @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
+
+                                            </div>
+                                            <div class="" style="display:none" id="uploadDiv">
+                                                @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+
+                                            </div>
+                                            <div class="upload">
+                                                @{
+                                                    if (!String.IsNullOrEmpty(Model.JDLink))
+                                                    {
+                                                        <a style="text-decoration:none;" id="audioId" target="_blank" rel="tooltip" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.JDLink.ToString().Replace(" ","%20")>Uploaded JD</a>
+                                                    }
+                                                }
+                                            </div>
                                         </div>
                                         <div class="col-lg-4  col-md-4 col-sm-4 pl-1 pull-left">
                                             <div class="form-group">
@@ -283,15 +348,14 @@
             document.getElementById("PerMintuteRate").value = '';
 
 
-            //var jdLinkElement = document.getElementById("JDLink");
-            //if (jdLinkElement != null) {
-            //    jdLinkElement.value = '';
-            //}
-            //var jdFileElement = document.getElementById("JDFile");
-            //if (jdFileElement != null) {
-            //    jdFileElement.value = '';
-            //}
-            //CompanyDetails
+            var jdLinkElement = document.getElementById("JDLink");
+            if (jdLinkElement != null) {
+                jdLinkElement.value = '';
+            }
+            var jdFileElement = document.getElementById("JDFile");
+            if (jdFileElement != null) {
+                jdFileElement.value = '';
+            }
             
 
 
@@ -333,6 +397,29 @@
             $(':submit', this).attr('disabled', 'disabled');
         }
     });
+
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("JDLink").value = '';
+
+        }
+        else if (val == 'Link') {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("JDFile").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("JDFile").value = '';
+            document.getElementById("JDLink").value = '';
+        }
+
+    }
+
 
     function SkillChanged() {
 
