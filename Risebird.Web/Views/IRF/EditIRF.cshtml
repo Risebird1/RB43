@@ -168,7 +168,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, new { @class = "form-control select-css " })
+                                        @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css " })
 
                                         @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @class = "text-danger" })
 
@@ -308,7 +308,7 @@
 
                                     <div class="form-group mb-0">
                                         @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, new { @class = "form-control select-css " })
+                                        @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, "Select", new { @class = "form-control select-css " })
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
 
                                     </div>

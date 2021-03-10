@@ -39,7 +39,7 @@
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section interviewer">
 
-                        @using (Html.BeginForm("AddInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return Checkvalidation();" }))
+                        @using (Html.BeginForm("AddInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return Checkvalidation();", @id = "InterviewerProfileform" }))
                         {
                             @Html.AntiForgeryToken()
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -79,52 +79,53 @@
                                     </div>
                                     <div class="form-group dob">
                                         <div class="mandate">
-                                            @Html.LabelFor(model => model.DOB, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                            @Html.EditorFor(m => m.DOB, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.DOB } })
-
-                                            @*@Html.TextBoxFor(m => m.DOB, null, new { id = "DOB", @class = "form-control text-box single-line", type = "date" })*@
-                                            @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
+                                            @Html.LabelFor(model => model.DOB, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                         </div>
+                                        @Html.EditorFor(m => m.DOB, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.DOB } })
+
+                                        @*@Html.TextBoxFor(m => m.DOB, null, new { id = "DOB", @class = "form-control text-box single-line", type = "date" })*@
+                                        @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
+                                    </div>
 
 
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.Experience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.EditorFor(model => model.Experience, new { htmlAttributes = new { id = "txt_Experience", @class = "form-control text-box single-line", @type = "text" } })
-                                            @Html.ValidationMessageFor(model => model.Experience, "", new { @class = "text-danger" })
-                                        </div>
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.GitHubLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.EditorFor(model => model.GitHubLink, new { htmlAttributes = new { id = "txt_GitHubLink", @class = "form-control text-box single-line", @type = "text" } })
-                                        </div>
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.Blog, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.EditorFor(model => model.Blog, new { htmlAttributes = new { id = "txt_Blog", @class = "form-control text-box single-line", @type = "text" } })
-                                        </div>
-                                        <div class="form-group">
-                                   
-                                                @Html.LabelFor(model => model.IsLeadInterviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.DropDownListFor(model => model.IsLeadInterviewer, new[]
-                                                                {   new SelectListItem { Text = "No", Value = "false" },
-                                                                    new SelectListItem { Text = "Yes", Value = "true"} },
-                                                                  new { id = "drp_IsLeadINtr", @class = "select-css form-control text-box single-line" })
-                                                @Html.ValidationMessageFor(model => model.IsLeadInterviewer, "", new { @class = "text-danger" })
-                                            </div>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                <select id="AssessmentGroupArray" name="AssessmentGroupArray" class="form-control multiselect" multiple="multiple">
-                                                    @foreach (var item in Model.AssessmentGroupList.ToList())
-                                                    {
-                                                        @if (item != null)
-                                                        {
-                                                            <option value="@item.Value">@item.Text</option>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Experience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.Experience, new { htmlAttributes = new { id = "txt_Experience", @class = "form-control text-box single-line", @type = "text" } })
+                                        @Html.ValidationMessageFor(model => model.Experience, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.GitHubLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.GitHubLink, new { htmlAttributes = new { id = "txt_GitHubLink", @class = "form-control text-box single-line", @type = "text" } })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Blog, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.Blog, new { htmlAttributes = new { id = "txt_Blog", @class = "form-control text-box single-line", @type = "text" } })
+                                    </div>
+                                    <div class="form-group">
 
-                                                        }
-                                                    }
+                                        @Html.LabelFor(model => model.IsLeadInterviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(model => model.IsLeadInterviewer, new[]
+                                                        {   new SelectListItem { Text = "No", Value = "false" },
+                                                            new SelectListItem { Text = "Yes", Value = "true"} },
+                                                          new { id = "drp_IsLeadINtr", @class = "select-css form-control text-box single-line" })
+                                        @Html.ValidationMessageFor(model => model.IsLeadInterviewer, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        <select id="AssessmentGroupArray" name="AssessmentGroupArray" class="form-control multiselect" multiple="multiple">
+                                            @foreach (var item in Model.AssessmentGroupList.ToList())
+                                            {
+                                                @if (item != null)
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
 
-                                                </select>
-                                                @Html.ValidationMessageFor(model => model.AssessmentGroupArray, "", new { @class = "text-danger" })
-                                            </div>
-                                        </div>
+                                                }
+                                            }
+
+                                        </select>
+                                        @Html.ValidationMessageFor(model => model.AssessmentGroupArray, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
                                 <div class="col-lg-4  col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
                                         <div class="mandate">
@@ -157,7 +158,7 @@
                                         <div class="mandate">
                                             @Html.LabelFor(model => model.PreferredDomain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         </div>
-                                        @Html.EditorFor(model => model.PreferredDomain, new { htmlAttributes = new { id = "txt_PreferredDomain", @class = "form-control text-box single-line", @type = "text"} })
+                                        @Html.EditorFor(model => model.PreferredDomain, new { htmlAttributes = new { id = "txt_PreferredDomain", @class = "form-control text-box single-line", @type = "text" } })
                                         @Html.ValidationMessageFor(model => model.PreferredDomain, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -165,22 +166,23 @@
                                         @Html.EditorFor(model => model.StackOverflowLink, new { htmlAttributes = new { id = "txt_StackOverflowLink", @class = "form-control text-box single-line", @type = "text" } })
                                     </div>
                                     <div class="form-group">
-                                       
-                                            @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.DropDownListFor(model => model.Country, (SelectList)Model.CountryList, new { id = "drp_Country", @class = "select-css form-control text-box single-line", @required = "required" })
-                                        </div>
+
+                                        @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(model => model.Country, (SelectList)Model.CountryList, new { id = "drp_Country", @class = "select-css form-control text-box single-line", @required = "required" })
+                                    </div>
                                     <div class="form-group">
                                         <div class="mandate">
-                                            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                            @*@Html.EditorFor(model => model.IsActive, new { htmlAttributes = new { id = "txt_IsActive", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
-                                            @Html.DropDownListFor(model => model.IsActive, new[]
-                                                            {   new SelectListItem { Text = "No", Value = "false" },
-                                                                new SelectListItem { Text = "Yes", Value = "true"} },
-                                                              new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
-                                            @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                                            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                         </div>
-
+                                        @*@Html.EditorFor(model => model.IsActive, new { htmlAttributes = new { id = "txt_IsActive", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
+                                        @Html.DropDownListFor(model => model.IsActive, new[]
+                                                        {   new SelectListItem { Text = "No", Value = "false" },
+                                                            new SelectListItem { Text = "Yes", Value = "true"} },
+                                                          new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
+                                        @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
                                     </div>
+
+                                </div>
                                 <div class="col-lg-4  col-md-4 col-sm-4 pl-1">
                                     <div class="form-group">
                                         <div class="mandate">
@@ -199,80 +201,81 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="mandate">
-                                            @Html.LabelFor(model => model.IsApproved, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                            @*@Html.EditorFor(model => model.IsApproved, new { htmlAttributes = new { id = "txt_IsApproved", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
-                                            @Html.DropDownListFor(model => model.IsApproved, new[]
-                                                            {   new SelectListItem { Text = "No", Value = "false" },
-                                                                new SelectListItem { Text = "Yes", Value = "true"} },
-                                                              new { id = "drp_IsAppr", @class = "select-css form-control text-box single-line" })
-
-                                            @Html.ValidationMessageFor(model => model.IsApproved, "", new { @class = "text-danger" })
+                                            @Html.LabelFor(model => model.IsApproved, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                         </div>
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.Gender, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.DropDownListFor(model => model.Gender, (SelectList)Model.GenderList, new { id = "drp_Gender", @class = "select-css form-control text-box single-line" })
-                                            @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
-                                        </div>
+                                        @*@Html.EditorFor(model => model.IsApproved, new { htmlAttributes = new { id = "txt_IsApproved", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
+                                        @Html.DropDownListFor(model => model.IsApproved, new[]
+                                                        {   new SelectListItem { Text = "No", Value = "false" },
+                                                            new SelectListItem { Text = "Yes", Value = "true"} },
+                                                          new { id = "drp_IsAppr", @class = "select-css form-control text-box single-line" })
+
+                                        @Html.ValidationMessageFor(model => model.IsApproved, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Gender, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(model => model.Gender, (SelectList)Model.GenderList, "Select", new { id = "drp_Gender", @class = "select-css form-control text-box single-line" })
+                                        @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                                    </div>
 
 
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.LinkedinLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.EditorFor(model => model.LinkedinLink, new { htmlAttributes = new { id = "txt_LinkedinLink", @class = "form-control text-box single-line", @type = "text" } })
-                                            @Html.ValidationMessageFor(model => model.LinkedinLink, "", new { @class = "text-danger" })
-                                        </div>
-                                        <div class="form-group">
-                                      
-                                                @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.EditorFor(model => model.City, new { htmlAttributes = new { id = "txt_City", @class = "form-control text-box single-line", @type = "text", @required = "required" } })
-                                                @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
-                                            </div>
-                                            <div class="form-group" style="margin-top: -10px;">
-                                                <span class="desp-label control-label">
-                                                    Upload Resume
-                                                </span>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.LinkedinLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.LinkedinLink, new { htmlAttributes = new { id = "txt_LinkedinLink", @class = "form-control text-box single-line", @type = "text" } })
+                                        @Html.ValidationMessageFor(model => model.LinkedinLink, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group">
 
-                                                <div class="mdc-touch-target-wrapper" style="top: 4px;
+                                        @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.City, new { htmlAttributes = new { id = "txt_City", @class = "form-control text-box single-line", @type = "text", @required = "required" } })
+                                        @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group" style="margin-top: -10px;">
+                                        <span class="desp-label control-label">
+                                            Upload Resume
+                                        </span>
+
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px;
     position: relative;">
-                                                    <div class="mdc-radio mdc-radio--touch">
-                                                        <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Upload" checked="checked" onclick="RadioChanged(this.value)">
-                                                        <div class="mdc-radio__background">
-                                                            <div class="mdc-radio__outer-circle"></div>
-                                                            <div class="mdc-radio__inner-circle"></div>
-                                                        </div>
-                                                        <div class="mdc-radio__ripple"></div>
-                                                    </div>
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Upload" checked="checked" onclick="RadioChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
                                                 </div>
-
-
-
-                                                <!--- <input id="Resume" name="Resume" value="Upload" type="radio" checked="checked" onclick="RadioChanged(this.value)">-->
-                                                | <span class="desp-label control-label">
-                                                    Coded Resume
-                                                </span>
-                                                <!--- <input id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">-->
-
-                                                <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
-                                                    <div class="mdc-radio mdc-radio--touch">
-                                                        <input class="mdc-radio__native-control" id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">
-                                                        <div class="mdc-radio__background">
-                                                            <div class="mdc-radio__outer-circle"></div>
-                                                            <div class="mdc-radio__inner-circle"></div>
-                                                        </div>
-                                                        <div class="mdc-radio__ripple"></div>
-                                                    </div>
-                                                </div>
+                                                <div class="mdc-radio__ripple"></div>
                                             </div>
-                                            <div style="display:none" id="linkDiv">
-                                                @Html.LabelFor(model => model.CodedResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                @Html.TextBoxFor(model => model.CodedResumeFile, new { id = "txt_CodedResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
-                                            </div>
-                                            <div class="" id="uploadDiv">
-
-                                                @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
-                                            </div>
-
                                         </div>
+
+
+
+                                        <!--- <input id="Resume" name="Resume" value="Upload" type="radio" checked="checked" onclick="RadioChanged(this.value)">-->
+                                        | <span class="desp-label control-label">
+                                            Coded Resume
+                                        </span>
+                                        <!--- <input id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">-->
+
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                                <div class="mdc-radio__ripple"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="display:none" id="linkDiv">
+                                        @Html.LabelFor(model => model.CodedResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.TextBoxFor(model => model.CodedResumeFile, new { id = "txt_CodedResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                    </div>
+                                    <div class="" id="uploadDiv">
+
+                                        @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                    </div>
+
+                                </div>
                             </div>
                             <!-- INterviewer personal Details End-->
                             <!-- Interviewer Skill Details Start-->
@@ -657,8 +660,8 @@
 
                                     <div class="col-md-12 mc-button-area">
                                         @Html.ActionLink("Back to List", "Index", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                        <input type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
-
+                                        @*<input type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />*@
+                                        <input type="submit" value="Submit" id="btnUpload" onclick="return CheckvalidationforProfile();" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
 
                                     </div>
                                 </div>
@@ -1177,9 +1180,16 @@
 
     }
     function Checkvalidation() {
-        if ($(".multiselect-selected-text").text() != "None selected" || $(".multiselect-selected-text").text() != "") {
+        //if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
+        //    return true;
+        //}
+        //return false;
+    }
+    function CheckvalidationforProfile() {
+        if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
             return true;
         }
+        $(".multiselect-selected-text").focus();
         return false;
     }
 </script>
