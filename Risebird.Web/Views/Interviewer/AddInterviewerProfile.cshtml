@@ -123,7 +123,7 @@
                                             }
 
                                         </select>
-                                        @Html.ValidationMessageFor(model => model.AssessmentGroupArray, "", new { @class = "text-danger" })
+                                        @Html.ValidationMessageFor(model => model.AssessmentGroupArray, "", new { @id = "err_assessmentgroup", @class = "text-danger" })
                                     </div>
                                 </div>
                                 <div class="col-lg-4  col-md-4 col-sm-4 px-1">
@@ -1187,9 +1187,11 @@
     }
     function CheckvalidationforProfile() {
         if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
+            $("#err_assessmentgroup").text("");
             return true;
         }
         $(".multiselect-selected-text").focus();
+        $("#err_assessmentgroup").text("Select Atleast one Assessment group.");
         return false;
     }
 </script>
