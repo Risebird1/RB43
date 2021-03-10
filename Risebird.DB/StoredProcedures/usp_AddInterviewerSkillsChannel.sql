@@ -13,48 +13,51 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[usp_AddInterviewerSkillsChannel]
 
-@InterviewerSkillId nvarchar(200),
-@JDTiltle nvarchar(200),
-@StartDate datetime,
-@EndDate datetime,
-@RisebirdHr int,
-@PerMintuteRate real,
-@CalendlyLink varchar(500),
-@PrimarySkill int,
-@HeuristicProfileType int,
-@JDLink varchar(2000)
-
-AS
-Begin
-
-INSERT INTO [dbo].[InterviewerSkillsChannel]
-           ([InterviewerSkillId]
-           ,[JDTiltle]
-           ,[StartDate]
-           ,[EndDate]           
-           ,[RisebirdHr]
-           ,[PerMintuteRate]  
-		   ,[CalendlyLink]
-		   ,[PrimarySkill]
-		   ,[HeuristicProfileType]
-		   ,[JDLink]
-		   )
-       VALUES
-           (@InterviewerSkillId,
-@JDTiltle,
-@StartDate,
-@EndDate,
-@RisebirdHr,
-@PerMintuteRate,
-@CalendlyLink,
-@PrimarySkill,
-@HeuristicProfileType,
-@JDLink
-)
-
-End
+Create PROCEDURE [dbo].[usp_AddInterviewerSkillsChannel]  
+  
+@InterviewerSkillId nvarchar(200),  
+@JDTiltle nvarchar(200),  
+@StartDate datetime,  
+@EndDate datetime,  
+@RisebirdHr int,  
+@PerMintuteRate real,  
+@CalendlyLink varchar(500),  
+@PrimarySkill int,  
+@HeuristicProfileType int,  
+@JDLink varchar(2000),
+@AssessmentGroupId varchar(200)  
+AS  
+Begin  
+  
+INSERT INTO [dbo].[InterviewerSkillsChannel]  
+           ([InterviewerSkillId]  
+           ,[JDTiltle]  
+           ,[StartDate]  
+           ,[EndDate]             
+           ,[RisebirdHr]  
+           ,[PerMintuteRate]    
+     ,[CalendlyLink]  
+     ,[PrimarySkill]  
+     ,[HeuristicProfileType]  
+     ,[JDLink]  
+     ,[AssessmentGroupId])  
+       VALUES  
+           (@InterviewerSkillId,  
+@JDTiltle,  
+@StartDate,  
+@EndDate,  
+@RisebirdHr,  
+@PerMintuteRate,  
+@CalendlyLink,  
+@PrimarySkill,  
+@HeuristicProfileType,  
+@JDLink,
+@AssessmentGroupId
+)  
+  
+End  
+  
 
 GO
 

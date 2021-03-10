@@ -322,7 +322,7 @@ namespace Risebird.Repository
             parameters.Add("@CalendlyLink", entity.CalendlyLink);
             parameters.Add("@HeuristicProfileType", entity.HeuristicProfileType);
             parameters.Add("@JDLink", entity.JDLink);
-
+            parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
             return parameters;
         }
 

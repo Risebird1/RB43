@@ -291,6 +291,8 @@ namespace Risebird.Web.Controllers
                     ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
                     ViewBag.LevelTech = new SelectList(_interviewerSkillsRepository.GetLevelTech(), "id", "Name");
                     ViewBag.Skill = new SelectList(_interviewerSkillsRepository.GetSkills(), "id", "Name");
+                    var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                    ViewBag.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
                     TempData["EditInterviewerSkillId"] = model.InterviewerSkillId;
                     TempData["InterviewerJDLink"] = model.JDLink;
                     var emailid = HttpContext.Session.GetString("email")?.Trim();

@@ -107,6 +107,7 @@ namespace Risebird.Entities.ViewModel
         public int ApprovedInterviewers { get; set; }
         public int? HeuristicProfileType { get; set; }
         public string JDLink { get; set; }
+        public string AssessmentGroupId { get; set; }
 
     }
 }

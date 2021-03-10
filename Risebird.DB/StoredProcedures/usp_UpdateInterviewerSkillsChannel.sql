@@ -9,43 +9,49 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+  
+  
+  
+CREATE PROCEDURE [dbo].[usp_UpdateInterviewerSkillsChannel]  
+  
+@InterviewerSkillId nvarchar(200),  
+@id int,  
+@JDTiltle nvarchar(200),  
+@StartDate datetime,  
+@EndDate datetime,  
+@RisebirdHr int,  
+@PerMintuteRate real,  
+@CalendlyLink varchar(500),  
+@PrimarySkill int,  
+@HeuristicProfileType int,  
+@JDLink varchar(2000),
+@AssessmentGroupId varchar(200)  
+  
+  
+AS  
+Begin  
+  
+update InterviewerSkillsChannel   
+set  
+[InterviewerSkillId]=@InterviewerSkillId,  
+           [JDTiltle]=@JDTiltle  
+           ,[StartDate]=@StartDate  
+           ,[EndDate]=@EndDate             
+           ,[RisebirdHr]=@RisebirdHr  
+           ,[PerMintuteRate]=@PerMintuteRate  
+     ,[CalendlyLink] =@CalendlyLink  
+     ,[PrimarySkill]=@PrimarySkill  
+     ,[HeuristicProfileType]=@HeuristicProfileType  
+     ,[JDLink]=@JDLink
+	 ,[AssessmentGroupId]=@AssessmentGroupId
+Where id =@id  
+  
+delete from TransInterviewerSkillsLeadInterviewer where InterviewerSkillId=@id  
+delete from TransInterviewerSkillsTechSkills where InterviewerSkillId=@id  
+End  
+  
 
 
-CREATE PROCEDURE [dbo].[usp_UpdateInterviewerSkillsChannel]
-
-@InterviewerSkillId nvarchar(200),
-@id int,
-@JDTiltle nvarchar(200),
-@StartDate datetime,
-@EndDate datetime,
-@RisebirdHr int,
-@PerMintuteRate real,
-@CalendlyLink varchar(500),
-@PrimarySkill int,
-@HeuristicProfileType int,
-@JDLink varchar(2000)
-
-
-AS
-Begin
-
-update InterviewerSkillsChannel 
-set
-[InterviewerSkillId]=@InterviewerSkillId,
-           [JDTiltle]=@JDTiltle
-           ,[StartDate]=@StartDate
-           ,[EndDate]=@EndDate           
-           ,[RisebirdHr]=@RisebirdHr
-           ,[PerMintuteRate]=@PerMintuteRate
-		   ,[CalendlyLink] =@CalendlyLink
-		   ,[PrimarySkill]=@PrimarySkill
-		   ,[HeuristicProfileType]=@HeuristicProfileType
-		   ,[JDLink]=@JDLink
-Where id =@id
-
-delete from TransInterviewerSkillsLeadInterviewer where InterviewerSkillId=@id
-delete from TransInterviewerSkillsTechSkills where InterviewerSkillId=@id
-End
 
 GO
 

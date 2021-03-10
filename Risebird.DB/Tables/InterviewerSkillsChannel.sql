@@ -17,6 +17,7 @@ CREATE TABLE [dbo].[InterviewerSkillsChannel](
 	[IsDeleted] [bit] NOT NULL DEFAULT 0,
 	[HeuristicProfileType] [int] NULL,
 	[JDLink] [varchar](2000) NULL,
+	[AssessmentGroupId] [varchar](100) NULL,
  CONSTRAINT [PK_InterviewerSkills] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -48,7 +49,15 @@ Else
 			ALTER TABLE InterviewerSkillsChannel
 			Add [JDLink] varchar(2000) null
 		END
- 
+ IF NOT EXISTS(
+		SELECT *
+		FROM sys.columns
+		WHERE Name IN (N'AssessmentGroupId')
+		  AND Object_ID = Object_ID(N'InterviewerSkillsChannel'))
+		BEGIN
+			ALTER TABLE InterviewerSkillsChannel
+			Add [AssessmentGroupId] varchar(100) null
+		END
 	End
 
 

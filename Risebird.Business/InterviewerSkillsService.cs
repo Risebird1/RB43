@@ -205,7 +205,7 @@ namespace Risebird.Business
                 model.PrimarySkill = InterviewerSkills.PrimarySkill;
                 model.HeuristicProfileType = InterviewerSkills.HeuristicProfileType;
                 model.JDLink = InterviewerSkills.JDLink;
-                //var skillCount = transTechSkills.Count();
+                model.AssessmentGroupId = InterviewerSkills.AssessmentGroupId == null ? "0" : InterviewerSkills.AssessmentGroupId;
                 return model;
 
             }
@@ -499,6 +499,6 @@ namespace Risebird.Business
                 return null;
             }
         }
-        
+
     }
 }
