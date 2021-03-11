@@ -289,6 +289,8 @@ namespace Risebird.Entities.ViewModel
         //public string PerHourRateOutside { get; set; }
         public SelectList CompanySizeList { get; set; }
         public SelectList CountryList { get; set; }
+        public SelectList IndianPrice { get; set; }
+        public SelectList OutSideIndiaPrice { get; set; }
         public SelectList ProfileTypeList { get; set; }
 
         [Display(Name = "Profile Type")]

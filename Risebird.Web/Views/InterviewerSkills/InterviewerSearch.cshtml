@@ -15,7 +15,8 @@
     string[] Senioritylevel = new string[] { };
     string[] ProfileType = new string[] { };
     string[] CompentencyLevel = new string[] { };
-
+    string[] IndianRate = new string[] { };
+    string[] OutSideIndiaRate = new string[] { };
 
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("InterviewerRiseTubefilters") != null)
@@ -27,6 +28,8 @@
     Senioritylevel = filter.Senioritylevel != null ? filter.Senioritylevel : new string[] { };
     ProfileType = filter.ProfileType != null ? filter.ProfileType : new string[] { };
     CompentencyLevel = filter.CompentencyLevel != null ? filter.CompentencyLevel : new string[] { };
+    IndianRate = filter.IndianRate != null ? filter.IndianRate : new string[] { };
+    OutSideIndiaRate = filter.OutSideIndiaRate != null ? filter.OutSideIndiaRate : new string[] { };
 
 }
 
@@ -217,6 +220,42 @@
                                                                 <select id="CompentencyLevel" name="CompentencyLevel" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in ViewBag.CompentencyLevel)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="IndianRate">India Price</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="IndianRate" name="IndianRate" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.IndianRate)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="OutSideIndiaRate">Out Side India Price</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="OutSideIndiaRate" name="OutSideIndiaRate" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.OutSideIndiaRate)
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -701,13 +740,13 @@
             buttonWidth: '100%',
             maxHeight: 200
         });
-        $("#JoiningStatus").multiselect({
+        $("#IndianRate").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '100%',
             maxHeight: 200
         });
-        $("#OfferStatus").multiselect({
+        $("#OutSideIndiaRate").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '100%',
@@ -753,6 +792,8 @@
         var Senioritylevel =  @Html.Raw(Json.Serialize(Senioritylevel));
         var compentencyLevel = @Html.Raw(Json.Serialize(CompentencyLevel));
         var profileType =  @Html.Raw(Json.Serialize(ProfileType));
+        var indianRate =  @Html.Raw(Json.Serialize(IndianRate));
+        var outSideIndiaRate =  @Html.Raw(Json.Serialize(OutSideIndiaRate));
 
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
@@ -760,6 +801,8 @@
         $("#Senioritylevel").val(Senioritylevel);
         $("#CompentencyLevel").val(compentencyLevel);
         $("#ProfileType").val(profileType);
+        $("#IndianRate").val(indianRate);
+        $("#OutSideIndiaRate").val(outSideIndiaRate);
     }
 
 

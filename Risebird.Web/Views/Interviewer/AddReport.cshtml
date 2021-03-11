@@ -1434,7 +1434,8 @@
                                                     <div class="mandate">
                                                         @Html.LabelFor(model => model.PerHourRateIndia, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                     </div>
-                                                    @Html.TextBoxFor(m => m.PerHourRateIndia, new { @class = "form-control text-box single-line" })
+                                                    @Html.DropDownListFor(x => Model.PerHourRateIndia, Model.IndianPrice, "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
+                                                    @Html.ValidationMessageFor(model => model.PerHourRateIndia, "", new { @class = "text-danger" })
 
                                                 </div>
                                                 <div class="form-group">
@@ -1446,8 +1447,8 @@
                                                     <div class="mandate">
                                                         @Html.LabelFor(model => model.PerHourRateOutside, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                     </div>
-                                                    @Html.TextBoxFor(m => m.PerHourRateOutside, new { @class = "form-control text-box single-line" })
-
+                                                    @Html.DropDownListFor(x => Model.PerHourRateOutside, Model.OutSideIndiaPrice, "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
+                                                    @Html.ValidationMessageFor(model => model.PerHourRateOutside, "", new { @class = "text-danger" })
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="text-danger" id="PerHourRateOutside_Error" style="color:red; margin-left:-12px; font-size:16px"></label>

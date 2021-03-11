@@ -2,10 +2,33 @@
 
 @model X.PagedList.IPagedList<Risebird.Entities.ViewModel.InterviewerProfileVM>
 @using X.PagedList.Mvc.Core;
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Interviewers";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string[] AssessmentGroups = new string[] { };
+    string[] Senioritylevel = new string[] { };
+    string[] ProfileType = new string[] { };
+    string[] CompentencyLevel = new string[] { };
+    string[] IndianRate = new string[] { };
+    string[] OutSideIndiaRate = new string[] { };
 }
+@if (HttpContextAccessor.HttpContext.Session.GetString("InterviewerIndexfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("InterviewerIndexfilters"));
+    AssessmentGroups = filter.AssessmentGroup != null ? filter.AssessmentGroup : new string[] { };
+    Senioritylevel = filter.Senioritylevel != null ? filter.Senioritylevel : new string[] { };
+    ProfileType = filter.ProfileType != null ? filter.ProfileType : new string[] { };
+    CompentencyLevel = filter.CompentencyLevel != null ? filter.CompentencyLevel : new string[] { };
+    IndianRate = filter.IndianRate != null ? filter.IndianRate : new string[] { };
+    OutSideIndiaRate = filter.OutSideIndiaRate != null ? filter.OutSideIndiaRate : new string[] { };
+
+}
+
 <link href="~/Newassets/css/interviewer.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <div class="main-panel" id="main-panel">
@@ -36,7 +59,11 @@
                 </div>
 
                 <div class="pull-right client-ms">
+                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-toggle="modal" data-target="#filterModal">
 
+                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                        <div class="mdc-button__ripple"></div>
+                    </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                         <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Interviewer" onclick="location.href='@Url.Action("AddInterviewerProfile","Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Add Interviewer</font></span>
                     </button>
@@ -72,6 +99,146 @@
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
+                            <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <form action="@Url.Action("Index","Interviewer")" method="post" id="form">
+
+                                            <div class="modal-body">
+                                                <div class="row">
+
+
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Senioritylevel">
+                                                                Seniority level
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="Senioritylevel" name="Senioritylevel" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.Senioritylevel)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ProfileType">Profile Type</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="ProfileType" name="ProfileType" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.ProfileType)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CompentencyLevel">Compentency Level</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="CompentencyLevel" name="CompentencyLevel" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.CompentencyLevel)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="IndianRate">India Price</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="IndianRate" name="IndianRate" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.IndianRate)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="OutSideIndiaRate">Out Side India Price</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="OutSideIndiaRate" name="OutSideIndiaRate" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.OutSideIndiaRate)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-12 col-sm-12">
+
+
+                                                        <div>
+                                                            <div class="col-md-12 col-sm-12 mc-button-area text-right">
+
+                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4  reset-filter">
+                                                                    Reset Filter
+                                                                </button>
+
+                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
+                                                                    Apply Filter
+                                                                </button>
+                                                            </div>
+
+                                                        </div>
+
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+
                             <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
                                 <div class="col-md-12">
                                     <div class="table-responsive">
@@ -1002,6 +1169,144 @@
         hangUp();
         var modal = document.getElementById("myCallModal");
         modal.style.display = "none";
+    }
+
+
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
+        $("#AssessmentGroup").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#RFID").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+
+        });
+
+        $("#Senioritylevel").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+
+        });
+
+        $("#ConfirmationStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+
+        });
+
+        $("#MeetingStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+
+         });
+
+        $("#InterviewStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+
+        });
+
+
+        $("#CandidateName").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#ProfileType").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#CompentencyLevel").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#IndianRate").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#OutSideIndiaRate").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#CandidateLocation").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#IsShortListed").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#IsIntrested").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#CandidateAvailable").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+
+
+    });
+
+    function ResetFilter() {
+
+        window.location.href = "/Interviewer/ResetInterviewerIndexFilter";
+    }
+
+    function ApplySessionFilter() {
+        var AssessmentGrouparr = @Html.Raw(Json.Serialize(AssessmentGroups));
+        var Senioritylevel =  @Html.Raw(Json.Serialize(Senioritylevel));
+        var compentencyLevel = @Html.Raw(Json.Serialize(CompentencyLevel));
+        var profileType =  @Html.Raw(Json.Serialize(ProfileType));
+        var indianRate =  @Html.Raw(Json.Serialize(IndianRate));
+        var outSideIndiaRate =  @Html.Raw(Json.Serialize(OutSideIndiaRate));
+
+
+        $("#AssessmentGroup").val(AssessmentGrouparr);
+        $("#Senioritylevel").val(Senioritylevel);
+        $("#CompentencyLevel").val(compentencyLevel);
+        $("#ProfileType").val(profileType);
+        $("#IndianRate").val(indianRate);
+        $("#OutSideIndiaRate").val(outSideIndiaRate);
     }
 
 
