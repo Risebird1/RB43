@@ -21,5 +21,6 @@ namespace Risebird.Entities.Data
         public string ImageURL { get; set; }
         public int IdProfile { get; set; }
         public string AssessmentGroupId { get; set; }
+        public bool IsLeadInterviewer { get; set; }
     }
 }

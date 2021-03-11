@@ -58,5 +58,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<string>> GetAllTagsFromIRF();
         int GetCandidateId(int id, string irfName);
         IEnumerable<TechSkillReport> GetTechSkillReport(int id);
+        Task<InterviewReport> GetInterviewerRecommendationDetails(int Userid);
+        Task<bool> InterviewerRecommendation(InterviewReport reportDetails);
     }
 }

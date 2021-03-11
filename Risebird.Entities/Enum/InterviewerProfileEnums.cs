@@ -89,6 +89,15 @@ namespace Risebird.Entities.Enum
         [Description("Female")]
         Female = 2
     }
+    public enum WorkCountry
+    {
+        [Description("India")]
+        India = 1,
+        [Description("Out Of India")]
+        OutOfIndia = 2,
+        [Description("Both India and Out Of India")]
+        BothIndiaandOutOfIndia = 3
+    }
     public enum Country
     {
         [Description("Africa")]
