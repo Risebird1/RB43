@@ -70,8 +70,8 @@
                                                 <div class="mandate">
                                                     @Html.Label("Country", "Country", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                 </div>
-                                                @Html.DropDownListFor(m => m.CompanyHeadquarters, Model.CountryList, "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
-                                                @Html.ValidationMessageFor(model => model.CompanyHeadquarters, "", new { @class = "text-danger" })
+                                                @Html.DropDownListFor(m => m.Country, Model.CountryList, "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
+                                                @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
                                             </div>
 
                                         </div>

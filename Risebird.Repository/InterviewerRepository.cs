@@ -1336,7 +1336,7 @@ namespace Risebird.Repository
                     parametersRecomm.Add("@CompanySize", reportDetails.CompanySize);
                     //parametersRecomm.Add("@JobFunction", reportDetails.JobFunction);
                     //parametersRecomm.Add("@Industry", reportDetails.Industry);
-                    parametersRecomm.Add("@CompanyHeadquarters", reportDetails.CompanyHeadquarters);
+                    parametersRecomm.Add("@Country", reportDetails.Country);
                     parametersRecomm.Add("@CompanyType", reportDetails.CompanyType);
                     parametersRecomm.Add("@CompanyStage", reportDetails.CompanyStage);
                     parametersRecomm.Add("@SkillCategory", reportDetails.SkillCategory);
@@ -1814,7 +1814,7 @@ namespace Risebird.Repository
                     DynamicParameters parametersRecomm = new DynamicParameters();
                     parametersRecomm.Add("@interviewId", reportDetails.InterviewId);
                     parametersRecomm.Add("@CompanySize", reportDetails.CompanySize);
-                    parametersRecomm.Add("@CompanyHeadquarters", reportDetails.CompanyHeadquarters);
+                    parametersRecomm.Add("@Country", reportDetails.Country);
                     parametersRecomm.Add("@CompanyType", reportDetails.CompanyType);
                     parametersRecomm.Add("@CompanyStage", reportDetails.CompanyStage);
                     parametersRecomm.Add("@SkillCategory", reportDetails.SkillCategory);

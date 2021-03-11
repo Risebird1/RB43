@@ -517,7 +517,7 @@ namespace Risebird.Business
                     reportModel.CompanySize = techInterviewerRecommendation.CompanySize;
                     reportModel.JobFunction = techInterviewerRecommendation.JobFunction;
                     reportModel.Industry = techInterviewerRecommendation.Industry;
-                    reportModel.CompanyHeadquarters = techInterviewerRecommendation.CompanyHeadquarters;
+                    reportModel.Country = techInterviewerRecommendation.Country;
                     reportModel.CompanyType = techInterviewerRecommendation.CompanyType;
                     reportModel.CompanyStage = techInterviewerRecommendation.CompanyStage;
                     reportModel.SkillCategory = techInterviewerRecommendation.SkillCategory;

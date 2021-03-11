@@ -201,8 +201,8 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Job Function")]
         public string JobFunction { get; set; }
         public string Industry { get; set; }
-        [Display(Name = "Company Headquarters")]
-        public string CompanyHeadquarters { get; set; }
+        [Display(Name = "Country")]
+        public string Country { get; set; }
         [Display(Name = "Company Type")]
         public string CompanyType { get; set; }
         public SelectList CompanyTypelist { get; set; }
