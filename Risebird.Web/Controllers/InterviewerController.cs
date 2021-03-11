@@ -393,6 +393,9 @@ namespace Risebird.Web.Controllers
             { Text = x.ToString(), Value = x.ToString() }), "Value", "Text");
 
             //=========Skills============
+
+         //   model.SkillTypeList = new SelectList(_skillService.GetSkills(), "id", "Name");
+
             var Skillset = _skillService.GetSkills();
             if (Skillset != null)
             {
