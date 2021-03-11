@@ -1403,6 +1403,12 @@ namespace Risebird.Web.Controllers
             var Country = from WorkCountry s in Enum.GetValues(typeof(WorkCountry))
                           select new { ID = (int)s, Name = s.GetDescription() };
             model.CountryList = new SelectList(Country, "ID", "Name");
+            var IndiaPrice = from IndiaPrice s in Enum.GetValues(typeof(IndiaPrice))
+                             select new { ID = (int)s, Name = s.GetDescription() };
+            model.IndianPrice = new SelectList(IndiaPrice, "ID", "Name");
+            var OutSideIndiaPrice = from OutSideIndiaPrice s in Enum.GetValues(typeof(OutSideIndiaPrice))
+                             select new { ID = (int)s, Name = s.GetDescription() };
+            model.OutSideIndiaPrice = new SelectList(OutSideIndiaPrice, "ID", "Name");
             //model.QuestionsList = new SelectList(_interviewerService.GetTechSkillComments(irfId), "Comment", "Comment");
 
             model.SkillQualityList = new SelectList(_iRFRepository.GetSkillQuality(), "Id", "Name");
