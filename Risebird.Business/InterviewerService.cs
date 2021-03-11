@@ -722,5 +722,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<InterviewReport> GetInterviewerRecommendationDetails(int Userid)
+        {
+            try
+            {
+                var comments = await _interviewerRepository.GetInterviewerRecommendationDetails(Userid);
+                return comments;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

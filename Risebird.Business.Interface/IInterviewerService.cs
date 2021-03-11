@@ -43,6 +43,6 @@ namespace Risebird.Business.Interface
         string ChangeStatusAssessment(int assessmentid, int status);
         string UpdateAssessment(AssignmentVM _assessment);
         Task<IEnumerable<string>> GetAllTagsFromIRF();
-
+        Task<InterviewReport> GetInterviewerRecommendationDetails(int Userid);
     }
 }

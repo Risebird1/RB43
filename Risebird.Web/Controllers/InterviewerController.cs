@@ -393,8 +393,12 @@ namespace Risebird.Web.Controllers
             { Text = x.ToString(), Value = x.ToString() }), "Value", "Text");
 
             //=========Skills============
-
-            model.SkillTypeList = new SelectList(_skillService.GetSkills(), "id", "Name");
+            var Skillset = _skillService.GetSkills();
+            if (Skillset != null)
+            {
+                Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+            }
+            model.SkillTypeList = new SelectList(Skillset, "id", "Name");
 
             var SkillCategory = from SkillCategory s in Enum.GetValues(typeof(SkillCategory))
                                 select new { ID = (int)s, Name = s.GetDescription() };
@@ -455,7 +459,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var result = await  _interviewerService.DeleteInterviewerProfile(UserId);
+                    var result = await _interviewerService.DeleteInterviewerProfile(UserId);
                     return Json(result);
                 }
                 else
@@ -1767,8 +1771,82 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        public async Task<IActionResult> InterviewerRecommendation(int id, string EmailAddress)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR")
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    //Fetch Assessment
+                    var model = await _interviewerService.GetInterviewerRecommendationDetails(id);
+                    if (model == null)
+                    {
+                        model = new InterviewReport();
+                    }
+                    GetStatusList(model);
+                    ViewBag.indexid = id;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
 
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> InterviewerRecommendation(InterviewReport model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    model.UserDetails = emailid;
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        TempData["MessageInterviewer"] = "Recommendation saved Successfully";
+                        return RedirectToAction("Index");
+                        //if (_interviewerService.AddInterviewerReport(model).Result)
+                        //{
+                        //    TempData["MessageInterviewer"] = "Recommendation saved Successfully";
+                        //    return RedirectToAction("Index");
+                        //}
+                        //else
+                        //{
+                        //    TempData["MessageInterviewer"] = "Recommendation was not saved.";
+                        //    return RedirectToAction("Index");
+                        //}
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["MessageInterviewer"] = "Recommendation was not saved.";
+                return RedirectToAction("Index");
+            }
+        }
     }
 
 

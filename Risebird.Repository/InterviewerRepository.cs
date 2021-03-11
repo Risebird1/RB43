@@ -1785,5 +1785,25 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<InterviewReport> GetInterviewerRecommendationDetails(int Userid)
+        {
+            try
+            {
+                var query = "Select * from InterviewerRecommendation where UserId= @UserId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@UserId", Userid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<InterviewReport>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

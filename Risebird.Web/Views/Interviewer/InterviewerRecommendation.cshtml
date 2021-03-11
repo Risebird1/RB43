@@ -1,0 +1,292 @@
+﻿@model Risebird.Entities.ViewModel.InterviewReport
+@using System.Text.RegularExpressions
+@using Risebird.Entities.Enum
+@{
+    ViewData["Title"] = "Interviewer Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />*@
+
+<link href="~/Newassets/css/interview.css?v=12345" rel="stylesheet" />
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
+<link href="~/Newassets/css/select2.css?v7" defer rel="stylesheet" />
+
+<div class="main-panel" id="main-panel">
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+
+            <div class="navbar-wrapper" style="width: 100%; float: left; display: block;">
+
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+
+                <div class="pull-left">
+                    <a class="navbar-brand">
+                        Interviewer Recommendation
+                    </a>
+                </div>
+
+                <div class="pull-right"> </div>
+            </div>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="loader text-center">
+        <img src="~/Newassets/img/lazyload.gif" />
+    </div>
+    <form action="/Interviewer/InterviewerRecommendation" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form interviewer" onsubmit="return CheckRecommendationValues()" id="reportForm">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="row">
+           
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <div class="mandate">
+                                @Html.LabelFor(model => model.CompanySize, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                            </div>
+                            @Html.DropDownListFor(m => m.CompanySize, Model.CompanySizeList, "Select Company Size", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
+                            @Html.ValidationMessageFor(model => model.CompanySize, "", new { @class = "text-danger" })
+                        </div>
+                        
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <div class="mandate">
+                                @Html.LabelFor(model => model.CompanyHeadquarters, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                            </div>
+                            @Html.DropDownListFor(m => m.CompanyHeadquarters, Model.CountryList, "Select Company Headquarters", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
+                            @Html.ValidationMessageFor(model => model.CompanyHeadquarters, "", new { @class = "text-danger" })
+                        </div>
+                       
+                    </div>
+                </div>
+
+
+
+                <div class="row">
+
+                    <div class="col-md-6 col-sm-6">
+                        <label class="control-label col-md-12 col-sm-12 desp-label"> CompanyType</label>
+                        <div class="form-group radiobox" style="margin-top:0px;">
+                            <div class="choose-file ">
+
+                                <div class="col-md-12">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.RadioButtonFor(m => m.CompanyType, "Product")<span class="radio-field">Product</span>
+                                        @Html.RadioButtonFor(m => m.CompanyType, "Service")<span class="radio-field">Service</span>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <div class="mandate">
+                                @Html.LabelFor(model => model.CompanyStage, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                            </div>
+
+                            @Html.DropDownListFor(x => Model.CompanyStage, Model.CompanyStageList, "Select Company Stage", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
+                            @Html.ValidationMessageFor(model => model.CompanyStage, "", new { @class = "text-danger" })
+                        </div>
+                       
+                    </div>
+
+
+
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <div class="mandate">
+                                @Html.LabelFor(model => model.SkillCategory, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                            </div>
+
+                            <select id="SkillCategoryArray" name="SkillCategoryArray" class="form-control multiselect" multiple="multiple">
+                                @foreach (var item in Model.SkillCategoryList.ToList())
+                                {
+                                    @if (item != null)
+                                    {
+                                        @if (item.Selected)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                }
+
+                            </select>
+
+
+                        </div>
+                        <div class="form-group">
+                            <label class="text-danger" id="SkillCategory_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <div class="mandate">
+                                @Html.LabelFor(model => model.Yearsofexperience, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                            </div>
+
+                            @Html.DropDownListFor(x => Model.Yearsofexperience, Model.YearsofexperienceList, "Select Experience", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
+                        </div>
+                       
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <div class="mandate">
+                                @Html.LabelFor(model => model.Senioritylevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                            </div>
+
+                            @Html.DropDownListFor(x => Model.Senioritylevel, Model.SenioritylevelList, "Select Senioritylevel", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
+                            @Html.ValidationMessageFor(model => model.Senioritylevel, "", new { @class = "text-danger" })
+
+                        </div>
+                       
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <div class="mandate">
+                                @Html.LabelFor(model => model.SkillNature, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+
+                                @Html.DropDownListFor(x => Model.SkillNature, Model.SkillNatureList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
+                                @Html.ValidationMessageFor(model => model.SkillNature, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        
+
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <div class="mandate">
+                                @Html.LabelFor(model => model.PerHourRateIndia, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                            </div>
+                            @Html.TextBoxFor(m => m.PerHourRateIndia, new { @class = "form-control text-box single-line", @required = "required" })
+                            @Html.ValidationMessageFor(model => model.PerHourRateIndia, "", new { @class = "text-danger" })
+                        </div>
+                        
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <div class="mandate">
+                                @Html.LabelFor(model => model.PerHourRateOutside, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                            </div>
+                            @Html.TextBoxFor(m => m.PerHourRateOutside, new { @class = "form-control text-box single-line", @required = "required" })
+                            @Html.ValidationMessageFor(model => model.PerHourRateOutside, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <div class="mandate">
+                                @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                            </div>
+                            @Html.TextBoxFor(m => m.Domain, new { @class = "form-control text-box single-line" })
+                            @Html.ValidationMessageFor(model => model.Domain, "", new { @class = "text-danger" })
+                        </div>
+                        
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="mandate">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ProfileType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                            </div>
+
+                            @Html.DropDownListFor(x => Model.ProfileType, Model.ProfileTypeList, "Select Profile Type", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
+                            @Html.ValidationMessageFor(model => model.ProfileType, "", new { @class = "text-danger" })
+                        
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <div class="mandate">
+                                @Html.LabelFor(model => model.CompentencyLevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                            </div>
+
+                            @Html.DropDownListFor(x => Model.CompentencyLevel, Model.CompentencyLevelList, "Select Competency Level", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CompentencyLevel, "", new { @class = "text-danger" })
+                        
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="card-footer ">
+            <div class="row">
+
+                <div class="col-md-12 mc-button-area">
+                    @Html.ActionLink("Back to List", "Index", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+
+
+
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<script src="~/js/FeedbackRecorder/Record.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#SkillCategoryArray").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+    });
+    function CheckRecommendationValues() {
+        var elementId = '';
+        if (document.getElementById("SkillCategoryArray").value == null || document.getElementById("SkillCategoryArray").value == '') {
+            document.getElementById("SkillCategory_Error").innerHTML = "This field is required.";
+            elementId = 'SkillCategoryArray';
+        }
+        else {
+            document.getElementById("SkillCategory_Error").innerHTML = "";
+        }
+        if (document.getElementById("CompanyStage").value == null || document.getElementById("CompanyStage").value == '') {
+            document.getElementById("CompanyStage_Error").innerHTML = "This field is required.";
+            elementId = 'CompanyStage';
+        }
+        else {
+            document.getElementById("CompanyStage_Error").innerHTML = "";
+        }
+        if (elementId != '') {
+            document.getElementById(elementId).focus();
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+</script>
