@@ -1771,7 +1771,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> InterviewerRecommendation(int id, string EmailAddress)
+        public async Task<IActionResult> InterviewerRecommendation(int id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
