@@ -35,6 +35,7 @@ body {
     margin-right: 10px;
     margin-top: 20px !important;
 }
+audio{outline:0px;border:0px;}
 
 .mobile-view-chn, .mobile-view-ac {
     display: none
