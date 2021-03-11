@@ -25,7 +25,7 @@ declare @commonTable table (IRFId int, [Type] varchar(25), EmailId varchar(100),
 		select ti.IRFId, 'Interviewer' as [Type] ,ul.EmailId, ipr.ResumeLink,
 		count(im.id) as TotalInterviews,
 		0 as TotalQCInterviews, ul.MobileNumber 
-		from TransInterviewer ti join Interviewer ipr on ipr.UserId = ti.UserId
+		from TransInterviewer ti join InterviewerProfile ipr on ipr.UserId = ti.UserId
 		join UserList ul on ul.id = ti.UserId
 		join IRF on irf.id = ti.IRFId
 		left join InterviewMeetings im on im.IRFId=IRF.IRFId and im.interviewer = ul.EmailId
@@ -38,7 +38,7 @@ declare @commonTable table (IRFId int, [Type] varchar(25), EmailId varchar(100),
 		0 as TotalInterviews,
 		count(im.id) as TotalQCInterviews,
 		ul.MobileNumber 
-		from TransQualityController tqc join Interviewer ipr on ipr.UserId = tqc.UserId
+		from TransQualityController tqc join InterviewerProfile ipr on ipr.UserId = tqc.UserId
 		join UserList ul on ul.id = tqc.UserId
 		join IRF on irf.id = tqc.IRFId
 		left join InterviewMeetings im on im.IRFId=IRF.IRFId and im.QCInterviewer = ul.EmailId
@@ -51,7 +51,7 @@ declare @commonTable table (IRFId int, [Type] varchar(25), EmailId varchar(100),
 		count(im.id) as TotalInterviews,
 		0 as TotalQCInterviews,  
 		ul.MobileNumber 
-		from TransEmergencyInterviewer tei join Interviewer ipr on ipr.UserId = tei.UserId
+		from TransEmergencyInterviewer tei join InterviewerProfile ipr on ipr.UserId = tei.UserId
 		join UserList ul on ul.id = tei.UserId
 		join IRF on irf.id = tei.IRFId
 		left join InterviewMeetings im on im.IRFId=irf.IRFId and im.interviewer = ul.EmailId
