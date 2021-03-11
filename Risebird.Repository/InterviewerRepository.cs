@@ -1805,5 +1805,44 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<bool> InterviewerRecommendation(InterviewReport reportDetails)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters parametersRecomm = new DynamicParameters();
+                    parametersRecomm.Add("@interviewId", reportDetails.InterviewId);
+                    parametersRecomm.Add("@CompanySize", reportDetails.CompanySize);
+                    parametersRecomm.Add("@CompanyHeadquarters", reportDetails.CompanyHeadquarters);
+                    parametersRecomm.Add("@CompanyType", reportDetails.CompanyType);
+                    parametersRecomm.Add("@CompanyStage", reportDetails.CompanyStage);
+                    parametersRecomm.Add("@SkillCategory", reportDetails.SkillCategory);
+                    parametersRecomm.Add("@Yearsofexperience", reportDetails.Yearsofexperience);
+                    parametersRecomm.Add("@Senioritylevel", reportDetails.Senioritylevel);
+                    parametersRecomm.Add("@SkillNature", reportDetails.SkillNature);
+                    parametersRecomm.Add("@Domain", reportDetails.Domain);
+                    parametersRecomm.Add("@PerHourRateIndia", reportDetails.PerHourRateIndia);
+                    parametersRecomm.Add("@PerHourRateOutside", reportDetails.PerHourRateOutside);
+                    parametersRecomm.Add("@ProfileType", reportDetails.ProfileType);
+                    parametersRecomm.Add("@CompentencyLevel", reportDetails.CompentencyLevel);
+
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerReportRecommendation", parametersRecomm,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
+
 }

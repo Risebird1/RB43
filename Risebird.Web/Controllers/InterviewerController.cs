@@ -1817,18 +1817,16 @@ namespace Risebird.Web.Controllers
                     model.UserDetails = emailid;
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        TempData["MessageInterviewer"] = "Recommendation saved Successfully";
-                        return RedirectToAction("Index");
-                        //if (_interviewerService.AddInterviewerReport(model).Result)
-                        //{
-                        //    TempData["MessageInterviewer"] = "Recommendation saved Successfully";
-                        //    return RedirectToAction("Index");
-                        //}
-                        //else
-                        //{
-                        //    TempData["MessageInterviewer"] = "Recommendation was not saved.";
-                        //    return RedirectToAction("Index");
-                        //}
+                        if (_interviewerService.InterviewerRecommendation(model).Result)
+                        {
+                            TempData["MessageInterviewer"] = "Recommendation saved Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["MessageInterviewer"] = "Recommendation was not saved.";
+                            return RedirectToAction("Index");
+                        }
                     }
                     else
                     {

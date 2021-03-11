@@ -735,5 +735,29 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> InterviewerRecommendation(InterviewReport reportModel)
+        {
+            try
+            {
+                if (reportModel.SkillCategoryArray != null)
+                {
+                    reportModel.SkillCategory = string.Join(',', reportModel.SkillCategoryArray);
+                }
+                else
+                {
+                    reportModel.SkillCategory = string.Empty;
+                }
+
+                var result = await _interviewerRepository.InterviewerRecommendation(reportModel);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

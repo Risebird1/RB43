@@ -52,7 +52,7 @@
                             @Html.AntiForgeryToken()
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             <div class="row">
-
+                                @Html.HiddenFor(model => model.InterviewId)
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="row">
                                         <div class="col-md-6 col-sm-6">
@@ -139,9 +139,9 @@
 
 
                                             </div>
-                                            
-                                                <label class="text-danger" id="SkillCategory_Error" style=" margin-left: -12px; font-size: 15px; position: absolute; bottom: -11px;"></label>
-                                       
+
+                                            <label class="text-danger" id="SkillCategory_Error" style=" margin-left: -12px; font-size: 15px; position: absolute; bottom: -11px;"></label>
+
                                         </div>
                                         <div class="col-md-6 col-sm-6">
                                             <div class="form-group">
@@ -264,38 +264,38 @@
         </div>
     </div>
 </div>
-                    <script src="~/js/FeedbackRecorder/Record.js"></script>
-                    <script>
-                        $(document).ready(function () {
-                            $("#SkillCategoryArray").multiselect({
-                                includeSelectAllOption: true,
-                                selectedClass: 'active1',
-                                buttonWidth: '100%',
-                                maxHeight: 200
-                            });
-                        });
-                        function CheckRecommendationValues() {
-                            var elementId = '';
-                            if (document.getElementById("SkillCategoryArray").value == null || document.getElementById("SkillCategoryArray").value == '') {
-                                document.getElementById("SkillCategory_Error").innerHTML = "This field is required.";
-                                elementId = 'SkillCategoryArray';
-                            }
-                            else {
-                                document.getElementById("SkillCategory_Error").innerHTML = "";
-                            }
-                            if (document.getElementById("CompanyStage").value == null || document.getElementById("CompanyStage").value == '') {
-                                document.getElementById("CompanyStage_Error").innerHTML = "This field is required.";
-                                elementId = 'CompanyStage';
-                            }
-                            else {
-                                document.getElementById("CompanyStage_Error").innerHTML = "";
-                            }
-                            if (elementId != '') {
-                                document.getElementById(elementId).focus();
-                                return false;
-                            }
-                            else {
-                                return true;
-                            }
-                        }
-                    </script>
+<script src="~/js/FeedbackRecorder/Record.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#SkillCategoryArray").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+    });
+    function CheckRecommendationValues() {
+        var elementId = '';
+        if (document.getElementById("SkillCategoryArray").value == null || document.getElementById("SkillCategoryArray").value == '') {
+            document.getElementById("SkillCategory_Error").innerHTML = "This field is required.";
+            elementId = 'SkillCategoryArray';
+        }
+        else {
+            document.getElementById("SkillCategory_Error").innerHTML = "";
+        }
+        if (document.getElementById("CompanyStage").value == null || document.getElementById("CompanyStage").value == '') {
+            document.getElementById("CompanyStage_Error").innerHTML = "This field is required.";
+            elementId = 'CompanyStage';
+        }
+        else {
+            document.getElementById("CompanyStage_Error").innerHTML = "";
+        }
+        if (elementId != '') {
+            document.getElementById(elementId).focus();
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+</script>

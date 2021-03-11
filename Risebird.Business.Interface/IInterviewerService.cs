@@ -44,5 +44,6 @@ namespace Risebird.Business.Interface
         string UpdateAssessment(AssignmentVM _assessment);
         Task<IEnumerable<string>> GetAllTagsFromIRF();
         Task<InterviewReport> GetInterviewerRecommendationDetails(int Userid);
+        Task<bool> InterviewerRecommendation(InterviewReport reportModel);
     }
 }
