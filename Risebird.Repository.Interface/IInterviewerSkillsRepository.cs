@@ -99,6 +99,6 @@ namespace Risebird.Repository.Interface
         int GetCandidateId(int id, string irfName);
         Task<List<string>> FetchAdminList();
         Task<IEnumerable<MeetingVM>> GetInterviewerSkillInterviewMeetings(int id);
-        
+        IEnumerable<Interviewer> GetInterviewersByAssessmentGroup(string assessmentgroupid);
     }
 }

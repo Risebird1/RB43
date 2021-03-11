@@ -499,6 +499,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<Interviewer> GetInterviewersByAssessmentGroup(string assessmentgroupid)
+        {
+            try
+            {
+                var interviewers = _interviewerSkillsRepository.GetInterviewersByAssessmentGroup(assessmentgroupid);
+                return interviewers;
+            }
 
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

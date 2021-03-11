@@ -210,7 +210,14 @@ namespace Risebird.Web.Controllers
                 ViewBag.Level = new SelectList(_interviewerSkillsRepository.GetLevels(), "id", "Name");
                 ViewBag.Interviewers = new SelectList(interviewers, "id", "EmailId");
                 ViewBag.LevelTech = new SelectList(_interviewerSkillsRepository.GetLevelTech(), "id", "Name");
-                ViewBag.Skill = new SelectList(_interviewerSkillsRepository.GetSkills(), "id", "Name");
+                //  ViewBag.Skill = new SelectList(_interviewerSkillsRepository.GetSkills(), "id", "Name");
+
+                var Skillset = _interviewerSkillsRepository.GetSkills();
+                if (Skillset != null)
+                {
+                    Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+                }
+                ViewBag.Skill = new SelectList(Skillset, "id", "Name");
                 var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                 ViewBag.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
                 return View(model);
@@ -290,7 +297,13 @@ namespace Risebird.Web.Controllers
                     ViewBag.Level = new SelectList(_interviewerSkillsRepository.GetLevels(), "id", "Name");
                     ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
                     ViewBag.LevelTech = new SelectList(_interviewerSkillsRepository.GetLevelTech(), "id", "Name");
-                    ViewBag.Skill = new SelectList(_interviewerSkillsRepository.GetSkills(), "id", "Name");
+                    // ViewBag.Skill = new SelectList(_interviewerSkillsRepository.GetSkills(), "id", "Name");
+                    var Skillset = _interviewerSkillsRepository.GetSkills();
+                    if (Skillset != null)
+                    {
+                        Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+                    }
+                    ViewBag.Skill = new SelectList(Skillset, "id", "Name");
                     var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                     ViewBag.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
                     TempData["EditInterviewerSkillId"] = model.InterviewerSkillId;
@@ -1699,6 +1712,22 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
 
+        }
+        [Authorize]
+        public SelectList GetInterviewersByAssessmentGroup(string assessmentgroupid)
+        {
+
+            var list = new List<SelectListItem>();
+            var interviewers = _iInterviewerSkillsService.GetInterviewersByAssessmentGroup(assessmentgroupid);
+
+            if (interviewers != null && interviewers.Count() > 0)
+            {
+                return new SelectList(interviewers, "UserId", "EmailId");
+            }
+            else
+                list.Add(new SelectListItem { Text = "No Interviewer", Value = "" });
+            //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
+            return new SelectList(list, "Value", "Text");
         }
 
     }
