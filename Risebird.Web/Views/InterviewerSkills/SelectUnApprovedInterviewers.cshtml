@@ -61,7 +61,7 @@
                                 <div id="tableID">
                                     @if (Model.UnApprovedInterviewersCollection == null || Model.UnApprovedInterviewersCollection.Count() == 0)
                                     {
-                                        <p style="text-align:center; font-size:20px"> Interviewers with the matching skills unavailable.</p>
+                                        <p style="text-align:center; font-size:20px"> Interviewers with the matching Assessment group unavailable.</p>
                                     }
                                     else
                                     {
@@ -98,11 +98,11 @@
                                                                 <td>@Model.UnApprovedInterviewersCollection[i].EmailId</td>
                                                                 @if (Model.UnApprovedInterviewersCollection[i].SkillName.Length > 30)
                                                                 {
-                                                            <td class="video-title" title="@Model.UnApprovedInterviewersCollection[i].SkillName">
+                                                                    <td class="video-title" title="@Model.UnApprovedInterviewersCollection[i].SkillName">
 
 
-                                                                <a onclick="" data-tooltip="@Model.UnApprovedInterviewersCollection[i].SkillName">  @Model.UnApprovedInterviewersCollection[i].SkillName.Substring(0, 30) ...</a>
-                                                            </td>
+                                                                        <a onclick="" data-tooltip="@Model.UnApprovedInterviewersCollection[i].SkillName">  @Model.UnApprovedInterviewersCollection[i].SkillName.Substring(0, 30) ...</a>
+                                                                    </td>
                                                                 }
                                                                 else
                                                                 {
