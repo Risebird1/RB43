@@ -165,5 +165,10 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string[] AssessmentGroupArray { get; set; }
         public List<SelectListItem> AssessmentGroupList { get; set; }
+        public string Senioritylevel { get; set; }
+        public string PerHourRateIndia { get; set; }
+        public string PerHourRateOutside { get; set; }
+        public string CompentencyLevel { get; set; }
+        public string ProfileType { get; set; }
     }
 }
