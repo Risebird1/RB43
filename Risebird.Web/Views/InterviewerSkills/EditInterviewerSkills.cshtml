@@ -58,28 +58,33 @@
                                         <div class="col-lg-6  col-md-6 col-sm-6  pull-left">
                                             @if (!Model.IsClone)
                                             {
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.InterviewerSkillId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.EditorFor(m => m.InterviewerSkillId, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
-                                                    <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                                    @Html.ValidationMessageFor(model => model.InterviewerSkillId, "", new { @class = "text-danger" })
+                                            <div class="form-group">
+                                                <div class="mandate">
+                                                    @Html.LabelFor(model => model.InterviewerSkillId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                 </div>
+                                                @Html.EditorFor(m => m.InterviewerSkillId, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+                                                <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                                @Html.ValidationMessageFor(model => model.InterviewerSkillId, "", new { @class = "text-danger" })
+                                            </div>
 
                                             }
                                             else
                                             {
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.InterviewerSkillId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.EditorFor(m => m.InterviewerSkillId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                    <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                                    @Html.ValidationMessageFor(model => model.InterviewerSkillId, "", new { @class = "text-danger" })
-                                                </div>
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.InterviewerSkillId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+                                                @Html.EditorFor(m => m.InterviewerSkillId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                                @Html.ValidationMessageFor(model => model.InterviewerSkillId, "", new { @class = "text-danger" })
+                                            </div>
                                             }
 
                                         </div>
                                         <div class="col-lg-6  col-md-6 col-sm-6 pull-left">
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <div class="mandate">
+                                                    @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                </div>
                                                 @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                 @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @class = "text-danger" })
                                             </div>
@@ -108,16 +113,19 @@
                                                 @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @class = "text-danger" })
                                             </div>
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.DropDownListFor(model => model.PrimarySkill, (SelectList)ViewBag.Skill, new { @class = "select-css form-control", @onchange = "SkillChanged()" })
+                                                <div class="mandate">
+                                                    @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+                                                @Html.DropDownListFor(model => model.PrimarySkill, (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control", @onchange = "SkillChanged()" })
                                                 @Html.ValidationMessageFor(model => model.PrimarySkill, "", new { @class = "text-danger" })
                                             </div>
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.HeuristicProfileType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <div class="mandate">
+                                                    @Html.LabelFor(model => model.HeuristicProfileType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                </div>
                                                 @Html.DropDownListFor(m => m.HeuristicProfileType, Html.GetEnumSelectList<Heuristicsscorelevel>(), "Select Profile Type", new { @class = "select-css form-control", @onchange = "SkillChanged()" })
                                                 @Html.ValidationMessageFor(model => model.HeuristicProfileType, "", new { @class = "text-danger" })
                                             </div>
-                                        </div>
+                                            </div>
                                         <div class="col-lg-4  col-md-4 col-sm-4 px-1 pull-left">
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
@@ -239,10 +247,10 @@
                                                         <tr>
 
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "select-css form-control" })
+                                                                @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control" })
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
+                                                                @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill,"Select", new { @class = "select-css form-control" })
                                                             </td>
                                                             <td>
                                                                 @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })

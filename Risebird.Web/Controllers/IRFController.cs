@@ -693,7 +693,13 @@ namespace Risebird.Web.Controllers
                 ViewBag.Clients = new SelectList(clients, "id", "Name");
                 ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
                 ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
-                ViewBag.Skill = new SelectList(skills, "id", "Name");
+                //ViewBag.Skill = new SelectList(skills, "id", "Name");
+                var Skillset = skills;
+                if (Skillset != null)
+                {
+                    Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+                }
+                ViewBag.Skill = new SelectList(Skillset, "id", "Name");
                 ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
                 ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(clients.FirstOrDefault().id), "id", "EmailId");
                 ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
@@ -1402,7 +1408,14 @@ namespace Risebird.Web.Controllers
                     ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                     ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
                     ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
-                    ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
+                   // ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
+
+                    var Skillset = _irfRepository.GetSkills();
+                    if (Skillset != null)
+                    {
+                        Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+                    }
+                    ViewBag.Skill = new SelectList(Skillset, "id", "Name");
                     ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
                     ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
                     ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");

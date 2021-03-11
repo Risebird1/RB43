@@ -305,22 +305,22 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerSkill[0].SkillId", (SelectList)Model.SkillTypeList,"Select", new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerSkill[0].SkillId", (SelectList)Model.SkillTypeList, "Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerSkill[0].Category", (SelectList)Model.SkillCategoryList, new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerSkill[0].Category", (SelectList)Model.SkillCategoryList, "Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerSkill[0].Ip", (SelectList)Model.SkillIPList, new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerSkill[0].Ip", (SelectList)Model.SkillIPList, "Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerSkill[0].Level", (SelectList)Model.SkillExpertiseLevelList, new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerSkill[0].Level", (SelectList)Model.SkillExpertiseLevelList, "Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerSkill[0].SkillExperience", (SelectList)Model.SkillYearsOfExperienceList, new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerSkill[0].SkillExperience", (SelectList)Model.SkillYearsOfExperienceList, "Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerSkill[0].Nature", (SelectList)Model.SkillNatureList, new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerSkill[0].Nature", (SelectList)Model.SkillNatureList, "Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="addRowSkillDetails()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
@@ -412,22 +412,22 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerEducationDetails[0].EducationType", (SelectList)Model.GraduationTypeList, new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerEducationDetails[0].EducationType", (SelectList)Model.GraduationTypeList,"Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerEducationDetails[0].Degree", (SelectList)Model.DegreeList, new { @class = "select-css  form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerEducationDetails[0].Degree", (SelectList)Model.DegreeList, "Select", new { @class = "select-css  form-control text-box single-line" })
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerEducationDetails[0].EducationMode", (SelectList)Model.EducationModeList, new { @class = "select-css  form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerEducationDetails[0].EducationMode", (SelectList)Model.EducationModeList, "Select", new { @class = "select-css  form-control text-box single-line" })
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerEducationDetails[0].CollegeType", (SelectList)Model.CollegeTypeList, new { @class = "select-css  form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerEducationDetails[0].CollegeType", (SelectList)Model.CollegeTypeList, "Select", new { @class = "select-css  form-control text-box single-line" })
                                                         </td>
                                                         <td>
                                                             @Html.TextBox("InterviewerEducationDetails[0].UniversityName", null, new { @class = "form-control text-box single-line" })
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerEducationDetails[0].PassOutYear", (SelectList)ViewBag.Years, new { @class = "select-css  form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerEducationDetails[0].PassOutYear", (SelectList)ViewBag.Years, "Select", new { @class = "select-css  form-control text-box single-line" })
                                                             @*@Html.TextBox("InterviewerEducationDetails[0].PassOutYear", null, new { id = "txt_PassOutYear", @class = "form-control text-box single-line" })*@
                                                         </td>
                                                         <td>
@@ -464,6 +464,7 @@
 
                             </div>
                             <!-- Educational Details End-->
+
                             <!-- Project Details start-->
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -525,7 +526,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerProjectsDetails[0].NatureOfProject", (SelectList)Model.NatureOfProjectList, new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerProjectsDetails[0].NatureOfProject", (SelectList)Model.NatureOfProjectList,"Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="addProjectTableRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
@@ -568,10 +569,10 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekday", (SelectList)Model.WeekDayList, new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekday", (SelectList)Model.WeekDayList,"Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekend", (SelectList)Model.WeekEndList, new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekend", (SelectList)Model.WeekEndList,"Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
                                                         <td>
                                                             @*<div class="checkbox checkbox-danger">*@
