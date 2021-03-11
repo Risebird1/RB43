@@ -854,7 +854,7 @@
         var interviewerSkills;
         $.ajax({
             type: "GET",
-            url: "/IRF/GetInterviewers",
+            url: "/InterviewerSkills/GetInterviewersByAssessmentGroup",
             data: { 'assessmentgroupid': Assessmentgroupid },
             success: function (data) {
                 $.ajax({

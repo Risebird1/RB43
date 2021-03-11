@@ -276,7 +276,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult EditInterviewerSkills(string id, bool isClone=false)
+        public IActionResult EditInterviewerSkills(string id, bool isClone = false)
         {
             try
             {
@@ -1699,6 +1699,22 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
 
+        }
+        [Authorize]
+        public SelectList GetInterviewersByAssessmentGroup(string assessmentgroupid)
+        {
+
+            var list = new List<SelectListItem>();
+            var interviewers = _iInterviewerSkillsService.GetInterviewersByAssessmentGroup(assessmentgroupid);
+
+            if (interviewers != null && interviewers.Count() > 0)
+            {
+                return new SelectList(interviewers, "UserId", "EmailId");
+            }
+            else
+                list.Add(new SelectListItem { Text = "No Interviewer", Value = "" });
+            //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
+            return new SelectList(list, "Value", "Text");
         }
 
     }

@@ -1398,7 +1398,9 @@ namespace Risebird.Web.Controllers
             var CompanySizeTypes = from CompanySize s in Enum.GetValues(typeof(CompanySize))
                                    select new { ID = (int)s, Name = s.GetDescription() };
             model.CompanySizeList = new SelectList(CompanySizeTypes, "ID", "Name");
-            var Country = from Country s in Enum.GetValues(typeof(Country))
+            //var Country = from Country s in Enum.GetValues(typeof(Country))
+            //              select new { ID = (int)s, Name = s.GetDescription() };
+            var Country = from WorkCountry s in Enum.GetValues(typeof(WorkCountry))
                           select new { ID = (int)s, Name = s.GetDescription() };
             model.CountryList = new SelectList(Country, "ID", "Name");
             //model.QuestionsList = new SelectList(_interviewerService.GetTechSkillComments(irfId), "Comment", "Comment");

@@ -62,6 +62,6 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetInterviewerRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern);
         Task<List<string>> FetchAdminList();
         Task<List<MeetingVM>> GetInterviewerSkillInterviewMeetings(int id);
-        
+        IEnumerable<Interviewer> GetInterviewersByAssessmentGroup(string assessmentgroupid);
     }
 }

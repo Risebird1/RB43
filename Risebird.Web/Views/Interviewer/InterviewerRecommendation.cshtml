@@ -68,9 +68,9 @@
                                         <div class="col-md-6 col-sm-6">
                                             <div class="form-group">
                                                 <div class="mandate">
-                                                    @Html.LabelFor(model => model.CompanyHeadquarters, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                    @Html.Label("Country", "Country", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                 </div>
-                                                @Html.DropDownListFor(m => m.CompanyHeadquarters, Model.CountryList, "Select Company Headquarters", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
+                                                @Html.DropDownListFor(m => m.CompanyHeadquarters, Model.CountryList, "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
                                                 @Html.ValidationMessageFor(model => model.CompanyHeadquarters, "", new { @class = "text-danger" })
                                             </div>
 
@@ -148,8 +148,8 @@
                                                 <div class="mandate">
                                                     @Html.LabelFor(model => model.Yearsofexperience, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
                                                 </div>
-
                                                 @Html.DropDownListFor(x => Model.Yearsofexperience, Model.YearsofexperienceList, "Select Experience", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
+                                                @Html.ValidationMessageFor(model => model.Yearsofexperience, "", new { @class = "text-danger" })
                                             </div>
 
                                         </div>
