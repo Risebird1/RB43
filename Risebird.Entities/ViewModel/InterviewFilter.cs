@@ -32,5 +32,7 @@ namespace Risebird.Entities.ViewModel
         public string[] AssessmentGroup { get; set; }
         public string[] Senioritylevel { get; set; }
         public string[] ProfileType { get; set; }
+        public string[] IndianRate { get; set; }
+        public string[] OutSideIndiaRate { get; set; }
     }
 }

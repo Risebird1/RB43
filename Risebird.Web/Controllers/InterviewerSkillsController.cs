@@ -60,6 +60,7 @@ namespace Risebird.Web.Controllers
                     var model = new InterviewerSkillsViewModel();
                     var InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkillsChannel(profileName, emailid);
                     model.InterviewerSkillsChannelModelList = InterviewerSkillsList.Where(x => x.EndDate.Date > DateTime.Now).OrderByDescending(y => y.EndDate);
+                    model.InterviewerSkillsChannelModelList = model.InterviewerSkillsChannelModelList.Select(x => { x.HeuristicProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.HeuristicProfileType)).GetDescription(); return x; }).ToList();
                     foreach (var item in model.InterviewerSkillsChannelModelList)
                     {
                         if (item.IsPaused)
@@ -150,6 +151,7 @@ namespace Risebird.Web.Controllers
                 {
                     var model = new InterviewerSkillsViewModel();
                     var InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkillsChannel(profileName, emailid);
+
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
                         InterviewerSkillsList = InterviewerSkillsList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
@@ -183,6 +185,7 @@ namespace Risebird.Web.Controllers
                         }
                     }
                     model.InterviewerSkillsChannelModelList = InterviewerSkillsList.OrderByDescending(x => x.EndDate).ToList();
+                    model.InterviewerSkillsChannelModelList = model.InterviewerSkillsChannelModelList.Select(x => { x.HeuristicProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.HeuristicProfileType)).GetDescription(); return x; }).ToList();
                     model.Profile = profileName;
                     return View(model);
 
@@ -914,12 +917,16 @@ namespace Risebird.Web.Controllers
                             filter.Senioritylevel = filter.Senioritylevel == null ? filter.Senioritylevel = modelList.Select(x => x.Senioritylevel).ToArray() : filter.Senioritylevel = filter.Senioritylevel;
                             filter.ProfileType = filter.ProfileType == null ? filter.ProfileType = modelList.Select(x => x.ProfileType).ToArray() : filter.ProfileType = filter.ProfileType;
                             filter.CompentencyLevel = filter.CompentencyLevel == null ? filter.CompentencyLevel = modelList.Select(x => x.CompentencyLevel).ToArray() : filter.CompentencyLevel = filter.CompentencyLevel;
+                            filter.IndianRate = filter.IndianRate == null ? filter.IndianRate = modelList.Select(x => x.PerHourRateIndia).ToArray() : filter.IndianRate = filter.IndianRate;
+                            filter.OutSideIndiaRate = filter.OutSideIndiaRate == null ? filter.OutSideIndiaRate = modelList.Select(x => x.PerHourRateOutside).ToArray() : filter.OutSideIndiaRate = filter.OutSideIndiaRate;
 
                             modelList = modelList.Where(c =>
                                (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroup) : c.AssessmentGroup == null)
                               && (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
                               && (filter.ProfileType.Count() > 0 ? filter.ProfileType.Contains(c.ProfileType) : c.ProfileType == null)
-                              && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)).ToList();
+                              && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)
+                               && (filter.IndianRate.Count() > 0 ? filter.IndianRate.Contains(c.PerHourRateIndia) : c.PerHourRateIndia == null)
+                          && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)).ToList();
 
                         }
                         //totalMeetings = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsCount(searchvalue).Result;
@@ -937,6 +944,9 @@ namespace Risebird.Web.Controllers
                         ViewBag.ProfileType = modelList.Select(x => x.ProfileType).Distinct();
                         ViewBag.CompentencyLevel = modelList.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
                         ViewBag.AssessmentGroup = modelList.Select(x => x.AssessmentGroup).Distinct();
+                        ViewBag.IndianRate = modelList.Select(x => x.PerHourRateIndia).Distinct();
+                        ViewBag.OutSideIndiaRate = modelList.Select(x => x.PerHourRateOutside).Distinct();
+
                         modelList = modelList.Take(12).ToList();
                         totalMeetings = modelList.Count();
 
@@ -1025,12 +1035,16 @@ namespace Risebird.Web.Controllers
                         filter.Senioritylevel = filter.Senioritylevel == null ? filter.Senioritylevel = modelList.Select(x => x.Senioritylevel).ToArray() : filter.Senioritylevel = filter.Senioritylevel;
                         filter.ProfileType = filter.ProfileType == null ? filter.ProfileType = modelList.Select(x => x.ProfileType).ToArray() : filter.ProfileType = filter.ProfileType;
                         filter.CompentencyLevel = filter.CompentencyLevel == null ? filter.CompentencyLevel = modelList.Select(x => x.CompentencyLevel).ToArray() : filter.CompentencyLevel = filter.CompentencyLevel;
-
+                        filter.IndianRate = filter.IndianRate == null ? filter.IndianRate = modelList.Select(x => x.PerHourRateIndia).ToArray() : filter.IndianRate = filter.IndianRate;
+                        filter.OutSideIndiaRate = filter.OutSideIndiaRate == null ? filter.OutSideIndiaRate = modelList.Select(x => x.PerHourRateOutside).ToArray() : filter.OutSideIndiaRate = filter.OutSideIndiaRate;
+                        
                         modelList = modelList.Where(c =>
                            (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroup) : c.AssessmentGroup == null)
                           && (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
                           && (filter.ProfileType.Count() > 0 ? filter.ProfileType.Contains(c.ProfileType) : c.ProfileType == null)
-                          && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)).ToList();
+                          && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)
+                          && (filter.IndianRate.Count() > 0 ? filter.IndianRate.Contains(c.PerHourRateIndia) : c.PerHourRateIndia == null)
+                          && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)).ToList();
 
                         //totalMeetings = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsCount(searchvalue).Result;
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
@@ -1046,6 +1060,9 @@ namespace Risebird.Web.Controllers
                         ViewBag.ProfileType = modelList.Select(x => x.ProfileType).Distinct();
                         ViewBag.CompentencyLevel = modelList.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
                         ViewBag.AssessmentGroup = modelList.Select(x => x.AssessmentGroup).Distinct();
+                        ViewBag.IndianRate = modelList.Select(x => x.PerHourRateIndia).Distinct();
+                        ViewBag.OutSideIndiaRate = modelList.Select(x => x.PerHourRateOutside).Distinct();
+
                         modelList = modelList.Take(12).ToList();
                         totalMeetings = modelList.Count();
 
