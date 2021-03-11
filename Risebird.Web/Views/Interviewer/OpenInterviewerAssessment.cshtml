@@ -76,6 +76,9 @@
                                                 <th>Resume</th>
                                                 <th>Primary Skill</th>
                                                 <th>Risebird HR</th>
+                                                <th>Profile Type</th>
+                                                <th>JD Link</th>
+
                                                 <th class="disabled-sorting text-right">Actions</th>
                                             </tr>
                                         </thead>
@@ -88,32 +91,43 @@
                                                 <th>Resume</th>
                                                 <th>Primary Skill</th>
                                                 <th>Risebird HR</th>
+                                                <th>Profile Type</th>
+                                                <th>JD Link</th>
                                                 <th class="disabled-sorting text-right">Actions</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
-                                                <tr id=@item.id>
-                                                    <td> @item.interviewDate </td>
-                                                    <td> @item.interviewSlot </td>
-                                                    <td> @item.interviewDuration </td>
-                                                    <td> @item.NickName</td>
-                                                    @if (item.resumeLink != null && item.resumeLink != "")
-                                                    {
-                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Resume</td>
-                                                    }
-                                                    <td>@item.PrimarySkill</td>
+                                            <tr id=@item.id>
+                                                <td> @item.interviewDate </td>
+                                                <td> @item.interviewSlot </td>
+                                                <td> @item.interviewDuration </td>
+                                                <td> @item.NickName</td>
+                                                @if (item.resumeLink != null && item.resumeLink != "")
+                                                {
+                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Resume</td>
+                                                }
+                                                <td>@item.PrimarySkill</td>
 
-                                                    <td> @item.risebirdHR</td>
-                                                    <td class="text-center four">
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">  <span class="mdc-fab__icon material-icons" onclick="location.href='@Url.Action("AssignYourself", "Interviewer", new { id = item.id, InterviewDate=item.interviewDate})'" title="Assign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></span></button>
-</td>
-                                                </tr>
+                                                <td> @item.risebirdHR</td>
+                                                <td> @item.HeuristicProfileTypeDesc</td>
+                                                @if (item.JDLink != null && item.JDLink != "")
+                                                {
+                                                    <td> <a target="_blank" title="JD Link" href=@item.JDLink.Replace(" ","%20")>JD Link</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
+                                                <td class="text-center four">
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit">  <span class="mdc-fab__icon material-icons btn btn-round btn-info btn-icon btn-sm like" onclick="location.href='@Url.Action("AssignYourself", "Interviewer", new { id = item.id, InterviewDate=item.interviewDate})'" title="Assign Yourself"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></span></button>
+                                                </td>
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>

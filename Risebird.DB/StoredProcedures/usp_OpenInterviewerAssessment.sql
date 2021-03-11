@@ -15,7 +15,7 @@ CREATE PROCEDURE [dbo].[usp_OpenInterviewerAssessment]
    @emailID varchar(200)           
 AS      
 BEGIN      
-  select distinct im.*, Skill.[Name] as PrimarySkill,inp.NickName,inp.CodedResumeLink as resumeLink from TransInterviewerSkillsLeadInterviewer tisli      
+  select distinct im.*, Skill.[Name] as PrimarySkill,inp.NickName,inp.CodedResumeLink as resumeLink, isc.JDLink, isc.HeuristicProfileType from TransInterviewerSkillsLeadInterviewer tisli      
   join UserList ul on tisli.UserId = ul.id      
   join InterviewerSkillsChannel isc on isc.id = tisli.InterviewerSkillId      
   inner join UnapprovedInterviewerMeetings im on  im.ISCId=isc.InterviewerSkillId      
