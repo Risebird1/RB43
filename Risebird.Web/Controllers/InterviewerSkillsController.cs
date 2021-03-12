@@ -1184,6 +1184,8 @@ namespace Risebird.Web.Controllers
                         var exprienceyears = _iRFRepository.GetInterviewerExprienceYear();
                         if (IRListModel != null)
                         {
+                            IRListModel.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(IRListModel.ProfileType)).GetDescription();
+                            IRListModel.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(IRListModel.CompentencyLevel)).GetDescription();
                             int expreinece_year = Convert.ToInt32(IRListModel.Yearsofexperience);
                             var years_expreince = exprienceyears.Where(x => x.Id == expreinece_year).FirstOrDefault();
                             if (years_expreince != null)
@@ -1216,6 +1218,7 @@ namespace Risebird.Web.Controllers
                         NewModel.zoomLink = model.zoomLink;
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
                         var SkillCategoryList = _iRFRepository.GetSkillCategory();
+
                         if (IRListModel != null)
                         {
                             int Seniorityid = Convert.ToInt32(IRListModel.Senioritylevel);
@@ -1315,6 +1318,16 @@ namespace Risebird.Web.Controllers
                         return x;
                     }).ToList();
                     var IRListModel = _interviewerService.GetInterviewerinteviewReport(model.imid, model.irfIntId).Result;
+                    var exprienceyears = _iRFRepository.GetInterviewerExprienceYear();
+                    if (IRListModel != null)
+                    {
+                        IRListModel.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(IRListModel.ProfileType)).GetDescription();
+                        IRListModel.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(IRListModel.CompentencyLevel)).GetDescription();
+                        int expreinece_year = Convert.ToInt32(IRListModel.Yearsofexperience);
+                        var years_expreince = exprienceyears.Where(x => x.Id == expreinece_year).FirstOrDefault();
+                        if (years_expreince != null)
+                            IRListModel.Yearsofexperience = years_expreince.Description;
+                    }
                     var modelList = modelList1;
 
                     MeetingVM NewModel = new MeetingVM();

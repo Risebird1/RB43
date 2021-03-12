@@ -296,11 +296,11 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Profile Type")]
 
-        public int ProfileType { get; set; }
+        public string ProfileType { get; set; }
         public SelectList CompentencyLevelList { get; set; }
         [Display(Name = "Competency Level")]
 
-        public int CompentencyLevel { get; set; }
+        public string CompentencyLevel { get; set; }
         public int InterviewerProfileId { get; set; }
         public int Userid { get; set; }
         public SelectList DomainList { get; set; }
