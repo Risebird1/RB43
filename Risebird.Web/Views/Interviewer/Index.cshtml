@@ -16,6 +16,7 @@
     string[] CompentencyLevel = new string[] { };
     string[] IndianRate = new string[] { };
     string[] OutSideIndiaRate = new string[] { };
+    string[] CompanyType = new string[] { };
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("InterviewerIndexfilters") != null)
 {
@@ -26,6 +27,7 @@
     CompentencyLevel = filter.CompentencyLevel != null ? filter.CompentencyLevel : new string[] { };
     IndianRate = filter.IndianRate != null ? filter.IndianRate : new string[] { };
     OutSideIndiaRate = filter.OutSideIndiaRate != null ? filter.OutSideIndiaRate : new string[] { };
+    CompanyType = filter.CompanyType != null ? filter.CompanyType : new string[] { };
 
 }
 
@@ -200,6 +202,24 @@
                                                                 <select id="OutSideIndiaRate" name="OutSideIndiaRate" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in ViewBag.OutSideIndiaRate)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType">Company Type</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="CompanyType" name="CompanyType" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.CompanyType)
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -1259,7 +1279,7 @@
             buttonWidth: '100%',
             maxHeight: 200
         });
-        $("#CandidateLocation").multiselect({
+        $("#CompanyType").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '100%',
@@ -1299,6 +1319,7 @@
         var profileType =  @Html.Raw(Json.Serialize(ProfileType));
         var indianRate =  @Html.Raw(Json.Serialize(IndianRate));
         var outSideIndiaRate =  @Html.Raw(Json.Serialize(OutSideIndiaRate));
+        var companyType =  @Html.Raw(Json.Serialize(CompanyType));
 
 
         $("#AssessmentGroup").val(AssessmentGrouparr);
@@ -1307,6 +1328,7 @@
         $("#ProfileType").val(profileType);
         $("#IndianRate").val(indianRate);
         $("#OutSideIndiaRate").val(outSideIndiaRate);
+        $("#CompanyType").val(companyType);
     }
 
 
