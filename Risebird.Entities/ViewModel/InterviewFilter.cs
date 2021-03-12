@@ -34,5 +34,7 @@ namespace Risebird.Entities.ViewModel
         public string[] ProfileType { get; set; }
         public string[] IndianRate { get; set; }
         public string[] OutSideIndiaRate { get; set; }
+        public string[] CompanyType { get; set; }
+        public string[] Domain { get; set; }
     }
 }
