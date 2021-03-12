@@ -17,8 +17,8 @@ AS
 Begin       
       
 select (select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<7 ) as UnassignedInterviewsCount,      
-(select Count(im.id) from InterviewMeetings im left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<GETDATE() and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7 ) as UnfilledMeetingStatusCount,      
-(select Count(im.id) from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<GETDATE() and ic.MeetingStatus=4 and ic.QCStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7 ) as UnfilledInterviewStatusCount,      
+(select Count(im.id) from InterviewMeetings im left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<GETDATE()  and ic.MeetingStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7 ) as UnfilledMeetingStatusCount,      
+(select Count(im.id) from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<GETDATE() and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and ic.QCStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7 ) as UnfilledInterviewStatusCount,      
 (select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and HRCoordinatorEmailId is null and DATEDIFF(DAY, interviewDate, GETDATE())<7 ) as UnfilledCommentsCount      
       
 End   
