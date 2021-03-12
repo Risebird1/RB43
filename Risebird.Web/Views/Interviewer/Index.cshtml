@@ -16,6 +16,8 @@
     string[] CompentencyLevel = new string[] { };
     string[] IndianRate = new string[] { };
     string[] OutSideIndiaRate = new string[] { };
+    string[] CompanyType = new string[] { };
+    string[] Domain = new string[] { };
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("InterviewerIndexfilters") != null)
 {
@@ -26,6 +28,8 @@
     CompentencyLevel = filter.CompentencyLevel != null ? filter.CompentencyLevel : new string[] { };
     IndianRate = filter.IndianRate != null ? filter.IndianRate : new string[] { };
     OutSideIndiaRate = filter.OutSideIndiaRate != null ? filter.OutSideIndiaRate : new string[] { };
+    CompanyType = filter.CompanyType != null ? filter.CompanyType : new string[] { };
+    Domain = filter.Domain != null ? filter.Domain : new string[] { };
 
 }
 
@@ -200,6 +204,42 @@
                                                                 <select id="OutSideIndiaRate" name="OutSideIndiaRate" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in ViewBag.OutSideIndiaRate)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType">Company Type</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="CompanyType" name="CompanyType" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.CompanyType)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Domain">Domain</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="Domain" name="Domain" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.Domain)
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -939,7 +979,7 @@
             html += '  <td><a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink.replace(" ", "%20") + '>Resume</a></td>';
             html += '   <td class="text-center action">';
             html += '  <button class="mdc-fab app-fab--absolute" aria-label="Recommendation">';
-            html += '   <a href="/Interviewer/InterviewerRecommendation?id ='+data[i].userId +'" title="Recommendation" class="mdc-fab__icon material-icons">';
+            html += '   <a href="/Interviewer/InterviewerRecommendation/'+data[i].userId +'" title="Recommendation" class="mdc-fab__icon material-icons">';
             html += '  <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" style="top: -1px;position: relative;"><path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"></path>';
             html += '  </svg>';
             html += '  </a>';
@@ -1283,13 +1323,13 @@
             buttonWidth: '100%',
             maxHeight: 200
         });
-        $("#CandidateLocation").multiselect({
+        $("#CompanyType").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '100%',
             maxHeight: 200
         });
-        $("#IsShortListed").multiselect({
+        $("#Domain").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '100%',
@@ -1323,6 +1363,8 @@
         var profileType =  @Html.Raw(Json.Serialize(ProfileType));
         var indianRate =  @Html.Raw(Json.Serialize(IndianRate));
         var outSideIndiaRate =  @Html.Raw(Json.Serialize(OutSideIndiaRate));
+        var companyType =  @Html.Raw(Json.Serialize(CompanyType));
+        var domain =  @Html.Raw(Json.Serialize(Domain));
 
 
         $("#AssessmentGroup").val(AssessmentGrouparr);
@@ -1331,6 +1373,8 @@
         $("#ProfileType").val(profileType);
         $("#IndianRate").val(indianRate);
         $("#OutSideIndiaRate").val(outSideIndiaRate);
+        $("#CompanyType").val(companyType);
+        $("#Domain").val(domain);
     }
 
 

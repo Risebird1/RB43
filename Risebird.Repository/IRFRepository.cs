@@ -4328,12 +4328,11 @@ namespace Risebird.Repository
         {
             DataTable dt = new DataTable();
             dt.Columns.AddRange(new DataColumn[2] { new DataColumn("EmailId", typeof(string)),
-                    new DataColumn("Import Status", typeof(string))/*,new DataColumn("Invitation Status", typeof(string))*/ });
+                    new DataColumn("Import Status", typeof(string)) });
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    //string result = string.Empty;
                     if (candidateList != null && candidateList.Count() > 0)
                     {
                         foreach (var obj in candidateList)
@@ -4346,6 +4345,7 @@ namespace Risebird.Repository
                             parameters.Add("@Phone", obj.Phone);
                             parameters.Add("@AddedByUserId", userId);
                             parameters.Add("@date", DateTime.Now);
+                            parameters.Add("@ClientHREmail", obj.ClientHREmail);
                             parameters.Add("@operationStatus", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
 
 
@@ -4397,6 +4397,21 @@ namespace Risebird.Repository
                 return null;
             }
         }
-
+        public IEnumerable<FetchInterviewerDetails> GetDomainList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<FetchInterviewerDetails>(
+                        con, "select * from Domains", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

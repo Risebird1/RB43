@@ -228,6 +228,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList SkillNatureList { get; set; }
 
         public string Domain { get; set; }
+        public string DomainName { get; set; }
 
         [Display(Name = "Skill IP")]
 
@@ -302,6 +303,7 @@ namespace Risebird.Entities.ViewModel
         public int CompentencyLevel { get; set; }
         public int InterviewerProfileId { get; set; }
         public int Userid { get; set; }
+        public SelectList DomainList { get; set; }
     }
     public class RBInterviewDetails
     {

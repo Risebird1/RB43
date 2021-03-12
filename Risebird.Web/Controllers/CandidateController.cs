@@ -2461,6 +2461,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 2].Value = "EmailId";
                 Sheet.Cells[1, 3].Value = "Resume Link";
                 Sheet.Cells[1, 4].Value = "Phone(With Country code)";
+                Sheet.Cells[1, 5].Value = "HR Email";
                 
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
 
@@ -2512,10 +2513,11 @@ namespace Risebird.Web.Controllers
                                 {
                                     var candidate = new CandidateQuickAddModel
                                     {
-                                        Name = (workSheet.Cells[rowIterator, 1] != null) ? workSheet.Cells[rowIterator, 1].Value.ToString() : "",
+                                        Name = (workSheet.Cells[rowIterator, 1] != null) ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
                                         EmailId = workSheet.Cells[rowIterator, 2].Value.ToString(),
-                                        ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null) ? workSheet.Cells[rowIterator, 3].Value.ToString() : "",         //workSheet.Cells[rowIterator, 3].Value.ToString();
-                                        Phone = (workSheet.Cells[rowIterator, 4].Value != null) ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString()) : "",                  // "+" + workSheet.Cells[rowIterator, 10].Value.ToString();
+                                        ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null) ? workSheet.Cells[rowIterator, 3].Value.ToString() : string.Empty,         //workSheet.Cells[rowIterator, 3].Value.ToString();
+                                        Phone = (workSheet.Cells[rowIterator, 4].Value != null) ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString()) : string.Empty,                  // "+" + workSheet.Cells[rowIterator, 10].Value.ToString();
+                                        ClientHREmail = (workSheet.Cells[rowIterator, 5] != null) ? workSheet.Cells[rowIterator, 5].Value.ToString() : string.Empty,
                                         IRFId = IRFId
                                     };
                                     candidateList.Add(candidate);

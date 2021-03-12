@@ -110,6 +110,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<FetchInterviewerDetails> GetOnlinePresence();
         IEnumerable<FetchInterviewerDetails> GetInterviwerCommunication();
         IEnumerable<FetchInterviewerDetails> GetInterviewexperience();
+        IEnumerable<FetchInterviewerDetails> GetDomainList();
 
 
 
