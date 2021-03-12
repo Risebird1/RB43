@@ -17,6 +17,7 @@
     string[] IndianRate = new string[] { };
     string[] OutSideIndiaRate = new string[] { };
     string[] CompanyType = new string[] { };
+    string[] Domain = new string[] { };
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("InterviewerIndexfilters") != null)
 {
@@ -28,6 +29,7 @@
     IndianRate = filter.IndianRate != null ? filter.IndianRate : new string[] { };
     OutSideIndiaRate = filter.OutSideIndiaRate != null ? filter.OutSideIndiaRate : new string[] { };
     CompanyType = filter.CompanyType != null ? filter.CompanyType : new string[] { };
+    Domain = filter.Domain != null ? filter.Domain : new string[] { };
 
 }
 
@@ -220,6 +222,24 @@
                                                                 <select id="CompanyType" name="CompanyType" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in ViewBag.CompanyType)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Domain">Domain</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="Domain" name="Domain" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.Domain)
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -1285,7 +1305,7 @@
             buttonWidth: '100%',
             maxHeight: 200
         });
-        $("#IsShortListed").multiselect({
+        $("#Domain").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '100%',
@@ -1320,6 +1340,7 @@
         var indianRate =  @Html.Raw(Json.Serialize(IndianRate));
         var outSideIndiaRate =  @Html.Raw(Json.Serialize(OutSideIndiaRate));
         var companyType =  @Html.Raw(Json.Serialize(CompanyType));
+        var domain =  @Html.Raw(Json.Serialize(Domain));
 
 
         $("#AssessmentGroup").val(AssessmentGrouparr);
@@ -1329,6 +1350,7 @@
         $("#IndianRate").val(indianRate);
         $("#OutSideIndiaRate").val(outSideIndiaRate);
         $("#CompanyType").val(companyType);
+        $("#Domain").val(domain);
     }
 
 

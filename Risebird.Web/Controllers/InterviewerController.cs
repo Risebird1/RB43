@@ -92,6 +92,7 @@ namespace Risebird.Web.Controllers
                             filter.IndianRate = filter.IndianRate == null ? filter.IndianRate = model.Select(x => x.PerHourRateIndia).ToArray() : filter.IndianRate = filter.IndianRate;
                             filter.OutSideIndiaRate = filter.OutSideIndiaRate == null ? filter.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).ToArray() : filter.OutSideIndiaRate = filter.OutSideIndiaRate;
                             filter.CompanyType = filter.CompanyType == null ? filter.CompanyType = model.Select(x => x.CompanyType).ToArray() : filter.CompanyType = filter.CompanyType;
+                            filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Domain).ToArray() : filter.Domain = filter.Domain;
 
                             model = model.Where(c =>
                                (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
@@ -99,7 +100,8 @@ namespace Risebird.Web.Controllers
                               && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)
                                && (filter.IndianRate.Count() > 0 ? filter.IndianRate.Contains(c.PerHourRateIndia) : c.PerHourRateIndia == null)
                           && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)
-                          && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)).ToList();
+                          && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
+                          && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Domain) : c.Domain == null)).ToList();
 
                         }
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
@@ -117,6 +119,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.IndianRate = model.Select(x => x.PerHourRateIndia).Distinct();
                         ViewBag.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).Distinct();
                         ViewBag.CompanyType = model.Select(x => x.CompanyType).Distinct();
+                        ViewBag.Domain = model.Select(x => x.Domain).Distinct();
 
                         if (String.IsNullOrEmpty(searchValue) && Page > 1)
                         {
@@ -207,6 +210,7 @@ namespace Risebird.Web.Controllers
                         filter.IndianRate = filter.IndianRate == null ? filter.IndianRate = model.Select(x => x.PerHourRateIndia).ToArray() : filter.IndianRate = filter.IndianRate;
                         filter.OutSideIndiaRate = filter.OutSideIndiaRate == null ? filter.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).ToArray() : filter.OutSideIndiaRate = filter.OutSideIndiaRate;
                         filter.CompanyType = filter.CompanyType == null ? filter.CompanyType = model.Select(x => x.CompanyType).ToArray() : filter.CompanyType = filter.CompanyType;
+                        filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Domain).ToArray() : filter.Domain = filter.Domain;
 
                         model = model.Where(c =>
                              (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
@@ -214,7 +218,8 @@ namespace Risebird.Web.Controllers
                           && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)
                           && (filter.IndianRate.Count() > 0 ? filter.IndianRate.Contains(c.PerHourRateIndia) : c.PerHourRateIndia == null)
                           && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)
-                           && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)).ToList();
+                           && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
+                           && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Domain) : c.Domain == null)).ToList();
 
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
                         foreach (var item in model)
@@ -231,6 +236,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.IndianRate = model.Select(x => x.PerHourRateIndia).Distinct();
                         ViewBag.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).Distinct();
                         ViewBag.CompanyType = model.Select(x => x.CompanyType).Distinct();
+                        ViewBag.Domain = model.Select(x => x.Domain).Distinct();
 
                         if (String.IsNullOrEmpty(searchValue) && Page > 1)
                         {
@@ -1593,6 +1599,7 @@ namespace Risebird.Web.Controllers
             model.BehavioralScoreList = new SelectList(_iRFRepository.GetBehavioralScore(), "Id", "Name");
             model.InterviwerCommunicationList = new SelectList(_iRFRepository.GetInterviwerCommunication(), "Id", "Name");
             model.InterviewexperienceList = new SelectList(_iRFRepository.GetInterviewexperience(), "Id", "Name");
+            model.DomainList = new SelectList(_iRFRepository.GetDomainList(), "Name", "Name");
 
             model.CompanyStageList = new SelectList(_iRFRepository.GetCompanyStage(), "Id", "Name");
             var skillCategories = _iRFRepository.GetSkillCategory();

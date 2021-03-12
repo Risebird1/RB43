@@ -170,5 +170,8 @@ namespace Risebird.Entities.ViewModel
         public string PerHourRateOutside { get; set; }
         public string CompentencyLevel { get; set; }
         public string ProfileType { get; set; }
+        public string Domain { get; set; }
+        public string DomainName { get; set; }
+
     }
 }

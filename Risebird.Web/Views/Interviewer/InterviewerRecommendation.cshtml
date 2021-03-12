@@ -204,29 +204,13 @@
                                             </div>
                                         </div>
 
-
-
-
                                         <div class="col-md-6 col-sm-6">
                                             <div class="form-group">
                                                 <div class="mandate">
-                                                    @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                </div>
-                                                @Html.TextBoxFor(m => m.Domain, new { @class = "form-control text-box single-line" })
-                                                @Html.ValidationMessageFor(model => model.Domain, "", new { @class = "text-danger" })
-                                            </div>
-
-                                        </div>
-
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="mandate">
-                                                <div class="form-group">
                                                     @Html.LabelFor(model => model.ProfileType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
                                                 </div>
-
                                                 @Html.DropDownListFor(x => Model.ProfileType, Model.ProfileTypeList, "Select Profile Type", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
                                                 @Html.ValidationMessageFor(model => model.ProfileType, "", new { @class = "text-danger" })
-
                                             </div>
                                         </div>
 
@@ -235,13 +219,31 @@
                                                 <div class="mandate">
                                                     @Html.LabelFor(model => model.CompentencyLevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
                                                 </div>
-
                                                 @Html.DropDownListFor(x => Model.CompentencyLevel, Model.CompentencyLevelList, "Select Competency Level", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
                                             </div>
                                             @Html.ValidationMessageFor(model => model.CompentencyLevel, "", new { @class = "text-danger" })
 
                                         </div>
 
+                                        <div class="col-md-6 col-sm-6">
+                                            <div class="form-group">
+                                                <div class="mandate">
+                                                    @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                </div>
+                                                @Html.DropDownListFor(x => Model.Domain, Model.DomainList, "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required", @onchange = "Checkdoaminvalue()" })
+                                                @*@Html.TextBoxFor(m => m.Domain, new { @class = "form-control text-box single-line" })*@
+                                                @Html.ValidationMessageFor(model => model.Domain, "", new { @class = "text-danger" })
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-6 col-sm-6" style="display:none" id="divdomainvalue">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.TextBoxFor(m => m.DomainName, new { @class = "form-control text-box single-line" })
+                                                @Html.ValidationMessageFor(model => model.DomainName, "", new { @class = "text-danger", @id = "err_DomainName" })
+                                            </div>
+
+                                        </div>
                                     </div>
 
                                 </div>
@@ -274,6 +276,7 @@
             buttonWidth: '100%',
             maxHeight: 200
         });
+        Checkdoaminvalue();
     });
     function CheckRecommendationValues() {
         var elementId = '';
@@ -284,12 +287,11 @@
         else {
             document.getElementById("SkillCategory_Error").innerHTML = "";
         }
-        if (document.getElementById("CompanyStage").value == null || document.getElementById("CompanyStage").value == '') {
-            document.getElementById("CompanyStage_Error").innerHTML = "This field is required.";
-            elementId = 'CompanyStage';
-        }
-        else {
-            document.getElementById("CompanyStage_Error").innerHTML = "";
+        if ($("#Domain").val() == "Other") {
+            if ($("#DomainName").val().trim() == "") {
+                $("#err_DomainName").text("This field is required.");
+                elementId = 'DomainName';
+            }
         }
         if (elementId != '') {
             document.getElementById(elementId).focus();
@@ -297,6 +299,14 @@
         }
         else {
             return true;
+        }
+    }
+    function Checkdoaminvalue() {
+        var selectvalue = $("#Domain").val();
+        if (selectvalue == "Other") {
+            document.getElementById("divdomainvalue").style.display = "block";
+        } else {
+            document.getElementById("divdomainvalue").style.display = "none";
         }
     }
 </script>

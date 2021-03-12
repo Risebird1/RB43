@@ -1349,7 +1349,14 @@ namespace Risebird.Repository
                     parametersRecomm.Add("@PerHourRateOutside", reportDetails.PerHourRateOutside);
                     parametersRecomm.Add("@ProfileType", reportDetails.ProfileType);
                     parametersRecomm.Add("@CompentencyLevel", reportDetails.CompentencyLevel);
-
+                    if (reportDetails.Domain == "Other")
+                    {
+                        parametersRecomm.Add("@DomainName", reportDetails.DomainName);
+                    }
+                    else
+                    {
+                        parametersRecomm.Add("@DomainName", "");
+                    }
                     paramPersonality.Add("@InterviewId", reportDetails.InterviewId);
                     paramPersonality.Add("@OverallPersonalityScore", reportDetails.OverallPersonalityScore);
                     paramPersonality.Add("@Openness", reportDetails.Openness);
@@ -1827,7 +1834,12 @@ namespace Risebird.Repository
                     parametersRecomm.Add("@ProfileType", reportDetails.ProfileType);
                     parametersRecomm.Add("@CompentencyLevel", reportDetails.CompentencyLevel);
                     parametersRecomm.Add("@Userid", reportDetails.Userid);
-                    
+                    parametersRecomm.Add("@DomainName", "");
+                    if (reportDetails.Domain == "Other")
+                    {
+                        parametersRecomm.Add("@DomainName", reportDetails.DomainName);
+                    }
+
                     await SqlMapper.QueryAsync<int>(con, "usp_AddOrUpdateInterviewerRecommendation", parametersRecomm,
                            commandType: CommandType.StoredProcedure);
                     return true;

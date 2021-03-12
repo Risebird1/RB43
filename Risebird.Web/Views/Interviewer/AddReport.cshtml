@@ -1455,25 +1455,9 @@
                                                 </div>
                                             </div>
 
-
-
-
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     <div class="mandate">
-                                                        @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                    </div>
-                                                    @Html.TextBoxFor(m => m.Domain, new { @class = "form-control text-box single-line" })
-
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="text-danger" id="Domain_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="mandate">
-                                                    <div class="form-group">
                                                         @Html.LabelFor(model => model.ProfileType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
                                                     </div>
 
@@ -1496,6 +1480,26 @@
                                                     <label class="text-danger" id="CompentencyLevel_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
                                                 </div>
                                             </div>
+
+
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <div class="mandate">
+                                                        @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                    </div>
+                                                    @Html.DropDownListFor(x => Model.Domain, Model.DomainList, "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required", @onchange = "Checkdoaminvalue()" })
+                                                    @Html.ValidationMessageFor(model => model.Domain, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6" style="display:none" id="divdomainvalue">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.DomainName, new { @class = "form-control text-box single-line" })
+                                                    @Html.ValidationMessageFor(model => model.DomainName, "", new { @class = "text-danger", @id = "err_DomainName" })
+                                                </div>
+
+                                            </div>
+
 
                                         </div>
 
@@ -2009,7 +2013,7 @@
         //CalculateProfileTotal(true);
 
         SetChartAndTotal();
-
+        Checkdoaminvalue();
 
     });
 
@@ -2368,14 +2372,12 @@
             document.getElementById("ProfileType_Error").innerHTML = "";
         }
 
-        if (document.getElementById("Domain").value == null || document.getElementById("Domain").value == '') {
-            document.getElementById("Domain_Error").innerHTML = "This field is required.";
-            elementId = 'Domain';
+        if ($("#Domain").val() == "Other") {
+            if ($("#DomainName").val().trim() == "") {
+                $("#err_DomainName").text("This field is required.");
+                elementId = 'DomainName';
+            }
         }
-        else {
-            document.getElementById("Domain_Error").innerHTML = "";
-        }
-
         if (document.getElementById("PerHourRateOutside").value == null || document.getElementById("PerHourRateOutside").value == '') {
             document.getElementById("PerHourRateOutside_Error").innerHTML = "This field is required.";
             elementId = 'PerHourRateOutside';
@@ -2456,7 +2458,14 @@
             return true;
         }
     }
-
+    function Checkdoaminvalue() {
+        var selectvalue = $("#Domain").val();
+        if (selectvalue == "Other") {
+            document.getElementById("divdomainvalue").style.display = "block";
+        } else {
+            document.getElementById("divdomainvalue").style.display = "none";
+        }
+    }
 
     //function CheckRecommendationValues() {
     //    //CompanySize
