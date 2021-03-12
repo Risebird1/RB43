@@ -114,7 +114,7 @@ namespace Risebird.Web.Controllers
                             }
                         }
                         ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
-                        ViewBag.ProfileType = model.Select(x => x.ProfileType).Distinct();
+                        ViewBag.ProfileType = model.Where(x => x.ProfileType != "0").Select(x => x.ProfileType).Distinct();
                         ViewBag.CompentencyLevel = model.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
                         ViewBag.IndianRate = model.Select(x => x.PerHourRateIndia).Distinct();
                         ViewBag.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).Distinct();
@@ -231,7 +231,7 @@ namespace Risebird.Web.Controllers
                             }
                         }
                         ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
-                        ViewBag.ProfileType = model.Select(x => x.ProfileType).Distinct();
+                        ViewBag.ProfileType = model.Where(x => x.ProfileType != "0").Select(x => x.ProfileType).Distinct();
                         ViewBag.CompentencyLevel = model.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
                         ViewBag.IndianRate = model.Select(x => x.PerHourRateIndia).Distinct();
                         ViewBag.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).Distinct();
