@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -828,7 +829,6 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
                             TempData.Remove("SuccessErrorMessageCandidate");
                         }
-
                         if (!String.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper();
@@ -2474,14 +2474,15 @@ namespace Risebird.Web.Controllers
 
         }
 
-        public ActionResult ImportQuickCandidates(IFormCollection formCollection)
+        [HttpPost]
+        public string ImportQuickCandidates(IFormCollection formCollection)
         {
             var IRFId = Convert.ToInt32((formCollection["IRFId"].ToString()));
             var isSendInvite = Convert.ToBoolean((formCollection["IsSendInvite"].ToString()));
             var IRFName = formCollection["IRFName"].ToString();
             try
             {
-                
+
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
@@ -2492,7 +2493,7 @@ namespace Risebird.Web.Controllers
                     if (Request != null)
                     {
                         var file = formCollection.Files[0];
-                        
+
                         if ((file != null) && (file.Length > 0) && !string.IsNullOrEmpty(file.FileName))
                         {
 
@@ -2521,17 +2522,23 @@ namespace Risebird.Web.Controllers
                                 }
 
                             }
-                            var result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite).Result;
-                            TempData["SuccessErrorMessageCandidate"] = result;
-                            return RedirectToAction("GetCandidates", new { id = IRFId, irfName = IRFName });
+                            StringBuilder result = new StringBuilder();
+                            if (candidateList != null && candidateList.Count() > 0)
+                            {
+                                result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite).Result;
+                            }
+                            else
+                            {
+                                result.Append("No candidates to add!");
+                            }
+                            return result.ToString();
 
 
                         }
 
                         else
                         {
-                            TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
-                            return RedirectToAction("GetCandidates", new { id = IRFId, irfName = IRFName });
+                            return "Failed to import candidates!";
 
                         }
                     }
@@ -2542,13 +2549,14 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
-                return RedirectToAction("GetCandidates", new { id = IRFId, irfName = IRFName });
+                return "Failed to import candidates!"; ;
             }
             return null;
         }
 
         
+
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetCandidateStatusList(int irfId, int candidateId, string irfName, string candidateName)
