@@ -525,6 +525,7 @@ namespace Risebird.Business
                     reportModel.Senioritylevel = techInterviewerRecommendation.Senioritylevel;
                     reportModel.SkillNature = techInterviewerRecommendation.SkillNature;
                     reportModel.Domain = techInterviewerRecommendation.Domain;
+                    reportModel.DomainName = techInterviewerRecommendation.DomainName;
                     reportModel.SkillIP = techInterviewerRecommendation.SkillIP;
                     reportModel.PerHourRateOutside = techInterviewerRecommendation.PerHourRateOutside;
                     reportModel.PerHourRateIndia = techInterviewerRecommendation.PerHourRateIndia;
