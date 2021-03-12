@@ -2,6 +2,7 @@
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository.Interface
@@ -138,7 +139,9 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewersByTag(string tag);
         Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null, int id = 0);
         Task<bool> AddQCCandidateStatus(int interviewId, string performedBy);
-        Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId);
+        //Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId);
         Task<Candidate> GetCandidateByIRF(int irfId, string emailId);
+        Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId);
+        Task<IRF> GetIRFForCall(int irfId);
     }
 }

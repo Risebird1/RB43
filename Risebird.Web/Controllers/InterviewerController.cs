@@ -570,13 +570,13 @@ namespace Risebird.Web.Controllers
             ViewBag.Years = new SelectList(Enumerable.Range(DateTime.Today.Year - 50, 51).Select(x => new SelectListItem()
             { Text = x.ToString(), Value = x.ToString() }), "Value", "Text");
 
-            //=========Skills============
+            
             var Skillset = _skillService.GetSkills();
             if (Skillset != null)
             {
                 Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
             }
-            model.SkillTypeList = new SelectList(Skillset, "id", "Name");
+            model.SkillTypeList = new SelectList(Skillset, "id", "Name");        
 
             var SkillCategory = from SkillCategory s in Enum.GetValues(typeof(SkillCategory))
                                 select new { ID = (int)s, Name = s.GetDescription() };

@@ -286,7 +286,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult EditInterviewerSkills(string id, bool isClone = false)
+        public IActionResult EditInterviewerSkills(string id, bool isClone=false)
         {
             try
             {

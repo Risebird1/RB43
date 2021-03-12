@@ -20,11 +20,13 @@ namespace Risebird.Business
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IConfiguration _configuration;
         private readonly IIRFService _irfService;
+        private readonly IIRFRepository _irfRepository;
+
 
         private readonly string twilioAuthToken;
         private readonly string twilioAccountSID;
         private readonly string twilioVoiceCallNumber;
-        public CandidateService(ICandidateRepository candidateRepository, IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, IIRFService irfService)
+        public CandidateService(ICandidateRepository candidateRepository, IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, IIRFService irfService, IIRFRepository irfRepository)
         {
             _candidateRepository = candidateRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -33,6 +35,7 @@ namespace Risebird.Business
             twilioAuthToken = _configuration["TwilioSettings:AUTH_TOKEN"];
             twilioAccountSID = _configuration["TwilioSettings:ACCOUNT_SID"];
             twilioVoiceCallNumber = _configuration["TwilioSettings:CallerNumber"];
+            _irfRepository = irfRepository;
         }
 
         public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null)
@@ -66,14 +69,18 @@ namespace Risebird.Business
         {
             try
             {
+                var link = string.Format("https://risebirdtestportal.azurewebsites.net/TwilioVoice/Index?irfId={0}", irfId.ToString());
+                var url = new Uri(link);
                 TwilioClient.Init(twilioAccountSID, twilioAuthToken);
                 var to = new PhoneNumber(phoneNumber);
                 var from = new PhoneNumber(twilioVoiceCallNumber);
+                
                 var call = await CallResource.CreateAsync(
                     to: to,
                     from: from,
-                    url: new Uri("https://beige-vulture-6005.twil.io/assets/phoneCalCandidateFile.xml"));
-                if(call.Status != null)
+                    url: url);
+
+                if (call.Status != null)
                 {
                     var result = call.Status.ToString();
                     if (result != CallResource.StatusEnum.Failed.ToString())

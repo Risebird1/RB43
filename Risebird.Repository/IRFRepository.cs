@@ -4304,14 +4304,36 @@ namespace Risebird.Repository
             return null;
         }
         
-
-        public async Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId)
+        public async Task<Candidate> GetCandidateByIRF(int irfId, string emailId)
         {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                dynamicParameters.Add("@EmailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<Candidate>(con, "usp_GetCandidateByIRF", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId)
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.AddRange(new DataColumn[2] { new DataColumn("EmailId", typeof(string)),
+                    new DataColumn("Import Status", typeof(string))/*,new DataColumn("Invitation Status", typeof(string))*/ });
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-
+                    //string result = string.Empty;
                     if (candidateList != null && candidateList.Count() > 0)
                     {
                         foreach (var obj in candidateList)
@@ -4323,15 +4345,21 @@ namespace Risebird.Repository
                             parameters.Add("@ResumeLink", obj.ResumeLink);
                             parameters.Add("@Phone", obj.Phone);
                             parameters.Add("@AddedByUserId", userId);
+                            parameters.Add("@date", DateTime.Now);
+                            parameters.Add("@operationStatus", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
 
-                            SqlMapper.Query<string>(con, "usp_AddQuickCandidate", parameters, commandType: CommandType.StoredProcedure);
+
+                            await SqlMapper.QueryAsync(con, "usp_AddQuickCandidate", parameters, commandType: CommandType.StoredProcedure);
+
+                            var result = parameters.Get<string>("@operationStatus");
+                            dt.Rows.Add(obj.EmailId, result);
 
                         }
-                        return "Candidates imported successfully.";
+                        return dt;
 
                     }
 
-                    return "No new candidates to import.";
+                    return null;
 
                 }
 
@@ -4340,26 +4368,25 @@ namespace Risebird.Repository
             catch (SqlException e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return "Sorry! Could not import candidates.";
+                return null;
             }
 
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return "Sorry! Could not import candidates.";
+                return null;
             }
         }
 
-        public async Task<Candidate> GetCandidateByIRF(int irfId, string emailId)
+        public async Task<IRF> GetIRFForCall(int irfId)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
-                dynamicParameters.Add("@EmailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<Candidate>(con, "usp_GetCandidateByIRF", dynamicParameters,
+                    var result = await SqlMapper.QueryAsync<IRF>(con, "usp_GetIRFById", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
