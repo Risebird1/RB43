@@ -1826,8 +1826,9 @@ namespace Risebird.Repository
                     parametersRecomm.Add("@PerHourRateOutside", reportDetails.PerHourRateOutside);
                     parametersRecomm.Add("@ProfileType", reportDetails.ProfileType);
                     parametersRecomm.Add("@CompentencyLevel", reportDetails.CompentencyLevel);
-
-                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerReportRecommendation", parametersRecomm,
+                    parametersRecomm.Add("@Userid", reportDetails.Userid);
+                    
+                    await SqlMapper.QueryAsync<int>(con, "usp_AddOrUpdateInterviewerRecommendation", parametersRecomm,
                            commandType: CommandType.StoredProcedure);
                     return true;
                 }
