@@ -314,10 +314,10 @@
                                                                             </button>
 
                                                                             @*<button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
-                                                                                <span onclick="javascript:GetCandidateStatusList('@item.IRFId', '@item.CandidateMasterId', '@ViewBag.IRFName', '@item.Name');" title="Candidate Status List" class="mdc-fab__icon material-icons">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg>
-                                                                                </span>
-                                                                            </button>*@
+                                                                                    <span onclick="javascript:GetCandidateStatusList('@item.IRFId', '@item.CandidateMasterId', '@ViewBag.IRFName', '@item.Name');" title="Candidate Status List" class="mdc-fab__icon material-icons">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg>
+                                                                                    </span>
+                                                                                </button>*@
 
                                                                         }
 
@@ -629,25 +629,25 @@
 
                                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded upload-wrap" for="UploadedFile" style="margin:0px auto; display:block;">
                                             <div class="file-upload-wrapper" data-text="CLICK HERE TO CHOOSE FILE">
-                                                <input type="file" class="file-upload-field" accept=".xls, .xlsx" name="UploadedFile" id="idExcelFile"/>
+                                                <input type="file" class="file-upload-field" accept=".xls, .xlsx" name="UploadedFile" id="idExcelFile" />
 
                                             </div>
                                         </button>
 
                                         @*<form>
-                                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded upload-wrap" for="UploadedFile">
-                                                    <div class="file-upload-wrapper" data-text="CLICK HERE TO CHOOSE FILE">
-                                                        <input type="file" class="file-upload-field" accept=".xls, .xlsx" name="UploadedFile" />
+                                                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded upload-wrap" for="UploadedFile">
+                                                        <div class="file-upload-wrapper" data-text="CLICK HERE TO CHOOSE FILE">
+                                                            <input type="file" class="file-upload-field" accept=".xls, .xlsx" name="UploadedFile" />
 
-                                                    </div>
-                                                </button>
-                                        </form>*@
+                                                        </div>
+                                                    </button>
+                                            </form>*@
                                         @*<input type="file" accept=".xls, .xlsx" name="UploadedFile" />*@
                                     </div>
                                     @*<div class="">
-                                        <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnImport" value="Import">
+                                            <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnImport" value="Import">
 
-                                    </div>*@
+                                        </div>*@
                                     <div class="">
                                         <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnImport" value="Import" onclick="ImportQuickCandidates()">
 
@@ -885,7 +885,7 @@
         </div>
 
     </div>
-
+</div>
     
     <script>
         var spanImport = document.getElementById("importResultPopUp");
@@ -893,9 +893,10 @@
         spanImport.onclick = function () {
             var modal = document.getElementById("importResultModal");
             modal.style.display = "none";
-            location.reload(true);
+            location.reload();
         }
         function ImportQuickCandidates() {
+            document.getElementById("btnImport").disabled = true;
             var irfExcelId = '@ViewBag.IRFId';
             var irfExcelName = '@ViewBag.IRFName';
             var excel_file = $("#idExcelFile")[0].files[0];

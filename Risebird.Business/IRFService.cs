@@ -1703,7 +1703,19 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IRF> GetIRFForCall(int irfId)
+        {
+            try
+            {
+                return await _irfRepository.GetIRFForCall(irfId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
 
+        }
 
 
     }

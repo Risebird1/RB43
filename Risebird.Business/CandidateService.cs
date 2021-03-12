@@ -69,22 +69,17 @@ namespace Risebird.Business
         {
             try
             {
-                var irfDetails = await _irfRepository.GetIRFForCall(irfId);
-                //var link = string.Format("https://localhost:44329/TwilioVoice/Index?irfName={0}&client={1}&primarySkill={2}", irfDetails.IRFId, irfDetails.ClientCompName, irfDetails.JDTiltle.Split("|")[0]);
-                var link = string.Format("https://localhost:44329/TwilioVoice/Index?irfId={0}", irfId.ToString());
+                var link = string.Format("https://risebirdtestportal.azurewebsites.net/TwilioVoice/Index?irfId={0}", irfId.ToString());
                 var url = new Uri(link);
-                //phoneNumber = "+918888571923";
                 TwilioClient.Init(twilioAccountSID, twilioAuthToken);
                 var to = new PhoneNumber(phoneNumber);
                 var from = new PhoneNumber(twilioVoiceCallNumber);
+                
                 var call = await CallResource.CreateAsync(
                     to: to,
                     from: from,
-                    url: new Uri("https://beige-vulture-6005.twil.io/assets/phoneCalCandidateFile.xml"));
-                //var call = await CallResource.CreateAsync(
-                //    to: to,
-                //    from: from,
-                //    url: url);
+                    url: url);
+
                 if (call.Status != null)
                 {
                     var result = call.Status.ToString();
