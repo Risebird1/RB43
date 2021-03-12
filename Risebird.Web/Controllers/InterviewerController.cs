@@ -1969,6 +1969,11 @@ namespace Risebird.Web.Controllers
                     if (model == null)
                     {
                         model = new InterviewReport();
+                        model.Userid = id;
+                    }
+                    if (!string.IsNullOrEmpty(model.SkillCategory))
+                    {
+                        model.SkillCategoryArray = model.SkillCategory.Split(',');
                     }
                     GetStatusList(model);
                     ViewBag.indexid = id;

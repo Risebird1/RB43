@@ -232,7 +232,7 @@ namespace Risebird.CommonHelper
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientUser.EmailId, clientUser.EmailId.Split("@").First()));
                     }
                 }
-                else
+                else if(!string.IsNullOrEmpty(clientHREmail))
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
                 }

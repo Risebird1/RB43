@@ -15,91 +15,112 @@ Create PROCEDURE [dbo].usp_AddQuickCandidate
 @EmailId varchar(200),  
 @ResumeLink varchar(500),    
 @Phone varchar(200),
-@AddedByUserId int  
+@AddedByUserId int, 
+@date datetime,
+@operationStatus varchar(200) out
 
   
 AS  
 Begin  
-declare  
-@ProfileId int = (select id from [Profile] where [Name]='Candidate')  
-IF NOT EXISTS (SELECT 1   FROM   UserList    WHERE  EmailId = @EmailId)  
-Begin  
-INSERT INTO [dbo].[UserList]  
-           (  
-     idProfile,  
-     FirstName,   
-     LastName,  
-     EmailId,  
-     LastLogin,  
-     LastLogout,  
-     IsActive,  
-     ImageURL,  
-     MobileNumber  
-           )  
-     VALUES  
-           (23,  
-@Name,  
-null,  
-@EmailId,  
-null,  
-null,  
-1,  
-null,  
-@Phone  
-)  
-  
-declare  
-@UserId int = (select id from UserList where EmailId=@EmailId and idProfile=@ProfileId)  
-  
-insert into CandidatesMaster ([UserId]) values (@UserId)  
-  
-insert into Candidate  
-([IRFId],  
-[ResumeLink],    
-[Phone],  
-[AddedByUserId],  
-[CandidateMasterId]
-)  
-values(@IRFId,  
-@ResumeLink,   
-@Phone,  
-@AddedByUserId,  
-(select id from CandidatesMaster where UserId=@UserId)
+	declare  @ProfileId int, @addedByEmail varchar(100);
+	set @ProfileId = (select id from [Profile] where [Name]='Candidate') 
+	set @addedByEmail= (select EmailId from UserList where id=@AddedByUserId)
 
-)  
-insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where UserId=@UserId))  
+IF EXISTS(select 1 from Candidate where IRFId=@IRFId and CandidateMasterId = (select id from CandidatesMaster where UserId= (select id from UserList where EmailId=@EmailId)))
+Begin
+	select @operationStatus='Duplicate candidate'
+End
+
+	
+Else IF Exists(select 1 from UserList where EmailId=@EmailId and idProfile != @ProfileId)
+Begin
+	select @operationStatus='User exists with a different Profile'
+End
+
+Else IF NOT EXISTS (SELECT 1   FROM   UserList    WHERE  EmailId = @EmailId)  
+	Begin  
+		INSERT INTO [dbo].[UserList]  
+		(idProfile,  
+		FirstName,   
+		LastName,  
+		EmailId,  
+		LastLogin,  
+		LastLogout,  
+		IsActive,  
+		ImageURL,  
+		MobileNumber)  
+	  
+		VALUES  
+		(23,  
+		@Name,  
+		null,  
+		@EmailId,  
+		null,  
+		null,  
+		1,  
+		null,  
+		@Phone)  
   
-End  
+		declare  
+		@UserId int = (select id from UserList where EmailId=@EmailId and idProfile=@ProfileId)  
+  
+		insert into CandidatesMaster ([UserId]) values (@UserId)  
+  
+		insert into Candidate  
+		([IRFId],  
+		[ResumeLink],    
+		[Phone],  
+		[AddedByUserId],  
+		[CandidateMasterId])  
+		values
+		(@IRFId,  
+		@ResumeLink,   
+		@Phone,  
+		@AddedByUserId,  
+		(select id from CandidatesMaster where UserId=@UserId))  
+
+		insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
+		values (@IRFId, (select id from CandidatesMaster where UserId=@UserId), 'Added', @date, 12, @addedByEmail)
+
+		insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where UserId=@UserId))  
+		select @operationStatus='Candidate imported successfully'
+  
+	End  
   
 Else  
   
 Begin  
-declare  
+	declare  
   
-@CandidateUserId int = (select id from UserList where EmailId=@EmailId and idProfile=@ProfileId)  
-  
-  
-IF NOT EXISTS (SELECT 1   FROM   CandidatesMaster    WHERE  UserId = @CandidateUserId)  
-Begin  
- insert into CandidatesMaster ([UserId]) values (@CandidateUserId)  
-End  
+	@CandidateUserId int = (select id from UserList where EmailId=@EmailId and idProfile=@ProfileId)  
   
   
-insert into Candidate  
-([IRFId],  
-[ResumeLink],  
-[Phone],   
-[AddedByUserId],  
-[CandidateMasterId]
-)  
-values(@IRFId,  
-@ResumeLink,  
-@Phone,  
-@AddedByUserId,  
-(select id from CandidatesMaster where UserId=@CandidateUserId)
-)    
+	IF NOT EXISTS (SELECT 1   FROM   CandidatesMaster    WHERE  UserId = @CandidateUserId)  
+	Begin  
+	 insert into CandidatesMaster ([UserId]) values (@CandidateUserId)  
+	End  
   
-insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where  UserId=@CandidateUserId))  
+  
+	insert into Candidate  
+	([IRFId],  
+	[ResumeLink],  
+	[Phone],   
+	[AddedByUserId],  
+	[CandidateMasterId]
+	)  
+	values(@IRFId,  
+	@ResumeLink,  
+	@Phone,  
+	@AddedByUserId,  
+	(select id from CandidatesMaster where UserId=@CandidateUserId)
+	)    
+  
+	insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
+	values (@IRFId, (select id from CandidatesMaster where UserId=@CandidateUserId), 'Added', @date, 12, @addedByEmail)
+
+	insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where  UserId=@CandidateUserId))
+	select @operationStatus='Candidate imported successfully'
+
   
 End  
   
