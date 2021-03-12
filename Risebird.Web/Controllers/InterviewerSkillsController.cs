@@ -1182,10 +1182,35 @@ namespace Risebird.Web.Controllers
                         }).ToList();
                         var IRListModel = _interviewerService.GetInterviewerinteviewReport(model.imid, model.irfIntId).Result;
                         var exprienceyears = _iRFRepository.GetInterviewerExprienceYear();
+                        var CompanyStageList = _iRFRepository.GetCompanyStage();
+                        var SkillNatureList = _iRFRepository.GetSkillNature();
                         if (IRListModel != null)
                         {
-                            IRListModel.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(IRListModel.ProfileType)).GetDescription();
-                            IRListModel.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(IRListModel.CompentencyLevel)).GetDescription();
+                            if (String.IsNullOrEmpty(IRListModel.ProfileType))
+                            {
+                                IRListModel.ProfileType = "";
+                            }
+                            else
+                            {
+                                IRListModel.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(IRListModel.ProfileType)).GetDescription();
+                            }
+                            if (String.IsNullOrEmpty(IRListModel.CompentencyLevel))
+                            {
+                                IRListModel.CompentencyLevel = "";
+                            }
+                            else
+                            {
+                                IRListModel.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(IRListModel.CompentencyLevel)).GetDescription();
+                            }
+
+                            int SkillNature = Convert.ToInt32(IRListModel.SkillNature);
+                            var Skill_Nature = SkillNatureList.Where(x => x.Id == SkillNature).FirstOrDefault();
+                            if (Skill_Nature != null)
+                                IRListModel.SkillNature = Skill_Nature.Description;
+                            int CompanyStage = Convert.ToInt32(IRListModel.CompanyStage);
+                            var Company_Stage = CompanyStageList.Where(x => x.Id == CompanyStage).FirstOrDefault();
+                            if (Company_Stage != null)
+                                IRListModel.CompanyStage = Company_Stage.Description;
                             int expreinece_year = Convert.ToInt32(IRListModel.Yearsofexperience);
                             var years_expreince = exprienceyears.Where(x => x.Id == expreinece_year).FirstOrDefault();
                             if (years_expreince != null)
@@ -1319,10 +1344,35 @@ namespace Risebird.Web.Controllers
                     }).ToList();
                     var IRListModel = _interviewerService.GetInterviewerinteviewReport(model.imid, model.irfIntId).Result;
                     var exprienceyears = _iRFRepository.GetInterviewerExprienceYear();
+                    var CompanyStageList = _iRFRepository.GetCompanyStage();
+                    var SkillNatureList = _iRFRepository.GetSkillNature();
                     if (IRListModel != null)
                     {
-                        IRListModel.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(IRListModel.ProfileType)).GetDescription();
-                        IRListModel.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(IRListModel.CompentencyLevel)).GetDescription();
+                        if (String.IsNullOrEmpty(IRListModel.ProfileType))
+                        {
+                            IRListModel.ProfileType = "";
+                        }
+                        else
+                        {
+                            IRListModel.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(IRListModel.ProfileType)).GetDescription();
+                        }
+                        if (String.IsNullOrEmpty(IRListModel.CompentencyLevel))
+                        {
+                            IRListModel.CompentencyLevel = "";
+                        }
+                        else
+                        {
+                            IRListModel.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(IRListModel.CompentencyLevel)).GetDescription();
+                        }
+
+                        int SkillNature = Convert.ToInt32(IRListModel.SkillNature);
+                        var Skill_Nature = SkillNatureList.Where(x => x.Id == SkillNature).FirstOrDefault();
+                        if (Skill_Nature != null)
+                            IRListModel.SkillNature = Skill_Nature.Description;
+                        int CompanyStage = Convert.ToInt32(IRListModel.CompanyStage);
+                        var Company_Stage = CompanyStageList.Where(x => x.Id == CompanyStage).FirstOrDefault();
+                        if (Company_Stage != null)
+                            IRListModel.CompanyStage = Company_Stage.Description;
                         int expreinece_year = Convert.ToInt32(IRListModel.Yearsofexperience);
                         var years_expreince = exprienceyears.Where(x => x.Id == expreinece_year).FirstOrDefault();
                         if (years_expreince != null)
