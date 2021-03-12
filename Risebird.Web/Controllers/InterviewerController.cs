@@ -570,13 +570,13 @@ namespace Risebird.Web.Controllers
             ViewBag.Years = new SelectList(Enumerable.Range(DateTime.Today.Year - 50, 51).Select(x => new SelectListItem()
             { Text = x.ToString(), Value = x.ToString() }), "Value", "Text");
 
-            
+
             var Skillset = _skillService.GetSkills();
             if (Skillset != null)
             {
                 Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
             }
-            model.SkillTypeList = new SelectList(Skillset, "id", "Name");        
+            model.SkillTypeList = new SelectList(Skillset, "id", "Name");
 
             var SkillCategory = from SkillCategory s in Enum.GetValues(typeof(SkillCategory))
                                 select new { ID = (int)s, Name = s.GetDescription() };
@@ -1599,7 +1599,12 @@ namespace Risebird.Web.Controllers
             model.BehavioralScoreList = new SelectList(_iRFRepository.GetBehavioralScore(), "Id", "Name");
             model.InterviwerCommunicationList = new SelectList(_iRFRepository.GetInterviwerCommunication(), "Id", "Name");
             model.InterviewexperienceList = new SelectList(_iRFRepository.GetInterviewexperience(), "Id", "Name");
-            model.DomainList = new SelectList(_iRFRepository.GetDomainList(), "Name", "Name");
+            var dominlist = _iRFRepository.GetDomainList();
+            if (dominlist != null)
+            {
+                dominlist = dominlist.OrderBy(x => x.Name);
+            }
+            model.DomainList = new SelectList(dominlist, "Name", "Name");
 
             model.CompanyStageList = new SelectList(_iRFRepository.GetCompanyStage(), "Id", "Name");
             var skillCategories = _iRFRepository.GetSkillCategory();
