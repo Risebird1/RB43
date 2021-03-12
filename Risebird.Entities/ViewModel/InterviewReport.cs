@@ -88,7 +88,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Meeting Status")]
         public SelectList MeetingStatusList { get; set; }
-        
+
         [Display(Name = "Upload Image")]
         public IFormFile AudioFile { get; set; }
 
@@ -301,6 +301,7 @@ namespace Risebird.Entities.ViewModel
 
         public int CompentencyLevel { get; set; }
         public int InterviewerProfileId { get; set; }
+        public int Userid { get; set; }
     }
     public class RBInterviewDetails
     {
