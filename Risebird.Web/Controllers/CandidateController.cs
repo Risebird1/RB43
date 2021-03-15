@@ -2461,7 +2461,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 2].Value = "EmailId";
                 Sheet.Cells[1, 3].Value = "Resume Link";
                 Sheet.Cells[1, 4].Value = "Phone(With Country code)";
-                Sheet.Cells[1, 5].Value = "HR Email";
+                Sheet.Cells[1, 5].Value = "Client HR Email ID";
                 
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
 

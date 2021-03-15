@@ -94,53 +94,53 @@
                                     <tbody id="tblbodyRecruiters">
                                         @foreach (var item in Model)
                                         {
-                                        <tr id=@item.id>
-                                            <td>@item.FirstName</td>
-                                            @if (item.LastName != null && item.LastName != "")
-                                            {
+                                            <tr id=@item.id>
+                                                <td>@item.FirstName</td>
+                                                @if (item.LastName != null && item.LastName != "")
+                                                {
 
-                                                <td>@item.LastName</td>
-                                            }
-                                            else
-                                            {
-                                                <td></td>
-                                            }
-                                            @if (item.EmailId != null && item.EmailId != "")
-                                            {
-                                                <td>@item.EmailId</td>
-                                            }
-                                            else
-                                            {
-                                                <td></td>
-                                            }
+                                                    <td>@item.LastName</td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
+                                                @if (item.EmailId != null && item.EmailId != "")
+                                                {
+                                                    <td>@item.EmailId</td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
 
-                                            <td>@item.Domain</td>
-                                            @if (item.MobileNumber != null && item.MobileNumber != "")
-                                            {
-                                                <td>@item.MobileNumber</td>
-                                            }
-                                            else
-                                            {
-                                                <td></td>
-                                            }
-
-
+                                                <td>@item.Domain</td>
+                                                @if (item.MobileNumber != null && item.MobileNumber != "")
+                                                {
+                                                    <td>@item.MobileNumber</td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
 
 
-                                            <td class="text-center action">
-
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Recruiter">
-                                                    <span onclick="location.href = '@Url.Action("EditRecruiter", "User", new { id = item.id})'" title="Click here to edit Recruiter" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                </button>
 
 
-                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete Risebird User">
-                                                    <span onclick="javascript:DeleteEntityfromEnvironment('@item.UserId','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                </button>
+                                                <td class="text-center action">
+
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Recruiter">
+                                                        <span onclick="location.href = '@Url.Action("EditRecruiter", "User", new { id = item.id})'" title="Click here to edit Recruiter" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                    </button>
 
 
-                                            </td>
-                                        </tr>
+                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete Risebird User">
+                                                        <span onclick="javascript:DeleteEntityfromEnvironment('@item.UserId','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                    </button>
+
+
+                                                </td>
+                                            </tr>
                                         }
                                     </tbody>
                                 </table>
@@ -171,54 +171,28 @@
 
 
 
-
-
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
-
+        $(document).ready(function () {
+            my_code();
+        });
         function my_code() {
             var msg = '@ViewBag.Message';
-
-
-
-            if (msg.toLowerCase().includes("success")) {
-                swal({
-                    title: 'Successful',
-                    text: '@ViewBag.Message',
-                    type: 'success',
-                    showConfirmButton: true
-
-                },
-                    function (value) //confirm
-                    {
-                        //if Yes do this
-                        window.location.href = '/User/Recruiters';
-                    }
-                )
-
+            if (msg.includes("Success")) {
+                swal.fire("Successful",'@ViewBag.Message', "success");
             }
             else {
-                swal({
-                    title: 'Failed',
-                    text: '@ViewBag.Message',
-                    type: 'error',
-                    showConfirmButton: true
-
-                },
-                    function ()
-                    {
-                        window.location.href = '/User/Recruiters';
-                    }
-                )
+                swal.fire("Failed", '@ViewBag.Message', "error");
             }
 
         }
 
-        window.onload = my_code();
+        //window.onload = my_code();
     </script>
-
 }
+
+
 
 
 <script>

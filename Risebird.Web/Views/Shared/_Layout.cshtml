@@ -56,9 +56,29 @@
     <script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js?v=7"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js?v=7" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
     <style>
-    .swal2-popup .swal2-title {
-   font-size: 1.3em !important;
-  }
+        .swal2-popup .swal2-styled{box-shadow:none!important}
+        .swal2-popup .swal2-actions:not(.swal2-loading) .swal2-styled:active, .swal2-popup .swal2-styled.swal2-confirm {
+            font-size: 14px !important;
+            min-width: 105px;
+            height: 40px;
+            padding: 0px 20px !important;
+            border: 0px !important;
+        }
+            .sweet-alert h2 {
+            margin-bottom: 10px!important;
+        }
+        .swal2-popup .swal2-content {
+            font-size: 1.2em;
+        }
+
+        .swal2-popup .swal2-title {
+            font-size: 1.8em !important;
+            font-weight: 400 !important;
+        }
+
+        .swal2-icon {
+            margin: 0em auto 1em!important;
+        }
 
 .swal2-popup .swal2-styled {
  padding: .425em 1em !important;

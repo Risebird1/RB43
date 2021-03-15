@@ -40,10 +40,13 @@
                     <h4 class="card-title col-md-12">Select interviewers for <strong>'@Model.ISCName'</strong></h4>
 
                 </div>
+                <div class="pull-right">
+                    @Html.ActionLink("Back to List", "Index", "InterviewerSkills", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                             
+                            </div>
 
-
+                </div>
             </div>
-        </div>
     </div>
     <div class="content client">
         <div class="row bl-bg">
