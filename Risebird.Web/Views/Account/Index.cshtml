@@ -341,58 +341,27 @@
 
 
 
-
-
 @if (Model.Message != null)
 {
     <script type="text/javascript">
-
+        $(document).ready(function () {
+            my_code();
+        });
         function my_code() {
             var msg = '@Model.Message';
-
-
-
             if (msg.includes("Success")) {
-                swal({
-                    title: 'Successful',
-                    text: '@Model.Message',
-                    type: 'success',
-                    showConfirmButton: true
-
-                },
-                    function (value) //confirm
-                    {
-                        //if Yes do this
-                        //window.location.href = '/Account/Index';
-                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
-                    }
-                )
-
+                swal.fire("Successful",'@Model.Message', "success");
             }
             else {
-                swal({
-                    title: 'Failed',
-                    text: '@Model.Message',
-                    type: 'error',
-                    showConfirmButton: true
-
-                },
-                    function ()
-                    {
-                        //window.location.href = '/Account/Index';
-                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
-                    }
-                )
+                swal.fire("Failed", '@Model.Message', "error");
             }
 
         }
 
-        window.onload = my_code();
+        //window.onload = my_code();
     </script>
-
 }
+
 
 
 

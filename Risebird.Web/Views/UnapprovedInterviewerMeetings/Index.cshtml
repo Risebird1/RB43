@@ -76,11 +76,12 @@
                             <div class="mdc-button__ripple"></div>
                         </button>
 
+                        <i type="submit" class="fa fa-file-excel-o excel-file card-title-space" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("ExportMeetingsToExcel", "UnapprovedInterviewerMeetings")'"></i>
 
 
                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
-                            </button>*@
+            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
+        </button>*@
 
 
                         @*<i type="submit" class="fa fa-file-excel-o excel-file card-title-space" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview")'"></i>*@
@@ -287,10 +288,10 @@
                                             <thead>
                                                 <tr>
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
-                                                    <th id='start'>ISC ID</th>
+                                                    <th>ISC ID</th>
                                                     <th>Interview Date</th>
                                                     <th>Candidate Name</th>
-                                                    <th>Coded Name</th>
+                                                    @*<th>Nick Name</th>*@
                                                     <th>Candidate Email</th>
                                                     <th>Primary Skill</th>
                                                     <th>Interviewer</th>
@@ -315,7 +316,7 @@
                                                     <th>ISC ID</th>
                                                     <th>Interview Date</th>
                                                     <th>Candidate Name</th>
-                                                    <th>Coded Name</th>
+                                                    @*<th>Nick Name</th>*@
                                                     <th>Candidate Email</th>
                                                     <th>Primary Skill</th>
                                                     <th>Interviewer</th>
@@ -392,7 +393,7 @@
                                                         }
 
 
-                                                        <td>@item.NickName</td>
+                                                        @*<td>@item.NickName</td>*@
 
 
                                                         @if (item.candidateEmail != null && item.candidateEmail != "")
@@ -527,7 +528,7 @@
                                                         }
                                                         else
                                                         {
-                                                            <td>No interviewSlot</td>
+                                                            <td>No Interview Slot</td>
                                                         }
 
                                                         @if (item.HRCoordinatorEmailId != null && item.HRCoordinatorEmailId != "")

@@ -84,7 +84,7 @@
                             <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="MyInterview" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
                         </button>
                         <i type="submit" class="fa fa-file-excel-o excel-file card-title-space" style="margin-right:10px;float:right;margin-left:3px;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i>
-                       
+
                     </div>
                     <div class="note-filter"> Note: To visualize the previous date data please apply filter</div>
                 </div>
@@ -272,7 +272,7 @@
                                         <div class="col-sm-12 col-md-6">
 
                                         </div>
-                                        <div class="pull-right" style="margin:0px 10px 10px 10px;">
+                                        <div class="pull-right client-ms" style="margin:0px 10px 10px 10px;">
                                             <div id="meeting_filter" class="dataTables_filter">
 
                                                 <div class="searchCon">
@@ -351,7 +351,7 @@
                                                     {
                                                         <td><a style="color:darkblue;font-weight: bold"> @item.interviewSlot</a></td>
                                                     }
-                                                    
+
                                                     <td class="callcandidatebtn" style="text-align:center">
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                                         {
@@ -376,10 +376,21 @@
                                                         }
 
                                                     </td>
+                                                    @if (item.candidateName.Length > 13)
+                                                    {
 
-                                                    <td>
-                                                        @item.candidateName
-                                                    </td>
+                                                        <td class="cadName">
+                                                            <a onclick="" data-tooltip="@item.candidateName"> @item.candidateName.Substring(0, 13)... </a>
+                                                        </td>
+
+                                                    }
+
+                                                    else
+                                                    {
+                                                        <td class="cadName">
+                                                            <a onclick=""> @item.candidateName </a>
+                                                        </td>
+                                                    }
 
                                                     <td> @item.interviewDuration </td>
                                                     @if (item.JDLink != null && item.JDLink != "")
@@ -399,7 +410,25 @@
                                                     {
                                                         <td>No Resume</td>
                                                     }
-                                                    <td> @item.risebirdHR</td>
+
+                                                    @if (item.risebirdHR.Length > 10)
+                                                    {
+
+                                                        <td class="cadName">
+                                                            <a onclick="" data-tooltip="@item.risebirdHR"> @item.risebirdHR.Substring(0, 10)... </a>
+                                                        </td>
+
+                                                    }
+
+                                                    else
+                                                    {
+                                                        <td class="cadName">
+                                                            <a onclick=""> @item.risebirdHR </a>
+                                                        </td>
+                                                    }
+
+
+                                                
                                                     <td class="text-right">
                                                         <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interview Survey">
                                                             <span onclick="CandidateFeedback(@item.id)" title="Interview Survey" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M16 1H2c-.55 0-1 .45-1 1v14c0 .55.45 1 1 1h14c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1zM7 13H5V8h2v5zm3 0H8V5h2v8zm3 0h-2V9h2v4z" /></svg></span>
@@ -436,7 +465,7 @@
                                                                         <th>Meeting Status</th>
                                                                         <th>Interview Status</th>
                                                                         <th>Co-ordinating HR</th>
-                                                                       
+
                                                                         <th>Company Detail</th>
 
 
@@ -458,7 +487,7 @@
                                                                         <td>@item.MeetingStatusDesc</td>
                                                                         <td>@item.InterviewStatusDesc</td>
                                                                         <td>@item.HRCoordinatorEmailId</td>
-                                                                       
+
                                                                         @if (item.CompanyDetails != null && item.CompanyDetails != "")
                                                                         {
                                                                             <td>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails>Company Instructions</a></td>
@@ -1042,64 +1071,27 @@
 
     }
 </script>
-
-
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
-
+        $(document).ready(function () {
+            my_code();
+        });
         function my_code() {
             var msg = '@ViewBag.Message';
-
-
-
             if (msg.includes("Success")) {
-                swal({
-                    title: 'Successful',
-                    text: '@ViewBag.Message',
-                    type: 'success',
-                    showConfirmButton: true
-                    //allowOutsideClick: true,
-                    //confirmButtonText: "Ok",
-                    //closeOnConfirm: true
-
-                    //confirmButtonText: 'Ok',
-                    //allowOutsideClick: true
-                },
-                    function (value) //confirm
-                    {
-                        //if Yes do this
-                        window.location.href = '/Interview/MyInterview';
-                    }
-                )
-
+                swal.fire("Successful",'@ViewBag.Message', "success");
             }
             else {
-                swal({
-                    title: 'Failed',
-                    text: '@ViewBag.Message',
-                    type: 'error',
-                    showConfirmButton: true
-                    //allowOutsideClick: true,
-                    //confirmButtonText: "Ok",
-                    //closeOnConfirm: true
-
-                    //confirmButtonText: 'Ok',
-                    //allowOutsideClick: true
-                },
-                    function ()
-                    {
-                        window.location.href = '/Interview/MyInterview';
-                    }
-                )
+                swal.fire("Failed", '@ViewBag.Message', "error");
             }
 
         }
 
-        window.onload = my_code();
+        //window.onload = my_code();
     </script>
-
 }
+
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {
     <script src="~/Newassets/js/enjoyhint.min.js"></script>
