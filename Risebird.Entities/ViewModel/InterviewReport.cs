@@ -215,11 +215,11 @@ namespace Risebird.Entities.ViewModel
         public string[] SkillCategoryArray { get; set; }
         public List<SelectListItem> SkillCategoryList { get; set; }
 
-        [Display(Name = "Years of experience")]
+        [Display(Name = "Years of Experience")]
         public string Yearsofexperience { get; set; }
         public SelectList YearsofexperienceList { get; set; }
 
-        [Display(Name = "Seniority level")]
+        [Display(Name = "Seniority Level")]
         public string Senioritylevel { get; set; }
         public SelectList SenioritylevelList { get; set; }
 

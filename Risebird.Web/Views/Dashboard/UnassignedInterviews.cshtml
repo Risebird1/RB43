@@ -32,7 +32,6 @@
 }
 
 
-
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 
 
@@ -48,7 +47,39 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">911 Dashboard / <strong>@ViewBag.actionstatus</strong></a>
+                <a class="navbar-brand">
+                    911 Dashboard /
+                    @if (ViewBag.actionstatus == "InterviewCount")
+                    {<strong>
+                            Unassigned Interviews
+                        </strong>
+
+                    }
+                 
+
+                    @if (ViewBag.actionstatus == "MeetingStatus")
+                    {<strong>
+                            Status Pending
+                        </strong>
+
+                    }
+                  
+                    @if (ViewBag.actionstatus == "QcPending")
+                    {<strong>
+                            Qc Pending
+                        </strong>
+
+                    }
+                
+
+                    @if (ViewBag.actionstatus == "UnAssignedCoordianter")
+                    {<strong>
+    Unassigned RB Co-ordinator
+</strong>
+
+                    }
+                
+                </a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -136,7 +167,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        
+
                                                         <div class="col-md-6 col-sm-6 border-rv">
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">
@@ -171,7 +202,7 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                        
+
                                                             <div class="form-group">
                                                                 <div>
                                                                     <div class="col-md-12 col-sm-12">
