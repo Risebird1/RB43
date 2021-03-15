@@ -83,7 +83,7 @@
                                                         <tr>
                                                             <th>Name</th>
                                                             <th>EmailId</th>
-                                                            <th>Skills</th>
+                                                            <th>Assessment Group</th>
                                                             <th>Resume</th>
                                                             <th>Add</th>
                                                         </tr>
@@ -96,17 +96,17 @@
                                                             <tr>
                                                                 <td>@Model.UnApprovedInterviewersCollection[i].FirstName</td>
                                                                 <td>@Model.UnApprovedInterviewersCollection[i].EmailId</td>
-                                                                @if (Model.UnApprovedInterviewersCollection[i].SkillName.Length > 30)
+                                                                @if (Model.UnApprovedInterviewersCollection[i].AssessmentGroupName.Length > 30)
                                                                 {
-                                                                    <td class="video-title" title="@Model.UnApprovedInterviewersCollection[i].SkillName">
+                                                                    <td class="video-title" title="@Model.UnApprovedInterviewersCollection[i].AssessmentGroupName">
 
 
-                                                                        <a onclick="" data-tooltip="@Model.UnApprovedInterviewersCollection[i].SkillName">  @Model.UnApprovedInterviewersCollection[i].SkillName.Substring(0, 30) ...</a>
+                                                                        <a onclick="" data-tooltip="@Model.UnApprovedInterviewersCollection[i].AssessmentGroupName">  @Model.UnApprovedInterviewersCollection[i].AssessmentGroupName.Substring(0, 30) ...</a>
                                                                     </td>
                                                                 }
                                                                 else
                                                                 {
-                                                                    <td>@Model.UnApprovedInterviewersCollection[i].SkillName</td>
+                                                                    <td>@Model.UnApprovedInterviewersCollection[i].AssessmentGroupName</td>
                                                                 }
                                                                 @if (Model.UnApprovedInterviewersCollection[i].ResumeLink != null && Model.UnApprovedInterviewersCollection[i].ResumeLink != "")
                                                                 {

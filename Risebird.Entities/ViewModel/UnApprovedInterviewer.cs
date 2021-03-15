@@ -11,5 +11,6 @@
         public string EmailId { get; set; }
         public string SkillName { get; set; }
         public bool IsAdded { get; set; }
+        public string AssessmentGroupName { get; set; }
     }
 }
