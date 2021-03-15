@@ -81,7 +81,56 @@ namespace Risebird.Web.Controllers
                         {
                             modelList = await _meetingService.GetCPMeetings(ClientId, profileName, emailid);
                         }
-
+                        modelList = (from m in modelList
+                                     select (new MeetingVM
+                                     {
+                                         EmailId = m.EmailId,
+                                         imid = m.imid,
+                                         IRFId = m.IRFId,
+                                         interviewDate = m.interviewDate,
+                                         interviewSlot = m.interviewSlot,
+                                         interviewDuration = m.interviewDuration,
+                                         candidateEmail = m.candidateEmail,
+                                         ClientHrContact = m.ClientHrContact,
+                                         confirmationStatus = m.confirmationStatus,
+                                         zoomLink = m.zoomLink,
+                                         risebirdHR = m.risebirdHR,
+                                         interviewer = m.interviewer,
+                                         preferredLocation = m.preferredLocation,
+                                         IsBiometricEnabled = m.IsBiometricEnabled,
+                                         InterviewBiometryScore = m.InterviewBiometryScore,
+                                         expectedPerHourRate = m.expectedPerHourRate,
+                                         staffingAgency = m.staffingAgency,
+                                         joiningTime = m.joiningTime,
+                                         dtCreatedOn = m.dtCreatedOn,
+                                         candidateName = m.candidateName,
+                                         currentEmployerName = m.currentEmployerName,
+                                         QCInterviewer = m.QCInterviewer,
+                                         IsEmergency = m.IsEmergency,
+                                         JoiningBiometryScore = m.JoiningBiometryScore,
+                                         MobileNumber = m.MobileNumber,
+                                         resumeLink = m.resumeLink,
+                                         irfIntId = m.irfIntId,
+                                         JDLink = m.JDLink,
+                                         JDTiltle = m.JDTiltle,
+                                         ClientId = m.ClientId,
+                                         ClientName = m.ClientName,
+                                         AadharFileLink = m.AadharFileLink,
+                                         VideoLink = m.VideoLink,
+                                         InterviewerComment = m.InterviewerComment,
+                                         IsApproved = m.IsApproved,
+                                         InterviewStatus = m.InterviewStatus,
+                                         MeetingStatus = m.MeetingStatus,
+                                         CandidateId = m.CandidateId,
+                                         ThumbnailImage = m.ThumbnailImage,
+                                         QCInterview = m.QCInterview,
+                                         CandidateAvailable = m.CandidateAvailable,
+                                         MeetingPatchCount = m.MeetingPatchCount,
+                                         TechSkillScore = m.TechSkillScore,
+                                         IsLock = m.IsLock,
+                                         UnlockVideo = m.EmailId == emailid ? true : false
+                                     })).ToList();
+                        
 
                         ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
                         ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
@@ -1232,6 +1281,19 @@ namespace Risebird.Web.Controllers
             //End:Save View counts of vedio
             return Json("Succecss");
         }
-
+        public JsonResult LockorUnlockVideo(string imid, int islock)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var result = _meetingService.LockorUnlockVideo(imid, islock, emailid);
+                return Json(result);
+            }
+            else
+            {
+                return Json("Fail");
+            }
+        }
     }
 }

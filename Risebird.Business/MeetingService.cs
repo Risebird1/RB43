@@ -2293,6 +2293,22 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public string LockorUnlockVideo(string imid, int islock, string emailid)
+        {
+            try
+            {
+                var meeting = _meetingRespository.LockorUnlockVideo(imid, islock, emailid);
+                return meeting;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "fail";
+            }
+
+        }
     }
 
 }

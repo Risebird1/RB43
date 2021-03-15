@@ -3755,5 +3755,42 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public string LockorUnlockVideo(string imid, int islock, string emailid)
+        {
+            try
+            {
+                int UserId = 0;
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", emailid);
+                var query = "Select id from UserList where Emailid=@Emailid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    UserId = results.FirstOrDefault();
+                }
+                var dParameters = new DynamicParameters();
+                dParameters.Add("@islock", islock);
+                if (islock == 0)
+                {
+                    dParameters.Add("@UserId", 0);
+                }
+                else
+                {
+                    dParameters.Add("@UserId", UserId);
+                }
+                dParameters.Add("@imid", imid);
+                var dquery = "Update InterviewComments Set IsLock = @islock,ClientUserid=@UserId Where Interviewid=@imid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query(dquery, dParameters);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "fail";
+        }
     }
 }

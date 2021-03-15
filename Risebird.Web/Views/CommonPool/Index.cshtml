@@ -435,8 +435,21 @@
                                     @foreach (var item in Model)
                                     {
                                         var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-                                        <div  class="col-xl-3 col-sm-6 mb-3">
-                                            <div id="commonpool_4" class="video-card">
+                                        var colorcode = "";
+                                        @if (item.CandidateAvailable == "Available" && !item.IsLock)
+                                        {
+                                            colorcode = "green";
+                                        }
+                                        else if (item.CandidateAvailable == "NotAvailable")
+                                        {
+                                            colorcode = "grey";
+                                        }
+                                        else if (item.IsLock)
+                                        {
+                                            colorcode = "black";
+                                        }
+                                        <div class="col-xl-3 col-sm-6 mb-3">
+                                            <div id="commonpool_4" class="video-card" style="border:2px solid @colorcode">
                                                 <div class="video-card-image">
                                                     @if (item.MeetingPatchCount > 0)
                                                     {
@@ -451,7 +464,10 @@
                                                         <video controls class="video-thumb">
                                                             <source src="@item.VideoLink" type="video/mp4">
                                                         </video>
-                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid})'" style=" cursor: pointer;"></a>
+                                                        @if (item.CandidateAvailable == "Available")
+                                                        {
+                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid })'" style=" cursor: pointer;"></a>
+                                                        }
                                                     }
                                                     else
                                                     {
@@ -463,7 +479,10 @@
                                                         {
                                                             <img src="~/RiseTube/img/video-icon.png" class="thumb-height" />
                                                         }
-                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid})'" style=" cursor: pointer;"></a>
+                                                        @if (item.CandidateAvailable == "Available")
+                                                        {
+                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid })'" style=" cursor: pointer;"></a>
+                                                        }
                                                     }
 
 
@@ -473,20 +492,88 @@
 
                                                         @if (@item.candidateName.Length > 20)
                                                         {
-                                                            <a onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid})'" style=" cursor: pointer;"><span class="candidate-name candidate">@item.candidateName</span> </a>
+                                                            @if (item.CandidateAvailable == "Available")
+                                                            {
+                                                                <a onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@item.candidateName</span> </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a><span class="candidate-name candidate">@item.candidateName</span> </a>
+                                                            }
                                                         }
                                                         else
                                                         {
-                                                            <span class="candidate">@item.candidateName</span>}
+                                                            <span class="candidate">@item.candidateName</span>
+                                                        }
                                                         @if (@item.JDTiltle.Length > 20)
                                                         {
-                                                            <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">@item.JDTiltle</span></a>}
-
+                                                            <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">@item.JDTiltle</span></a>
+                                                        }
                                                         else
                                                         {
-                                                            <span class="designation">@item.JDTiltle</span>}
+                                                            <span class="designation">@item.JDTiltle</span>
+                                                        }
 
-
+                                                        @if (item.CandidateAvailable == "Available")
+                                                        {
+                                                            @if (item.IsLock)
+                                                            {
+                                                                @if (item.UnlockVideo)
+                                                                {
+                                                                    <span id="lock_@item.imid" style="display:block">
+                                                                        <button>
+                                                                            <span title="Unlock" onclick="Lockvideo(@item.imid,0)">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+                                                                                    <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
+                                                                                </svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    </span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span id="lock_@item.imid" style="display:block">
+                                                                        <button>
+                                                                            <span title="Unlock">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+                                                                                    <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
+                                                                                </svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    </span>
+                                                                }
+                                                                <span id="unlock_@item.imid" style="display:none">
+                                                                    <button>
+                                                                        <span title="Lock" onclick="Lockvideo(@item.imid,1)">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-unlock" viewBox="0 0 16 16">
+                                                                                <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2zM3 8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H3z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                </span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span id="lock_@item.imid" style="display:none">
+                                                                    <button>
+                                                                        <span title="Unlock" onclick="Lockvideo(@item.imid,0)">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+                                                                                <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                </span>
+                                                                <span id="unlock_@item.imid" style="display:block">
+                                                                    <button>
+                                                                        <span title="Lock" onclick="Lockvideo(@item.imid,1)">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-unlock" viewBox="0 0 16 16">
+                                                                                <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2zM3 8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H3z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                </span>
+                                                            }
+                                                        }
 
 
 
@@ -498,7 +585,6 @@
                                                                 </button>
                                                             </span>
                                                         }
-
 
                                                     </div>
 
@@ -1135,7 +1221,7 @@
                 //    placement: "bottom",
                 //    xOffset: 0,
                 //    yOffset: 0,
-                   
+
                 //    onNext: function () {
                 //        $('#commonpool_4').removeClass('overlay-relative');
                 //        $('.helper').remove();
@@ -1145,7 +1231,7 @@
                 //        $('.helper').remove();
                 //    }
                 //},
-               
+
 
             ],
             onStart: ["addOverlay"],
@@ -1252,7 +1338,26 @@
         var modal = document.getElementById("myCallModal");
         modal.style.display = "none";
     }
+    function Lockvideo(interviewid, islock) {
+        $.ajax({
+            url: '/CommonPool/LockorUnlockVideo',
+            data: { 'imid': interviewid, 'islock': islock },
+            success: function (data) {
+                if (data == "Success") {
+                    swal.fire("Successfully");
+                    if (islock == 0) {
+                        document.getElementById("unlock_" + interviewid).style.display = "block";
+                        document.getElementById("lock_" + interviewid).style.display = "none";
 
+                    } else {
+                        document.getElementById("lock_" + interviewid).style.display = "block";
+                        document.getElementById("unlock_" + interviewid).style.display = "none";
+
+                    }
+                }
+            }
+        });
+    }
 
 </script>
 

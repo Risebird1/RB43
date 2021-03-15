@@ -141,11 +141,12 @@ namespace Risebird.Repository.Interface
         Task<List<RBInterviewDetails>> RBDetails(string EmailId);
         Task<string> RBUpdateStatusDetails(string EmailId);
         Task<List<RBInterviewDetails>> FetchFNDetails(string EmailId);
-        Task<List<RBInterviewDetails>> RBInterviewerDetails(int interviewerid,int flag);
+        Task<List<RBInterviewDetails>> RBInterviewerDetails(int interviewerid, int flag);
         Task<string> RBAddPoints(int interviewerid, int Points, string Comment);
-        Task<string> RBConfirmPayment(int interviewerid,int index);
+        Task<string> RBConfirmPayment(int interviewerid, int index);
         Task<List<string>> FetchInterviewerList(string searchterm);
         Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount);
         Task<List<RBInterviewDetails>> FNGenerateInvoiceDetails(DateTime st, DateTime se);
+        string LockorUnlockVideo(string imid, int islock, string emailid);
     }
 }
