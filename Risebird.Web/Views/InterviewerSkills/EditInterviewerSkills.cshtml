@@ -115,14 +115,14 @@
                                             <div class="form-group">
                                                 <div class="mandate">
                                                     @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                                @Html.DropDownListFor(model => model.PrimarySkill, (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control", @onchange = "SkillChanged()" })
+                                                @Html.DropDownListFor(model => model.PrimarySkill, (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control" })
                                                 @Html.ValidationMessageFor(model => model.PrimarySkill, "", new { @class = "text-danger" })
                                             </div>
                                             <div class="form-group">
                                                 <div class="mandate">
                                                     @Html.LabelFor(model => model.HeuristicProfileType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                 </div>
-                                                @Html.DropDownListFor(m => m.HeuristicProfileType, Html.GetEnumSelectList<Heuristicsscorelevel>(), "Select Profile Type", new { @class = "select-css form-control", @onchange = "SkillChanged()" })
+                                                @Html.DropDownListFor(m => m.HeuristicProfileType, Html.GetEnumSelectList<Heuristicsscorelevel>(), "Select Profile Type", new { @class = "select-css form-control" })
                                                 @Html.ValidationMessageFor(model => model.HeuristicProfileType, "", new { @class = "text-danger" })
                                             </div>
                                             </div>
