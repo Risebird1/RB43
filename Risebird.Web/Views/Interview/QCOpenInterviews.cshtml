@@ -72,7 +72,7 @@
                                         <div class="col-sm-12 col-md-6">
 
                                         </div>
-                                        <div class="pull-right" style="margin:0px 10px 10px 10px;">
+                                        <div class="pull-right client-ms" style="margin:0px 10px 10px 10px;">
                                             <div id="meeting_filter" class="dataTables_filter">
 
                                                 <div class="searchCon">
@@ -178,9 +178,9 @@
 
                                     </div>
 
-                                    </div>
-
                                 </div>
+
+                            </div>
 
                         </div>
                     </div>
@@ -195,54 +195,27 @@
 
 </div>
 
-
-
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
-
+        $(document).ready(function () {
+            my_code();
+        });
         function my_code() {
             var msg = '@ViewBag.Message';
-
-
-
-            if (msg.includes("success")) {
-                swal({
-                    title: 'Successful',
-                    text: '@ViewBag.Message',
-                    type: 'success',
-                    showConfirmButton: true
-
-                },
-                    function (value) //confirm
-                    {
-                        //if Yes do this
-                        window.location.href = '/Interview/QCOpenInterviews';
-                    }
-                )
-
+            if (msg.includes("Success")) {
+                swal.fire("Successful",'@ViewBag.Message', "success");
             }
             else {
-                swal({
-                    title: 'Failed',
-                    text: '@ViewBag.Message',
-                    type: 'error',
-                    showConfirmButton: true
-
-                },
-                    function ()
-                    {
-                        window.location.href = '/Interview/QCOpenInterviews';
-                    }
-                )
+                swal.fire("Failed", '@ViewBag.Message', "error");
             }
 
         }
 
-        window.onload = my_code();
+        //window.onload = my_code();
     </script>
-
 }
+
 
 
 <script type="text/javascript">

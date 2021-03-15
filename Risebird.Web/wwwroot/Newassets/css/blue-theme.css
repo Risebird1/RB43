@@ -363,8 +363,8 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .swal2-popup .swal2-actions:not(.swal2-loading) .swal2-styled:active, .swal2-popup .swal2-styled.swal2-confirm {
-    background: #42a5f5 !important;
-    border-color: #42a5f5 !important;
+    background: #8ec9f9 !important;
+    border-color: #8ec9f9 !important;
 }
 
 .show-interest {
