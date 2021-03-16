@@ -1447,6 +1447,16 @@ namespace Risebird.Web.Controllers
                             meeting.StaffingAgencyList = new SelectList(clients.Where(x => x.ClientRoleId == 4), "EmailId", "EmailId");
 
                         }
+                        meeting.interviewer = meeting.interviewer.Trim();
+                        if (!string.IsNullOrEmpty(meeting.interviewer))
+                        {
+                            meeting.interviewer = meeting.interviewer.Trim();
+                        }
+                        meeting.QCInterviewer = meeting.QCInterviewer.Trim();
+                        if (!string.IsNullOrEmpty(meeting.QCInterviewer))
+                        {
+                            meeting.QCInterviewer = meeting.QCInterviewer.Trim();
+                        }
                         if (ModelState.IsValid)
                         {
                             if (meeting.File == null && (meeting.resumeLink == null))
@@ -1665,9 +1675,11 @@ namespace Risebird.Web.Controllers
                         var interviewslotList = from InterviewSlots s in Enum.GetValues(typeof(InterviewSlots))
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         meetingUpdated.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
+                        meetingUpdated.interviewer = meetingUpdated.interviewer.Trim();
                         if (!string.IsNullOrEmpty(meetingUpdated.interviewer)) {
                             meetingUpdated.interviewer = meetingUpdated.interviewer.Trim();
                         }
+                        meetingUpdated.QCInterviewer = meetingUpdated.QCInterviewer.Trim();
                         if (!string.IsNullOrEmpty(meetingUpdated.QCInterviewer))
                         {
                             meetingUpdated.QCInterviewer = meetingUpdated.QCInterviewer.Trim();
