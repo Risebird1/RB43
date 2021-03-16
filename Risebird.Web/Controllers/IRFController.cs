@@ -2510,85 +2510,85 @@ namespace Risebird.Web.Controllers
         //    }
         //}
 
-        public ActionResult ImportCandidates(IFormCollection formCollection, string irfId, string IRFName)
-        {
+        //public ActionResult ImportCandidates(IFormCollection formCollection, string irfId, string IRFName)
+        //{
 
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
+        //            var emailid = HttpContext.Session.GetString("email")?.Trim();
+        //            emailid = emailid.Replace("\"", "");
 
-                    if (Request != null)
-                    {
-                        var file = formCollection.Files[0];
-                        var IRFId = Convert.ToInt32((formCollection["IRFId"].ToString()));
-                        if ((file != null) && (file.Length > 0) && !string.IsNullOrEmpty(file.FileName))
-                        {
+        //            if (Request != null)
+        //            {
+        //                var file = formCollection.Files[0];
+        //                var IRFId = Convert.ToInt32((formCollection["IRFId"].ToString()));
+        //                if ((file != null) && (file.Length > 0) && !string.IsNullOrEmpty(file.FileName))
+        //                {
 
-                            string fileName = file.FileName;
-                            string fileContentType = file.ContentType;
-                            byte[] fileBytes = new byte[file.Length];
-                            var data = file.OpenReadStream();
-                            var candidateList = new List<Candidate>();
-                            using (var package = new ExcelPackage(file.OpenReadStream()))
-                            {
-                                var currentSheet = package.Workbook.Worksheets;
-                                var workSheet = currentSheet.First();
-                                var noOfCol = workSheet.Dimension.End.Column;
-                                var noOfRow = workSheet.Dimension.End.Row;
-                                for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
-                                {
-                                    var candidate = new Candidate
-                                    {
-                                        Name = (workSheet.Cells[rowIterator, 1] != null) ? workSheet.Cells[rowIterator, 1].Value.ToString() : "",
-                                        EmailId = workSheet.Cells[rowIterator, 2].Value.ToString(),
-                                        ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null) ? workSheet.Cells[rowIterator, 3].Value.ToString() : "",         //workSheet.Cells[rowIterator, 3].Value.ToString();
-                                        Type = (workSheet.Cells[rowIterator, 4].Value != null) ? workSheet.Cells[rowIterator, 4].Value.ToString() : "", //workSheet.Cells[rowIterator, 4].Value.ToString();
-                                        Location = (workSheet.Cells[rowIterator, 5].Value != null) ? workSheet.Cells[rowIterator, 5].Value.ToString() : "",            //workSheet.Cells[rowIterator, 5].Value.ToString();
-                                        Skill = (workSheet.Cells[rowIterator, 6].Value != null) ? workSheet.Cells[rowIterator, 6].Value.ToString() : "",            // workSheet.Cells[rowIterator, 6].Value.ToString();
-                                        WorkAuth = (workSheet.Cells[rowIterator, 7].Value != null) ? workSheet.Cells[rowIterator, 7].Value.ToString() : "",               //workSheet.Cells[rowIterator, 7].Value.ToString();
-                                        CurrentLocation = (workSheet.Cells[rowIterator, 8].Value != null) ? workSheet.Cells[rowIterator, 8].Value.ToString() : "",                 //workSheet.Cells[rowIterator, 8].Value.ToString();
-                                        CurrentEmployer = (workSheet.Cells[rowIterator, 9].Value != null) ? workSheet.Cells[rowIterator, 9].Value.ToString() : "",                 //workSheet.Cells[rowIterator, 9].Value.ToString();
-                                        Phone = (workSheet.Cells[rowIterator, 10].Value != null) ? ("+" + workSheet.Cells[rowIterator, 10].Value.ToString()) : "",                  // "+" + workSheet.Cells[rowIterator, 10].Value.ToString();
-                                        TotalExperience = (workSheet.Cells[rowIterator, 11].Value != null) ? Convert.ToDecimal(workSheet.Cells[rowIterator, 11].Value) : 0,                // Convert.ToDecimal(workSheet.Cells[rowIterator, 11].Value);
-                                        CurrentSalary = (workSheet.Cells[rowIterator, 12].Value != null) ? Convert.ToDecimal(workSheet.Cells[rowIterator, 12].Value) : 0,                  // Convert.ToDecimal(workSheet.Cells[rowIterator, 12].Value);
-                                        ExpectedSalary = (workSheet.Cells[rowIterator, 13].Value != null) ? Convert.ToDecimal(workSheet.Cells[rowIterator, 13].Value) : 0,                //Convert.ToDecimal(workSheet.Cells[rowIterator, 13].Value);
-                                        Notice = (workSheet.Cells[rowIterator, 14].Value != null) ? Convert.ToDecimal(workSheet.Cells[rowIterator, 14].Value) : 0,                   //Convert.ToDecimal(workSheet.Cells[rowIterator, 14].Value);
-                                        //Add template column EncodedResumeLink
-                                        IRFId = IRFId
-                                    };
-                                    candidateList.Add(candidate);
-                                }
+        //                    string fileName = file.FileName;
+        //                    string fileContentType = file.ContentType;
+        //                    byte[] fileBytes = new byte[file.Length];
+        //                    var data = file.OpenReadStream();
+        //                    var candidateList = new List<Candidate>();
+        //                    using (var package = new ExcelPackage(file.OpenReadStream()))
+        //                    {
+        //                        var currentSheet = package.Workbook.Worksheets;
+        //                        var workSheet = currentSheet.First();
+        //                        var noOfCol = workSheet.Dimension.End.Column;
+        //                        var noOfRow = workSheet.Dimension.End.Row;
+        //                        for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
+        //                        {
+        //                            var candidate = new Candidate
+        //                            {
+        //                                Name = (workSheet.Cells[rowIterator, 1] != null) ? workSheet.Cells[rowIterator, 1].Value.ToString() : "",
+        //                                EmailId = workSheet.Cells[rowIterator, 2].Value.ToString(),
+        //                                ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null) ? workSheet.Cells[rowIterator, 3].Value.ToString() : "",         //workSheet.Cells[rowIterator, 3].Value.ToString();
+        //                                Type = (workSheet.Cells[rowIterator, 4].Value != null) ? workSheet.Cells[rowIterator, 4].Value.ToString() : "", //workSheet.Cells[rowIterator, 4].Value.ToString();
+        //                                Location = (workSheet.Cells[rowIterator, 5].Value != null) ? workSheet.Cells[rowIterator, 5].Value.ToString() : "",            //workSheet.Cells[rowIterator, 5].Value.ToString();
+        //                                Skill = (workSheet.Cells[rowIterator, 6].Value != null) ? workSheet.Cells[rowIterator, 6].Value.ToString() : "",            // workSheet.Cells[rowIterator, 6].Value.ToString();
+        //                                WorkAuth = (workSheet.Cells[rowIterator, 7].Value != null) ? workSheet.Cells[rowIterator, 7].Value.ToString() : "",               //workSheet.Cells[rowIterator, 7].Value.ToString();
+        //                                CurrentLocation = (workSheet.Cells[rowIterator, 8].Value != null) ? workSheet.Cells[rowIterator, 8].Value.ToString() : "",                 //workSheet.Cells[rowIterator, 8].Value.ToString();
+        //                                CurrentEmployer = (workSheet.Cells[rowIterator, 9].Value != null) ? workSheet.Cells[rowIterator, 9].Value.ToString() : "",                 //workSheet.Cells[rowIterator, 9].Value.ToString();
+        //                                Phone = (workSheet.Cells[rowIterator, 10].Value != null) ? ("+" + workSheet.Cells[rowIterator, 10].Value.ToString()) : "",                  // "+" + workSheet.Cells[rowIterator, 10].Value.ToString();
+        //                                TotalExperience = (workSheet.Cells[rowIterator, 11].Value != null) ? Convert.ToDecimal(workSheet.Cells[rowIterator, 11].Value) : 0,                // Convert.ToDecimal(workSheet.Cells[rowIterator, 11].Value);
+        //                                CurrentSalary = (workSheet.Cells[rowIterator, 12].Value != null) ? Convert.ToDecimal(workSheet.Cells[rowIterator, 12].Value) : 0,                  // Convert.ToDecimal(workSheet.Cells[rowIterator, 12].Value);
+        //                                ExpectedSalary = (workSheet.Cells[rowIterator, 13].Value != null) ? Convert.ToDecimal(workSheet.Cells[rowIterator, 13].Value) : 0,                //Convert.ToDecimal(workSheet.Cells[rowIterator, 13].Value);
+        //                                Notice = (workSheet.Cells[rowIterator, 14].Value != null) ? Convert.ToDecimal(workSheet.Cells[rowIterator, 14].Value) : 0,                   //Convert.ToDecimal(workSheet.Cells[rowIterator, 14].Value);
+        //                                //Add template column EncodedResumeLink
+        //                                IRFId = IRFId
+        //                            };
+        //                            candidateList.Add(candidate);
+        //                        }
 
-                            }
-                            var result = _irfService.AddMultipleCandidates(candidateList, emailid, profileName).Result;
-                            TempData["SuccessErrorMessageCandidate"] = result;
-                            return RedirectToAction("Candidates", new { id = IRFId, irfName = IRFName });
+        //                    }
+        //                    var result = _irfService.AddMultipleCandidates(candidateList, emailid, profileName).Result;
+        //                    TempData["SuccessErrorMessageCandidate"] = result;
+        //                    return RedirectToAction("Candidates", new { id = IRFId, irfName = IRFName });
 
-                        }
+        //                }
 
-                        else
-                        {
-                            TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
-                            return RedirectToAction("Candidates", new { id = IRFId, irfName = IRFName });
-                        }
-                    }
-                }
+        //                else
+        //                {
+        //                    TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
+        //                    return RedirectToAction("Candidates", new { id = IRFId, irfName = IRFName });
+        //                }
+        //            }
+        //        }
 
 
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
-                return RedirectToAction("Candidates", new { id = Convert.ToInt16(irfId), irfName = IRFName });
-            }
-            return null;
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
+        //        return RedirectToAction("Candidates", new { id = Convert.ToInt16(irfId), irfName = IRFName });
+        //    }
+        //    return null;
+        //}
 
 
         public IActionResult ShowCalendly(string irfName, string calendlyLink)

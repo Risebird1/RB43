@@ -70,9 +70,12 @@ namespace Risebird.Repository
                     await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
                        commandType: CommandType.StoredProcedure);
 
-                    var ProfileList = SqlMapper.QueryAsync<InterviewerProfileVM>(
-                        con, "select id, NickName, userId from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
-                    ProfileId = ProfileList.Where(x => x.NickName == interviewerProfile.NickName).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
+                    ProfileId = parameters.Get<int>("@InterviewerProfileId");
+
+
+                    //var ProfileList = SqlMapper.QueryAsync<InterviewerProfileVM>(
+                    //    con, "select id, NickName, userId from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
+                    //ProfileId = ProfileList.Where(x => x.NickName == interviewerProfile.NickName).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
                 }
 
                 //To Add Skills
@@ -264,7 +267,7 @@ namespace Risebird.Repository
                 entity.AssessmentGroupId = string.Join(',', entity.AssessmentGroupArray);
             }
             parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
-            parameters.Add("@InterviewerProfileId", SqlDbType.Int, direction: ParameterDirection.Output);
+            parameters.Add("@InterviewerProfileId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             return parameters;
         }

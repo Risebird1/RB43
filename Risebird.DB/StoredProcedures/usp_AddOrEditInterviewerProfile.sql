@@ -97,7 +97,9 @@ Declare @v_ProfileId int;
       
   delete from TransInterviewerAccDetails where InterviewerProfileId=@v_ProfileId      
       
-  delete from TransInterviewerCertificate where InterviewerProfileId=@v_ProfileId      
+  delete from TransInterviewerCertificate where InterviewerProfileId=@v_ProfileId   
+  
+  select @InterviewerProfileId=@v_ProfileId
       
 End      
       
@@ -169,7 +171,9 @@ Declare @v_User_Id int;
    @IsLeadInterviewer,      
    @IsApproved,      
    @AssessmentGroupId)      
-      
+
+ select @InterviewerProfileId=(select id from InterviewerProfile where UserId=@v_User_Id)
+     
 End      
   
   

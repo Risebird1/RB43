@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -1339,6 +1340,174 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public FileContentResult MyAssessmentsExportToExcel()
+        {
+            string userEmailId = string.Empty;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Interviews");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Interviewer_MyAssessments" + ".xlsx";
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var myInterviews = _interviewerService.GetAssignedInterviewerAssessment(emailid);
+                myInterviews = myInterviews.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                foreach (var item in myInterviews)
+                {
+                    if (!string.IsNullOrEmpty(item.resumeLink))
+                    {
+                        try
+                        {
+                            item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
+                        }
+                        catch (Exception)
+                        {
+                            item.resumeLink = "";
+                        }
+                    }
+                    else
+                    {
+                        item.resumeLink = "";
+                    }
+                    if (!string.IsNullOrEmpty(item.JDLink))
+                    {
+                        try
+                        {
+                            item.JDLink = new Uri(item.JDLink, UriKind.Absolute).ToString();
+                        }
+                        catch (Exception)
+                        {
+                            item.JDLink = "";
+                        }
+                    }
+                    else
+                    {
+                        item.JDLink = "";
+                    }
+                    if (item.HeuristicProfileType.HasValue)
+                    {
+                        item.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)(item.HeuristicProfileType)).GetDescription();
+                    }
+                    if (item.InterviewStatus.HasValue)
+                    {
+                        item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                    }
+                    if (item.MeetingStatus.HasValue)
+                    {
+                        item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
+
+                    }
+                }
+
+                Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:Z1"].Style.WrapText = true;
+                //Sheet.Column(1).Width = 30;
+                //Sheet.Column(2).Width = 30;
+                int startColumn = 1; int endColumn = 15;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 40;
+                }
+                Sheet.Cells[1, 1].Value = "Discussion Date";
+                Sheet.Cells[1, 2].Value = "Slot";
+                Sheet.Cells[1, 3].Value = "Duration";
+                Sheet.Cells[1, 4].Value = "Zoom Id";
+                Sheet.Cells[1, 5].Value = "Coded Name";
+                Sheet.Cells[1, 6].Value = "Resume";
+                Sheet.Cells[1, 7].Value = "Primary Skill";
+                Sheet.Cells[1, 8].Value = "Profile type";
+                Sheet.Cells[1, 9].Value = "JD Link";
+                Sheet.Cells[1, 10].Value = "Risebird HR";
+                Sheet.Cells[1, 11].Value = "Meeting Status";
+                Sheet.Cells[1, 12].Value = "Interview Status";
+                
+
+
+                //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
+                int i = 2;
+                //string LastAction = null; ;
+
+                if (myInterviews.Count() > 0)
+                {
+                    foreach (var item in myInterviews)
+                    {
+                        Sheet.Cells[i, 1].Value = item.interviewDate.ToString("MM/dd/yyyy HH:mm");
+                        Sheet.Cells[i, 2].Value = item.interviewSlot != null ? item.interviewSlot : string.Empty;
+                        Sheet.Cells[i, 3].Value = item.interviewDuration != null ? item.interviewDuration : string.Empty;
+                        //Sheet.Cells[i, 4].Value = item.NickName;
+                        Sheet.Cells[i, 4].Value = item.ZoomId != null ? item.ZoomId : string.Empty;
+                        Sheet.Cells[i, 5].Value = item.NickName != null ? item.NickName : string.Empty;
+
+                        if (!string.IsNullOrEmpty(item.resumeLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 6].Hyperlink = new Uri(item.resumeLink.Replace(" ", "%20"), UriKind.Absolute);
+                                Sheet.Cells[i, 6].Value = "Resume";
+                                Sheet.Cells[i, 6].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 6].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 6].Value = "No Resume";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 6].Value = "No Resume";
+                        }
+
+                        //Sheet.Cells[i, 6].Value = item.interviewer != null ? item.interviewer : string.Empty;
+                        Sheet.Cells[i, 7].Value = item.PrimarySkill != null ? item.PrimarySkill : string.Empty;
+                        Sheet.Cells[i, 8].Value = item.HeuristicProfileTypeDesc != null ? item.HeuristicProfileTypeDesc : string.Empty;
+
+                        if (!string.IsNullOrEmpty(item.JDLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 9].Hyperlink = new Uri(item.JDLink.Replace(" ", "%20"), UriKind.Absolute);
+                                Sheet.Cells[i, 9].Value = "JD Link";
+                                Sheet.Cells[i, 9].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 9].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 9].Value = string.Empty;
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 9].Value = string.Empty;
+                        }
+
+                        Sheet.Cells[i, 10].Value = item.HRCoordinatorEmailId != null ? item.HRCoordinatorEmailId : string.Empty;
+                        Sheet.Cells[i, 11].Value = item.MeetingStatusDesc != null ? item.MeetingStatusDesc : string.Empty;
+                        Sheet.Cells[i, 12].Value = item.InterviewStatusDesc != null ? item.InterviewStatusDesc : string.Empty;
+
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+
         }
 
         [Authorize]
