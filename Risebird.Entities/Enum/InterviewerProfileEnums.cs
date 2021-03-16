@@ -93,9 +93,9 @@ namespace Risebird.Entities.Enum
     {
         [Description("India")]
         India = 1,
-        [Description("OutSide India")]
+        [Description("US")]
         OutOfIndia = 2,
-        [Description("Both India and OutSide India")]
+        [Description("Both India and US")]
         BothIndiaandOutOfIndia = 3
     }
     public enum IndiaPrice
