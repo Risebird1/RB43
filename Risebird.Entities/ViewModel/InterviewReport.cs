@@ -243,7 +243,7 @@ namespace Risebird.Entities.ViewModel
         public string Articulation { get; set; }
         [Display(Name = "Readiness Online Interviews")]
         public string ReadinessOnlineInterviews { get; set; }
-        [Display(Name = "Team work")]
+        [Display(Name = "Team Work")]
         public string Teamwork { get; set; }
         [Display(Name = "Relationship Management")]
         public string RelationshipManagement { get; set; }
