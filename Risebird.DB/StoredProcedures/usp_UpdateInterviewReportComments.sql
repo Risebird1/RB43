@@ -24,54 +24,61 @@ Begin Try
        
 	IF EXISTS( SELECT 1 FROM InterviewMeetings where id = @InterviewId)  
 		BEGIN  
-		IF EXISTS(SELECT 1 FROM InterviewComments where interviewId= @InterviewId)  
-			BEGIN  
-     UPDATE [InterviewComments] SET interviewStatus = @interviewStatus ,  
-          interviewerComment =  ISNULL(@interviewerComment,interviewerComment),  
-          MeetingStatus = @MeetingStatus, 
-          AudioLink = ISNULL(@audiolink,AudioLink) ,  
-          VideoLink = ISNULL(@videolink, VideoLink) ,
-		  ThumbnailImage=ISNULL(@ThumbnailImage,ThumbnailImage),
-		  FeedbackAudioLink = ISNULL(@FeedbackAudioLink, FeedbackAudioLink)
-      WHERE        interviewId = @InterviewId  
+			IF EXISTS(SELECT 1 FROM InterviewComments where interviewId= @InterviewId)  
+				BEGIN
+			
+					UPDATE [InterviewComments] SET interviewStatus = @interviewStatus ,  
+				    interviewerComment =  ISNULL(@interviewerComment,interviewerComment),  
+				    MeetingStatus = @MeetingStatus, 
+				    AudioLink = ISNULL(@audiolink,AudioLink) ,  
+				    VideoLink = ISNULL(@videolink, VideoLink) ,
+				    ThumbnailImage=ISNULL(@ThumbnailImage,ThumbnailImage),
+				    FeedbackAudioLink = ISNULL(@FeedbackAudioLink, FeedbackAudioLink)
+					WHERE interviewId = @InterviewId  
   
                       
-     END  
-		ELSE  
-			BEGIN  
-				INSERT INTO [InterviewComments]  
-					 (interviewId,  
-					  interviewStatus,  
-					  interviewerComment,  
-					  MeetingStatus,  					 
-					  AudioLink,
-					  VideoLink,
-					  ThumbnailImage,
-					  FeedbackAudioLink)   
-				VALUES  
-					 (@interviewId,  
-					  @InterviewStatus,  
-					  @interviewerComment,
-					  @MeetingStatus, 
-					  @audiolink,
-					  @videolink,
-					  @ThumbnailImage,
-					  @FeedbackAudioLink)  
+				END  
+			ELSE  
+				BEGIN  
+					INSERT INTO [InterviewComments]  
+						 (interviewId,  
+						  interviewStatus,  
+						  interviewerComment,  
+						  MeetingStatus,  					 
+						  AudioLink,
+						  VideoLink,
+						  ThumbnailImage,
+						  FeedbackAudioLink)   
+					VALUES  
+						 (@interviewId,  
+						  @InterviewStatus,  
+						  @interviewerComment,
+						  @MeetingStatus, 
+						  @audiolink,
+						  @videolink,
+						  @ThumbnailImage,
+						  @FeedbackAudioLink)  
 
-				INSERT INTO 
-					InterviewReport 
-						(IRFId, 
-						InterviewId, 
-						CandidateName)
+					IF NOT EXISTS(SELECT 1 FROM InterviewReport where InterviewId= @InterviewId)
+					BEGIN
+						INSERT INTO 
+						InterviewReport 
+							(IRFId, 
+							InterviewId, 
+							CandidateName)
 						 
-						values
-						(
-							(select ir.id from IRF ir join InterviewMeetings im on ir.irfid = im.irfid where im.id = @interviewId),
-							@interviewId,
-							(select im.CandidateName from InterviewMeetings im where im.id = @interviewId)  
-						)
+							values
+							(
+								(select ir.id from IRF ir join InterviewMeetings im on ir.irfid = im.irfid where im.id = @interviewId),
+								@interviewId,
+								(select im.CandidateName from InterviewMeetings im where im.id = @interviewId)  
+							)
+
+					END
+
+					
         
-			END  
+				END  
 
 		
 		END

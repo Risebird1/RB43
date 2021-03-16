@@ -183,7 +183,7 @@
                                             @Html.LabelFor(model => model.Rating, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                             @Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "select-css form-control" })
-                                            @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
+                                            @Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" })
 
                                         </div>
 
@@ -1311,6 +1311,7 @@
                             @Html.HiddenFor(x => x.CandidateId)
                             @Html.HiddenFor(x => x.OldInterviewStatus)
                             @Html.HiddenFor(x => x.OldMeetingStatus)
+                            @Html.HiddenFor(x => x.OverallScore)
                         </form>
                     </div>
 
