@@ -1196,6 +1196,7 @@ namespace Risebird.Web.Controllers
                         var exprienceyears = _iRFRepository.GetInterviewerExprienceYear();
                         var CompanyStageList = _iRFRepository.GetCompanyStage();
                         var SkillNatureList = _iRFRepository.GetSkillNature();
+
                         if (IRListModel != null)
                         {
                             if (String.IsNullOrEmpty(IRListModel.ProfileType))
@@ -1214,7 +1215,7 @@ namespace Risebird.Web.Controllers
                             {
                                 IRListModel.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(IRListModel.CompentencyLevel)).GetDescription();
                             }
-
+                            IRListModel.Country = ((WorkCountry)Convert.ToInt32(IRListModel.Country)).GetDescription();
                             int SkillNature = Convert.ToInt32(IRListModel.SkillNature);
                             var Skill_Nature = SkillNatureList.Where(x => x.Id == SkillNature).FirstOrDefault();
                             if (Skill_Nature != null)
