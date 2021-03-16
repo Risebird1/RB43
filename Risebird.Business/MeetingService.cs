@@ -796,8 +796,9 @@ namespace Risebird.Business
                 }
                 else
                 {
-                    var model = interviewReport != null ? interviewReport.FirstOrDefault() : new InterviewReport();
+                    var model = (interviewReport != null && interviewReport.Count()>0) ? interviewReport.FirstOrDefault() : new InterviewReport();
                     model.IsEdited = model.InterviewId > 0;
+                    //model.IsEdited = true;
 
                     //get all values from database
                     var levelTech = await _meetingRespository.GetLevelTech();
