@@ -2,6 +2,19 @@
 @charset "UTF-8";
 
 
+html, body {
+    margin: 0;
+    padding: 0;
+}
+html {
+    height: 100%;
+}
+
+body {
+    min-height: 100%;
+    position: absolute;
+    width: 100%;
+}
 
 
 /* PREDEFINED CLASSES */
@@ -24,6 +37,7 @@
     margin-right: 10px;
     margin-top: 20px !important;
 }
+audio{outline:0px;border:0px;}
 
 .mobile-view-chn, .mobile-view-ac {
     display: none
@@ -51,7 +65,151 @@
     margin-top: 0px;
     margin-bottom: 10px;
 }
+#MyRibbonDetailsPopup .modal-lg {
+    max-width:800px !important;
+}
+.countdown__timer.front-card:after, .countdown__timer.back-card:after {
+    border-top: solid 1px #22222226;
+}
 
+.countdown__timer.front-card:after, .countdown__timer.back-card:after {
+    content: '';
+    z-index: 2;
+    position: absolute;
+    bottom: 2px;
+    left: 0px;
+    width: 57px;
+    height: 20px;
+    border-radius: 0px 0px 4px 4px;
+}
+.countdown__timer.front-card .card-title {
+    background: -webkit-linear-gradient(#770801, #fdaca6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+.countdown__timer.back-card .card-title {
+    background: -webkit-linear-gradient(#770801, #fdaca6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.flipper {
+    position: relative;
+    top: -8px;
+    left: -8px;
+}
+
+.flipper {
+    perspective: 600px;
+    -webkit-perspective: 600px;
+    -moz-perspective: 600px;
+    -webkit-transform-origin: 100% center;
+    -moz-transform-origin: 100% center;
+    -ms-transform-origin: 100% center;
+    transform-origin: 100% center;
+}
+
+.front-card, .back-card {
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -o-transition: transform 1s ease-in-out;
+    -moz-transition: transform 1s ease-in-out;
+    -webkit-transition: transform 1s ease-in-out;
+    transition: transform 1s ease-in-out;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.front-card {
+    z-index: 2;
+    -webkit-transform: rotateX(0deg);
+    -moz-transform: rotateX(0deg);
+    transform: rotateX(0deg);
+    color: #544f4f;
+    background: #DDDDDD;
+    background: -webkit-linear-gradient(to top, #DDDDDD 0%, #8F8F8F 100%);
+    background: -moz-linear-gradient(to top, #DDDDDD 0%, #8F8F8F 100%);
+    background: linear-gradient(to top, #DDDDDD 0%, #8F8F8F 100%);
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.flipper.flip .front-card {
+    -webkit-transform: rotateX(180deg);
+    -moz-transform: rotateX(180deg);
+    transform: rotateX(180deg);
+}
+
+.back-card {
+    -webkit-transform: rotateX(-180deg);
+    -moz-transform: rotateX(-180deg);
+    transform: rotateX(-180deg);
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.flipper.flip .back-card {
+    -webkit-transform: rotateX(0deg);
+    -moz-transform: rotateX(0deg);
+    transform: rotateX(0deg);
+    color: #544f4f;
+    background: #FFFFFF;
+    background: -webkit-linear-gradient(to top, #FFFFFF 0%, #EDF7DA 100%);
+    background: -moz-linear-gradient(to top, #FFFFFF 0%, #EDF7DA 100%);
+    background: linear-gradient(to top, #FFFFFF 0%, #EDF7DA 100%);
+}
+.un-left {
+    width: 83%; padding-left: 20px !important;
+}
+.un-right {
+
+    width: 57px;
+    float: right;
+    height: 46px;
+}
+/*Styling*/
+.header-front {
+    color: #544f4f;
+    background: #DDDDDD;
+    background: -webkit-linear-gradient(to top, #DDDDDD 0%, #8F8F8F 100%);
+    background: -moz-linear-gradient(to top, #DDDDDD 0%, #8F8F8F 100%);
+    background: linear-gradient(to top, #DDDDDD 0%, #8F8F8F 100%);
+}
+
+.header-back {
+    color: #544f4f;
+    background: #FFFFFF;
+    background: -webkit-linear-gradient(to top, #FFFFFF 0%, #EDF7DA 100%);
+    background: -moz-linear-gradient(to top, #FFFFFF 0%, #EDF7DA 100%);
+    background: linear-gradient(to top, #FFFFFF 0%, #EDF7DA 100%);
+}
+
+
+
+.countdown__timer {
+    padding: .25em;
+    border: 0px solid black;
+    border-radius: 1px;
+    font-weight: bolder;
+    font-size: 42px;
+    width: 57px;
+    height: 45px;
+    margin: 0px auto;
+    line-height: 25px;
+    text-align: center;
+
+}
+.un-left strong {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: bold;
+}
 .background-colorful {
     background: linear-gradient(left, #E04B4A 0%, #1caf9a 50%, #95b75d 100%);
     background: -o-linear-gradient(left, #E04B4A 0%, #1caf9a 50%, #95b75d 100%);
@@ -60,20 +218,13 @@
     background: -ms-linear-gradient(left, #E04B4A 0%, #1caf9a 50%, #95b75d 100%);
     background: -webkit-gradient(linear, left top, right top, color-stop(0, #E04B4A), color-stop(0.5, #1caf9a), color-stop(1, #95b75d));
 }
+.secret-pass {
+    float: left;
+    padding-left: 30px;
+    line-height: 13px;
+}
 /* EOF PREDEFINED CLASSES */
-html * {
-    outline: none !important;
-}
 
-html,
-body {
-    min-height: 100%;
-    padding: 0px;
-    margin: 0px;
-    position: relative;
-    color: #22262e;
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji!important";
-}
 
 .body-full-height {
     height: 100%;
@@ -1078,7 +1229,7 @@ table.journey td.cadSkill {
 
 .talk-bubble [data-tooltip], .video-info [data-tooltip], .video-title [data-tooltip], .jd-title [data-tooltip], .cadName [data-tooltip], .cadName [data-tooltip], .cadSkill [data-tooltip], .cadSkill[data-tooltip], .cadEmail [data-tooltip], .cadEmail [data-tooltip], [data-tooltip] {
     position: relative;
-    z-index: 2;
+    z-index: 1;
     cursor: pointer;
     left: 0%;
 }
@@ -1660,6 +1811,7 @@ table.interviewertable th, table.interviewertable td {
     display: block;
     border-bottom: 0px;
 }
+
 /* END X-NAVIGATION FEATURES */
 /* END PROFILE */
 /* BLOCK */
@@ -3120,12 +3272,14 @@ textarea {
     font-size: 13px !important;
     float: left !important;
 }
+
 .note-filter {
     width: 100%;
     float: left;
     color: #0b8c0b;
     padding-top: 4px;
 }
+
 .mandate {
     position: relative;
     width: auto;
@@ -3494,17 +3648,20 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+
     height: 100%;
+    width: 100%;
     background: rgba(0,0,0,.8);
-    z-index: 5;
+    z-index: 1;
 }
 
 .overlay-relative {
     position: relative;
     z-index: 7;
 }
-
+#statusListModal .scrollers {
+    height: 430px;
+}
 .helper {
     position: absolute;
     top: 0;
@@ -6485,11 +6642,9 @@ h4.card-title {
     background: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat right;
     z-index: 1;
 }
-.client-ms #meeting_filter input[type=search] {
-    background: #fff;
-    border: 0px !important;
-}
-.dataTables_filter input[type=search], #meeting_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
+.client-ms #meeting_filter input[type=search]{background:#fff;border:0px!important;}
+
+.dataTables_filter input[type=search], #meeting_filter input[type=search], #interviewersTbl_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
     border: 0px !important;
     padding: 9px 10px 9px 10px;
     width: 190px;
@@ -6505,13 +6660,13 @@ h4.card-title {
     background: #fff;
 }
 
-#candidateTable_filter input[type=search], #dupmeeting_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #MyInterviewList_filter input[type=search], #interviewer_filter input[type=search], #OpeninterviewList_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
-    border: 1px #ccc solid !important
-}
+    #candidateTable_filter input[type=search], #supportList_filter input[type=search], #interviewersTbl_filter input[type=search], #dupmeeting_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #MyInterviewList_filter input[type=search], #interviewer_filter input[type=search], #OpeninterviewList_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
+        border: 1px #ccc solid !important
+    }
 
-#meeting input[type=search], #MyInterviewList_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #dupmeeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
-    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 78% 9px;
-}
+        #meeting input[type=search], #MyInterviewList_filter input[type=search], #interviewersTbl_filter input[type=search], #supportList_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #dupmeeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
+            background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 78% 9px;
+        }
 
 .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1, .toggle-box,  .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1, .toggle-box {
     display: none;

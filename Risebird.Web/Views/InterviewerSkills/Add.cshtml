@@ -1,4 +1,5 @@
 ﻿@model Risebird.Entities.ViewModel.InterviewerSkillsVM
+@using Risebird.Entities.Enum
 
 @{
     ViewData["Title"] = "Add Interviewer Skills";
@@ -65,22 +66,33 @@
                                         <div class="col-lg-6  col-md-6 col-sm-6 pr-1 pull-left">
                                             <div class="form-group">
                                                 <div class="mandate">
-                                                    @Html.LabelFor(model => model.InterviewerSkillId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                                    @*<label class="control-label col-md-4 col-sm-2 desp-label" for="irfid">irf id</label>*@
-
-                                                    @Html.EditorFor(model => model.InterviewerSkillId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
-                                                    <!--<label class="text-danger" id="uniqueMsg" style="color:red"></label>-->
-                                                    @Html.ValidationMessageFor(model => model.InterviewerSkillId, "", new { @class = "text-danger" })
-                                                    @*<input class="form-control text-box single-line" id="IRFId" name="IRFId" type="text" value="">*@
-
+                                                    @Html.LabelFor(model => model.InterviewerSkillId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                 </div>
+                                                @*<label class="control-label col-md-4 col-sm-2 desp-label" for="irfid">irf id</label>*@
+
+                                                @Html.EditorFor(model => model.InterviewerSkillId, new { htmlAttributes = new { @class = "form-control text-box single-line",@required="required", @onblur = "checkUniqueness(this.value)" } })
+                                                <!--<label class="text-danger" id="uniqueMsg" style="color:red"></label>-->
+                                                @Html.ValidationMessageFor(model => model.InterviewerSkillId, "", new { @class = "text-danger" })
+                                                @*<input class="form-control text-box single-line" id="IRFId" name="IRFId" type="text" value="">*@
+
+                                            </div>
                                         </div>
                                         <div class="col-lg-6  col-md-6 col-sm-6 px-1 pull-left">
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <div class="mandate">    @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
 
-                                                @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line",@required="required" } })
                                                 @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @class = "text-danger" })
+
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6  col-md-6 col-sm-6 pr-1 pull-left">
+                                            <div class="form-group">
+                                                <div class="mandate">
+                                                    @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                </div>
+                                                @Html.DropDownListFor(m => m.AssessmentGroupId, (SelectList)ViewBag.AssessmentGroupList, "Select Assessment Group", new { @class = "select-css form-control", @onchange = "TechSkillChanged()" })
+                                                @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new { @class = "text-danger" })
 
                                             </div>
                                         </div>
@@ -95,16 +107,26 @@
                                         <div class="col-md-4 col-sm-4 pr-1 pull-left">
                                             <div class="form-group">
                                                 <div class="mandate">
-                                                    @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                                    @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                    @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @class = "text-danger" })
+                                                    @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                </div>
+                                                @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="mandate">
+                                                    @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+                                                    @Html.DropDownList("PrimarySkill", (SelectList)ViewBag.Skill,"Select", new { @class = "select-css form-control", @required = "required" })
+                                                    @Html.ValidationMessageFor(model => model.PrimarySkill, "", new { @class = "text-danger" })
                                                 </div>
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.DropDownList("PrimarySkill", (SelectList)ViewBag.Skill, new { @class = "select-css form-control", @onchange = "SkillChanged()" })
-                                                @Html.ValidationMessageFor(model => model.PrimarySkill, "", new { @class = "text-danger" })
+                                                <div class="mandate">
+                                                    @Html.LabelFor(model => model.HeuristicProfileType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                </div>
+                                                @Html.DropDownListFor(m => m.HeuristicProfileType, Html.GetEnumSelectList<Heuristicsscorelevel>(), "Select Profile Type", new { @class = "select-css form-control", @required = "required" })
+                                                @Html.ValidationMessageFor(model => model.HeuristicProfileType, "", new { @class = "text-danger" })
                                             </div>
-                                        </div>
+
+                                            </div>
                                         <div class="col-md-4 col-sm-4 px-1 pull-left">
                                             <div class="form-group">
                                                 <div class="mandate">  @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
@@ -114,11 +136,55 @@
                                             </div>
                                             <div class="form-group">
                                                 <div class="mandate">
-                                                    @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
-                                                    <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></label>
-                                                    @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                                                    @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                 </div>
+                                                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
+                                                <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></label>
+                                                @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                Upload JD
+
+
+                                                <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+    
+                                                    <div class="mdc-radio mdc-radio--touch">
+                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
+                                                        <div class="mdc-radio__background">
+                                                            <div class="mdc-radio__outer-circle"></div>
+                                                            <div class="mdc-radio__inner-circle"></div>
+                                                        </div>
+                                                        <div class="mdc-radio__ripple"></div>
+                                                    </div>
+                                                </div>
+                                                Provide JD Link
+
+                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                    <div class="mdc-radio mdc-radio--touch">
+                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
+                                                        <div class="mdc-radio__background">
+                                                            <div class="mdc-radio__outer-circle"></div>
+                                                            <div class="mdc-radio__inner-circle"></div>
+                                                        </div>
+                                                        <div class="mdc-radio__ripple"></div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="form-group" style="display:none" id="linkDiv">
+                                                @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
+
+                                            </div>
+                                            <div class="" style="display:none" id="uploadDiv">
+                                                @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+
+                                            </div>
                                         </div>
                                         <div class="col-md-4 col-sm-4 pl-1 pull-left">
 
@@ -159,11 +225,11 @@
 
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, new { @class = "select-css form-control" })
+                                                            @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control" })
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
+                                                            @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill,"Select", new { @class = "select-css form-control" })
                                                         </td>
                                                         <td>
                                                             <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
@@ -664,21 +730,22 @@
 
     $(document).ready(function () {
 
-        SkillChanged();
+        //SkillChanged();
+        TechSkillChanged();
         //Perform Ajax request.
 
-        var id = $("#InterviewerCollection_0__UserId").val();
-        $.ajax({
-            type: "GET",
-            url: "/InterviewerSkills/GetInterviewerSkills",
-            data: { 'id': id },
-            success: function (data) {
+        //var id = $("#InterviewerCollection_0__UserId").val();
+        //$.ajax({
+        //    type: "GET",
+        //    url: "/InterviewerSkills/GetInterviewerSkills",
+        //    data: { 'id': id },
+        //    success: function (data) {
       
-                $("#InterviewerCollection_0__SkillId").val(data);
+        //        $("#InterviewerCollection_0__SkillId").val(data);
 
 
-            }
-        });
+        //    }
+        //});
 
 
 
@@ -784,8 +851,56 @@
 
 
     }
-
-
+    function TechSkillChanged() {
+        var Assessmentgroupid = $("#AssessmentGroupId").val();
+        var skills = "";
+        var interviewerSkills;
+        $.ajax({
+            type: "GET",
+            url: "/InterviewerSkills/GetInterviewersByAssessmentGroup",
+            data: { 'assessmentgroupid': Assessmentgroupid },
+            success: function (data) {
+                $.ajax({
+                    type: "GET",
+                    async: false,
+                    url: "/IRF/GetInterviewerSkills",
+                    data: { 'id': data[0].value },
+                    success: function (result) {
+                        interviewerSkills = result;
+                    }
+                });
+                var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
+                for (i = 0; i < drpdowns.length; i++) {
+                    $("#" + drpdowns[i].id + " option").remove();
+                }
+                if (data.length > 0) {
+                    for (i = 0; i < drpdowns.length; i++) {
+                        $(data).each(function () {
+                            var option = $("<option />");
+                            option.html(this.text);
+                            option.val(this.value);
+                            $("#" + drpdowns[i].id).append(option);
+                        });
+                        //interviewerids = $("#txtinterviewerids").val();
+                        //if (interviewerids != "") {
+                        //    var interviewer = interviewerids.split(',');
+                        //    for (var j = 0; j < interviewer.length; j++) {
+                        //        var createid = "InterviewerCollection_" + j + "__UserId";
+                        //        var options = createid + " option[value='" + interviewer[j] + "']";
+                        //        $("#" + options).attr('selected', 'selected');
+                        //        InterviewerChanged(interviewer[j], createid);
+                        //        if (j < (interviewer.length - 1)) {
+                        //            AddRowInterviewer();
+                        //        }
+                        //    }
+                        //}
+                        InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
+                    }
+                }
+            }
+        });
+    }
+    
 
 </script>
 
@@ -813,4 +928,11 @@
     function PerMinRateInterviewer() {
         $("#InterviewerCollection_0__PerSuccessRate").val($("#PerMintuteRate").val());
     }
+</script>
+
+<script>
+    $('body').addClass('sidebar-mini js');
+    $("#minimizeSidebar").click(function () {
+        $('body').removeClass('sidebar-mini');
+    });
 </script>

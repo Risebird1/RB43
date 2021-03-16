@@ -70,9 +70,12 @@ namespace Risebird.Repository
                     await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
                        commandType: CommandType.StoredProcedure);
 
-                    var ProfileList = SqlMapper.QueryAsync<InterviewerProfileVM>(
-                        con, "select id, NickName, userId from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
-                    ProfileId = ProfileList.Where(x => x.NickName == interviewerProfile.NickName).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
+                    ProfileId = parameters.Get<int>("@InterviewerProfileId");
+
+
+                    //var ProfileList = SqlMapper.QueryAsync<InterviewerProfileVM>(
+                    //    con, "select id, NickName, userId from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
+                    //ProfileId = ProfileList.Where(x => x.NickName == interviewerProfile.NickName).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
                 }
 
                 //To Add Skills
@@ -264,7 +267,7 @@ namespace Risebird.Repository
                 entity.AssessmentGroupId = string.Join(',', entity.AssessmentGroupArray);
             }
             parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
-            parameters.Add("@InterviewerProfileId", SqlDbType.Int, direction: ParameterDirection.Output);
+            parameters.Add("@InterviewerProfileId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             return parameters;
         }
@@ -1336,7 +1339,7 @@ namespace Risebird.Repository
                     parametersRecomm.Add("@CompanySize", reportDetails.CompanySize);
                     //parametersRecomm.Add("@JobFunction", reportDetails.JobFunction);
                     //parametersRecomm.Add("@Industry", reportDetails.Industry);
-                    parametersRecomm.Add("@CompanyHeadquarters", reportDetails.CompanyHeadquarters);
+                    parametersRecomm.Add("@Country", reportDetails.Country);
                     parametersRecomm.Add("@CompanyType", reportDetails.CompanyType);
                     parametersRecomm.Add("@CompanyStage", reportDetails.CompanyStage);
                     parametersRecomm.Add("@SkillCategory", reportDetails.SkillCategory);
@@ -1349,7 +1352,14 @@ namespace Risebird.Repository
                     parametersRecomm.Add("@PerHourRateOutside", reportDetails.PerHourRateOutside);
                     parametersRecomm.Add("@ProfileType", reportDetails.ProfileType);
                     parametersRecomm.Add("@CompentencyLevel", reportDetails.CompentencyLevel);
-
+                    if (reportDetails.Domain == "Other")
+                    {
+                        parametersRecomm.Add("@DomainName", reportDetails.DomainName);
+                    }
+                    else
+                    {
+                        parametersRecomm.Add("@DomainName", "");
+                    }
                     paramPersonality.Add("@InterviewId", reportDetails.InterviewId);
                     paramPersonality.Add("@OverallPersonalityScore", reportDetails.OverallPersonalityScore);
                     paramPersonality.Add("@Openness", reportDetails.Openness);
@@ -1785,5 +1795,70 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<InterviewReport> GetInterviewerRecommendationDetails(int Userid)
+        {
+            try
+            {
+                var query = "Select * from InterviewerRecommendation where UserId= @UserId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@UserId", Userid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<InterviewReport>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> InterviewerRecommendation(InterviewReport reportDetails)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters parametersRecomm = new DynamicParameters();
+                    parametersRecomm.Add("@interviewId", reportDetails.InterviewId);
+                    parametersRecomm.Add("@CompanySize", reportDetails.CompanySize);
+                    parametersRecomm.Add("@Country", reportDetails.Country);
+                    parametersRecomm.Add("@CompanyType", reportDetails.CompanyType);
+                    parametersRecomm.Add("@CompanyStage", reportDetails.CompanyStage);
+                    parametersRecomm.Add("@SkillCategory", reportDetails.SkillCategory);
+                    parametersRecomm.Add("@Yearsofexperience", reportDetails.Yearsofexperience);
+                    parametersRecomm.Add("@Senioritylevel", reportDetails.Senioritylevel);
+                    parametersRecomm.Add("@SkillNature", reportDetails.SkillNature);
+                    parametersRecomm.Add("@Domain", reportDetails.Domain);
+                    parametersRecomm.Add("@PerHourRateIndia", reportDetails.PerHourRateIndia);
+                    parametersRecomm.Add("@PerHourRateOutside", reportDetails.PerHourRateOutside);
+                    parametersRecomm.Add("@ProfileType", reportDetails.ProfileType);
+                    parametersRecomm.Add("@CompentencyLevel", reportDetails.CompentencyLevel);
+                    parametersRecomm.Add("@Userid", reportDetails.Userid);
+                    parametersRecomm.Add("@DomainName", "");
+                    if (reportDetails.Domain == "Other")
+                    {
+                        parametersRecomm.Add("@DomainName", reportDetails.DomainName);
+                    }
+
+                    await SqlMapper.QueryAsync<int>(con, "usp_AddOrUpdateInterviewerRecommendation", parametersRecomm,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
+
 }

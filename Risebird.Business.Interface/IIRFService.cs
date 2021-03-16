@@ -3,6 +3,7 @@ using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Business.Interface
@@ -82,6 +83,9 @@ namespace Risebird.Business.Interface
         IEnumerable<LevelTech> GetLevelTech();
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewersByTag(string tag);
         Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null, int id = 0);
-        Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite);
+        //Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite);
+        Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, string audioLink = null);
+        Task<StringBuilder> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite);
+        Task<IRF> GetIRFForCall(int irfId);
     }
 }

@@ -1517,7 +1517,25 @@
     box-shadow: none !important;
 }
 
+.overlay-relative .client-field {
+    color: #fff;
+    padding: 3px;
+}
+.overlay-relative.ts-button {
+    color: #fff;
+    padding: 3px;
+}
+.theme-settings .overlay-relative .ts-button {
+    z-index:10000000000;
+}
 
+.navbar-brand .overlay-relative {
+    color: #fff !important;
+    z-index: 10000000000;
+}
+#divDetailedView table th.overlay-relative, table.dataTable > thead > th.overlay-relative, table.journey th.overlay-relative {
+    background: #e0e0e0 !important;
+}
 
     .form-control:focus, .dataTables_length select .form-control:focus {
         border: 1px solid #4a93de;
@@ -7306,6 +7324,7 @@ input.theatre-btn:focus {
             -ms-transform: translate3d(-25px, 0, 0);
             transform: translate3d(-25px, 0, 0);
         }
+
 
         .sidebar-mini .sidebar .sidebar-wrapper > .nav [data-toggle="collapse"] ~ div > ul > li > a .sidebar-normal,
         .sidebar-mini .sidebar .sidebar-wrapper .user .info [data-toggle="collapse"] ~ div > ul > li > a .sidebar-normal,

@@ -14,7 +14,9 @@
     string strtDte = String.Empty;
     string endDte = String.Empty;
     string[] Status = new string[] { };
-   
+    string[] Client = new string[] { };
+    string[] ClientHREmail = new string[] { };
+
 
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
@@ -22,11 +24,12 @@
     filter = JsonConvert.DeserializeObject<UnassignedInterviewsFilter>(HttpContextAccessor.HttpContext.Session.GetString("UnassignedInterviewsFilters"));
     strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
-    
-    Status = filter.Status != null ? filter.Status : new string[] { };
-    
-}
 
+    Status = filter.Status != null ? filter.Status : new string[] { };
+    Client = filter.Client != null ? filter.Client : new string[] { };
+    ClientHREmail = filter.ClientHREmail != null ? filter.ClientHREmail : new string[] { };
+
+}
 
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
@@ -44,7 +47,39 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">911 Dashboard</a>
+                <a class="navbar-brand">
+                    911 Dashboard /
+                    @if (ViewBag.actionstatus == "InterviewCount")
+                    {<strong>
+                            Unassigned Interviews
+                        </strong>
+
+                    }
+                 
+
+                    @if (ViewBag.actionstatus == "MeetingStatus")
+                    {<strong>
+                            Status Pending
+                        </strong>
+
+                    }
+                  
+                    @if (ViewBag.actionstatus == "QcPending")
+                    {<strong>
+                            Qc Pending
+                        </strong>
+
+                    }
+                
+
+                    @if (ViewBag.actionstatus == "UnAssignedCoordianter")
+                    {<strong>
+    Unassigned RB Co-ordinator
+</strong>
+
+                    }
+                
+                </a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -64,7 +99,7 @@
                 </div>
 
                 <div class="pull-right">
-                    
+
                     <div>
                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#filterModal">
 
@@ -91,7 +126,7 @@
                         <div class="dataloading">
 
                             <div class="toolbar">
-
+                                <input type="hidden" value="@ViewBag.actionstatus" id="hidactionstatus" />
                                 <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-lg" role="document">
                                         <div class="modal-content">
@@ -104,7 +139,7 @@
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            <form action="@Url.Action("UnassignedInterviews","Dashboard")" method="post" id="form">
+                                            <form action="@Url.Action("UnassignedInterviews","Dashboard",new { actionstatus=ViewBag.actionstatus})" method="post" id="form">
 
                                                 <div class="modal-body">
                                                     <div class="row">
@@ -132,30 +167,42 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+
                                                         <div class="col-md-6 col-sm-6 border-rv">
-
-                                                            
-                                                            
-
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Status">
-                                                                    Status
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">
+                                                                    Client
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="Status" name="Status" class="form-control multiselect" multiple="multiple">
-                                                                        <option value="@(UnassignedInterviewsTypes.Unassigned.GetDescription())">@(UnassignedInterviewsTypes.Unassigned.GetDescription())</option>
-                                                                        <option value="@(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription())">@(UnassignedInterviewsTypes.MeetingStatusPending.GetDescription())</option>
-                                                                        <option value="@(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription())">@(UnassignedInterviewsTypes.InterviewStatusPending.GetDescription())</option>
-                                                                        <option value="@(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription())">@(UnassignedInterviewsTypes.InterviewerCommentsPending.GetDescription())</option>
+                                                                    <select id="Client" name="Client" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.Name).Distinct().ToList())
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            
-                                                            
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6">
 
-                                                            
+
+
+                                                        </div>
+
+
+                                                        <div class="col-md-6 col-sm-6 ">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHREmail">
+                                                                    Client HR
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ClientHREmail" name="ClientHREmail" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.ClientHrContact).Distinct().ToList())
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
                                                             <div class="form-group">
                                                                 <div>
                                                                     <div class="col-md-12 col-sm-12">
@@ -176,7 +223,10 @@
                                                                 </div>
                                                             </div>
 
+
                                                         </div>
+
+
                                                     </div>
 
                                                 </div>
@@ -264,7 +314,7 @@
 
 
 
-                                                      
+
                                                         <td>@item.HRCoordinatorEmailId</td>
 
                                                     </tr>
@@ -319,13 +369,26 @@
                 buttonWidth: '100%',
                 maxHeight: 200
             });
+            $("#Client").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#ClientHREmail").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
 
-            
+
 
         });
 
-        function ResetFilter() {
-            window.location.href = "/Dashboard/ResetUnassignedInterviewsFilter";
+    function ResetFilter() {
+        var value=$("#hidactionstatus").val();
+        window.location.href = "/Dashboard/ResetUnassignedInterviewsFilter?actionstatus=" + value;
 
         }
         function ApplySessionFilter() {
@@ -333,13 +396,17 @@
             var strtDte = '@strtDte';
             var endDte = '@endDte';
             var status =  @Html.Raw(Json.Serialize(Status));
-           
+            var client =  @Html.Raw(Json.Serialize(Client));
+            var clientHREmail =  @Html.Raw(Json.Serialize(ClientHREmail));
+
 
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
             $("#Status").val(status);
-           
+            $("#Client").val(client);
+            $("#ClientHREmail").val(clientHREmail);
+
             var form = $("#form").serialize();
 
         }
@@ -351,7 +418,24 @@
 
 
 <script>
+
+    function RefreshSearch() {
+        $('#meetingTable').DataTable().destroy();
+
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
     $(document).ready(function () {
+
+        applyDataTable();
+
+    });
+
+
+
+    function applyDataTable() {
         $('#meetingTable').DataTable({
             "pagingType": "full_numbers",
             "lengthMenu": [
@@ -366,26 +450,19 @@
                 searchPlaceholder: "Search records",
             },
             "fnInitComplete": function () {
-                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter input:eq(0)").after("<span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
                 $(".dataTables_filter").keyup(function (e) {
                     if ($(this).val() != "") {
-                        $("#x").hide();
+                        $("#x").show();
 
                     }
-                    else { $("#x").hide(); }
+                    else { $("#x").show(); }
                 });
             }
 
         });
 
-
-        var table = $('#meetingTable').DataTable();
-
-
-    });
-
-
-
+    }
 
 
 

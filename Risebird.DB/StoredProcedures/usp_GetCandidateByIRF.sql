@@ -18,7 +18,7 @@ Create PROCEDURE [dbo].[usp_GetCandidateByIRF]
 AS
 Begin
 
-select distinct  ca.CandidateMasterId, ca.IRFId, ca.ClientHRAttemptContact, ca.TotalInvites, ul.FirstName as [Name] from Candidate ca 
+select ca.id, ca.CandidateMasterId, ca.IRFId, ca.ClientHRAttemptContact, ca.TotalInvites, ul.FirstName as [Name] from Candidate ca 
 join CandidatesMaster cm on cm.id=ca.CandidateMasterId 
 join UserList ul on ul.id = cm.UserId
 where ca.IRFId=@IRFId and ul.EmailId=@EmailId

@@ -320,7 +320,9 @@ namespace Risebird.Repository
             parameters.Add("@PerMintuteRate", entity.PerMintuteRate);
             parameters.Add("@PrimarySkill", entity.PrimarySkill);
             parameters.Add("@CalendlyLink", entity.CalendlyLink);
-
+            parameters.Add("@HeuristicProfileType", entity.HeuristicProfileType);
+            parameters.Add("@JDLink", entity.JDLink);
+            parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
             return parameters;
         }
 
@@ -1140,6 +1142,23 @@ namespace Risebird.Repository
                 return null;
             }
         }
-
+        public IEnumerable<Interviewer> GetInterviewersByAssessmentGroup(string assessmentgroupid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters dp = new DynamicParameters();
+                    dp.Add("@assessmentgroupid", assessmentgroupid);
+                    return con.Query<Interviewer>(
+                         "select intp.UserId,intp.AssessmentGroupId, ul.EmailId,intp.IsLeadInterviewer FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId  where intp.IsApproved=1 and intp.IsLeadInterviewer=1 and intp.AssessmentGroupId like '%'+@assessmentgroupid+'%'", dp);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

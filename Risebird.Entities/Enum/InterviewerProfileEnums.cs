@@ -89,6 +89,41 @@ namespace Risebird.Entities.Enum
         [Description("Female")]
         Female = 2
     }
+    public enum WorkCountry
+    {
+        [Description("India")]
+        India = 1,
+        [Description("US")]
+        OutOfIndia = 2,
+        [Description("Both India and US")]
+        BothIndiaandOutOfIndia = 3
+    }
+    public enum IndiaPrice
+    {
+        [Description("600")]
+        Sixhundred = 600,
+        [Description("800")]
+        Eigthhundred = 800,
+        [Description("1000")]
+        Onethousand = 1000,
+        [Description("1200")]
+        Twelvehundred = 1200,
+        [Description("1500")]
+        Fifteenhundred = 1500
+    }
+    public enum OutSideIndiaPrice
+    {
+        [Description("900")]
+        Ninehundred = 900,
+        [Description("1200")]
+        Twelvehundred = 1200,
+        [Description("1500")]
+        Fifteenhundred = 1500,
+        [Description("1800")]
+        Eighteenhundred = 1800,
+        [Description("2250")]
+        TwentyTwohundredFifty = 2250
+    }
     public enum Country
     {
         [Description("Africa")]
@@ -1185,7 +1220,7 @@ namespace Risebird.Entities.Enum
     public enum Heuristicsscorelevel
     {
         [Description("Basic")]
-        Basic = 0,
+        Basic = 5,
         [Description("Standard")]
         Standard = 1,
         [Description("Standard+")]

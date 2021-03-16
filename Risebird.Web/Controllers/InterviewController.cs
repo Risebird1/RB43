@@ -101,7 +101,37 @@ namespace Risebird.Web.Controllers
                                 x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty;
                                 return x;
                             }).ToList();
-                            modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
+
+                            foreach (var item in modelList)
+                            {
+                                item.NextLevelApprovalStat = item.IsApproved.HasValue ? ((NextLevelApprovalStatus)item.IsApproved).GetDescription() : string.Empty;
+
+                                if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                                {
+                                    if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                                    {
+                                        item.MeetingStatusStatusDesc = "Status Pending";
+
+                                    }
+                                }
+                                else
+                                {
+                                    item.MeetingStatusStatusDesc = string.Empty;
+
+                                }
+
+                                //interview status
+
+                                if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
+                                {
+                                    item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
+                                }
+                                else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
+                                {
+                                    item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
+                                }
+                            }
+                            //modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
 
                             filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = modelList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                             filter.RFID = filter.RFID == null ? filter.RFID = modelList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
@@ -129,7 +159,34 @@ namespace Risebird.Web.Controllers
 
                             modelList = _meetingService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1));
                             modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
-                            modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
+                            foreach (var item in modelList)
+                            {
+                                item.NextLevelApprovalStat = item.IsApproved.HasValue ? ((NextLevelApprovalStatus)item.IsApproved).GetDescription() : string.Empty;
+
+                                if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                                {
+                                    if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                                    {
+                                        item.MeetingStatusStatusDesc = "Status Pending";
+
+                                    }
+                                }
+                                else
+                                {
+                                    item.MeetingStatusStatusDesc = string.Empty;
+
+                                }
+
+                                if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
+                                {
+                                    item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
+                                }
+                                else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
+                                {
+                                    item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
+                                }
+                            }
+                            //modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
                         }
                         return View(modelList);
                     }
@@ -180,7 +237,38 @@ namespace Risebird.Web.Controllers
                         x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty;
                         return x;
                     }).ToList();
-                    modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
+                    //modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
+
+                    foreach (var item in modelList)
+                    {
+                        item.NextLevelApprovalStat = item.IsApproved.HasValue ? ((NextLevelApprovalStatus)item.IsApproved).GetDescription() : string.Empty;
+
+                        if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                        {
+                            if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                            {
+                                item.MeetingStatusStatusDesc = "Status Pending";
+
+                            }
+                        }
+                        else
+                        {
+                            item.MeetingStatusStatusDesc = string.Empty;
+
+                        }
+
+                        //interview status
+
+                        if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
+                        {
+                            item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
+                        }
+                        else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
+                        {
+                            item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
+                        }
+                    }
+
 
                     filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = modelList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                     filter.RFID = filter.RFID == null ? filter.RFID = modelList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
@@ -218,9 +306,9 @@ namespace Risebird.Web.Controllers
                     modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
                 }
 
-                Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
-                Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
-                Sheet.Cells["A1:Z1"].Style.WrapText = true;
+                Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:AI1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:AI1"].Style.WrapText = true;
                 //Sheet.Column(1).Width = 30;
                 //Sheet.Column(2).Width = 30;
                 int startColumn = 1; int endColumn = 40;
@@ -923,6 +1011,36 @@ namespace Risebird.Web.Controllers
 
                         }).ToList();
 
+                        foreach (var item in modelList)
+                        {
+                            item.NextLevelApprovalStat = item.IsApproved.HasValue ? ((NextLevelApprovalStatus)item.IsApproved).GetDescription() : string.Empty;
+
+                            if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                            {
+                                if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                                {
+                                    item.MeetingStatusStatusDesc = "Status Pending";
+
+                                }
+                            }
+                            else
+                            {
+                                item.MeetingStatusStatusDesc = string.Empty;
+
+                            }
+
+                            //interview status
+                            
+                            if ((item.InterviewStatus == 4 || item.InterviewStatus==2) && item.QCStatus == null)
+                            {
+                                item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
+                            }
+                            else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
+                            {
+                                item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
+                            }
+                        }
+
                         filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = modelList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                         filter.RFID = filter.RFID == null ? filter.RFID = modelList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
                         filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = modelList.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
@@ -1329,6 +1447,16 @@ namespace Risebird.Web.Controllers
                             meeting.StaffingAgencyList = new SelectList(clients.Where(x => x.ClientRoleId == 4), "EmailId", "EmailId");
 
                         }
+                        meeting.interviewer = meeting.interviewer.Trim();
+                        if (!string.IsNullOrEmpty(meeting.interviewer))
+                        {
+                            meeting.interviewer = meeting.interviewer.Trim();
+                        }
+                        meeting.QCInterviewer = meeting.QCInterviewer.Trim();
+                        if (!string.IsNullOrEmpty(meeting.QCInterviewer))
+                        {
+                            meeting.QCInterviewer = meeting.QCInterviewer.Trim();
+                        }
                         if (ModelState.IsValid)
                         {
                             if (meeting.File == null && (meeting.resumeLink == null))
@@ -1547,6 +1675,15 @@ namespace Risebird.Web.Controllers
                         var interviewslotList = from InterviewSlots s in Enum.GetValues(typeof(InterviewSlots))
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         meetingUpdated.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
+                        meetingUpdated.interviewer = meetingUpdated.interviewer.Trim();
+                        if (!string.IsNullOrEmpty(meetingUpdated.interviewer)) {
+                            meetingUpdated.interviewer = meetingUpdated.interviewer.Trim();
+                        }
+                        meetingUpdated.QCInterviewer = meetingUpdated.QCInterviewer.Trim();
+                        if (!string.IsNullOrEmpty(meetingUpdated.QCInterviewer))
+                        {
+                            meetingUpdated.QCInterviewer = meetingUpdated.QCInterviewer.Trim();
+                        }
                         if (ModelState.IsValid)
                         {
                             //String uploadedFileURL = String.Empty;

@@ -517,7 +517,7 @@ namespace Risebird.Business
                     reportModel.CompanySize = techInterviewerRecommendation.CompanySize;
                     reportModel.JobFunction = techInterviewerRecommendation.JobFunction;
                     reportModel.Industry = techInterviewerRecommendation.Industry;
-                    reportModel.CompanyHeadquarters = techInterviewerRecommendation.CompanyHeadquarters;
+                    reportModel.Country = techInterviewerRecommendation.Country;
                     reportModel.CompanyType = techInterviewerRecommendation.CompanyType;
                     reportModel.CompanyStage = techInterviewerRecommendation.CompanyStage;
                     reportModel.SkillCategory = techInterviewerRecommendation.SkillCategory;
@@ -525,11 +525,13 @@ namespace Risebird.Business
                     reportModel.Senioritylevel = techInterviewerRecommendation.Senioritylevel;
                     reportModel.SkillNature = techInterviewerRecommendation.SkillNature;
                     reportModel.Domain = techInterviewerRecommendation.Domain;
+                    reportModel.DomainName = techInterviewerRecommendation.DomainName;
                     reportModel.SkillIP = techInterviewerRecommendation.SkillIP;
                     reportModel.PerHourRateOutside = techInterviewerRecommendation.PerHourRateOutside;
                     reportModel.PerHourRateIndia = techInterviewerRecommendation.PerHourRateIndia;
                     reportModel.ProfileType = techInterviewerRecommendation.ProfileType;
                     reportModel.CompentencyLevel = techInterviewerRecommendation.CompentencyLevel;
+                    reportModel.Country = techInterviewerRecommendation.Country;
                     if (!string.IsNullOrEmpty(techInterviewerRecommendation.SkillCategory))
                     {
                         reportModel.SkillCategoryArray = techInterviewerRecommendation.SkillCategory.Split(',');
@@ -720,6 +722,43 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public async Task<InterviewReport> GetInterviewerRecommendationDetails(int Userid)
+        {
+            try
+            {
+                var comments = await _interviewerRepository.GetInterviewerRecommendationDetails(Userid);
+                return comments;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> InterviewerRecommendation(InterviewReport reportModel)
+        {
+            try
+            {
+                if (reportModel.SkillCategoryArray != null)
+                {
+                    reportModel.SkillCategory = string.Join(',', reportModel.SkillCategoryArray);
+                }
+                else
+                {
+                    reportModel.SkillCategory = string.Empty;
+                }
+
+                var result = await _interviewerRepository.InterviewerRecommendation(reportModel);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
     }

@@ -1,4 +1,4 @@
-var site_settings = '<div class="ts-button">'
+var site_settings = '<div id="clientdashboard_7"><div  class="ts-button">'
         +'<span class="fa fa-cogs"></span>'
     +'</div>'
     +'<div class="ts-body">'
@@ -10,7 +10,7 @@ var site_settings = '<div class="ts-button">'
     +'<a href="#" data-theme="../../Newassets/css/orange-theme.css?v=546787"><img src="../../Newassets/img/orange.png"/></a>'                        
            
     +'<a href="#" data-theme="../../Newassets/css/dark-theme.css?v=546787"><img src="../../Newassets/img/dark.png"/></a>'
-        +'</div>'
+    +'</div></div>'
 	
         
         

@@ -1,6 +1,8 @@
 ﻿@*@model IEnumerable<Risebird.Entities.ViewModel.Candidate>*@
 @using Risebird.Entities.Enum
 @model X.PagedList.IPagedList<Risebird.Entities.ViewModel.Candidate>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 @using X.PagedList.Mvc.Core;
 @{
     ViewData["Title"] = "Candidates";
@@ -9,6 +11,7 @@
 
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=11" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <input type="hidden" value="@ViewBag.Profile" id="hidprofile" />
 <input type="hidden" value="@ViewBag.IRFName" id="hidirfname" />
 <input type="hidden" value="@ViewBag.IRFId" id="hidirfid" />
@@ -24,7 +27,9 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">Candidates for <strong>@ViewBag.IRFName</strong></a>
+                <div id="getstatus_1">
+                    <a class="navbar-brand">Candidates for <strong>@ViewBag.IRFName</strong></a>
+                </div>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -45,20 +50,20 @@
                     <div class="mobile-view"> <h4 class="card-title"> Candidates for <strong>'@ViewBag.IRFName'</strong></h4></div>
                 </div>
 
-                <div class="pull-right">
+                <div class="pull-right client-ms">
                     <div>
 
 
                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates</font></span>
-        </button>*@
+                                <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates</font></span>
+                            </button>*@
 
 
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick(false)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates</font></span>
+                            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick(false)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates</font></span>
                         </button>
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file and send invitation." onclick="ModalButtonClick(true)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates(Invite)</font></span>
+                            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file and send invitation." onclick="ModalButtonClick(true)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates (Invite)</font></span>
                         </button>
 
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
@@ -71,7 +76,7 @@
                             <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Candidate List" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Candidate</font></span>
                         </button>
 
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                        <button id="getstatus_13" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span data-toggle="tooltip" data-placement="top" title="Back to List" onclick="location.href='@Url.Action("Index", "IRF")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back to List</font></span>
                         </button>
 
@@ -126,15 +131,16 @@
                                                             <th style="border-right: 0px !important;"></th>
 
                                                             <th>Candidate Email</th>
-                                                            <th>RB Attempts</th>
-                                                            <th>Resume</th>
-                                                            <th>Coded Resume</th>
-                                                            <th>Invite Sent</th>
-                                                            <th>Confirmation</th>
+                                                            <th id="getstatus_2">RB Attempts</th>
+                                                            <th id="getstatus_3">Resume</th>
 
-                                                            <th>Joinability</th>
-                                                            <th>Selectability</th>
-                                                            <th> Actions </th>
+                                                            <th id="getstatus_4">Invite Sent</th>
+                                                            <th id="getstatus_5">Confirmation</th>
+
+                                                            <th id="getstatus_6">Joinability</th>
+                                                            <th id="getstatus_7">Selectability</th>
+                                                            <th width="25%"> Actions </th>
+                                                            <th style="text-align:center">Schedule Call</th>
                                                             <th style="text-align:center">Call</th>
 
 
@@ -146,12 +152,14 @@
                                                             <th>Candidate Email</th>
                                                             <th>RB Attempts</th>
                                                             <th>Resume</th>
-                                                            <th>Coded Resume</th>
+
                                                             <th>Invite Sent</th>
                                                             <th>Confirmation</th>
                                                             <th>Joinability</th>
                                                             <th>Selectability </th>
-                                                            <th> Actions </th>
+                                                            <th style="width:25%"> Actions </th>
+                                                            <th style="text-align:center">Schedule Call</th>
+
                                                             <th style="text-align:center">Call</th>
 
                                                         </tr>
@@ -236,14 +244,6 @@
                                                                 }
 
 
-                                                                @if (item.EncodedResumeLink != null && item.EncodedResumeLink != "")
-                                                                {
-                                                                    <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=@item.EncodedResumeLink>Coded Resume</a> </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>No Coded Resume</td>
-                                                                }
 
 
                                                                 <td class="text-center">@item.TotalInvites</td>
@@ -267,7 +267,7 @@
 
 
 
-                                                                <td class="text-right action">
+                                                                <td class="text-left action">
 
                                                                     @if (ViewBag.Profile != "Recruiter")
 
@@ -275,7 +275,7 @@
 
                                                                         if (!string.IsNullOrEmpty(item.ClientHRAttemptContact))
                                                                         {
-                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Send Invite">
+                                                                            <button id="getstatus_8" class="mdc-fab app-fab--absolute" aria-label="Send Invite">
                                                                                 <span onclick="location.href = '@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })'" title="Send Invite" class="mdc-fab__icon material-icons">
                                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
                                                                                 </span>
@@ -284,7 +284,7 @@
 
                                                                         else
                                                                         {
-                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Kindly enter Client HR's EmailId to send invite!">
+                                                                            <button id="getstatus_8" class="mdc-fab app-fab--absolute" aria-label="Kindly enter Client HR's EmailId to send invite!">
                                                                                 <span title="Kindly enter Client HR's EmailId to send invite!" class="mdc-fab__icon material-icons">
                                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
                                                                                 </span>
@@ -295,7 +295,7 @@
 
 
 
-                                                                        <span onclick="location.href = '@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })'" title="Cancel Invite" class="mdc-fab app-fab--absolute trash-btn">
+                                                                        <span id="getstatus_9" onclick="location.href = '@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })'" title="Cancel Invite" class="mdc-fab app-fab--absolute trash-btn">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
                                                                         </span>
 
@@ -307,14 +307,26 @@
 
                                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>
                                                                                 </span>
-                                                                            </button>}
+                                                                            </button>
+
+                                                                            <button class="mdc-fab app-fab--absolute itemques" aria-label="Add Candidate Status">
+                                                                                <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
+                                                                            </button>
+
+                                                                            @*<button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
+                                                                                    <span onclick="javascript:GetCandidateStatusList('@item.IRFId', '@item.CandidateMasterId', '@ViewBag.IRFName', '@item.Name');" title="Candidate Status List" class="mdc-fab__icon material-icons">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg>
+                                                                                    </span>
+                                                                                </button>*@
+
+                                                                        }
 
 
                                                                     }
 
 
 
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                    <button id="getstatus_10" class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                                         <span onclick="location.href = '@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="mdc-fab__icon material-icons">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
                                                                         </span>
@@ -338,6 +350,9 @@
                                                                         </button>
                                                                     }
 
+
+
+
                                                                     @if (ViewBag.profile != "Client")
                                                                     {
 
@@ -349,13 +364,19 @@
                                                                     }
 
                                                                 </td>
+
+                                                                <td class="text-center">
+                                                                    @if (item.Phone != null && item.Phone != string.Empty)
+                                                                    {
+                                                                        <span id="getstatus_11" class="call" data-toggle="tooltip" data-placement="top" title="Click here to place a reeminder call to the candidate." onclick="AutoCallCandidate('@item.Phone','@item.IRFId', '@item.CandidateMasterId', '@item.Name')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-square"></span></span></span>
+                                                                    }
+
+                                                                </td>
+
                                                                 <td>
                                                                     @if (item.Phone != null && item.Phone != string.Empty)
                                                                     {
-
-
-                                                                        <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick(@jsonObject,1)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
-
+                                                                        <span id="getstatus_12" class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick(@jsonObject,1)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
                                                                     }
 
                                                                 </td>
@@ -373,6 +394,7 @@
                                                                         <tr>
                                                                             <th style="border-left: 0px !important;">Candidate Name</th>
                                                                             <th>Client HR</th>
+                                                                            <th>Coded Resume</th>
                                                                             <th>Type</th>
                                                                             <th>Location(Applied for)</th>
                                                                             @*<th>Skill</th>*@
@@ -428,6 +450,14 @@
                                                                             }
 
 
+                                                                            @if (item.EncodedResumeLink != null && item.EncodedResumeLink != "")
+                                                                            {
+                                                                                <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=@item.EncodedResumeLink>Coded Resume</a> </td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td>No Coded Resume</td>
+                                                                            }
 
                                                                             <td>@item.Type</td>
 
@@ -595,19 +625,32 @@
                                 {
                                     <div class="form-group">
 
-                                       
 
-                                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" for="UploadedFile" style="margin:0px auto; display:block;">
 
-                                            <span class="mdc-button__label"><span class="fa fa-file"><font style=" font-family: Roboto, sans-serif; font-size:12px;">   Click here to choose file</font></span></span>
-                                            <div class="mdc-button__ripple"></div>
+                                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded upload-wrap" for="UploadedFile" style="margin:0px auto; display:block;">
+                                            <div class="file-upload-wrapper" data-text="CLICK HERE TO CHOOSE FILE">
+                                                <input type="file" class="file-upload-field" accept=".xls, .xlsx" name="UploadedFile" id="idExcelFile" />
+
+                                            </div>
                                         </button>
 
-                                        <input type="file" accept=".xls, .xlsx" name="UploadedFile" />
+                                        @*<form>
+                                                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded upload-wrap" for="UploadedFile">
+                                                        <div class="file-upload-wrapper" data-text="CLICK HERE TO CHOOSE FILE">
+                                                            <input type="file" class="file-upload-field" accept=".xls, .xlsx" name="UploadedFile" />
+
+                                                        </div>
+                                                    </button>
+                                            </form>*@
+                                        @*<input type="file" accept=".xls, .xlsx" name="UploadedFile" />*@
                                     </div>
+                                    @*<div class="">
+                                            <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnImport" value="Import">
+
+                                        </div>*@
                                     <div class="">
-                                        <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnImport" value="Import">
-                                            
+                                        <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnImport" value="Import" onclick="ImportQuickCandidates()">
+
                                     </div>
                                     <input type="hidden" id="IRFId" name="IRFId" value='@ViewBag.IRFId'>
                                     <input type="hidden" id="IRFName" name="IRFName" value='@ViewBag.IRFName'>
@@ -665,9 +708,9 @@
             </div>
 
 
-            <div id="statusModal" class="modal modal-bg">
-                <!-- Modal content -->
-                <div class="modal-dialog modal-lg" role="document">
+            <!--<div id="statusModal" class="modal modal-bg">-->
+            <!-- Modal content -->
+            <!--<div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
 
 
@@ -710,18 +753,179 @@
                     </div>
 
                 </div>
+            </div>-->
+
+            <div id="candidateStatusModal" class="modal modal-bg">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+
+
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon fas fa-user-friends fa-2x"></span>
+                            </div>
+                            <h5 class="modal-title pull-left" id="candidateStatusHeading"> </h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" id="candidateStatusPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
+
+
+                        <div class="modal-body">
+
+                            <div class="col-md-12 col-sm-12 ">
+                                <div class="form-group">
+
+                                    <label class="control-labeled">
+                                        Status
+                                    </label>
+
+                                    <select class="select-css form-control" id="statusDrpDwn" asp-items="Html.GetEnumSelectList<CandidateStatusOptionsDrpdwn>()"></select>
+                                </div>
+
+                                <div class="form-group">
+                                    <form>
+                                        <div class="file-upload-wrapper" data-text="Select your file">
+                                            <input name="file-upload-field" id="idAudioFile" type="file" class="file-upload-field" accept=".mp3, .wav, .m4a">
+                                        </div>
+                                    </form>
+
+                                    @*<label class="control-labeled">
+                                            Upload Audio
+                                        </label>
+                                        <input type="file" id="idAudioFile" accept=".mp3, .wav, .m4a">*@
+
+                                </div>
+                                <div class="form-group">
+
+                                    <label class="control-labeled w-full">
+                                        Comments
+                                    </label>
+                                    <input type="text" id="idComments" class="w-full" style="height:60px">
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+                                <div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <input type="button" onclick="SaveCandidateStatus()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="statusListModal" class="modal modal-bg">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+
+
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon  fas fa-list" style="font-size:24px;"></span>
+                            </div>
+                            <h5 class="modal-title pull-left" id="statusListHeading"></h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" id="statusListPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
+
+                        <div class="modal-body" id="statusListTableBody">
+
+
+
+
+
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
 
-            
+            <div id="importResultModal" class="modal modal-bg">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+
+
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon  fas fa-file-import" style="font-size:24px;"></span>
+                            </div>
+                            <h5 class="modal-title pull-left" id="importResultHeading">Import status</h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" id="importResultPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
+
+                        <div class="modal-body" id="importResultTableBody" style=" overflow: auto; height: 300px">
+
+
+
+
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
 
             <!-- end row -->
         </div>
 
     </div>
+</div>
+    
+    <script>
+        var spanImport = document.getElementById("importResultPopUp");
+        // When the user clicks on <span> (x), close the modal
+        spanImport.onclick = function () {
+            var modal = document.getElementById("importResultModal");
+            modal.style.display = "none";
+            location.reload();
+        }
+        function ImportQuickCandidates() {
+            document.getElementById("btnImport").disabled = true;
+            var irfExcelId = '@ViewBag.IRFId';
+            var irfExcelName = '@ViewBag.IRFName';
+            var excel_file = $("#idExcelFile")[0].files[0];
+            var isSendInvite = document.getElementById("IsSendInvite").value;
 
 
+            var formdata = new FormData();
+            formdata.append('IRFId', irfExcelId);
+            formdata.append('IsSendInvite', isSendInvite);
+            formdata.append('excel_file', excel_file);
+            formdata.append('IRFName', irfExcelName);
 
+            $.ajax({
+                type: "POST",
+                url: "/Candidate/ImportQuickCandidates",
+                contentType: false,
+                processData: false,
+                data: formdata,
+                success: function (data) {
+
+                    document.getElementById('myModal').style.display = "none";
+                    var importMsg = data.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                    document.getElementById('importResultModal').style.display = "block";
+                    $('#importResultTableBody').html('');
+                    $('#importResultTableBody').html(importMsg);
+                }
+            });
+        }
+    </script>
     @if (ViewBag.Message != null)
     {
         <script type="text/javascript">
@@ -868,19 +1072,18 @@
             var modal = document.getElementById("myModal");
             modal.style.display = "none";
         }
-        var closeStatus = document.getElementById("statusPopUp");
-        // When the user clicks on <span> (x), close the modal
-        closeStatus.onclick = function () {
-            var modal = document.getElementById("statusModal");
-            modal.style.display = "none";
-        }
+        //var closeStatus = document.getElementById("statusPopUp");
+        //// When the user clicks on <span> (x), close the modal
+        //closeStatus.onclick = function () {
+        //    var modal = document.getElementById("statusModal");
+        //    modal.style.display = "none";
+        //}
         var candidateId;
         var irfId;
     </script>
     <script>
         function ModalButtonClick(value) {
-            debugger;
-            document.getElementById("IsSendInvite").value=value;
+            document.getElementById("IsSendInvite").value = value;
 
             // Get the modal
             var modal = document.getElementById("myModal");
@@ -890,35 +1093,35 @@
 
         }
 
-        function OpenStatusModal(id, name, status) {
-            candidateId = id;
-            // Get the modal
-            var modal = document.getElementById("statusModal");
+        //function OpenStatusModal(id, name, status) {
+        //    candidateId = id;
+        //    // Get the modal
+        //    var modal = document.getElementById("statusModal");
 
-            document.getElementById("statusHeading").innerHTML = "Status for " + name;
+        //    document.getElementById("statusHeading").innerHTML = "Status for " + name;
 
-            if (status != null && status != "") {
-                $("#statusDrpDwn").val(status);
-            }
-            // When the user clicks the button, open the modal
-            modal.style.display = "block";
+        //    if (status != null && status != "") {
+        //        $("#statusDrpDwn").val(status);
+        //    }
+        //    // When the user clicks the button, open the modal
+        //    modal.style.display = "block";
 
 
-        }
-        function SaveStatusPopUp() {
-            var statusValue = document.getElementById("statusDrpDwn").value;
+        //}
+        //function SaveStatusPopUp() {
+        //    var statusValue = document.getElementById("statusDrpDwn").value;
 
-            $.ajax({
-                type: "GET",
-                url: "/IRF/SaveCandidateStatus",
-                data: { 'candidateId': candidateId, 'statusValue': statusValue },
-                success: function (data) {
+        //    $.ajax({
+        //        type: "GET",
+        //        url: "/IRF/SaveCandidateStatus",
+        //        data: { 'candidateId': candidateId, 'statusValue': statusValue },
+        //        success: function (data) {
 
-                    location.reload(true);
+        //            location.reload(true);
 
-                }
-            });
-        }
+        //        }
+        //    });
+        //}
 
     </script>
     <script>
@@ -1089,7 +1292,8 @@
                     }
                 }
                 else {
-                    html += '   <td></td>'; }
+                    html += '   <td></td>';
+                }
 
                 html += ' <td class="text-center">' + data[i].attemptsCount + '</td>';
 
@@ -1100,12 +1304,7 @@
                     html += '   <td>No Resume</td>';
                 }
 
-                if (data[i].encodedResumeLink != null && data[i].encodedResumeLink != "") {
-                    html += '    <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=' + data[i].encodedResumeLink + '>Coded Resume</a> </td>';
-                }
-                else {
-                    html += '   <td>No Coded Resume</td>';
-                }
+
                 html += '  <td class="text-center">' + data[i].totalInvites + '</td>';
 
                 html += ' <td class="text-center">' + data[i].inviteConfirmation + '</td>';
@@ -1117,7 +1316,7 @@
                 html += '  <b>' + data[i].selectabilityScore + '</b>';
                 html += ' </td>';
 
-                html += '    <td class="text-right action">';
+                html += '    <td class="text-left action">';
 
                 if (profile != "Recruiter") {
 
@@ -1152,6 +1351,11 @@
                         html += '   <a href = "/Candidate/UploadAudio?candidateId=' + data[i].candidateMasterId + '&irfId=' + data[i].irfId + '&irfName=' + irfname + '" title="Audio files" class="mdc-fab__icon material-icons">';
                         html += '    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>';
                         html += '  </a> </button>';
+
+                        html += '  <input type="hidden" id="hidcandidatestatus' + data[i].irfId + '" value="' + data[i].irfName + '"/><input type="hidden" id="hiditem' + data[i].irfId + '" value="' + data[i].name + '"/> <button class="mdc-fab app-fab--absolute itemques" aria-label="Add Candidate Status"><span onclick="OpenStatusModalJson(' + data[i].irfId + ',' + data[i].candidateMasterId + ')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span></button>';
+
+                      //  html += '  <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status"> <span onclick="javascript:GetCandidateStatusListJson(' + data[i].irfId + ',' + data[i].candidateMasterId + ');" title="Candidate Status List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg> </span></button>';
+
                     }
 
 
@@ -1191,6 +1395,13 @@
                 }
 
                 html += '  </td>';
+
+                html += ' <td class="text-center">';
+
+                if (data[i].phone != null && data[i].phone != "") {
+                    html += '<input type="hidden" id="hidphone' + data[i].irfId + '" value="' + data[i].phone + '"/><input type="hidden" id="hiditem' + data[i].irfId + '" value="' + data[i].name + '"/><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to place a reeminder call to the candidate." onclick="AutoCallCandidatejson(' + data[i].irfId + ', ' + data[i].candidateMasterId + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-square"></span></span></span>';
+                }
+                html += '</td>';
                 html += '<td>';
                 if (data[i].phone != null && data[i].phone != "") {
 
@@ -1198,6 +1409,7 @@
                     html += '   <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClickjson(' + i + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>';
 
                 }
+
 
                 html += '    </td>';
 
@@ -1214,6 +1426,7 @@
                 html += '  <tr>';
                 html += '   <th>Candidate Name</th>';
                 html += '   <th>Client HR</th>';
+                html += '   <th>Coded Resume</th>';
                 html += '     <th>Type</th>';
                 html += '     <th>Location(Applied for)</th>';
                 //html += '    <th>Skill</th>';
@@ -1247,7 +1460,8 @@
                     }
                 }
                 else {
-                    html += '<td></td>'; }
+                    html += '<td></td>';
+                }
 
 
 
@@ -1257,6 +1471,13 @@
                 }
                 else {
                     html += '    <td></td>';
+                }
+
+                if (data[i].encodedResumeLink != null && data[i].encodedResumeLink != "") {
+                    html += '    <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=' + data[i].encodedResumeLink + '>Coded Resume</a> </td>';
+                }
+                else {
+                    html += '   <td>No Coded Resume</td>';
                 }
                 if (data[i].type == null) {
                     html += ' <td></td>';
@@ -1461,3 +1682,538 @@
 
 
     </script>
+
+    <script>
+        var irfStatusId;//since the property irfId already exists above, hence this name
+        var candidateStatusId;
+        var irfStatusName;
+        var candidateStatusName;
+        var spanStatusModal = document.getElementById("candidateStatusPopUp");
+        // When the user clicks on <span> (x), close the modal
+        spanStatusModal.onclick = function () {
+            var modal = document.getElementById("candidateStatusModal");
+            modal.style.display = "none";
+        }
+
+        function OpenStatusModalJson(irfId, candidateId) {
+            var irfname = $('#hidcandidatestatus' + irfId).val();
+            var itemname = $('#hiditem' + irfId).val();
+            OpenStatusModal(irfId, candidateId, irfname, itemname);
+        }
+
+        function OpenStatusModal(irfId, candidateId, irfName, candidateName) {
+            irfStatusId = irfId;
+            candidateStatusId = candidateId;
+            irfStatusName = irfName;
+            candidateStatusName = candidateName;
+
+            // Get the modal
+            var modal = document.getElementById("candidateStatusModal");
+
+            document.getElementById("candidateStatusHeading").innerHTML = "Add status for " + candidateName;
+
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+
+        }
+
+
+        function SaveCandidateStatus() {
+
+            var comment = document.getElementById("idComments").value;
+            var audio_file = $("#idAudioFile")[0].files[0];
+            var statusValue = document.getElementById("statusDrpDwn").value;
+
+
+            var formdata = new FormData();
+            formdata.append('irfId', irfStatusId);
+            formdata.append('candidateId', candidateStatusId);
+            formdata.append('comment', comment);
+            formdata.append('audio_file', audio_file);
+            formdata.append('status', statusValue);
+            formdata.append('candidateName', candidateStatusName);
+            formdata.append('irfName', irfStatusName);
+
+            $.ajax({
+                type: "POST",
+                url: "/Candidate/AddStatus",
+                contentType: false,
+                processData: false,
+                data: formdata,
+                success: function (data) {
+                    location.reload(true);
+                }
+            });
+        }
+    </script>
+    <script>
+        var closeStatusList = document.getElementById("statusListPopUp");
+        closeStatusList.onclick = function () {
+            var modal = document.getElementById("statusListModal");
+            modal.style.display = "none";
+        }
+        function GetCandidateStatusListJson(irfId, candidateId) {
+
+            var itemname = $('#hiditem' + irfId).val();
+            var irfname = $('hidirfname').val();
+            GetCandidateStatusList(irfId, candidateId, irfname, itemname);
+        }
+
+        function GetCandidateStatusList(irfId, candidateId, irfName, candidateName) {
+            $.ajax({
+                url: '/Candidate/GetCandidateStatusList',
+                data: { 'irfId': irfId, 'candidateId': candidateId, 'irfName': irfName, 'candidateName': candidateName },
+                success: function (data) {
+                    var modal = document.getElementById("statusListModal");
+                    modal.style.display = "block";
+                    var appendText = 'Status list for ' + candidateName;
+                    $('#statusListHeading').html('');
+                    $('#statusListHeading').html(appendText);
+                    $('#statusListTableBody').html('');
+                    $('#statusListTableBody').html(data);
+
+
+                }
+            });
+        }
+
+
+    </script>
+    <script>
+
+        function AutoCallCandidatejson(irfId, candidateId) {
+            var mobile = $("#hidphone" + irfId).val();
+            var itemname = $('#hiditem' + irfId).val();
+            AutoCallCandidate(mobile, irfId, candidateId, itemname);
+
+        }
+        function AutoCallCandidate(phoneNumber, irfId, candidateId, candidateName) {
+
+            swal.fire({
+                title: 'Call ' + candidateName + '?',
+                text: "A system generated schedule call will be placed to the candidate.",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        $.ajax({
+                            url: '/Candidate/AutoCallCandidate',
+                            data: { 'phoneNumber': phoneNumber, 'irfId': irfId, 'candidateId': candidateId },
+                            success: function (result) {
+                                if (result == true) {
+                                    resolve(result)
+
+                                }
+                                else {
+                                    swal.fire("Error calling!", "Please try again", "error");
+
+                                }
+
+                            },
+                            error: function () {
+                                swal.fire("Error calling!", "Please try again", "error");
+                            }
+                        })
+                    })
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Call placed!',
+                        type: 'success',
+                        html: '<p>Successfully completed the schedule call.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    })
+                    //.then(function () {
+                    //    window.location = "/Interviewer/Index";
+                    //})
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Cancelled',
+                        'Cancelled!',
+                        'error'
+                    )
+                }
+            })
+        }
+
+    </script>
+   <script>$("form").on("change", ".file-upload-field", function () {
+           $(this).parent(".file-upload-wrapper").attr("data-text", $(this).val().replace(/.*(\/|\\)/, ''));
+       });</script>
+    @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
+    {
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+
+        <script type="text/javascript">
+            hopscotch.registerHelper('addOverlay', function () {
+                $('body').append('<div class="overlay"></div>');
+            });
+
+            hopscotch.registerHelper('removeOverlay', function () {
+                $('.overlay').fadeOut(function () {
+                    $(this).remove();
+                    $('.helper').remove();
+                });
+            });
+
+            hopscotch.listen('show', function () {
+                var elementObject = $(hopscotch.getCurrTarget(tour));
+                var element = $('#' + elementObject[0].id);
+
+                element.prev().removeClass('overlay-relative');
+                element.addClass('overlay-relative');
+
+                if ($('.helper').length !== 0) {
+
+                    // Use Helper Layer for hilight target element.
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
+
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
+
+                } else {
+
+                    // Add Helper Layer for highlight target element.
+                    var newHelper = '<div class="helper"></div>';
+                    $('body').append(newHelper);
+
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
+
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
+                }
+
+            });
+
+            var tour = {
+                id: "hello-hopscotch",
+                showCloseButton: false,
+                steps: [
+                    {
+                        title: "Candidate",
+                        content: "Detailed view of candidates of a particular irf and click on next button to know its features",
+                        target: "getstatus_1",
+                        placement: "bottom",
+                        showPrevButton: true,
+
+                        highlight: true,
+                        zindex: 999999,
+                        yOffset: 10,
+
+                        onCTA: function () {
+                            hopscotch.showStep(2);
+                            $('#getstatus_1').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onNext: function () {
+                            $('#getstatus_1').removeClass('overlay-relative');
+                            $('.helper').remove();
+
+                        }
+                    },
+
+
+
+
+
+                    {
+                        title: "RB Attempt",
+                        content: "Attempt made by the client to react out to the candidate",
+                        target: "getstatus_2",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#getstatus_2').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_2').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Resume",
+                        content: "Click here to view the resume of the candidate",
+                        target: "getstatus_3",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#getstatus_3').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_3').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                    {
+                        title: "Invite Sent",
+                        content: "Showing the count of invite sent here",
+                        target: "getstatus_4",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#getstatus_4').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_4').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                    {
+                        title: "Confirmation",
+                        content: "Showing the count of confirmation here",
+                        target: "getstatus_5",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#getstatus_5').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_5').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Joinability	",
+                        content: "Showing the count of joinability here",
+                        target: "getstatus_6",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#getstatus_6').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_6').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Selectability",
+                        content: "Showing the count of selectability here",
+                        target: "getstatus_7",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#getstatus_7').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_7').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                    {
+                        title: "Invite Sent",
+                        content: "Click here to send the invite ",
+                        target: "getstatus_8",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#getstatus_8').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_8').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+
+                    {
+                        title: "Cancel Invite",
+                        content: "Click here to cancel the invite ",
+                        target: "getstatus_9",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#getstatus_9').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_9').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Edit",
+                        content: "Click here to edit the candidate detail ",
+                        target: "getstatus_10",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#getstatus_10').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_10').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+                    {
+                        title: "Schedule Call",
+                        content: "Click here to schedule a call for the candidate ",
+                        target: "getstatus_11",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "left",
+                        xOffset: '0',
+
+                        onNext: function () {
+                            $('#getstatus_11').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_11').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Call",
+                        content: "Click here to call the candidate ",
+                        target: "getstatus_12",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "left",
+                        xOffset: '0',
+
+                        onNext: function () {
+                            $('#getstatus_12').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_12').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Back to List",
+                        content: "Click here to go back to Skill Channel Page",
+                        target: "getstatus_13",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "left",
+                        yOffset: -10,
+                        xOffset: 0,
+                        arrowOffset: 'left',
+
+                        onNext: function () {
+                            $('#getstatus_13').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_13').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                    {
+                        title: "Common Pool Menu",
+                        content: "Click on Common Pool menu to see its features",
+                        target: "commonpool_menu",
+                        placement: "top",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 20,
+                        xOffset: 10,
+                        onNext: function () {
+                            $('#commonpool_menu').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#commonpool_menu').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+
+                ],
+                onStart: ["addOverlay"],
+                onEnd: ["removeOverlay"],
+            };
+
+            hopscotch.startTour(tour);
+
+        </script>
+    }
+
+
+
+
+

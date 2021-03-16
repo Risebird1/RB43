@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using OfficeOpenXml;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -81,6 +83,45 @@ namespace Risebird.Web.Controllers
 
                         }
                         var model = _interviewerService.GetInterviewers();
+                        model = model.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); return x; }).ToList();
+                        if (HttpContext.Session.GetString("InterviewerIndexfilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("InterviewerIndexfilters"));
+                            filter.Senioritylevel = filter.Senioritylevel == null ? filter.Senioritylevel = model.Select(x => x.Senioritylevel).ToArray() : filter.Senioritylevel = filter.Senioritylevel;
+                            filter.ProfileType = filter.ProfileType == null ? filter.ProfileType = model.Select(x => x.ProfileType).ToArray() : filter.ProfileType = filter.ProfileType;
+                            filter.CompentencyLevel = filter.CompentencyLevel == null ? filter.CompentencyLevel = model.Select(x => x.CompentencyLevel).ToArray() : filter.CompentencyLevel = filter.CompentencyLevel;
+                            filter.IndianRate = filter.IndianRate == null ? filter.IndianRate = model.Select(x => x.PerHourRateIndia).ToArray() : filter.IndianRate = filter.IndianRate;
+                            filter.OutSideIndiaRate = filter.OutSideIndiaRate == null ? filter.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).ToArray() : filter.OutSideIndiaRate = filter.OutSideIndiaRate;
+                            filter.CompanyType = filter.CompanyType == null ? filter.CompanyType = model.Select(x => x.CompanyType).ToArray() : filter.CompanyType = filter.CompanyType;
+                            filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Domain).ToArray() : filter.Domain = filter.Domain;
+
+                            model = model.Where(c =>
+                               (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
+                              && (filter.ProfileType.Count() > 0 ? filter.ProfileType.Contains(c.ProfileType) : c.ProfileType == null)
+                              && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)
+                               && (filter.IndianRate.Count() > 0 ? filter.IndianRate.Contains(c.PerHourRateIndia) : c.PerHourRateIndia == null)
+                          && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)
+                          && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
+                          && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Domain) : c.Domain == null)).ToList();
+
+                        }
+                        var Senioritylevel = _iRFRepository.GetSenioritylevel();
+                        foreach (var item in model)
+                        {
+                            if (!String.IsNullOrEmpty(item.Senioritylevel))
+                            {
+                                int Seniorityid = Convert.ToInt32(item.Senioritylevel);
+                                item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
+                            }
+                        }
+                        ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
+                        ViewBag.ProfileType = model.Where(x => x.ProfileType != "0").Select(x => x.ProfileType).Distinct();
+                        ViewBag.CompentencyLevel = model.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
+                        ViewBag.IndianRate = model.Select(x => x.PerHourRateIndia).Distinct();
+                        ViewBag.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).Distinct();
+                        ViewBag.CompanyType = model.Select(x => x.CompanyType).Distinct();
+                        ViewBag.Domain = model.Select(x => x.Domain).Distinct();
+
                         if (String.IsNullOrEmpty(searchValue) && Page > 1)
                         {
                             searchValue = Searchvalueprofile;
@@ -140,6 +181,144 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
+        }
+        [HttpPost]
+        public async Task<IActionResult> Index(int? Page, InterviewFilter filter, string searchValue)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
+                    {
+                        if (TempData["MessageInterviewer"] != null)
+                        {
+                            ViewBag.Message = TempData["MessageInterviewer"].ToString();
+                            TempData.Remove("MessageInterviewer");
+
+                        }
+                        var model = _interviewerService.GetInterviewers();
+                        if (filter != null)
+                        {
+                            HttpContext.Session.SetString("InterviewerIndexfilters", JsonConvert.SerializeObject(filter));
+                        }
+                        model = model.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); return x; }).ToList();
+                        filter.Senioritylevel = filter.Senioritylevel == null ? filter.Senioritylevel = model.Select(x => x.Senioritylevel).ToArray() : filter.Senioritylevel = filter.Senioritylevel;
+                        filter.ProfileType = filter.ProfileType == null ? filter.ProfileType = model.Select(x => x.ProfileType).ToArray() : filter.ProfileType = filter.ProfileType;
+                        filter.CompentencyLevel = filter.CompentencyLevel == null ? filter.CompentencyLevel = model.Select(x => x.CompentencyLevel).ToArray() : filter.CompentencyLevel = filter.CompentencyLevel;
+                        filter.IndianRate = filter.IndianRate == null ? filter.IndianRate = model.Select(x => x.PerHourRateIndia).ToArray() : filter.IndianRate = filter.IndianRate;
+                        filter.OutSideIndiaRate = filter.OutSideIndiaRate == null ? filter.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).ToArray() : filter.OutSideIndiaRate = filter.OutSideIndiaRate;
+                        filter.CompanyType = filter.CompanyType == null ? filter.CompanyType = model.Select(x => x.CompanyType).ToArray() : filter.CompanyType = filter.CompanyType;
+                        filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Domain).ToArray() : filter.Domain = filter.Domain;
+
+                        model = model.Where(c =>
+                             (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
+                          && (filter.ProfileType.Count() > 0 ? filter.ProfileType.Contains(c.ProfileType) : c.ProfileType == null)
+                          && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)
+                          && (filter.IndianRate.Count() > 0 ? filter.IndianRate.Contains(c.PerHourRateIndia) : c.PerHourRateIndia == null)
+                          && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)
+                           && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
+                           && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Domain) : c.Domain == null)).ToList();
+
+                        var Senioritylevel = _iRFRepository.GetSenioritylevel();
+                        foreach (var item in model)
+                        {
+                            if (!String.IsNullOrEmpty(item.Senioritylevel))
+                            {
+                                int Seniorityid = Convert.ToInt32(item.Senioritylevel);
+                                item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
+                            }
+                        }
+                        ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
+                        ViewBag.ProfileType = model.Where(x => x.ProfileType != "0").Select(x => x.ProfileType).Distinct();
+                        ViewBag.CompentencyLevel = model.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
+                        ViewBag.IndianRate = model.Select(x => x.PerHourRateIndia).Distinct();
+                        ViewBag.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).Distinct();
+                        ViewBag.CompanyType = model.Select(x => x.CompanyType).Distinct();
+                        ViewBag.Domain = model.Select(x => x.Domain).Distinct();
+
+                        if (String.IsNullOrEmpty(searchValue) && Page > 1)
+                        {
+                            searchValue = Searchvalueprofile;
+                        }
+                        Searchvalueprofile = searchValue;
+
+                        ViewBag.Searchvalue = searchValue;
+                        if (!String.IsNullOrEmpty(searchValue))
+                        {
+                            searchValue = searchValue.ToUpper();
+                            model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+
+                        }
+                        ViewBag.TotalCount = model.Count;
+
+                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                        int a = model.Count / 10;
+                        if (model.Count % 10 == 0)
+                        {
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                        }
+                        else
+                        {
+                            a = a + 1;
+                            if (a == Page)
+                            {
+                                ViewBag.PageEndCount = model.Count;
+                            }
+                            else
+                            {
+                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                            }
+
+                        }
+                        if (model.Count == 0)
+                        {
+                            ViewBag.PageStartCount = 0;
+                            ViewBag.PageEndCount = 0;
+                        }
+                        _modelDetails = model;
+                        return View(model.ToPagedList(Page ?? 1, 10));
+                        // return View(_interviewerService.GetInterviewers());
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+        public async Task<IActionResult> ResetInterviewerIndexFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("InterviewerIndexfilters");
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
         }
 
         [HttpGet]
@@ -392,9 +571,13 @@ namespace Risebird.Web.Controllers
             ViewBag.Years = new SelectList(Enumerable.Range(DateTime.Today.Year - 50, 51).Select(x => new SelectListItem()
             { Text = x.ToString(), Value = x.ToString() }), "Value", "Text");
 
-            //=========Skills============
 
-            model.SkillTypeList = new SelectList(_skillService.GetSkills(), "id", "Name");
+            var Skillset = _skillService.GetSkills();
+            if (Skillset != null)
+            {
+                Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+            }
+            model.SkillTypeList = new SelectList(Skillset, "id", "Name");
 
             var SkillCategory = from SkillCategory s in Enum.GetValues(typeof(SkillCategory))
                                 select new { ID = (int)s, Name = s.GetDescription() };
@@ -455,7 +638,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var result = await  _interviewerService.DeleteInterviewerProfile(UserId);
+                    var result = await _interviewerService.DeleteInterviewerProfile(UserId);
                     return Json(result);
                 }
                 else
@@ -981,7 +1164,28 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         var meetings = _interviewerService.GetOpenInterviewerAssessment(emailid);
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-
+                        foreach (var item in meetings)
+                        {
+                            if (!string.IsNullOrEmpty(item.JDLink))
+                            {
+                                try
+                                {
+                                    item.JDLink = new Uri(item.JDLink, UriKind.Absolute).ToString();
+                                }
+                                catch (Exception)
+                                {
+                                    item.JDLink = "";
+                                }
+                            }
+                            else
+                            {
+                                item.JDLink = "";
+                            }
+                            if (item.HeuristicProfileType.HasValue)
+                            {
+                                item.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)(item.HeuristicProfileType)).GetDescription();
+                            }
+                        }
 
                         if (TempData["SuccessErrorMessageLeadInterviewer"] != null)
                         {
@@ -1041,7 +1245,25 @@ namespace Risebird.Web.Controllers
                             {
                                 item.resumeLink = "";
                             }
-
+                            if (!string.IsNullOrEmpty(item.JDLink))
+                            {
+                                try
+                                {
+                                    item.JDLink = new Uri(item.JDLink, UriKind.Absolute).ToString();
+                                }
+                                catch (Exception)
+                                {
+                                    item.JDLink = "";
+                                }
+                            }
+                            else
+                            {
+                                item.JDLink = "";
+                            }
+                            if (item.HeuristicProfileType.HasValue)
+                            {
+                                item.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)(item.HeuristicProfileType)).GetDescription();
+                            }
                             if (item.InterviewStatus.HasValue)
                             {
                                 item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
@@ -1118,6 +1340,174 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public FileContentResult MyAssessmentsExportToExcel()
+        {
+            string userEmailId = string.Empty;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Interviews");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Interviewer_MyAssessments" + ".xlsx";
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var myInterviews = _interviewerService.GetAssignedInterviewerAssessment(emailid);
+                myInterviews = myInterviews.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                foreach (var item in myInterviews)
+                {
+                    if (!string.IsNullOrEmpty(item.resumeLink))
+                    {
+                        try
+                        {
+                            item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
+                        }
+                        catch (Exception)
+                        {
+                            item.resumeLink = "";
+                        }
+                    }
+                    else
+                    {
+                        item.resumeLink = "";
+                    }
+                    if (!string.IsNullOrEmpty(item.JDLink))
+                    {
+                        try
+                        {
+                            item.JDLink = new Uri(item.JDLink, UriKind.Absolute).ToString();
+                        }
+                        catch (Exception)
+                        {
+                            item.JDLink = "";
+                        }
+                    }
+                    else
+                    {
+                        item.JDLink = "";
+                    }
+                    if (item.HeuristicProfileType.HasValue)
+                    {
+                        item.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)(item.HeuristicProfileType)).GetDescription();
+                    }
+                    if (item.InterviewStatus.HasValue)
+                    {
+                        item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                    }
+                    if (item.MeetingStatus.HasValue)
+                    {
+                        item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
+
+                    }
+                }
+
+                Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:Z1"].Style.WrapText = true;
+                //Sheet.Column(1).Width = 30;
+                //Sheet.Column(2).Width = 30;
+                int startColumn = 1; int endColumn = 15;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 40;
+                }
+                Sheet.Cells[1, 1].Value = "Discussion Date";
+                Sheet.Cells[1, 2].Value = "Slot";
+                Sheet.Cells[1, 3].Value = "Duration";
+                Sheet.Cells[1, 4].Value = "Zoom Id";
+                Sheet.Cells[1, 5].Value = "Coded Name";
+                Sheet.Cells[1, 6].Value = "Resume";
+                Sheet.Cells[1, 7].Value = "Primary Skill";
+                Sheet.Cells[1, 8].Value = "Profile type";
+                Sheet.Cells[1, 9].Value = "JD Link";
+                Sheet.Cells[1, 10].Value = "Risebird HR";
+                Sheet.Cells[1, 11].Value = "Meeting Status";
+                Sheet.Cells[1, 12].Value = "Interview Status";
+                
+
+
+                //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
+                int i = 2;
+                //string LastAction = null; ;
+
+                if (myInterviews.Count() > 0)
+                {
+                    foreach (var item in myInterviews)
+                    {
+                        Sheet.Cells[i, 1].Value = item.interviewDate.ToString("MM/dd/yyyy HH:mm");
+                        Sheet.Cells[i, 2].Value = item.interviewSlot != null ? item.interviewSlot : string.Empty;
+                        Sheet.Cells[i, 3].Value = item.interviewDuration != null ? item.interviewDuration : string.Empty;
+                        //Sheet.Cells[i, 4].Value = item.NickName;
+                        Sheet.Cells[i, 4].Value = item.ZoomId != null ? item.ZoomId : string.Empty;
+                        Sheet.Cells[i, 5].Value = item.NickName != null ? item.NickName : string.Empty;
+
+                        if (!string.IsNullOrEmpty(item.resumeLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 6].Hyperlink = new Uri(item.resumeLink.Replace(" ", "%20"), UriKind.Absolute);
+                                Sheet.Cells[i, 6].Value = "Resume";
+                                Sheet.Cells[i, 6].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 6].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 6].Value = "No Resume";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 6].Value = "No Resume";
+                        }
+
+                        //Sheet.Cells[i, 6].Value = item.interviewer != null ? item.interviewer : string.Empty;
+                        Sheet.Cells[i, 7].Value = item.PrimarySkill != null ? item.PrimarySkill : string.Empty;
+                        Sheet.Cells[i, 8].Value = item.HeuristicProfileTypeDesc != null ? item.HeuristicProfileTypeDesc : string.Empty;
+
+                        if (!string.IsNullOrEmpty(item.JDLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 9].Hyperlink = new Uri(item.JDLink.Replace(" ", "%20"), UriKind.Absolute);
+                                Sheet.Cells[i, 9].Value = "JD Link";
+                                Sheet.Cells[i, 9].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 9].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 9].Value = string.Empty;
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 9].Value = string.Empty;
+                        }
+
+                        Sheet.Cells[i, 10].Value = item.HRCoordinatorEmailId != null ? item.HRCoordinatorEmailId : string.Empty;
+                        Sheet.Cells[i, 11].Value = item.MeetingStatusDesc != null ? item.MeetingStatusDesc : string.Empty;
+                        Sheet.Cells[i, 12].Value = item.InterviewStatusDesc != null ? item.InterviewStatusDesc : string.Empty;
+
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+
         }
 
         [Authorize]
@@ -1355,9 +1745,17 @@ namespace Risebird.Web.Controllers
             var CompanySizeTypes = from CompanySize s in Enum.GetValues(typeof(CompanySize))
                                    select new { ID = (int)s, Name = s.GetDescription() };
             model.CompanySizeList = new SelectList(CompanySizeTypes, "ID", "Name");
-            var Country = from Country s in Enum.GetValues(typeof(Country))
+            //var Country = from Country s in Enum.GetValues(typeof(Country))
+            //              select new { ID = (int)s, Name = s.GetDescription() };
+            var Country = from WorkCountry s in Enum.GetValues(typeof(WorkCountry))
                           select new { ID = (int)s, Name = s.GetDescription() };
             model.CountryList = new SelectList(Country, "ID", "Name");
+            var IndiaPrice = from IndiaPrice s in Enum.GetValues(typeof(IndiaPrice))
+                             select new { ID = (int)s, Name = s.GetDescription() };
+            model.IndianPrice = new SelectList(IndiaPrice, "ID", "Name");
+            var OutSideIndiaPrice = from OutSideIndiaPrice s in Enum.GetValues(typeof(OutSideIndiaPrice))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            model.OutSideIndiaPrice = new SelectList(OutSideIndiaPrice, "ID", "Name");
             //model.QuestionsList = new SelectList(_interviewerService.GetTechSkillComments(irfId), "Comment", "Comment");
 
             model.SkillQualityList = new SelectList(_iRFRepository.GetSkillQuality(), "Id", "Name");
@@ -1370,6 +1768,12 @@ namespace Risebird.Web.Controllers
             model.BehavioralScoreList = new SelectList(_iRFRepository.GetBehavioralScore(), "Id", "Name");
             model.InterviwerCommunicationList = new SelectList(_iRFRepository.GetInterviwerCommunication(), "Id", "Name");
             model.InterviewexperienceList = new SelectList(_iRFRepository.GetInterviewexperience(), "Id", "Name");
+            var dominlist = _iRFRepository.GetDomainList();
+            if (dominlist != null)
+            {
+                dominlist = dominlist.OrderBy(x => x.Name);
+            }
+            model.DomainList = new SelectList(dominlist, "Name", "Name");
 
             model.CompanyStageList = new SelectList(_iRFRepository.GetCompanyStage(), "Id", "Name");
             var skillCategories = _iRFRepository.GetSkillCategory();
@@ -1728,8 +2132,85 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        public async Task<IActionResult> InterviewerRecommendation(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR")
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    //Fetch Assessment
+                    var model = await _interviewerService.GetInterviewerRecommendationDetails(id);
+                    if (model == null)
+                    {
+                        model = new InterviewReport();
+                        model.Userid = id;
+                    }
+                    if (!string.IsNullOrEmpty(model.SkillCategory))
+                    {
+                        model.SkillCategoryArray = model.SkillCategory.Split(',');
+                    }
+                    GetStatusList(model);
+                    ViewBag.indexid = id;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
 
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> InterviewerRecommendation(InterviewReport model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    model.UserDetails = emailid;
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (_interviewerService.InterviewerRecommendation(model).Result)
+                        {
+                            TempData["MessageInterviewer"] = "Recommendation saved Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["MessageInterviewer"] = "Recommendation was not saved.";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["MessageInterviewer"] = "Recommendation was not saved.";
+                return RedirectToAction("Index");
+            }
+        }
     }
 
 

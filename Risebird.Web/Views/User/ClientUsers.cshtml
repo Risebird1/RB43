@@ -86,34 +86,46 @@
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                    <tr id=@item.id>
-                                        <td hidden>@item.id</td>
-                                        <td hidden>@item.idProfile</td>
-                                        <td>@item.FirstName</td>
-                                        <td>@item.LastName</td>
-                                        <td>@item.EmailId</td>
-                                        <td>@item.ClientName</td>
-                                        <td>@item.Role</td>
-                                        <td>@item.MobileNumber</td>
-                                        <td>@item.UserPassword</td>
-                                        <td class="text-center">
+                                        <tr id=@item.id>
+                                            <td hidden>@item.id</td>
+                                            <td hidden>@item.idProfile</td>
+                                            <td>@item.FirstName</td>
+                                            <td>@item.LastName</td>
+                                            <td>@item.EmailId</td>
+                                            <td>@item.ClientName</td>
+                                            <td>@item.Role</td>
+                                            <td>@item.MobileNumber</td>
+                                            <td>
+                                                <div style="position:relative">
+                                                    <div class="secret-pass passshow" id="password-field_@item.id" type="password">@item.UserPassword</div>
+                                                    @if (item.UserPassword != null && item.UserPassword != "")
+                                                    {<span class="secret" id="secret_@item.id" style="top:0px;">********</span>
+                                                        <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
+                                                    }
+                                                    else
+                                                    { <span toggle="#password-field_@item.id" class=" toggle-password" id="toggle-password_@item.id"></span>}
+                                                </div>
 
-                                            <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit client user">
-                                                <span onclick="location.href = '@Url.Action("EditClientUser", "User", new { id = item.id})'" title="Click here to edit client user" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                            </button>
+
+                                            </td>
+                                            <td class="text-center">
+
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit client user">
+                                                    <span onclick="location.href = '@Url.Action("EditClientUser", "User", new { id = item.id})'" title="Click here to edit client user" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                </button>
 
 
 
-                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client user">
-                                                <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                            </button>
+                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client user">
+                                                    <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                </button>
 
-                                            <button class="mdc-fab app-fab--absolute " aria-label="Click here to reset your navigation history">
-                                                <span onclick="javascript:ResetNavigation('@item.UserId','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
-                                            </button>
+                                                <button class="mdc-fab app-fab--absolute " aria-label="Click here to reset your navigation history">
+                                                    <span onclick="javascript:ResetNavigation('@item.UserId','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
+                                                </button>
 
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
                                     }
                                 </tbody>
                             </table>
@@ -132,53 +144,28 @@
 
 </div>
 
-
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
-
+        $(document).ready(function () {
+            my_code();
+        });
         function my_code() {
             var msg = '@ViewBag.Message';
-
-
-
             if (msg.includes("Success")) {
-                swal({
-                    title: 'Successful',
-                    text: '@ViewBag.Message',
-                    type: 'success',
-                    showConfirmButton: true
-
-                },
-                    function (value) //confirm
-                    {
-                        //if Yes do this
-                        window.location.href = '/User/ClientUsers';
-                    }
-                )
-
+                swal.fire("Successful",'@ViewBag.Message', "success");
             }
             else {
-                swal({
-                    title: 'Failed',
-                    text: '@ViewBag.Message',
-                    type: 'error',
-                    showConfirmButton: true
-
-                },
-                    function ()
-                    {
-                        window.location.href = '/User/ClientUsers';
-                    }
-                )
+                swal.fire("Failed", '@ViewBag.Message', "error");
             }
 
         }
 
-        window.onload = my_code();
+        //window.onload = my_code();
     </script>
-
 }
+
+
 
 
 
@@ -311,7 +298,7 @@
                 return new Promise(function (resolve, reject) {
                     $.ajax({
                         url: '/User/ResetNavigation',
-                        data: { 'userId': userId},
+                        data: { 'userId': userId },
                         type: 'get',
                         success: function (result) {
                             if (result == true) {
@@ -380,3 +367,31 @@
     };
     //// script for loader ends here
 </script>
+
+
+<script>
+
+    function showhidepass(id) {
+        var value = document.getElementById("password-field_" + id);
+        if (value.getAttribute("type") == "text") {
+            value.setAttribute("type", "password");
+            $("#secret_" + id).show();
+            $("#password-field_" + id).addClass('passshow');
+
+            $("#toggle-password_" + id).removeClass("fa-eye-slash");
+        }
+        else {
+            value.setAttribute("type", "text");
+            $("#password-field_" + id).removeClass('passshow');
+            $("#toggle-password_" + id).addClass("fa-eye-slash");
+            $("#secret_" + id).hide();
+
+        }
+
+    }
+
+
+
+
+</script>
+

@@ -40,10 +40,13 @@
                     <h4 class="card-title col-md-12">Select interviewers for <strong>'@Model.ISCName'</strong></h4>
 
                 </div>
+                <div class="pull-right">
+                    @Html.ActionLink("Back to List", "Index", "InterviewerSkills", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                             
+                            </div>
 
-
+                </div>
             </div>
-        </div>
     </div>
     <div class="content client">
         <div class="row bl-bg">
@@ -61,7 +64,7 @@
                                 <div id="tableID">
                                     @if (Model.UnApprovedInterviewersCollection == null || Model.UnApprovedInterviewersCollection.Count() == 0)
                                     {
-                                        <p style="text-align:center; font-size:20px"> Interviewers with the matching skills unavailable.</p>
+                                        <p style="text-align:center; font-size:20px"> Interviewers with the matching Assessment group unavailable.</p>
                                     }
                                     else
                                     {
@@ -83,7 +86,7 @@
                                                         <tr>
                                                             <th>Name</th>
                                                             <th>EmailId</th>
-                                                            <th>Skills</th>
+                                                            <th>Assessment Group</th>
                                                             <th>Resume</th>
                                                             <th>Add</th>
                                                         </tr>
@@ -96,17 +99,17 @@
                                                             <tr>
                                                                 <td>@Model.UnApprovedInterviewersCollection[i].FirstName</td>
                                                                 <td>@Model.UnApprovedInterviewersCollection[i].EmailId</td>
-                                                                @if (Model.UnApprovedInterviewersCollection[i].SkillName.Length > 30)
+                                                                @if (Model.UnApprovedInterviewersCollection[i].AssessmentGroupName.Length > 30)
                                                                 {
-                                                            <td class="video-title" title="@Model.UnApprovedInterviewersCollection[i].SkillName">
+                                                                    <td class="video-title" title="@Model.UnApprovedInterviewersCollection[i].AssessmentGroupName">
 
 
-                                                                <a onclick="" data-tooltip="@Model.UnApprovedInterviewersCollection[i].SkillName">  @Model.UnApprovedInterviewersCollection[i].SkillName.Substring(0, 30) ...</a>
-                                                            </td>
+                                                                        <a onclick="" data-tooltip="@Model.UnApprovedInterviewersCollection[i].AssessmentGroupName">  @Model.UnApprovedInterviewersCollection[i].AssessmentGroupName.Substring(0, 30) ...</a>
+                                                                    </td>
                                                                 }
                                                                 else
                                                                 {
-                                                                    <td>@Model.UnApprovedInterviewersCollection[i].SkillName</td>
+                                                                    <td>@Model.UnApprovedInterviewersCollection[i].AssessmentGroupName</td>
                                                                 }
                                                                 @if (Model.UnApprovedInterviewersCollection[i].ResumeLink != null && Model.UnApprovedInterviewersCollection[i].ResumeLink != "")
                                                                 {

@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Risebird.Business.Interface;
+using Twilio.AspNet.Core;
+using Twilio.TwiML;
+
+namespace Risebird.Web.Controllers
+{
+    public class TwilioVoiceController : TwilioController
+    {
+        private readonly IIRFService _irfService;
+
+        public TwilioVoiceController(IIRFService irfService)
+        {
+            _irfService = irfService;
+        }
+        
+        [HttpPost]
+        public TwiMLResult Index(string irfId)
+        {
+            var irfDetails = _irfService.GetIRFForCall(Convert.ToInt32(irfId)).Result;
+            var response = new VoiceResponse();
+            var client = irfDetails.ClientCompName;
+            var primarySkill = irfDetails.JDTiltle.Split("|")[0];
+            var message = string.Format("Dear Candidate! Greetings from RiseBird. This is a gentle reminder on behalf of {0} for you to schedule your interview for {1}.",
+                         client, primarySkill);
+            response.Say(message);
+            return TwiML(response);
+        }
+    }
+}

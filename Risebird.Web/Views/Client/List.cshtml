@@ -94,72 +94,72 @@
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                    <tr id=@item.id>
-                                        <td hidden>@item.id</td>
-                                        <td>@item.Name</td>
-                                        <td>@item.Description</td>
-                                        <td>@item.GST</td>
-                                        <td style="white-space:normal;">@item.OfficeAddress</td>
-                                        <td>@item.Balance</td>
-                                        @if (item.LogoLink != null && item.LogoLink != "")
-                                        {
-                                            <td>
+                                        <tr id=@item.id>
+                                            <td hidden>@item.id</td>
+                                            <td>@item.Name</td>
+                                            <td>@item.Description</td>
+                                            <td>@item.GST</td>
+                                            <td style="white-space:normal;">@item.OfficeAddress</td>
+                                            <td>@item.Balance</td>
+                                            @if (item.LogoLink != null && item.LogoLink != "")
+                                            {
+                                                <td>
 
-                                                <a target="_blank" title="Logo" href=@item.LogoLink>Logo</a>
+                                                    <a target="_blank" title="Logo" href=@item.LogoLink>Logo</a>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>No Logo</td>
+                                            }
+
+                                            @if (item.CompanyLink != null && item.CompanyLink != "")
+                                            {
+                                                <td>
+
+                                                    <a target="_blank" title="Company URL" href=@item.CompanyLink>Company URL</a>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>No URL</td>
+                                            }
+
+                                            @if (item.CompanyVideoLink != null && item.CompanyVideoLink != "")
+                                            {
+                                                <td>
+
+                                                    <a target="_blank" title="Company Video URL(GIF)" href=@item.CompanyVideoLink>Video URL(GIF)</a>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>No Video(GIF)</td>
+                                            }
+
+                                            <td class="text-right" style="padding-right:30px;">
+
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
+                                                    <span onclick="OpenAddpointmodel(@item.id)" title="Add Points" class="fa fa-plus-circle"></span>
+                                                </button>
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Deduct Points">
+                                                    <span onclick="OpenDeductpointmodel(@item.id)" title="Deduct Points" class="fa fa-minus-circle"></span>
+                                                </button>
+
+                                                <button class="mdc-fab app-fab--absolute" aria-label="View Details">
+                                                    <span onclick="location.href = '@Url.Action("ClientDetails", "RisebirdPay", new { id = item.id})'" title="View Details" class="fa fa-fw fa-eye"></span>
+                                                </button>
+
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit client user">
+                                                    <span onclick="location.href = '@Url.Action("EditClient", "Client", new { id = item.id})'" title="Click here to edit client" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                </button>
+                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client">
+                                                    <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                </button>
+
+
                                             </td>
-                                        }
-                                        else
-                                        {
-                                            <td>No Logo</td>
-                                        }
-
-                                        @if (item.CompanyLink != null && item.CompanyLink != "")
-                                        {
-                                            <td>
-
-                                                <a target="_blank" title="Company URL" href=@item.CompanyLink>Company URL</a>
-                                            </td>
-                                        }
-                                        else
-                                        {
-                                            <td>No URL</td>
-                                        }
-
-                                        @if (item.CompanyVideoLink != null && item.CompanyVideoLink != "")
-                                        {
-                                            <td>
-
-                                                <a target="_blank" title="Company Video URL(GIF)" href=@item.CompanyVideoLink>Video URL(GIF)</a>
-                                            </td>
-                                        }
-                                        else
-                                        {
-                                            <td>No Video(GIF)</td>
-                                        }
-
-                                        <td class="text-right" style="padding-right:30px;">
-
-                                            <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
-                                                <span onclick="OpenAddpointmodel(@item.id)" title="Add Points" class="fa fa-plus-circle"></span>
-                                            </button>
-                                            <button class="mdc-fab app-fab--absolute" aria-label="Deduct Points">
-                                                <span onclick="OpenDeductpointmodel(@item.id)" title="Deduct Points" class="fa fa-minus-circle"></span>
-                                            </button>
-
-                                            <button class="mdc-fab app-fab--absolute" aria-label="View Details">
-                                                <span onclick="location.href = '@Url.Action("ClientDetails", "RisebirdPay", new { id = item.id})'" title="View Details" class="fa fa-fw fa-eye"></span>
-                                            </button>
-
-                                            <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit client user">
-                                                <span onclick="location.href = '@Url.Action("EditClient", "Client", new { id = item.id})'" title="Click here to edit client" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                            </button>
-                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client">
-                                                <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                            </button>
-
-
-                                        </td>
-                                    </tr>
+                                        </tr>
                                     }
                                 </tbody>
                             </table>
@@ -263,55 +263,30 @@
 
 
 
+
+
+
+
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
-
+        $(document).ready(function () {
+            my_code();
+        });
         function my_code() {
             var msg = '@ViewBag.Message';
-
-
-
             if (msg.includes("Success")) {
-                swal({
-                    title: 'Successful',
-                    text: '@ViewBag.Message',
-                    type: 'success',
-                    showConfirmButton: true
-
-                },
-                    function (value) //confirm
-                    {
-                        //if Yes do this
-                        window.location.href = '/Client/List';
-                    }
-                )
-
+                swal.fire("Successful",'@ViewBag.Message', "success");
             }
             else {
-                swal({
-                    title: 'Failed',
-                    text: '@ViewBag.Message',
-                    type: 'error',
-                    showConfirmButton: true
-
-                },
-                    function ()
-                    {
-                        window.location.href = '/Client/List';
-                    }
-                )
+                swal.fire("Failed", '@ViewBag.Message', "error");
             }
 
         }
 
-        window.onload = my_code();
+        //window.onload = my_code();
     </script>
-
 }
-
-
-
 <script>
 
     function RefreshSearch() {

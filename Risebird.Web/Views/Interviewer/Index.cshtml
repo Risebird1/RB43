@@ -2,10 +2,37 @@
 
 @model X.PagedList.IPagedList<Risebird.Entities.ViewModel.InterviewerProfileVM>
 @using X.PagedList.Mvc.Core;
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Interviewers";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string[] AssessmentGroups = new string[] { };
+    string[] Senioritylevel = new string[] { };
+    string[] ProfileType = new string[] { };
+    string[] CompentencyLevel = new string[] { };
+    string[] IndianRate = new string[] { };
+    string[] OutSideIndiaRate = new string[] { };
+    string[] CompanyType = new string[] { };
+    string[] Domain = new string[] { };
 }
+@if (HttpContextAccessor.HttpContext.Session.GetString("InterviewerIndexfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("InterviewerIndexfilters"));
+    AssessmentGroups = filter.AssessmentGroup != null ? filter.AssessmentGroup : new string[] { };
+    Senioritylevel = filter.Senioritylevel != null ? filter.Senioritylevel : new string[] { };
+    ProfileType = filter.ProfileType != null ? filter.ProfileType : new string[] { };
+    CompentencyLevel = filter.CompentencyLevel != null ? filter.CompentencyLevel : new string[] { };
+    IndianRate = filter.IndianRate != null ? filter.IndianRate : new string[] { };
+    OutSideIndiaRate = filter.OutSideIndiaRate != null ? filter.OutSideIndiaRate : new string[] { };
+    CompanyType = filter.CompanyType != null ? filter.CompanyType : new string[] { };
+    Domain = filter.Domain != null ? filter.Domain : new string[] { };
+
+}
+
 <link href="~/Newassets/css/interviewer.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <div class="main-panel" id="main-panel">
@@ -36,7 +63,11 @@
                 </div>
 
                 <div class="pull-right client-ms">
+                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-toggle="modal" data-target="#filterModal">
 
+                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                        <div class="mdc-button__ripple"></div>
+                    </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                         <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Interviewer" onclick="location.href='@Url.Action("AddInterviewerProfile","Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Add Interviewer</font></span>
                     </button>
@@ -72,6 +103,182 @@
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
+                            <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <form action="@Url.Action("Index","Interviewer")" method="post" id="form">
+
+                                            <div class="modal-body">
+                                                <div class="row">
+
+
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Senioritylevel">
+                                                                Seniority level
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="Senioritylevel" name="Senioritylevel" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.Senioritylevel)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ProfileType">Profile Type</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="ProfileType" name="ProfileType" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.ProfileType)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CompentencyLevel">Compentency Level</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="CompentencyLevel" name="CompentencyLevel" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.CompentencyLevel)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="IndianRate">India Price</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="IndianRate" name="IndianRate" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.IndianRate)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="OutSideIndiaRate">Out Side India Price</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="OutSideIndiaRate" name="OutSideIndiaRate" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.OutSideIndiaRate)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType">Company Type</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="CompanyType" name="CompanyType" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.CompanyType)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Domain">Domain</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="Domain" name="Domain" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.Domain)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-12 col-sm-12">
+
+
+                                                        <div>
+                                                            <div class="col-md-12 col-sm-12 mc-button-area text-right">
+
+                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4  reset-filter">
+                                                                    Reset Filter
+                                                                </button>
+
+                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
+                                                                    Apply Filter
+                                                                </button>
+                                                            </div>
+
+                                                        </div>
+
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+
                             <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
                                 <div class="col-md-12">
                                     <div class="table-responsive">
@@ -248,7 +455,13 @@
 
 
                                                         <td class="text-right action">
-
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Recommendation">
+                                                                <span onclick="location.href = '@Url.Action("InterviewerRecommendation", "Interviewer", new {  id = item.UserId })'" title="Recommendation" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" style="top: -1px;position: relative;">
+                                                                        <path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"></path>
+                                                                    </svg>
+                                                                </span>
+                                                            </button>
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Interviewer Profile">
                                                                 <span onclick="location.href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId})'" title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                             </button>
@@ -257,12 +470,20 @@
                                                                 <span onclick="location.href = '@Url.Action("IndexEmployer", "Interviewer", new { id = item.id})'" title="Click here to add Interviewer Employer Details" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M10 8c1.66 0 2.99-1.34 2.99-3S11.66 2 10 2 7 3.34 7 5s1.34 3 3 3zm-6 2V8h2V6H4V4H2v2H0v2h2v2h2zm6 0c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></span>
                                                             </button>
 
+                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                            {
+                                                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.FirstName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone"></span></span></span>
+
+                                                            }
+
 
 
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete Interviewer Profile">
                                                                 <span onclick="javascript:DeleteEntityfromEnvironment('@item.UserId','@item.FirstName');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
                                                             </button>
-
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Assessments">
+                                                                <span onclick="location.href = '@Url.Action("AssessmentForApproval", "Interviewer", new { EmailAddress = item.EmailId , id = item.id })'" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></span>
+                                                            </button>
 
                                                         </td>
                                                     </tr>
@@ -396,6 +617,49 @@
                 <!--  end card  -->
             </div>
             <!-- end col-md-12 -->
+
+
+            <div id="myCallModal" class="modal modal-wrap modal-bg">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+
+
+
+
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon">
+
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                                </span>
+                            </div>
+                            <h5 class="modal-title pull-left"> Call Interviewer!</h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
+
+
+
+
+                        <div class="modal-body">
+
+                            <h5 class="modal-title text-center" id="callingLabel"></h5>
+
+                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+
+
         </div>
         <!-- end row -->
     </div>
@@ -403,53 +667,26 @@
 </div>
 
 
-
 @if (ViewBag.Message != null)
 {
-    <script type="text/javascript">
-
+<script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
         function my_code() {
             var msg = '@ViewBag.Message';
-
-
-
             if (msg.includes("Success")) {
-                swal({
-                    title: 'Successful',
-                    text: '@ViewBag.Message',
-                    type: 'success',
-                    showConfirmButton: true
-
-                },
-                    function (value) //confirm
-                    {
-                        //if Yes do this
-                        window.location.href = '/Interviewer/Index';
-                    }
-                )
-
+                swal.fire("Successful",'@ViewBag.Message', "success");
             }
             else {
-                swal({
-                    title: 'Failed',
-                    text: '@ViewBag.Message',
-                    type: 'error',
-                    showConfirmButton: true
-
-                },
-                    function ()
-                    {
-                        window.location.href = '/Interviewer/Index';
-                    }
-                )
+                swal.fire("Failed", '@ViewBag.Message', "error");
             }
 
         }
 
-        window.onload = my_code();
-    </script>
+        //window.onload = my_code();
+</script>}
 
-}
 
 
 <script>
@@ -714,14 +951,37 @@
 
             html += '  <td><a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink.replace(" ", "%20") + '>Resume</a></td>';
             html += '   <td class="text-center action">';
+            html += '  <button class="mdc-fab app-fab--absolute" aria-label="Recommendation">';
+            html += '   <a href="/Interviewer/InterviewerRecommendation/'+data[i].userId +'" title="Recommendation" class="mdc-fab__icon material-icons">';
+            html += '  <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" style="top: -1px;position: relative;"><path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"></path>';
+            html += '  </svg>';
+            html += '  </a>';
+            html += '  </button>';
             html += ' <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Interviewer Profile">';
             html += ' <a href = "/Interviewer/EditInterviewerProfile/?userId=' + data[i].userId + '" title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></a>';
             html += '  </button>';
             html += '  <button class="mdc-fab app-fab--absolute" aria-label="Click here to add Interviewer Employer Details">';
             html += ' <a href = "/Interviewer/IndexEmployer?id= ' + data[i].id + '" title="Click here to add Interviewer Employer Details" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M10 8c1.66 0 2.99-1.34 2.99-3S11.66 2 10 2 7 3.34 7 5s1.34 3 3 3zm-6 2V8h2V6H4V4H2v2H0v2h2v2h2zm6 0c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></a>';
             html += '  </button>';
+                @*if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
+  {
+                        html += '  <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.FirstName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span class="mdc-fab app-fab--absolute" style="top: -3px;"><span class="fa fa-phone"></span></span></span>';
+
+}*@
+
+            if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
+                html += '<input type="hidden" id="hidmobile' + data[i].userId + '" value="' + data[i].mobileNumber + '"/><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClickjson(' + data[i].userId + ')" data-original-title="Tooltip on top"><span class="mdc-fab app-fab--absolute" style="top:-3px;left:1px;"><span class="fa fa-phone"></span></span></span>';
+            }
+
+
+
             html += ' <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">';
             html += '  <span onclick="javascript:DeleteEntityfromEnvironmentJson(' + data[i].userId + ');" title="Click here to delete Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>';
+            html += ' </button>';
+
+
+            html += ' <button class="mdc-fab app-fab--absolute" aria-label="Assessments">';
+            html += '<a href = "/Interviewer/AssessmentForApproval/' + data[i].id + '?EmailAddress=' + data[i].emailId+'" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></a>';
             html += ' </button>';
             html += '</td>';
             html += '  </tr>';
@@ -768,7 +1028,11 @@
             html += ' <td>' + data[i].city + '</td>';
             html += ' <td >' + data[i].currentRole + '</td>';
             html += ' <td>' + data[i].experience + '</td>';
-            html += ' <td>' + data[i].preferredDomain + '</td>';
+            if (data[i].preferredDomain != "" && data[i].preferredDomain != null) {
+                html += ' <td>' + data[i].preferredDomain + '</td>';
+            } else {
+                html += ' <td></td>';
+            }
             if (data[i].gitHubLink != null && data[i].gitHubLink != "") {
                 html += '<td><a id="githubId" target="_blank" title="Github" href=' + data[i].gitHubLink + '>Github</a> </td>';
 
@@ -863,5 +1127,229 @@
             $('#read_' + id).val('Readmore');
         }
     }
+
+</script>
+<script>
+    var interviewer = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
+
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+
+    });
+
+    function callInterviewer(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+    });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected!";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+
+    });
+
+    function CallButtonClickjson(userId) {
+        var interviewer = $("#hidfirstname" + userId).val();
+        var mobile = $("#hidmobile" + userId).val();
+
+        // Get the modal
+        CallButtonClick(interviewer, mobile);
+
+    }
+    function CallButtonClick(name, phoneNumber) {
+        interviewer = name;
+        // Get the modal
+        var modal = document.getElementById("myCallModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + interviewer + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callInterviewer(phoneNumber);
+
+    }
+
+    function CallButtonClickjson(userId) {
+        var interviewer = $("#hidfirstname" + userId).val();
+        var mobile = $("#hidmobile" + userId).val();
+
+        // Get the modal
+        CallButtonClick(interviewer, mobile);
+
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+
+
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
+        $("#AssessmentGroup").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#RFID").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+
+        });
+
+        $("#Senioritylevel").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+
+        });
+
+        $("#ConfirmationStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+
+        });
+
+        $("#MeetingStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+
+         });
+
+        $("#InterviewStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+
+        });
+
+
+        $("#CandidateName").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#ProfileType").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#CompentencyLevel").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#IndianRate").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#OutSideIndiaRate").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#CompanyType").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#Domain").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#IsIntrested").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#CandidateAvailable").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+
+
+    });
+
+    function ResetFilter() {
+
+        window.location.href = "/Interviewer/ResetInterviewerIndexFilter";
+    }
+
+    function ApplySessionFilter() {
+        var AssessmentGrouparr = @Html.Raw(Json.Serialize(AssessmentGroups));
+        var Senioritylevel =  @Html.Raw(Json.Serialize(Senioritylevel));
+        var compentencyLevel = @Html.Raw(Json.Serialize(CompentencyLevel));
+        var profileType =  @Html.Raw(Json.Serialize(ProfileType));
+        var indianRate =  @Html.Raw(Json.Serialize(IndianRate));
+        var outSideIndiaRate =  @Html.Raw(Json.Serialize(OutSideIndiaRate));
+        var companyType =  @Html.Raw(Json.Serialize(CompanyType));
+        var domain =  @Html.Raw(Json.Serialize(Domain));
+
+
+        $("#AssessmentGroup").val(AssessmentGrouparr);
+        $("#Senioritylevel").val(Senioritylevel);
+        $("#CompentencyLevel").val(compentencyLevel);
+        $("#ProfileType").val(profileType);
+        $("#IndianRate").val(indianRate);
+        $("#OutSideIndiaRate").val(outSideIndiaRate);
+        $("#CompanyType").val(companyType);
+        $("#Domain").val(domain);
+    }
+
 
 </script>

@@ -281,12 +281,14 @@
                                                                                 @Html.HiddenFor(model => model.IreportModel.OverallInterviewingAbilityScore)
                                                                                 <ul class="nav nav-pills nav-pills-primary tabs">
                                                                                     <li class="nav-link active item1" rel="link1">Summary</li>
+                                                                                    <li class="nav-link item8" rel="link8"> Recommendation  </li>
                                                                                     <li class="nav-link item2" rel="link2">Interviewer Details</li>
                                                                                     <li class="nav-link item3" rel="link3"> Tech Skill Report</li>
                                                                                     <li class="nav-link item4" rel="link4"> Interviewing Strategy </li>
                                                                                     <li class="nav-link item5" rel="link5"> Profile Score </li>
-                                                                                    <li class="nav-link item6" rel="link6"> Interviewing ability </li>
+                                                                                    <li class="nav-link item6" rel="link6"> Interviewing Ability </li>
                                                                                     <li class="nav-link item7" rel="link7"> Personality Score  </li>
+
                                                                                 </ul>
                                                                                 <hr />
                                                                                 <div class="tab_container tab-space">
@@ -353,14 +355,14 @@
                                                                                         </div>
                                                                                     </div>
                                                                                     <!-- #tab1 -->
-                                                                                    <h3 class="tab_drawer_heading" rel="link2">Interviewer Details</h3>
-                                                                                    <div id="link2" class="tab_content">
+                                                                                    <h3 class="tab_drawer_heading" rel="link2">Recommendation</h3>
+                                                                                    <div id="link8" class="tab_content">
                                                                                         <div class="row">
                                                                                             <div class="col-md-6 col-sm-6">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.Label("Interviewer Name", "Interviewer Name", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                                                                    @Html.LabelFor(model => model.IreportModel.ProfileType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
 
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.ProfileType, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                                 </div>
                                                                                             </div>
                                                                                             <div class="col-md-6 col-sm-6">
@@ -380,7 +382,7 @@
                                                                                             </div>
                                                                                             <div class="col-md-6 col-sm-6">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.Label("Per Hour Rate OutSide", "Per Hour Rate OutSide", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                                                                    @Html.Label("Per Hour Rate OutSide", "Per Hour Rate US", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
                                                                                                     @Html.TextBoxFor(m => m.IreportModel.PerHourRateOutside, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                                 </div>
                                                                                             </div>
@@ -406,7 +408,68 @@
                                                                                                     @Html.TextBoxFor(m => m.IreportModel.Senioritylevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                                 </div>
                                                                                             </div>
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.CompentencyLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.CompentencyLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
                                                                                         </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.SkillNature, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SkillNature, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @if (Model.IreportModel.Domain == "Other")
+                                                                                                    {
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.DomainName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.Domain, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    }
+
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.CompanyStage, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.CompanyStage, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Country, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.Country, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <h3 class="tab_drawer_heading" rel="link2">Interviewer Details</h3>
+                                                                                    <div id="link2" class="tab_content">
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.Label("Interviewer Name", "Interviewer Name", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Yearsofexperience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.Yearsofexperience, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
                                                                                         <div class="row">
                                                                                             <div class="col-md-6 col-sm-6">
                                                                                                 <div class="form-group">
@@ -555,9 +618,9 @@
                                                                                                             else
                                                                                                             {
                                                                                                                 @if (Model.MeetingPatch.Count() == 0)
-                                                                                                                        {
-                                                                                                                            for (int i = 0; i < Model.IreportModel.InterviewerQuestionsCollection.Count(); i++)
-                                                                                                                            {
+                                                                                                                {
+                                                                                                                    for (int i = 0; i < Model.IreportModel.InterviewerQuestionsCollection.Count(); i++)
+                                                                                                                    {
                                                                                                                         <tr onclick="switchtoquestionVideo(@Model.IreportModel.InterviewerQuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                                                                             <td>
                                                                                                                                 @*@Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })*@
@@ -774,7 +837,7 @@
                                                                                         </div>
                                                                                     </div>
 
-                                                                                    <h3 class="tab_drawer_heading" rel="link6"> Interviewing ability</h3>
+                                                                                    <h3 class="tab_drawer_heading" rel="link6"> Interviewing Ability</h3>
 
                                                                                     <div id="link6" class="tab_content">
                                                                                         <div class="row">
@@ -975,6 +1038,7 @@
 
 
                                                                                     </div>
+
 
                                                                                 </div>
                                                                             </div>

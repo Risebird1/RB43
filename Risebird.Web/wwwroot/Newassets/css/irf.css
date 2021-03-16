@@ -32,6 +32,9 @@ textarea::-webkit-scrollbar-thumb {
     background: #18ce0f !important;
 }
 
+.card-blue .card-header .overlay-relative h6 {
+    color: #fff;
+}
 
 
 #interviewerMemberModal .modal-lg {
@@ -100,7 +103,6 @@ table td {
 
 table th {
     color: #000000e0;
-  
 }
 
 
@@ -137,7 +139,7 @@ table th {
 }
 
 .panel-header-sm {
-/*    height: 85px;
+    /*    height: 85px;
     padding-top: 65px;*/
     background: none !important;
 }
@@ -366,7 +368,7 @@ input[type=number] {
 
 
 .panel-header-sm {
-/*    height: 85px;
+    /*    height: 85px;
     padding-top: 65px;*/
     background: none !important;
 }
@@ -612,7 +614,7 @@ input[type=number] {
 }
 
 .panel-header-sm {
-/*    height: 85px;
+    /*    height: 85px;
     padding-top: 65px;*/
     background: none !important;
 }
@@ -702,12 +704,16 @@ input[type=number] {
 }
 
 #irf-card-footer {
-    padding-left: 17px;
+    padding-left: 0px;
+    left: 20px;
     padding-top: 10px;
     padding-right: 0px;
-    font-size:13px;
+    font-size: 13px;
 }
-#nonExistingModal{z-index:1000!important}
+
+#nonExistingModal {
+    z-index: 1000 !important
+}
 
 .card-header-buttons {
     padding: 5px 5px 0px 0px;
@@ -821,14 +827,16 @@ input[type=number] {
 .proctor-detail h4 {
     font-size: 16px;
     line-height: 26px;
-    margin:0px;
-    padding:0px;
+    margin: 0px;
+    padding: 0px;
 }
+
 .tabs-wrap .nav-tabs > li {
     position: relative;
     z-index: 100;
     text-align: center;
 }
+
     .tabs-wrap .nav-tabs > li > a {
         border-radius: 10px;
         font-size: 23px;
@@ -842,63 +850,70 @@ input[type=number] {
         line-height: 44px;
         border-radius: 100px;
     }
+
 .tabs-wrap .tab-content {
     border-top: 1px solid #ddd;
 }
+
 .tabs-wrap .nav-tabs {
     border: 0px;
     margin: 0px auto;
-  display:inline-block;
+    display: inline-block;
     padding: 0 0px 20px 0px;
 }
 
-.tabs-wrap .nav-tabs > li:after {
-    border-right: 5px #f1eaea solid;
-    content: "";
-    transition: auto;
-    position: absolute;
-    top: -16%;
-    left: 82%;
-    height: 100px;
-    transform: rotate(90deg);
-    z-index: -1;
-}
-        .tabs-wrap .nav-tabs > li:last-child:after {
-            border-right: 0px #f1eaea solid;
-        }
+    .tabs-wrap .nav-tabs > li:after {
+        border-right: 5px #f1eaea solid;
+        content: "";
+        transition: auto;
+        position: absolute;
+        top: -16%;
+        left: 82%;
+        height: 100px;
+        transform: rotate(90deg);
+        z-index: -1;
+    }
+
+    .tabs-wrap .nav-tabs > li:last-child:after {
+        border-right: 0px #f1eaea solid;
+    }
 
     .tabs-wrap .nav-tabs > li.active > a, .tabs-wrap .nav-tabs > li.active > a:focus, .tabs-wrap .nav-tabs > li.active > a:hover {
     }
 
 .tabs-wrap {
     margin: 50px 0px;
-  
 }
 
 .note span {
     color: red;
 }
+
 .note {
     line-height: 54px;
-    color:#000;
+    color: #000;
     font-size: 16px;
 }
+
 .step-btn {
     position: absolute;
     top: 0px;
     right: 75px;
 }
+
 .blink_me {
     animation: blinker 1s linear infinite;
     line-height: 45px;
 }
+
     .blink_me span {
-        animation:none;
-        font-size:23px; font-weight:bold;
+        animation: none;
+        font-size: 23px;
+        font-weight: bold;
     }
 
-    @keyframes blinker {
-        50% {
+@keyframes blinker {
+    50% {
         opacity: 0;
     }
 }
@@ -906,7 +921,7 @@ input[type=number] {
 .label-left {
     width: 16.66666667%;
     float: left;
-    padding:0px 10px;
+    padding: 0px 10px;
 }
 
 .label-right {
@@ -914,6 +929,7 @@ input[type=number] {
     float: left;
     padding: 0px 10px;
 }
+
 .video-thumb-wrap {
     width: 100%;
     height: auto;
@@ -946,7 +962,7 @@ input[type=number] {
     border-radius: 4px 4px 0 0;
     height: 40px;
     font-size: 0.8rem;
-    border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    border-bottom: 1px rgba(0, 0, 0, 0.13) solid;
 }
 
     .mdc-card .modal .form-control:focus, .modal .form-control:focus {
@@ -1073,6 +1089,153 @@ input[type=number] {
     padding: 0px 15px;
 }
 
+#statusListModal {
+    z-index: 1000
+}
+
+    #statusListModal .modal-lg {
+        max-width: 800px !important;
+    }
+
+#candidateStatusModal .file-upload-wrapper {
+    position: relative;
+    width: 100%;
+    height: 45px;
+    margin: 20px 0px;
+}
+
+#myModal .file-upload-wrapper {
+    position: relative;
+    width: 100%;
+    height: 45px;
+    margin: 0px 0px;
+    text-align: center;
+    text-overflow: ellipsis;
+}
+
+#candidateStatusModal .file-upload-wrapper:after {
+    content: attr(data-text);
+    font-size: 14px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #fff;
+    padding: 10px 15px;
+    display: block;
+    width: calc(100% - 40px);
+    pointer-events: none;
+    z-index: 20;
+    height: 45px;
+    line-height: 22px;
+    color: #545252f2;
+    border-radius: 5px 10px 10px 5px;
+    font-weight: 300;
+    border: 1px #cccccc73 solid;
+}
+
+#myModal .file-upload-wrapper:after {
+    content: attr(data-text);
+    font-size: 14px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 10px 0px;
+    display: block;
+    width: 300px;
+    pointer-events: none;
+    z-index: 20;
+    height: 45px;
+    line-height: 22px;
+    color: #545252f2;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#candidateStatusModal .file-upload-wrapper:before, #myModal .file-upload-wrapper:before {
+    content: "Upload Audio";
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: inline-block;
+    height: 45px;
+    color: #fff;
+    font-weight: 500;
+    z-index: 25;
+    font-size: 14px;
+    line-height: 44px;
+    padding: 0 15px;
+    text-transform: uppercase;
+    pointer-events: none;
+    border-radius: 0 5px 5px 0;
+}
+
+#myModal .file-upload-wrapper:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: inline-block;
+    height: 45px;
+    color: #fff;
+    font-weight: 500;
+    z-index: 25;
+    font-size: 14px;
+    line-height: 44px;
+    padding: 0 15px;
+    text-transform: uppercase;
+    pointer-events: none;
+    border-radius: 0 5px 5px 0;
+}
+
+.upload-wrap {
+    margin: 0px auto;
+    display: block;
+    min-width: 330px;
+    height: 48px;
+}
+
+#candidateStatusModal .file-upload-wrapper input, #myModal .file-upload-wrapper input {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 99;
+    height: 40px;
+    margin: 0;
+    padding: 0;
+    display: block;
+    cursor: pointer;
+    width: 100%;
+}
+#importResultModal.modal .modal-content .modal-body {
+    padding: 0px 0px;
+}
+
+
+#importResultModal table th {
+    background: #cccccca8;
+    padding: 5px 10px;
+    color: #585858;
+}
+#importResultModal table tr {
+
+    padding: 5px 0px 0px 10px;
+    font-weight: normal;
+}
+
+#importResultModal table td {
+    padding: 3px 10px;
+    background: #efececc9;
+    border-bottom: 1px #ccc solid;
+    border-left: 1px #ccc solid;
+}
+#importResultModal table {
+    width: 100%
+}
 #QuestionsTable .form-control[readonly], #QuestionsTable .form-control {
     cursor: pointer !important;
     transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
@@ -1162,7 +1325,6 @@ input[type=number] {
 }
 
 #resumeId, #zoomlinkId {
-
     padding: 5px 10px;
     border-radius: 16px;
 }
@@ -1183,7 +1345,6 @@ input[type=number] {
 }
 
 #videoId {
-
     padding: 5px 10px;
     border-radius: 16px;
 }
@@ -1192,7 +1353,11 @@ input[type=number] {
     background: none;
     text-decoration: none;
 }
-#statusTable .talk-bubble textarea{height:60px;}
+
+#statusTable .talk-bubble textarea {
+    height: 60px;
+}
+
 .scorecolor {
     border-radius: 30px !important;
     transition: all .3s;
@@ -1208,6 +1373,7 @@ input[type=number] {
     text-transform: uppercase;
     background: #dfd2d266;
 }
+
 .interviewr-cmt #videoId {
     background: none;
     text-decoration: none;
@@ -1333,6 +1499,7 @@ input[type=number] {
     .clientName {
         width: 170px;
     }
+
     .note {
         line-height: 22px;
         color: #000;
@@ -1340,9 +1507,11 @@ input[type=number] {
         text-align: center;
         padding: 10px;
     }
+
     .container.tabs-wrap {
         max-width: 100%;
     }
+
     .card-header-buttons {
         text-align: center;
     }
@@ -1364,28 +1533,33 @@ input[type=number] {
     .card-blue .card-header h6 {
         text-align: center;
     }
+
     .card-title-space.back {
         margin-top: 20px !important;
         margin-right: 10px !important;
     }
-    }
-    .tabs-wrap .nav-tabs > li > a {
-        border-radius: 10px;
-        font-size: 23px;
-        padding: 8px 8px;
-        background: #f2f2f2;
-        margin: 10px 30px 3px 30px;
-        height: 40px;
-        color: #a09898;
-        min-width: 40px;
-        text-align: center;
-        line-height: 25px;
-        border-radius: 100px;
-    }
-    .note {
-        font-size:15px;
-    }
-    }
+}
+
+.tabs-wrap .nav-tabs > li > a {
+    border-radius: 10px;
+    font-size: 23px;
+    padding: 8px 8px;
+    background: #f2f2f2;
+    margin: 10px 30px 3px 30px;
+    height: 40px;
+    color: #a09898;
+    min-width: 40px;
+    text-align: center;
+    line-height: 25px;
+    border-radius: 100px;
+}
+
+.note {
+    font-size: 15px;
+}
+
+}
+
 @media screen and (max-width: 540px) {
     .label-right {
         width: 70%;
@@ -1399,20 +1573,20 @@ input[type=number] {
     }
 }
 
-    @media screen and (max-width: 360px) {
-        .label-right {
-            width: 100%;
-            float: left;
-            padding: 0px 0px;
-        }
-
-        .label-left {
-            width: 100%;
-            text-align: left !important;
-        }
-
-        .container.tabs-wrap {
-            max-width: 100%;
-            padding: 0;
-        }
+@media screen and (max-width: 360px) {
+    .label-right {
+        width: 100%;
+        float: left;
+        padding: 0px 0px;
     }
+
+    .label-left {
+        width: 100%;
+        text-align: left !important;
+    }
+
+    .container.tabs-wrap {
+        max-width: 100%;
+        padding: 0;
+    }
+}

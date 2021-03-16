@@ -7,6 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Twilio;
+using Microsoft.Extensions.Configuration;
+using Twilio.Types;
+using Twilio.Rest.Api.V2010.Account;
 
 namespace Risebird.Business
 {
@@ -14,10 +18,24 @@ namespace Risebird.Business
     {
         private readonly ICandidateRepository _candidateRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-        public CandidateService(ICandidateRepository candidateRepository, IApplicationErrorLogger applicationErrorLogger)
+        private readonly IConfiguration _configuration;
+        private readonly IIRFService _irfService;
+        private readonly IIRFRepository _irfRepository;
+
+
+        private readonly string twilioAuthToken;
+        private readonly string twilioAccountSID;
+        private readonly string twilioVoiceCallNumber;
+        public CandidateService(ICandidateRepository candidateRepository, IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, IIRFService irfService, IIRFRepository irfRepository)
         {
             _candidateRepository = candidateRepository;
             _applicationErrorLogger = applicationErrorLogger;
+            _configuration = configuration;
+            _irfService = irfService;
+            twilioAuthToken = _configuration["TwilioSettings:AUTH_TOKEN"];
+            twilioAccountSID = _configuration["TwilioSettings:ACCOUNT_SID"];
+            twilioVoiceCallNumber = _configuration["TwilioSettings:CallerNumber"];
+            _irfRepository = irfRepository;
         }
 
         public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null)
@@ -44,6 +62,45 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+
+        public async Task<bool> AutoCallCandidate(string phoneNumber, int irfId, int candidateId, string loggedInEmail)
+        {
+            try
+            {
+                var link = string.Format("https://risebirdtestportal.azurewebsites.net/TwilioVoice/Index?irfId={0}", irfId.ToString());
+                var url = new Uri(link);
+                TwilioClient.Init(twilioAccountSID, twilioAuthToken);
+                var to = new PhoneNumber(phoneNumber);
+                var from = new PhoneNumber(twilioVoiceCallNumber);
+                
+                var call = await CallResource.CreateAsync(
+                    to: to,
+                    from: from,
+                    url: url);
+
+                if (call.Status != null)
+                {
+                    var result = call.Status.ToString();
+                    if (result != CallResource.StatusEnum.Failed.ToString())
+                    {
+                        await _irfService.AddCandidateStatus(loggedInEmail, candidateId, irfId, "Placed a reminder call", (int)CandidateStatusOptions.ReminderCall);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                return false;
+                
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
     }

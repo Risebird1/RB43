@@ -199,29 +199,29 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.preferredLocation, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.EditorFor(model => model.preferredLocation, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.preferredLocation, "", new { @class = "text-danger" })
+                                      
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.staffingAgency, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.DropDownListFor(model => model.staffingAgency, Model.StaffingAgencyList, new { @class = "select-css form-control" })
 
-                                        @Html.ValidationMessageFor(model => model.staffingAgency, "", new { @class = "text-danger" })
+                           
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.EditorFor(model => model.expectedPerHourRate, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.expectedPerHourRate, "", new { @class = "text-danger" })
+                                   
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.joiningTime, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.EditorFor(model => model.joiningTime, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.joiningTime, "", new { @class = "text-danger" })
+                               
 
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.EditorFor(model => model.currentEmployerName, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.currentEmployerName, "", new { @class = "text-danger" })
+                                  
 
                                     </div>
                                 </div>
@@ -426,4 +426,11 @@
         spinner.value = value;
     };
 
+</script>
+
+<script>
+    $('body').addClass('sidebar-mini js');
+    $("#minimizeSidebar").click(function () {
+        $('body').removeClass('sidebar-mini');
+    });
 </script>

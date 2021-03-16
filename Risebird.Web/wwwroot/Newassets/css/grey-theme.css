@@ -40,7 +40,7 @@ textarea::-webkit-scrollbar-thumb {
     border: 1px solid #acacad !important;
 }
 .un-left {
-    background: #eaeaea;
+    background: #dedede;
 }
 
 .un-right {
@@ -69,6 +69,11 @@ textarea::-webkit-scrollbar-thumb {
     .file-upload .file-select .file-select-button {
         background: #e4e2e2;
     }
+
+.share-btn, .view-video {
+    color: #504d4d !important
+}
+
 .click-btn, .click-btn:hover {
     background: #b1aeae;
     color: #fff !important;
@@ -325,6 +330,18 @@ table.journey {
 [type="datetime-local"] {
     background: #dddddf url(../img/grey-timdate.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
+}
+#candidateStatusModal .file-upload-wrapper:before {
+    background: #929292;
+}
+
+#candidateStatusModal .file-upload-wrapper:after {
+    background: #181818;
+    color: #ada2a2f2;
+    border: 1px #181818 solid;
+}
+#candidateStatusModal .file-upload-wrapper:hover:before {
+    background: #777474;
 }
 .btnmeeting, .btnmeeting:hover{
     background: #929292;

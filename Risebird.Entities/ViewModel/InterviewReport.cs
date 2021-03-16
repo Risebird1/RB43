@@ -88,7 +88,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Meeting Status")]
         public SelectList MeetingStatusList { get; set; }
-        
+
         [Display(Name = "Upload Image")]
         public IFormFile AudioFile { get; set; }
 
@@ -201,8 +201,8 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Job Function")]
         public string JobFunction { get; set; }
         public string Industry { get; set; }
-        [Display(Name = "Company Headquarters")]
-        public string CompanyHeadquarters { get; set; }
+        [Display(Name = "Country")]
+        public string Country { get; set; }
         [Display(Name = "Company Type")]
         public string CompanyType { get; set; }
         public SelectList CompanyTypelist { get; set; }
@@ -215,11 +215,11 @@ namespace Risebird.Entities.ViewModel
         public string[] SkillCategoryArray { get; set; }
         public List<SelectListItem> SkillCategoryList { get; set; }
 
-        [Display(Name = "Years of experience")]
+        [Display(Name = "Years of Experience")]
         public string Yearsofexperience { get; set; }
         public SelectList YearsofexperienceList { get; set; }
 
-        [Display(Name = "Seniority level")]
+        [Display(Name = "Seniority Level")]
         public string Senioritylevel { get; set; }
         public SelectList SenioritylevelList { get; set; }
 
@@ -228,6 +228,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList SkillNatureList { get; set; }
 
         public string Domain { get; set; }
+        public string DomainName { get; set; }
 
         [Display(Name = "Skill IP")]
 
@@ -242,7 +243,7 @@ namespace Risebird.Entities.ViewModel
         public string Articulation { get; set; }
         [Display(Name = "Readiness Online Interviews")]
         public string ReadinessOnlineInterviews { get; set; }
-        [Display(Name = "Team work")]
+        [Display(Name = "Team Work")]
         public string Teamwork { get; set; }
         [Display(Name = "Relationship Management")]
         public string RelationshipManagement { get; set; }
@@ -289,16 +290,20 @@ namespace Risebird.Entities.ViewModel
         //public string PerHourRateOutside { get; set; }
         public SelectList CompanySizeList { get; set; }
         public SelectList CountryList { get; set; }
+        public SelectList IndianPrice { get; set; }
+        public SelectList OutSideIndiaPrice { get; set; }
         public SelectList ProfileTypeList { get; set; }
 
         [Display(Name = "Profile Type")]
 
-        public int ProfileType { get; set; }
+        public string ProfileType { get; set; }
         public SelectList CompentencyLevelList { get; set; }
         [Display(Name = "Competency Level")]
 
-        public int CompentencyLevel { get; set; }
+        public string CompentencyLevel { get; set; }
         public int InterviewerProfileId { get; set; }
+        public int Userid { get; set; }
+        public SelectList DomainList { get; set; }
     }
     public class RBInterviewDetails
     {

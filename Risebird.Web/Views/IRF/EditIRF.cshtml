@@ -49,14 +49,31 @@
                                 </div>
                                 <div style="width: 100%;">&nbsp;</div>
                                 <div class="col-md-3 col-sm-3 pr-1">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(m => m.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        <label class="text-danger" id="uniqueMsg" style="color:red; position:absolute;"></label>
-                                        @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
+
+                                    @if (!Model.IsClone)
+                                    {
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(m => m.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+                                            <label class="text-danger" id="uniqueMsg" style="color:red; position:absolute;"></label>
+                                            @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
+
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(m => m.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            <label class="text-danger" id="uniqueMsg" style="color:red; position:absolute;"></label>
+                                            @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
 
 
-                                    </div>
+                                        </div>
+
+                                    }
+
                                 </div>
                                 <div class="col-md-3 col-sm-3 px-1">
                                     <div class="form-group">
@@ -168,7 +185,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, new { @class = "form-control select-css " })
+                                        @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css " })
 
                                         @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @class = "text-danger" })
 
@@ -308,7 +325,7 @@
 
                                     <div class="form-group mb-0">
                                         @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, new { @class = "form-control select-css " })
+                                        @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, "Select", new { @class = "form-control select-css " })
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
 
                                     </div>
@@ -1360,7 +1377,6 @@
             document.getElementById("JDTiltle").value = '';
             document.getElementById("ClientName").value = '';
             document.getElementById("JobCountry").value = '';
-            document.getElementById("JDTiltle").value = '';
             document.getElementById("StartDate").value = '';
             document.getElementById("EndDate").value = '';
             document.getElementById("NoOfPosition").value = '';

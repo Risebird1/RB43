@@ -107,6 +107,9 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
+                        user.FirstName = user.FirstName.Trim();
+                        user.LastName = user.LastName.Trim();
+                        user.EmailId = user.EmailId.Trim();
                         user.EmailId = user.EmailId.ToLower();
                         if (_userService.AddUser(user))
                         {
@@ -189,6 +192,9 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
+                        user.FirstName = user.FirstName.Trim();
+                        user.LastName = user.LastName.Trim();
+                        user.EmailId = user.EmailId.Trim();
                         user.EmailId = user.EmailId.ToLower();
                         if (_userService.UpdateUser(user))
                         {
@@ -323,7 +329,18 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        clientUserVM.EmailId = clientUserVM.EmailId.Trim().ToLower();
+                        if (!string.IsNullOrEmpty(clientUserVM.FirstName))
+                        {
+                            clientUserVM.FirstName = clientUserVM.FirstName.Trim();
+                        }
+                        if (!string.IsNullOrEmpty(clientUserVM.LastName))
+                        {
+                            clientUserVM.LastName = clientUserVM.LastName.Trim();
+                        }
+                        if (!string.IsNullOrEmpty(clientUserVM.EmailId))
+                        {
+                            clientUserVM.EmailId = clientUserVM.EmailId.Trim().ToLower();
+                        }
                         if (_userService.AddClientUser(clientUserVM))
                         {
                             TempData["SuccessErrorMessageClientUser"] = "Client User is added Successfully";
@@ -433,6 +450,9 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
+                        clientUserVM.FirstName = clientUserVM.FirstName.Trim();
+                        clientUserVM.LastName = clientUserVM.LastName.Trim();
+                        clientUserVM.EmailId = clientUserVM.EmailId.Trim();
                         clientUserVM.EmailId = clientUserVM.EmailId.ToLower();
                         if (_userService.UpdateClientUser(clientUserVM))
                         {

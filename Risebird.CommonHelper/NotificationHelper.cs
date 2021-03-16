@@ -232,7 +232,7 @@ namespace Risebird.CommonHelper
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientUser.EmailId, clientUser.EmailId.Split("@").First()));
                     }
                 }
-                else
+                else if(!string.IsNullOrEmpty(clientHREmail))
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
                 }
@@ -1010,9 +1010,14 @@ namespace Risebird.CommonHelper
                 msg.Subject = ClientName + " - Video Interview - " + primarySkill;
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(emailId, "Candidate"));
 
-                foreach (var clientUser in clientUsers)
+                //foreach (var clientUser in clientUsers)
+                //{
+                //    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientUser.EmailId, null));
+                //}
+                if(!string.IsNullOrEmpty(clientHREmail))
                 {
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientUser.EmailId, null));
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
+
                 }
 
 

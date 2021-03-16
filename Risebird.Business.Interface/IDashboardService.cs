@@ -31,7 +31,6 @@ namespace Risebird.Business.Interface
         Task<string> DeleteChannelInterviewerByid(int id, int channelid);
         Task<ChannelInterviewerVM> FecthInterviewerById(int id);
         Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCount();
-        Task<IEnumerable<MeetingVM>> GetNotUpdatedMeetings();
         Task<List<string>> FetchHRList(string searchterm);
         bool AddChannelApprovedInterviewer(IEnumerable<ChannelApprovedInterviewer> model, int channelid);
         IEnumerable<ChannelApprovedInterviewer> GetChannelApprovedInterviewer(int id);
@@ -39,5 +38,7 @@ namespace Risebird.Business.Interface
         Task<bool> DeleteChannelInterviewer(int id);
         Task<bool> ChannelInterviewerAction(int id, string action);
         Task<CandidateCurrentStatusCount> GetClientCandidatesCurrentStatusCount(string emailId);
+        Task<List<MeetingVM>> FetchRibbonDetailsValues(string actionstatus);
+        Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus);
     }
 }

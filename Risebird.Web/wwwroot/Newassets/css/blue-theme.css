@@ -312,8 +312,8 @@ textarea::-webkit-scrollbar-thumb {
     background: #fff !important;
 }
 
-.share-btn {
-    color: #000 !important
+.share-btn, .view-video {
+    color: #717070 !important;
 }
 
 .single-video-right .video-card-image {
@@ -363,12 +363,20 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .swal2-popup .swal2-actions:not(.swal2-loading) .swal2-styled:active, .swal2-popup .swal2-styled.swal2-confirm {
-    background: #42a5f5 !important;
-    border-color: #42a5f5 !important;
+    background: #8ec9f9 !important;
+    border-color: #8ec9f9 !important;
 }
 
 .show-interest {
     color: #000;
+}
+
+#candidateStatusModal .file-upload-wrapper:before {
+    background: #54a5f5;
+}
+
+#candidateStatusModal .file-upload-wrapper:hover:before {
+    background: #2c8eef;
 }
 
 .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa, .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
@@ -585,11 +593,12 @@ input[type="radio"]:checked, input[type="checkbox"]:checked {
     border-left: 5px solid white !important;
 }
 .un-left {
-    background: #eaeaea;
+    background: #dedede;
 }
 .un-right {
     background: #f3f3f3;
 }
+
 @media only screen and (max-width: 767px) {
     .razorpay_btn button.form-control {
         width: 33.3%;

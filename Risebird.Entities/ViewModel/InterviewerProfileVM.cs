@@ -45,6 +45,7 @@ namespace Risebird.Entities.ViewModel
         //[DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DOB { get; set; }
         [Display(Name = "Gender")]
+        [Required]
         public string Gender { get; set; }
 
         [Display(Name = "Annual Salary")]
@@ -164,5 +165,13 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string[] AssessmentGroupArray { get; set; }
         public List<SelectListItem> AssessmentGroupList { get; set; }
+        public string Senioritylevel { get; set; }
+        public string PerHourRateIndia { get; set; }
+        public string PerHourRateOutside { get; set; }
+        public string CompentencyLevel { get; set; }
+        public string ProfileType { get; set; }
+        public string Domain { get; set; }
+        public string DomainName { get; set; }
+
     }
 }

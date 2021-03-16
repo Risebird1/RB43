@@ -203,7 +203,9 @@ namespace Risebird.Business
                 model.CalendlyLink = InterviewerSkills.CalendlyLink;
                 model.RisebirdHr = InterviewerSkills.RisebirdHr;
                 model.PrimarySkill = InterviewerSkills.PrimarySkill;
-                //var skillCount = transTechSkills.Count();
+                model.HeuristicProfileType = InterviewerSkills.HeuristicProfileType;
+                model.JDLink = InterviewerSkills.JDLink;
+                model.AssessmentGroupId = InterviewerSkills.AssessmentGroupId == null ? "0" : InterviewerSkills.AssessmentGroupId;
                 return model;
 
             }
@@ -497,6 +499,19 @@ namespace Risebird.Business
                 return null;
             }
         }
-        
+        public IEnumerable<Interviewer> GetInterviewersByAssessmentGroup(string assessmentgroupid)
+        {
+            try
+            {
+                var interviewers = _interviewerSkillsRepository.GetInterviewersByAssessmentGroup(assessmentgroupid);
+                return interviewers;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

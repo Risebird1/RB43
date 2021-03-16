@@ -60,6 +60,7 @@ namespace Risebird.Web.Controllers
                     var model = new InterviewerSkillsViewModel();
                     var InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkillsChannel(profileName, emailid);
                     model.InterviewerSkillsChannelModelList = InterviewerSkillsList.Where(x => x.EndDate.Date > DateTime.Now).OrderByDescending(y => y.EndDate);
+                    model.InterviewerSkillsChannelModelList = model.InterviewerSkillsChannelModelList.Select(x => { x.HeuristicProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.HeuristicProfileType)).GetDescription(); return x; }).ToList();
                     foreach (var item in model.InterviewerSkillsChannelModelList)
                     {
                         if (item.IsPaused)
@@ -150,6 +151,7 @@ namespace Risebird.Web.Controllers
                 {
                     var model = new InterviewerSkillsViewModel();
                     var InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkillsChannel(profileName, emailid);
+
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
                         InterviewerSkillsList = InterviewerSkillsList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
@@ -183,6 +185,7 @@ namespace Risebird.Web.Controllers
                         }
                     }
                     model.InterviewerSkillsChannelModelList = InterviewerSkillsList.OrderByDescending(x => x.EndDate).ToList();
+                    model.InterviewerSkillsChannelModelList = model.InterviewerSkillsChannelModelList.Select(x => { x.HeuristicProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.HeuristicProfileType)).GetDescription(); return x; }).ToList();
                     model.Profile = profileName;
                     return View(model);
 
@@ -210,9 +213,16 @@ namespace Risebird.Web.Controllers
                 ViewBag.Level = new SelectList(_interviewerSkillsRepository.GetLevels(), "id", "Name");
                 ViewBag.Interviewers = new SelectList(interviewers, "id", "EmailId");
                 ViewBag.LevelTech = new SelectList(_interviewerSkillsRepository.GetLevelTech(), "id", "Name");
-                ViewBag.Skill = new SelectList(_interviewerSkillsRepository.GetSkills(), "id", "Name");
+                //  ViewBag.Skill = new SelectList(_interviewerSkillsRepository.GetSkills(), "id", "Name");
 
-
+                var Skillset = _interviewerSkillsRepository.GetSkills();
+                if (Skillset != null)
+                {
+                    Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+                }
+                ViewBag.Skill = new SelectList(Skillset, "id", "Name");
+                var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                ViewBag.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
                 return View(model);
             }
             else
@@ -233,6 +243,17 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
+                        string uploadedFileURL = string.Empty;
+                        if (InterviewerSkillsDetails.JDFile != null)
+                        {
+                            var fileName = InterviewerSkillsDetails.JDFile.FileName.Replace(" ", "_");
+
+                            await _azureStorageHelper.InsertBlob(fileName, "resumes", InterviewerSkillsDetails.JDFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(fileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            InterviewerSkillsDetails.JDLink = uploadedFileURL;
+                        }
                         if (_iInterviewerSkillsService.AddInterviewerSkillsDetails(InterviewerSkillsDetails).Result)
                         {
                             TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel is added successfully!";
@@ -265,25 +286,47 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult EditInterviewerSkills(string id)
+        public IActionResult EditInterviewerSkills(string id, bool isClone = false)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
                     var model = _iInterviewerSkillsService.GetEditInterviewerSkills(Convert.ToInt16(id)).Result;
+                    var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                     //string skills = string.Empty;
                     //skills = string.Join(",", from item in model.SkillCollection select item.SkillId);
-                    var interviewers = _iInterviewerSkillsService.GetInterviewers(model.PrimarySkill);
+                    //var interviewers = _iInterviewerSkillsService.GetInterviewers(model.PrimarySkill);
+                    if (!String.IsNullOrEmpty(model.AssessmentGroupId))
+                    {
+                        var interviewers = _iInterviewerSkillsService.GetInterviewersByAssessmentGroup(model.AssessmentGroupId);
+                        ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+                    }
+                    else
+                    {
+                        var interviewers = new List<SelectListItem>();
+                        interviewers.Add(new SelectListItem { Text = "No Interviewer", Value = "" });
+                        ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+                    }
                     ViewBag.RiseBirdHR = new SelectList(_iInterviewerSkillsService.GetRiseBirdHR(), "id", "EmailId");
                     ViewBag.Level = new SelectList(_interviewerSkillsRepository.GetLevels(), "id", "Name");
-                    ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+
                     ViewBag.LevelTech = new SelectList(_interviewerSkillsRepository.GetLevelTech(), "id", "Name");
-                    ViewBag.Skill = new SelectList(_interviewerSkillsRepository.GetSkills(), "id", "Name");
+                    // ViewBag.Skill = new SelectList(_interviewerSkillsRepository.GetSkills(), "id", "Name");
+                    var Skillset = _interviewerSkillsRepository.GetSkills();
+                    if (Skillset != null)
+                    {
+                        Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+                    }
+                    ViewBag.Skill = new SelectList(Skillset, "id", "Name");
+
+                    ViewBag.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
                     TempData["EditInterviewerSkillId"] = model.InterviewerSkillId;
+                    TempData["InterviewerJDLink"] = model.JDLink;
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model.LoggedEmail = emailid;
+                    model.IsClone = isClone;
                     return View(model);
                 }
                 else
@@ -311,6 +354,27 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
+
+                        if ((model.JDFile != null))
+                        {
+                            var fileName = model.JDFile.FileName.Replace(" ", "_");
+                            await _azureStorageHelper.InsertBlob(fileName, "resumes", model.JDFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(fileName);
+                            string uploadedFileURL = blob.Uri.ToString();
+                            if (uploadedFileURL == null)
+                            {
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Could not upload JD file.";
+                                return RedirectToAction("Index");
+
+                            }
+
+                            model.JDLink = uploadedFileURL;
+                        }
+                        else if (model.JDLink == null || model.JDLink == "")
+                        {
+                            model.JDLink = TempData["InterviewerJDLink"]?.ToString();
+                        }
                         if (TempData["EditInterviewerSkillId"] != null && (TempData["EditInterviewerSkillId"].ToString() != model.InterviewerSkillId))
                         {
                             if (!(_iInterviewerSkillsService.CheckUniqueness(model.InterviewerSkillId)))
@@ -865,12 +929,20 @@ namespace Risebird.Web.Controllers
                             filter.Senioritylevel = filter.Senioritylevel == null ? filter.Senioritylevel = modelList.Select(x => x.Senioritylevel).ToArray() : filter.Senioritylevel = filter.Senioritylevel;
                             filter.ProfileType = filter.ProfileType == null ? filter.ProfileType = modelList.Select(x => x.ProfileType).ToArray() : filter.ProfileType = filter.ProfileType;
                             filter.CompentencyLevel = filter.CompentencyLevel == null ? filter.CompentencyLevel = modelList.Select(x => x.CompentencyLevel).ToArray() : filter.CompentencyLevel = filter.CompentencyLevel;
+                            filter.IndianRate = filter.IndianRate == null ? filter.IndianRate = modelList.Select(x => x.PerHourRateIndia).ToArray() : filter.IndianRate = filter.IndianRate;
+                            filter.OutSideIndiaRate = filter.OutSideIndiaRate == null ? filter.OutSideIndiaRate = modelList.Select(x => x.PerHourRateOutside).ToArray() : filter.OutSideIndiaRate = filter.OutSideIndiaRate;
+                            filter.CompanyType = filter.CompanyType == null ? filter.CompanyType = modelList.Select(x => x.CompanyType).ToArray() : filter.CompanyType = filter.CompanyType;
+                            filter.Domain = filter.Domain == null ? filter.Domain = modelList.Select(x => x.Domain).ToArray() : filter.Domain = filter.Domain;
 
                             modelList = modelList.Where(c =>
                                (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroup) : c.AssessmentGroup == null)
                               && (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
                               && (filter.ProfileType.Count() > 0 ? filter.ProfileType.Contains(c.ProfileType) : c.ProfileType == null)
-                              && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)).ToList();
+                              && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)
+                               && (filter.IndianRate.Count() > 0 ? filter.IndianRate.Contains(c.PerHourRateIndia) : c.PerHourRateIndia == null)
+                          && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)
+                          && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
+                          && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Domain) : c.Domain == null)).ToList();
 
                         }
                         //totalMeetings = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsCount(searchvalue).Result;
@@ -885,9 +957,14 @@ namespace Risebird.Web.Controllers
                             }
                         }
                         ViewBag.Senioritylevel = modelList.Select(x => x.Senioritylevel).Distinct();
-                        ViewBag.ProfileType = modelList.Select(x => x.ProfileType).Distinct();
+                        ViewBag.ProfileType = modelList.Where(x => x.ProfileType != "0").Select(x => x.ProfileType).Distinct();
                         ViewBag.CompentencyLevel = modelList.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
                         ViewBag.AssessmentGroup = modelList.Select(x => x.AssessmentGroup).Distinct();
+                        ViewBag.IndianRate = modelList.Select(x => x.PerHourRateIndia).Distinct();
+                        ViewBag.OutSideIndiaRate = modelList.Select(x => x.PerHourRateOutside).Distinct();
+                        ViewBag.CompanyType = modelList.Select(x => x.CompanyType).Distinct();
+                        ViewBag.Domain = modelList.Select(x => x.Domain).Distinct();
+
                         modelList = modelList.Take(12).ToList();
                         totalMeetings = modelList.Count();
 
@@ -976,12 +1053,20 @@ namespace Risebird.Web.Controllers
                         filter.Senioritylevel = filter.Senioritylevel == null ? filter.Senioritylevel = modelList.Select(x => x.Senioritylevel).ToArray() : filter.Senioritylevel = filter.Senioritylevel;
                         filter.ProfileType = filter.ProfileType == null ? filter.ProfileType = modelList.Select(x => x.ProfileType).ToArray() : filter.ProfileType = filter.ProfileType;
                         filter.CompentencyLevel = filter.CompentencyLevel == null ? filter.CompentencyLevel = modelList.Select(x => x.CompentencyLevel).ToArray() : filter.CompentencyLevel = filter.CompentencyLevel;
+                        filter.IndianRate = filter.IndianRate == null ? filter.IndianRate = modelList.Select(x => x.PerHourRateIndia).ToArray() : filter.IndianRate = filter.IndianRate;
+                        filter.OutSideIndiaRate = filter.OutSideIndiaRate == null ? filter.OutSideIndiaRate = modelList.Select(x => x.PerHourRateOutside).ToArray() : filter.OutSideIndiaRate = filter.OutSideIndiaRate;
+                        filter.CompanyType = filter.CompanyType == null ? filter.CompanyType = modelList.Select(x => x.CompanyType).ToArray() : filter.CompanyType = filter.CompanyType;
+                        filter.Domain = filter.Domain == null ? filter.Domain = modelList.Select(x => x.Domain).ToArray() : filter.Domain = filter.Domain;
 
                         modelList = modelList.Where(c =>
                            (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroup) : c.AssessmentGroup == null)
                           && (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
                           && (filter.ProfileType.Count() > 0 ? filter.ProfileType.Contains(c.ProfileType) : c.ProfileType == null)
-                          && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)).ToList();
+                          && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)
+                          && (filter.IndianRate.Count() > 0 ? filter.IndianRate.Contains(c.PerHourRateIndia) : c.PerHourRateIndia == null)
+                          && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)
+                           && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
+                            && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Domain) : c.Domain == null)).ToList();
 
                         //totalMeetings = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsCount(searchvalue).Result;
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
@@ -994,9 +1079,14 @@ namespace Risebird.Web.Controllers
                             }
                         }
                         ViewBag.Senioritylevel = modelList.Select(x => x.Senioritylevel).Distinct();
-                        ViewBag.ProfileType = modelList.Select(x => x.ProfileType).Distinct();
+                        ViewBag.ProfileType = modelList.Where(x => x.ProfileType != "0").Select(x => x.ProfileType).Distinct();
                         ViewBag.CompentencyLevel = modelList.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
                         ViewBag.AssessmentGroup = modelList.Select(x => x.AssessmentGroup).Distinct();
+                        ViewBag.IndianRate = modelList.Select(x => x.PerHourRateIndia).Distinct();
+                        ViewBag.OutSideIndiaRate = modelList.Select(x => x.PerHourRateOutside).Distinct();
+                        ViewBag.CompanyType = modelList.Select(x => x.CompanyType).Distinct();
+                        ViewBag.Domain = modelList.Select(x => x.Domain).Distinct();
+
                         modelList = modelList.Take(12).ToList();
                         totalMeetings = modelList.Count();
 
@@ -1104,8 +1194,36 @@ namespace Risebird.Web.Controllers
                         }).ToList();
                         var IRListModel = _interviewerService.GetInterviewerinteviewReport(model.imid, model.irfIntId).Result;
                         var exprienceyears = _iRFRepository.GetInterviewerExprienceYear();
+                        var CompanyStageList = _iRFRepository.GetCompanyStage();
+                        var SkillNatureList = _iRFRepository.GetSkillNature();
+
                         if (IRListModel != null)
                         {
+                            if (String.IsNullOrEmpty(IRListModel.ProfileType))
+                            {
+                                IRListModel.ProfileType = "";
+                            }
+                            else
+                            {
+                                IRListModel.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(IRListModel.ProfileType)).GetDescription();
+                            }
+                            if (String.IsNullOrEmpty(IRListModel.CompentencyLevel))
+                            {
+                                IRListModel.CompentencyLevel = "";
+                            }
+                            else
+                            {
+                                IRListModel.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(IRListModel.CompentencyLevel)).GetDescription();
+                            }
+                            IRListModel.Country = ((WorkCountry)Convert.ToInt32(IRListModel.Country)).GetDescription();
+                            int SkillNature = Convert.ToInt32(IRListModel.SkillNature);
+                            var Skill_Nature = SkillNatureList.Where(x => x.Id == SkillNature).FirstOrDefault();
+                            if (Skill_Nature != null)
+                                IRListModel.SkillNature = Skill_Nature.Description;
+                            int CompanyStage = Convert.ToInt32(IRListModel.CompanyStage);
+                            var Company_Stage = CompanyStageList.Where(x => x.Id == CompanyStage).FirstOrDefault();
+                            if (Company_Stage != null)
+                                IRListModel.CompanyStage = Company_Stage.Description;
                             int expreinece_year = Convert.ToInt32(IRListModel.Yearsofexperience);
                             var years_expreince = exprienceyears.Where(x => x.Id == expreinece_year).FirstOrDefault();
                             if (years_expreince != null)
@@ -1138,6 +1256,7 @@ namespace Risebird.Web.Controllers
                         NewModel.zoomLink = model.zoomLink;
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
                         var SkillCategoryList = _iRFRepository.GetSkillCategory();
+
                         if (IRListModel != null)
                         {
                             int Seniorityid = Convert.ToInt32(IRListModel.Senioritylevel);
@@ -1237,6 +1356,41 @@ namespace Risebird.Web.Controllers
                         return x;
                     }).ToList();
                     var IRListModel = _interviewerService.GetInterviewerinteviewReport(model.imid, model.irfIntId).Result;
+                    var exprienceyears = _iRFRepository.GetInterviewerExprienceYear();
+                    var CompanyStageList = _iRFRepository.GetCompanyStage();
+                    var SkillNatureList = _iRFRepository.GetSkillNature();
+                    if (IRListModel != null)
+                    {
+                        if (String.IsNullOrEmpty(IRListModel.ProfileType))
+                        {
+                            IRListModel.ProfileType = "";
+                        }
+                        else
+                        {
+                            IRListModel.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(IRListModel.ProfileType)).GetDescription();
+                        }
+                        if (String.IsNullOrEmpty(IRListModel.CompentencyLevel))
+                        {
+                            IRListModel.CompentencyLevel = "";
+                        }
+                        else
+                        {
+                            IRListModel.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(IRListModel.CompentencyLevel)).GetDescription();
+                        }
+
+                        int SkillNature = Convert.ToInt32(IRListModel.SkillNature);
+                        var Skill_Nature = SkillNatureList.Where(x => x.Id == SkillNature).FirstOrDefault();
+                        if (Skill_Nature != null)
+                            IRListModel.SkillNature = Skill_Nature.Description;
+                        int CompanyStage = Convert.ToInt32(IRListModel.CompanyStage);
+                        var Company_Stage = CompanyStageList.Where(x => x.Id == CompanyStage).FirstOrDefault();
+                        if (Company_Stage != null)
+                            IRListModel.CompanyStage = Company_Stage.Description;
+                        int expreinece_year = Convert.ToInt32(IRListModel.Yearsofexperience);
+                        var years_expreince = exprienceyears.Where(x => x.Id == expreinece_year).FirstOrDefault();
+                        if (years_expreince != null)
+                            IRListModel.Yearsofexperience = years_expreince.Description;
+                    }
                     var modelList = modelList1;
 
                     MeetingVM NewModel = new MeetingVM();
@@ -1663,6 +1817,22 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
 
+        }
+        [Authorize]
+        public SelectList GetInterviewersByAssessmentGroup(string assessmentgroupid)
+        {
+
+            var list = new List<SelectListItem>();
+            var interviewers = _iInterviewerSkillsService.GetInterviewersByAssessmentGroup(assessmentgroupid);
+
+            if (interviewers != null && interviewers.Count() > 0)
+            {
+                return new SelectList(interviewers, "UserId", "EmailId");
+            }
+            else
+                list.Add(new SelectListItem { Text = "No Interviewer", Value = "" });
+            //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
+            return new SelectList(list, "Value", "Text");
         }
 
     }

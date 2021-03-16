@@ -90,7 +90,15 @@
                                                     </button>
 
 
+                                                    @if (Model.Profile == "Admin")
+                                                    {
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel" style=" top: -3px;">
+                                                            <span onclick="location.href='@Url.Action("EditInterviewerSkills", "InterviewerSkills", new { id = item.id, isClone = true })'" title="Clone the Skills Channel" class="mdc-fab__icon material-icons">
+                                                                <i style="font-size:14px;" class="fa fa-clone"></i>
 
+                                                            </span>
+                                                        </button>
+                                                    }
 
 
 
@@ -137,6 +145,7 @@
                                                             <span>JD Tiltle:</span> <div class="clientName" title="@item.JDTiltle">@item.JDTiltle</div>
                                                         </div> <br />
 
+                                                        <div class="row"> <span>Profile Type:</span>@item.HeuristicProfileType</div> <br />
                                                         <div class="row"> <span>End Date:</span>@item.EndDate</div> <br />
                                                         <div class="row">
                                                             <span>Primary Skill:</span> @(item.SkillName!= null ? item.SkillName : "")

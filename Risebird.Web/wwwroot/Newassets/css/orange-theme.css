@@ -6,6 +6,9 @@ body {
 .main-panel {
     background: #ebecf1;
 }
+.share-btn, .view-video {
+    color: #504d4d !important
+}
 
 .bl-bg {
     background: #ebecf1;
@@ -283,9 +286,8 @@ textarea::-webkit-scrollbar {
         background-color: #fcfcfc!important;
         border: 0px!important;
     }
-
 .un-left {
-    background: #eaeaea;
+    background: #dedede;
 }
 
 .un-right {
@@ -521,7 +523,13 @@ table.journey {
     background: #dddddf url(../img/orange-timdate.png) 94% 50% no-repeat !important;
     background-size: 5% !important;
 }
+#candidateStatusModal .file-upload-wrapper:before {
+    background: #e96e28;
+}
 
+#candidateStatusModal .file-upload-wrapper:hover:before {
+    background: #e0590c;
+}
 .btnmeeting, .btnmeeting:hover {
     background: #ea6e28;
     border: 2px #ea6e2894 double;
