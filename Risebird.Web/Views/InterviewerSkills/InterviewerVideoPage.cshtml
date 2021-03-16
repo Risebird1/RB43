@@ -444,7 +444,12 @@
                                                                                                     @Html.TextBoxFor(m => m.IreportModel.CompanyStage, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                                 </div>
                                                                                             </div>
-
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Country, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.Country, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </div>
+                                                                                            </div>
                                                                                         </div>
                                                                                     </div>
                                                                                     <h3 class="tab_drawer_heading" rel="link2">Interviewer Details</h3>
