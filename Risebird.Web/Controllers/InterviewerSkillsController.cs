@@ -293,12 +293,24 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null)
                 {
                     var model = _iInterviewerSkillsService.GetEditInterviewerSkills(Convert.ToInt16(id)).Result;
+                    var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                     //string skills = string.Empty;
                     //skills = string.Join(",", from item in model.SkillCollection select item.SkillId);
-                    var interviewers = _iInterviewerSkillsService.GetInterviewers(model.PrimarySkill);
+                    //var interviewers = _iInterviewerSkillsService.GetInterviewers(model.PrimarySkill);
+                    if (!String.IsNullOrEmpty(model.AssessmentGroupId))
+                    {
+                        var interviewers = _iInterviewerSkillsService.GetInterviewersByAssessmentGroup(model.AssessmentGroupId);
+                        ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+                    }
+                    else
+                    {
+                        var interviewers = new List<SelectListItem>();
+                        interviewers.Add(new SelectListItem { Text = "No Interviewer", Value = "" });
+                        ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+                    }
                     ViewBag.RiseBirdHR = new SelectList(_iInterviewerSkillsService.GetRiseBirdHR(), "id", "EmailId");
                     ViewBag.Level = new SelectList(_interviewerSkillsRepository.GetLevels(), "id", "Name");
-                    ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+
                     ViewBag.LevelTech = new SelectList(_interviewerSkillsRepository.GetLevelTech(), "id", "Name");
                     // ViewBag.Skill = new SelectList(_interviewerSkillsRepository.GetSkills(), "id", "Name");
                     var Skillset = _interviewerSkillsRepository.GetSkills();
@@ -307,7 +319,7 @@ namespace Risebird.Web.Controllers
                         Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
                     }
                     ViewBag.Skill = new SelectList(Skillset, "id", "Name");
-                    var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+
                     ViewBag.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
                     TempData["EditInterviewerSkillId"] = model.InterviewerSkillId;
                     TempData["InterviewerJDLink"] = model.JDLink;
