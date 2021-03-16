@@ -130,7 +130,7 @@ namespace Risebird.Web.Controllers
                                          IsLock = m.IsLock,
                                          UnlockVideo = m.EmailId == emailid ? true : false
                                      })).ToList();
-                        
+
 
                         ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
                         ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
@@ -1281,12 +1281,15 @@ namespace Risebird.Web.Controllers
             //End:Save View counts of vedio
             return Json("Succecss");
         }
-        public JsonResult LockorUnlockVideo(string imid, int islock)
+        public JsonResult LockorUnlockVideo(string imid, int islock, string emailid = null)
         {
             if (HttpContext.Session.GetString("email") != null)
             {
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
+                if (String.IsNullOrEmpty(emailid))
+                {
+                    emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                }
                 var result = _meetingService.LockorUnlockVideo(imid, islock, emailid);
                 return Json(result);
             }
@@ -1294,6 +1297,44 @@ namespace Risebird.Web.Controllers
             {
                 return Json("Fail");
             }
+        }
+        public IActionResult AllInterview()
+        {
+            var modelList = _meetingService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1));
+            modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
+            foreach (var item in modelList)
+            {
+                item.NextLevelApprovalStat = item.IsApproved.HasValue ? ((NextLevelApprovalStatus)item.IsApproved).GetDescription() : string.Empty;
+
+                if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                {
+                    if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                    {
+                        item.MeetingStatusStatusDesc = "Status Pending";
+
+                    }
+                }
+                else
+                {
+                    item.MeetingStatusStatusDesc = string.Empty;
+
+                }
+
+                if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
+                {
+                    item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
+                }
+                else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
+                {
+                    item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
+                }
+            }
+            return View(modelList);
+        }
+        public JsonResult FetchClientUsers(string ClientName)
+        {
+            var result = _meetingService.FetchClientUsers(ClientName);
+            return Json(result);
         }
     }
 }

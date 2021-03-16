@@ -796,7 +796,7 @@ namespace Risebird.Business
                 }
                 else
                 {
-                    var model = (interviewReport != null && interviewReport.Count()>0) ? interviewReport.FirstOrDefault() : new InterviewReport();
+                    var model = (interviewReport != null && interviewReport.Count() > 0) ? interviewReport.FirstOrDefault() : new InterviewReport();
                     model.IsEdited = model.InterviewId > 0;
                     //model.IsEdited = true;
 
@@ -2308,7 +2308,21 @@ namespace Risebird.Business
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "fail";
             }
+        }
+        public List<string> FetchClientUsers(string ClientName)
+        {
+            try
+            {
+                var meeting = _meetingRespository.FetchClientUsers(ClientName);
+                return meeting;
 
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
         }
     }
 

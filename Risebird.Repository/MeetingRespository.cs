@@ -3792,5 +3792,24 @@ namespace Risebird.Repository
             }
             return "fail";
         }
+        public List<string> FetchClientUsers(string ClientName)
+        {
+            try
+            {
+                var dParameters = new DynamicParameters();
+                dParameters.Add("@ClientName", ClientName);
+                var dquery = "Select ul.EmailId From Client cl join ClientUser cu on cu.ClientId=cl.id join UserList ul on ul.id=cu.UserId where Name=@ClientName";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<string>(dquery, dParameters);
+                    return (List<string>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

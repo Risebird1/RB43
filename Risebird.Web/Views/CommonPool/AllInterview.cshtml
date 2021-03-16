@@ -1,0 +1,1599 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@using Risebird.Entities
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using Risebird.CommonHelper
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Interviews";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = String.Empty;
+    string endDte = String.Empty;
+    string[] primarySkills = new string[] { };
+    string[] RFID = new string[] { };
+    string[] ClientHR = new string[] { };
+    string[] ConfirmationStatus = new string[] { };
+    string[] MeetingStatus = new string[] { };
+    string[] InterviewStatus = new string[] { };
+    string[] Interviewer = new string[] { };
+    string[] ClientName = new string[] { };
+    string[] Client = new string[] { };
+}
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("Interviewfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("Interviewfilters"));
+    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
+    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
+    RFID = filter.RFID != null ? filter.RFID : new string[] { };
+    ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
+    ConfirmationStatus = filter.ConfirmationStatus != null ? filter.ConfirmationStatus : new string[] { };
+    MeetingStatus = filter.MeetingStatus != null ? filter.MeetingStatus : new string[] { };
+    InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
+    Interviewer = filter.Interviewer != null ? filter.Interviewer : new string[] { };
+    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
+    Client = filter.Client != null ? filter.Client : new string[] { };
+}
+
+
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Interviews</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Interviews</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div>
+
+
+
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#filterModal">
+
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="interviewerMemberModal" class="modal modal-bg">
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+
+
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                    </div>
+                    <h5 class="modal-title pull-left" id="memberHeading">Interviewer Details</h5>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id="membersPopUp" style="cursor:pointer;">&times;</span>
+                </button>
+
+                <div class="modal-body" id="memberTableBody">
+
+
+
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="content interview client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+                            <div class="toolbar">
+
+                                <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="filheader">
+                                                <div class="filavatar">
+                                                    <span class="fa fa-filter"></span>
+                                                </div>
+                                                <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                            </div>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <form action="@Url.Action("Index","Interview")" method="post" id="form">
+
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                    Start Date
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                                </div>
+                                                            </div>
+
+
+
+
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                    End Date
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+
+                                                                        @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
+                                                                    Client
+                                                                    HR
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.ClientHrContact).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
+                                                                    Meeting Status
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Where(x => !string.IsNullOrEmpty(x.MeetingStatusStatusDesc)).Select(x => x.MeetingStatusStatusDesc).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Interviewer">
+                                                                    Interviewer
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="Interviewer" name="Interviewer" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.interviewer).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">
+                                                                    End Client Name
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">RFID</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+
+                                                                        @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label  col-md-12 col-sm-12 desp-label" for="ConfirmationStatus">
+                                                                    Confirmation Status
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ConfirmationStatus" name="ConfirmationStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.confirmationStatus).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
+                                                                    Interview Status
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">
+                                                                    Client
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="Client" name="Client" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.Client).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <div>
+                                                                    <div class="col-md-12 col-sm-12">
+
+
+                                                                        <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                            <font style="font-size:12px;"> Reset Filter</font>
+                                                                        </button>
+
+
+                                                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                            <font style="font-size:12px;"> Apply Filter</font>
+                                                                        </button>
+
+
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+
+                                    <div id="tableID" class="second interview">
+                                        <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="disabled-sorting" style="text-align:center">Move To CP</th>
+                                                    <th>Action</th>
+                                                    <th id='start'>IRF ID</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Candidate Name</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>Primary Skill</th>
+                                                    <th>Interview Status</th>
+                                                    <th>Resume</th>
+                                                    <th>Client HR</th>
+                                                    <th>End Client Name</th>
+                                                    <th>Video Link</th>
+
+                                                    <th style="text-align:center">Call</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th class="disabled-sorting" style="text-align:center">Move To CP</th>
+                                                    <th>Action</th>
+                                                    <th>IRF ID</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Candidate Name</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>Primary Skill</th>
+                                                    <th>Interview Status</th>
+                                                    <th>Resume</th>
+                                                    <th>Client HR</th>
+                                                    <th>End Client Name</th>
+                                                    <th>Video Link</th>
+
+                                                    <th style="text-align:center">Call</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                @foreach (var item in Model)
+                                                {
+                                                    var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+
+                                                    <tr id=@item.imid>
+                                                        @if (item.MoveToCP)
+                                                        {
+                                                            <td class="text-center action">
+                                                                <div class="switch-btn">
+                                                                    <span class="on-off">Off</span>
+                                                                    <div class="material-toggle" onclick="ChangeCheckbox(@item.imid)">
+
+                                                                        <input class="switch" id="MoveToCP_@item.imid" type="checkbox" checked="checked" value="false" name="Move To CommonPool">
+                                                                        <label for="MoveToCP" class=""></label>
+
+                                                                    </div>
+                                                                    <span class="on-off">On</span>
+                                                                </div>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td class="text-center action">
+                                                                <div class="switch-btn">
+                                                                    <span class="on-off">Off</span>
+                                                                    <div class="material-toggle" onclick="ChangeCheckbox(@item.imid)">
+
+                                                                        <input class="switch" id="MoveToCP_@item.imid" type="checkbox" value="false" name="Move To CommonPool">
+                                                                        <label for="MoveToCP" class=""></label>
+
+                                                                    </div>
+                                                                    <span class="on-off">On</span>
+                                                                </div>
+                                                            </td>
+                                                        }
+                                                        <td>
+
+                                                            @if (item.CandidateAvailable == "Available")
+                                                            {
+                                                                <div id="lockbutton_@item.imid">
+                                                                    @if (item.IsLock)
+                                                                    {
+
+                                                                        <span id="lock_@item.imid" style="display:block">
+                                                                            <button>
+                                                                                <span title="Unlock" onclick="Lockvideo(@item.imid,0,'')">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+                                                                                        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
+                                                                                    </svg>
+                                                                                </span>
+                                                                            </button>
+                                                                        </span>
+                                                                        <span id="unlock_@item.imid" style="display:none">
+                                                                            <button>
+                                                                                <span title="Lock" onclick="Lockvideopopup(@item.imid,1,'@item.ClientName')">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-unlock" viewBox="0 0 16 16">
+                                                                                        <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2zM3 8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H3z" />
+                                                                                    </svg>
+                                                                                </span>
+                                                                            </button>
+                                                                        </span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span id="lock_@item.imid" style="display:none">
+                                                                            <button>
+                                                                                <span title="Unlock" onclick="Lockvideo(@item.imid,0,'')">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+                                                                                        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
+                                                                                    </svg>
+                                                                                </span>
+                                                                            </button>
+                                                                        </span>
+                                                                        <span id="unlock_@item.imid" style="display:block">
+                                                                            <button>
+                                                                                <span title="Lock" onclick="Lockvideopopup(@item.imid,1,'@item.ClientName')">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-unlock" viewBox="0 0 16 16">
+                                                                                        <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2zM3 8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H3z" />
+                                                                                    </svg>
+                                                                                </span>
+                                                                            </button>
+                                                                        </span>
+                                                                    }
+                                                                </div>
+                                                            }
+
+                                                        </td>
+                                                        <td title=@item.IRFId> @item.IRFId </td>
+                                                        <td> @item.interviewDate </td>
+                                                        @if (item.IsOnline == 1)
+                                                        {
+                                                            <td>
+                                                                <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                @item.candidateName
+                                                            </td>
+                                                        }
+                                                        <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
+                                                        <td> @item.JDTiltle.Split("|")[0] </td>
+
+
+
+
+
+                                                        @if (item.InterviewStatus != 4 && item.InterviewStatus != 2)
+                                                        {
+                                                            <td class="text-center"> @item.intervieweStatusStatDesc</td>
+                                                        }
+                                                        else if (item.QCStatus == 1 && item.InterviewStatus == 4)
+                                                        {
+                                                            <td class="text-center">
+                                                                <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                            </td>
+                                                        }
+                                                        else if (item.QCStatus == 1 && item.InterviewStatus == 2)
+                                                        {
+                                                            <td class="text-center">
+                                                                <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                            </td>
+                                                        }
+                                                        else if (item.InterviewStatus == 4 && item.QCStatus == null)
+                                                        {
+                                                            int start = item.intervieweStatusStatDesc.IndexOf("(");
+                                                            int end = item.intervieweStatusStatDesc.IndexOf(")");
+                                                            @*<td>QC Pending(<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>*@
+                                                            <td>@item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a></td>
+
+                                                        }
+                                                        else if (item.InterviewStatus == 2 && item.QCStatus == null)
+                                                        {
+                                                            int start = item.intervieweStatusStatDesc.IndexOf("(");
+                                                            int end = item.intervieweStatusStatDesc.IndexOf(")");
+                                                            @*<td>QC Pending(<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>*@
+                                                            <td>@item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a></td>
+
+                                                        }
+                                                        else if (item.QCStatus == 2 && item.InterviewStatus == 4)
+                                                        {
+                                                            int start = item.intervieweStatusStatDesc.IndexOf("(");
+                                                            int end = item.intervieweStatusStatDesc.IndexOf(")");
+                                                            <td class="text-center">
+                                                                @*QC Failed(<a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>)*@
+                                                                @item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a>
+                                                            </td>
+                                                        }
+                                                        else if (item.QCStatus == 2 && item.InterviewStatus == 2)
+                                                        {
+                                                            int start = item.intervieweStatusStatDesc.IndexOf("(");
+                                                            int end = item.intervieweStatusStatDesc.IndexOf(")");
+                                                            <td class="text-center">
+                                                                @*QC Failed(<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>)*@
+                                                                @item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
+
+
+                                                        @if (item.resumeLink != null && item.resumeLink != "")
+                                                        {
+                                                            <td>
+
+                                                                <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No Resume</td>
+                                                        }
+
+                                                        @if (item.IsHrOnline == 1)
+                                                        {
+                                                            <td>
+                                                                <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact </a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                @item.ClientHrContact
+                                                            </td>
+                                                        }
+                                                        <td> @item.ClientName </td>
+
+                                                        @if (item.VideoLink != null && item.VideoLink != "")
+                                                        {
+                                                            <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No Video</td>
+                                                        }
+
+
+
+                                                        <td>
+                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                            {
+                                                                <!--- <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
+
+                                                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
+
+
+                                                            }
+
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <!-- end content-->
+                        </div>
+
+                        <!-- end col-md-12 -->
+                    </div>
+
+                    <div id="myModal" class="modal modal-bg">
+                        <!-- Modal content -->
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+
+
+
+                                <div class="filheader">
+                                    <div class="filavatar">
+                                        <span class="publicsharing-icon">
+
+
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                                        </span>
+                                    </div>
+                                    <h5 class="modal-title pull-left"> Call Candidate!</h5>
+                                </div>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                                </button>
+
+
+
+                                <div class="modal-body">
+                                    <div>
+                                        <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
+
+                                    </div>
+
+                                    <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto; display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <!-- end row -->
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<div id="broadcastModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z"></path></svg>
+                </div>
+                <h5 class="modal-title pull-left" id="filterModalLabel"> Broadcast</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="broadcastPopUp">&times;</span>
+            </button>
+
+            <div class="modal-body">
+
+                <div class="col-md-12 col-sm-12">
+                    <p class="desp-label fx-17">Please select from the following:</p>
+                    <div class="form-group clearfix">
+                        <div class="broad-ele">
+                            <input type="radio" id="radOne" name="receivers" value="Interviewer">
+                            <label for="radOne" class="control-label desp-label">All Interviewers</label>
+                        </div>
+                        <div class="broad-ele">
+                            <input type="radio" id="radTwo" name="receivers" value="Candidate">
+                            <label for="radTwo" class="control-label desp-label">All Candidates</label>
+                        </div>
+                        <div class="broad-ele">
+                            <input type="radio" id="radThree" name="receivers" value="Client">
+                            <label for="radThree" class="control-label desp-label">All Clients</label>
+                        </div>
+
+
+                        <div class="broad-ele">
+                            <div class="pull-left">
+                                <input type="radio" id="radFour" name="receivers" value="IRF">
+                                <label for="radFour" class="control-label desp-label">IRF</label>
+                            </div>
+
+
+                            <div id="IRFLIST" class="form-group pull-left" style="display:none;margin-left:15px;">
+                                <label class="control-label desp-label pull-left" style="padding-top: 2px;">IRF LIST</label>
+                                <div class="form-group pull-left col-md-9">
+                                    <select id="irflist" class="select-css form-control">
+                                        @foreach (var item in Model.Select(x => (x.irfIntId, x.IRFId)).Distinct().ToList())
+                                        {
+                                            @if (item.IRFId != null && item.IRFId != "")
+                                            {
+                                                <option value="@item.irfIntId">@item.IRFId</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                    </div>
+                </div>
+
+
+                <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                        <label class="control-label  desp-label" for="Subject">Subject <span class="required">*</span></label>
+                        <input class="form-control w-full" type="text" name="textField" id="bcSubject" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label  desp-label" for="Message">Message <span class="required">*</span></label>
+                        <div>
+                            <div class="text-areadiv1">
+                                <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-12 col-sm-12 text-right">
+                    <button type="button" onclick="SendBroadcast()" class="mdc-button mdc-button--raised mdc-ripple-upgraded sendButton">Send</button>
+                    <button type="button" id="broadcastPopUpclose" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="sentimentModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left"> Upload Video for Sentiment Analysis</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="sentimentPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+
+
+
+
+            <div class="modal-body">
+                <ul style="padding:0px;text-align: center">
+                    <li style="list-style:none;font-size: 15px; line-height: 18px;color:red">Kindly ensure the duration of the video file does not exceed 90 seconds.</li>
+                </ul>
+
+                @using (Html.BeginForm("AnalyseSentiment", "Interview", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <div class="form-group">
+
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" for="UploadedFile" style="margin:0px auto; display:block;">
+
+                            <span class="mdc-button__label"><span class="fa fa-file"><font style=" font-family: Roboto, sans-serif; font-size:12px;">   Click here to choose file</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
+
+                        <input type="file" accept=".mp4, .ogg, .webm" name="UploadedFile" />
+
+                    </div>
+                    <div class="">
+                        <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnVideoUpload" value="Upload">
+                    </div>
+                    <input type="hidden" id="sentimentImid" name="sentimentImid">
+
+                }
+
+
+            </div>
+            <div class="modal-footer" style="background:#fff;"></div>
+        </div>
+
+    </div>
+</div>
+
+<div id="VideoDetailsModel" class="modal modal-bg">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M9 1C4.58 1 1 4.58 1 9s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 2.75c1.24 0 2.25 1.01 2.25 2.25S10.24 8.25 9 8.25 6.75 7.24 6.75 6 7.76 3.75 9 3.75zM9 14.5c-1.86 0-3.49-.92-4.49-2.33C4.62 10.72 7.53 10 9 10c1.47 0 4.38.72 4.49 2.17-1 1.41-2.63 2.33-4.49 2.33z" /></svg>
+                </div>
+                <h5 class="modal-title pull-left">Share/View Details</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeVideoDetailsModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12 sb-container scroller">
+                    <div id="divvideodetailsmodel" class="pdr-20">
+
+                    </div>
+                </div>
+
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color:#fff;line-height: 13px;" type="button" onclick="SaveVideoDetails()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Save">
+                        <input style="color:#fff;line-height: 13px;" type="button" onclick="closeVideoDetailsModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="CandidateFeedbackModel" class="modal modal-bg" style="z-index:3">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Candidate Feedback </h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeCandidateFeedbackModel()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <input type="text" hidden id="txtinterviewid" />
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div style="padding:10px" id="divcandidatefeedback">
+
+                </div>
+                <div>
+                    <div class="col-md-12 text-right">
+                        <div>
+                            <div style="display: inline-block!important;margin-bottom:10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="ResendFeedbackForm()" id="btnresendform" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Send Feedback"></div>
+                            <div style="        display: inline-block !important;
+        margin-bottom: 10px;
+"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeCandidateFeedbackModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="LockForUserpopup" class="modal modal-bg" style="z-index:3">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Lock For User</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeLockForUserpopup()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <input type="text" hidden id="txtinterviewid" />
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div style="padding:10px">
+                    <input type="hidden" id="hidimid" />
+                    Client User
+                    <select id="ddlClientUser"></select>
+                </div>
+                <div>
+                    <div class="col-md-12 text-right">
+                        <div>
+                            <div style="display: inline-block!important;margin-bottom:10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="Lockvalues()" id="btnresendform" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Lock"></div>
+                            <div style=" display: inline-block !important; margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeLockForUserpopup()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+
+<script>
+    var closeMember = document.getElementById("membersPopUp");
+    // When the user clicks on <span> (x), close the modal
+    closeMember.onclick = function () {
+        var modal = document.getElementById("interviewerMemberModal");
+        modal.style.display = "none";
+    }
+    function getIRFMembers(id) {
+
+        $.ajax({
+            url: '/IRF/GetIRFInterviewerMembers',
+            data: { 'irfId': id },
+            success: function (data) {
+                var modal = document.getElementById("interviewerMemberModal");
+                modal.style.display = "block";
+                $('#memberTableBody').html('');
+                $('#memberTableBody').html(data);
+
+
+            }
+        });
+    }
+
+</script>
+<script>
+    var span = document.getElementById("sentimentPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        var modal = document.getElementById("sentimentModal");
+        modal.style.display = "none";
+    }
+
+
+    function SentimentModalClick(imid) {
+
+        // Get the modal
+        var modal = document.getElementById("sentimentModal");
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        document.getElementById("sentimentImid").value = imid;
+    }
+</script>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+            $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+              }
+
+            $("#PrimarySkill").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '100%',
+                    maxHeight: 200
+                });
+
+
+            $("#RFID").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '100%',
+                    maxHeight: 200
+                });
+            $("#ClientHR").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '100%',
+                    maxHeight: 200
+                });
+
+            $("#ConfirmationStatus").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '100%',
+                    maxHeight: 200
+                });
+
+            $("#MeetingStatus").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '100%',
+                    maxHeight: 200
+                });
+
+            $("#InterviewStatus").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '100%',
+                    maxHeight: 200
+                });
+
+            $("#Interviewer").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '100%',
+                    maxHeight: 200
+            });
+
+            $("#ClientName").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#Client").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+
+
+
+    });
+         function ResetFilter() {
+             window.location.href = "/Interview/ResetInterviewFilter";
+            // $.ajax({
+            //type: "POST",
+            //url: "/Interview/Index",
+            //     success: function (data) {
+            //        window.location.href = "/Interview/ResetInterviewFilter";
+            //     }
+            //    });
+    }
+        function ApplySessionFilter() {
+            var strtDte = '@strtDte';
+            var endDte = '@endDte';
+            var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
+            var rFID =  @Html.Raw(Json.Serialize(RFID));
+            var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
+            var confirmationStatus =  @Html.Raw(Json.Serialize(ConfirmationStatus));
+            var meetingStatus =  @Html.Raw(Json.Serialize(MeetingStatus));
+            var interviewStatus =  @Html.Raw(Json.Serialize(InterviewStatus));
+            var interviewer =  @Html.Raw(Json.Serialize(Interviewer));
+            var clientName =  @Html.Raw(Json.Serialize(ClientName));
+            var client =  @Html.Raw(Json.Serialize(Client));
+
+            $('input[name=StartDate]').val(strtDte);
+            $('input[name=EndDate]').val(endDte);
+            $("#PrimarySkill").val(primarySkillsArr);
+            $("#RFID").val(rFID);
+            $("#ClientHR").val(clientHR);
+            $("#ConfirmationStatus").val(confirmationStatus);
+            $("#MeetingStatus").val(meetingStatus);
+            $("#InterviewStatus").val(interviewStatus);
+            $("#Interviewer").val(interviewer);
+            $("#ClientName").val(clientName);
+            $("#Client").val(client);
+            var form = $("#form").serialize();
+            // $.ajax({
+            //type: "POST",
+            //url: "/Interview/Index",
+            //data: form,
+            //     success: function (data) {
+            //     }
+            //    });
+    }
+
+
+</script>
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.includes("Success")) {
+                swal.fire("Successful",'@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+
+        }
+
+        //window.onload = my_code();
+    </script>
+}
+
+
+
+
+<script>
+    function RefreshSearch() {
+        $('#meeting').DataTable().destroy();
+
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+
+        applyDataTable();
+
+    });
+
+
+
+    function applyDataTable() {
+        $('#meeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+
+        });
+
+    }
+
+
+
+    $(document).ready(function () {
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+
+
+    (function () {
+        var searchForm = document.getElementById('meeting'),
+
+            clearBtn = textInput.nextSibling;
+        textInput.onkeyup = function () {
+            // Show the clear button if text input value is not empty
+            clearBtn.style.visibility = (this.value.length) ? "visible" : "hidden";
+        };
+        // Hide the clear button on click, and reset the input value
+        clearBtn.onclick = function () {
+            this.style.visibility = "hidden";
+            textInput.value = "";
+        };
+    })();
+
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#meeting").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#meeting").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meeting").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+<script>
+    var candidate = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
+
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+
+    });
+
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+    });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+
+    });
+
+    function ModalButtonClick(candidateObj) {
+        candidate = candidateObj.candidateName;
+        // Get the modal
+        var modal = document.getElementById("myModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(candidateObj.MobileNumber);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+
+</script>
+
+
+<script type="text/javascript">
+    var spanbroadcast = document.getElementById("broadcastPopUp");
+    // When the user clicks on <span> (x), close the modal
+    spanbroadcast.onclick = function () {
+        var modal = document.getElementById("broadcastModal");
+        modal.style.display = "none";
+    }
+
+    var spanbroadcast1 = document.getElementById("broadcastPopUpclose");
+    // When the user clicks on <span> (x), close the modal
+    spanbroadcast1.onclick = function () {
+        var modal = document.getElementById("broadcastModal");
+        modal.style.display = "none";
+    }
+
+
+    function OpenBroadcastModal() {
+        // Get the modal
+        var modalBct = document.getElementById("broadcastModal");
+
+        //// When the user clicks the button, open the modal
+        modalBct.style.display = "block";
+        return;
+
+    }
+
+    function SendBroadcast() {
+
+        var message = document.getElementById("bcMessage").value;
+        var subject = document.getElementById("bcSubject").value;
+        var irfid = document.getElementById("irflist").value;
+        var ele = document.getElementsByName('receivers');
+        for (i = 0; i < ele.length; i++) {
+            if (ele[i].checked) {
+                var receiver = ele[i].value;
+            }
+        }
+        $.ajax({
+            type: "GET",
+            url: "/Interview/Broadcast",
+            data: {
+
+                'message': message, 'subject': subject, 'receiver': receiver, 'irfid': irfid
+            },
+            success: function (data) {
+                window.location.href = '/Interview/Index';
+
+            }
+        });
+    }
+    function openCandidateFeedbackModel() {
+        var modal = document.getElementById("CandidateFeedbackModel");
+        modal.style.display = "block";
+    }
+    function closeCandidateFeedbackModel() {
+        var modal = document.getElementById("CandidateFeedbackModel");
+        modal.style.display = "none";
+    }
+
+    function CandidateFeedback(interviewid) {
+        $.ajax({
+            type: "POST",
+            url: "/Interview/FetchCandidateFeedback",
+            data: { interviewid: interviewid },
+            success: function (data) {
+                openCandidateFeedbackModel();
+                $("#txtinterviewid").val(interviewid);
+                BindCandidateFeedback(data);
+            }
+        });
+    }
+    function BindCandidateFeedback(Data) {
+        var html = '';
+        document.getElementById("btnresendform").style.display = "none";
+        if (Data == null) {
+            html = 'No Feedback record found';
+            document.getElementById("btnresendform").style.display = "block";
+        } else {
+            html += '<p><b>Overall, how would you rate the video interview experience?</b></p>';
+            html += '<p>FeedBack: ' + Data.question1 + ' out of 5</p>';
+            html += '<p><b>How would you rate the evaluation process of interviewer?</b></p>';
+            html += '<p>FeedBack: ' + Data.question2 + ' out of 5</p>';
+            html += '<p><b>Given a chance would you like to reappear for the video interview?</b></p>';
+            if (Data.question3 == "1") {
+                html += '<p>FeedBack: No, I am satisfied with the interviewer and evaluation process</p>';
+            } else {
+                html += '<p>FeedBack: Yes, I did not get a fair chance and I can do better</p> ';
+            }
+            html += '<p><b>What did you like about the video interviews event?</b></p>';
+            html += '<p>FeedBack: ' + Data.question4 + '</p>';
+            html += '<p><b>What did you dislike about the video interviews event?</b></p>';
+            html += '<p>FeedBack: ' + Data.question5 + '</p>';
+            html += '<p><b>How friendly was the Risebird staff from scheduling to completion of interviews ?</b></p>';
+            html += '<p>FeedBack: ' + Data.question6 + ' out of 5</p>';
+            if (Data.commentforInterviewer != null) {
+                html += '<p><b>Comments:</b> ' + Data.commentforInterviewer + '</p>';
+            } else {
+                html += '<p><b>Comments:</b> </p>';
+            }
+        }
+        $("#divcandidatefeedback").empty().html(html);
+    }
+    function ResendFeedbackForm() {
+        var interviewid = $("#txtinterviewid").val();
+        var candidateemail = $("#txtcandidateemail_" + interviewid).val();
+        $.ajax({
+            type: "POST",
+            url: "/Interview/ResendFeedbackform",
+            data: { interviewid: interviewid, CandidateEmail: candidateemail },
+            success: function (data) {
+                alert(data);
+                closeCandidateFeedbackModel();
+            }
+        });
+    }
+</script>
+<script>
+    var start = document.getElementById('start');
+    start.focus();
+
+    function dotheneedful(sibling) {
+        if (sibling != null) {
+            start.focus();
+            start.style.backgroundColor = '';
+            start.style.color = '';
+            sibling.focus();
+            start = sibling;
+        }
+    }
+
+    document.onkeydown = checkKey;
+
+    function checkKey(e) {
+        e = e || window.event;
+        if (e.keyCode == '38') {
+            // up arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.previousElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '40') {
+            // down arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.nextElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '37') {
+            // left arrow
+            var sibling = start.previousElementSibling;
+            dotheneedful(sibling);
+        } else if (e.keyCode == '39') {
+            // right arrow
+            var sibling = start.nextElementSibling;
+            dotheneedful(sibling);
+        }
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $('.sendButton').attr('disabled', true);
+        $('input[type="text"],textarea').on('keyup', function () {
+            var textarea_value = $("#bcMessage").val();
+            var text_value = $('input[name="textField"]').val();
+            if (textarea_value != '' && text_value != '') {
+                $('.sendButton').attr('disabled', false);
+
+            } else {
+                $('.sendButton').attr('disabled', true);
+            }
+        });
+    });
+
+    //new added Popup
+    function OpenVideoUploadPopup(interviewid) {
+        var url = "/Interview/partialVideoView?id=" + interviewid;
+        $.get(url, function (data) {
+            $("#VideoDetailsModel").html(data);
+            //BindVideoData(data);
+            var modal = document.getElementById("VideoDetailsModel");
+            modal.style.display = "block";
+        });
+        //fetch question data
+        //Create popup for question and name and Videoupload
+        //Save data new table
+        //Close popup
+    }
+    function closeVideoDetailsModel() {
+        var modal = document.getElementById("VideoDetailsModel");
+        modal.style.display = "none";
+    }
+    function BindVideoData(Data) {
+        var html = '';
+        html += '<table>';
+        html += '<tr>';
+
+        html += '                        <td>Question</td>';
+        html += '                        <td>Title</td>';
+        html += '                         <td>Priority</td>';
+        html += '               <td>Video Link</td>';
+        html += '               <td>Upload Video</td>';
+        html += '           </tr>';
+        for (var i = 0; i < Data.length; i++) {
+            html += '<tr>';
+
+            html += '<td><input type="text" id="txt_que_' + i + '" value="' + Data[i].question + '" readonly /></td>';
+            if (Data[i].videoTitle != null) {
+                html += '<td><input type="text" id="txt_tit_' + i + '" value="' + Data[i].videoTitle + '" /></td>';
+            } else {
+                html += '<td><input type="text" id="txt_tit_' + i + '" value="" /></td>';
+            }
+            html += '<td><input type="text" id="txt_pri_' + i + '" value="' + Data[i].priority + '" /></td>';
+            if (Data[i].videoLink != null) {
+                html += '<td><input type="text" id="txt_vli_' + i + '" value="' + Data[i].videoLink + '" readonly /></td>';
+            } else {
+                html += '<td><input type="text" id="txt_vli_' + i + '" readonly /></td>';
+
+            }
+            html += '<td><input type="file" id = "txt_file_' + i + '"  accept = ".mp4" ></td>';
+            html += '</tr>';
+        }
+        html += '</table>';
+
+        $("#divvideodetailsmodel").empty().html(html);
+    }
+    function SaveVideoDetails() {
+        $.ajax({
+            type: "GET",
+            url: "/RiseTube/CalculateTimeSpend",
+            data: {},
+            success: function (data) {
+            }
+        });
+    }
+
+</script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script>
+    function ChangeCheckbox(imid) {
+        if (document.getElementById("MoveToCP_" + imid).checked) {
+            document.getElementById("MoveToCP_" + imid).checked = false;
+        } else {
+            document.getElementById("MoveToCP_" + imid).checked = true;
+        }
+    }
+    function Lockvideo(interviewid, islock, emailid) {
+        $.ajax({
+            url: '/CommonPool/LockorUnlockVideo',
+            data: { 'imid': interviewid, 'islock': islock, 'emailid': emailid },
+            success: function (data) {
+                if (data == "Success") {
+                    swal.fire("Successfully");
+                    if (islock == 0) {
+                        document.getElementById("unlock_" + interviewid).style.display = "block";
+                        document.getElementById("lock_" + interviewid).style.display = "none";
+
+                    } else {
+                        document.getElementById("lock_" + interviewid).style.display = "block";
+                        document.getElementById("unlock_" + interviewid).style.display = "none";
+
+                    }
+                }
+            }
+        });
+    }
+    function closeLockForUserpopup() {
+        var modal = document.getElementById("LockForUserpopup");
+        modal.style.display = "none";
+    }
+    function Lockvideopopup(imid, islock, ClientName) {
+        //Lockvideo(imid, islock);
+        $("#hidimid").val(imid);
+        $.ajax({
+            url: '/CommonPool/FetchClientUsers',
+            data: { 'ClientName': ClientName },
+            success: function (data) {
+                var drp = $("#ddlClientUser");
+                for (i = 0; i < drp.length; i++) {
+                    $("#ddlClientUser option").remove();
+                }
+                if (data.length > 0) {
+                    $(data).each(function () {
+                        var option = $("<option />");
+                        option.html(this.text);
+                        option.val(this.value);
+                        drp.append(option);
+                    });
+                }
+                var modal = document.getElementById("LockForUserpopup");
+                modal.style.display = "block";
+            }
+        });
+    }
+    function Lockvalues() {
+        var selectemailid = $("#ddlClientUser").val();
+        var imid = $("#hidimid").val();
+        closeLockForUserpopup();
+        Lockvideo(imid, 1, selectemailid);
+    }
+</script>
+

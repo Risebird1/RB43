@@ -122,5 +122,6 @@ namespace Risebird.Business.Interface
         Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount);
         Task<List<RBInterviewDetails>> FNGenerateInvoiceDetails(DateTime st, DateTime se);
         string LockorUnlockVideo(string imid, int islock, string emailid);
+        List<string> FetchClientUsers(string ClientName);
     }
 }
