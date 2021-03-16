@@ -697,14 +697,16 @@ namespace Risebird.Repository
         {
             try
             {
+                string query = string.Empty;
+                DateTime currentdate = DateTime.Now;
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@currentdate", currentdate);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-
-                    var result = await SqlMapper.QueryAsync<NotUpdatedMeetings>(con, "usp_GetNotUpdatedMeetingsCount",
+                    var result = await SqlMapper.QueryAsync<NotUpdatedMeetings>(con, "usp_GetNotUpdatedMeetingsCount",dp,
                         commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
-
             }
             catch (SqlException ex)
             {
@@ -862,18 +864,18 @@ namespace Risebird.Repository
                 string query = string.Empty;
                 if (actionstatus == "InterviewCount")
                 {
-                   // query = "select * from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<7 ";
+                    // query = "select * from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<7 ";
                     query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
                 }
                 else if (actionstatus == "MeetingStatus")
                 {
                     //query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
-                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<GETDATE() and ic.MeetingStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
+                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and ic.MeetingStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
                 }
                 else if (actionstatus == "QcPending")
                 {
-                   // query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus=4 and ic.QCStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
-                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<GETDATE() and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and ic.QCStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
+                    // query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus=4 and ic.QCStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
+                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and ic.QCStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
                 }
                 else if (actionstatus == "UnAssignedCoordianter")
                 {
@@ -884,6 +886,10 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<MeetingVM>(query, null);
+                    if (actionstatus == "QcPending" || actionstatus == "MeetingStatus")
+                    {
+                        results = results.Where(x => x.interviewDate < DateTime.Now).ToList();
+                    }
                     return (List<MeetingVM>)results;
                 }
             }
@@ -911,12 +917,12 @@ namespace Risebird.Repository
                 else if (actionstatus == "MeetingStatus")
                 {
                     //query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus is null";
-                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<GETDATE() and ic.MeetingStatus is null";
+                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and ic.MeetingStatus is null";
                 }
                 else if (actionstatus == "QcPending")
                 {
                     //query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus=4 and ic.QCStatus is null";
-                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<GETDATE() and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and ic.QCStatus is null";
+                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1  and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and ic.QCStatus is null";
                 }
                 else if (actionstatus == "UnAssignedCoordianter")
                 {
@@ -927,6 +933,10 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<MeetingVM>(query, null);
+                    if (actionstatus == "QcPending" || actionstatus == "MeetingStatus")
+                    {
+                        results = results.Where(x => x.interviewDate < DateTime.Now).ToList();
+                    }
                     return (List<MeetingVM>)results;
                 }
             }
