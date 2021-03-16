@@ -1,5 +1,6 @@
 ﻿@model Risebird.Entities.ViewModel.CandidateStatus
 @using Risebird.Entities.Enum;
+@using Risebird.CommonHelper;
 
 @{
     ViewData["Title"] = "Edit Candidate Status";
@@ -100,7 +101,7 @@
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group" id="descDrop">
                                                     @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    <select class="select-css form-control" asp-for="Status" asp-items="Html.GetEnumSelectList<CandidateStatusOptions>()"></select>
+                                                    <select class="select-css form-control" asp-for="Status" asp-items="Html.GetEnumSelectList<CandidateStatusOptionsDrpdwn>()"></select>
 
 
                                                 </div>
