@@ -531,6 +531,7 @@ namespace Risebird.Business
                     reportModel.PerHourRateIndia = techInterviewerRecommendation.PerHourRateIndia;
                     reportModel.ProfileType = techInterviewerRecommendation.ProfileType;
                     reportModel.CompentencyLevel = techInterviewerRecommendation.CompentencyLevel;
+                    reportModel.Country = techInterviewerRecommendation.Country;
                     if (!string.IsNullOrEmpty(techInterviewerRecommendation.SkillCategory))
                     {
                         reportModel.SkillCategoryArray = techInterviewerRecommendation.SkillCategory.Split(',');
