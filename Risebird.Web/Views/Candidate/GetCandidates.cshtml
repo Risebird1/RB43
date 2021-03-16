@@ -140,7 +140,7 @@
                                                             <th id="getstatus_6">Joinability</th>
                                                             <th id="getstatus_7">Selectability</th>
                                                             <th width="25%"> Actions </th>
-                                                            <th style="text-align:center">Reminder Call</th>
+                                                            <th style="text-align:center">Schedule Call</th>
                                                             <th style="text-align:center">Call</th>
 
 
@@ -158,7 +158,7 @@
                                                             <th>Joinability</th>
                                                             <th>Selectability </th>
                                                             <th style="width:25%"> Actions </th>
-                                                            <th style="text-align:center">Reminder Call</th>
+                                                            <th style="text-align:center">Schedule Call</th>
 
                                                             <th style="text-align:center">Call</th>
 
@@ -1790,7 +1790,7 @@
 
             swal.fire({
                 title: 'Call ' + candidateName + '?',
-                text: "A system generated reminder call will be placed to the candidate.",
+                text: "A system generated schedule call will be placed to the candidate.",
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -1824,7 +1824,7 @@
                     swal.fire({
                         title: 'Call placed!',
                         type: 'success',
-                        html: '<p>Successfully completed the reminder call.</p>',
+                        html: '<p>Successfully completed the schedule call.</p>',
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',
                         confirmButtonText: 'Close!',
@@ -2121,8 +2121,8 @@
                         }
                     },
                     {
-                        title: "Reminder Call",
-                        content: "Click here to give a reminder call to the candidate ",
+                        title: "Schedule Call",
+                        content: "Click here to schedule a call for the candidate ",
                         target: "getstatus_11",
                         showPrevButton: true,
                         zindex: 999999,
