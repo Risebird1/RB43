@@ -2302,7 +2302,6 @@ namespace Risebird.Business
                 return meeting;
 
             }
-
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -2317,15 +2316,53 @@ namespace Risebird.Business
                 return meeting;
 
             }
-
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-    }
+        public string SetCandidateAvailability(string imid, int isavailable)
+        {
+            try
+            {
+                var meeting = _meetingRespository.SetCandidateAvailability(imid, isavailable);
+                return meeting;
 
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "fail";
+            }
+        }
+        public string MoveToCP(string imid, int movetocp)
+        {
+            try
+            {
+                var meeting = _meetingRespository.MoveToCP(imid, movetocp);
+                return meeting;
+
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "fail";
+            }
+        }
+        public List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                return _meetingRespository.GetAllSelectedCandidateInterviewList(startDate, endDate).Result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+    }
 }
 
 

@@ -3811,5 +3811,69 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public string SetCandidateAvailability(string imid, int isavailable)
+        {
+            try
+            {
+                var dParameters = new DynamicParameters();
+                dParameters.Add("@isavailable", isavailable);
+                dParameters.Add("@imid", imid);
+                var dquery = "Update InterviewComments Set CandidateAvailable = @isavailable,ClientUserid=@UserId Where Interviewid=@imid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query(dquery, dParameters);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "fail";
+        }
+        public string MoveToCP(string imid, int movetocp)
+        {
+            try
+            {
+                var dParameters = new DynamicParameters();
+                dParameters.Add("@movetocp", movetocp);
+                dParameters.Add("@imid", imid);
+                var dquery = "Update InterviewComments Set MoveToCP = @movetocp,ClientUserid=@UserId Where Interviewid=@imid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query(dquery, dParameters);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "fail";
+        }
+        public async Task<IEnumerable<MeetingVM>> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("startDate", startDate);
+                    parameters.Add("endDate", endDate);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIAllSelectedCandidateInterviewMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

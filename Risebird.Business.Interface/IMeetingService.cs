@@ -123,5 +123,8 @@ namespace Risebird.Business.Interface
         Task<List<RBInterviewDetails>> FNGenerateInvoiceDetails(DateTime st, DateTime se);
         string LockorUnlockVideo(string imid, int islock, string emailid);
         List<string> FetchClientUsers(string ClientName);
+        string SetCandidateAvailability(string imid, int isavailable);
+        string MoveToCP(string imid, int movetocp);
+        List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate);
     }
 }

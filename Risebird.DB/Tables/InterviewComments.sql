@@ -34,6 +34,10 @@ CREATE TABLE [dbo].[InterviewComments](
 	[FeedbackAudioLink] [nvarchar](max) NULL,
 	[AadharFileLink] [nvarchar](max) NULL,
 	[MoveToCP] [bit] NULL,
+    [CandidateAvailable] [bit] NULL,
+    [IsLock] [bit] NULL,
+    [ClientUserid] [int] NULL
+
 	CONSTRAINT [FK_Interview] FOREIGN KEY (InterviewId) REFERENCES InterviewMeetings(id),
 
  CONSTRAINT [PK_InterviewComments] PRIMARY KEY CLUSTERED 
@@ -116,6 +120,25 @@ BEGIN
     Add CandidateAvailable bit Not NUll default 1
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsLock')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add IsLock bit null
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ClientUserid')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add ClientUserid int
+END
+ 
 End
 GO
 

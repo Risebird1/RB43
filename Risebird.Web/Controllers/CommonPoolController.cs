@@ -1298,42 +1298,66 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
+        [Authorize]
         public IActionResult AllInterview()
         {
-            var modelList = _meetingService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1));
-            modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
-            foreach (var item in modelList)
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                item.NextLevelApprovalStat = item.IsApproved.HasValue ? ((NextLevelApprovalStatus)item.IsApproved).GetDescription() : string.Empty;
-
-                if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin")
                 {
-                    if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                    var modelList = _meetingService.GetAllSelectedCandidateInterviewList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1));
+                    modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
+                    foreach (var item in modelList)
                     {
-                        item.MeetingStatusStatusDesc = "Status Pending";
+                        item.NextLevelApprovalStat = item.IsApproved.HasValue ? ((NextLevelApprovalStatus)item.IsApproved).GetDescription() : string.Empty;
 
+                        if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                        {
+                            if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                            {
+                                item.MeetingStatusStatusDesc = "Status Pending";
+                            }
+                        }
+                        else
+                        {
+                            item.MeetingStatusStatusDesc = string.Empty;
+                        }
+                        if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
+                        {
+                            item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
+                        }
+                        else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
+                        {
+                            item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
+                        }
                     }
+                    return View(modelList);
                 }
                 else
                 {
-                    item.MeetingStatusStatusDesc = string.Empty;
-
-                }
-
-                if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
-                {
-                    item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
-                }
-                else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
-                {
-                    item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
-            return View(modelList);
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
         }
         public JsonResult FetchClientUsers(string ClientName)
         {
             var result = _meetingService.FetchClientUsers(ClientName);
+            return Json(result);
+        }
+        public JsonResult SetCandidateAvailability(string imid, int isavailable)
+        {
+            var result = _meetingService.SetCandidateAvailability(imid, isavailable);
+            return Json(result);
+        }
+        public JsonResult MoveToCP(string imid, int movetocp)
+        {
+            var result = _meetingService.MoveToCP(imid, movetocp);
             return Json(result);
         }
     }
