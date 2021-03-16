@@ -48,7 +48,7 @@
 
                 <div class="pull-right client-ms">
                     <div id="meeting_filter" class="dataTables_filter pull-left">
-
+                        
                         <div class="searchCon" style="margin-right:10px;">
 
                             <button onclick="searchResult()" type="button" id="search">&nbsp</button>
@@ -59,6 +59,9 @@
                             @*<button style="display:none;" type="button" id="x">x</button>*@
 
                         </div>
+                        <i type="submit" class="fa fa-file-excel-o excel-file card-title-space" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyAssessmentsExportToExcel", "Interviewer")'"></i>
+
+
                     </div>
                     <div>
 
