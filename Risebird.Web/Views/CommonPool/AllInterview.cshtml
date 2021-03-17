@@ -66,32 +66,29 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="mobile-view">
+    @*<div class="mobile-view">*@
         <div class="pt30">
             <div class="col-md-12 nopad" style="margin:0px;">
                 <div class="card-header bg-w clearfix">
                     <div class="pull-left">
                         <h4 class="card-title"></h4>
-                        <h4 class="card-title"> Interviews</h4>
+                        <div class="mobile-view"> <h4 class="card-title"> Interviews</h4></div>
                     </div>
 
                     <div class="pull-right">
                         <div>
-
-
-
-                            @*<button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#filterModal">
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#filterModal">
 
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                 <div class="mdc-button__ripple"></div>
-                            </button>*@
+                            </button>
 
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    @*</div>*@
 
 
     <div class="content client">
@@ -449,14 +446,15 @@
                                                                         <span id="lock_@item.imid" style="display:block">
                                                                             <button class="lock-un">
                                                                                 <span title="Unlock" onclick="Lockvideo(@item.imid,0,'')">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z" /></svg>
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>
+
                                                                                 </span>
                                                                             </button>
                                                                         </span>
                                                                         <span id="unlock_@item.imid" style="display:none">
                                                                             <button class="lock-un">
                                                                                 <span title="Lock" onclick="Lockvideopopup(@item.imid,1,'@item.ClientName')">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z" /></svg>
                                                                                 </span>
                                                                             </button>
                                                                         </span>
@@ -466,14 +464,14 @@
                                                                         <span id="lock_@item.imid" style="display:none">
                                                                             <button class="lock-un">
                                                                                 <span title="Unlock" onclick="Lockvideo(@item.imid,0,'')">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z" /></svg>
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>
                                                                                 </span>
                                                                             </button>
                                                                         </span>
                                                                         <span id="unlock_@item.imid" style="display:block">
                                                                             <button class="lock-un">
                                                                                 <span title="Lock" onclick="Lockvideopopup(@item.imid,1,'@item.ClientName')">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z" /></svg>
                                                                                 </span>
                                                                             </button>
                                                                         </span>
@@ -697,7 +695,7 @@
                     <div class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" style="font-size:17px!important;padding-bottom:8px;"> Client User</div>
                     <div> <select class="form-control select-css" id="ddlClientUser" style="margin-bottom: 10px !important;"></select></div>
                 </div>
-         
+
                 <div>
                     <div class="col-md-12 text-right">
                         <div>
@@ -1165,7 +1163,7 @@
         }
         $.ajax({
             url: '/CommonPool/MoveToCP',
-            data: { 'imid': interviewid, 'movetocp': MoveToCP },
+            data: { 'imid': imid, 'movetocp': MoveToCP },
             success: function (data) {
             }
         });
@@ -1207,8 +1205,8 @@
                 if (data.length > 0) {
                     $(data).each(function () {
                         var option = $("<option />");
-                        option.html(this.text);
-                        option.val(this.value);
+                        option.html(this);
+                        option.val(this);
                         drp.append(option);
                     });
                 }
@@ -1233,7 +1231,7 @@
         }
         $.ajax({
             url: '/CommonPool/SetCandidateAvailability',
-            data: { 'imid': interviewid, 'isavailable': isAvailable },
+            data: { 'imid': imid, 'isavailable': isAvailable },
             success: function (data) {
             }
         });

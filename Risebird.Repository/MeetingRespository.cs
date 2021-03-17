@@ -3838,7 +3838,7 @@ namespace Risebird.Repository
                 var dParameters = new DynamicParameters();
                 dParameters.Add("@movetocp", movetocp);
                 dParameters.Add("@imid", imid);
-                var dquery = "Update InterviewComments Set MoveToCP = @movetocp,ClientUserid=@UserId Where Interviewid=@imid";
+                var dquery = "Update InterviewComments Set MoveToCP = @movetocp Where Interviewid=@imid";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = con.Query(dquery, dParameters);
