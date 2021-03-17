@@ -329,7 +329,18 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        clientUserVM.EmailId = clientUserVM.EmailId.Trim().ToLower();
+                        if (!string.IsNullOrEmpty(clientUserVM.FirstName))
+                        {
+                            clientUserVM.FirstName = clientUserVM.FirstName.Trim();
+                        }
+                        if (!string.IsNullOrEmpty(clientUserVM.LastName))
+                        {
+                            clientUserVM.LastName = clientUserVM.LastName.Trim();
+                        }
+                        if (!string.IsNullOrEmpty(clientUserVM.EmailId))
+                        {
+                            clientUserVM.EmailId = clientUserVM.EmailId.Trim().ToLower();
+                        }
                         if (_userService.AddClientUser(clientUserVM))
                         {
                             TempData["SuccessErrorMessageClientUser"] = "Client User is added Successfully";
@@ -439,7 +450,22 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        clientUserVM.EmailId = clientUserVM.EmailId.ToLower();
+                        if(!string.IsNullOrEmpty(clientUserVM.FirstName))
+                        {
+                            clientUserVM.FirstName = clientUserVM.FirstName.Trim();
+
+                        }
+                        if (!string.IsNullOrEmpty(clientUserVM.LastName))
+                        {
+                            clientUserVM.LastName = clientUserVM.LastName.Trim();
+
+                        }
+                        if (!string.IsNullOrEmpty(clientUserVM.EmailId))
+                        {
+                            clientUserVM.EmailId = clientUserVM.EmailId.Trim();
+                            clientUserVM.EmailId = clientUserVM.EmailId.ToLower();
+
+                        }
                         if (_userService.UpdateClientUser(clientUserVM))
                         {
                             TempData["SuccessErrorMessageClientUser"] = "Client User is updated Successfully";

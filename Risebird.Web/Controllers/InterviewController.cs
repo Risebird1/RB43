@@ -1449,6 +1449,16 @@ namespace Risebird.Web.Controllers
                             meeting.StaffingAgencyList = new SelectList(clients.Where(x => x.ClientRoleId == 4), "EmailId", "EmailId");
 
                         }
+                        meeting.interviewer = meeting.interviewer.Trim();
+                        if (!string.IsNullOrEmpty(meeting.interviewer))
+                        {
+                            meeting.interviewer = meeting.interviewer.Trim();
+                        }
+                        meeting.QCInterviewer = meeting.QCInterviewer.Trim();
+                        if (!string.IsNullOrEmpty(meeting.QCInterviewer))
+                        {
+                            meeting.QCInterviewer = meeting.QCInterviewer.Trim();
+                        }
                         if (ModelState.IsValid)
                         {
                             if (meeting.File == null && (meeting.resumeLink == null))

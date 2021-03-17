@@ -875,7 +875,7 @@ namespace Risebird.Repository
                 else if (actionstatus == "QcPending")
                 {
                     // query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus=4 and ic.QCStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
-                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and ic.QCStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
+                    query = "select * from InterviewMeetings im inner join InterviewComments ic on ic.InterviewId= im.id left join QCFeedbackReport qc on qc.InterviewId = im.id where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null) and DATEDIFF(DAY, interviewDate, GETDATE())<7  ";
                 }
                 else if (actionstatus == "UnAssignedCoordianter")
                 {
@@ -886,7 +886,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<MeetingVM>(query, null);
-                    if (actionstatus == "QcPending" || actionstatus == "MeetingStatus")
+                    if (actionstatus == "MeetingStatus")
                     {
                         results = results.Where(x => x.interviewDate < DateTime.Now).ToList();
                     }
@@ -922,7 +922,7 @@ namespace Risebird.Repository
                 else if (actionstatus == "QcPending")
                 {
                     //query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus=4 and ic.QCStatus is null";
-                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1  and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and ic.QCStatus is null";
+                    query = "select * from InterviewMeetings im inner join InterviewComments ic on ic.InterviewId= im.id left join QCFeedbackReport qc on qc.InterviewId = im.id where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null)";
                 }
                 else if (actionstatus == "UnAssignedCoordianter")
                 {
@@ -933,7 +933,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<MeetingVM>(query, null);
-                    if (actionstatus == "QcPending" || actionstatus == "MeetingStatus")
+                    if (actionstatus == "MeetingStatus")
                     {
                         results = results.Where(x => x.interviewDate < DateTime.Now).ToList();
                     }

@@ -239,7 +239,7 @@
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Where(x => !string.IsNullOrEmpty(x.MeetingStatusStatusDesc)).Select(x => x.MeetingStatusStatusDesc).Distinct().ToList())
+                                                                        @foreach (var item in Model.Where(x=>!string.IsNullOrEmpty(x.MeetingStatusStatusDesc)).Select(x => x.MeetingStatusStatusDesc).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
                                                                             {
@@ -597,28 +597,28 @@
                                                         }
 
 
-                                                        @if (item.InterviewStatus != 4 && item.InterviewStatus != 2)
-                                                        {
-                                                            <td class="text-center"> @item.intervieweStatusStatDesc</td>
-                                                        }
-                                                        else if (item.QCStatus == 1 && item.InterviewStatus == 4)
-                                                        {
-                                                            <td class="text-center">
-                                                                <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                            </td>
-                                                        }
-                                                        else if (item.QCStatus == 1 && item.InterviewStatus == 2)
-                                                        {
-                                                            <td class="text-center">
-                                                                <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                            </td>
-                                                        }
-                                                        else if (item.InterviewStatus == 4 && item.QCStatus == null)
-                                                        {
-                                                            int start = item.intervieweStatusStatDesc.IndexOf("(");
-                                                            int end = item.intervieweStatusStatDesc.IndexOf(")");
-                                                            @*<td>QC Pending(<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>*@
-                                                            <td>@item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a></td>
+                                                    @if (item.InterviewStatus != 4 && item.InterviewStatus != 2)
+                                                    {
+                                                        <td class="text-center"> @item.intervieweStatusStatDesc</td>
+                                                    }
+                                                    else if (item.QCStatus == 1 && item.InterviewStatus == 4)
+                                                    {
+                                                        <td class="text-center">
+                                                            <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                        </td>
+                                                    }
+                                                    else if (item.QCStatus == 1 && item.InterviewStatus == 2)
+                                                    {
+                                                        <td class="text-center">
+                                                            <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                        </td>
+                                                    }
+                                                    else if (item.InterviewStatus == 4 && item.QCStatus == null)
+                                                    {
+                                                        int start = item.intervieweStatusStatDesc.IndexOf("(");
+                                                        int end = item.intervieweStatusStatDesc.IndexOf(")");
+                                                        @*<td>QC Pending(<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>*@
+                                                        <td>@item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end-start+1))</a></td>
 
                                                         }
                                                         else if (item.InterviewStatus == 2 && item.QCStatus == null)

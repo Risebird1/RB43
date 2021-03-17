@@ -1199,8 +1199,10 @@ namespace Risebird.Repository
                     InterviewComments interviewComments = new InterviewComments();
                     DynamicParameters parameters = new DynamicParameters();
                     DynamicParameters paramx = new DynamicParameters();
+                    paramx.Add("@IRFId", reportDetails.IRFId);
+                    paramx.Add("@CandidateName", reportDetails.CandidateName);
                     paramx.Add("@InterviewId", reportDetails.InterviewId);
-                    paramx.Add("@confirmationStatus", "");
+                    paramx.Add("@confirmationStatus", reportDetails.confirmationStatus != null ? reportDetails.confirmationStatus : string.Empty);
                     paramx.Add("@OverallScore", reportDetails.OverallScore);
                     paramx.Add("@Rating", reportDetails.Rating);
                     paramx.Add("@TechSkillComments", reportDetails.TechSkillComments);
@@ -1239,33 +1241,36 @@ namespace Risebird.Repository
                     {
                         parametersPoints.Add("@Type", "Interview");
                     }
-                    if (reportDetails.IsEdited)
-                    {
-                        var result = SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,
+                    //if (reportDetails.IsEdited)
+                    //{
+                    //    var result = SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,
+                    //                        commandType: CommandType.StoredProcedure);
+
+                    //}
+                    //else
+                    //{
+                    //    //add to interviewReport table
+                    //    string sqlInsertReport = "INSERT INTO InterviewReport (IRFId, InterviewId, CandidateName,confirmationStatus,OverallScore, Rating, TechSkillComments, SkillGeneralComments, SelectabilityComments, JoinabilityComments, ProctoringCount ) Values (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @Rating, @TechSkillComments, @SkillGeneralComments, @SelectabilityComments, @JoinabilityComments, @ProctoringCount);";
+                    //    var affectedRows = con.ExecuteAsync(sqlInsertReport, new
+                    //    {
+                    //        reportDetails.IRFId,
+                    //        reportDetails.InterviewId,
+                    //        reportDetails.CandidateName,
+                    //        reportDetails.confirmationStatus,
+                    //        reportDetails.OverallScore,
+                    //        reportDetails.Rating,
+                    //        reportDetails.TechSkillComments,
+                    //        reportDetails.SkillGeneralComments,
+                    //        reportDetails.SelectabilityComments,
+                    //        reportDetails.JoinabilityComments,
+                    //        reportDetails.ProctoringCount
+
+                    //    }).Result;
+
+                    //}
+
+                    var result = SqlMapper.Query<int>(con, "usp_AddUpdateInterviewReport", paramx,
                                             commandType: CommandType.StoredProcedure);
-
-                    }
-                    else
-                    {
-                        //add to interviewReport table
-                        string sqlInsertReport = "INSERT INTO InterviewReport (IRFId, InterviewId, CandidateName,confirmationStatus,OverallScore, Rating, TechSkillComments, SkillGeneralComments, SelectabilityComments, JoinabilityComments, ProctoringCount ) Values (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @Rating, @TechSkillComments, @SkillGeneralComments, @SelectabilityComments, @JoinabilityComments, @ProctoringCount);";
-                        var affectedRows = con.ExecuteAsync(sqlInsertReport, new
-                        {
-                            reportDetails.IRFId,
-                            reportDetails.InterviewId,
-                            reportDetails.CandidateName,
-                            reportDetails.confirmationStatus,
-                            reportDetails.OverallScore,
-                            reportDetails.Rating,
-                            reportDetails.TechSkillComments,
-                            reportDetails.SkillGeneralComments,
-                            reportDetails.SelectabilityComments,
-                            reportDetails.JoinabilityComments,
-                            reportDetails.ProctoringCount
-
-                        }).Result;
-
-                    }
 
                     DataTable techReportDt = new DataTable();
                     techReportDt.Columns.Add("InterviewId", typeof(int));
