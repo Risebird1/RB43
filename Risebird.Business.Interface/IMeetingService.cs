@@ -22,7 +22,7 @@ namespace Risebird.Business.Interface
         string AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate);
         bool UnassignYourself(int meetingid, string email, bool isPenalty);
         List<Meeting> GetAllAssignedInterviews(string emailID);
-        bool UpdateComments(InterviewComments comments, string performedBy=null);
+        bool UpdateComments(InterviewComments comments, string performedBy = null);
         InterviewComments GetInterviewComments(int interviewId);
         Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
         Task<bool> AddInterviewReport(InterviewReport reportModel, string emailId);
@@ -34,7 +34,7 @@ namespace Risebird.Business.Interface
         bool PostSelectionStatus(string imid, string value, string comment);
         bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP, string clientEmailId);
         List<Meeting> GetQualityControlInterviews(string emailID);
-        bool SaveQCFeedback(string imid, string qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled, string oldQcStatus, string performedBy=null);
+        bool SaveQCFeedback(string imid, string qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled, string oldQcStatus, string performedBy = null);
         List<Meeting> GetQCOpenInterviews(string emailId);
         string QCAssignYourself(int meetingid, string interviewerMail);
         bool QCUnassignYourself(int meetingid, string email);
@@ -115,11 +115,16 @@ namespace Risebird.Business.Interface
         Task<List<RBInterviewDetails>> RBDetails(string EmailId);
         Task<string> RBUpdateStatusDetails(string EmailId);
         Task<List<RBInterviewDetails>> FetchFNDetails(string EmailId);
-        Task<List<RBInterviewDetails>> RBInterviewerDetails(int interviewerid,int flag);
+        Task<List<RBInterviewDetails>> RBInterviewerDetails(int interviewerid, int flag);
         Task<string> RBAddPoints(int interviewerid, int Points, string Comment);
-        Task<string> RBConfirmPayment(int interviewerid,int index);
+        Task<string> RBConfirmPayment(int interviewerid, int index);
         Task<List<string>> FetchInterviewerList(string searchterm);
-        Task<string> InsertAdvancePayment(string Interviewer,string Comment,int Amount);
+        Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount);
         Task<List<RBInterviewDetails>> FNGenerateInvoiceDetails(DateTime st, DateTime se);
+        string LockorUnlockVideo(string imid, int islock, string emailid);
+        List<string> FetchClientUsers(string ClientName);
+        string SetCandidateAvailability(string imid, int isavailable);
+        string MoveToCP(string imid, int movetocp);
+        List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate);
     }
 }

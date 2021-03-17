@@ -38,11 +38,33 @@ body {
     margin-top: 20px !important;
 }
 audio{outline:0px;border:0px;}
-
+.lock-un {
+    background: none;
+    border: 0px;
+    padding: 3px 0px;
+    text-align: center;
+}
 .mobile-view-chn, .mobile-view-ac {
     display: none
 }
-
+.available {
+    color: #1f9007;
+    padding: 2px 0px;
+    font-size: 13px;
+    border-radius: 3px;
+    margin-left: 4px;
+    line-height: 19px;
+    font-weight: bold;
+}
+.unavailable {
+    color: #6f796d;
+    padding: 2px 0px;
+    font-size: 13px;
+    border-radius: 3px;
+    margin-left: 4px;
+    line-height: 19px;
+    font-weight: bold;
+}
 .mobile-view-ac {
     position: absolute;
     right: 6px;

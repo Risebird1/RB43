@@ -1199,8 +1199,10 @@ namespace Risebird.Repository
                     InterviewComments interviewComments = new InterviewComments();
                     DynamicParameters parameters = new DynamicParameters();
                     DynamicParameters paramx = new DynamicParameters();
+                    paramx.Add("@IRFId", reportDetails.IRFId);
+                    paramx.Add("@CandidateName", reportDetails.CandidateName);
                     paramx.Add("@InterviewId", reportDetails.InterviewId);
-                    paramx.Add("@confirmationStatus", "");
+                    paramx.Add("@confirmationStatus", reportDetails.confirmationStatus != null ? reportDetails.confirmationStatus : string.Empty);
                     paramx.Add("@OverallScore", reportDetails.OverallScore);
                     paramx.Add("@Rating", reportDetails.Rating);
                     paramx.Add("@TechSkillComments", reportDetails.TechSkillComments);
@@ -1239,33 +1241,36 @@ namespace Risebird.Repository
                     {
                         parametersPoints.Add("@Type", "Interview");
                     }
-                    if (reportDetails.IsEdited)
-                    {
-                        var result = SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,
+                    //if (reportDetails.IsEdited)
+                    //{
+                    //    var result = SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,
+                    //                        commandType: CommandType.StoredProcedure);
+
+                    //}
+                    //else
+                    //{
+                    //    //add to interviewReport table
+                    //    string sqlInsertReport = "INSERT INTO InterviewReport (IRFId, InterviewId, CandidateName,confirmationStatus,OverallScore, Rating, TechSkillComments, SkillGeneralComments, SelectabilityComments, JoinabilityComments, ProctoringCount ) Values (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @Rating, @TechSkillComments, @SkillGeneralComments, @SelectabilityComments, @JoinabilityComments, @ProctoringCount);";
+                    //    var affectedRows = con.ExecuteAsync(sqlInsertReport, new
+                    //    {
+                    //        reportDetails.IRFId,
+                    //        reportDetails.InterviewId,
+                    //        reportDetails.CandidateName,
+                    //        reportDetails.confirmationStatus,
+                    //        reportDetails.OverallScore,
+                    //        reportDetails.Rating,
+                    //        reportDetails.TechSkillComments,
+                    //        reportDetails.SkillGeneralComments,
+                    //        reportDetails.SelectabilityComments,
+                    //        reportDetails.JoinabilityComments,
+                    //        reportDetails.ProctoringCount
+
+                    //    }).Result;
+
+                    //}
+
+                    var result = SqlMapper.Query<int>(con, "usp_AddUpdateInterviewReport", paramx,
                                             commandType: CommandType.StoredProcedure);
-
-                    }
-                    else
-                    {
-                        //add to interviewReport table
-                        string sqlInsertReport = "INSERT INTO InterviewReport (IRFId, InterviewId, CandidateName,confirmationStatus,OverallScore, Rating, TechSkillComments, SkillGeneralComments, SelectabilityComments, JoinabilityComments, ProctoringCount ) Values (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @Rating, @TechSkillComments, @SkillGeneralComments, @SelectabilityComments, @JoinabilityComments, @ProctoringCount);";
-                        var affectedRows = con.ExecuteAsync(sqlInsertReport, new
-                        {
-                            reportDetails.IRFId,
-                            reportDetails.InterviewId,
-                            reportDetails.CandidateName,
-                            reportDetails.confirmationStatus,
-                            reportDetails.OverallScore,
-                            reportDetails.Rating,
-                            reportDetails.TechSkillComments,
-                            reportDetails.SkillGeneralComments,
-                            reportDetails.SelectabilityComments,
-                            reportDetails.JoinabilityComments,
-                            reportDetails.ProctoringCount
-
-                        }).Result;
-
-                    }
 
                     DataTable techReportDt = new DataTable();
                     techReportDt.Columns.Add("InterviewId", typeof(int));
@@ -3754,6 +3759,126 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+        public string LockorUnlockVideo(string imid, int islock, string emailid)
+        {
+            try
+            {
+                int UserId = 0;
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", emailid);
+                var query = "Select id from UserList where Emailid=@Emailid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    UserId = results.FirstOrDefault();
+                }
+                var dParameters = new DynamicParameters();
+                dParameters.Add("@islock", islock);
+                if (islock == 0)
+                {
+                    dParameters.Add("@UserId", 0);
+                }
+                else
+                {
+                    dParameters.Add("@UserId", UserId);
+                }
+                dParameters.Add("@imid", imid);
+                var dquery = "Update InterviewComments Set IsLock = @islock,ClientUserid=@UserId Where Interviewid=@imid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query(dquery, dParameters);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "fail";
+        }
+        public List<string> FetchClientUsers(string ClientName)
+        {
+            try
+            {
+                var dParameters = new DynamicParameters();
+                dParameters.Add("@ClientName", ClientName);
+                var dquery = "Select ul.EmailId From Client cl join ClientUser cu on cu.ClientId=cl.id join UserList ul on ul.id=cu.UserId where Name=@ClientName";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<string>(dquery, dParameters);
+                    return (List<string>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string SetCandidateAvailability(string imid, int isavailable)
+        {
+            try
+            {
+                var dParameters = new DynamicParameters();
+                dParameters.Add("@isavailable", isavailable);
+                dParameters.Add("@imid", imid);
+                var dquery = "Update InterviewComments Set CandidateAvailable = @isavailable,ClientUserid=@UserId Where Interviewid=@imid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query(dquery, dParameters);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "fail";
+        }
+        public string MoveToCP(string imid, int movetocp)
+        {
+            try
+            {
+                var dParameters = new DynamicParameters();
+                dParameters.Add("@movetocp", movetocp);
+                dParameters.Add("@imid", imid);
+                var dquery = "Update InterviewComments Set MoveToCP = @movetocp Where Interviewid=@imid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query(dquery, dParameters);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "fail";
+        }
+        public async Task<IEnumerable<MeetingVM>> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("startDate", startDate);
+                    parameters.Add("endDate", endDate);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIAllSelectedCandidateInterviewMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

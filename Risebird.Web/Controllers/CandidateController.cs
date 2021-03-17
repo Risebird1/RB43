@@ -2514,7 +2514,7 @@ namespace Risebird.Web.Controllers
                                     var candidate = new CandidateQuickAddModel
                                     {
                                         Name = (workSheet.Cells[rowIterator, 1] != null) ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
-                                        EmailId = workSheet.Cells[rowIterator, 2].Value.ToString(),
+                                        EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim(),
                                         ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null) ? workSheet.Cells[rowIterator, 3].Value.ToString() : string.Empty,         //workSheet.Cells[rowIterator, 3].Value.ToString();
                                         Phone = (workSheet.Cells[rowIterator, 4].Value != null) ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString()) : string.Empty,                  // "+" + workSheet.Cells[rowIterator, 10].Value.ToString();
                                         ClientHREmail = (workSheet.Cells[rowIterator, 5] != null) ? workSheet.Cells[rowIterator, 5].Value.ToString() : string.Empty,
