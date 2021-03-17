@@ -233,6 +233,9 @@ namespace Risebird.Entities.ViewModel
         public string Name { get; set; }
         public string CompanyType { get; set; }
         public string Domain { get; set; }
+        public bool IsLock { get; set; }
+        public string EmailId { get; set; }
+        public bool UnlockVideo { get; set; }
     }
     public class VedioComments
     {

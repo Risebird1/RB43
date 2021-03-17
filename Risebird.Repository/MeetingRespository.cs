@@ -3760,5 +3760,125 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public string LockorUnlockVideo(string imid, int islock, string emailid)
+        {
+            try
+            {
+                int UserId = 0;
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", emailid);
+                var query = "Select id from UserList where Emailid=@Emailid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    UserId = results.FirstOrDefault();
+                }
+                var dParameters = new DynamicParameters();
+                dParameters.Add("@islock", islock);
+                if (islock == 0)
+                {
+                    dParameters.Add("@UserId", 0);
+                }
+                else
+                {
+                    dParameters.Add("@UserId", UserId);
+                }
+                dParameters.Add("@imid", imid);
+                var dquery = "Update InterviewComments Set IsLock = @islock,ClientUserid=@UserId Where Interviewid=@imid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query(dquery, dParameters);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "fail";
+        }
+        public List<string> FetchClientUsers(string ClientName)
+        {
+            try
+            {
+                var dParameters = new DynamicParameters();
+                dParameters.Add("@ClientName", ClientName);
+                var dquery = "Select ul.EmailId From Client cl join ClientUser cu on cu.ClientId=cl.id join UserList ul on ul.id=cu.UserId where Name=@ClientName";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<string>(dquery, dParameters);
+                    return (List<string>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string SetCandidateAvailability(string imid, int isavailable)
+        {
+            try
+            {
+                var dParameters = new DynamicParameters();
+                dParameters.Add("@isavailable", isavailable);
+                dParameters.Add("@imid", imid);
+                var dquery = "Update InterviewComments Set CandidateAvailable = @isavailable,ClientUserid=@UserId Where Interviewid=@imid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query(dquery, dParameters);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "fail";
+        }
+        public string MoveToCP(string imid, int movetocp)
+        {
+            try
+            {
+                var dParameters = new DynamicParameters();
+                dParameters.Add("@movetocp", movetocp);
+                dParameters.Add("@imid", imid);
+                var dquery = "Update InterviewComments Set MoveToCP = @movetocp Where Interviewid=@imid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query(dquery, dParameters);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "fail";
+        }
+        public async Task<IEnumerable<MeetingVM>> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("startDate", startDate);
+                    parameters.Add("endDate", endDate);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIAllSelectedCandidateInterviewMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

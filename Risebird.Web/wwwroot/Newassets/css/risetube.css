@@ -2161,6 +2161,28 @@ table {
             background: #9a989873 !important;
         }
 
+.call-wrap {
+    float: right;
+    position: relative;
+    top: -1px;
+}
+.un-lock-icon {
+    position: relative;
+    top: -5px;
+}
+
+.call-wrap .call-btn {
+    background: #0ea93d;
+    border-radius: 100%;
+    float: right;
+    padding: 1px;
+    border: 0px;
+    position: relative;
+    top: 2px;
+    right: 0px;
+    width: 19px;
+    height: 19px;
+}
 .call-btn {
     background: #0ea93d;
     border-radius: 100%;
