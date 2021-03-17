@@ -329,9 +329,13 @@
     font-size: 2.5rem;
     margin: 0;
 }
+.lock-un{
+    background:none;
+    border:0px;
+    text-align:center;
+}
 #interviewerMemberModal .modal-lg {
     max-width: 870px !important;
- 
 }
 #interviewerMemberModal .scrollers {
  height: 430px;
