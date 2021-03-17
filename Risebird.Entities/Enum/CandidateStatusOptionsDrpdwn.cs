@@ -70,9 +70,9 @@ namespace Risebird.Entities.Enum
         [Description("Not Responding")]
         NotResponding=17,
 
-        [Display(Name = "Cancelled")]
-        [Description("Cancelled")]
-        Cancelled=18,
+        //[Display(Name = "Cancelled")]
+        //[Description("Cancelled")]
+        //Cancelled=18,
 
         //[Display(Name = "QC Pending")]
         //[Description("QC Pending")]

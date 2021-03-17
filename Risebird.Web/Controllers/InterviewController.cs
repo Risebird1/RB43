@@ -79,6 +79,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
                     {
+                        ViewBag.profile = profileName;
                         if (TempData["SuccessErrorMessageInterview"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
@@ -983,6 +984,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
                     {
+                        ViewBag.profile = profileName;
                         if (TempData["SuccessErrorMessageInterview"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
@@ -1675,11 +1677,9 @@ namespace Risebird.Web.Controllers
                         var interviewslotList = from InterviewSlots s in Enum.GetValues(typeof(InterviewSlots))
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         meetingUpdated.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
-                        meetingUpdated.interviewer = meetingUpdated.interviewer.Trim();
                         if (!string.IsNullOrEmpty(meetingUpdated.interviewer)) {
                             meetingUpdated.interviewer = meetingUpdated.interviewer.Trim();
                         }
-                        meetingUpdated.QCInterviewer = meetingUpdated.QCInterviewer.Trim();
                         if (!string.IsNullOrEmpty(meetingUpdated.QCInterviewer))
                         {
                             meetingUpdated.QCInterviewer = meetingUpdated.QCInterviewer.Trim();

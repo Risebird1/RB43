@@ -796,7 +796,7 @@ namespace Risebird.Business
                 }
                 else
                 {
-                    var model = (interviewReport != null && interviewReport.Count()>0) ? interviewReport.FirstOrDefault() : new InterviewReport();
+                    var model = (interviewReport != null && interviewReport.Count() > 0) ? interviewReport.FirstOrDefault() : new InterviewReport();
                     model.IsEdited = model.InterviewId > 0;
                     //model.IsEdited = true;
 
@@ -2294,8 +2294,75 @@ namespace Risebird.Business
                 return null;
             }
         }
-    }
+        public string LockorUnlockVideo(string imid, int islock, string emailid)
+        {
+            try
+            {
+                var meeting = _meetingRespository.LockorUnlockVideo(imid, islock, emailid);
+                return meeting;
 
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "fail";
+            }
+        }
+        public List<string> FetchClientUsers(string ClientName)
+        {
+            try
+            {
+                var meeting = _meetingRespository.FetchClientUsers(ClientName);
+                return meeting;
+
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public string SetCandidateAvailability(string imid, int isavailable)
+        {
+            try
+            {
+                var meeting = _meetingRespository.SetCandidateAvailability(imid, isavailable);
+                return meeting;
+
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "fail";
+            }
+        }
+        public string MoveToCP(string imid, int movetocp)
+        {
+            try
+            {
+                var meeting = _meetingRespository.MoveToCP(imid, movetocp);
+                return meeting;
+
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "fail";
+            }
+        }
+        public List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                return _meetingRespository.GetAllSelectedCandidateInterviewList(startDate, endDate).Result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+    }
 }
 
 

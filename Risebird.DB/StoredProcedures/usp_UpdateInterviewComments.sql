@@ -100,8 +100,10 @@ Begin Try
 					  @AadharFileLink,
 					  @CandidateAvailable)  
 
-				INSERT INTO 
-					InterviewReport 
+					IF NOT EXISTS(SELECT 1 FROM InterviewReport where InterviewId= @InterviewId)
+					BEGIN
+						INSERT INTO 
+						InterviewReport 
 						(IRFId, 
 						InterviewId, 
 						CandidateName)
@@ -112,6 +114,9 @@ Begin Try
 							@interviewId,
 							(select im.CandidateName from InterviewMeetings im where im.id = @interviewId)  
 						)
+					End
+
+				
         
 			END  
 
@@ -140,25 +145,7 @@ Begin Catch
   
  Rollback;  
 End Catch  
-  
-  
-  
-  
-  
-  
-
-
-
-
-  
-  
-  
-  
-  
-  
-
-
-
+ 
 
 GO
   
