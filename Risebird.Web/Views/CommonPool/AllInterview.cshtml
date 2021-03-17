@@ -503,17 +503,17 @@
 
                                                         @if (item.InterviewStatus != 4 && item.InterviewStatus != 2)
                                                         {
-                                                            <td class="text-center"> @item.intervieweStatusStatDesc</td>
+                                                            <td > @item.intervieweStatusStatDesc</td>
                                                         }
                                                         else if (item.QCStatus == 1 && item.InterviewStatus == 4)
                                                         {
-                                                            <td class="text-center">
+                                                            <td >
                                                                 <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
                                                             </td>
                                                         }
                                                         else if (item.QCStatus == 1 && item.InterviewStatus == 2)
                                                         {
-                                                            <td class="text-center">
+                                                            <td >
                                                                 <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
                                                             </td>
                                                         }
@@ -546,7 +546,7 @@
                                                         {
                                                             int start = item.intervieweStatusStatDesc.IndexOf("(");
                                                             int end = item.intervieweStatusStatDesc.IndexOf(")");
-                                                            <td class="text-center">
+                                                            <td >
                                                                 @*QC Failed(<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>)*@
                                                                 @item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a>
                                                             </td>
