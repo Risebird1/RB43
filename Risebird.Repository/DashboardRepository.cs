@@ -870,7 +870,7 @@ namespace Risebird.Repository
                 else if (actionstatus == "MeetingStatus")
                 {
                     //query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
-                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and ic.MeetingStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
+                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7";
                 }
                 else if (actionstatus == "QcPending")
                 {
@@ -917,7 +917,7 @@ namespace Risebird.Repository
                 else if (actionstatus == "MeetingStatus")
                 {
                     //query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus is null";
-                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and ic.MeetingStatus is null";
+                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2)";
                 }
                 else if (actionstatus == "QcPending")
                 {
