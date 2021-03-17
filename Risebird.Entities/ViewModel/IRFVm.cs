@@ -54,7 +54,6 @@ namespace Risebird.Entities.ViewModel
         public DateTime EndDate { get; set; }
 
         [DisplayName("JD Link")]
-        [Required]
         public string JDLink { get; set; }
 
         [DisplayName("Company Details")]
@@ -64,7 +63,6 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public int NoOfPosition { get; set; }
         [DisplayName("Client Profile Type")]
-        [Required]
         public int Heuristicsscore { get; set; }
 
         [DisplayName("No of Interviews")]
@@ -84,7 +82,6 @@ namespace Risebird.Entities.ViewModel
         public SelectList JobLevelList { get; set; }
         public IList<TransSkill> SkillCollection { get; set; }
         public IList<TransSkillGeneral> SkillGeneral { get; set; }
-        [Required]
         public IList<TransJoinability> Joinability { get; set; }
         public IList<TransSelectability> Selectability { get; set; }
         public IList<TransClientUser> ClientCollection { get; set; }
@@ -102,8 +99,6 @@ namespace Risebird.Entities.ViewModel
         public SelectList SkillGeneralTypeList { get; set; }
 
         public SelectList CompanyTypeList { get; set; }
-
-        [Required]
         public IFormFile JDFile { get; set; }
         public IFormFile CompanyDetailFile { get; set; }
 
@@ -122,7 +117,6 @@ namespace Risebird.Entities.ViewModel
         public List<InterviewerIds> InterviewerIds { get; set; }
         public string Type { get; set; }
         [DisplayName("Primary Skill")]
-        [Required]
         public string PrimarySkillInvite { get; set; }
         public bool IsClone { get; set; }
         public IEnumerable<InterviewerProfileVM> InterviewerList { get; set; }
