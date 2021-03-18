@@ -576,6 +576,9 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 8].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
                                     i++;
                                 }
+                                Sheet.Cells[i, 1].Value = "Total";
+                                Sheet.Cells[i, 4].Value = model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum();
+                                i++;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                         }
@@ -669,6 +672,9 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 8].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
                                     i++;
                                 }
+                                Sheet.Cells[i, 1].Value = "Total";
+                                Sheet.Cells[i, 4].Value = model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum();
+                                i++;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                         }
