@@ -655,6 +655,7 @@ namespace Risebird.Web.Controllers
                             foreach (var interviewer in Interviewers)
                             {
                                 Sheet.Cells[i, 1].Value = interviewer;
+                                Sheet.Cells[i, 1].Style.Font.Size = 14;
                                 i++;
                                 foreach (var item in model.Result)
                                 {
