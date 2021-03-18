@@ -1344,20 +1344,37 @@
 </script>
 <script type="text/javascript">
 
-    $(document).ready(function ()
-        $('.dropques option').wrap('<span>');
+    //$(document).ready(function ()
+    //    $('.dropques option').wrap('<span>');
 
-    var selectedOption = $('.dropques').find("[selected]");
-    $(selectedOption).unwrap();
+    //var selectedOption = $('.dropques').find("[selected]");
+    //$(selectedOption).unwrap();
 
 
-    })
+    //})
 
     $(document).ready(function () {
-        $('.droprating option').wrap('<span>');
 
-        var selectedOption = $('.droprating').find("[selected]");
-        $(selectedOption).unwrap();
+        var meetingStatus = document.getElementById('MeetingStatus').value;
+        if (meetingStatus == null || meetingStatus == '') {
+            document.getElementById('InterviewerComment').disabled = true;
+            document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status above to add comments here.";
+
+            //interview status check
+            //document.getElementById("InterviewStatus").value = '';
+            document.getElementById("InterviewStatus").disabled = true;
+
+
+        }
+        else {
+            document.getElementById('InterviewerComment').disabled = false;
+            document.getElementById("interviewerComment_Error").innerHTML = "";
+
+        }
+        //$('.droprating option').wrap('<span>');
+
+        //var selectedOption = $('.droprating').find("[selected]");
+        //$(selectedOption).unwrap();
 
 
     })
@@ -1643,6 +1660,7 @@
             series.colorField = "color";
 
             series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
+            series.columns.template.tooltipText = "{valueY.formatNumber('#.00')}";
             series.tooltip.label.adapter.add("text", function (text, target) {
                 if (target.dataItem && target.dataItem.valueY == 0) {
 
@@ -1871,10 +1889,22 @@
     }
 
     function MeetingStatusChanged(value) {
+        if (value != null && value != '') {
+            document.getElementById('InterviewerComment').disabled = false;
+            document.getElementById("interviewerComment_Error").innerHTML = "";
+
+        }
+        else {
+
+            document.getElementById('InterviewerComment').value = '';
+            document.getElementById('InterviewerComment').disabled = true;
+            document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status above to add comments here.";
+
+        }
         if (value != 2) {
             document.getElementById("meetingStatus_Error").innerHTML = "";
         }
-        if (value == 1 || value == 2 || value == 3) {
+        if (value != 4) {
             document.getElementById("InterviewStatus").value = '';
             document.getElementById("InterviewStatus").disabled = true;
         }
