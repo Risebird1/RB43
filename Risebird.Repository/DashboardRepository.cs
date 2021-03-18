@@ -865,7 +865,7 @@ namespace Risebird.Repository
                 if (actionstatus == "InterviewCount")
                 {
                     // query = "select * from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<7 ";
-                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
+                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<1";
                 }
                 else if (actionstatus == "MeetingStatus")
                 {
@@ -880,7 +880,7 @@ namespace Risebird.Repository
                 else if (actionstatus == "UnAssignedCoordianter")
                 {
                     //query = "select * from InterviewMeetings im  where confirmationStatus=1 and risebirdHR is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
-                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id where confirmationStatus=1 and im.HRCoordinatorEmailId is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
+                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id where confirmationStatus=1 and im.HRCoordinatorEmailId is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
                 }
 
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -927,7 +927,7 @@ namespace Risebird.Repository
                 else if (actionstatus == "UnAssignedCoordianter")
                 {
                     //query = "select * from InterviewMeetings im  where confirmationStatus=1 and risebirdHR is null";
-                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id where confirmationStatus=1 and im.HRCoordinatorEmailId is null";
+                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id where confirmationStatus=1 and im.HRCoordinatorEmailId is null";
                 }
 
                 using (SqlConnection con = new SqlConnection(connectionString))

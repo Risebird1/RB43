@@ -253,157 +253,157 @@
                                                                 </div>
                                                             </div>
 
-                                                    
-                                                                <div class="form-group">
-                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
-                                                                            <option value="Available">Available</option>
-                                                                            <option value="NotAvailable">NotAvailable</option>
 
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
+                                                                        <option value="Available">Available</option>
+                                                                        <option value="NotAvailable">NotAvailable</option>
+
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+
+
+                                                        </div>
+                                                    }
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateLocation">
+                                                                Candidate Location
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in ViewBag.preferredLocationList)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-12">
+
+
+                                                            <div class="row">
+                                                                <div class="col-md-12 mc-button-area text-right">
+
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4  reset-filter">
+                                                                        Reset Filter
+                                                                    </button>
+
+
+
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
+                                                                        Apply Filter
+                                                                    </button>
+
+
+                                                                </div>
+
+                                                            </div>
+
+
+
+
+
+
+
+
+
+
+                                                        </div>
+                                                        @*@if (ViewBag.ProfileName != "CuratedUser")
+                                                            {
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="ApprovalStatus">
+                                                                        Approval Status
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in ViewBag.NextLevelApprovalStatusList)
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
                                                                         </select>
                                                                     </div>
                                                                 </div>
-                                                          
-
-
-                                                        </div>
-                                                    }
-                                                <div class="col-md-6 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateLocation">
-                                                            Candidate Location
-                                                        </label>
-                                                        <div class="col-md-12 col-sm-12">
-                                                            <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in ViewBag.preferredLocationList)
-                                                                {
-                                                                    @if (item != null && item != "")
-                                                                    {
-                                                                        <option value="@item">@item</option>
-                                                                    }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-
-
-                                                        <div class="row">
-                                                            <div class="col-md-12 mc-button-area text-right">
-
-                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4  reset-filter">
-                                                                    Reset Filter
-                                                                </button>
-
-
-
-                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
-                                                                    Apply Filter
-                                                                </button>
-
-
-                                                            </div>
-
-                                                        </div>
-
-
-
-
-
-
-
-
-
-
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="IsShortListed">
+                                                                        Shortlisted
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="IsShortListed" name="IsShortListed" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in ViewBag.IsShortListed)
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            }*@
                                                     </div>
                                                     @*@if (ViewBag.ProfileName != "CuratedUser")
-        {
-            <div class="form-group">
-                <label class="control-label col-md-12 col-sm-12 desp-label" for="ApprovalStatus">
-                    Approval Status
-                </label>
-                <div class="col-md-12 col-sm-12">
-                    <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
-                        @foreach (var item in ViewBag.NextLevelApprovalStatusList)
-                        {
-                            @if (item != null && item != "")
-                            {
-                                <option value="@item">@item</option>
-                            }
-                        }
-                    </select>
-                </div>
-            </div>
-        }
-        else
-        {
-            <div class="form-group">
-                <label class="control-label col-md-12 col-sm-12 desp-label" for="IsShortListed">
-                    Shortlisted
-                </label>
-                <div class="col-md-12 col-sm-12">
-                    <select id="IsShortListed" name="IsShortListed" class="form-control multiselect" multiple="multiple">
-                        @foreach (var item in ViewBag.IsShortListed)
-                        {
-                            @if (item != null && item != "")
-                            {
-                                <option value="@item">@item</option>
-                            }
-                        }
-                    </select>
-                </div>
-            </div>
-        }*@
-                                                </div>
-                                                    @*@if (ViewBag.ProfileName != "CuratedUser")
-                                                    {
-                                                        <div class="col-md-6 col-sm-6 border-rv">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus">
-                                                                    Joining Status
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in ViewBag.JoiningStatusList)
-                                                                        {
-                                                                            @if (item != null && item != "")
+                                                        {
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus">
+                                                                        Joining Status
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in ViewBag.JoiningStatusList)
                                                                             {
-                                                                                <option value="@item">@item</option>
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
                                                                             }
-                                                                        }
-                                                                    </select>
+                                                                        </select>
+                                                                    </div>
                                                                 </div>
+
+
                                                             </div>
-
-
-                                                        </div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="col-md-6 col-sm-6 border-rv">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="IsIntrested">
-                                                                    Interested
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="IsIntrested" name="IsIntrested" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in ViewBag.IsIntrested)
-                                                                        {
-                                                                            @if (item != null && item != "")
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="IsIntrested">
+                                                                        Interested
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="IsIntrested" name="IsIntrested" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in ViewBag.IsIntrested)
                                                                             {
-                                                                                <option value="@item">@item</option>
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
                                                                             }
-                                                                        }
-                                                                    </select>
+                                                                        </select>
+                                                                    </div>
                                                                 </div>
+
+
                                                             </div>
+                                                        }*@
 
 
-                                                        </div>
-                                                    }*@
-                                                    
-                                                   
                                                 </div>
 
                                             </div>
@@ -432,7 +432,7 @@
                                             colorcode = "#6d6969";
                                         }
                                         <div class="col-xl-3 col-sm-6 mb-3">
-                                            <div id="commonpool_4" class="video-card" style="border:3px solid @colorcode">
+                                            <div id="commonpool_@item.imid" class="video-card" style="border:3px solid @colorcode">
                                                 <div class="video-card-image">
                                                     @if (item.MeetingPatchCount > 0)
                                                     {
@@ -496,15 +496,16 @@
                                                         {
                                                             <span class="designation pull-left">@item.JDTiltle</span>
                                                         }
-                                                    <span class="pull-left">
-                                                        @if (item.CandidateAvailable == "Available")
-                                                        {
-                                                        <span class="available"> @item.CandidateAvailable</span>
-                                                        }
-                                                        else {
-                                                    <span class="unavailable"> @item.CandidateAvailable</span>}
+                                                        <span class="pull-left">
+                                                            @if (item.CandidateAvailable == "Available")
+                                                            {
+                                                                <span class="available"> @item.CandidateAvailable</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="unavailable"> @item.CandidateAvailable</span>}
 
-                                                    </span>
+                                                        </span>
                                                         <span class="pull-right">
                                                             @if (item.CandidateAvailable == "Available")
                                                             {
@@ -1332,15 +1333,17 @@
             data: { 'imid': interviewid, 'islock': islock },
             success: function (data) {
                 if (data == "Success") {
-                    swal.fire("Successfully");
                     if (islock == 0) {
+                        swal.fire("Profile unlock Successfully");
                         document.getElementById("unlock_" + interviewid).style.display = "block";
                         document.getElementById("lock_" + interviewid).style.display = "none";
+                        document.getElementById("commonpool_" + interviewid).style.border = "3px solid green";
 
                     } else {
+                        swal.fire("Profile lock Successfully");
                         document.getElementById("lock_" + interviewid).style.display = "block";
                         document.getElementById("unlock_" + interviewid).style.display = "none";
-
+                        document.getElementById("commonpool_" + interviewid).style.border = "3px solid black";
                     }
                 }
             }
