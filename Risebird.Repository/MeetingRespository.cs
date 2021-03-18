@@ -3880,5 +3880,23 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<List<RBInterviewDetails>> FetchAllFNDetail()
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<RBInterviewDetails>(con, "Usp_FetchInterviewPayDetails", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return (List<RBInterviewDetails>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

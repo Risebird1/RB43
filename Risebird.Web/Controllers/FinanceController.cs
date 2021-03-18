@@ -516,5 +516,92 @@ namespace Risebird.Web.Controllers
                 return Json("failed");
             }
         }
+        [Authorize]
+        [HttpGet]
+        public FileContentResult ExportFNPayment()
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Payable Details");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_AccountDetails.xlsx";
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    {
+
+                        var model = _meetingService.FetchAllFNDetail();
+                        string userEmailId = string.Empty;
+
+                        Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
+                        Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
+                        Sheet.Cells["A1:Z1"].Style.WrapText = true;
+                        //Sheet.Column(1).Width = 30;
+                        //Sheet.Column(2).Width = 30;
+                        int startColumn = 1; int endColumn = 25;
+                        for (int a = startColumn; a <= endColumn; a++)
+                        {
+                            Sheet.Column(a).Width = 30;
+                        }
+                        Sheet.Cells[1, 1].Value = "Payment For";
+                        Sheet.Cells[1, 2].Value = "Interview Id";
+                        Sheet.Cells[1, 3].Value = "Type";
+                        Sheet.Cells[1, 4].Value = "Amount";
+                        Sheet.Cells[1, 5].Value = "Date";
+                        Sheet.Cells[1, 6].Value = "Status";
+                        Sheet.Cells[1, 7].Value = "Location";
+                        Sheet.Cells[1, 8].Value = "Meeting Status";
+                        int i = 2;
+                        if (model.Result.Count() > 0)
+                        {
+                            foreach (var item in model.Result)
+                            {
+                                Sheet.Cells[i, 1].Value = item.Comment;
+                                Sheet.Cells[i, 2].Value = item.InterviewId;
+                                Sheet.Cells[i, 3].Value = item.Type;
+                                Sheet.Cells[i, 4].Value = item.Points;
+                                Sheet.Cells[i, 5].Value = item.Date;
+                                Sheet.Cells[i, 6].Value = item.Status;
+                                Sheet.Cells[i, 7].Value = item.PreferredLocation;
+                                Sheet.Cells[i, 8].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                i++;
+                            }
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                        else
+                        {
+                            ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                            Rng.Value = "No data available in table !!!";
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+
+                    }
+                    else
+                    {
+                        ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                        Rng.Value = "Data export failed !!!";
+                        return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                    }
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "Data export failed !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+
+        }
     }
 }

@@ -126,5 +126,6 @@ namespace Risebird.Business.Interface
         string SetCandidateAvailability(string imid, int isavailable);
         string MoveToCP(string imid, int movetocp);
         List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate);
+        Task<List<RBInterviewDetails>> FetchAllFNDetail();
     }
 }
