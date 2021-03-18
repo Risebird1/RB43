@@ -110,10 +110,10 @@
     width: 30px;
 }
 
-.text-areadiv #comment::-webkit-input-placeholder { /* Edge */
-    line-height: 40px !important
+.text-areadiv #comment::-webkit-input-placeholder { 
+    line-height: 40px !important;
 }
-
+*/
 .text-areadiv #comment:-ms-input-placeholder { /* Internet Explorer 10-11 */
     line-height: 40px !important
 }
@@ -189,6 +189,11 @@
         .modal .form-control.text-areadiv textarea:focus {
             border-bottom: 2px rgb(80, 158, 235) solid !important;
         }
+
+
+#PublicUrlShareModel .modal-lg {
+    max-width: 784px !important;
+}
 
 .private-share {
     background-repeat: no-repeat !important;
@@ -381,7 +386,7 @@
 .copy-btn {
     background: none;
     border: 0;
-    margin: -10px 0px 0px -37px !important;
+    margin: -10px 0px 0px 0px !important;
 }
 
 .special-text svg {
