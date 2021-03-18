@@ -759,7 +759,7 @@ namespace Risebird.Repository
                 {
                     SqlMapper.Query<string>(
                         con, "update [dbo].[InterviewMeetings] set interviewer=@value where id = @meetingid", new { value = interviewerMail, meetingid }, commandType: Text);
-                    return "Interview assigned successfully.";
+                    return "Interview assigned Successfully.";
                 }
             }
             catch (SqlException ex)

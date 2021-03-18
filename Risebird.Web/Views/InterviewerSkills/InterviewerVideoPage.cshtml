@@ -2071,12 +2071,14 @@
                 // Create series
                 var series = chart.series.push(new am4charts.ColumnSeries());
                 series.dataFields.valueY = "visits";
+           
                 series.dataFields.categoryX = "country";
                 series.name = "Visits";
                 series.colorField = "color";
 
 
                 series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
+                series.columns.template.tooltipText = "{valueY.formatNumber('#.00')}";
                 series.tooltip.label.adapter.add("text", function (text, target) {
                     if (target.dataItem && target.dataItem.valueY == 0) {
 
