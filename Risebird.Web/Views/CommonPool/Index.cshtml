@@ -253,164 +253,61 @@
                                                                 </div>
                                                             </div>
 
-                                                    
-                                                                <div class="form-group">
-                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
-                                                                            <option value="Available">Available</option>
-                                                                            <option value="NotAvailable">NotAvailable</option>
 
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                          
-
-
-                                                        </div>
-                                                    }
-                                                <div class="col-md-6 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateLocation">
-                                                            Candidate Location
-                                                        </label>
-                                                        <div class="col-md-12 col-sm-12">
-                                                            <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in ViewBag.preferredLocationList)
-                                                                {
-                                                                    @if (item != null && item != "")
-                                                                    {
-                                                                        <option value="@item">@item</option>
-                                                                    }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-
-
-                                                        <div class="row">
-                                                            <div class="col-md-12 mc-button-area text-right">
-
-                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4  reset-filter">
-                                                                    Reset Filter
-                                                                </button>
-
-
-
-                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
-                                                                    Apply Filter
-                                                                </button>
-
-
-                                                            </div>
-
-                                                        </div>
-
-
-
-
-
-
-
-
-
-
-                                                    </div>
-                                                    @*@if (ViewBag.ProfileName != "CuratedUser")
-        {
-            <div class="form-group">
-                <label class="control-label col-md-12 col-sm-12 desp-label" for="ApprovalStatus">
-                    Approval Status
-                </label>
-                <div class="col-md-12 col-sm-12">
-                    <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
-                        @foreach (var item in ViewBag.NextLevelApprovalStatusList)
-                        {
-                            @if (item != null && item != "")
-                            {
-                                <option value="@item">@item</option>
-                            }
-                        }
-                    </select>
-                </div>
-            </div>
-        }
-        else
-        {
-            <div class="form-group">
-                <label class="control-label col-md-12 col-sm-12 desp-label" for="IsShortListed">
-                    Shortlisted
-                </label>
-                <div class="col-md-12 col-sm-12">
-                    <select id="IsShortListed" name="IsShortListed" class="form-control multiselect" multiple="multiple">
-                        @foreach (var item in ViewBag.IsShortListed)
-                        {
-                            @if (item != null && item != "")
-                            {
-                                <option value="@item">@item</option>
-                            }
-                        }
-                    </select>
-                </div>
-            </div>
-        }*@
-                                                </div>
-                                                    @*@if (ViewBag.ProfileName != "CuratedUser")
-                                                    {
-                                                        <div class="col-md-6 col-sm-6 border-rv">
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus">
-                                                                    Joining Status
-                                                                </label>
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in ViewBag.JoiningStatusList)
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
+                                                                    <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
+                                                                        <option value="Available">Available</option>
+                                                                        <option value="NotAvailable">NotAvailable</option>
+
                                                                     </select>
                                                                 </div>
                                                             </div>
 
 
-                                                            </div>
-                                                        }
-                                                        else
-                                                        {
-                                                            <div class="col-md-6 col-sm-6 border-rv">
-                                                                <div class="form-group">
-                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="IsIntrested">
-                                                                        Interested
-                                                                    </label>
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <select id="IsIntrested" name="IsIntrested" class="form-control multiselect" multiple="multiple">
-                                                                            @foreach (var item in ViewBag.IsIntrested)
-                                                                            {
-                                                                                @if (item != null && item != "")
-                                                                                {
-                                                                                    <option value="@item">@item</option>
-                                                                                }
-                                                                            }
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-
 
                                                         </div>
-                                                    }*@
-                                                    
-                                                   
-                                                </div>
+                                                    }
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateLocation">
+                                                                Candidate Location
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in ViewBag.preferredLocationList)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-md-12">
+                                                            <div class="row">
+                                                                <div class="col-md-12 mc-button-area text-right">
 
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4  reset-filter">
+                                                                        Reset Filter
+                                                                    </button>
+
+
+
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
+                                                                        Apply Filter
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
-
                             </div>
 
                             <div class="video-block section-padding" id="VideoList">
@@ -496,15 +393,16 @@
                                                         {
                                                             <span class="designation pull-left">@item.JDTiltle</span>
                                                         }
-                                                    <span class="pull-left">
-                                                        @if (item.CandidateAvailable == "Available")
-                                                        {
-                                                        <span class="available"> @item.CandidateAvailable</span>
-                                                        }
-                                                        else {
-                                                    <span class="unavailable"> @item.CandidateAvailable</span>}
+                                                        <span class="pull-left">
+                                                            @if (item.CandidateAvailable == "Available")
+                                                            {
+                                                                <span class="available"> @item.CandidateAvailable</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="unavailable"> @item.CandidateAvailable</span>}
 
-                                                    </span>
+                                                        </span>
                                                         <span class="pull-right">
                                                             @if (item.CandidateAvailable == "Available")
                                                             {
@@ -515,13 +413,7 @@
                                                                         <span class="pull-left" id="lock_@item.imid" style="display:block">
                                                                             <button class="lock-un">
                                                                                 <span class="un-lock-icon" title="Unlock" onclick="Lockvideo(@item.imid,0)">
-
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>
-
-
-
-
-
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>
                                                                                 </span>
                                                                             </button>
                                                                         </span>
@@ -531,14 +423,13 @@
                                                                         <span class="pull-left" id="lock_@item.imid" style="display:block">
                                                                             <button class="lock-un">
                                                                                 <span class="un-lock-icon" title="Unlock">
-
                                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>
                                                                                 </span>
                                                                             </button>
                                                                         </span>
                                                                     }
                                                                     <span class="pull-left" id="unlock_@item.imid" style="display:none">
-                                                                        <button>
+                                                                        <button class="lock-un">
                                                                             <span class="un-lock-icon" title="Lock" onclick="Lockvideo(@item.imid,1)">
                                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z" /></svg>
                                                                             </span>
@@ -550,7 +441,6 @@
                                                                     <span class="pull-left" id="lock_@item.imid" style="display:none">
                                                                         <button class="lock-un">
                                                                             <span class="un-lock-icon" title="Unlock" onclick="Lockvideo(@item.imid,0)">
-
                                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>
                                                                             </span>
                                                                         </button>
@@ -563,50 +453,18 @@
                                                                         </button>
                                                                     </span>
                                                                 }
-                                                            }
-
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>
-                                                                                </span>
-                                                                            </button>
-                                                                        </span>
-                                                                    }
-                                                                    <span class="pull-left" id="unlock_@item.imid" style="display:none">
-                                                                        <button>
-                                                                            <span class="un-lock-icon" title="Lock" onclick="Lockvideo(@item.imid,1)">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z" /></svg>
-                                                                            </span>
-                                                                        </button>
-                                                                    </span>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <span class="pull-left" id="lock_@item.imid" style="display:none">
-                                                                        <button class="lock-un">
-                                                                            <span class="un-lock-icon" title="Unlock" onclick="Lockvideo(@item.imid,0)">
-
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>
-                                                                            </span>
-                                                                        </button>
-                                                                    </span>
-                                                                    <span class="pull-left" id="unlock_@item.imid" style="display:block">
-                                                                        <button class="lock-un">
-                                                                            <span class="un-lock-icon" title="Lock" onclick="Lockvideo(@item.imid,1)">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z" /></svg>
-                                                                            </span>
-                                                                        </button>
-                                                                    </span>
-                                                                }
-                                                            }
-
-                                                            @if (item.MobileNumber != null)
-                                                            {
-                                                                <span class="call-wrap">
-                                                                    <button class="call-btn" aria-label="Call">
-                                                                        <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="15" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                    </button>
-                                                                </span>
                                                             }
                                                         </span>
+                                                        }
+
+                                                        @if (item.MobileNumber != null)
+                                                        {
+                                                            <span class="call-wrap">
+                                                                <button class="call-btn" aria-label="Call">
+                                                                    <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="15" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                </button>
+                                                            </span>
+                                                        }
                                                     </div>
 
                                                     <div class="video-page text-success">
@@ -652,11 +510,6 @@
                                                             <span style="color:green">Selected</span>
 
                                                         }
-
-
-
-
-
                                                     </div>
                                                     <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
                                                         <span>Expected Salary:</span> @if (@item.expectedPerHourRate.Length > 5)
@@ -685,8 +538,6 @@
                                             </div>
                                         </div>
                                     }
-
-
                                 </div>
                             </div>
                             <hr>
