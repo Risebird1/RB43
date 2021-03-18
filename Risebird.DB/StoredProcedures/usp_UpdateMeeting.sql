@@ -66,10 +66,87 @@ Begin
 		End
 
 	if(@comfirmationStatus='2')
-	IF EXISTS (SELECT 1   FROM   InterviewComments  WHERE  InterviewId=@interviewId)
-	Begin
-		update InterviewComments set MeetingStatus=null where InterviewId = @interviewId
-	End
+		IF EXISTS (SELECT 1   FROM   InterviewComments  WHERE  InterviewId=@interviewId)
+		Begin
+			update InterviewComments set MeetingStatus=null where InterviewId = @interviewId
+		End
+
+	declare
+	@profileId int = (select id from [Profile] where [Name]='Candidate')
+
+IF NOT EXISTS (SELECT 1  FROM  UserList  WHERE  EmailId = @candidateEmail)
+Begin
+	--declare
+	--@profileId int = (select id from [Profile] where [Name]='Candidate')
+	
+	Insert into UserList (idProfile, FirstName, EmailId, IsActive,MobileNumber) values (@profileId, @candidateName, @candidateEmail, 1,@MobileNumber)
+
+	declare 
+	@cndUserId int = (select id from UserList where EmailId=@candidateEmail and idProfile=@profileId)
+
+	Insert into CandidatesMaster (UserId) values(@cndUserId)
+	declare
+	@canMasterId int = (select id from CandidatesMaster where UserId=@cndUserId)
+
+	Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId, ClientHRAttemptContact) 
+	values((select id from IRF where IRFId=@IRFId), @resumeLink, @preferredLocation, @MobileNumber,
+	(select id from CandidatesMaster  where UserId = @cndUserId), @ClientHrContact)
+
+	--insert candidate added status
+	insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
+	values ((select id from IRF where IRFId=@IRFId), @canMasterId, 'Added', GETDATE(), 12, 'System')
+	
+End
+
+Else
+
+Begin
+	declare
+	@candidateUserId int = (select id from UserList where EmailId = @candidateEmail)
+
+	IF NOT EXISTS (SELECT 1  FROM  CandidatesMaster  WHERE  UserId = @candidateUserId)
+		begin
+			Insert into CandidatesMaster (UserId) values(@candidateUserId)
+		end
+
+	declare
+	@candidateMasterId int = (select id from CandidatesMaster where UserId=@candidateUserId)
+	declare @irfintid int = (select id from IRF where IRFId=@IRFId)
+	IF NOT EXISTS (SELECT 1  FROM  Candidate  WHERE  CandidateMasterId = @candidateMasterId and IRFID= @irfintid)
+		Begin
+			Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId, ClientHRAttemptContact) 
+			values(@irfintid, @resumeLink, @preferredLocation,@MobileNumber, @candidateMasterId, @ClientHrContact) 	
+			
+			--insert candidate added status
+			insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
+			values (@irfintid, @candidateMasterId, 'Added', GETDATE(), 12, 'System')
+		End
+
+End
+
+
+
+--declare @canUserId int,@canMstid int, @idIrf int;
+
+--set @canUserId = (select id from UserList where EmailId = @candidateEmail and idProfile=@profileId)
+--set @canMstid =(select id from CandidatesMaster where UserId=@canUserId)
+--set @idIrf =(select id from IRF where IRFId=@IRFId)
+
+--if(@comfirmationStatus='2')
+--	Begin
+--		insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
+--		values (@idIrf, @canMstid, 'Cancelled', GETDATE(), 18, 'System')
+--	End
+
+--Else
+--	Begin
+--		insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
+--		values (@idIrf, @canMstid, 'Cancelled', GETDATE(), 18, 'System')
+--	End
+
+
+
+
 END
 
 
