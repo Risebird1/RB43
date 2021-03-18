@@ -535,6 +535,7 @@ namespace Risebird.Web.Controllers
                     {
                         //var model = _meetingService.FetchAllFNDetail();
                         var model = _meetingService.FNAllGeneratedInvoiceDetails(st, se);
+                        var Interviewers = model.Result.Select(x => x.FirstName).Distinct().ToList();
                         string userEmailId = string.Empty;
 
                         Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
@@ -558,17 +559,23 @@ namespace Risebird.Web.Controllers
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
-                            foreach (var item in model.Result)
+                            foreach (var interviewer in Interviewers)
                             {
-                                Sheet.Cells[i, 1].Value = item.Comment;
-                                Sheet.Cells[i, 2].Value = item.InterviewId;
-                                Sheet.Cells[i, 3].Value = item.Type;
-                                Sheet.Cells[i, 4].Value = item.Points;
-                                Sheet.Cells[i, 5].Value = item.Date;
-                                Sheet.Cells[i, 6].Value = item.Status;
-                                Sheet.Cells[i, 7].Value = item.PreferredLocation;
-                                Sheet.Cells[i, 8].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                Sheet.Cells[i, 1].Value = interviewer;
+                                Sheet.Cells[i, 1].Style.Font.Size = 14;
                                 i++;
+                                foreach (var item in model.Result.Where(x => x.FirstName == interviewer).ToList())
+                                {
+                                    Sheet.Cells[i, 1].Value = item.Comment;
+                                    Sheet.Cells[i, 2].Value = item.InterviewId;
+                                    Sheet.Cells[i, 3].Value = item.Type;
+                                    Sheet.Cells[i, 4].Value = item.Points;
+                                    Sheet.Cells[i, 5].Value = item.Date.ToString();
+                                    Sheet.Cells[i, 6].Value = item.Status;
+                                    Sheet.Cells[i, 7].Value = item.PreferredLocation;
+                                    Sheet.Cells[i, 8].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                    i++;
+                                }
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                         }
@@ -621,6 +628,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "Finance")
                     {
                         var model = _meetingService.FetchAllFNDetail();
+                        var Interviewers = model.Result.Select(x => x.FirstName).Distinct().ToList();
                         string userEmailId = string.Empty;
 
                         Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
@@ -644,17 +652,22 @@ namespace Risebird.Web.Controllers
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
-                            foreach (var item in model.Result)
+                            foreach (var interviewer in Interviewers)
                             {
-                                Sheet.Cells[i, 1].Value = item.Comment;
-                                Sheet.Cells[i, 2].Value = item.InterviewId;
-                                Sheet.Cells[i, 3].Value = item.Type;
-                                Sheet.Cells[i, 4].Value = item.Points;
-                                Sheet.Cells[i, 5].Value = item.Date;
-                                Sheet.Cells[i, 6].Value = item.Status;
-                                Sheet.Cells[i, 7].Value = item.PreferredLocation;
-                                Sheet.Cells[i, 8].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                Sheet.Cells[i, 1].Value = interviewer;
                                 i++;
+                                foreach (var item in model.Result)
+                                {
+                                    Sheet.Cells[i, 1].Value = item.Comment;
+                                    Sheet.Cells[i, 2].Value = item.InterviewId;
+                                    Sheet.Cells[i, 3].Value = item.Type;
+                                    Sheet.Cells[i, 4].Value = item.Points;
+                                    Sheet.Cells[i, 5].Value = item.Date.ToString();
+                                    Sheet.Cells[i, 6].Value = item.Status;
+                                    Sheet.Cells[i, 7].Value = item.PreferredLocation;
+                                    Sheet.Cells[i, 8].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                    i++;
+                                }
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                         }

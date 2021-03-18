@@ -3885,13 +3885,13 @@ namespace Risebird.Repository
             try
             {
                 List<RBInterviewDetails> _list = new List<RBInterviewDetails>();
-                var query = "Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,ul.FirstName,ip.Status,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,isNull(im.interviewdate,ip.Date) as Date from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewerComments ic on ic.InterviewId=im.id where ip.Status='Submitted' and ip.Interviewid!=0 union Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,ul.FirstName,ip.Status,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,isNull(im.interviewdate,ip.Date) as Date from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewId left join InterviewerComments ic on ic.InterviewId=im.id where ip.Status='Submitted' and ip.Interviewerid!=0 ";
+                var query = "Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,ul.FirstName,ip.Status,ip.Userid,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,isNull(im.interviewdate,ip.Date) as Date from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewerComments ic on ic.InterviewId=im.id where ip.Status='Submitted' and ip.Interviewid!=0 union Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,ul.FirstName,ip.Status,ip.Userid,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,isNull(im.interviewdate,ip.Date) as Date from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewId left join InterviewerComments ic on ic.InterviewId=im.id where ip.Status='Submitted' and ip.Interviewerid!=0 ";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<RBInterviewDetails>(query, null);
                     _list = (List<RBInterviewDetails>)results;
                 }
-                var queryad = "Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,ul.FirstName,ip.Status,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,isNull(im.interviewdate,ip.Date) as Date from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewerComments ic on ic.InterviewId=im.id where ip.Status='Advance' and ip.Interviewid!=0 union Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,ul.FirstName,ip.Status,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,isNull(im.interviewdate,ip.Date) as Date from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewId left join InterviewerComments ic on ic.InterviewId=im.id where ip.Status='Advance' and ip.Interviewerid!=0 ";
+                var queryad = "Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,ul.FirstName,ip.Status,ip.Userid,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,isNull(im.interviewdate,ip.Date) as Date from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewerComments ic on ic.InterviewId=im.id where ip.Status='Advance' and ip.Interviewid!=0 union Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,ul.FirstName,ip.Status,ip.Userid,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,isNull(im.interviewdate,ip.Date) as Date from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewId left join InterviewerComments ic on ic.InterviewId=im.id where ip.Status='Advance' and ip.Interviewerid!=0 ";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<RBInterviewDetails>(queryad, null);
@@ -3908,7 +3908,11 @@ namespace Risebird.Repository
                                          Date = c.Date,
                                          Status = c.Status,
                                          PreferredLocation = c.PreferredLocation,
-                                         MeetingStatus = c.MeetingStatus
+                                         MeetingStatus = c.MeetingStatus,
+                                         candidateEmail = c.candidateEmail,
+                                         candidateName = c.candidateName,
+                                         Userid = c.Userid,
+                                         FirstName=c.FirstName
                                      }).ToList();
                     return resultset.Where(x => x.Points > 0).ToList();
                 }
@@ -3927,7 +3931,7 @@ namespace Risebird.Repository
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@st", st);
                 dynamicParameters.Add("@se", se);
-                var query = "Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,ul.FirstName,ip.Status,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,isNull(im.interviewdate,ip.Date) as Date,'' as  PreferredLocation from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.InterviewId=im.id where ip.Interviewid!=0  and (ip.Status='Submitted' or ip.Status='Pending')  and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,ul.FirstName,ip.Status,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,isNull(im.interviewdate,ip.Date) as Date,'' as PreferredLocation from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewId left join InterviewerComments ic on ic.InterviewId=im.id where ip.Interviewerid!=0  and (ip.Status='Submitted' or ip.Status='Pending')  and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
+                var query = "Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,ul.FirstName,ip.Status,ip.Userid,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,isNull(im.interviewdate,ip.Date) as Date,'' as  PreferredLocation from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.InterviewId=im.id where ip.Interviewid!=0  and (ip.Status='Submitted' or ip.Status='Pending')  and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,ul.FirstName,ip.Status,ip.Userid,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,isNull(im.interviewdate,ip.Date) as Date,'' as PreferredLocation from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewId left join InterviewerComments ic on ic.InterviewId=im.id where ip.Interviewerid!=0  and (ip.Status='Submitted' or ip.Status='Pending')  and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<RBInterviewDetails>(query, dynamicParameters);
@@ -3935,7 +3939,7 @@ namespace Risebird.Repository
                 }
                 if (_list.Count > 0)
                 {
-                    var queryad = "Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,ul.FirstName,ip.Status,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,isNull(im.interviewdate,ip.Date) as Date,'' as  PreferredLocation from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.InterviewId=im.id where ip.Interviewid!=0  and ip.Status='Advance'  and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,ul.FirstName,ip.Status,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,isNull(im.interviewdate,ip.Date) as Date,'' as PreferredLocation from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewId left join InterviewerComments ic on ic.InterviewId=im.id where ip.Interviewerid!=0  and ip.Status='Advance'  and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
+                    var queryad = "Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,ul.FirstName,ip.Status,ip.Userid,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,isNull(im.interviewdate,ip.Date) as Date,'' as  PreferredLocation from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.InterviewId=im.id where ip.Interviewid!=0  and ip.Status='Advance'  and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,ul.FirstName,ip.Status,ip.Userid,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,isNull(im.interviewdate,ip.Date) as Date,'' as PreferredLocation from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewId left join InterviewerComments ic on ic.InterviewId=im.id where ip.Interviewerid!=0  and ip.Status='Advance'  and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync<RBInterviewDetails>(queryad, dynamicParameters);
@@ -3952,7 +3956,11 @@ namespace Risebird.Repository
                                              Date = c.Date,
                                              Status = c.Status,
                                              PreferredLocation = c.PreferredLocation,
-                                             MeetingStatus = c.MeetingStatus
+                                             MeetingStatus = c.MeetingStatus,
+                                             candidateEmail=c.candidateEmail,
+                                             candidateName=c.candidateName,
+                                             Userid=c.Userid,
+                                             FirstName = c.FirstName
                                          }).ToList();
                         return resultset.Where(x => x.Points > 0).ToList();
                     }
