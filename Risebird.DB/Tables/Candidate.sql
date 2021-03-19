@@ -38,6 +38,7 @@ CREATE TABLE [dbo].[Candidate](
     [AvailableFullTime] [bit] NULL,
 	[AvailableFreeLancing] [bit] NULL,
     [ClientHRAttemptContact] [varchar](100) NULL,
+    [ProfileSource] [varchar](200) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
@@ -343,6 +344,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Candidate
     Add [ClientHRAttemptContact] VARCHAR(100)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ProfileSource')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add [ProfileSource] VARCHAR(200)
 END
 
 End

@@ -109,5 +109,9 @@ namespace Risebird.Entities.ViewModel
         ErrorMessage = "Please Enter Correct Email Address")]
         public string ClientHRAttemptContact { get; set; }
 
+        [Display(Name = "Profile Source")]
+
+        public string ProfileSource { get; set; }
+
     }
 }

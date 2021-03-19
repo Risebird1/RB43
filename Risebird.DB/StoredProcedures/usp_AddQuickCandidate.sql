@@ -18,6 +18,7 @@ Create PROCEDURE [dbo].usp_AddQuickCandidate
 @AddedByUserId int, 
 @date datetime,
 @ClientHREmail varchar(200),
+@ProfileSource varchar(200),
 @operationStatus varchar(200) out
 
   
@@ -73,14 +74,16 @@ Else IF NOT EXISTS (SELECT 1   FROM   UserList    WHERE  EmailId = @EmailId)
 		[Phone],  
 		[AddedByUserId],  
 		[CandidateMasterId],
-		[ClientHRAttemptContact])  
+		[ClientHRAttemptContact],
+		[ProfileSource])  
 		values
 		(@IRFId,  
 		@ResumeLink,   
 		@Phone,  
 		@AddedByUserId,  
 		(select id from CandidatesMaster where UserId=@UserId),
-		@ClientHREmail)  
+		@ClientHREmail,
+		@ProfileSource)  
 
 		insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
 		values (@IRFId, (select id from CandidatesMaster where UserId=@UserId), 'Added', @date, 12, @addedByEmail)
@@ -110,14 +113,16 @@ Begin
 	[Phone],   
 	[AddedByUserId],  
 	[CandidateMasterId],
-	[ClientHRAttemptContact]
+	[ClientHRAttemptContact],
+	[ProfileSource]
 	)  
 	values(@IRFId,  
 	@ResumeLink,  
 	@Phone,  
 	@AddedByUserId,  
 	(select id from CandidatesMaster where UserId=@CandidateUserId),
-	@ClientHREmail
+	@ClientHREmail,
+	@ProfileSource
 	)    
   
 	insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 

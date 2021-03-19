@@ -28,7 +28,7 @@ ca.TotalExperience, ca.CurrentSalary, ca.ExpectedSalary, ca.Notice, ca.Selectabi
 ca.JoinabilityComments, ca.JoinabilityScore, ca.SelectabilityScore, ca.TechSkillComments, ca.SkillGeneralComments,ca.CostEstimate,
 ca.TechSkillScore, ca.SkillGeneralScore, ca.AddedByUserId, ca.VoiceItUserId, ca.InviteDate, ca.[Status], ul.EmailId, ca.Phone,
 ul.FirstName as [Name], IRF.EndDate, IRF.IRFId as IRFName,cm.id as CandidateMasterId ,Isnull(ca.EncodedResumeLink,'') as EncodedResumeLink, ca.AvailableFullTime, ca.AvailableFreeLancing,
-tasc.AttemptsCount, ca.ClientHRAttemptContact
+tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource
 from Candidate ca join IRF on ca.IRFId=IRF.id
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id  
 join UserList ul on ul.id = cm.UserId

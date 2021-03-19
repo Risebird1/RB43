@@ -2462,6 +2462,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 3].Value = "Resume Link";
                 Sheet.Cells[1, 4].Value = "Phone(With Country code)";
                 Sheet.Cells[1, 5].Value = "Client HR Email ID";
+                Sheet.Cells[1, 6].Value = "Profile Source";
                 
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
 
@@ -2517,7 +2518,8 @@ namespace Risebird.Web.Controllers
                                         EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim(),
                                         ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null) ? workSheet.Cells[rowIterator, 3].Value.ToString() : string.Empty,         //workSheet.Cells[rowIterator, 3].Value.ToString();
                                         Phone = (workSheet.Cells[rowIterator, 4].Value != null) ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString()) : string.Empty,                  // "+" + workSheet.Cells[rowIterator, 10].Value.ToString();
-                                        ClientHREmail = (workSheet.Cells[rowIterator, 5] != null) ? workSheet.Cells[rowIterator, 5].Value.ToString() : string.Empty,
+                                        ClientHREmail = (workSheet.Cells[rowIterator, 5].Value != null) ? workSheet.Cells[rowIterator, 5].Value.ToString() : string.Empty,
+                                        ProfileSource = (workSheet.Cells[rowIterator, 6].Value != null) ? workSheet.Cells[rowIterator, 6].Value.ToString() : string.Empty,
                                         IRFId = IRFId
                                     };
                                     candidateList.Add(candidate);
