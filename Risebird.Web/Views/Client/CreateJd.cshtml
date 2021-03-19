@@ -187,24 +187,27 @@
                                         <div class="card-content-holder border card-blue">
                                             <div class="card-header jd">
                                                 <div class="row">
-                                                    <div id="rbmatches_2"  class="col-md-6 col-sm-6 first">
-                                                       
+                                                    <div id="rbmatches_2" class="col-md-6 col-sm-6 first">
+
+                                                        @if (item.candidateEmail != null && item.candidateEmail != "")
+                                                        {
                                                             @if (@item.JDTitle.Length > 10)
                                                             {
                                                                 <a style="text-decoration: none;
         cursor: pointer;
 " data-tooltip="@item.JDTitle"><h6 class="jd-name assessment-grp">@item.JDTitle</h6> </a>
-                                                    }
-                                                    else
-                                                    {
-                                                        <h6 class="assessment-grp">
-                                                            @item.JDTitle
-                                                        </h6>
-                                                    }
+                                                            }
+                                                            else
+                                                            {
+                                                    <h6 class="assessment-grp">
+                                                        @item.JDTitle
+                                                    </h6>
+                                                            }
+                                                        }
+                                                        else { <h6></h6>}
 
 
-
-                                                             </div>
+                                                    </div>
 
                                                     <div class="col-md-6 col-sm-6 card-header-buttons action text-right">
                                                         @if (!Model._clientjddetails.isClientUser)

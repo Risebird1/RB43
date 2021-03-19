@@ -10,6 +10,7 @@ namespace Risebird.Entities.ViewModel
         public string[] InterviewStatus { get; set; }
         public string[] ScheduleStatus { get; set; }
         public string[] HREmail { get; set; }
+        public string[] ProfileSource { get; set; }
 
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
