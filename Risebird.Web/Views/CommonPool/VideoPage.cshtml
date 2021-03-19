@@ -587,14 +587,19 @@
                                                                                                 </div>
                                                                                                 <div class="video-card-body" onclick="changeVideo(@videolist.Priority)">
                                                                                                     <div class="video-title">
-                                                                                                        @if (@videolist.VideoTitle.Length > 11)
+
+                                                                                                        @if (videolist.VideoTitle != null && videolist.VideoTitle != "")
                                                                                                         {
-                                                                                                            <a data-tooltip="@videolist.VideoTitle" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.VideoTitle</span> </a>
+                                                                                                            @if (videolist.VideoTitle.Length > 11)
+                                                                                                            {
+                                                                                                                <a data-tooltip="@videolist.VideoTitle" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.VideoTitle</span> </a>
+                                                                                                            }
+                                                                                                            else
+                                                                                                            {
+                                                                                                                <span class="candidate">@videolist.VideoTitle</span>
+                                                                                                            }
                                                                                                         }
-                                                                                                        else
-                                                                                                        {
-                                                                                                            <span class="candidate">@videolist.VideoTitle</span>
-                                                                                                        }
+                                                                                                        else { <span></span>}
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>
@@ -620,14 +625,20 @@
                                                                                                 </div>
                                                                                                 <div class="video-card-body" onclick="changeVideo(@videolist.Priority)">
                                                                                                     <div class="video-title">
-                                                                                                        @if (@videolist.VideoTitle.Length > 11)
+
+                                                                                                        @if (videolist.VideoTitle != null && videolist.VideoTitle != "")
                                                                                                         {
-                                                                                                            <a data-tooltip="@videolist.VideoTitle" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.VideoTitle</span> </a>
+                                                                                                            @if (videolist.VideoTitle.Length > 11)
+                                                                                                            {
+                                                                                                                <a data-tooltip="@videolist.VideoTitle" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.VideoTitle</span> </a>
+                                                                                                            }
+                                                                                                            else
+                                                                                                            {
+                                                                                                                <span class="candidate">@videolist.VideoTitle</span>
+                                                                                                            }
                                                                                                         }
                                                                                                         else
-                                                                                                        {
-                                                                                                            <span class="candidate">@videolist.VideoTitle</span>
-                                                                                                        }
+                                                                                                        { <span></span>}
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>
@@ -1308,14 +1319,19 @@
                                                                                     </div>
                                                                                     <div class="video-card-body" onclick="changeVideo(@videolist.Priority)">
                                                                                         <div class="video-title">
-                                                                                            @if (@videolist.VideoTitle.Length > 11)
+
+                                                                                            @if (videolist.VideoTitle != null && videolist.VideoTitle != "")
                                                                                             {
-                                                                                                <a data-tooltip="@videolist.VideoTitle" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.VideoTitle</span> </a>
+                                                                                                @if (videolist.VideoTitle.Length > 11)
+                                                                                                {
+                                                                                                    <a data-tooltip="@videolist.VideoTitle" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.VideoTitle</span> </a>
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                    <span class="candidate">@videolist.VideoTitle</span>
+                                                                                                }
                                                                                             }
-                                                                                            else
-                                                                                            {
-                                                                                                <span class="candidate">@videolist.VideoTitle</span>
-                                                                                            }
+                                                                                            else{<span></span>}
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -1346,14 +1362,19 @@
                                                                                     </div>
                                                                                     <div class="video-card-body" onclick="changeVideo(@videolist.Priority)">
                                                                                         <div class="video-title">
-                                                                                            @if (@videolist.VideoTitle.Length > 11)
+
+                                                                                            @if (videolist.VideoTitle != null && videolist.VideoTitle != "")
                                                                                             {
-                                                                                                <a data-tooltip="@videolist.VideoTitle" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.VideoTitle</span> </a>
+                                                                                                @if (videolist.VideoTitle.Length > 11)
+                                                                                                {
+                                                                                                    <a data-tooltip="@videolist.VideoTitle" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.VideoTitle</span> </a>
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                    <span class="candidate">@videolist.VideoTitle</span>
+                                                                                                }
                                                                                             }
-                                                                                            else
-                                                                                            {
-                                                                                                <span class="candidate">@videolist.VideoTitle</span>
-                                                                                            }
+                                                                                            else { <span></span>}
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -1415,23 +1436,34 @@
                                                                                     </div>
                                                                                     <div class="video-card-body">
                                                                                         <div class="video-title">
-                                                                                            @if (@videolist.candidateName.Length > 11)
+
+                                                                                            @if (videolist.candidateName != null && videolist.candidateName != "")
                                                                                             {
-                                                                                                <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                                                @if (videolist.candidateName.Length > 11)
+                                                                                                {
+                                                                                                    <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                    <span onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" class="candidate">@videolist.candidateName</span>}
                                                                                             }
                                                                                             else
-                                                                                            {
-                                                                                                <span onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" class="candidate">@videolist.candidateName</span>}
+                                                                                            { <span></span>}
 
-                                                                                            @if (@videolist.JDTiltle.Length > 10)
+                                                                                            @if (videolist.JDTiltle.Split("|")[0] != null && videolist.JDTiltle.Split("|")[0] != "")
                                                                                             {
-                                                                                                <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
 
-                                                                                            else
-                                                                                            {
-                                                                                                <span>@videolist.JDTiltle</span>}
+                                                                                                @if (@videolist.JDTiltle.Length > 10)
+                                                                                                {
+                                                                                                    <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
 
-                                                                                        </div>
+                                                                                                else
+                                                                                                {
+                                                                                                    <span>@videolist.JDTiltle</span>}
+                                                                                            }
+                                                                                            else {<span></span>}
+
+                                                                                            </div>
                                                                                         <div class="video-page text-success">
                                                                                             &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
                                                                                             <span class="divider-g">
@@ -1451,22 +1483,32 @@
 
 
                                                                                         <div class="video-info">
-                                                                                            <span> Notice Period: </span> @if (videolist.joiningTime.Length > 10)
-                                                                                            {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
-                                                                                        else
-                                                                                        {
-                                                                                            <span id="join_time"> @videolist.joiningTime</span>}
-                                                                                        </div>
+                                                                                            <span> Notice Period: </span>
+                                                                                            @if (videolist.joiningTime != null && videolist.joiningTime != "")
+                                                                                            {
+                                                                                                @if (videolist.joiningTime.Length > 10)
+                                                                                                {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
+                                                                                                else
+                                                                                                {
+                                                                                                <span id="join_time"> @videolist.joiningTime</span>}
+                                                                                            }
+                                                                                            else { <span></span>}
+                                                                                            </div>
 
                                                                                         <div class="video-info">
-                                                                                            <span>Expected Salary:</span>  @if (@videolist.expectedPerHourRate.Length > 10)
+                                                                                            <span>Expected Salary:</span>
+                                                                                            @if (videolist.expectedPerHourRate != null && videolist.expectedPerHourRate != "")
                                                                                             {
-                                                                                                <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
+                                                                                                @if (videolist.expectedPerHourRate.Length > 10)
+                                                                                                {
+                                                                                                    <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
 
-                                                                                            else
-                                                                                            {
-                                                                                                <span>@videolist.expectedPerHourRate</span>}
-                                                                                        </div>
+                                                                                                else
+                                                                                                {
+                                                                                                    <span>@videolist.expectedPerHourRate</span>}
+                                                                                            }
+                                                                                            else { <span></span> }
+                                                                                            </div>
                                                                                     </div>
                                                                                 </div>
                                                                             }
@@ -1553,23 +1595,31 @@
                                                                             </div>
                                                                             <div class="video-card-body">
                                                                                 <div class="video-title">
-                                                                                    @if (@videolist.candidateName.Length > 11)
+                                                                                    @if (videolist.candidateName != null && videolist.candidateName != "")
                                                                                     {
-                                                                                        <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                                        @if (videolist.candidateName.Length > 11)
+                                                                                        {
+                                                                                            <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <span onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" class="candidate">@videolist.candidateName</span>}
                                                                                     }
                                                                                     else
+                                                                                    {<span></span>}
+                                                                                    @if (videolist.JDTiltle != null && videolist.JDTiltle != "")
                                                                                     {
-                                                                                        <span onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" class="candidate">@videolist.candidateName</span>}
+                                                                                        @if (videolist.JDTiltle.Length > 10)
+                                                                                        {
+                                                                                            <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
 
-                                                                                    @if (@videolist.JDTiltle.Length > 10)
-                                                                                    {
-                                                                                        <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
+                                                                                        else
+                                                                                        {
+                                                                                            <span>@videolist.JDTiltle</span>}
+                                                                                    }
+                                                                                    else { <span></span>}
 
-                                                                                    else
-                                                                                    {
-                                                                                        <span>@videolist.JDTiltle</span>}
-
-                                                                                </div>
+                                                                                    </div>
                                                                                 <div class="video-page text-success">
                                                                                     &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
                                                                                     <span class="divider-g">
@@ -1589,22 +1639,33 @@
 
 
                                                                                 <div class="video-info">
-                                                                                    <span> Notice Period: </span> @if (videolist.joiningTime.Length > 10)
-                                                                                    {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
-                                                                                else
-                                                                                {
-                                                                                    <span id="join_time"> @videolist.joiningTime</span>}
-                                                                                </div>
+                                                                                    <span> Notice Period: </span>
+                                                                                    @if (videolist.joiningTime != null && videolist.joiningTime != "")
+                                                                                    {
+
+                                                                                        @if (videolist.joiningTime.Length > 10)
+                                                                                        {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
+                                                                                        else
+                                                                                        {
+                                                                                        <span id="join_time"> @videolist.joiningTime</span>}
+                                                                                    }
+                                                                                    else{<span></span>}
+                                                                                    </div>
 
                                                                                 <div class="video-info">
-                                                                                    <span>Expected Salary:</span>  @if (@videolist.expectedPerHourRate.Length > 10)
+                                                                                    <span>Expected Salary:</span>
+                                                                                    @if (videolist.expectedPerHourRate != null && videolist.expectedPerHourRate != "")
                                                                                     {
-                                                                                        <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
+                                                                                        @if (videolist.expectedPerHourRate.Length > 10)
+                                                                                        {
+                                                                                            <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
 
-                                                                                    else
-                                                                                    {
-                                                                                        <span>@videolist.expectedPerHourRate</span>}
-                                                                                </div>
+                                                                                        else
+                                                                                        {
+                                                                                            <span>@videolist.expectedPerHourRate</span>}
+                                                                                    }
+                                                                                    else { <span></span>}
+                                                                                    </div>
                                                                             </div>
                                                                         </div>
 
@@ -1677,23 +1738,31 @@
                                                                 </div>
                                                                 <div class="video-card-body">
                                                                     <div class="video-title">
-                                                                        @if (@videolist.candidateName.Length > 11)
+                                                                        @if (videolist.candidateName != null && videolist.candidateName != "")
                                                                         {
-                                                                            <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                            @if (videolist.candidateName.Length > 11)
+                                                                            {
+                                                                                <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span class="candidate">@videolist.candidateName</span>}
                                                                         }
                                                                         else
+                                                                        { <span></span>}
+                                                                        @if (videolist.JDTiltle != null && videolist.JDTiltle != "")
                                                                         {
-                                                                            <span class="candidate">@videolist.candidateName</span>}
+                                                                            @if (videolist.JDTiltle.Length > 10)
+                                                                            {
+                                                                                <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
 
-                                                                        @if (@videolist.JDTiltle.Length > 10)
-                                                                        {
-                                                                            <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
+                                                                            else
+                                                                            {
+                                                                                <span>@videolist.JDTiltle</span>}
+                                                                        }
+                                                                        else { <span></span>}
 
-                                                                        else
-                                                                        {
-                                                                            <span>@videolist.JDTiltle</span>}
-
-                                                                    </div>
+                                                                        </div>
                                                                     <div class="video-page text-success">
                                                                         &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
                                                                         <span class="divider-g">
