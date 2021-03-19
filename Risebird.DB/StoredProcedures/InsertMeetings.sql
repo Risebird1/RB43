@@ -94,7 +94,7 @@ ELSE
 
 Begin
 
-set @InterviewId = (select id from InterviewMeetings where candidateEmail = @candidateEmail and interviewDate=@interviewDate)
+set @InterviewId = (select id from InterviewMeetings where candidateEmail = @candidateEmail and interviewDate=@interviewDate and IRFId= @IRFId)
 
  UPDATE [dbo].[InterviewMeetings]
    SET [interviewDate] = @interviewDate
@@ -108,7 +108,7 @@ set @InterviewId = (select id from InterviewMeetings where candidateEmail = @can
 		   ,[ExpectedPerHourRate]=@expectedPerHourRate
 		   ,[joiningTime]=@joiningTime
 		   ,[staffingAgency]=@staffingAgenecy
- WHERE     candidateEmail = @candidateEmail and interviewDate=@interviewDate
+ WHERE     id=@InterviewId
  
  
  
@@ -254,14 +254,14 @@ ELSE
 
 Begin
 
-set @InterviewId = (select id from UnapprovedInterviewerMeetings where candidateEmail = @candidateEmail and interviewDate=@interviewDate)
+set @InterviewId = (select id from UnapprovedInterviewerMeetings where candidateEmail = @candidateEmail and interviewDate=@interviewDate and ISCId= @IRFId)
 
  UPDATE [dbo].[UnapprovedInterviewerMeetings]
    SET [confirmationStatus] = @comfirmationStatus
 	  ,[zoomLink]=@zoomLink
       ,[ZoomId]=@hrRiseBirdAssinged
        
- WHERE candidateEmail = @candidateEmail and interviewDate=@interviewDate
+ WHERE id=@InterviewId
  
  
  
