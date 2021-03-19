@@ -320,5 +320,12 @@ namespace Risebird.Entities.ViewModel
         public int InterviewStatus { get; set; }
         public string InterviewStatusDetails { get; set; }
         public int Rate { get; set; }
+        public string candidateEmail { get; set; }
+        public string candidateName { get; set; }
+        public int Userid { get; set; }
+        public string FirstName { get; set; }
+        public string VideoLink { get; set; }
+        public string ClientName { get; set; }
+        public string InterviewerEmailid { get; set; }
     }
 }

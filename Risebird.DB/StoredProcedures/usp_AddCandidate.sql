@@ -31,7 +31,8 @@ Create PROCEDURE [dbo].[usp_AddCandidate]
 @Heuristicsscore int,
 @AvailableFullTime  bit,
 @AvailableFreeLancing bit,
-@ClientHRAttemptContact varchar(100)
+@ClientHRAttemptContact varchar(100),
+@ProfileSource varchar(200)
   
 AS  
 Begin  
@@ -89,7 +90,8 @@ insert into Candidate
 [Heuristicsscore],
 [AvailableFullTime],
 [AvailableFreeLancing],
-[ClientHRAttemptContact]
+[ClientHRAttemptContact],
+[ProfileSource]
 )  
 values(@IRFId,  
 @ResumeLink,  
@@ -111,7 +113,8 @@ values(@IRFId,
 @Heuristicsscore,
 @AvailableFullTime,
 @AvailableFreeLancing,
-@ClientHRAttemptContact
+@ClientHRAttemptContact,
+@ProfileSource
 )  
   
 insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where UserId=@UserId))  
@@ -153,7 +156,8 @@ insert into Candidate
 [Heuristicsscore],
 [AvailableFullTime],
 [AvailableFreeLancing],
-[ClientHRAttemptContact]
+[ClientHRAttemptContact],
+[ProfileSource]
 )  
 values(@IRFId,  
 @ResumeLink,  
@@ -175,7 +179,8 @@ values(@IRFId,
 @Heuristicsscore,
 @AvailableFullTime,
 @AvailableFreeLancing,
-@ClientHRAttemptContact)  
+@ClientHRAttemptContact,
+@ProfileSource)  
   
   
 insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where  UserId=@CandidateUserId))  
