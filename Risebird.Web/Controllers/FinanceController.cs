@@ -548,36 +548,62 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Column(a).Width = 30;
                         }
-                        Sheet.Cells[1, 1].Value = "Payment For";
-                        Sheet.Cells[1, 2].Value = "Interview Id";
-                        Sheet.Cells[1, 3].Value = "Type";
-                        Sheet.Cells[1, 4].Value = "Amount";
-                        Sheet.Cells[1, 5].Value = "Date";
-                        Sheet.Cells[1, 6].Value = "Status";
-                        Sheet.Cells[1, 7].Value = "Location";
+                        Sheet.Cells[1, 1].Value = "Date";
+                        Sheet.Cells[1, 2].Value = "Candidate Email";
+                        Sheet.Cells[1, 3].Value = "Candidate Name";
+                        Sheet.Cells[1, 4].Value = "Client Name";
+                        Sheet.Cells[1, 5].Value = "Payment For";
+                        Sheet.Cells[1, 6].Value = "Type";
+                        Sheet.Cells[1, 7].Value = "Country";
                         Sheet.Cells[1, 8].Value = "Meeting Status";
+                        Sheet.Cells[1, 9].Value = "Interview Status";
+                        Sheet.Cells[1, 10].Value = "Video Link";
+                        Sheet.Cells[1, 11].Value = "Amount";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
                             foreach (var interviewer in Interviewers)
                             {
-                                Sheet.Cells[i, 1].Value = interviewer;
-                                Sheet.Cells[i, 1].Style.Font.Size = 14;
+                                int valueset = i;
+                                string InterviewerEmailid = "";
                                 i++;
                                 foreach (var item in model.Result.Where(x => x.FirstName == interviewer).ToList())
                                 {
-                                    Sheet.Cells[i, 1].Value = item.Comment;
-                                    Sheet.Cells[i, 2].Value = item.InterviewId;
-                                    Sheet.Cells[i, 3].Value = item.Type;
-                                    Sheet.Cells[i, 4].Value = item.Points;
-                                    Sheet.Cells[i, 5].Value = item.Date.ToString();
-                                    Sheet.Cells[i, 6].Value = item.Status;
+                                    InterviewerEmailid = item.InterviewerEmailid;
+                                    Sheet.Cells[i, 1].Value = item.Date.ToString();
+                                    Sheet.Cells[i, 2].Value = item.candidateEmail;
+                                    Sheet.Cells[i, 3].Value = item.candidateName;
+                                    Sheet.Cells[i, 4].Value = item.ClientName;
+                                    Sheet.Cells[i, 5].Value = item.Comment;
+                                    Sheet.Cells[i, 6].Value = item.Type;
                                     Sheet.Cells[i, 7].Value = item.PreferredLocation;
                                     Sheet.Cells[i, 8].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                    Sheet.Cells[i, 9].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
+                                    if (!string.IsNullOrEmpty(item.VideoLink))
+                                    {
+                                        try
+                                        {
+                                            Sheet.Cells[i, 10].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                            Sheet.Cells[i, 10].Value = "Video";
+                                            Sheet.Cells[i, 10].Style.Font.UnderLine = true;
+                                            Sheet.Cells[i, 10].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                        }
+                                        catch (Exception)
+                                        {
+                                            Sheet.Cells[i, 10].Value = "No Video";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Sheet.Cells[i, 10].Value = "No Video";
+                                    }
+                                    Sheet.Cells[i, 11].Value = item.Points;
                                     i++;
                                 }
+                                Sheet.Cells[valueset, 1].Value = interviewer + "(" + InterviewerEmailid + ")";
+                                Sheet.Cells[valueset, 1].Style.Font.Size = 14;
                                 Sheet.Cells[i, 1].Value = "Total";
-                                Sheet.Cells[i, 4].Value = model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum();
+                                Sheet.Cells[i, 11].Value = model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum();
                                 i++;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -644,36 +670,62 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Column(a).Width = 30;
                         }
-                        Sheet.Cells[1, 1].Value = "Payment For";
-                        Sheet.Cells[1, 2].Value = "Interview Id";
-                        Sheet.Cells[1, 3].Value = "Type";
-                        Sheet.Cells[1, 4].Value = "Amount";
-                        Sheet.Cells[1, 5].Value = "Date";
-                        Sheet.Cells[1, 6].Value = "Status";
-                        Sheet.Cells[1, 7].Value = "Location";
+                        Sheet.Cells[1, 1].Value = "Date";
+                        Sheet.Cells[1, 2].Value = "Candidate Email";
+                        Sheet.Cells[1, 3].Value = "Candidate Name";
+                        Sheet.Cells[1, 4].Value = "Client Name";
+                        Sheet.Cells[1, 5].Value = "Payment For";
+                        Sheet.Cells[1, 6].Value = "Type";
+                        Sheet.Cells[1, 7].Value = "Country";
                         Sheet.Cells[1, 8].Value = "Meeting Status";
+                        Sheet.Cells[1, 9].Value = "Interview Status";
+                        Sheet.Cells[1, 10].Value = "Video Link";
+                        Sheet.Cells[1, 11].Value = "Amount";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
                             foreach (var interviewer in Interviewers)
                             {
-                                Sheet.Cells[i, 1].Value = interviewer;
-                                Sheet.Cells[i, 1].Style.Font.Size = 14;
+                                int valueset = i;
+                                string InterviewerEmailid = "";
                                 i++;
-                                foreach (var item in model.Result)
+                                foreach (var item in model.Result.Where(x => x.FirstName == interviewer).ToList())
                                 {
-                                    Sheet.Cells[i, 1].Value = item.Comment;
-                                    Sheet.Cells[i, 2].Value = item.InterviewId;
-                                    Sheet.Cells[i, 3].Value = item.Type;
-                                    Sheet.Cells[i, 4].Value = item.Points;
-                                    Sheet.Cells[i, 5].Value = item.Date.ToString();
-                                    Sheet.Cells[i, 6].Value = item.Status;
+                                    InterviewerEmailid = item.InterviewerEmailid;
+                                    Sheet.Cells[i, 1].Value = item.Date.ToString();
+                                    Sheet.Cells[i, 2].Value = item.candidateEmail;
+                                    Sheet.Cells[i, 3].Value = item.candidateName;
+                                    Sheet.Cells[i, 4].Value = item.ClientName;
+                                    Sheet.Cells[i, 5].Value = item.Comment;
+                                    Sheet.Cells[i, 6].Value = item.Type;
                                     Sheet.Cells[i, 7].Value = item.PreferredLocation;
                                     Sheet.Cells[i, 8].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                    Sheet.Cells[i, 9].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
+                                    if (!string.IsNullOrEmpty(item.VideoLink))
+                                    {
+                                        try
+                                        {
+                                            Sheet.Cells[i, 10].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                            Sheet.Cells[i, 10].Value = "Video";
+                                            Sheet.Cells[i, 10].Style.Font.UnderLine = true;
+                                            Sheet.Cells[i, 10].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                        }
+                                        catch (Exception)
+                                        {
+                                            Sheet.Cells[i, 10].Value = "No Video";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Sheet.Cells[i, 10].Value = "No Video";
+                                    }
+                                    Sheet.Cells[i, 11].Value = item.Points;
                                     i++;
                                 }
+                                Sheet.Cells[valueset, 1].Value = interviewer + "(" + InterviewerEmailid + ")";
+                                Sheet.Cells[valueset, 1].Style.Font.Size = 14;
                                 Sheet.Cells[i, 1].Value = "Total";
-                                Sheet.Cells[i, 4].Value = model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum();
+                                Sheet.Cells[i, 11].Value = model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum();
                                 i++;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);

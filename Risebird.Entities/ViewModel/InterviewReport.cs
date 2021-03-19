@@ -324,5 +324,8 @@ namespace Risebird.Entities.ViewModel
         public string candidateName { get; set; }
         public int Userid { get; set; }
         public string FirstName { get; set; }
+        public string VideoLink { get; set; }
+        public string ClientName { get; set; }
+        public string InterviewerEmailid { get; set; }
     }
 }
