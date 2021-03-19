@@ -109,6 +109,7 @@ namespace Risebird.Web.Controllers
                         candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
                         candidateTimeline.confirmationStatus = firstData.confirmationStatus;
                         candidateTimeline.PrimarySkill = firstData.PrimarySkill;
+                        candidateTimeline.ProfileSource = firstData.ProfileSource;
                         candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
                         //schedule status
@@ -209,6 +210,7 @@ namespace Risebird.Web.Controllers
                         var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateTimelinefilters"));
 
                         filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.HREmail).ToArray() : filter.HREmail = filter.HREmail;
+                        filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
 
                         if (filter.ScheduleStatus != null)
                         {
@@ -239,6 +241,11 @@ namespace Risebird.Web.Controllers
                         if (filter.HREmail != null)
                         {
                             model = model.Where(x => filter.HREmail.Contains(x.HREmail)).ToList();
+
+                        }
+                        if (filter.ProfileSource != null)
+                        {
+                            model = model.Where(x => filter.ProfileSource.Contains(x.ProfileSource)).ToList();
 
                         }
 
@@ -311,6 +318,7 @@ namespace Risebird.Web.Controllers
                         candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
                         candidateTimeline.confirmationStatus = firstData.confirmationStatus;
                         candidateTimeline.PrimarySkill = firstData.PrimarySkill;
+                        candidateTimeline.ProfileSource = firstData.ProfileSource;
                         candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
                         //schedule status
@@ -406,6 +414,7 @@ namespace Risebird.Web.Controllers
                         }
                     }
                     filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.HREmail).ToArray() : filter.HREmail = filter.HREmail;
+                    filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
 
                     if (filter.ScheduleStatus != null)
                     {
@@ -434,10 +443,14 @@ namespace Risebird.Web.Controllers
 
                     }
 
-                    
                     if (filter.HREmail != null)
                     {
                         model = model.Where(x => filter.HREmail.Contains(x.HREmail)).ToList();
+
+                    }
+                    if (filter.ProfileSource != null)
+                    {
+                        model = model.Where(x => filter.ProfileSource.Contains(x.ProfileSource)).ToList();
 
                     }
                     return View(model);
@@ -524,6 +537,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
                     candidateTimeline.confirmationStatus = firstData.confirmationStatus;
                     candidateTimeline.PrimarySkill = firstData.PrimarySkill;
+                    candidateTimeline.ProfileSource = firstData.ProfileSource;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
                     //schedule status
@@ -624,6 +638,7 @@ namespace Risebird.Web.Controllers
                     var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateTimelinefilters"));
 
                     filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.HREmail).ToArray() : filter.HREmail = filter.HREmail;
+                    filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
 
                     if (filter.ScheduleStatus != null)
                     {
@@ -656,6 +671,11 @@ namespace Risebird.Web.Controllers
                         model = model.Where(x => filter.HREmail.Contains(x.HREmail)).ToList();
 
                     }
+                    if (filter.ProfileSource != null)
+                    {
+                        model = model.Where(x => filter.ProfileSource.Contains(x.ProfileSource)).ToList();
+
+                    }
 
                 }
 
@@ -676,6 +696,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 6].Value = "Schedule Status";
                 Sheet.Cells[1, 7].Value = "Current Status";
                 Sheet.Cells[1, 8].Value = "Current Status Date";
+                Sheet.Cells[1, 9].Value = "Profile Source";
 
 
                 int i = 2;
@@ -724,7 +745,15 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 7].Value = string.Empty;
                             Sheet.Cells[i, 8].Value = string.Empty;
                         }
-                        
+                        if (!string.IsNullOrEmpty(item.ProfileSource))
+                        {
+                            Sheet.Cells[i, 9].Value = item.ProfileSource;
+
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 9].Value = string.Empty;
+                        }
                         //if (!string.IsNullOrEmpty(item.VideoLink) && item.QCInterview > 0)
                         //{
                         //    try
@@ -743,7 +772,7 @@ namespace Risebird.Web.Controllers
                         //{
                         //    Sheet.Cells[i, 9].Value = "No Video";
                         //}
-                        
+
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -2462,6 +2491,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 3].Value = "Resume Link";
                 Sheet.Cells[1, 4].Value = "Phone(With Country code)";
                 Sheet.Cells[1, 5].Value = "Client HR Email ID";
+                Sheet.Cells[1, 6].Value = "Profile Source";
                 
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
 
@@ -2517,7 +2547,9 @@ namespace Risebird.Web.Controllers
                                         EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim(),
                                         ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null) ? workSheet.Cells[rowIterator, 3].Value.ToString() : string.Empty,         //workSheet.Cells[rowIterator, 3].Value.ToString();
                                         Phone = (workSheet.Cells[rowIterator, 4].Value != null) ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString()) : string.Empty,                  // "+" + workSheet.Cells[rowIterator, 10].Value.ToString();
-                                        ClientHREmail = (workSheet.Cells[rowIterator, 5] != null) ? workSheet.Cells[rowIterator, 5].Value.ToString() : string.Empty,
+                                        ClientHREmail = (workSheet.Cells[rowIterator, 5].Value != null) ? workSheet.Cells[rowIterator, 5].Value.ToString() : string.Empty,
+                                        //ProfileSource = (workSheet.Cells[rowIterator, 6].Value != null) ? workSheet.Cells[rowIterator, 6].Value.ToString() : string.Empty,
+                                        ProfileSource = workSheet.Cells[rowIterator, 6].Value.ToString().Trim(),
                                         IRFId = IRFId
                                     };
                                     candidateList.Add(candidate);

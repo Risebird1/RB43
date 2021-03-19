@@ -246,24 +246,32 @@
                                                 <div class="video-card-body">
                                                     <div class="video-title">
 
-                                                        @if (@item.candidateName.Length > 20)
+                                                        @if (item.candidateName != null && item.candidateName != "")
                                                         {
-                                                            <a data-tooltip="@item.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@item.candidateName</span> </a>
+                                                            @if (@item.candidateName.Length > 20)
+                                                            {
+                                                                <a data-tooltip="@item.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@item.candidateName</span> </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="candidate">@item.candidateName</span>}
+
                                                         }
                                                         else
+                                                        { <span></span>}
+
+
+                                                        @if (item.JDTiltle != null && item.JDTiltle != "")
                                                         {
-                                                            <span class="candidate">@item.candidateName</span>}
+                                                            @if (@item.JDTiltle.Length > 20)
+                                                            {
+                                                                <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">@item.JDTiltle</span></a>}
 
-
-
-
-                                                        @if (@item.JDTiltle.Length > 20)
-                                                        {
-                                                            <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">@item.JDTiltle</span></a>}
-
-                                                        else
-                                                        {
-                                                            <span class="designation">@item.JDTiltle</span>}
+                                                            else
+                                                            {
+                                                                <span class="designation">@item.JDTiltle</span>}
+                                                        }
+                                                        else { <span></span>}
 
 
                                                         @if (item.MobileNumber != null && !(ViewBag.Profile == "CuratedUser"))
@@ -279,7 +287,8 @@
                                                             <div class="video-info nopad pull-right">
                                                                 <span>Matching Fee:</span> @if (@item.CostEstimate.Length > 10)
                                                                 {
-                                                                    <a href="#" data-tooltip="@item.CostEstimate"> <span class="expected-salari">@item.CostEstimate</span></a>}
+                                                                    <a href="#" data-tooltip="@item.CostEstimate"> <span class="expected-salari">@item.CostEstimate</span></a>
+                                                                 }
 
                                                                 else
                                                                 {
@@ -313,10 +322,9 @@
 
 
                                                         <span class="notice"> Notice Period: </span>
-
-                                                        @if (!string.IsNullOrEmpty(item.joiningTime))
+                                                        @if (item.joiningTime != null && item.joiningTime != "")
                                                         {
-                                                            if (item.joiningTime.Length > 12)
+                                                            @if (item.joiningTime.Length > 12)
                                                             {
                                                                 <a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>
                                                             }
@@ -325,12 +333,10 @@
                                                                 <span class="join"> @item.joiningTime</span>
                                                             }
                                                         }
-                                                        @*else
+                                                        else
                                                         {
-
-                                                        }*@
-
-
+                                                            <span></span>
+                                                        }
                                                     </div>
 
                                                     <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
@@ -353,38 +359,35 @@
                                                     </div>
 
                                                     <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
-                                                        <span>Expected Salary:</span>
-                                                        @if (!string.IsNullOrEmpty(item.expectedPerHourRate))
-                                                        {
-                                                            @if (@item.expectedPerHourRate.Length > 5)
+                                                        <span>Expected Salary:</span>  @if (item.expectedPerHourRate != null && item.expectedPerHourRate != "")
+                                                        {@if (@item.expectedPerHourRate.Length > 5)
                                                             {
-                                                                <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>
-                                                            }
+                                                                <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>}
 
                                                             else
                                                             {
-                                                                <span>@item.expectedPerHourRate</span>
-                                                            }
+                                                                <span>@item.expectedPerHourRate</span>}
                                                         }
-
+                                                        else { <span></span>}
                                                     </div>
 
                                                     <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
 
                                                         <span>Client:</span>
                                                         <span>
-                                                            @if (!string.IsNullOrEmpty(item.ClientName))
+
+                                                            @if (item.ClientName != null && item.ClientName != "")
                                                             {
                                                                 @if (@item.ClientName.Length > 10)
                                                                 {
                                                                     <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.ClientName</span></a>
-                                                                }
+                                                                    }
                                                                 else
                                                                 {
                                                                     <span>@item.ClientName</span>
-                                                                }
+                                                                    }
                                                             }
-
+                                                            else { <span></span>}
                                                         </span>
 
                                                     </div>

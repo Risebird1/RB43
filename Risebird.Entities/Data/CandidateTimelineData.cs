@@ -27,6 +27,7 @@ namespace Risebird.Entities.Data
         public string ScheduleStatusValue { get; set; }
         public DateTime ScheduleStatusDate { get; set; }
         public string PrimarySkill { get; set; }
+        public string ProfileSource { get; set; }
 
     }
 }

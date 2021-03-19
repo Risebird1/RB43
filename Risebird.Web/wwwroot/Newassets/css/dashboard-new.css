@@ -100,7 +100,7 @@ audio{outline:0px;border:0px;}
     position: absolute;
     bottom: 2px;
     left: 0px;
-    width: 57px;
+    width: 68px;
     height: 20px;
     border-radius: 0px 0px 4px 4px;
 }
@@ -187,11 +187,11 @@ audio{outline:0px;border:0px;}
     background: linear-gradient(to top, #FFFFFF 0%, #EDF7DA 100%);
 }
 .un-left {
-    width: 83%; padding-left: 20px !important;
+    width: 80%;
+    padding-left: 20px !important;
 }
 .un-right {
-
-    width: 57px;
+    width: 70px;
     float: right;
     height: 46px;
 }
@@ -219,13 +219,12 @@ audio{outline:0px;border:0px;}
     border: 0px solid black;
     border-radius: 1px;
     font-weight: bolder;
-    font-size: 29px;
-    width: 57px;
+    font-size: 36px;
+    width: 68px;
     height: 45px;
     margin: 0px auto;
     line-height: 25px;
     text-align: center;
-
 }
 .un-left strong {
     text-transform: uppercase;

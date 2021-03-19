@@ -79,7 +79,7 @@
                         @if (ViewBag.profile == "Admin")
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span data-toggle="tooltip" data-placement="top" title="Selected Candidate" onclick="location.href='@Url.Action("SelectedCandidate", "CommonPool")'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Selected Candidate</font></span>
+                                <span data-toggle="tooltip" data-placement="top" title="Selected Candidates" onclick="location.href='@Url.Action("SelectedCandidate", "CommonPool")'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Selected Candidates</font></span>
                             </button>
                         }
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
@@ -222,7 +222,7 @@
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.ClientHrContact).Distinct().ToList())
+                                                                        @foreach (var item in Model.Select(x => x.CandidateClientHR).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
                                                                             {
@@ -683,19 +683,19 @@
                                                         }
                                                         <td> @item.risebirdHR</td>
 
-                                                        @if (item.IsHrOnline == 1)
-                                                        {
-                                                            <td>
-                                                                <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact </a>
-                                                            </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>
-                                                                @item.ClientHrContact
-                                                            </td>
-                                                        }
-                                                        <td> @item.ClientName </td>
+                                                    @if (item.IsHrOnline == 1)
+                                                    {
+                                                        <td>
+                                                            <a onclick="directopenChat('@item.CandidateClientHR')"><span class="dot" style="background-color:green"></span>     @item.CandidateClientHR </a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            @item.CandidateClientHR
+                                                        </td>
+                                                    }
+                                                    <td> @item.ClientName </td>
 
                                                         @if (item.VideoLink != null && item.VideoLink != "")
                                                         {

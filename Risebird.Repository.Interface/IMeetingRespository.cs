@@ -152,5 +152,8 @@ namespace Risebird.Repository.Interface
         string SetCandidateAvailability(string imid, int isavailable);
         string MoveToCP(string imid, int movetocp);
         Task<IEnumerable<MeetingVM>> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate);
+        Task<List<RBInterviewDetails>> FetchAllFNDetail();
+        Task<List<RBInterviewDetails>> FNAllGeneratedInvoiceDetails(DateTime st, DateTime se);
+
     }
 }

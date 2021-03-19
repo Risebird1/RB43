@@ -153,9 +153,9 @@ Begin
 	declare
 	@canMasterId int = (select id from CandidatesMaster where UserId=@cndUserId)
 
-	Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId) 
+	Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId, ClientHRAttemptContact) 
 	values((select id from IRF where IRFId=@IRFId), @resumeLink, @prefferedLocation, @textreminder,
-	(select id from CandidatesMaster  where UserId = @cndUserId))
+	(select id from CandidatesMaster  where UserId = @cndUserId), @ClientHrContact)
 
 	--insert candidate added status
 	insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
@@ -179,8 +179,8 @@ Begin
 	declare @irfintid int = (select id from IRF where IRFId=@IRFId)
 	IF NOT EXISTS (SELECT 1  FROM  Candidate  WHERE  CandidateMasterId = @candidateMasterId and IRFID= @irfintid)
 		Begin
-			Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId) 
-			values(@irfintid, @resumeLink, @prefferedLocation,@textreminder, @candidateMasterId) 	
+			Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId, ClientHRAttemptContact) 
+			values(@irfintid, @resumeLink, @prefferedLocation,@textreminder, @candidateMasterId, @ClientHrContact) 	
 			
 			--insert candidate added status
 			insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 

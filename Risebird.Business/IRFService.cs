@@ -1605,8 +1605,9 @@ namespace Risebird.Business
                     if (isSendInvite)
                     {
 
-                        int i = 0;
-                        foreach (DataRow row in data.Rows)
+                        //int i = 0;
+
+                        Parallel.ForEach(data.Rows.OfType<System.Data.DataRow>(),  row =>
                         {
                             string value = row.ItemArray[1].ToString();
                             if (!string.IsNullOrEmpty(value) && value.Contains("successfully"))
@@ -1615,7 +1616,7 @@ namespace Risebird.Business
 
                                 if (candidateEmail != null && calendlyLink != null)
                                 {
-                                    var candidate = await _irfRepository.GetCandidateByIRF(irfId, candidateEmail);
+                                    var candidate = _irfRepository.GetCandidateByIRF(irfId, candidateEmail).Result;
                                     string mailResult = string.Empty;
                                     if (irf.BussinessType == "B2B")
                                     {
@@ -1627,9 +1628,11 @@ namespace Risebird.Business
                                         mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact);
 
                                     }
+                                    var index = data.Rows.IndexOf(row);
                                     if (mailResult.ToLower().Contains("success"))
                                     {
-                                        data.Rows[i][1] = row.ItemArray[1].ToString() + "(Invitation sent successfully)";
+
+                                        data.Rows[index][1] = row.ItemArray[1].ToString() + "(Invitation sent successfully)";
 
 
                                         if (candidate.TotalInvites == 0)
@@ -1640,20 +1643,20 @@ namespace Risebird.Business
 
                                         _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
 
-                                        await AddCandidateStatus(emailId, candidate.CandidateMasterId, irfId, "Invitation sent", (int)CandidateStatusOptions.InvitationSent);
+                                        var result = AddCandidateStatus(emailId, candidate.CandidateMasterId, irfId, "Invitation sent", (int)CandidateStatusOptions.InvitationSent).Result;
 
                                     }
                                     else
                                     {
-                                        data.Rows[i][1] = row.ItemArray[1].ToString() + "(Failed to send invite)";
+                                        data.Rows[index][1] = row.ItemArray[1].ToString() + "(Failed to send invite)";
 
                                     }
 
 
                                 }
                             }
-                            i++;
-                        }
+                        });
+
                     }
                     //Table start.
                     sb.Append("<div class='import' style='overflow-y:auto;'><table  style='border: 1px solid #ccc;font-size: 9pt;font-family:Arial'>");;

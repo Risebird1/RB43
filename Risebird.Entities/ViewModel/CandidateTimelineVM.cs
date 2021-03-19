@@ -29,6 +29,7 @@ namespace Risebird.Entities.ViewModel
         public int? confirmationStatus { get; set; }
         public string PrimarySkill { get; set; }
         public DateTime? CurrentStatusDate { get; set; }
+        public string ProfileSource{ get; set; }
 
 
     }

@@ -24,6 +24,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsSendInvite { get; set; }
         public int AddedByUserId { get; set; }
         public string ClientHREmail { get; set; }
+        public string ProfileSource { get; set; }
 
     }
 }
