@@ -372,7 +372,7 @@
 
                                                         @if (item.candidateName != null && item.candidateName != "")
                                                         {
-                                                            @if (@item.candidateName.Length > 10)
+                                                            @if (@item.candidateName.Length > 20)
                                                             {
                                                                 @if (item.CandidateAvailable == "Available")
                                                                 {
@@ -394,24 +394,24 @@
 
                                                         @if (item.JDTiltle != null && item.JDTiltle != "")
                                                         {
-                                                            @if (@item.JDTiltle.Length > 10)
+                                                            @if (@item.JDTiltle.Length > 20)
                                                             {
-                                                                <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time pull-left designation">@item.JDTiltle</span></a>
+                                                                <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time pull-left designation"> &nbsp; @item.JDTiltle</span></a>
                                                             }
                                                             else
                                                             {
-                                                                <span class="designation pull-left">@item.JDTiltle</span>
+                                                    <span class="designation pull-left">&nbsp; @item.JDTiltle</span>
                                                             }
                                                         }
                                                         else { <span></span>}
                                                         <span class="pull-left">
                                                             @if (item.CandidateAvailable == "Available")
                                                             {
-                                                                <span class="available"> @item.CandidateAvailable</span>
+                                                            <span class="available"> &nbsp; @item.CandidateAvailable</span>
                                                             }
                                                             else
                                                             {
-                                                                <span class="unavailable"> @item.CandidateAvailable</span>}
+                                                        <span class="unavailable"> &nbsp; @item.CandidateAvailable</span>}
 
                                                         </span>
                                                         <span class="pull-right">
@@ -468,7 +468,7 @@
                                                                 }
                                                             }
                                                         </span>
-                                                        }
+                                                        
 
                                                         @if (item.MobileNumber != null)
                                                         {
