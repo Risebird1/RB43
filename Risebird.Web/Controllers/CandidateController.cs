@@ -2548,7 +2548,8 @@ namespace Risebird.Web.Controllers
                                         ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null) ? workSheet.Cells[rowIterator, 3].Value.ToString() : string.Empty,         //workSheet.Cells[rowIterator, 3].Value.ToString();
                                         Phone = (workSheet.Cells[rowIterator, 4].Value != null) ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString()) : string.Empty,                  // "+" + workSheet.Cells[rowIterator, 10].Value.ToString();
                                         ClientHREmail = (workSheet.Cells[rowIterator, 5].Value != null) ? workSheet.Cells[rowIterator, 5].Value.ToString() : string.Empty,
-                                        ProfileSource = (workSheet.Cells[rowIterator, 6].Value != null) ? workSheet.Cells[rowIterator, 6].Value.ToString() : string.Empty,
+                                        //ProfileSource = (workSheet.Cells[rowIterator, 6].Value != null) ? workSheet.Cells[rowIterator, 6].Value.ToString() : string.Empty,
+                                        ProfileSource = workSheet.Cells[rowIterator, 6].Value.ToString().Trim(),
                                         IRFId = IRFId
                                     };
                                     candidateList.Add(candidate);
