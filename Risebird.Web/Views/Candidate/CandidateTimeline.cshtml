@@ -19,6 +19,7 @@
     string[] InterviewStatus = new string[] { };
     string[] ScheduleStatus = new string[] { };
     string[] HREmail = new string[] { };
+    string[] ProfileSource = new string[] { };
 
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("CandidateTimelinefilters") != null)
@@ -31,6 +32,7 @@
     InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
     ScheduleStatus = filter.ScheduleStatus != null ? filter.ScheduleStatus : new string[] { };
     HREmail = filter.HREmail != null ? filter.HREmail : new string[] { };
+    ProfileSource = filter.ProfileSource != null ? filter.ProfileSource : new string[] { };
 
 }
 <link href="~/Newassets/css/interviewer.css?v=7" rel="stylesheet" type="text/css" />
@@ -102,7 +104,7 @@
 
                 </div>
 
-                <div class="note-filter" style="text-align: right;"> Note: To visualize the  30days older data please apply filter</div>
+                <div class="note-filter" style="text-align: right;"> Note: To visualize data older than 30 days, please apply filter</div>
             </div>
         </div>
     </div>
@@ -180,6 +182,23 @@
                                                                     <option value="@(Risebird.Entities.Enum.InterviewStatus.Selected.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Selected.GetDescription())</option>
                                                                     <option value="@(Risebird.Entities.Enum.InterviewStatus.Rejected.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Rejected.GetDescription())</option>
                                                                     <option value="@(Risebird.Entities.Enum.InterviewStatus.BorderLine.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.BorderLine.GetDescription())</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="control-label  col-md-12 col-sm-12 desp-label" for="ProfileSource">
+                                                                Profile Source
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="ProfileSource" name="ProfileSource" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.ProfileSource).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -748,6 +767,13 @@
             maxHeight: 200
         });
 
+        $("#ProfileSource").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+
     })
 
 
@@ -764,12 +790,14 @@
         var meetingStatus =  @Html.Raw(Json.Serialize(MeetingStatus));
         var interviewStatus =  @Html.Raw(Json.Serialize(InterviewStatus));
         var scheduleStatus =  @Html.Raw(Json.Serialize(ScheduleStatus));
+        var profileSource =  @Html.Raw(Json.Serialize(ProfileSource));
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
         $("#HREmail").val(hrEmail);
         $("#MeetingStatus").val(meetingStatus);
         $("#InterviewStatus").val(interviewStatus);
         $("#ScheduleStatus").val(scheduleStatus);
+        $("#ProfileSource").val(profileSource);
         var form = $("#form").serialize();
 
     }

@@ -57,7 +57,7 @@ if @EmailId is not null
 
 		if(@roleId=1 or @roleId=4)
 			Begin
-				select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId, ul.FirstName as [Name], ca.ClientHRAttemptContact as HREmail, ca.IRFId, im.id as InterviewId,
+				select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId, ul.FirstName as [Name], ca.ClientHRAttemptContact as HREmail, ca.IRFId, ca.ProfileSource, im.id as InterviewId,
 				ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,
 				mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,
 				ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,
@@ -80,7 +80,7 @@ if @EmailId is not null
 		
 		else
 			Begin
-				select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId, ul.FirstName as [Name], ca.ClientHRAttemptContact as HREmail, ca.IRFId, im.id as InterviewId,
+				select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId, ul.FirstName as [Name], ca.ClientHRAttemptContact as HREmail, ca.IRFId, ca.ProfileSource, im.id as InterviewId,
 				ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,
 				mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,
 				ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,
@@ -103,7 +103,7 @@ if @EmailId is not null
 	End
 Else
 	Begin
-		select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId, ul.FirstName as [Name], ca.ClientHRAttemptContact as HREmail, ca.IRFId, im.id as InterviewId,
+		select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId, ul.FirstName as [Name], ca.ClientHRAttemptContact as HREmail, ca.IRFId, ca.ProfileSource, im.id as InterviewId,
 		ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,
 		mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,
 		ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,
