@@ -675,5 +675,12 @@
     function openPaymentHistory() {
         window.location.href = "/Finance/PaymentHistory";
     }
+    function ExportFNDetails() {
+        if (Generateinvoiceflag == 2) {
+            window.location.href = "/Finance/ExportGenerateFNPayment?st=" + St_date + "&se=" + Se_date;
+        } else {
+            window.location.href = "/Finance/ExportFNPayment";
+        }
+    }
 </script>
 

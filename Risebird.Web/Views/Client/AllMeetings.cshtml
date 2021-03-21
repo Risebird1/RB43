@@ -129,7 +129,7 @@
 
                     </div>
                 </div>
-
+                <div class="note-filter" style="text-align: right;"> Note: To visualize data older than 30 days, please apply filter</div>
             </div>
         </div>
     </div>
@@ -494,21 +494,21 @@
                                                             @if (item.candidateName != null && item.candidateName != "")
                                                             {
 
-                                                                @if (item.IsOnline == 1 && item.candidateName.Length > 18)
+                                                                @if (item.IsOnline == 1 && item.candidateName.Length > 15)
                                                                 {
                                                                     <td>
-                                                                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>  @item.candidateName.Substring(0, 18)... </a>
+                                                                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>  @item.candidateName.Substring(0, 10)... </a>
                                                                     </td>
                                                                 }
                                                                 else
                                                                 {
 
-                                                                    @if (item.candidateName.Length > 18)
+                                                                    @if (item.candidateName.Length > 15)
                                                                     {
 
 
                                                                         <td class="cadName">
-                                                                            <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 18)...  </a>
+                                                                            <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 10)...  </a>
                                                                         </td>
                                                                     }
 
@@ -952,14 +952,14 @@
             html += ' <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
             html += ' <td> ' + new Date(data[i].interviewDate).toLocaleString()+ ' </td>';
             if (data[i].candidateName != null && data[i].candidateName != "") {
-                if (data[i].IsOnline == 1 && data[i].candidateName.length > 18) {
-                    html += ' <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>    ' + data[i].candidateName.substring(0, 18) + '...</a> </td>';
+                if (data[i].IsOnline == 1 && data[i].candidateName.length > 15) {
+                    html += ' <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>    ' + data[i].candidateName.substring(0, 15) + '...</a> </td>';
                 }
                 else {
 
 
-                    if (data[i].candidateName.length > 18) {
-                        html += ' <td><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 18) + '...  </a> </td>';
+                    if (data[i].candidateName.length > 15) {
+                        html += ' <td><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 15) + '...  </a> </td>';
                     }
                     else {
                         html += ' <td>' + data[i].candidateName + ' </td>';

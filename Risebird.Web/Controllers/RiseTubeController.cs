@@ -236,9 +236,9 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             if (profileName == "Client")
-                            {
-                                modelList = await _meetingService.GetRiseTubeMeetingsPaged(profileName, emailid, Page.Value, searchvalue, ClientId);
-                                totalMeetings = await _meetingService.GetRisetubeIndexMeetingsCount(profileName, emailid, searchvalue, ClientId);
+                            {                               
+                                modelList = await _meetingService.GetRiseTubeMeetingsPagedFiltered(profileName, emailid, Page.Value, DateTime.Now.Date.AddDays(-30), DateTime.Now.Date, searchvalue, ClientId);
+                                totalMeetings = await _meetingService.GetRisetubeIndexMeetingsFilteredCount(profileName, emailid, DateTime.Now.Date.AddDays(-30), DateTime.Now.Date, searchvalue, ClientId);
 
                             }
                             else if (profileName == "CuratedUser")

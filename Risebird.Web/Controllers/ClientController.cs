@@ -806,7 +806,10 @@ namespace Risebird.Web.Controllers
                     {
                         var meetings = _meetingService.GetClientMeetingList(emailid);
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-
+                        if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
+                        {
+                            meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                        }
                         //ViewBag.IsSelected = false;
                         foreach (var m in meetings)
                         {
@@ -1188,6 +1191,10 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                    var meetings = _meetingService.GetClientMeetingList(emailid);
                     meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                    if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
+                    {
+                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                    }
                     foreach (var m in meetings)
                     {
                         if (m.InterviewStatus.HasValue)
@@ -1353,8 +1360,8 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    HttpContext.Session.Remove("AllPriorityClientMeetingsfilters");
-                    return RedirectToAction("AllMeetings");
+                    HttpContext.Session.Remove("AllPriorityClientMeetingsfilters");                  
+                    return RedirectToAction("AllMeetings", "Client", new { @Page = 1, @searchValue = string.Empty });
                 }
                 else
                 {
@@ -1389,6 +1396,10 @@ namespace Risebird.Web.Controllers
 
                 var selectedMeeting = new List<MeetingVM>();
                 var meetings = _meetingService.GetClientMeetingList(emailid);
+                if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
+                {
+                    meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                }
 
                 meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                 foreach (var meeting in meetings)
@@ -1823,21 +1834,13 @@ namespace Risebird.Web.Controllers
 
                         var selectedMeeting = new List<MeetingVM>();
                         var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1 && x.InterviewStatus.HasValue && (x.InterviewStatus == 2 || x.InterviewStatus == 4) && x.confirmationStatus == "1");
-
+                        if (HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters") == null)
+                        {
+                            meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                        }
 
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.MeetingStatusDescription = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); x.InterviewStatusDescription = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); return x; }).ToList();
-                        //foreach (var meeting in meetings)
-                        //{
-                        //    if (meeting.InterviewStatus != null)
-                        //    {
-                        //        meeting.InterviewStatusDescription = ((InterviewStatus)meeting.InterviewStatus).GetDescription();
-                        //    }
-                        //    if (meeting.MeetingStatus != null)
-                        //    {
-                        //        meeting.MeetingStatusDescription = ((MeetingStatus)meeting.MeetingStatus).GetDescription();
-                        //    }
-
-                        //}
+                      
 
                         foreach (var m in meetings)
                         {
@@ -2156,7 +2159,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     HttpContext.Session.Remove("SelectedPriorityClientMeetingsfilters");
-                    return RedirectToAction("SelectedPriorityClientMeetings");
+                    return RedirectToAction("SelectedMeetings", "Client", new { @Page=1,  @searchValue= string.Empty});
                 }
                 else
                 {
@@ -2189,6 +2192,10 @@ namespace Risebird.Web.Controllers
 
                 var selectedMeeting = new List<MeetingVM>();
                 var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1 && x.InterviewStatus.HasValue && (x.InterviewStatus == 2 || x.InterviewStatus == 4) && x.confirmationStatus == "1");
+                if (HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters") == null)
+                {
+                    meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                }
                 meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                 foreach (var meeting in meetings)
                 {
@@ -2451,17 +2458,10 @@ namespace Risebird.Web.Controllers
                     var selectedMeeting = new List<MeetingVM>();
                     var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1 && x.InterviewStatus.HasValue && (x.InterviewStatus == 2 || x.InterviewStatus == 4) && x.confirmationStatus == "1");
                     meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.MeetingStatusDescription = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); x.InterviewStatusDescription = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); return x; }).ToList();
-                    //foreach (var meeting in meetings)
-                    //{
-                    //    if (meeting.InterviewStatus != null)
-                    //    {
-                    //        meeting.InterviewStatusDescription = ((InterviewStatus)meeting.InterviewStatus).GetDescription();
-                    //    }
-                    //    if (meeting.MeetingStatus != null)
-                    //    {
-                    //        meeting.MeetingStatusDescription = ((MeetingStatus)meeting.MeetingStatus).GetDescription();
-                    //    }
-                    //}
+                    if (HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters") == null)
+                    {
+                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                    }
                     foreach (var m in meetings)
                     {
                         if (m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))

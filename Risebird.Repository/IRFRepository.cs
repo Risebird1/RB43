@@ -2621,6 +2621,7 @@ namespace Risebird.Repository
                 parameters.Add("@AvailableFullTime", obj.AvailableFullTime);
                 parameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
                 parameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
+                parameters.Add("@ProfileSource", obj.ProfileSource);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
@@ -2780,6 +2781,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@AvailableFullTime", obj.AvailableFullTime);
                 dynamicParameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
                 dynamicParameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
+                dynamicParameters.Add("@ProfileSource", obj.ProfileSource);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<int>(
@@ -4346,6 +4348,7 @@ namespace Risebird.Repository
                             parameters.Add("@AddedByUserId", userId);
                             parameters.Add("@date", DateTime.Now);
                             parameters.Add("@ClientHREmail", obj.ClientHREmail);
+                            parameters.Add("@ProfileSource", obj.ProfileSource);
                             parameters.Add("@operationStatus", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
 
 

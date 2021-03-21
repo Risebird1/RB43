@@ -377,13 +377,17 @@
                                                 <div class="video-card-body">
                                                     <div class="video-title">
 
-                                                        @if (@item.candidateName.Length > 20)
+                                                        @if (item.candidateName != null && item.candidateName != "")
                                                         {
-                                                            <a data-tooltip="@item.candidateName" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@item.candidateName</span> </a>
+                                                            @if (@item.candidateName.Length > 20)
+                                                            {
+                                                                <a data-tooltip="@item.candidateName" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@item.candidateName</span> </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="candidate">@item.candidateName</span>}
                                                         }
-                                                        else
-                                                        {
-                                                            <span class="candidate">@item.candidateName</span>}
+                                                        else { <span></span>}
                                                         @if (!String.IsNullOrEmpty(item.AssessmentGroup))
                                                         {
 
