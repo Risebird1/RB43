@@ -332,6 +332,7 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> ConfirmPayment(int id, int index, string email, string amount)
         {
             var resultset = await _meetingService.RBInterviewerDetails(id, index);
+            var paymenthistory = await _meetingService.InsertPaymentHistory(email, Convert.ToInt32(amount), "Done");
             //Start: Create PDF File
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_RBpayment.pdf";
             Document doc = new Document(iTextSharp.text.PageSize.A4, 10, 10, 42, 35);
@@ -450,6 +451,7 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> AdvancePayment(string Interviewer, string Comment, int Amount)
         {
             var model = await _meetingService.InsertAdvancePayment(Interviewer, Comment, Amount);
+            var paymenthistory = await _meetingService.InsertPaymentHistory(Interviewer, Amount, "Advance");
             var result = "";
             if (model == "Success")
             {
@@ -546,64 +548,65 @@ namespace Risebird.Web.Controllers
                         int startColumn = 1; int endColumn = 25;
                         for (int a = startColumn; a <= endColumn; a++)
                         {
-                            Sheet.Column(a).Width = 30;
+                            Sheet.Column(a).Width = 25;
                         }
                         Sheet.Cells[1, 1].Value = "Date";
                         Sheet.Cells[1, 2].Value = "Candidate Email";
                         Sheet.Cells[1, 3].Value = "Candidate Name";
                         Sheet.Cells[1, 4].Value = "Client Name";
                         Sheet.Cells[1, 5].Value = "Payment For";
-                        Sheet.Cells[1, 6].Value = "Type";
-                        Sheet.Cells[1, 7].Value = "Country";
-                        Sheet.Cells[1, 8].Value = "Meeting Status";
-                        Sheet.Cells[1, 9].Value = "Interview Status";
-                        Sheet.Cells[1, 10].Value = "Video Link";
-                        Sheet.Cells[1, 11].Value = "Amount";
+                        Sheet.Cells[1, 6].Value = "Interviewer";
+                        Sheet.Cells[1, 7].Value = "Type";
+                        Sheet.Cells[1, 8].Value = "Country";
+                        Sheet.Cells[1, 9].Value = "Meeting Status";
+                        Sheet.Cells[1, 10].Value = "Interview Status";
+                        Sheet.Cells[1, 11].Value = "Video Link";
+                        Sheet.Cells[1, 12].Value = "Amount";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
                             foreach (var interviewer in Interviewers)
                             {
-                                int valueset = i;
-                                string InterviewerEmailid = "";
+                                Sheet.Cells[i, 6].Value = interviewer;
+                                Sheet.Cells[i, 6].Style.Font.Size = 14;
                                 i++;
                                 foreach (var item in model.Result.Where(x => x.FirstName == interviewer).ToList())
                                 {
-                                    InterviewerEmailid = item.InterviewerEmailid;
                                     Sheet.Cells[i, 1].Value = item.Date.ToString();
                                     Sheet.Cells[i, 2].Value = item.candidateEmail;
                                     Sheet.Cells[i, 3].Value = item.candidateName;
                                     Sheet.Cells[i, 4].Value = item.ClientName;
                                     Sheet.Cells[i, 5].Value = item.Comment;
-                                    Sheet.Cells[i, 6].Value = item.Type;
-                                    Sheet.Cells[i, 7].Value = item.PreferredLocation;
-                                    Sheet.Cells[i, 8].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
-                                    Sheet.Cells[i, 9].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
+                                    Sheet.Cells[i, 6].Value = item.InterviewerEmailid;
+                                    Sheet.Cells[i, 7].Value = item.Type;
+                                    Sheet.Cells[i, 8].Value = item.PreferredLocation;
+                                    Sheet.Cells[i, 9].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                    Sheet.Cells[i, 10].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
                                     if (!string.IsNullOrEmpty(item.VideoLink))
                                     {
                                         try
                                         {
-                                            Sheet.Cells[i, 10].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                            Sheet.Cells[i, 10].Value = "Video";
-                                            Sheet.Cells[i, 10].Style.Font.UnderLine = true;
-                                            Sheet.Cells[i, 10].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                            Sheet.Cells[i, 11].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                            Sheet.Cells[i, 11].Value = "Video";
+                                            Sheet.Cells[i, 11].Style.Font.UnderLine = true;
+                                            Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                                         }
                                         catch (Exception)
                                         {
-                                            Sheet.Cells[i, 10].Value = "No Video";
+                                            Sheet.Cells[i, 11].Value = "No Video";
                                         }
                                     }
                                     else
                                     {
-                                        Sheet.Cells[i, 10].Value = "No Video";
+                                        Sheet.Cells[i, 11].Value = "No Video";
                                     }
                                     Sheet.Cells[i, 11].Value = item.Points;
                                     i++;
                                 }
-                                Sheet.Cells[valueset, 1].Value = interviewer + "(" + InterviewerEmailid + ")";
-                                Sheet.Cells[valueset, 1].Style.Font.Size = 14;
-                                Sheet.Cells[i, 1].Value = "Total";
-                                Sheet.Cells[i, 11].Value = model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum();
+
+                                Sheet.Cells[i, 11].Value = "Total";
+                                Sheet.Cells[i, 12].Value = model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum();
+                                i++;
                                 i++;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -663,69 +666,70 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
                         Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
                         Sheet.Cells["A1:Z1"].Style.WrapText = true;
-                        //Sheet.Column(1).Width = 30;
+                        //Sheet.Column(1).Width = 30;mmmmm
                         //Sheet.Column(2).Width = 30;
                         int startColumn = 1; int endColumn = 25;
                         for (int a = startColumn; a <= endColumn; a++)
                         {
-                            Sheet.Column(a).Width = 30;
+                            Sheet.Column(a).Width = 25;
                         }
                         Sheet.Cells[1, 1].Value = "Date";
                         Sheet.Cells[1, 2].Value = "Candidate Email";
                         Sheet.Cells[1, 3].Value = "Candidate Name";
                         Sheet.Cells[1, 4].Value = "Client Name";
                         Sheet.Cells[1, 5].Value = "Payment For";
-                        Sheet.Cells[1, 6].Value = "Type";
-                        Sheet.Cells[1, 7].Value = "Country";
-                        Sheet.Cells[1, 8].Value = "Meeting Status";
-                        Sheet.Cells[1, 9].Value = "Interview Status";
-                        Sheet.Cells[1, 10].Value = "Video Link";
-                        Sheet.Cells[1, 11].Value = "Amount";
+                        Sheet.Cells[1, 6].Value = "Interviewer";
+                        Sheet.Cells[1, 7].Value = "Type";
+                        Sheet.Cells[1, 8].Value = "Country";
+                        Sheet.Cells[1, 9].Value = "Meeting Status";
+                        Sheet.Cells[1, 10].Value = "Interview Status";
+                        Sheet.Cells[1, 11].Value = "Video Link";
+                        Sheet.Cells[1, 12].Value = "Amount";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
                             foreach (var interviewer in Interviewers)
                             {
-                                int valueset = i;
-                                string InterviewerEmailid = "";
+                                Sheet.Cells[i, 6].Value = interviewer;
+                                Sheet.Cells[i, 6].Style.Font.Size = 14;
                                 i++;
                                 foreach (var item in model.Result.Where(x => x.FirstName == interviewer).ToList())
                                 {
-                                    InterviewerEmailid = item.InterviewerEmailid;
                                     Sheet.Cells[i, 1].Value = item.Date.ToString();
                                     Sheet.Cells[i, 2].Value = item.candidateEmail;
                                     Sheet.Cells[i, 3].Value = item.candidateName;
                                     Sheet.Cells[i, 4].Value = item.ClientName;
                                     Sheet.Cells[i, 5].Value = item.Comment;
-                                    Sheet.Cells[i, 6].Value = item.Type;
-                                    Sheet.Cells[i, 7].Value = item.PreferredLocation;
-                                    Sheet.Cells[i, 8].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
-                                    Sheet.Cells[i, 9].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
+                                    Sheet.Cells[i, 6].Value = item.InterviewerEmailid;
+                                    Sheet.Cells[i, 7].Value = item.Type;
+                                    Sheet.Cells[i, 8].Value = item.PreferredLocation;
+                                    Sheet.Cells[i, 9].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                    Sheet.Cells[i, 10].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
                                     if (!string.IsNullOrEmpty(item.VideoLink))
                                     {
                                         try
                                         {
-                                            Sheet.Cells[i, 10].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                            Sheet.Cells[i, 10].Value = "Video";
-                                            Sheet.Cells[i, 10].Style.Font.UnderLine = true;
-                                            Sheet.Cells[i, 10].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                            Sheet.Cells[i, 11].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                            Sheet.Cells[i, 11].Value = "Video";
+                                            Sheet.Cells[i, 11].Style.Font.UnderLine = true;
+                                            Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                                         }
                                         catch (Exception)
                                         {
-                                            Sheet.Cells[i, 10].Value = "No Video";
+                                            Sheet.Cells[i, 11].Value = "No Video";
                                         }
                                     }
                                     else
                                     {
-                                        Sheet.Cells[i, 10].Value = "No Video";
+                                        Sheet.Cells[i, 11].Value = "No Video";
                                     }
                                     Sheet.Cells[i, 11].Value = item.Points;
                                     i++;
                                 }
-                                Sheet.Cells[valueset, 1].Value = interviewer + "(" + InterviewerEmailid + ")";
-                                Sheet.Cells[valueset, 1].Style.Font.Size = 14;
-                                Sheet.Cells[i, 1].Value = "Total";
-                                Sheet.Cells[i, 11].Value = model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum();
+
+                                Sheet.Cells[i, 11].Value = "Total";
+                                Sheet.Cells[i, 12].Value = model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum();
+                                i++;
                                 i++;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -771,7 +775,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "Finance")
                 {
-                    var model = await _meetingService.FetchFNDetails(emailid);
+                    var model = await _meetingService.FetchFNPaymentHistory();
                     return View(model);
                 }
                 else

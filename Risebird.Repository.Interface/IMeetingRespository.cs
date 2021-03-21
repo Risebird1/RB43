@@ -154,6 +154,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate);
         Task<List<RBInterviewDetails>> FetchAllFNDetail();
         Task<List<RBInterviewDetails>> FNAllGeneratedInvoiceDetails(DateTime st, DateTime se);
-
+        Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue);
+        Task<List<RBInterviewDetails>> FetchFNPaymentHistory();
     }
 }

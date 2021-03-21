@@ -3706,7 +3706,6 @@ namespace Risebird.Repository
                         status,
                         date,
                         interviewerid
-
                     });
                     return "Success";
                 }
@@ -3912,7 +3911,7 @@ namespace Risebird.Repository
                                          candidateEmail = c.candidateEmail,
                                          candidateName = c.candidateName,
                                          Userid = c.Userid,
-                                         FirstName=c.FirstName,
+                                         FirstName = c.FirstName,
                                          ClientName = c.ClientName,
                                          VideoLink = c.VideoLink,
                                          InterviewerEmailid = c.InterviewerEmailid,
@@ -3961,14 +3960,14 @@ namespace Risebird.Repository
                                              Status = c.Status,
                                              PreferredLocation = c.PreferredLocation,
                                              MeetingStatus = c.MeetingStatus,
-                                             candidateEmail=c.candidateEmail,
-                                             candidateName=c.candidateName,
-                                             Userid=c.Userid,
+                                             candidateEmail = c.candidateEmail,
+                                             candidateName = c.candidateName,
+                                             Userid = c.Userid,
                                              FirstName = c.FirstName,
-                                             ClientName=c.ClientName,
-                                             VideoLink=c.VideoLink,
-                                             InterviewerEmailid=c.InterviewerEmailid,
-                                             InterviewStatus=c.InterviewStatus
+                                             ClientName = c.ClientName,
+                                             VideoLink = c.VideoLink,
+                                             InterviewerEmailid = c.InterviewerEmailid,
+                                             InterviewStatus = c.InterviewStatus
                                          }).ToList();
                         return resultset.Where(x => x.Points > 0).ToList();
                     }
@@ -3977,6 +3976,72 @@ namespace Risebird.Repository
                 {
                     return _list.ToList();
                 }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue)
+        {
+            try
+            {
+                int userid = 0;
+                int Interviewerpresent = 0;
+                var query = "Select id from UserList where Emailid=@Emailid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", Interviewer);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<int>(query, dynamicParameters);
+                    userid = results.FirstOrDefault();
+                }
+                var querycheck = "Select idProfile from UserList where id=@Userid";
+                var dynamicParameterscheck = new DynamicParameters();
+                dynamicParameterscheck.Add("@Userid", userid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<int>(querycheck, dynamicParameterscheck);
+                    Interviewerpresent = results.FirstOrDefault();
+                }
+                if (Interviewerpresent != 3)
+                {
+                    return "Failed";
+                }
+                string status = actionvalue;
+                var PaymentDate = DateTime.Now;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string sqlInsertReport = "Insert Into PaymentHistory (userid, PaymentDate,Amount,Status) Values (@userid, @PaymentDate, @Amount @status);";
+                    var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
+                    {
+                        userid,
+                        PaymentDate,
+                        Amount,
+                        status,
+                    });
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+        public async Task<List<RBInterviewDetails>> FetchFNPaymentHistory()
+        {
+            try
+            {
+                List<RBInterviewDetails> _list = new List<RBInterviewDetails>();
+                var query = "Select ph.id,ul.EmailId as InterviewerEmailid, ul.FirstName,ph.PaymentDate as Date,ph.Status,ph.Amount as Points from PaymentHistory ph join Userlist ul on ul.id=ph.Userid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<RBInterviewDetails>(query, null);
+                    _list = (List<RBInterviewDetails>)results;
+                }
+                return _list;
             }
             catch (SqlException ex)
             {

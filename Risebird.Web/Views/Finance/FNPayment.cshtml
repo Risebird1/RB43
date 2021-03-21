@@ -43,6 +43,9 @@
                 </div>
 
                 <div class="pull-right">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Payment History">
+                        <span class="fa fa-history" data-toggle="tooltip" data-placement="top" title="Payment History" onclick="openPaymentHistory()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Payment History</font></span>
+                    </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Click here to generate invoice.">
                         <span class="fa fa-file" data-toggle="tooltip" data-placement="top" title="Click here to generate invoice." onclick="openmyinvoiceModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Generate Invoice</font></span>
                     </button>
@@ -668,6 +671,9 @@
         } else {
             window.location.href = "/Finance/ExportFNPayment";
         }
+    }
+    function openPaymentHistory() {
+        window.location.href = "/Finance/PaymentHistory";
     }
 </script>
 
