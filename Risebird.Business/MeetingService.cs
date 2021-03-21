@@ -2390,6 +2390,32 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue)
+        {
+            try
+            {
+                var result = _meetingRespository.InsertPaymentHistory(Interviewer, Amount, actionvalue);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
+        public async Task<List<RBInterviewDetails>> FetchFNPaymentHistory()
+        {
+            try
+            {
+                var result = _meetingRespository.FetchFNPaymentHistory();
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 
