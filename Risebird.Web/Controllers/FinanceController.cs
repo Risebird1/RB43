@@ -16,6 +16,7 @@ using X.PagedList;
 using iTextSharp.text.pdf;
 using iTextSharp.text;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace Risebird.Web.Controllers
 {
@@ -786,6 +787,7 @@ namespace Risebird.Web.Controllers
         /// Finance Team may be find History of payment that is done by finance team to interviewer
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         public async Task<IActionResult> PaymentHistory()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -819,6 +821,16 @@ namespace Risebird.Web.Controllers
                             item.AssessmentGroupId = groupdetail;
                         }
                     }
+                    if (HttpContext.Session.GetString("PaymentHistoryfilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PaymentHistoryfilters"));
+                        if (filter.StartDate != null && filter.EndDate != null)
+                        {
+                            model = model.Where(t => t.Date >= filter.StartDate && t.Date <= filter.EndDate).ToList();
+                        }
+                        filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.InterviewerEmailid).ToArray() : filter.HREmail = filter.HREmail;
+                        model = model.Where(x => filter.HREmail.Contains(x.InterviewerEmailid)).ToList();
+                    }
                     return View(model);
                 }
                 else
@@ -829,6 +841,83 @@ namespace Risebird.Web.Controllers
             else
             {
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> PaymentHistory(CandidateTimelineFilter filter)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var model = await _meetingService.FetchFNPaymentHistory();
+                    var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                    foreach (var item in model)
+                    {
+                        if (!String.IsNullOrEmpty(item.AssessmentGroupId))
+                        {
+                            var AssessmentGroup = item.AssessmentGroupId.Split(",");
+                            string groupdetail = "";
+                            foreach (var group in AssessmentGroup)
+                            {
+                                int groupid = Convert.ToInt32(group);
+                                if (String.IsNullOrEmpty(groupdetail))
+                                {
+                                    groupdetail = AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
+                                }
+                                else
+                                {
+                                    groupdetail = groupdetail + ", " + AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
+                                }
+                            }
+                            item.AssessmentGroupId = groupdetail;
+                        }
+                    }
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("PaymentHistoryfilters", JsonConvert.SerializeObject(filter));
+                    }
+                    if (filter.StartDate != null && filter.EndDate != null)
+                    {
+                        model = model.Where(t => t.Date >= filter.StartDate && t.Date <= filter.EndDate).ToList();
+                    }
+                    filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.InterviewerEmailid).ToArray() : filter.HREmail = filter.HREmail;
+                    model = model.Where(x => filter.HREmail.Contains(x.InterviewerEmailid)).ToList();
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        public IActionResult ResetFinaceHistoryFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("PaymentHistoryfilters");
+                    return RedirectToAction("PaymentHistory");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }
