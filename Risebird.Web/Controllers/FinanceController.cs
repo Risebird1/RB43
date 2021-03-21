@@ -26,13 +26,14 @@ namespace Risebird.Web.Controllers
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
         private static string SearchValue;
+        private IInterviewerService _interviewerService;
 
-
-        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
+        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
+            _interviewerService = interviewerService;
         }
         /// <summary>
         /// Interviewer or QC check payment status and request for payment with details
@@ -776,6 +777,28 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "Finance")
                 {
                     var model = await _meetingService.FetchFNPaymentHistory();
+                    var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                    foreach (var item in model)
+                    {
+                        if (!String.IsNullOrEmpty(item.AssessmentGroupId))
+                        {
+                            var AssessmentGroup = item.AssessmentGroupId.Split(",");
+                            string groupdetail = "";
+                            foreach (var group in AssessmentGroup)
+                            {
+                                int groupid = Convert.ToInt32(group);
+                                if (String.IsNullOrEmpty(groupdetail))
+                                {
+                                    groupdetail = AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
+                                }
+                                else
+                                {
+                                    groupdetail = groupdetail + ", " + AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
+                                }
+                            }
+                            item.AssessmentGroupId = groupdetail;
+                        }
+                    }
                     return View(model);
                 }
                 else
