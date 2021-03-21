@@ -475,6 +475,12 @@ namespace Risebird.Web.Controllers
             }
             return Json(result);
         }
+        /// <summary>
+        /// Finace Team may be find data on date basis and Pending and Submitted 
+        /// </summary>
+        /// <param name="st"></param>
+        /// <param name="se"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<JsonResult> FNGenerateInvoiceJson(DateTime st, DateTime se)
         {
@@ -519,6 +525,12 @@ namespace Risebird.Web.Controllers
                 return Json("failed");
             }
         }
+        /// <summary>
+        /// Finance Team may Export data in Excel sheet
+        /// </summary>
+        /// <param name="st"></param>
+        /// <param name="se"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpGet]
         public FileContentResult ExportGenerateFNPayment(DateTime st, DateTime se)
@@ -643,6 +655,10 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        /// <summary>
+        /// Finance Team may Export data in Excel sheet
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [HttpGet]
         public FileContentResult ExportFNPayment()
@@ -766,6 +782,10 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        /// <summary>
+        /// Finance Team may be find History of payment that is done by finance team to interviewer
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> PaymentHistory()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
