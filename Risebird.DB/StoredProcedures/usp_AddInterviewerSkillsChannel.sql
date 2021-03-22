@@ -26,7 +26,9 @@ Create PROCEDURE [dbo].[usp_AddInterviewerSkillsChannel]
 @PrimarySkill int,  
 @HeuristicProfileType int,  
 @JDLink varchar(2000),
-@AssessmentGroupId varchar(200)  
+@AssessmentGroupId varchar(200),
+@idIsc int output        
+
 AS  
 Begin  
   
@@ -55,6 +57,9 @@ INSERT INTO [dbo].[InterviewerSkillsChannel]
 @JDLink,
 @AssessmentGroupId
 )  
+
+select @idIsc= SCOPE_IDENTITY()
+
   
 End  
   

@@ -814,9 +814,12 @@ namespace Risebird.Repository
                     await SqlMapper.QueryAsync<int>(con, "usp_AddIRFDetails", parameters,
                        commandType: CommandType.StoredProcedure);
 
-                    var irfList = SqlMapper.QueryAsync<IRFVm>(
-                        con, "select * from IRF orderby ", null, commandType: Text).Result.AsList();
-                    var irfID = irfList.Where(x => x.IRFId == irfDetails.IRFId).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
+                    var irfID = parameters.Get<int>("@idIrf");
+
+
+                    //var irfList = SqlMapper.QueryAsync<IRFVm>(
+                    //    con, "select * from IRF orderby ", null, commandType: Text).Result.AsList();
+                    //var irfID = irfList.Where(x => x.IRFId == irfDetails.IRFId).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
 
 
                     DataTable joinabilityDt = new DataTable();
@@ -2272,7 +2275,7 @@ namespace Risebird.Repository
             parameters.Add("@PrimarySkillInvite", entity.PrimarySkillInvite);
             parameters.Add("@BillingOwner", entity.BillingOwner);
             parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
-            parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
+            parameters.Add("@idIrf", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             return parameters;
         }
