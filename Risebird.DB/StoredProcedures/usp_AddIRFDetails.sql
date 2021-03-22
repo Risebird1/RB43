@@ -95,11 +95,14 @@ INSERT INTO [dbo].[IRF]
    @Heuristicsscore,    
    @PrimarySkillInvite,  
    @BillingOwner,
-   @AssessmentGroupId)        
+   @AssessmentGroupId)  
+   
+
+select @idIrf = SCOPE_IDENTITY()
         
 End        
     
-  GO
+GO
 
 
 
