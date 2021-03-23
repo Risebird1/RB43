@@ -1457,7 +1457,7 @@ select * {
 }
 
 .text-areadiv textarea {
-    background: #181818;
+    background: #181818!important;
 }
 
 .border-db {

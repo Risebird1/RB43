@@ -52,6 +52,9 @@ textarea::-webkit-scrollbar-thumb {
     border-radius: 10px;
     background: #fff url(../../Newassets/img/refresh.png) 1px no-repeat;
 }
+.text-areadiv textarea {
+    background: #eeeeee !important;
+}
 .talk-bubble {
     background-color: #fcfcfc;
     border: 0px;
