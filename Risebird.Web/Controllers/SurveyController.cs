@@ -92,30 +92,36 @@ namespace Risebird.Web.Controllers
         }
         public IActionResult CandidateFeedBack()
         {
+            var modelData = new List<SurveyVM>();
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
             var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
             var _resultlist = (from data in result
                                select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
             _resultlist = _resultlist.Distinct().ToList();
             var resultset = _meetingService.FetchSurveyInterviewer(_resultlist);
-            var model = (from pair1 in result
-                         join pair2 in resultset on pair1.Interviewerid equals pair2.Interviewerid
-                         select new SurveyVM
-                         {
-                             interviewid = pair1.interviewid,
-                             Question1 = pair1.Question1,
-                             Question2 = pair1.Question2,
-                             Question3 = pair1.Question3,
-                             Question4 = pair1.Question4,
-                             Question5 = pair1.Question5,
-                             Question6 = pair1.Question6,
-                             Name = pair1.Name,
-                             EmailAddress = pair1.EmailAddress,
-                             interviewerEmail = pair2.Intervieweremail,
-                             CommentforInterviewer = pair1.CommentforInterviewer,
-                             PrimarySkill = pair1.PrimarySkill
-                         }).ToList().Distinct();
-            return View(model);
+            foreach (var item in result)
+            {
+                if (modelData.Where(x => x.interviewid == item.Interviewerid).Count() == 0)
+                {
+                    modelData.Add(new SurveyVM
+                    {
+                        interviewid = item.interviewid,
+                        Question1 = item.Question1,
+                        Question2 = item.Question2,
+                        Question3 = item.Question3,
+                        Question4 = item.Question4,
+                        Question5 = item.Question5,
+                        Question6 = item.Question6,
+                        Name = item.Name,
+                        EmailAddress = item.EmailAddress,
+                        interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
+                        CommentforInterviewer = item.CommentforInterviewer,
+                        PrimarySkill = item.PrimarySkill
+                    });
+                }
+            }
+            
+            return View(modelData);
         }
     }
 }
