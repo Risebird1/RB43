@@ -262,9 +262,11 @@ namespace Risebird.Repository
                     await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerSkillsChannel", parameters,
                        commandType: CommandType.StoredProcedure);
 
-                    var irfList = SqlMapper.QueryAsync<InterviewerSkillsVM>(
-                        con, "select * from [dbo].[InterviewerSkillsChannel]", null, commandType: Text).Result.AsList();
-                    var InterviewerSkillId = irfList.Where(x => x.InterviewerSkillId == InterviewerSkillsDetails.InterviewerSkillId).Last().id;//irfList.Find(x => x.IRFId == InterviewerSkillsDetails.IRFId).id;
+                    var InterviewerSkillId= parameters.Get<int>("@idIsc");
+
+                    //var irfList = SqlMapper.QueryAsync<InterviewerSkillsVM>(
+                    //    con, "select * from [dbo].[InterviewerSkillsChannel]", null, commandType: Text).Result.AsList();
+                    //var InterviewerSkillId = irfList.Where(x => x.InterviewerSkillId == InterviewerSkillsDetails.InterviewerSkillId).Last().id;//irfList.Find(x => x.IRFId == InterviewerSkillsDetails.IRFId).id;
 
                     //update tech skill table
                     foreach (var item in InterviewerSkillsDetails.SkillCollection)
@@ -308,7 +310,7 @@ namespace Risebird.Repository
             }
         }
 
-        private DynamicParameters SetStoredProcedureParameterForInterviewerSkills(InterviewerSkillsVM entity)
+        private DynamicParameters SetStoredProcedureParameterForInterviewerSkills(InterviewerSkillsVM entity, bool isUpdate=false)
         {
             var parameters = new DynamicParameters();
 
@@ -323,6 +325,12 @@ namespace Risebird.Repository
             parameters.Add("@HeuristicProfileType", entity.HeuristicProfileType);
             parameters.Add("@JDLink", entity.JDLink);
             parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
+            if(!isUpdate)
+            {
+                parameters.Add("@idIsc", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            }
+
             return parameters;
         }
 
@@ -541,7 +549,7 @@ namespace Risebird.Repository
         {
             try
             {
-                DynamicParameters parameters = SetStoredProcedureParameterForInterviewerSkills(InterviewerSkillsDetails);
+                DynamicParameters parameters = SetStoredProcedureParameterForInterviewerSkills(InterviewerSkillsDetails, true);
 
                 parameters.Add("@id", InterviewerSkillsDetails.id);
 

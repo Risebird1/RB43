@@ -3664,12 +3664,17 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     -ms-transform: rotate(90deg);
     transform: rotate( 360deg );
 }
-
+.multiselect.dropdown-toggle .caret{display:none}
+.multiselect.dropdown-toggle:after {
+    color: #9a9a9a !important;
+    position: relative;
+    left: 10px;
+    top: 2px;
+}
 .overlay {
     position: absolute;
     top: 0;
     left: 0;
-
     height: 100%;
     width: 100%;
     background: rgba(0,0,0,.8);
@@ -6636,7 +6641,7 @@ button.close {
     position: absolute;
     top: 7px;
     right: 10px;
-    background: #fff;
+
 }
 
 #trigger-update {

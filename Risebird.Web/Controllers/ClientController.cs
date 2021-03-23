@@ -870,7 +870,7 @@ namespace Risebird.Web.Controllers
                             }
 
                             
-                            if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0))
+                            if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0 || m.QCStatus==2))
                             {
                                 m.intervieweStatusStatDesc = "QC Pending";
                             }
@@ -1072,14 +1072,14 @@ namespace Risebird.Web.Controllers
                             //}
 
 
-                            if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0))
+                            if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0 || m.QCStatus == 2))
                             {
                                 m.intervieweStatusStatDesc = "QC Pending";
                             }
-                            //if (m.intervieweStatusStatDesc == null)
-                            //{
-                            //    m.intervieweStatusStatDesc = string.Empty;
-                            //}
+                            if (m.intervieweStatusStatDesc == null)
+                            {
+                                m.intervieweStatusStatDesc = string.Empty;
+                            }
                         }
 
 
@@ -1461,7 +1461,7 @@ namespace Risebird.Web.Controllers
                         m.MeetingStatusStatusDesc = string.Empty;
 
                     }
-                    if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0))
+                    if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0  || m.QCStatus==2))
                     {
                         m.intervieweStatusStatDesc = "QC Pending";
                     }
