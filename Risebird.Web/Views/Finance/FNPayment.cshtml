@@ -472,8 +472,12 @@
                     } else {
                         Swal.fire("Fail to add Points.");
                     }
-                    window.location.href = "/Finance/FNPayment";
-
+                    if (Generateinvoiceflag == 2) {
+                        closemyAddpointsModel();
+                        SearchInvoice();
+                    } else {
+                        window.location.href = "/Finance/FNPayment";
+                    }
                 }
             });
         } else {
@@ -510,7 +514,7 @@
         html += '   <th>Date</th>';
         html += '   <th>Payment For</th>';
         html += '   <th>Type</th>';
-        html += '   <th>Status</th>';
+        html += '   <th>Payment Status</th>';
         html += '   <th>Rate</th>';
         html += '   <th>Amount</th>';
         html += '   <th>Meeting Status</th>';
@@ -629,7 +633,12 @@
                 data: { 'Interviewer': interviewer, 'Comment': comment, 'Amount': amount },
                 success: function (data) {
                     Swal.fire(data);
-                    window.location.href = "/Finance/FNPayment";
+                    if (Generateinvoiceflag == 2) {
+                        closemyAdvancepaymentModel();
+                        SearchInvoice();
+                    } else {
+                        window.location.href = "/Finance/FNPayment";
+                    }
                 }
             });
         } else {
@@ -681,6 +690,9 @@
         } else {
             window.location.href = "/Finance/ExportFNPayment";
         }
+    }
+    function openPaymentHistory() {
+        window.location.href = "/Finance/PaymentHistory";
     }
 </script>
 
