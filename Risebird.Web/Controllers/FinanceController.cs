@@ -614,7 +614,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         Sheet.Cells[i, 11].Value = "No Video";
                                     }
-                                    Sheet.Cells[i, 11].Value = item.Points;
+                                    Sheet.Cells[i, 12].Value = item.Points;
                                     i++;
                                 }
 
@@ -741,7 +741,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         Sheet.Cells[i, 11].Value = "No Video";
                                     }
-                                    Sheet.Cells[i, 11].Value = item.Points;
+                                    Sheet.Cells[i, 12].Value = item.Points;
                                     i++;
                                 }
 
