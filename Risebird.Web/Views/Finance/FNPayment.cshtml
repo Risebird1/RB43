@@ -42,11 +42,11 @@
                     <div class="mobile-view"> <h4 class="card-title"> RB Payment Details</h4></div>
                 </div>
 
-                <div class="pull-right client-ms">
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Payment History">
+                <div class="pull-right">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Payment History">
                         <span class="fa fa-history" data-toggle="tooltip" data-placement="top" title="Payment History" onclick="openPaymentHistory()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Payment History</font></span>
                     </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to generate invoice.">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Click here to generate invoice.">
                         <span class="fa fa-file" data-toggle="tooltip" data-placement="top" title="Click here to generate invoice." onclick="openmyinvoiceModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Generate Invoice</font></span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to Advance Payment.">
@@ -472,8 +472,12 @@
                     } else {
                         Swal.fire("Fail to add Points.");
                     }
-                    window.location.href = "/Finance/FNPayment";
-
+                    if (Generateinvoiceflag == 2) {
+                        closemyAddpointsModel();
+                        SearchInvoice();
+                    } else {
+                        window.location.href = "/Finance/FNPayment";
+                    }
                 }
             });
         } else {
@@ -510,7 +514,7 @@
         html += '   <th>Date</th>';
         html += '   <th>Payment For</th>';
         html += '   <th>Type</th>';
-        html += '   <th>Status</th>';
+        html += '   <th>Payment Status</th>';
         html += '   <th>Rate</th>';
         html += '   <th>Amount</th>';
         html += '   <th>Meeting Status</th>';
@@ -629,7 +633,12 @@
                 data: { 'Interviewer': interviewer, 'Comment': comment, 'Amount': amount },
                 success: function (data) {
                     Swal.fire(data);
-                    window.location.href = "/Finance/FNPayment";
+                    if (Generateinvoiceflag == 2) {
+                        closemyAdvancepaymentModel();
+                        SearchInvoice();
+                    } else {
+                        window.location.href = "/Finance/FNPayment";
+                    }
                 }
             });
         } else {
@@ -681,6 +690,9 @@
         } else {
             window.location.href = "/Finance/ExportFNPayment";
         }
+    }
+    function openPaymentHistory() {
+        window.location.href = "/Finance/PaymentHistory";
     }
 </script>
 
