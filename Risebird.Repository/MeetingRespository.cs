@@ -3912,7 +3912,7 @@ namespace Risebird.Repository
                                          candidateEmail = c.candidateEmail,
                                          candidateName = c.candidateName,
                                          Userid = c.Userid,
-                                         FirstName=c.FirstName,
+                                         FirstName = c.FirstName,
                                          ClientName = c.ClientName,
                                          VideoLink = c.VideoLink,
                                          InterviewerEmailid = c.InterviewerEmailid,
@@ -3961,14 +3961,14 @@ namespace Risebird.Repository
                                              Status = c.Status,
                                              PreferredLocation = c.PreferredLocation,
                                              MeetingStatus = c.MeetingStatus,
-                                             candidateEmail=c.candidateEmail,
-                                             candidateName=c.candidateName,
-                                             Userid=c.Userid,
+                                             candidateEmail = c.candidateEmail,
+                                             candidateName = c.candidateName,
+                                             Userid = c.Userid,
                                              FirstName = c.FirstName,
-                                             ClientName=c.ClientName,
-                                             VideoLink=c.VideoLink,
-                                             InterviewerEmailid=c.InterviewerEmailid,
-                                             InterviewStatus=c.InterviewStatus
+                                             ClientName = c.ClientName,
+                                             VideoLink = c.VideoLink,
+                                             InterviewerEmailid = c.InterviewerEmailid,
+                                             InterviewStatus = c.InterviewStatus
                                          }).ToList();
                         return resultset.Where(x => x.Points > 0).ToList();
                     }
@@ -3983,6 +3983,25 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+        public IEnumerable<int> FetchAllInterviewidfromIrf(string IRFid)
+        {
+            try
+            {
+                var query = "Select id from InterviewMeetings where Irfid=@irfid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfid", IRFid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

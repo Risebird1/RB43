@@ -2390,6 +2390,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<int> FetchAllInterviewidfromIrf(string IRFid)
+        {
+            try
+            {
+                var _survey = _meetingRespository.FetchAllInterviewidfromIrf(IRFid);
+                return _survey;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 

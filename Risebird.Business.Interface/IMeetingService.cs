@@ -128,5 +128,6 @@ namespace Risebird.Business.Interface
         List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate);
         Task<List<RBInterviewDetails>> FetchAllFNDetail();
         Task<List<RBInterviewDetails>> FNAllGeneratedInvoiceDetails(DateTime st, DateTime se);
+        IEnumerable<int> FetchAllInterviewidfromIrf(string IRFid);
     }
 }
