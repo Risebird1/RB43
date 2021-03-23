@@ -61,7 +61,7 @@ if @EmailId is not null
 				ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,
 				mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,
 				ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,
-				ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
+				ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IsDeleted as IsIRFArchived,
 				(CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill
 				from Candidate ca 
 				join CandidatesMaster cm on cm.id =ca.CandidateMasterId
@@ -84,7 +84,7 @@ if @EmailId is not null
 				ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,
 				mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,
 				ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,
-				ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
+				ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IsDeleted as IsIRFArchived,
 				(CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill
 				from Candidate ca 
 				join CandidatesMaster cm on cm.id =ca.CandidateMasterId
@@ -122,9 +122,6 @@ Else
 	End
 
 	
-	
-				
-
 End
 GO
 

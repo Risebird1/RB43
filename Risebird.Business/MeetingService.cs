@@ -216,7 +216,7 @@ namespace Risebird.Business
             try
             {
                 var meetings = _meetingRespository.GetClientMeetings(emailId).Result.OrderByDescending(x => x.interviewDate).ToList();
-
+                
                 return meetings ?? new List<MeetingVM>();
             }
             catch (Exception ex)
