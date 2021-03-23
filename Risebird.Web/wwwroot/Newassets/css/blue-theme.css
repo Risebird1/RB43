@@ -370,7 +370,9 @@ textarea::-webkit-scrollbar-thumb {
 .show-interest {
     color: #000;
 }
-
+.text-areadiv textarea {
+    background: #eeeeee!important;
+}
 #candidateStatusModal .file-upload-wrapper:before {
     background: #54a5f5;
 }
