@@ -28,6 +28,7 @@ namespace Risebird.Entities.Data
         public DateTime ScheduleStatusDate { get; set; }
         public string PrimarySkill { get; set; }
         public string ProfileSource { get; set; }
+        public bool IsIRFArchived { get; set; }
 
     }
 }

@@ -17,18 +17,21 @@ CREATE PROCEDURE [dbo].[usp_GetRisetubeIndexMeetingsFilteredCountDup]
 @clientIdParam int,
 @EmailIdParam varchar(100),
 @startDateParam datetime,
-@endDateParam datetime
+@endDateParam datetime,
+@timeNow datetime
+
 
 AS  
 Begin 
 declare @totalResults int, @searchValue varchar(max), @Emailid varchar(100), @clientid int,
-		@startDate datetime, @endDate datetime
+		@startDate datetime, @endDate datetime, @time datetime
 
 		set @searchValue=@searchValueParam
 		set @Emailid=@EmailIdParam
 		set @clientid=@clientIdParam
 		set @startDate=@startDateParam
 		set @endDate=@endDateParam
+		set @time=@timeNow
 
 
 
@@ -108,7 +111,7 @@ Else
 						inner join @tblTechSkill tts on tts.InterviewId = im.id
 						left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId
 						where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid and QCF.QCStatus=1 and (ic.MoveToCP is null or ic.MoveToCP =0) and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))
-						
+						and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @time) as date)) or IRF.IsDeleted=0)   
 						and cast(interviewDate as date) >= cast (@startDate as date)
 						and cast(interviewDate as date) <= cast (@endDate as date)
 						
@@ -133,7 +136,7 @@ Else
 						inner join @tblTechSkill tts on tts.InterviewId = im.id
 						left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId
 						where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid and QCF.QCStatus=1 and (ic.MoveToCP is null or ic.MoveToCP =0) 
-						
+						and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @time) as date)) or IRF.IsDeleted=0)   
 						and cast(interviewDate as date) >= cast (@startDate as date)
 						and cast(interviewDate as date) <= cast (@endDate as date)
 						
