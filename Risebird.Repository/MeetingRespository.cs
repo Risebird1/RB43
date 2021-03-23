@@ -3822,7 +3822,7 @@ namespace Risebird.Repository
                 var dParameters = new DynamicParameters();
                 dParameters.Add("@isavailable", isavailable);
                 dParameters.Add("@imid", imid);
-                var dquery = "Update InterviewComments Set CandidateAvailable = @isavailable,ClientUserid=@UserId Where Interviewid=@imid";
+                var dquery = "Update InterviewComments Set CandidateAvailable = @isavailable Where Interviewid=@imid";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = con.Query(dquery, dParameters);
