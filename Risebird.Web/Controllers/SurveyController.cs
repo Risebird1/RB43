@@ -96,6 +96,7 @@ namespace Risebird.Web.Controllers
             var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
             var _resultlist = (from data in result
                                select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
+            _resultlist = _resultlist.Distinct().ToList();
             var resultset = _meetingService.FetchSurveyInterviewer(_resultlist);
             var model = (from pair1 in result
                          join pair2 in resultset on pair1.Interviewerid equals pair2.Interviewerid
