@@ -191,10 +191,17 @@
                                     <tbody>
                                         @foreach (var item in Model)
                                         {
-                                            <tr id=@item.interviewid>
-                                                <td>@item.Name</td>
-                                                <td>@item.EmailAddress</td>
+                                        <tr id=@item.interviewid>
+                                            <td>@item.Name</td>
+                                            <td>@item.EmailAddress</td>
+                                            @if (item.IsClient)
+                                            {
+                                                <td>******</td>
+                                            }
+                                            else
+                                            {
                                                 <td>@item.interviewerEmail</td>
+                                            }
                                                 <td>@item.PrimarySkill</td>
                                                 <td>@item.Question1 out of 5</td>
                                                 <td>@item.Question2 out of 5</td>

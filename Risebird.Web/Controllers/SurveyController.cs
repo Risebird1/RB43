@@ -143,7 +143,8 @@ namespace Risebird.Web.Controllers
                                     EmailAddress = item.EmailAddress,
                                     interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
                                     CommentforInterviewer = item.CommentforInterviewer,
-                                    PrimarySkill = item.PrimarySkill
+                                    PrimarySkill = item.PrimarySkill,
+                                    IsClient = true
                                 });
                             }
                         }
