@@ -2403,6 +2403,34 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<int> FetchAllInterviewidByClient(int Clientid, string emailid)
+        {
+            try
+            {
+                var _survey = _meetingRespository.FetchAllInterviewidByClient(Clientid, emailid);
+                return _survey;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IEnumerable<SurveyDetails> FetchSurveyClientName(List<SurveyDetails> _lst)
+        {
+            try
+            {
+                var _survey = _meetingRespository.FetchSurveyClientName(_lst);
+                return _survey;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 

@@ -129,5 +129,7 @@ namespace Risebird.Business.Interface
         Task<List<RBInterviewDetails>> FetchAllFNDetail();
         Task<List<RBInterviewDetails>> FNAllGeneratedInvoiceDetails(DateTime st, DateTime se);
         IEnumerable<int> FetchAllInterviewidfromIrf(string IRFid);
+        IEnumerable<int> FetchAllInterviewidByClient(int Clientid, string emailid);
+        IEnumerable<SurveyDetails> FetchSurveyClientName(List<SurveyDetails> _lst);
     }
 }
