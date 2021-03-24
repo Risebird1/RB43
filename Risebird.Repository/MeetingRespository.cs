@@ -1191,6 +1191,35 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailID, bool isFilter=false, DateTime? startDate= null, DateTime? endDate= null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("EmailId", emailID);
+                    if(isFilter)
+                    {
+                        parameters.Add("@timeNow", null);
+                    }
+                    else
+                    {
+                        parameters.Add("@timeNow", DateTime.Now);
+                    }
+                    parameters.Add("@startDate", startDate);
+                    parameters.Add("@endDate", endDate);
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientSelectedMeetings", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<bool> AddInterviewReport(InterviewReport reportDetails)
         {
             try
