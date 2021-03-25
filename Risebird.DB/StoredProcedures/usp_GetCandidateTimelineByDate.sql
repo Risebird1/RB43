@@ -61,7 +61,7 @@ if @EmailId is not null
 				ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,
 				mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,
 				ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,
-				ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IsDeleted as IsIRFArchived,
+				ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, 
 				(CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill
 				from Candidate ca 
 				join CandidatesMaster cm on cm.id =ca.CandidateMasterId
@@ -76,6 +76,7 @@ if @EmailId is not null
 				left join @meetingStatusTable mst on ca.CandidateMasterId= mst.CandidateMasterId and ca.IRFId= mst.IRFId
 				left join @interviewStatusTable ist on ca.CandidateMasterId= ist.CandidateMasterId and ca.IRFId= ist.IRFId
 				where ulc.EmailId LIKE @EmailId AND ulc.IsActive=1 and ca.ClientHRAttemptContact=@EmailId
+				and irf.IsDeleted=0
 			End
 		
 		else
@@ -84,7 +85,7 @@ if @EmailId is not null
 				ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,
 				mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,
 				ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,
-				ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IsDeleted as IsIRFArchived,
+				ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, 
 				(CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill
 				from Candidate ca 
 				join CandidatesMaster cm on cm.id =ca.CandidateMasterId
@@ -99,6 +100,7 @@ if @EmailId is not null
 				left join @meetingStatusTable mst on ca.CandidateMasterId= mst.CandidateMasterId and ca.IRFId= mst.IRFId
 				left join @interviewStatusTable ist on ca.CandidateMasterId= ist.CandidateMasterId and ca.IRFId= ist.IRFId
 				where ulc.EmailId LIKE @EmailId AND ulc.IsActive=1
+				and irf.IsDeleted=0
 			End
 	End
 Else

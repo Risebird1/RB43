@@ -946,7 +946,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult DeleteIRF(string id)
+        public async Task<IActionResult> ArchiveIRF(int id)
         {
             try
             {
@@ -954,18 +954,10 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName=="Client")
                     {
-                        if (_irfService.DeleteIRF(Convert.ToInt16(id)).Result)
-                        {
-                            TempData["SuccessErrorMessage"] = "IRF deleted Successfully";
-                            return RedirectToAction("Index");
-                        }
-                        else
-                        {
-                            TempData["SuccessErrorMessage"] = "IRF delete Failed";
-                            return RedirectToAction("Index");
-                        }
+                        var result = await _irfService.ArchiveIRF(id);
+                        return Json(result);
                     }
                     else
                     {
@@ -979,14 +971,13 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "IRF delete Failed";
-                return RedirectToAction("Index");
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
             }
 
         }
         [Authorize]
-        public IActionResult UnArchiveIRF(string id)
+        public async Task<IActionResult> UnArchiveIRF(int id)
         {
             try
             {
@@ -994,18 +985,10 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName=="Client")
                     {
-                        if (_irfService.UnArchiveIRF(Convert.ToInt16(id)).Result)
-                        {
-                            TempData["SuccessErrorMessage"] = "IRF restored Successfully";
-                            return RedirectToAction("Index");
-                        }
-                        else
-                        {
-                            TempData["SuccessErrorMessage"] = "IRF restore Failed";
-                            return RedirectToAction("Index");
-                        }
+                        var result = await _irfService.UnArchiveIRF(id);
+                        return Json(result);
                     }
                     else
                     {
@@ -1019,9 +1002,8 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "IRF restore Failed";
-                return RedirectToAction("Index");
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
             }
 
         }

@@ -1,4 +1,6 @@
 ﻿@model Risebird.Entities.ViewModel.VirtualMachineVM
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Proctor Interviews";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -6,7 +8,8 @@
 }
 
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/irf.css?v=7" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=12344" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -20,9 +23,11 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">
-                    Proctor Interviews
-                </a>
+                <div id="procinterview_1">
+                    <a class="navbar-brand">
+                        Proctor Interviews
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
@@ -85,7 +90,7 @@
                                     <div class="card-content-holder border card-blue">
                                         <div class="card-header">
                                             <div class="row">
-                                                <div class=" col-md-7 col-sm-7 first">
+                                                <div id="procinterview_2" class=" col-md-7 col-sm-7">
                                                     @if (item.CustomName != null)
                                                     {
                                                         <h6>@item.CustomName</h6>
@@ -117,7 +122,7 @@
                                                     }
                                                     @if (Model.Profile == "Admin")
                                                     {
-                                                        <button id="remove_@item.id" class="mdc-fab app-fab--absolute trash-btn item1" title="Remove" aria-label="Remove" onclick="javascript:RemoveVM('@item.id', '@item.Name');" >
+                                                        <button id="remove_@item.id" class="mdc-fab app-fab--absolute trash-btn item1" title="Remove" aria-label="Remove" onclick="javascript:RemoveVM('@item.id', '@item.Name');">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     }
@@ -146,16 +151,16 @@
                                                             </div> <br /> <br />
                                                         }
 
-                                                        <div class="row second"> <span>Public IP Address:</span>@item.PublicIP</div>
+                                                        <div id="procinterview_3" class="row"> <span>Public IP Address:</span>@item.PublicIP</div>
                                                         <br />
                                                         <br />
-                                                        <div class="row three" style="position:relative;">
-                                                            <div style="padding: 11px 5px 5px 0px;"> <span>Password:</span></div>
+                                                        <div  class="row " style="position:relative;">
+                                                            <div id="procinterview_4" style="padding: 11px 5px 5px 0px;"> <span>Password:</span></div>
 
                                                             <!--- <div class="pull-left">
-            <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.id" style="background:none;">
-            <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
-        </div>--->
+                                                                <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.id" style="background:none;">
+                                                                <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
+                                                            </div>--->
 
 
 
@@ -203,18 +208,21 @@
                                                     {
                                                         @if (item.StatusDesc.ToLower() == "running")
                                                         {
-                                                            <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 trash-btn" title="Stop VM" aria-label="Stop VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'deallocate');">
-                                                                <i class="fa fa-stop"></i>
-                                                            </button>
+                                                   
+                                                        <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 trash-btn" title="Stop VM" aria-label="Stop VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'deallocate');">
+                                                            <i class="fa fa-stop"></i>
+                                                        </button>
+                                                 
 
 
                                                         }
                                                         else if (item.StatusDesc.ToLower() == "deallocated" || item.StatusDesc.ToLower() == "stopped")
                                                         {
-
-                                                            <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 go-btn" title="Start VM" aria-label="Start VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'start');">
-                                                                <i class="fa fa-play"></i>
-                                                            </button>
+                                                <span id="procinterview_5"  style="margin-right: 3px;">
+                                                    <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 go-btn" title="Start VM" aria-label="Start VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'start');">
+                                                        <i class="fa fa-play"></i>
+                                                    </button>
+                                                </span>
                                                         }
                                                     }
                                                     @if (Model.Profile == "Admin" || Model.Profile == "Candidate" || Model.Profile == "Interviewer")
@@ -233,22 +241,24 @@
 
                                                     @if (Model.Profile == "Interviewer" || Model.Profile == "Admin")
                                                     {
-                                                        <button id="questionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Add questions" aria-label="Add questions" onclick="location.href='@Url.Action("ProctorVMQuestions", "ProctorInterviews", new { vmId = item.id})'">
-                                                            <i class="fa fa-question"></i>
-                                                        </button>
+                                                        <span id="procinterview_6"  style="margin-right: 3px;">
+                                                            <button id="questionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Add questions" aria-label="Add questions" onclick="location.href='@Url.Action("ProctorVMQuestions", "ProctorInterviews", new { vmId = item.id})'">
+                                                                <i class="fa fa-question"></i>
+                                                            </button>
+                                                        </span>
                                                     }
                                                     @if (item.QuestionsCount != 0)
-                                                    {
-                                                        <button id="candidateQuestionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Questions" aria-label="Questions" onclick="location.href='@Url.Action("CandidateQuestions", "ProctorInterviews", new { vmId = item.id, vmName = item.Name})'">
-                                                            <i class="fa fa-question-circle"></i>
-                                                        </button>
-                                                    }
+                                                    {<span id="procinterview_7"  style="margin-right: 3px;">
+                                                            <button id="candidateQuestionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Questions" aria-label="Questions" onclick="location.href='@Url.Action("CandidateQuestions", "ProctorInterviews", new { vmId = item.id, vmName = item.Name})'">
+                                                                <i class="fa fa-question-circle"></i>
+                                                            </button></span>
+                                                            }
 
 
 
 
-                                                </div>
-                                            </div>
+                                                        </div>
+                                                    </div>
                                         </div>
 
                                     </div>
@@ -297,7 +307,7 @@
 
                                             <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 18 18"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M2 12.88V16h3.12L14 7.12 10.88 4 2 12.88zm14.76-8.51c.33-.33.33-.85 0-1.18l-1.95-1.95c-.33-.33-.85-.33-1.18 0L12 2.88 15.12 6l1.64-1.63z" /></svg>
 
-           
+
                                         </div>
                                         <h5 class="modal-title pull-left" id="filterModalLabel"> Edit</h5>
                                     </div>
@@ -509,7 +519,7 @@
 
         var password = document.getElementById("idPassword").value;
 
-        if (customName.length == 0 && password.length == 0 && userName.length==0) {
+        if (customName.length == 0 && password.length == 0 && userName.length == 0) {
             document.getElementById("emptyFields_Error").innerHTML = "Kindly fill atleast one field to save.";
             return;
         }
@@ -520,7 +530,7 @@
             type: "POST",
             url: "/ProctorInterviews/EditNamePassword",
             data: {
-                'id': editVmId, 'customName': customName, 'password': password, 'vmName': editvmName, 'userName' : userName
+                'id': editVmId, 'customName': customName, 'password': password, 'vmName': editvmName, 'userName': userName
             },
             success: function (data) {
                 location.reload(true);
@@ -573,7 +583,7 @@
             else if (result.dismiss === 'cancel') {
                 swal.fire(
                     'Cancelled',
-                    'The virtual machine ' + vmName +' has not been removed!',
+                    'The virtual machine ' + vmName + ' has not been removed!',
                     'error'
                 )
             }
@@ -593,21 +603,284 @@
             value.setAttribute("type", "password");
             $("#secret_" + id).show();
             $("#password-field_" + id).addClass('passshow');
-         
+
             $("#toggle-password_" + id).removeClass("fa-eye-slash");
-             }
+        }
         else {
-           value.setAttribute("type", "text");
+            value.setAttribute("type", "text");
             $("#password-field_" + id).removeClass('passshow');
             $("#toggle-password_" + id).addClass("fa-eye-slash");
-           $("#secret_" + id).hide();
+            $("#secret_" + id).hide();
 
-}
+        }
 
-}
+    }
 
 
 
 
 </script>
+
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Interviewer\"")
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        hopscotch.registerHelper('addOverlay', function () {
+            $('body').append('<div class="overlay"></div>');
+        });
+
+        hopscotch.registerHelper('removeOverlay', function () {
+            $('.overlay').fadeOut(function () {
+                $(this).remove();
+                $('.helper').remove();
+            });
+        });
+
+        hopscotch.listen('show', function () {
+            var elementObject = $(hopscotch.getCurrTarget(tour));
+            var element = $('#' + elementObject[0].id);
+
+            element.prev().removeClass('overlay-relative');
+            element.addClass('overlay-relative');
+
+            if ($('.helper').length !== 0) {
+
+                // Use Helper Layer for hilight target element.
+                var helper = $('.helper');
+                var padding = 5;
+                var helperPosX = element.position().left - padding;
+                var helperPosY = element.position().top - padding;
+                var targetWidth = element.outerWidth();
+                var targetHeight = element.outerHeight();
+
+                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                helper.css('width', targetWidth);
+                helper.css('height', targetHeight);
+                helper.offset({ left: helperPosX, top: helperPosY });
+
+            } else {
+
+                // Add Helper Layer for highlight target element.
+                var newHelper = '<div class="helper"></div>';
+                $('body').append(newHelper);
+
+                var helper = $('.helper');
+                var padding = 5;
+                var helperPosX = element.position().left - padding;
+                var helperPosY = element.position().top - padding;
+                var targetWidth = element.outerWidth();
+                var targetHeight = element.outerHeight();
+
+                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                helper.css('width', targetWidth);
+                helper.css('height', targetHeight);
+                helper.offset({ left: helperPosX, top: helperPosY });
+            }
+
+        });
+
+        var tour = {
+            id: "hello-hopscotch",
+            showCloseButton: false,
+            steps: [
+                {
+                    title: "Proctor Interviews",
+                    content: "View all Virtual Machines details here and click on next button to know its features",
+                    target: "procinterview_1",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    highlight: true,
+                    zindex: 999999,
+                    yOffset: 10,
+
+                    onCTA: function () {
+                        hopscotch.showStep(2);
+                        $('#procinterview_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onNext: function () {
+                        $('#procinterview_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+
+                    }
+                },
+
+
+
+                {
+                    title: "VM Name",
+                    content: "VM Name will be shown here",
+                    target: "procinterview_2",
+                    showPrevButton: true,
+                    placement: "bottom",
+                    zindex: 999999,
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onPrev: function () {
+
+                        $('#procinterview_2').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onNext: function () {
+
+                        $('#procinterview_2').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                },
+
+                {
+                    title: "Public IP Address",
+                    content: "Public IP Address will be shown here",
+                    target: "procinterview_3",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#procinterview_3').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#procinterview_3').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+                {
+                    title: "Interview Status",
+                    content: "Interview status will be shown here",
+                    target: "qcinterview_5",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#qcinterview_5').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#qcinterview_5').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Password",
+                    content: "Password will be available here.",
+                    target: "procinterview_4",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#procinterview_4').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#procinterview_4').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+                {
+                    title: "Start VM",
+                    content: "Click here to start VM and click again to stop it",
+                    target: "procinterview_5",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#procinterview_5').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#procinterview_5').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+                {
+                    title: "Add Question",
+                    content: "Click here to add question",
+                    target: "procinterview_6",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "left",
+                    yOffset: -20,
+                    xOffset: 10,
+                    onNext: function () {
+                        $('#procinterview_6').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#procinterview_6').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Question",
+                    content: "Click here to view the added Questions",
+                    target: "procinterview_7",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "left",
+                    yOffset: -20,
+                    xOffset: 10,
+                    onNext: function () {
+                        $('#procinterview_7').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#procinterview_7').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Interviewers Assessment",
+                    content: "Click on Interviewers Assessment menu to see its features",
+                    target: "procinterview_8",
+                    placement: "bottom",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    yOffset: -20,
+                    xOffset: 10,
+                    onNext: function () {
+                        $('#procinterview_8').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#procinterview_8').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+
+            ],
+            onStart: ["addOverlay"],
+            onEnd: ["removeOverlay"],
+        };
+
+        hopscotch.startTour(tour);
+
+    </script>
+
+}
 

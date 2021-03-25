@@ -225,6 +225,20 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailId, bool isFilter = false, DateTime? startDate= null, DateTime? endDate= null)
+        {
+            try
+            {
+                var meetings = await _meetingRespository.GetClientSelectedMeetings(emailId, isFilter, startDate, endDate);
+                return meetings;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         public List<string> GetClientHRContactList(string emailId, List<MeetingVM> meetingList)
         {
             try

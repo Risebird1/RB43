@@ -46,7 +46,9 @@ textarea::-webkit-scrollbar-thumb {
 .un-right {
     background: #f3f3f3;
 }
-
+.ref-btn {
+    background: #fff;
+}
 
 #x {
     border-radius: 10px;

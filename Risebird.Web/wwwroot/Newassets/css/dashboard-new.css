@@ -2231,6 +2231,11 @@ a.list-group-item:focus {
                     font-weight: normal
                 }
 
+.seniority.overlay-relative {
+    color: #fff;
+    font-weight: normal
+}
+
     .panel .panel-heading,
     .panel .panel-footer,
     .panel .panel-body {
@@ -3680,10 +3685,15 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     background: rgba(0,0,0,.8);
     z-index: 1;
 }
+.table-striped.table-bordered th.overlay-relative{color:#000;}
 
 .overlay-relative {
     position: relative;
     z-index: 7;
+}
+.statusInfo .overlay-relative {
+    color: #fff;
+    font-weight: normal
 }
 #statusListModal .scrollers {
     height: 430px;
@@ -6686,13 +6696,13 @@ h4.card-title {
     background: #fff;
 }
 
-    #candidateTable_filter input[type=search], #supportList_filter input[type=search], #interviewersTbl_filter input[type=search], #dupmeeting_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #MyInterviewList_filter input[type=search], #interviewer_filter input[type=search], #OpeninterviewList_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
-        border: 1px #ccc solid !important
-    }
+#candidateTable_filter input[type=search], #supportList_filter input[type=search], #txtmeeting_filter input[type=search], #interviewersTbl_filter input[type=search], #dupmeeting_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #MyInterviewList_filter input[type=search], #interviewer_filter input[type=search], #OpeninterviewList_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
+    border: 1px #ccc solid !important
+}
 
-        #meeting input[type=search], #MyInterviewList_filter input[type=search], #interviewersTbl_filter input[type=search], #supportList_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #dupmeeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
-            background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 78% 9px;
-        }
+#meeting input[type=search], #MyInterviewList_filter input[type=search], #txtmeeting_filter input[type=search], #interviewersTbl_filter input[type=search], #supportList_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #dupmeeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
+    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 78% 9px;
+}
 
 .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1, .toggle-box,  .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1, .toggle-box {
     display: none;

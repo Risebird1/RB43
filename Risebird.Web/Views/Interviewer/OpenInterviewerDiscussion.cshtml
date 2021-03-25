@@ -10,7 +10,7 @@
 
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
-
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <!-- Bleow New Style added by Vishwanath for IRF Chanbge -->
 
 
@@ -26,9 +26,10 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">Open Discussions</a>
+                <div id="opendiscinterview_1">
+                    <a class="navbar-brand">Open Discussions</a></div>
+                </div>
             </div>
-        </div>
     </nav>
     <!-- End Navbar -->
     <div class="pt30">
@@ -72,7 +73,7 @@
 
                                                         <div class="col-md-3 col-sm-3 card-header-buttons action text-right">
 
-                                                            <button class="mdc-fab app-fab--absolute itemques" aria-label="Edit">
+                                                            <button id="opendiscinterview_4" class="mdc-fab app-fab--absolute itemques" aria-label="Edit">
                                                                 <span onclick="window.open('@item.CalendlyLink')" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg></span>
                                                             </button>
                                                         </div>
@@ -86,8 +87,8 @@
 
                                                         <div class="col-12">
                                                             <div class="group inner list-group-item-text">
-                                                                <div class="can-details three">  <b>Primary Skill:</b> <span>@item.PrimarySkill  </span></div>
-                                                                <div class="can-details four">  <b>Job Ends on :</b> <span>@item.EndDate.ToString("dd MMM yyyy")  </span></div>
+                                                                <div id="opendiscinterview_2" class="can-details three">  <b>Primary Skill:</b> <span>@item.PrimarySkill  </span></div>
+                                                                <div id="opendiscinterview_3" class="can-details four">  <b>Job Ends on :</b> <span>@item.EndDate.ToString("dd MMM yyyy")  </span></div>
 
                                                             </div>
                                                         </div>
@@ -118,60 +119,187 @@
 
 
 
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Interviewer\"")
 {
-    <script src="~/Newassets/js/enjoyhint.min.js"></script>
-    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-    <script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
 
-        var enjoyhint_instance = new EnjoyHint({});
+    <script type="text/javascript">
+        hopscotch.registerHelper('addOverlay', function () {
+            $('body').append('<div class="overlay"></div>');
+        });
 
-        var enjoyhint_script_steps = [
-            {
-                'next .card-title': 'Open interview invites and click on continue to know its features',
-                'nextButton': { className: "myNext", text: "Continue" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
+        hopscotch.registerHelper('removeOverlay', function () {
+            $('.overlay').fadeOut(function () {
+                $(this).remove();
+                $('.helper').remove();
+            });
+        });
 
-            {
-                'next .first': 'Skill Channel ID',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .second': 'Client Name',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .three': 'Primary Skill',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .four': 'Job End Date',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .five': 'Job Description link',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .itemques': 'Click here to schedule your interview based on your availability',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'click .icimenu': 'Click on Scheduled Interview menu to see its features',
+        hopscotch.listen('show', function () {
+            var elementObject = $(hopscotch.getCurrTarget(tour));
+            var element = $('#' + elementObject[0].id);
 
-            },
+            element.prev().removeClass('overlay-relative');
+            element.addClass('overlay-relative');
 
-        ];
+            if ($('.helper').length !== 0) {
 
-        enjoyhint_instance.set(enjoyhint_script_steps);
-        enjoyhint_instance.run();
+                // Use Helper Layer for hilight target element.
+                var helper = $('.helper');
+                var padding = 5;
+                var helperPosX = element.position().left - padding;
+                var helperPosY = element.position().top - padding;
+                var targetWidth = element.outerWidth();
+                var targetHeight = element.outerHeight();
+
+                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                helper.css('width', targetWidth);
+                helper.css('height', targetHeight);
+                helper.offset({ left: helperPosX, top: helperPosY });
+
+            } else {
+
+                // Add Helper Layer for highlight target element.
+                var newHelper = '<div class="helper"></div>';
+                $('body').append(newHelper);
+
+                var helper = $('.helper');
+                var padding = 5;
+                var helperPosX = element.position().left - padding;
+                var helperPosY = element.position().top - padding;
+                var targetWidth = element.outerWidth();
+                var targetHeight = element.outerHeight();
+
+                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                helper.css('width', targetWidth);
+                helper.css('height', targetHeight);
+                helper.offset({ left: helperPosX, top: helperPosY });
+            }
+
+        });
+
+        var tour = {
+            id: "hello-hopscotch",
+            showCloseButton: false,
+            steps: [
+                {
+                    title: "Open Discussions",
+                    content: "View all Open Discussions here and click on next button to know its features",
+                    target: "opendiscinterview_1",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    highlight: true,
+                    zindex: 999999,
+                    yOffset: 10,
+
+                    onCTA: function () {
+                        hopscotch.showStep(2);
+                        $('#opendiscinterview_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onNext: function () {
+                        $('#opendiscinterview_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+
+                    }
+                },
+
+
+
+                {
+                    title: "Primary Skill",
+                    content: "Showing Primary Skill here",
+                    target: "opendiscinterview_2",
+                    showPrevButton: true,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    zindex: 999999,
+
+                    onPrev: function () {
+
+                        $('#opendiscinterview_2').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onNext: function () {
+
+                        $('#opendiscinterview_2').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                },
+
+                {
+                    title: "Job End Date",
+                    content: "Showing Job End Date here",
+                    target: "opendiscinterview_3",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#opendiscinterview_3').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#opendiscinterview_3').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Schedule Meeting",
+                    content: "Click here to schedule meeting for discussion",
+                    target: "opendiscinterview_4",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#opendiscinterview_4').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#opendiscinterview_4').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+
+                {
+                    title: "My Scheduled Discussions",
+                    content: "Click on My Scheduled Discussions menu to see its features",
+                    target: "opendiscinterview_5",
+                    placement: "bottom",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    yOffset: -20,
+                    xOffset: 10,
+                    onNext: function () {
+                        $('#opendiscinterview_5').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#opendiscinterview_5').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+            ],
+            onStart: ["addOverlay"],
+            onEnd: ["removeOverlay"],
+        };
+
+        hopscotch.startTour(tour);
 
     </script>
 }

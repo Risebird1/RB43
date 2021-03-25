@@ -210,7 +210,7 @@ namespace Risebird.Repository
                         parameters.Add("@searchValueParam", searchValue);
                         parameters.Add("@startDateParam", startDate);
                         parameters.Add("@endDateParam", endDate);
-                        parameters.Add("@timeNow", DateTime.Now);
+                        //parameters.Add("@timeNow", DateTime.Now);
                         return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsFilteredDup", parameters,
                             commandType: CommandType.StoredProcedure);
                     }
@@ -1181,6 +1181,35 @@ namespace Risebird.Repository
                     parameters.Add("EmailId", emailID);
                     parameters.Add("@timeNow", DateTime.Now);
                     return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientMeetings", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailID, bool isFilter=false, DateTime? startDate= null, DateTime? endDate= null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("EmailId", emailID);
+                    if(isFilter)
+                    {
+                        parameters.Add("@timeNow", null);
+                    }
+                    else
+                    {
+                        parameters.Add("@timeNow", DateTime.Now);
+                    }
+                    parameters.Add("@startDate", startDate);
+                    parameters.Add("@endDate", endDate);
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientSelectedMeetings", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
             }
@@ -3330,7 +3359,7 @@ namespace Risebird.Repository
                         parameters.Add("@clientIdParam", clientId);
                         parameters.Add("@startDateParam", startDate);
                         parameters.Add("@endDateParam", endDate);
-                        parameters.Add("@timeNow", DateTime.Now);
+                        //parameters.Add("@timeNow", DateTime.Now);
                         var result = await SqlMapper.QueryAsync<int>(con, "usp_GetRisetubeIndexMeetingsFilteredCountDup", parameters,
                             commandType: CommandType.StoredProcedure);
                         return result.FirstOrDefault();

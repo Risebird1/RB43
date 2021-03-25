@@ -130,5 +130,6 @@ namespace Risebird.Business.Interface
         Task<List<RBInterviewDetails>> FNAllGeneratedInvoiceDetails(DateTime st, DateTime se);
         Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue);
         Task<List<RBInterviewDetails>> FetchFNPaymentHistory();
+        Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailId, bool isFilter = false, DateTime? startDate= null, DateTime? endDate= null);
     }
 }
