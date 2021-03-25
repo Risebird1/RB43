@@ -265,6 +265,7 @@ namespace Risebird.Repository
                 entity.AssessmentGroupId = string.Join(',', entity.AssessmentGroupArray);
             }
             parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
+            parameters.Add("@UserPassword", entity.UserPassword);
             parameters.Add("@InterviewerProfileId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             return parameters;

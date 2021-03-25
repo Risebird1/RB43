@@ -15,12 +15,12 @@ namespace Risebird.Business
     {
         private readonly IUserRepository _userRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-        private readonly IB2CClientService _b2CClientService;
-        public UserService(IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IB2CClientService b2CClientService)
+        private readonly IPasswordHelper _passwordHelper;
+        public UserService(IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IPasswordHelper passwordHelper)
         {
             _userRepository = userRepository;
             _applicationErrorLogger = applicationErrorLogger;
-            _b2CClientService = b2CClientService;
+            _passwordHelper = passwordHelper;
         }
 
         public List<Menu> GetMenuBasedOnUserEmailld(string emailId)
@@ -152,7 +152,14 @@ namespace Risebird.Business
         {
             try
             {
-                clientUser.UserPassword = GenerateUserPassword(clientUser).Result;
+                var userDetails = new UserDetails
+                {
+                    FirstName = clientUser.FirstName,
+                    LastName = clientUser.LastName,
+                    EmailId = clientUser.EmailId
+                };
+                //clientUser.UserPassword = GenerateUserPassword(clientUser).Result;
+                clientUser.UserPassword = _passwordHelper.GenerateUserPassword(userDetails).Result;
                 return _userRepository.AddClientUser(clientUser).Result;
             }
 
@@ -163,25 +170,44 @@ namespace Risebird.Business
             }
         }
 
-        private async Task<string> GenerateUserPassword(ClientUserVM clientUser)
-        {
-            Random rand = new Random(); // <-- Make this static somewhere
+        //private async Task<string> GenerateUserPassword(ClientUserVM clientUser)
+        //{
+        //    Random rand = new Random(); // <-- Make this static somewhere
 
-            const int maxValue = 999;
-            string number = rand.Next(maxValue + 1).ToString("D3");
-            var userobj = new UserList
-            {
-                FirstName = clientUser.FirstName,
-                LastName = clientUser.LastName,
-                EmailId = clientUser.EmailId,
-                UserPassword = clientUser.FirstName.ToUpper() + "@" + number
-            };
-            if( await _b2CClientService.CreateUser(userobj))
-            {
-                return userobj.UserPassword;
-            }
-            return string.Empty;
-        }
+        //    const int maxValue = 999;
+        //    string number = rand.Next(maxValue + 1).ToString("D3");
+        //    var userobj = new UserList
+        //    {
+        //        FirstName = clientUser.FirstName,
+        //        LastName = clientUser.LastName,
+        //        EmailId = clientUser.EmailId,
+        //        UserPassword = clientUser.FirstName.ToUpper() + "@" + number
+        //    };
+        //    if( await _b2CClientService.CreateUser(userobj))
+        //    {
+        //        return userobj.UserPassword;
+        //    }
+        //    return string.Empty;
+        //}
+        //public async Task<string> GenerateUserPassword(UserDetails user)
+        //{
+        //    Random rand = new Random(); // <-- Make this static somewhere
+
+        //    const int maxValue = 999;
+        //    string number = rand.Next(maxValue + 1).ToString("D3");
+        //    var userobj = new UserList
+        //    {
+        //        FirstName = user.FirstName,
+        //        LastName = user.LastName,
+        //        EmailId = user.EmailId,
+        //        UserPassword = user.FirstName.ToUpper() + "@" + number
+        //    };
+        //    if (await _b2CClientService.CreateUser(userobj))
+        //    {
+        //        return userobj.UserPassword;
+        //    }
+        //    return string.Empty;
+        //}
 
         public bool DeleteClientUser(int id)
         {

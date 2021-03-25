@@ -173,6 +173,7 @@ namespace Risebird.Entities.ViewModel
         public string ProfileType { get; set; }
         public string Domain { get; set; }
         public string DomainName { get; set; }
+        public string UserPassword { get; set; }
 
     }
 }

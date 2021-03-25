@@ -18,14 +18,17 @@ namespace Risebird.Business
         private readonly IUserService _userService;
         private readonly IMeetingRespository _meetingRespository;
         private readonly INotificationHelper _notificationHelper;
+        private readonly IPasswordHelper _passwordHelper;
 
-        public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IMeetingRespository meetingRespository, INotificationHelper notificationHelper)
+
+        public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IMeetingRespository meetingRespository, INotificationHelper notificationHelper, IPasswordHelper passwordHelper)
         {
             _interviewerRepository = interviewerRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _userService = userService;
             _meetingRespository = meetingRespository;
             _notificationHelper = notificationHelper;
+            _passwordHelper = passwordHelper;
         }
 
         #region Interviewer Profile Service Functions
@@ -45,6 +48,13 @@ namespace Risebird.Business
         {
             try
             {
+                UserDetails userDetails = new UserDetails
+                {
+                    FirstName = interviewerProfile.FirstName.Replace(" ",""),
+                    LastName = interviewerProfile.LastName.Replace(" ", ""),
+                    EmailId = interviewerProfile.EmailId.Replace(" ", "")
+                };
+                interviewerProfile.UserPassword = await _passwordHelper.GenerateUserPassword(userDetails);
                 return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
             }
             catch (Exception e)
