@@ -300,7 +300,9 @@ textarea::-webkit-scrollbar-thumb {
 .text-areadiv textarea {
     background: #eeeeee !important;
 }
-
+.ref-btn {
+    background: #fff;
+}
 input[type='radio']:checked:after {
     background-color: #ea6e24 !important;
     top: 1px !important;
