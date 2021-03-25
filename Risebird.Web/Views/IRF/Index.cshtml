@@ -292,16 +292,20 @@
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
                                                             <span onclick="javascript:getIRFMembers('@item.id', '@item.IRFId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
                                                         </button>
+
+                                                    }
+                                                    @if (Model.Profile != "Recruiter" && Model.Profile != "CuratedUser")
+                                                    {
                                                         if (!item.IsDeleted)
                                                         {
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
-                                                                <span onclick="javascript:DeleteIRF('@item.id');" title="Archive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
+                                                                <span onclick="javascript:ArchiveIRF('@item.id', '@item.IRFId');" title="Archive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
                                                             </button>
                                                         }
                                                         else
                                                         {
                                                             <button class="mdc-fab app-fab--absolute unarchive-btn" aria-label="UnArchive">
-                                                                <span onclick="javascript:UnArchiveIRF('@item.id');" title="UnArchive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
+                                                                <span onclick="javascript:UnArchiveIRF('@item.id', '@item.IRFId');" title="UnArchive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
                                                             </button>
                                                         }
                                                     }
@@ -974,12 +978,11 @@
 
 <script type="text/javascript">
 
-    function DeleteIRF(dataID) {
+    function ArchiveIRF(irfId, irfName) {
 
-        var IdIRF = dataID;
         swal.fire({
             title: 'Are you sure?',
-            text: "It will be archived!",
+            text: "The Skill Channel(" + irfName +") will be archived!",
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -987,11 +990,17 @@
             confirmButtonText: 'Yes, archive it!',
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
-                    var IdIRF = dataID;
                     $.ajax({
-                        url: '/IRF/DeleteIRF?id=' + IdIRF,
+                        url: '/IRF/ArchiveIRF?id=' + irfId,
                         success: function (result) {
-                            resolve(result)
+                            if (result == true) {
+                                resolve(result)
+
+                            }
+                            else {
+                                swal.fire("Error archiving!", "Please try again", "error");
+
+                            }
 
                         },
                         error: function () {
@@ -1007,7 +1016,7 @@
                 swal.fire({
                     title: 'Archived!',
                     type: 'success',
-                    html: '<p>IRF has been archived.</p>',
+                    html: '<p>Skill Channel has been archived.</p>',
                     showCancelButton: false,
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'Close!',
@@ -1027,6 +1036,67 @@
 
 
     }
+
+    function UnArchiveIRF(irfId, irfName) {
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The Skill Channel(" + irfName + ") will be Unarchived!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/UnArchiveIRF?id=' + irfId,
+                        success: function (result) {
+                            if (result == true) {
+                                resolve(result)
+
+                            }
+                            else {
+                                swal.fire("Error!", "Please try again", "error");
+
+                            }
+
+                        },
+                        error: function () {
+
+                            swal.fire("Error!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Unarchived!',
+                    type: 'success',
+                    html: '<p>Skill Channel has been Unarchived.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Unarchive cancelled! :)',
+                    'error'
+                )
+            }
+        })
+
+
+    }
+
+
     function Subscribe(irfId, irfName, primarySkill) {
 
         swal.fire({

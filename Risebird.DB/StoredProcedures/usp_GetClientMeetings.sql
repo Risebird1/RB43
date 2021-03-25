@@ -12,7 +12,8 @@ GO
 
  
 CREATE PROCEDURE [dbo].[usp_GetClientMeetings] 
-@EmailId varchar(300)        
+@EmailId varchar(300),
+@timeNow datetime
 AS      
 BEGIN      
 	declare @profileId int, @roleId int, @userId int;
@@ -43,6 +44,9 @@ if(@roleId=1)
 		left join UserList ul on tcu.ClientUserId= ul.id
 
 		where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and im.ClientHrContact=@EmailId
+		and irf.IsDeleted=0
+		--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)   
+
 
 	End
 
@@ -67,7 +71,10 @@ else if(@roleId=4)
 		inner join TransClientUser tcu on IRF.id=tcu.IRFId
 		left join UserList ul on tcu.ClientUserId= ul.id
 
-		where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and im.staffingAgency=@EmailId 
+		where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and im.staffingAgency=@EmailId
+		and irf.IsDeleted=0
+		--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)   
+
 	End
 
 else
@@ -91,7 +98,10 @@ else
 		inner join TransClientUser tcu on IRF.id=tcu.IRFId
 		left join UserList ul on tcu.ClientUserId= ul.id
 
-		where ul.EmailId LIKE @EmailId AND ul.IsActive=1 
+		where ul.EmailId LIKE @EmailId AND ul.IsActive=1
+		and irf.IsDeleted=0
+		--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)   
+
 	End
        
 

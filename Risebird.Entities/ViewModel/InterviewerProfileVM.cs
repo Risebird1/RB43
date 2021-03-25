@@ -104,7 +104,8 @@ namespace Risebird.Entities.ViewModel
         //public IList<InterviewerProfessional> InterviewerProfessionalDetails { get; set; }
         public IList<TransInterviewerProjects> InterviewerProjectsDetails { get; set; }
         public IList<TransInterviewerAvailability> InterviewerAvailabilityDetails { get; set; }
-        public IList<TransInterviewerAccDetails> InterviewerAccDetails { get; set; }
+        //public IList<TransInterviewerAccDetails> InterviewerAccDetails { get; set; }
+        public TransInterviewerAccDetails InterviewerAccDetails { get; set; }
         public IList<TransInterviewerCertificate> InterviewerCertificateDetails { get; set; }
 
         //To add in the dropdown List
@@ -172,6 +173,7 @@ namespace Risebird.Entities.ViewModel
         public string ProfileType { get; set; }
         public string Domain { get; set; }
         public string DomainName { get; set; }
+        public string UserPassword { get; set; }
 
     }
 }

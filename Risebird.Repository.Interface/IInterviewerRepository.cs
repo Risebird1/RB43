@@ -28,8 +28,8 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<InterviewerProfessional>> GetProfessionalList(int ProfileId);
         Task<IEnumerable<TransInterviewerProjects>> GetProjectsList(int ProfileId);
         Task<IEnumerable<TransInterviewerAvailability>> GetAvailabilityList(int ProfileId);
-        Task<IEnumerable<TransInterviewerAccDetails>> GetAccDetailsList(int ProfileId);
-
+        //Task<IEnumerable<TransInterviewerAccDetails>> GetAccDetailsList(int ProfileId);
+        Task<TransInterviewerAccDetails> GetAccDetailsList(int ProfileId);
         Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile);
         IEnumerable<InterviewerInvites> GetInterviewerInvites(string emailId);
         Task<IEnumerable<Meeting>> GetUnapprovedInterviewerScheduledInterviews(string emailID);

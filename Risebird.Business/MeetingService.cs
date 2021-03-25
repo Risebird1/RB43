@@ -216,12 +216,26 @@ namespace Risebird.Business
             try
             {
                 var meetings = _meetingRespository.GetClientMeetings(emailId).Result.OrderByDescending(x => x.interviewDate).ToList();
-
+                
                 return meetings ?? new List<MeetingVM>();
             }
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailId, bool isFilter = false, DateTime? startDate= null, DateTime? endDate= null)
+        {
+            try
+            {
+                var meetings = await _meetingRespository.GetClientSelectedMeetings(emailId, isFilter, startDate, endDate);
+                return meetings;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -2441,6 +2455,32 @@ namespace Risebird.Business
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue)
+        {
+            try
+            {
+                var result = _meetingRespository.InsertPaymentHistory(Interviewer, Amount, actionvalue);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
+        public async Task<List<RBInterviewDetails>> FetchFNPaymentHistory()
+        {
+            try
+            {
+                var result = _meetingRespository.FetchFNPaymentHistory();
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

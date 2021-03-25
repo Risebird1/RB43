@@ -402,6 +402,19 @@ namespace Risebird.Web.Controllers
                             return View("AddInterviewerProfile", model);
                         }
 
+                        if (!string.IsNullOrEmpty(interviewerProfile.FirstName))
+                        {
+                            interviewerProfile.FirstName = interviewerProfile.FirstName.Trim();
+                        }
+                        if (!string.IsNullOrEmpty(interviewerProfile.LastName))
+                        {
+                            interviewerProfile.LastName = interviewerProfile.LastName.Trim();
+                        }
+                        if (!string.IsNullOrEmpty(interviewerProfile.EmailId))
+                        {
+                            interviewerProfile.EmailId = interviewerProfile.EmailId.Trim().ToLower();
+                        }
+
                         if (_interviewerService.AddInterviewerProfile(interviewerProfile).Result)
                         {
                             TempData["MessageInterviewer"] = "Interviewer Profile is added Successfully";
@@ -917,8 +930,14 @@ namespace Risebird.Web.Controllers
                         InterviewerProfileVM model = await _interviewerService.GetInterviewerProfileByEmailId(emailid, profileName);
                         if (model == null)
                         {
-                            TempData["MessageInterviewer"] = "No Information available in the System";
+                            TempData["SuccessErrorMessage"] = "No Information available in the System";
                             return RedirectToAction("MyInterview", "Interview");
+                        }
+                        if (TempData["MyProfileMessage"] != null)
+                        {
+                            ViewBag.Message = TempData["MyProfileMessage"].ToString();
+                            TempData.Remove("MyProfileMessage");
+
                         }
                         // Get all the select Lists
                         GetAllSelectList(model);
@@ -940,8 +959,8 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["MessageInterviewer"] = "Failed";
-                return RedirectToAction("Index");
+                TempData["SuccessErrorMessage"] = "Error retrieving Profile Data!";
+                return RedirectToAction("MyInterview", "Interview");
             }
         }
         [HttpPost]
@@ -969,12 +988,12 @@ namespace Risebird.Web.Controllers
 
                         if (_interviewerService.AddInterviewerMyProfile(interviewerProfile).Result)
                         {
-                            TempData["MessageInterviewer"] = "My Profile is added Successfully";
+                            TempData["MyProfileMessage"] = "Profile updated Successfully";
                             return RedirectToAction("MyProfile");
                         }
                         else
                         {
-                            TempData["MessageInterviewer"] = "My Profile addition is Failed";
+                            TempData["MyProfileMessage"] = "Profile update failed";
                             return RedirectToAction("MyProfile");
                         }
                     }
@@ -992,8 +1011,8 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterviewer"] = "Interviewer My Profile addition is Failed";
-                return RedirectToAction("Index");
+                TempData["MyProfileMessage"] = "Profile update failed";
+                return RedirectToAction("MyProfile");
             }
         }
 

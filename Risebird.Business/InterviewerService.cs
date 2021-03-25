@@ -18,14 +18,17 @@ namespace Risebird.Business
         private readonly IUserService _userService;
         private readonly IMeetingRespository _meetingRespository;
         private readonly INotificationHelper _notificationHelper;
+        private readonly IPasswordHelper _passwordHelper;
 
-        public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IMeetingRespository meetingRespository, INotificationHelper notificationHelper)
+
+        public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IMeetingRespository meetingRespository, INotificationHelper notificationHelper, IPasswordHelper passwordHelper)
         {
             _interviewerRepository = interviewerRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _userService = userService;
             _meetingRespository = meetingRespository;
             _notificationHelper = notificationHelper;
+            _passwordHelper = passwordHelper;
         }
 
         #region Interviewer Profile Service Functions
@@ -45,6 +48,13 @@ namespace Risebird.Business
         {
             try
             {
+                UserDetails userDetails = new UserDetails
+                {
+                    FirstName = interviewerProfile.FirstName.Replace(" ",""),
+                    LastName = interviewerProfile.LastName.Replace(" ", ""),
+                    EmailId = interviewerProfile.EmailId.Replace(" ", "")
+                };
+                interviewerProfile.UserPassword = await _passwordHelper.GenerateUserPassword(userDetails);
                 return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
             }
             catch (Exception e)
@@ -167,7 +177,7 @@ namespace Risebird.Business
                 //List<InterviewerProfessional> ProfessionalList = _interviewerRepository.GetProfessionalList(ProfileId).Result.ToList();
                 List<TransInterviewerProjects> ProjectsList = _interviewerRepository.GetProjectsList(ProfileId).Result.ToList();
                 List<TransInterviewerAvailability> AvailabilityList = _interviewerRepository.GetAvailabilityList(ProfileId).Result.ToList();
-                List<TransInterviewerAccDetails> AccDetailsList = _interviewerRepository.GetAccDetailsList(ProfileId).Result.ToList();
+                TransInterviewerAccDetails AccDetailsList = _interviewerRepository.GetAccDetailsList(ProfileId).Result;
 
                 // Assign the Lists to model
 
@@ -205,7 +215,7 @@ namespace Risebird.Business
                 // Get all the List from DB
 
                 List<TransInterviewerAvailability> AvailabilityList = _interviewerRepository.GetAvailabilityList(ProfileId).Result.ToList();
-                List<TransInterviewerAccDetails> AccDetailsList = _interviewerRepository.GetAccDetailsList(ProfileId).Result.ToList();
+                TransInterviewerAccDetails AccDetailsList = _interviewerRepository.GetAccDetailsList(ProfileId).Result;
 
                 // Assign the Lists to model
 
@@ -233,7 +243,7 @@ namespace Risebird.Business
                     InterviewerProfileVM profileModel = interviewerProfile.FirstOrDefault();
                     // Get all the List from DB
                     profileModel.InterviewerAvailabilityDetails = _interviewerRepository.GetAvailabilityList(profileModel.id).Result.ToList();
-                    profileModel.InterviewerAccDetails = _interviewerRepository.GetAccDetailsList(profileModel.id).Result.ToList();
+                    profileModel.InterviewerAccDetails = _interviewerRepository.GetAccDetailsList(profileModel.id).Result;
 
                     return profileModel;
                 }

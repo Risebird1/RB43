@@ -49,11 +49,16 @@ textarea::-webkit-scrollbar-thumb {
 .un-right {
     background: #f3f3f3;
 }
-
+.ref-btn {
+    background: #fff;
+}
 
 #x {
     border-radius: 10px;
     background: #fff url(../../Newassets/img/refresh.png) 1px no-repeat;
+}
+.text-areadiv textarea {
+    background: #eeeeee !important;
 }
 .talk-bubble {
     background-color: #fcfcfc;

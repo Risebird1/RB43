@@ -369,10 +369,14 @@ textarea::-webkit-scrollbar-thumb {
 #interviewer.table.dataTable > thead > tr > th.overlay-relative {
     color: #000 !important
 }
+.ref-btn{background:#fff;}
+
 .show-interest {
     color: #000;
 }
-
+.text-areadiv textarea {
+    background: #eeeeee!important;
+}
 #candidateStatusModal .file-upload-wrapper:before {
     background: #54a5f5;
 }

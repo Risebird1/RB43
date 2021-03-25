@@ -1606,8 +1606,12 @@ ul.panel-controls > li > button {
 
     .navbar .navbar-wrapper .navbar-brand {
         margin-right: 0.3rem;
-        font-size: 14px;
+    
     }
+
+.myqcinterviewer table.dataTable thead > tr > th.sorting {
+    padding-right: 0px!important;
+}
 
 .control-label {
     color: #5f5c5c;

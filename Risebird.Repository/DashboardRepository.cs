@@ -254,6 +254,7 @@ namespace Risebird.Repository
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@emailId", emailId);
+                parameters.Add("@timeNow", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<IRFFunnel>(con, "usp_GetClientFunnelData", parameters,

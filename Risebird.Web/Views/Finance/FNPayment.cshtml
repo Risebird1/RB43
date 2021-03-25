@@ -42,18 +42,21 @@
                     <div class="mobile-view"> <h4 class="card-title"> RB Payment Details</h4></div>
                 </div>
 
-                <div class="pull-right">
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Click here to generate invoice.">
+                <div class="pull-right client-ms">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Payment History">
+                        <span class="fa fa-history" data-toggle="tooltip" data-placement="top" title="Payment History" onclick="openPaymentHistory()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Payment History</font></span>
+                    </button>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to generate invoice.">
                         <span class="fa fa-file" data-toggle="tooltip" data-placement="top" title="Click here to generate invoice." onclick="openmyinvoiceModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Generate Invoice</font></span>
                     </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Click here to Advance Payment.">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to Advance Payment.">
                         <span class="fa fa-credit-card" data-toggle="tooltip" data-placement="top" title="Click here to Advance Payment." onclick="openmyAdvancepaymentModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Advance Payment</font></span>
                     </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
                         @*<span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportFNPayment", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>*@
                         <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="ExportFNDetails()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>
                     </button>
-                    <div id="meeting_filter" class="dataTables_filter pull-right mt-20">
+                    <div id="meeting_filter" class="dataTables_filter pull-right" style="margin-left:5PX;">
 
                         <div class="searchCon">
 
@@ -175,29 +178,31 @@
             <!-- end col-md-12 -->
         </div>
 
-        <div id="myModal" class="modal">
-            <!-- Modal content -->
-            <div class="modal-dialog modal-lg" role="document" style="max-width:820px !important">
-                <div class="modal-dialog modal-lg" role="document" style="max-width:820px !important">
-                    <div class="modal-content">
-                        <div class="filheader">
-                            <div class="filavatar">
-                                <span class="publicsharing-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" /></svg>
+        <div class="rbpay">
+            <div id="myModal" class="modal">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="filheader">
+                                <div class="filavatar">
+                                    <span class="publicsharing-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" /></svg>
 
-                                </span>
+                                    </span>
+                                </div>
+                                <h5 class="modal-title pull-left"> Detailed View</h5>
                             </div>
-                            <h5 class="modal-title pull-left"> Detailed View</h5>
-                        </div>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="CloseMyModelPopup()">
-                            <span aria-hidden="true" id="importPopUp" style="cursor:pointer;">&times;</span>
-                        </button>
-                        <div class="modal-body">
-                            <div class="col-md-12">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="CloseMyModelPopup()">
+                                <span aria-hidden="true" id="importPopUp" style="cursor:pointer;">&times;</span>
+                            </button>
+                            <div class="modal-body">
+                                <div class="col-md-12">
 
-                                <div class="sb-container scroller-payment"> <div id="divDetailedView"></div></div>
+                                    <div class="sb-container scroller-payment"> <div id="divDetailedView"></div></div>
+                                </div>
+
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -469,8 +474,12 @@
                     } else {
                         Swal.fire("Fail to add Points.");
                     }
-                    window.location.href = "/Finance/FNPayment";
-
+                    if (Generateinvoiceflag == 2) {
+                        closemyAddpointsModel();
+                        SearchInvoice();
+                    } else {
+                        window.location.href = "/Finance/FNPayment";
+                    }
                 }
             });
         } else {
@@ -507,7 +516,7 @@
         html += '   <th>Date</th>';
         html += '   <th>Payment For</th>';
         html += '   <th>Type</th>';
-        html += '   <th>Status</th>';
+        html += '   <th>Payment Status</th>';
         html += '   <th>Rate</th>';
         html += '   <th>Amount</th>';
         html += '   <th>Meeting Status</th>';
@@ -626,7 +635,12 @@
                 data: { 'Interviewer': interviewer, 'Comment': comment, 'Amount': amount },
                 success: function (data) {
                     Swal.fire(data);
-                    window.location.href = "/Finance/FNPayment";
+                    if (Generateinvoiceflag == 2) {
+                        closemyAdvancepaymentModel();
+                        SearchInvoice();
+                    } else {
+                        window.location.href = "/Finance/FNPayment";
+                    }
                 }
             });
         } else {
@@ -668,6 +682,19 @@
         } else {
             window.location.href = "/Finance/ExportFNPayment";
         }
+    }
+    function openPaymentHistory() {
+        window.location.href = "/Finance/PaymentHistory";
+    }
+    function ExportFNDetails() {
+        if (Generateinvoiceflag == 2) {
+            window.location.href = "/Finance/ExportGenerateFNPayment?st=" + St_date + "&se=" + Se_date;
+        } else {
+            window.location.href = "/Finance/ExportFNPayment";
+        }
+    }
+    function openPaymentHistory() {
+        window.location.href = "/Finance/PaymentHistory";
     }
 </script>
 

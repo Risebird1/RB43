@@ -110,6 +110,7 @@ namespace Risebird.Web.Controllers
                         candidateTimeline.confirmationStatus = firstData.confirmationStatus;
                         candidateTimeline.PrimarySkill = firstData.PrimarySkill;
                         candidateTimeline.ProfileSource = firstData.ProfileSource;
+                        candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                         candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
                         //schedule status
@@ -125,6 +126,7 @@ namespace Risebird.Web.Controllers
                                 scheduleStatusObj.Day = item.ScheduleStatusDate.Date.ToString("dddd");
                                 scheduleStatusObj.Time = item.ScheduleStatusDate.ToString("hh:mm tt");
                                 scheduleStatusObj.Status = item.ScheduleStatusValue;
+                                scheduleStatusObj.ActualDate = item.ScheduleStatusDate;
 
                                 scheduleStatusObj.StatusDate = item.ScheduleStatusDate.Date.ToString("MMMM yyyy");
                                 scheduleStatusObjList.Add(scheduleStatusObj);
@@ -204,6 +206,30 @@ namespace Risebird.Web.Controllers
                         }
                     }
 
+                    //if(profileName=="Client")
+                    //{
+                    //    var newModel = new List<CandidateTimelineVM>();
+                    //    foreach (var item in model)
+                    //    {
+                    //        if(item.IsIRFArchived)
+                    //        {
+                    //            var date = item.ScheduleStatus?.Select(x => x.ActualDate)?.Min();
+                    //            if(date !=null && date.HasValue)
+                    //            {
+                    //                if(date?.Date >= DateTime.Now.AddDays(-30).Date)
+                    //                {
+                    //                    newModel.Add(item);
+                    //                }
+                    //            }
+                                
+                    //        }
+                    //        else
+                    //        {
+                    //            newModel.Add(item);
+                    //        }
+                    //    }
+                    //    model = newModel;
+                    //}
 
                     if (HttpContext.Session.GetString("CandidateTimelinefilters") != null)
                     {
@@ -319,6 +345,7 @@ namespace Risebird.Web.Controllers
                         candidateTimeline.confirmationStatus = firstData.confirmationStatus;
                         candidateTimeline.PrimarySkill = firstData.PrimarySkill;
                         candidateTimeline.ProfileSource = firstData.ProfileSource;
+                        candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                         candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
                         //schedule status
@@ -334,7 +361,7 @@ namespace Risebird.Web.Controllers
                                 scheduleStatusObj.Day = item.ScheduleStatusDate.Date.ToString("dddd");
                                 scheduleStatusObj.Time = item.ScheduleStatusDate.ToString("hh:mm tt");
                                 scheduleStatusObj.Status = item.ScheduleStatusValue;
-
+                                scheduleStatusObj.ActualDate = item.ScheduleStatusDate;
                                 scheduleStatusObj.StatusDate = item.ScheduleStatusDate.Date.ToString("MMMM yyyy");
                                 scheduleStatusObjList.Add(scheduleStatusObj);
                             }
@@ -413,6 +440,30 @@ namespace Risebird.Web.Controllers
 
                         }
                     }
+                    //if (profileName == "Client")
+                    //{
+                    //    var newModel = new List<CandidateTimelineVM>();
+                    //    foreach (var item in model)
+                    //    {
+                    //        if (item.IsIRFArchived)
+                    //        {
+                    //            var date = item.ScheduleStatus?.Select(x => x.ActualDate)?.Min();
+                    //            if (date != null && date.HasValue)
+                    //            {
+                    //                if (date?.Date >= DateTime.Now.AddDays(-30).Date)
+                    //                {
+                    //                    newModel.Add(item);
+                    //                }
+                    //            }
+
+                    //        }
+                    //        else
+                    //        {
+                    //            newModel.Add(item);
+                    //        }
+                    //    }
+                    //    model = newModel;
+                    //}
                     filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.HREmail).ToArray() : filter.HREmail = filter.HREmail;
                     filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
 
@@ -538,6 +589,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.confirmationStatus = firstData.confirmationStatus;
                     candidateTimeline.PrimarySkill = firstData.PrimarySkill;
                     candidateTimeline.ProfileSource = firstData.ProfileSource;
+                    candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
                     //schedule status
@@ -553,7 +605,7 @@ namespace Risebird.Web.Controllers
                             scheduleStatusObj.Day = item.ScheduleStatusDate.Date.ToString("dddd");
                             scheduleStatusObj.Time = item.ScheduleStatusDate.ToString("hh:mm tt");
                             scheduleStatusObj.Status = item.ScheduleStatusValue;
-
+                            scheduleStatusObj.ActualDate = item.ScheduleStatusDate;
                             scheduleStatusObj.StatusDate = item.ScheduleStatusDate.Date.ToString("MMMM yyyy");
                             scheduleStatusObjList.Add(scheduleStatusObj);
                         }
@@ -631,7 +683,30 @@ namespace Risebird.Web.Controllers
 
                     }
                 }
+                //if (profileName == "Client")
+                //{
+                //    var newModel = new List<CandidateTimelineVM>();
+                //    foreach (var item in model)
+                //    {
+                //        if (item.IsIRFArchived)
+                //        {
+                //            var date = item.ScheduleStatus?.Select(x => x.ActualDate)?.Min();
+                //            if (date != null && date.HasValue)
+                //            {
+                //                if (date?.Date >= DateTime.Now.AddDays(-30).Date)
+                //                {
+                //                    newModel.Add(item);
+                //                }
+                //            }
 
+                //        }
+                //        else
+                //        {
+                //            newModel.Add(item);
+                //        }
+                //    }
+                //    model = newModel;
+                //}
 
                 if (HttpContext.Session.GetString("CandidateTimelinefilters") != null)
                 {

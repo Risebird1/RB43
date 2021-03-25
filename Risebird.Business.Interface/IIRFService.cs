@@ -16,7 +16,7 @@ namespace Risebird.Business.Interface
         IEnumerable<Skill> GetTechSkills(int id);
         bool AddSkillComments(TechSkillComments skillComments);
         List<string> GetListOfInterviwerBasedOnIRFId(string irfId);
-        Task<bool> DeleteIRF(int id);
+        Task<bool> ArchiveIRF(int id);
         Task<List<MeetingVM>> GetIRFInterviewMeetings(int id, string profileName, string email);
         string GetQCSkills(int id);
         SelectList GetQualityController();
