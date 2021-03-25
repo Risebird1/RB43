@@ -623,23 +623,44 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 int Clientid = 0;
-                ViewBag.ProfileName = profileName;
                 if (profileName == "Client")
                 {
                     var client = _userRepository.GetClientUserDetails(emailid);
                     Clientid = client.Result.ClientId;
                 }
-                var interviewerids = _meetingService.FetchAllInterviewidByClient(Clientid, emailid);
                 var modelData = new List<SurveyVM>();
                 AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
                 var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
-                var _resultlist = (from data in result
-                                   select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
-                _resultlist = _resultlist.Distinct().ToList();
-                var resultset = _meetingService.FetchSurveyInterviewer(_resultlist);
-                foreach (var item in result)
+                if (profileName == "Client")
                 {
-                    if (interviewerids.Any(x => x == item.interviewid))
+                    var interviewerids = _meetingService.FetchAllInterviewidByClient(Clientid, emailid);
+                    foreach (var item in result)
+                    {
+                        if (interviewerids.Any(x => x == item.interviewid))
+                        {
+                            if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
+                            {
+                                modelData.Add(new SurveyVM
+                                {
+                                    interviewid = item.interviewid,
+                                    Question1 = item.Question1,
+                                    Question2 = item.Question2,
+                                    Question3 = item.Question3,
+                                    Question4 = item.Question4,
+                                    Question5 = item.Question5,
+                                    Question6 = item.Question6,
+                                    Name = item.Name,
+                                    EmailAddress = item.EmailAddress,
+                                    CommentforInterviewer = item.CommentforInterviewer,
+                                    PrimarySkill = item.PrimarySkill,
+                                });
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var item in result)
                     {
                         if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
                         {
@@ -654,9 +675,8 @@ namespace Risebird.Web.Controllers
                                 Question6 = item.Question6,
                                 Name = item.Name,
                                 EmailAddress = item.EmailAddress,
-                                interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
                                 CommentforInterviewer = item.CommentforInterviewer,
-                                PrimarySkill = item.PrimarySkill
+                                PrimarySkill = item.PrimarySkill,
                             });
                         }
                     }
