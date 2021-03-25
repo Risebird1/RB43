@@ -402,6 +402,19 @@ namespace Risebird.Web.Controllers
                             return View("AddInterviewerProfile", model);
                         }
 
+                        if (!string.IsNullOrEmpty(interviewerProfile.FirstName))
+                        {
+                            interviewerProfile.FirstName = interviewerProfile.FirstName.Trim();
+                        }
+                        if (!string.IsNullOrEmpty(interviewerProfile.LastName))
+                        {
+                            interviewerProfile.LastName = interviewerProfile.LastName.Trim();
+                        }
+                        if (!string.IsNullOrEmpty(interviewerProfile.EmailId))
+                        {
+                            interviewerProfile.EmailId = interviewerProfile.EmailId.Trim().ToLower();
+                        }
+
                         if (_interviewerService.AddInterviewerProfile(interviewerProfile).Result)
                         {
                             TempData["MessageInterviewer"] = "Interviewer Profile is added Successfully";

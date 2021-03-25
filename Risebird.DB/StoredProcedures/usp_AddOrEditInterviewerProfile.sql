@@ -37,7 +37,8 @@ CREATE PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @IsLeadInterviewer bit,      
 @IsActive bit,      
 @IsApproved bit,      
-@AssessmentGroupId varchar(100),    
+@AssessmentGroupId varchar(100),  
+@UserPassword nvarchar(60),
 @InterviewerProfileId int output      
       
 AS      
@@ -114,7 +115,8 @@ Declare @v_User_Id int;
    [LastName],      
    [EmailId],      
    [IsActive],      
-   [MobileNumber])      
+   [MobileNumber],
+   [UserPassword])      
          
        VALUES      
            (3,      
@@ -122,7 +124,8 @@ Declare @v_User_Id int;
    @LastName,      
    @EmailId,      
    @IsActive,      
-   @MobileNumber)      
+   @MobileNumber,
+   @UserPassword)      
       
  -- Collect the user ID from UserList tbl      
  Select @v_User_Id = id from [dbo].[UserList] where EmailId = @EmailId;      
