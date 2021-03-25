@@ -206,30 +206,30 @@ namespace Risebird.Web.Controllers
                         }
                     }
 
-                    if(profileName=="Client")
-                    {
-                        var newModel = new List<CandidateTimelineVM>();
-                        foreach (var item in model)
-                        {
-                            if(item.IsIRFArchived)
-                            {
-                                var date = item.ScheduleStatus?.Select(x => x.ActualDate)?.Min();
-                                if(date !=null && date.HasValue)
-                                {
-                                    if(date?.Date >= DateTime.Now.AddDays(-30).Date)
-                                    {
-                                        newModel.Add(item);
-                                    }
-                                }
+                    //if(profileName=="Client")
+                    //{
+                    //    var newModel = new List<CandidateTimelineVM>();
+                    //    foreach (var item in model)
+                    //    {
+                    //        if(item.IsIRFArchived)
+                    //        {
+                    //            var date = item.ScheduleStatus?.Select(x => x.ActualDate)?.Min();
+                    //            if(date !=null && date.HasValue)
+                    //            {
+                    //                if(date?.Date >= DateTime.Now.AddDays(-30).Date)
+                    //                {
+                    //                    newModel.Add(item);
+                    //                }
+                    //            }
                                 
-                            }
-                            else
-                            {
-                                newModel.Add(item);
-                            }
-                        }
-                        model = newModel;
-                    }
+                    //        }
+                    //        else
+                    //        {
+                    //            newModel.Add(item);
+                    //        }
+                    //    }
+                    //    model = newModel;
+                    //}
 
                     if (HttpContext.Session.GetString("CandidateTimelinefilters") != null)
                     {
@@ -440,30 +440,30 @@ namespace Risebird.Web.Controllers
 
                         }
                     }
-                    if (profileName == "Client")
-                    {
-                        var newModel = new List<CandidateTimelineVM>();
-                        foreach (var item in model)
-                        {
-                            if (item.IsIRFArchived)
-                            {
-                                var date = item.ScheduleStatus?.Select(x => x.ActualDate)?.Min();
-                                if (date != null && date.HasValue)
-                                {
-                                    if (date?.Date >= DateTime.Now.AddDays(-30).Date)
-                                    {
-                                        newModel.Add(item);
-                                    }
-                                }
+                    //if (profileName == "Client")
+                    //{
+                    //    var newModel = new List<CandidateTimelineVM>();
+                    //    foreach (var item in model)
+                    //    {
+                    //        if (item.IsIRFArchived)
+                    //        {
+                    //            var date = item.ScheduleStatus?.Select(x => x.ActualDate)?.Min();
+                    //            if (date != null && date.HasValue)
+                    //            {
+                    //                if (date?.Date >= DateTime.Now.AddDays(-30).Date)
+                    //                {
+                    //                    newModel.Add(item);
+                    //                }
+                    //            }
 
-                            }
-                            else
-                            {
-                                newModel.Add(item);
-                            }
-                        }
-                        model = newModel;
-                    }
+                    //        }
+                    //        else
+                    //        {
+                    //            newModel.Add(item);
+                    //        }
+                    //    }
+                    //    model = newModel;
+                    //}
                     filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.HREmail).ToArray() : filter.HREmail = filter.HREmail;
                     filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
 
@@ -683,30 +683,30 @@ namespace Risebird.Web.Controllers
 
                     }
                 }
-                if (profileName == "Client")
-                {
-                    var newModel = new List<CandidateTimelineVM>();
-                    foreach (var item in model)
-                    {
-                        if (item.IsIRFArchived)
-                        {
-                            var date = item.ScheduleStatus?.Select(x => x.ActualDate)?.Min();
-                            if (date != null && date.HasValue)
-                            {
-                                if (date?.Date >= DateTime.Now.AddDays(-30).Date)
-                                {
-                                    newModel.Add(item);
-                                }
-                            }
+                //if (profileName == "Client")
+                //{
+                //    var newModel = new List<CandidateTimelineVM>();
+                //    foreach (var item in model)
+                //    {
+                //        if (item.IsIRFArchived)
+                //        {
+                //            var date = item.ScheduleStatus?.Select(x => x.ActualDate)?.Min();
+                //            if (date != null && date.HasValue)
+                //            {
+                //                if (date?.Date >= DateTime.Now.AddDays(-30).Date)
+                //                {
+                //                    newModel.Add(item);
+                //                }
+                //            }
 
-                        }
-                        else
-                        {
-                            newModel.Add(item);
-                        }
-                    }
-                    model = newModel;
-                }
+                //        }
+                //        else
+                //        {
+                //            newModel.Add(item);
+                //        }
+                //    }
+                //    model = newModel;
+                //}
 
                 if (HttpContext.Session.GetString("CandidateTimelinefilters") != null)
                 {

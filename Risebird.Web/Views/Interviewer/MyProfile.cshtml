@@ -20,7 +20,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-              <a class="navbar-brand breadcrumscolor" href="/IRF/Index">My Profile form</a>
+                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">My Profile form</a>
                 <a class="navbar-brand">/ My Profile </a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
@@ -179,7 +179,7 @@
                                                             <td>
                                                                 @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekend, (SelectList)Model.WeekEndList, new { @class = "select-css form-control text-box single-line" })
                                                             </td>
-                                                            <td >
+                                                            <td>
 
                                                                 <div class="mdc-checkbox">
 
@@ -205,15 +205,15 @@
                                                                     @Html.CheckBoxFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays)
                                                                     @*<label for="@Html.NameFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays)">Is Available On Public Holidays</label>*@
                                                                 </div>-->
-                                                                                                                      </td>
-                                                                  
-                                                                <td class="action text-center">
-                                                                    <span id="btnPlus" onclick="addAvailabilityDetails()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'InterviewerAvailabilityDetails','Weekday','Weekend','IsAvailableOnPublicHolidays')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                </td>
-                                                            </tr>
-                                                        }
+                                                            </td>
+
+                                                            <td class="action text-center">
+                                                                <span id="btnPlus" onclick="addAvailabilityDetails()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'InterviewerAvailabilityDetails','Weekday','Weekend','IsAvailableOnPublicHolidays')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            </td>
+                                                        </tr>
                                                     }
+                                                }
 
 
                                             </tbody>
@@ -232,77 +232,37 @@
                                         <h2>Account Details</h2>
                                     </div>
                                 </div>
-                                @if (Model.InterviewerAccDetails == null || Model.InterviewerAccDetails.Count() == 0)
-                                {
-                                    <div class="col-md-4 col-sm-4 pr-1">
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
-                                            @Html.TextBox("InterviewerAccDetails[0].AccountName", null, new { id = "txt_AccountName", @class = "form-control text-box single-line" })
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-sm-4 px-1">
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
-                                            @Html.TextBox("InterviewerAccDetails[0].AccountNumber", null, new { id = "txt_AccountNumber", @class = "form-control text-box single-line",@type="number" })
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-sm-4 pl-1">
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
-                                            @Html.TextBox("InterviewerAccDetails[0].IFSCCode", null, new { id = "txt_IFSCCode", @class = "form-control text-box single-line" })
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-sm-4 pr-1">
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
-                                            @Html.TextBox("InterviewerAccDetails[0].UPIId", null, new { id = "txt_UPIId", @class = "form-control text-box single-line" })
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-sm-4 px-1">
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> PAN</label>
-                                            @Html.TextBox("InterviewerAccDetails[0].PAN", null, new { id = "txt_PAN", @class = "form-control text-box single-line" })
-                                        </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    @for (int i = 0; i < 1; i++)
-                                    {
-                                        <div class="col-md-4 col-sm-4 pr-1">
-                                            <div class="form-group">
-                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
-                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountName, null, new { id = "txt_AccountName", @class = "form-control text-box single-line" })
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 col-sm-4 px-1">
-                                            <div class="form-group">
-                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
-                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountNumber, null, new { id = "txt_AccountNumber", @class = "form-control text-box single-line",@type = "number" })
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 col-sm-4 pl-1">
-                                            <div class="form-group">
-                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
-                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].IFSCCode, null, new { id = "txt_IFSCCode", @class = "form-control text-box single-line" })
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 col-sm-4 pr-1">
-                                            <div class="form-group">
-                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
-                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].UPIId, null, new { id = "txt_UPIId", @class = "form-control text-box single-line" })
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 col-sm-4 px-1">
-                                            <div class="form-group">
-                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="bankLocation">PAN</label>
-                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].PAN, null, new { id = "txt_", @class = "form-control text-box single-line" })
-                                                <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                            </div>
-                                        </div>
-                                    }
 
-                                }
+                                <div class="col-md-4 col-sm-4 pr-1">
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
+                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountName, null, new { @class = "form-control text-box single-line" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-4 px-1">
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
+                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountNumber, null, new { @class = "form-control text-box single-line", @type = "number" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-4 pl-1">
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
+                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.IFSCCode, null, new { @class = "form-control text-box single-line" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-4 pr-1">
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
+                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.UPIId, null, new { @class = "form-control text-box single-line" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-4 px-1">
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="bankLocation">PAN</label>
+                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.PAN, null, new { @class = "form-control text-box single-line" })
+                                    </div>
+                                </div>
 
 
                             </div>
@@ -330,10 +290,30 @@
     </div>
 </div>
 
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful",'@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+
+        }
+
+    </script>
+}
+
 
 <script>
 
-        function addAvailabilityDetails() {
+    function addAvailabilityDetails() {
 
         var table = document.getElementById("availabilityDetailsTable");
         var rowCount = table.rows.length;
@@ -373,7 +353,7 @@
     }
 
 
-        function deleteRowAvailabilityDetails(element, collectionName, tdOne, tdTwo, tdThree) {
+    function deleteRowAvailabilityDetails(element, collectionName, tdOne, tdTwo, tdThree) {
 
         if ($(element).parents('tbody').find('tr').length === 1) {
 

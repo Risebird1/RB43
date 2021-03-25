@@ -49,7 +49,8 @@ if(@roleId=1)
 			left join UserList ul on tcu.ClientUserId= ul.id
 
 			where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and im.ClientHrContact=@EmailId
-			and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
+			and irf.IsDeleted=0
+			--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
 			and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)
 			and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and QCF.QCStatus=1
 			order by im.interviewDate desc
@@ -76,7 +77,8 @@ if(@roleId=1)
 			left join UserList ul on tcu.ClientUserId= ul.id
 
 			where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and im.ClientHrContact=@EmailId
-			and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
+			and irf.IsDeleted=0
+			--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
 			and cast(interviewDate as date) >= cast(@startDate as date) and cast(interviewDate as date) <= cast(@endDate as date)
 			and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and QCF.QCStatus=1
 			order by im.interviewDate desc
@@ -106,7 +108,8 @@ if(@roleId=1)
 			left join UserList ul on tcu.ClientUserId= ul.id
 
 			where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and im.ClientHrContact=@EmailId
-			and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
+			and irf.IsDeleted=0
+			--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
 			and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and QCF.QCStatus=1
 			order by im.interviewDate desc
 
@@ -139,7 +142,8 @@ else if(@roleId=4)
 				left join UserList ul on tcu.ClientUserId= ul.id
 
 				where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and im.staffingAgency=@EmailId
-				and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
+				and irf.IsDeleted=0
+				--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
 				and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)
 				and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and QCF.QCStatus=1
 				order by im.interviewDate desc
@@ -167,7 +171,8 @@ else if(@roleId=4)
 				left join UserList ul on tcu.ClientUserId= ul.id
 
 				where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and im.staffingAgency=@EmailId
-				and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
+				and irf.IsDeleted=0
+				--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
 				and cast(interviewDate as date) >= cast(@startDate as date) and cast(interviewDate as date) <= cast(@endDate as date)
 				and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and QCF.QCStatus=1
 				order by im.interviewDate desc
@@ -195,7 +200,8 @@ else if(@roleId=4)
 				left join UserList ul on tcu.ClientUserId= ul.id
 
 				where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and im.staffingAgency=@EmailId
-				and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
+				and irf.IsDeleted=0
+				--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
 				and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and QCF.QCStatus=1
 				order by im.interviewDate desc
 
@@ -229,7 +235,8 @@ else
 				left join UserList ul on tcu.ClientUserId= ul.id
 
 				where ul.EmailId LIKE @EmailId AND ul.IsActive=1
-				and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
+				and irf.IsDeleted=0
+				--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
 				and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)
 				and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and QCF.QCStatus=1
 				order by im.interviewDate desc
@@ -258,7 +265,8 @@ else
 				left join UserList ul on tcu.ClientUserId= ul.id
 
 				where ul.EmailId LIKE @EmailId AND ul.IsActive=1
-				and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
+				and irf.IsDeleted=0
+				--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
 				and cast(interviewDate as date) >= cast(@startDate as date) and cast(interviewDate as date) <= cast(@endDate as date)
 				and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and QCF.QCStatus=1
 				order by im.interviewDate desc
@@ -286,7 +294,8 @@ else
 				left join UserList ul on tcu.ClientUserId= ul.id
 
 				where ul.EmailId LIKE @EmailId AND ul.IsActive=1
-				and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
+				and irf.IsDeleted=0
+				--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)
 				and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and QCF.QCStatus=1
 				order by im.interviewDate desc
 				

@@ -294,11 +294,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> DeleteIRF(int id)
+        public async Task<bool> ArchiveIRF(int id)
         {
             try
             {
-                return _irfRepository.DeleteIRF(id).Result;
+                return _irfRepository.ArchiveIRF(id).Result;
             }
 
             catch (Exception e)

@@ -104,7 +104,8 @@ namespace Risebird.Entities.ViewModel
         //public IList<InterviewerProfessional> InterviewerProfessionalDetails { get; set; }
         public IList<TransInterviewerProjects> InterviewerProjectsDetails { get; set; }
         public IList<TransInterviewerAvailability> InterviewerAvailabilityDetails { get; set; }
-        public IList<TransInterviewerAccDetails> InterviewerAccDetails { get; set; }
+        //public IList<TransInterviewerAccDetails> InterviewerAccDetails { get; set; }
+        public TransInterviewerAccDetails InterviewerAccDetails { get; set; }
         public IList<TransInterviewerCertificate> InterviewerCertificateDetails { get; set; }
 
         //To add in the dropdown List

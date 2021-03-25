@@ -44,7 +44,8 @@ if(@roleId=1)
 		left join UserList ul on tcu.ClientUserId= ul.id
 
 		where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and im.ClientHrContact=@EmailId
-		and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)   
+		and irf.IsDeleted=0
+		--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)   
 
 
 	End
@@ -71,7 +72,8 @@ else if(@roleId=4)
 		left join UserList ul on tcu.ClientUserId= ul.id
 
 		where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and im.staffingAgency=@EmailId
-		and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)   
+		and irf.IsDeleted=0
+		--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)   
 
 	End
 
@@ -97,7 +99,8 @@ else
 		left join UserList ul on tcu.ClientUserId= ul.id
 
 		where ul.EmailId LIKE @EmailId AND ul.IsActive=1
-		and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)   
+		and irf.IsDeleted=0
+		--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)   
 
 	End
        
