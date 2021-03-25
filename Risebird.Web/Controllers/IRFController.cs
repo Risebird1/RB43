@@ -5080,37 +5080,41 @@ namespace Risebird.Web.Controllers
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
             var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
             var interviewerids = _meetingService.FetchAllInterviewidfromIrf(IRFId);
-            var _resultlist = (from data in interviewerids
-                               select new SurveyDetails { interviewid = data }).ToList();
-            _resultlist = _resultlist.Distinct().ToList();
-            var resultset = _meetingService.FetchSurveyCandidateEmails(_resultlist);
-            bool flag = false;
-            foreach (var item in interviewerids)
+            if (interviewerids != null)
             {
-                if (result.Where(x => x.interviewid == item).Count() == 0)
+                var _resultlist = (from data in interviewerids
+                                   select new SurveyDetails { interviewid = data }).ToList();
+                _resultlist = _resultlist.Distinct().ToList();
+                var resultset = _meetingService.FetchSurveyCandidateEmails(_resultlist);
+                bool flag = false;
+                foreach (var item in interviewerids)
                 {
-                    var CandidateEmail = resultset.Where(x => x.interviewid == item).Select(x => x.Intervieweremail).FirstOrDefault();
-                    string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index/" + item;
-                    Mail _mail = new Mail
+                    if (result.Where(x => x.interviewid == item).Count() == 0)
                     {
-                        TO = CandidateEmail,
-                        Subject = "Risebird: Feedback form"
-                    };
-                    var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
-                    if (emailsend == "Mail sent successfully.")
-                    {
-                        flag = true;
+                        var CandidateEmail = resultset.Where(x => x.interviewid == item).Select(x => x.Intervieweremail).FirstOrDefault();
+                        string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index/" + item;
+                        Mail _mail = new Mail
+                        {
+                            TO = CandidateEmail,
+                            Subject = "Risebird: Feedback form"
+                        };
+                        var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
+                        if (emailsend == "Mail sent successfully.")
+                        {
+                            flag = true;
+                        }
                     }
                 }
+                if (flag == true)
+                {
+                    return Json("Success");
+                }
+                else
+                {
+                    return Json("fail");
+                }
             }
-            if (flag == true)
-            {
-                return Json("Success");
-            }
-            else
-            {
-                return Json("fail");
-            }
+            return Json("Success");
         }
     }
 }
