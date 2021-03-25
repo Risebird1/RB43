@@ -203,6 +203,16 @@ else
                                 </a>
                             </li>
                         }
+
+                        else if (m.sUrl == "/Survey/CandidateFeedBack")
+                        {
+                            <li id="candidatefeedback_menu" class="candidatetimeline">
+                                <a href="@m.sUrl">
+                                    <i class="fa fa-commenting-o"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
                         else if (m.sUrl == "/Interview/Index")
                         {
                             <li class="interviewmenu">
@@ -434,23 +444,23 @@ else
 
 
                             @*<div>
-                                    <input class="toggle-box" id="menu_Interviewer" type="checkbox">
-                                    <label for="menu_Interviewer">Interviewer</label>
-                                    <div>
-                                        <ul class="nav">
-                                            @foreach (var item in interviewerMenuList)
-                                            {
-                                                <li>
-                                                    <a href="@item.sUrl">
-                                                        <span class="sidebar-mini-icon">  @(new string(item.functionName.ToString().Split(' ').Select(x => x[0]).ToArray()))</span>
-                                                        <span class="sidebar-normal">     @item.functionName </span>
-                                                    </a>
-                                                </li>
-                                            }
+                            <input class="toggle-box" id="menu_Interviewer" type="checkbox">
+                            <label for="menu_Interviewer">Interviewer</label>
+                            <div>
+                                <ul class="nav">
+                                    @foreach (var item in interviewerMenuList)
+                                    {
+                                        <li>
+                                            <a href="@item.sUrl">
+                                                <span class="sidebar-mini-icon">  @(new string(item.functionName.ToString().Split(' ').Select(x => x[0]).ToArray()))</span>
+                                                <span class="sidebar-normal">     @item.functionName </span>
+                                            </a>
+                                        </li>
+                                    }
 
-                                        </ul>
-                                    </div>
-                                </div>*@
+                                </ul>
+                            </div>
+                        </div>*@
                         </li>
 
                     }

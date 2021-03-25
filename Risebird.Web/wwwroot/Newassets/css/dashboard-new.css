@@ -31,7 +31,12 @@ body {
     .clearfix:after {
         clear: both;
     }
-
+ .cadfName [data-tooltip]:before {
+    position: absolute;
+    bottom: 90%;
+    left: 90%;
+}
+    #interviewer.table.dataTable thead > tr > th.sorting{padding-right:0px!important;}
 .ch-btn {
     width: 220px;
     margin-right: 10px;

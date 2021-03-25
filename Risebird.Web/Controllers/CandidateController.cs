@@ -66,7 +66,7 @@ namespace Risebird.Web.Controllers
                     if (HttpContext.Session.GetString("CandidateTimelinefilters") != null)
                     {
                         var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateTimelinefilters"));
-                        
+
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
                             candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, profileName == "Client" ? emailid : null)).ToList();
@@ -501,7 +501,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                       
+
                         candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
                     }
 
@@ -708,10 +708,10 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 2].Value = item.CandidateEmailId;
                         Sheet.Cells[i, 3].Value = item.PrimarySkill;
                         Sheet.Cells[i, 4].Value = item.HREmail;
-                        if(item.ScheduleStatus!=null && item.ScheduleStatus.Count()!=0)
+                        if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
                         {
                             var addedOnData = item.ScheduleStatus.Where(x => x.Status == CandidateStatusOptions.Added.GetDescription())?.FirstOrDefault();
-                            if(addedOnData!=null)
+                            if (addedOnData != null)
                             {
                                 Sheet.Cells[i, 5].Value = addedOnData.Date + " " + addedOnData.StatusDate + ", " + addedOnData.Time;
                             }
@@ -720,7 +720,7 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 5].Value = string.Empty;
                             }
 
-                            if(item.ScheduleStatus.Where(x=>x.Status==MeetingStatus.Scheduled.GetDescription()).Any())
+                            if (item.ScheduleStatus.Where(x => x.Status == MeetingStatus.Scheduled.GetDescription()).Any())
                             {
                                 Sheet.Cells[i, 6].Value = ScheduleStatusTypes.Scheduled.GetDescription();
                             }
@@ -735,10 +735,10 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 6].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
                         }
 
-                        if(!string.IsNullOrEmpty(item.CurrentStatus))
+                        if (!string.IsNullOrEmpty(item.CurrentStatus))
                         {
                             Sheet.Cells[i, 7].Value = item.CurrentStatus;
-                            Sheet.Cells[i, 8].Value = item.CurrentStatusDate.HasValue && item.CurrentStatusDate.Value!=DateTime.MinValue? item.CurrentStatusDate.Value.ToString() : string.Empty;
+                            Sheet.Cells[i, 8].Value = item.CurrentStatusDate.HasValue && item.CurrentStatusDate.Value != DateTime.MinValue ? item.CurrentStatusDate.Value.ToString() : string.Empty;
                         }
                         else
                         {
@@ -916,48 +916,72 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult CandidatesJson(string searchValue)
+        public async Task<JsonResult> CandidatesJson(int id, string searchValue)
         {
             int Page = 1;
-            var candidateList = _candidateModelDetails;
-            if (!String.IsNullOrEmpty(searchValue))
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                searchValue = searchValue.ToUpper();
-                candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
 
-            }
-            int totalcount = candidateList.Count;
-            int Pagestart = 0;
-            int Pageend = 0;
-            ViewBag.TotalCount = candidateList.Count;
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
 
-            Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
-            int a = candidateList.Count / 10;
-            if (candidateList.Count % 10 == 0)
-            {
-                Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-            }
-            else
-            {
-                a = a + 1;
-                if (a == Page)
+
+                var meetings = (await _irfService.GetIRFInterviewMeetings(id, profileName, emailid))?.ToList();
+                var candidateList = (await _irfService.GetIRFCandidates(id))?.ToList();
+                if (profileName == "Recruiter")
                 {
-                    Pageend = candidateList.Count;
+                    var userId = _irfService.GetUserId(emailid, profileName);
+                    candidateList = candidateList.Where(x => x.AddedByUserId == userId).ToList();
+                }
+
+                if (candidateList != null && candidateList.Count > 0)
+                {
+
+                    candidateList.ForEach(x => x.InviteConfirmation = meetings.Where(y => Convert.ToInt32(y.confirmationStatus) == 1 && y.candidateEmail == x.EmailId).ToList().Count);
+                    candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatusOptions)x.Status).GetDescription());
+                    candidateList.ForEach(x => { x.confirmationStatusDesc = ((ReceiveMeetingStatus)x.confirmationStatus).GetDescription(); x.MeetingStatusDesc = ((MeetingStatus)x.MeetingStatus).GetDescription(); x.InterviewStatusDesc = ((InterviewStatus)x.InterviewStatus).GetDescription(); x.HeuristicsscoreDesc = ((Heuristicsscorelevel)x.Heuristicsscore).GetDescription(); });
+                }
+                if (!String.IsNullOrEmpty(searchValue))
+                {
+                    searchValue = searchValue.ToUpper();
+                    candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+
+                }
+                int totalcount = candidateList.Count;
+                int Pagestart = 0;
+                int Pageend = 0;
+
+                Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                int a = candidateList.Count / 10;
+                if (candidateList.Count % 10 == 0)
+                {
+                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
                 }
                 else
                 {
-                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                    a = a + 1;
+                    if (a == Page)
+                    {
+                        Pageend = candidateList.Count;
+                    }
+                    else
+                    {
+                        Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                    }
 
                 }
+                if (candidateList.Count == 0)
+                {
+                    Pagestart = 0;
+                    Pageend = 0;
+                }
 
+                return Json(new { result = candidateList.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = candidateList.Count });
             }
-            if (candidateList.Count == 0)
-            {
-                Pagestart = 0;
-                Pageend = 0;
-            }
-
-            return Json(new { result = candidateList.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = candidateList.Count });
+            else { return Json("Failed"); }
         }
         [Authorize]
         [HttpGet]
@@ -1673,7 +1697,7 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("GetCandidates", new { id = irfId, irfName = irfName });
-                
+
             }
 
         }
@@ -1814,7 +1838,7 @@ namespace Risebird.Web.Controllers
                         comment = nvc["comment"];
                     }
 
-                    
+
                     model.IRFId = irfId;
                     model.CandidateId = candidateId;
                     model.PerformedBy = emailid;
@@ -1823,7 +1847,7 @@ namespace Risebird.Web.Controllers
 
                     if (profileName != "Client")
                     {
-                        if(irfId!=0 && candidateId!=0 && status!=0)
+                        if (irfId != 0 && candidateId != 0 && status != 0)
                         {
                             if (Request.Form.Files.Count() > 0)
                             {
@@ -2293,7 +2317,7 @@ namespace Risebird.Web.Controllers
                     {
 
 
-                        var IRListModel = await  _meetingService.GetInteviewReport(model.imid, model.irfIntId);
+                        var IRListModel = await _meetingService.GetInteviewReport(model.imid, model.irfIntId);
                         if (IRListModel == null)
                         {
                             IRListModel = new InterviewReport();
@@ -2492,7 +2516,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 4].Value = "Phone(With Country code)";
                 Sheet.Cells[1, 5].Value = "Client HR Email ID";
                 Sheet.Cells[1, 6].Value = "Profile Source";
-                
+
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
 
             }
@@ -2588,7 +2612,7 @@ namespace Risebird.Web.Controllers
             return null;
         }
 
-        
+
 
 
         [Authorize]

@@ -22,7 +22,9 @@ body {
 td.detail-row {
     background-color: #fff;
 }
-
+#interviewer.table.dataTable > thead > tr > th.overlay-relative {
+    color: #000 !important
+}
 .child-section {
     background: #e5e5e5;
 }
