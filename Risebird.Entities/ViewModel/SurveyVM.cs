@@ -40,7 +40,7 @@ namespace Risebird.Entities.ViewModel
         public string interviewerEmail { get; set; }
         public string PrimarySkill { get; set; }
 
-
+        public bool IsClient { get; set; }
     }
     public class SurveyCandidateInterviewer
     {
@@ -53,5 +53,7 @@ namespace Risebird.Entities.ViewModel
     {
         public int Interviewerid { get; set; }
         public string Intervieweremail { get; set; }
+        public int interviewid { get; set; }
+        public string ClientName { get; set; }
     }
 }

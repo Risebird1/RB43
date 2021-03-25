@@ -18,6 +18,9 @@ body {
     border: 0px !important;
     border-radius: 0px;
 }
+#interviewer.table.dataTable > thead > tr > th.overlay-relative {
+    color: #000 !important
+}
 textarea::-webkit-scrollbar {
     background-color: var(#acacad, #565656) !important;
 }

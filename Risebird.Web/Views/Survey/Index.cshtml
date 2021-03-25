@@ -172,7 +172,7 @@
                 </div>
                 <br />
                 <div>
-                    <input type="button" class="btn btn-primary card-title-space" value="Submit" onclick="formsubmit()" />
+                    <input type="button" id="btnSubmit" class="btn btn-primary card-title-space" value="Submit" onclick="formsubmit()" />
                 </div>
             }
         </div>
@@ -188,6 +188,7 @@
     function formsubmit() {
         var returnvalue = ValidCaptcha();
         if (returnvalue == true) {
+            $("#btnSubmit").attr("disable", "disable");
             $("#surveyform").submit();
         }
         else {

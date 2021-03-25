@@ -197,31 +197,63 @@
 
 
                         </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="panel-title-box">
+                                    <h3><span>Candidate Survey Feedback</span></h3>
 
+                                </div>
+
+                                <div id="slotsId">
+                                    <div class="panel-body panel-body-table">
+                                        <div>
+                                            <div class="">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered table-striped">
+                                                        <tr>
+                                                            <td>OverAll Interview Rating</td>
+                                                            <td><span id="canfeedInterviewrating">0.00 Out of 5</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>OverAll Interviewer Rating</td>
+                                                            <td><span id="canfeedInterviewerrating">0.00 Out of 5</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>OverAll Scheduling Rating</td>
+                                                            <td><span id="canfeedschedulerating">0.00 Out of 5</span></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
 
 
                             @*<div class="col-md-6 col-lg-6 col-sm-6">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <p style="width:100%" class="card-text">Candidates Current Status: <span><strong>@Model.CandidatesCountObj.TotalCount</strong></span></p>
-                                        <div>
-                                            <div id="candidatesPieId" class="PieId"></div>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <p style="width:100%" class="card-text">Candidates Current Status: <span><strong>@Model.CandidatesCountObj.TotalCount</strong></span></p>
+                                            <div>
+                                                <div id="candidatesPieId" class="PieId"></div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                            </div>*@
+                                </div>*@
                             @*<div class="col-md-6 col-lg-6 col-sm-6">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <p class="card-text">Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
-                                        <div>
-                                            <div id="meetingsCountId" class="PieId"></div>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <p class="card-text">Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
+                                            <div>
+                                                <div id="meetingsCountId" class="PieId"></div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>*@
+                                </div>*@
 
 
 
@@ -229,6 +261,7 @@
 
                         </div>
                     </div>
+
                 </div>
                 <!-- END DASHBOARD CHART -->
 
@@ -612,7 +645,7 @@
             { y: @Model.CandidatesCountObj.Scheduled, label: "Scheduled" },
             { y: @Model.CandidatesCountObj.QCPending, label: "QC Pending" },
             { y: @Model.CandidatesCountObj.NotYetScheduled, label: "Not Yet Scheduled" }
-            
+
         ]
 
             //var chart = new CanvasJS.Chart("candidatesPieId", {
@@ -635,7 +668,7 @@
             //chart.render();
 
 
-        
+
 
     }
 
@@ -718,6 +751,17 @@
         $('[data-toggle="tooltip"]').tooltip();
     });
 </script>
-
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '/Survey/FetchCandidateFeedBackDetails',
+            success: function (data) {
+                $("#canfeedInterviewrating").text(data.avgQ1 + " Out of 5");
+                $("#canfeedInterviewerrating").text(data.avgQ2 + " Out of 5");
+                $("#canfeedschedulerating").text(data.avgQ6 + " Out of 5");
+            }
+        });
+    });
+</script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
