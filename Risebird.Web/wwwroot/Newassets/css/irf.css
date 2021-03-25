@@ -896,8 +896,8 @@ input[type=number] {
 
 .step-btn {
     position: absolute;
-    top: 0px;
-    right: 75px;
+    top: 15px;
+    right: 65px;
 }
 
 .blink_me {
@@ -1523,8 +1523,8 @@ input[type=number] {
 
     .step-btn {
         position: absolute;
-        top: 0px;
-        right: 15px;
+        top: 15px;
+        right: 65px;
     }
 }
 

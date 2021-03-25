@@ -197,22 +197,20 @@ namespace Risebird.Repository
                     }
                 }
 
-                foreach (var item in interviewerProfile.InterviewerAccDetails)
+                //add interviewer account details
+                DynamicParameters paramsAccount = new DynamicParameters();
+                paramsAccount.Add("@InterviewerProfileId", ProfileId);
+                paramsAccount.Add("@AccountName", interviewerProfile.InterviewerAccDetails.AccountName);
+                paramsAccount.Add("@AccountNumber", interviewerProfile.InterviewerAccDetails.AccountNumber);
+                paramsAccount.Add("@IFSCCode", interviewerProfile.InterviewerAccDetails.IFSCCode);
+                paramsAccount.Add("@UPIId", interviewerProfile.InterviewerAccDetails.UPIId);
+                paramsAccount.Add("@PAN", interviewerProfile.InterviewerAccDetails.PAN);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    DynamicParameters Params = new DynamicParameters();
-                    Params.Add("@InterviewerProfileId", ProfileId);
-                    Params.Add("@AccountName", item.AccountNumber);
-                    Params.Add("@AccountNumber", item.AccountNumber);
-                    Params.Add("@IFSCCode", item.IFSCCode);
-                    Params.Add("@UPIId", item.UPIId);
-                    Params.Add("@PAN", item.PAN);
+                    await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAccDetails", paramsAccount,
+                   commandType: CommandType.StoredProcedure);
 
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAccDetails", Params,
-                       commandType: CommandType.StoredProcedure);
-
-                    }
                 }
 
                 return true;
@@ -805,7 +803,7 @@ namespace Risebird.Repository
         }
 
         //AccDetails
-        public async Task<IEnumerable<TransInterviewerAccDetails>> GetAccDetailsList(int ProfileId)
+        public async Task<TransInterviewerAccDetails> GetAccDetailsList(int ProfileId)
         {
             try
             {
@@ -815,9 +813,9 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     //Id, InterviewerProfileId,  AccountHolderName, AccountNumber, IFSCCode, Location, UPIId
-                    return await SqlMapper.QueryAsync<TransInterviewerAccDetails>(
+                    return (await SqlMapper.QueryAsync<TransInterviewerAccDetails>(
                         con, "select * from [dbo].[TransInterviewerAccDetails] where InterviewerProfileId = @ProfileId",
-                        parameters, commandType: Text);
+                        parameters, commandType: Text)).FirstOrDefault();
                 }
             }
             catch (SqlException ex)
@@ -907,22 +905,20 @@ namespace Risebird.Repository
                     }
                 }
 
-                foreach (var item in interviewerProfile.InterviewerAccDetails)
+                //add interviewer account details
+                DynamicParameters paramsAccount = new DynamicParameters();
+                paramsAccount.Add("@InterviewerProfileId", ProfileId);
+                paramsAccount.Add("@AccountName", interviewerProfile.InterviewerAccDetails.AccountName);
+                paramsAccount.Add("@AccountNumber", interviewerProfile.InterviewerAccDetails.AccountNumber);
+                paramsAccount.Add("@IFSCCode", interviewerProfile.InterviewerAccDetails.IFSCCode);
+                paramsAccount.Add("@UPIId", interviewerProfile.InterviewerAccDetails.UPIId);
+                paramsAccount.Add("@PAN", interviewerProfile.InterviewerAccDetails.PAN);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    DynamicParameters Params = new DynamicParameters();
-                    Params.Add("@InterviewerProfileId", ProfileId);
-                    Params.Add("@AccountName", item.AccountNumber);
-                    Params.Add("@AccountNumber", item.AccountNumber);
-                    Params.Add("@IFSCCode", item.IFSCCode);
-                    Params.Add("@UPIId", item.UPIId);
-                    Params.Add("@PAN", item.PAN);
+                    await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAccDetails", paramsAccount,
+                   commandType: CommandType.StoredProcedure);
 
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAccDetails", Params,
-                       commandType: CommandType.StoredProcedure);
-
-                    }
                 }
                 return true;
             }

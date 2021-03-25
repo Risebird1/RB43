@@ -210,7 +210,7 @@ namespace Risebird.Repository
                         parameters.Add("@searchValueParam", searchValue);
                         parameters.Add("@startDateParam", startDate);
                         parameters.Add("@endDateParam", endDate);
-                        parameters.Add("@timeNow", DateTime.Now);
+                        //parameters.Add("@timeNow", DateTime.Now);
                         return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsFilteredDup", parameters,
                             commandType: CommandType.StoredProcedure);
                     }
@@ -3359,7 +3359,7 @@ namespace Risebird.Repository
                         parameters.Add("@clientIdParam", clientId);
                         parameters.Add("@startDateParam", startDate);
                         parameters.Add("@endDateParam", endDate);
-                        parameters.Add("@timeNow", DateTime.Now);
+                        //parameters.Add("@timeNow", DateTime.Now);
                         var result = await SqlMapper.QueryAsync<int>(con, "usp_GetRisetubeIndexMeetingsFilteredCountDup", parameters,
                             commandType: CommandType.StoredProcedure);
                         return result.FirstOrDefault();

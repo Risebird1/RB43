@@ -2139,7 +2139,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> DeleteIRF(int IRFId)
+        public async Task<bool> ArchiveIRF(int IRFId)
         {
             try
             {

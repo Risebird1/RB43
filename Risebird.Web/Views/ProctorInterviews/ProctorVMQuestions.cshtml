@@ -50,12 +50,14 @@
                                         <table class="table table-bordered mbn" id="questionsTable">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-center" style="font-size:15px!important;">Question</th>
-                                                    <th class="text-center" style="font-size:15px!important;">Detail</th>
+                                                    <th class="text-center" style="        font-size: 15px !important;
+        width:200px;
+">Question</th>
+                                                    <th class="text-center" style="font-size:15px!important; width:200px;">Detail</th>
                                                     <th class="text-center" style="font-size:15px!important;">Priority</th>
                                                     <th class="text-center" style="font-size:15px!important;">VideoLink</th>
                                                     <th class="text-center" style="font-size:15px!important;">Skill</th>
-                                                    <th class="text-center" style="font-size:15px!important;">Level</th>
+                                                    <th class="text-center" style="font-size:15px!important;width:100px;">Level</th>
                                                     <th class="text-center" style="font-size:15px!important;">Time</th>
                                                     <th class="text-center" style="font-size:15px!important;">Actions</th>
                                                 </tr>
@@ -65,11 +67,11 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            <input type="text" class="form-control text-box single-line" id="QuestionList_0__Question" name="QuestionList[0].Question" />
+                                                            <input style="width:200px" type="text" class="form-control text-box single-line" id="QuestionList_0__Question" name="QuestionList[0].Question" />
                                                         </td>
 
                                                         <td>
-                                                            <input type="text" class="form-control text-box single-line" id="QuestionList_0__Detail" name="QuestionList[0].Detail" />
+                                                            <input style="width:200px" type="text" class="form-control text-box single-line" id="QuestionList_0__Detail" name="QuestionList[0].Detail" />
                                                         </td>
                                                         <td>
                                                             <input type="number" class="form-control text-box single-line" id="QuestionList_0__Priority" name="QuestionList[0].Priority" />
@@ -81,7 +83,7 @@
                                                             <input type="text" class="form-control text-box single-line" id="QuestionList_0__Skill" name="QuestionList[0].Skill" />
                                                         </td>
                                                         <td>
-                                                            <select class="select-css form-control" id="QuestionList_0__Level" name="QuestionList[0].Level" asp-items="Html.GetEnumSelectList<QuestionLevel>()"></select>
+                                                            <select  class="select-css form-control" id="QuestionList_0__Level" name="QuestionList[0].Level" asp-items="Html.GetEnumSelectList<QuestionLevel>()"></select>
 
                                                         </td>
                                                         <td>
