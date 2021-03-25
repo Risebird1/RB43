@@ -277,9 +277,15 @@ namespace Risebird.Web.Controllers
         /// <param name="flag"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> GetInterviewerPaymentDetails(int id, int flag)
+        public async Task<JsonResult> GetInterviewerPaymentDetails(int id, int flag, DateTime st, DateTime se)
         {
             var model = await _meetingService.RBInterviewerDetails(id, flag);
+            if (flag == 2)
+            {
+                var model1 = model.Where(x => x.Status == "Advance").ToList();
+                model = model.Where(x => x.Date >= st && x.Date <= se).ToList();
+                model = model.Union(model1).ToList();
+            }
             foreach (var item in model)
             {
                 item.MeetingStatusDetails = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
@@ -295,9 +301,9 @@ namespace Risebird.Web.Controllers
         /// <param name="Comment"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> AddPointsforInterviewer(int id, int Points, string Comment)
+        public async Task<JsonResult> AddPointsforInterviewer(int id, int Points, string Comment, DateTime PointDate)
         {
-            var model = await _meetingService.RBAddPoints(id, Points, Comment);
+            var model = await _meetingService.RBAddPoints(id, Points, Comment, PointDate);
             return Json(model);
         }
         /// <summary>
@@ -331,10 +337,11 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<IActionResult> ConfirmPayment(int id, int index, string email, string amount)
+        public async Task<IActionResult> ConfirmPayment(int id, int index, string email, string amount, DateTime st, DateTime se)
         {
+
             var resultset = await _meetingService.RBInterviewerDetails(id, index);
-            var paymenthistory = await _meetingService.InsertPaymentHistory(email, Convert.ToInt32(amount), "Done");
+
             //Start: Create PDF File
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_RBpayment.pdf";
             Document doc = new Document(iTextSharp.text.PageSize.A4, 10, 10, 42, 35);
@@ -360,7 +367,9 @@ namespace Risebird.Web.Controllers
             doc.Add(table);
             doc.Close();
             //End: Create PDF File
-            var model = await _meetingService.RBConfirmPayment(id, index);
+            var model = await _meetingService.RBConfirmPayment(id, index, st, se);
+            var commentvalue = st.ToString() + " to " + se.ToString();
+            var paymenthistory = await _meetingService.InsertPaymentHistory(email, Convert.ToInt32(amount), "Done", commentvalue);
             //Start:Send email to Interviewer
             Mail _mail = new Mail
             {
@@ -453,7 +462,7 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> AdvancePayment(string Interviewer, string Comment, int Amount)
         {
             var model = await _meetingService.InsertAdvancePayment(Interviewer, Comment, Amount);
-            var paymenthistory = await _meetingService.InsertPaymentHistory(Interviewer, Amount, "Advance");
+            var paymenthistory = await _meetingService.InsertPaymentHistory(Interviewer, Amount, "Advance", "");
             var result = "";
             if (model == "Success")
             {

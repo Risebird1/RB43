@@ -226,7 +226,7 @@
                         <div class="modal-body">
 
                             <input type="hidden" id="txtInterviewerid" />
-
+                            <div class="col-md-12"><p class="desp-label" style="margin-bottom: 5px; font-size: 16px;">Date</p><input type="date" id="addPointDate" class="form-control" style="margin-bottom: 10px;" /></div>
                             <div class="col-md-12"><p class="desp-label" style="margin-bottom: 5px; font-size: 16px;">Please Add Points</p><input type="number" id="txtPoints" placeholder="Please Add Points" class="form-control" style="margin-bottom: 10px;" /></div>
 
                             <div class="col-md-12"> <p class="desp-label" style="margin-bottom: 5px; font-size: 16px;">Please Enter Comment</p><input type="text" id="txtComments" placeholder="Please Enter Comment" class="form-control" style="margin-bottom: 10px;" /></div>
@@ -439,7 +439,7 @@
         $.ajax({
             type: "POST",
             url: "/Finance/GetInterviewerPaymentDetails",
-            data: { 'id': interviewerid, 'flag': Generateinvoiceflag },
+            data: { 'id': interviewerid, 'flag': Generateinvoiceflag, 'st': St_date, 'se': Se_date },
             success: function (data) {
                 binddata(data);
             }
@@ -459,30 +459,39 @@
         $("#txtqueryEmailid").val(Emailid);
     }
     function AddPoints() {
-        $(".loader").show();
-        if ($("#txtPoints").val().trim() != "" && $("#txtComments").val().trim() != "") {
-            $.ajax({
-                type: "POST",
-                url: "/Finance/AddPointsforInterviewer",
-                data: { 'id': $("#txtInterviewerid").val(), 'Points': $("#txtPoints").val(), 'Comment': $("#txtComments").val() },
-                success: function (data) {
+        var addpointdate = $("#addPointDate").val();
+        if (addpointdate.trim() != "") {
+            var add_pointdate = new Date(addpointdate);
+            var today = new Date();
+            if (add_pointdate <= today) {
+                $(".loader").show();
+                if ($("#txtPoints").val().trim() != "" && $("#txtComments").val().trim() != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Finance/AddPointsforInterviewer",
+                        data: { 'id': $("#txtInterviewerid").val(), 'Points': $("#txtPoints").val(), 'Comment': $("#txtComments").val(), 'PointDate': addpointdate },
+                        success: function (data) {
+                            $(".loader").hide();
+                            if (data == "Success") {
+                                Swal.fire("Points are added successfully.");
+                            } else {
+                                Swal.fire("Fail to add Points.");
+                            }
+                            if (Generateinvoiceflag == 2) {
+                                closemyAddpointsModel();
+                                SearchInvoice();
+                            } else {
+                                window.location.href = "/Finance/FNPayment";
+                            }
+                        }
+                    });
+                } else {
                     $(".loader").hide();
-                    if (data == "Success") {
-                        Swal.fire("Points are added successfully.");
-                    } else {
-                        Swal.fire("Fail to add Points.");
-                    }
-                    if (Generateinvoiceflag == 2) {
-                        closemyAddpointsModel();
-                        SearchInvoice();
-                    } else {
-                        window.location.href = "/Finance/FNPayment";
-                    }
+                    Swal.fire("All fields are required.");
                 }
-            });
-        } else {
-            $(".loader").hide();
-            Swal.fire("All fields are required.");
+            } else {
+                Swal.fire("Date Should not be greater then Today date.");
+            }
         }
     }
     function SendQuery() {
@@ -551,7 +560,7 @@
             confirmButtonText: 'Yes',
         }).then((result) => {
             if (result.value) {
-                window.location.href = "/Finance/ConfirmPayment?id=" + interviewerid + "&index=" + Generateinvoiceflag + "&email=" + $("#hidcomment_" + interviewerid).val() + "&amount=" + $("#hidpoint_" + interviewerid).val();
+                window.location.href = "/Finance/ConfirmPayment?id=" + interviewerid + "&index=" + Generateinvoiceflag + "&email=" + $("#hidcomment_" + interviewerid).val() + "&amount=" + $("#hidpoint_" + interviewerid).val() + "&st=" + St_date + "&se=" + Se_date;
             }
         })
     }
@@ -597,6 +606,7 @@
     var St_date;
     var Se_date;
     $(document).ready(function () {
+        document.getElementById('addPointDate').value = new Date().toISOString().slice(0, 10);
         $("#adtxtEmailid").autocomplete({
             source: function (request, response) {
                 $.ajax({
@@ -651,7 +661,7 @@
         if (st.trim() != "" && se.trim() != "") {
             var stdate = new Date(st);
             var sedate = new Date(se);
-            if (sedate <= stdate) {
+            if (sedate < stdate) {
                 Swal.fire("Start date should be less than End Date");
             } else {
                 $.ajax({

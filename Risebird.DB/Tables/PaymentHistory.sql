@@ -8,6 +8,7 @@ CREATE TABLE [dbo].[PaymentHistory](
 	[PaymentDate] [datetime] NULL,
 	[Amount] [int] NULL,
 	[Status] [varchar](10) NULL,
+	[Comment] [varchar](100) Null,
  CONSTRAINT [PK_PaymentHistory] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC

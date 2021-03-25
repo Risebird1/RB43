@@ -29,6 +29,7 @@ namespace Risebird.Web.Controllers
             SurveyVM model = new SurveyVM();
             model.interviewid = id;
             model.Type = "Candidate";
+            ViewBag.Status = "";
             return View(model);
         }
         [HttpPost]
@@ -81,6 +82,7 @@ namespace Risebird.Web.Controllers
             {
                 Console.WriteLine(ex1.InnerException);
             }
+            ViewBag.Status = "Complete";
             return View();
         }
         public IActionResult InterviewerSurvey(int id)
