@@ -3655,15 +3655,8 @@ namespace Risebird.Repository
                 var query = "";
                 if (index == 2)
                 {
-                    //query = "Update InterviewPoints set Status='Paid' where userid=@Userid and (status='Submitted' or status='Pending' or status='Advance')";
-                    query = "Update InterviewPoints set Status='Paid' where userid=@Userid and status='Advance'";
-                    var dynamicParameters = new DynamicParameters();
-                    dynamicParameters.Add("@Userid", interviewerid);
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var results = await con.QueryAsync(query, dynamicParameters);
-                    }
                     query = "Update ip Set ip.Status='Paid' from InterviewPoints ip left join InterviewMeetings im on im.id=ip.Interviewid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
+                    var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@st", st);
                     dynamicParameters.Add("@se", se);
                     using (SqlConnection con = new SqlConnection(connectionString))
@@ -3674,8 +3667,15 @@ namespace Risebird.Repository
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync(query, dynamicParameters);
-                        return "Success";
                     }
+                    query = "Update InterviewPoints set Status='Paid' where userid=@Userid and status='Advance'";
+                    var dynamicParameters1 = new DynamicParameters();
+                    dynamicParameters1.Add("@Userid", interviewerid);
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = await con.QueryAsync(query, dynamicParameters1);
+                    }
+                    return "Success";
                 }
                 else
                 {
