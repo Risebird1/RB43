@@ -1453,9 +1453,9 @@ table.interviewertable th, table.interviewertable td {
 }
 
 .scroller-payment {
-    height: 270px;
+    height: 200px;
 }
-
+.rbpay .modal-dialog{max-width:850px!important}
 .video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
     position: absolute;
     bottom: 100%;
@@ -3488,6 +3488,9 @@ button.btn {
 @media (max-width: 767px) {
     .timer {
         font-size: 15px !important;
+    }
+    .rbpay .modal-dialog {
+        max-width:100% !important
     }
     .mobpad{padding:0px!important;}
 
