@@ -1533,7 +1533,7 @@
     color: #fff !important;
     z-index: 10000000000;
 }
-#divDetailedView table th.overlay-relative, table.dataTable > thead > th.overlay-relative, table.journey th.overlay-relative {
+#divDetailedView table th.overlay-relative, table.dataTable > thead > th.overlay-relative, table.journey th.overlay-relative, table.table-bordered.dataTable th.overlay-relative {
     background: #e0e0e0 !important;
 }
 

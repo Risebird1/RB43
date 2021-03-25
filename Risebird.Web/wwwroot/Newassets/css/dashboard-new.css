@@ -2231,6 +2231,11 @@ a.list-group-item:focus {
                     font-weight: normal
                 }
 
+.seniority.overlay-relative {
+    color: #fff;
+    font-weight: normal
+}
+
     .panel .panel-heading,
     .panel .panel-footer,
     .panel .panel-body {
@@ -3680,10 +3685,15 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     background: rgba(0,0,0,.8);
     z-index: 1;
 }
+.table-striped.table-bordered th.overlay-relative{color:#000;}
 
 .overlay-relative {
     position: relative;
     z-index: 7;
+}
+.statusInfo .overlay-relative {
+    color: #fff;
+    font-weight: normal
 }
 #statusListModal .scrollers {
     height: 430px;
