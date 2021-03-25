@@ -2431,6 +2431,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<SurveyDetails> FetchSurveyCandidateEmails(List<SurveyDetails> _lst)
+        {
+            try
+            {
+                var _survey = _meetingRespository.FetchSurveyCandidateEmails(_lst);
+                return _survey;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 

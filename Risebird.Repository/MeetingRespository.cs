@@ -4069,6 +4069,42 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public IEnumerable<SurveyDetails> FetchSurveyCandidateEmails(List<SurveyDetails> _lst)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable Surveysetdt = new DataTable();
+                    Surveysetdt.Columns.Add("CuratedGroupId", typeof(int));
+                    Surveysetdt.Columns.Add("IRFId", typeof(int));
+                    Surveysetdt.Columns.Add("IsAdded", typeof(bool));
 
+                    foreach (var item in _lst)
+                    {
+                        Surveysetdt.Rows.Add(item.interviewid, 0, true);
+                    }
+
+                    SqlCommand cmdSurveyset = new SqlCommand("usp_SurveyCandidateEmail", con);
+                    cmdSurveyset.CommandType = CommandType.StoredProcedure;
+                    cmdSurveyset.Parameters.Add(new SqlParameter("@SurveyBulkDetails", SqlDbType.Structured));
+                    cmdSurveyset.Parameters["@SurveyBulkDetails"].Value = Surveysetdt;
+                    con.Open();
+                    var result = new List<SurveyDetails>();
+                    var dr = cmdSurveyset.ExecuteReader();
+                    while (dr.Read())
+                    {
+                        result.Add(new SurveyDetails { interviewid = Convert.ToInt32(dr["interviewid"].ToString()), Intervieweremail = dr["EmailAddress"].ToString() });
+                    }
+                    con.Close();
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

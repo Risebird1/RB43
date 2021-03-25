@@ -131,5 +131,6 @@ namespace Risebird.Business.Interface
         IEnumerable<int> FetchAllInterviewidfromIrf(string IRFid);
         IEnumerable<int> FetchAllInterviewidByClient(int Clientid, string emailid);
         IEnumerable<SurveyDetails> FetchSurveyClientName(List<SurveyDetails> _lst);
+        IEnumerable<SurveyDetails> FetchSurveyCandidateEmails(List<SurveyDetails> _lst);
     }
 }
