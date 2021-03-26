@@ -2458,7 +2458,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue)
+     
         public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue,string Comment)
         {
             try

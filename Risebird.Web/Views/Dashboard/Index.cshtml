@@ -189,6 +189,35 @@
                                         </tr>
                                     </table>
                                 </td>
+                                <td width="20%" style="border: 0px; padding: 0px; height: 0px; line-height: 30px;">
+                                    <table width="100%">
+                                        <tr>
+                                            <td class="un-right">
+                                                @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>*@
+
+
+                                                <div class="flipper">
+                                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('ZoomLink')">
+                                                        <div class="card-image">
+                                                            <div class="header-front"></div>
+                                                            <span style="cursor:pointer" id="ribbonmissingzoomlinkcount" class="card-title">@Model.NotUpdatedMeetingsObj.MissingZoomLink</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('ZoomLink')">
+                                                        <div class="card-image">
+                                                            <div class="header-back"></div>
+                                                            <span style="cursor:pointer" id="ribbonmissingzoomlinkcount_1" class="card-title">@Model.NotUpdatedMeetingsObj.MissingZoomLink</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </td>
+                                            <td class="text-left un-left"><strong>Missing ZoomLink</strong></td>
+
+                                        </tr>
+                                    </table>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -1084,11 +1113,13 @@
                 $("#ribbonunfilledmeetingstatuscount").text(data.unfilledMeetingStatusCount);
                 $("#ribbonunfilledinterviewstatuscount").text(data.unfilledInterviewStatusCount);
                 $("#ribbonunfilledcommentscount").text(data.unfilledCommentsCount);
+                $("#ribbonmissingzoomlinkcount").text(data.missingZoomLink);
 
                 $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
                 $("#ribbonunfilledinterviewstatuscount_1").text(data.unfilledInterviewStatusCount);
                 $("#ribbonunfilledcommentscount_1").text(data.unfilledCommentsCount);
+                $("#ribbonmissingzoomlinkcount_1").text(data.missingZoomLink);
             }
         });
         $(".flipper").toggleClass("flip");
