@@ -306,14 +306,14 @@
                                                         <th style="border-left: 0px !important;">Date</th>
                                                         <th style="text-align:center">Slot</th>
                                                         <th style="text-align:center">Call Candidate</th>
-                                                        <th style="text-align:center">Call Coordinating HR</th>
+                                                        <th style="text-align:center">Call HR</th>
                                                         <th id="myinterview_4">Candidate Name</th>
                                                         <th>Duration</th>
                                                         <th id="myinterview_5">JD Link</th>
                                                         <th>Skill Channel</th>
                                                         <th id="myinterview_6">Resume</th>
                                                         <th id="myinterview_7">Zoom ID</th>
-                                                        <th class="disabled-sorting text-right">Actions</th>
+                                                        <th class="disabled-sorting text-left">Actions</th>
 
                                                     </tr>
 
@@ -331,7 +331,7 @@
                                                         <th>Skill Channel</th>
                                                         <th>Resume</th>
                                                         <th>Zoom ID</th>
-                                                        <th class="disabled-sorting text-right">Actions</th>
+                                                        <th class="disabled-sorting text-left">Actions</th>
 
                                                     </tr>
 
@@ -449,7 +449,7 @@
                                                     else { <td></td>}
 
 
-                                                            <td class="text-right">
+                                                            <td class="text-left">
                                                                 <button id="myinterview_8" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interview Survey">
                                                                     <span onclick="CandidateFeedback(@item.id)" title="Interview Survey" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fa fa-commenting-o"></i></span>
                                                                 </button>
@@ -744,6 +744,7 @@
                 });
     }
 </script>
+
 <script type="text/javascript">
     //// script for loader starts here
     $(".dataloading").hide();
@@ -890,7 +891,7 @@
             textMsg = "Unassigning at this hour will lead to a penalty. Note: Update Risebird HR, before unassigning interview."
         }
         else {
-            textMsg = "The Interview will be unassigned! Note: Update Risebird HR, before unassigning interview.";
+            textMsg = "Unassigned interview at the last minute results in reducing your interviewing quality score.  Note: Please make sure to update Risebird HR, before unassigning interview.";
         }
 
 
@@ -1026,12 +1027,10 @@
 
     }
 </script>
+
+
 <script>
 
-    function RefreshSearch() {
-        $(".dataTables_filter input").val('');
-        searchResult();
-    }
     function FilterInterviews(filterValue) {
 
         $.ajax({
