@@ -704,7 +704,7 @@ namespace Risebird.Repository
                 dp.Add("@currentdate", currentdate);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<NotUpdatedMeetings>(con, "usp_GetNotUpdatedMeetingsCount",dp,
+                    var result = await SqlMapper.QueryAsync<NotUpdatedMeetings>(con, "usp_GetNotUpdatedMeetingsCount", dp,
                         commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
@@ -883,6 +883,10 @@ namespace Risebird.Repository
                     //query = "select * from InterviewMeetings im  where confirmationStatus=1 and risebirdHR is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
                     query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id where confirmationStatus=1 and im.HRCoordinatorEmailId is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
                 }
+                else if (actionstatus == "ZoomLink")
+                {
+                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id where confirmationStatus=1 and (zoomLink is null or zoomLink='')";
+                }
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -890,6 +894,10 @@ namespace Risebird.Repository
                     if (actionstatus == "MeetingStatus")
                     {
                         results = results.Where(x => x.interviewDate < DateTime.Now).ToList();
+                    }
+                    if (actionstatus == "ZoomLink")
+                    {
+                        results = results.Where(x => x.interviewDate > DateTime.Now).ToList();
                     }
                     return (List<MeetingVM>)results;
                 }
@@ -930,13 +938,20 @@ namespace Risebird.Repository
                     //query = "select * from InterviewMeetings im  where confirmationStatus=1 and risebirdHR is null";
                     query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id where confirmationStatus=1 and im.HRCoordinatorEmailId is null";
                 }
-
+                else if (actionstatus == "ZoomLink")
+                {
+                    query = "select * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id where confirmationStatus=1 and (zoomLink is null or zoomLink='')";
+                }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<MeetingVM>(query, null);
                     if (actionstatus == "MeetingStatus")
                     {
                         results = results.Where(x => x.interviewDate < DateTime.Now).ToList();
+                    }
+                    if (actionstatus == "ZoomLink")
+                    {
+                        results = results.Where(x => x.interviewDate > DateTime.Now).ToList();
                     }
                     return (List<MeetingVM>)results;
                 }
