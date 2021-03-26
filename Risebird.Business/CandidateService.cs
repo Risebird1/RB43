@@ -69,7 +69,7 @@ namespace Risebird.Business
         {
             try
             {
-                var link = string.Format("https://risebirdtestportal.azurewebsites.net/TwilioVoice/Index?irfId={0}", irfId.ToString());
+                var link = string.Format("https://portal.risebird.io/TwilioVoice/Index?irfId={0}", irfId.ToString());
                 var url = new Uri(link);
                 TwilioClient.Init(twilioAccountSID, twilioAuthToken);
                 var to = new PhoneNumber(phoneNumber);
