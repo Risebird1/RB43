@@ -40,7 +40,8 @@ namespace Risebird.Web.Controllers
         private IInterviewerSkillsService _iInterviewerSkillsService;
         private readonly ICandidateService _candidateService;
         private IInterviewerService _interviewerService;
-        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService)
+        private readonly INotificationHelper _notificationHelper;
+        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -54,6 +55,7 @@ namespace Risebird.Web.Controllers
             _iInterviewerSkillsService = iInterviewerSkillsService;
             _candidateService = candidateService;
             _interviewerService = interviewerService;
+            _notificationHelper = notificationHelper;
         }
 
 
@@ -1390,7 +1392,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                     ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
                     ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
-                   // ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
+                    // ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
 
                     var Skillset = _irfRepository.GetSkills();
                     if (Skillset != null)
@@ -1464,7 +1466,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-       
+
         public async Task<IActionResult> EditIRF(IRFVm model)
         {
             try
@@ -5052,6 +5054,49 @@ namespace Risebird.Web.Controllers
                 Rng.Value = "No data available in table !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
+        }
+        [Authorize]
+        public JsonResult SendEmailForCandidateFeedbackByIRF(string IRFId)
+        {
+            var modelData = new List<SurveyVM>();
+            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+            var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
+            var interviewerids = _meetingService.FetchAllInterviewidfromIrf(IRFId);
+            if (interviewerids != null)
+            {
+                var _resultlist = (from data in interviewerids
+                                   select new SurveyDetails { interviewid = data }).ToList();
+                _resultlist = _resultlist.Distinct().ToList();
+                var resultset = _meetingService.FetchSurveyCandidateEmails(_resultlist);
+                bool flag = false;
+                foreach (var item in interviewerids)
+                {
+                    if (result.Where(x => x.interviewid == item).Count() == 0)
+                    {
+                        var CandidateEmail = resultset.Where(x => x.interviewid == item).Select(x => x.Intervieweremail).FirstOrDefault();
+                        string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index/" + item;
+                        Mail _mail = new Mail
+                        {
+                            TO = CandidateEmail,
+                            Subject = "Risebird: Feedback form"
+                        };
+                        var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
+                        if (emailsend == "Mail sent successfully.")
+                        {
+                            flag = true;
+                        }
+                    }
+                }
+                if (flag == true)
+                {
+                    return Json("Success");
+                }
+                else
+                {
+                    return Json("fail");
+                }
+            }
+            return Json("Success");
         }
     }
 }

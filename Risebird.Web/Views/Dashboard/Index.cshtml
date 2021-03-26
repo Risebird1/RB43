@@ -671,15 +671,38 @@
                 <div class="row">
                     <div class="col-md-12 nopad">
                         <div class="col-lg-4 col-md-4 col-sm-4">
-
                             <div class="card">
                                 <div class="card-body">
-                                    <p class="card-text">Total Candidates : <span><strong>@Model.CandidatesCountObj.TotalCandidates</strong></span></p>
+                                    <p class="card-text"><strong>Candidate Survey Feedback</strong></p>
                                     <div>
-                                        <div id="candidatesPieId" class="PieId"></div>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped">
+                                                <tr>
+                                                    <td>OverAll Interview Rating</td>
+                                                    <td><span id="canfeedInterviewrating">0.00 Out of 5</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>OverAll Interviewer Rating</td>
+                                                    <td><span id="canfeedInterviewerrating">0.00 Out of 5</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>OverAll Scheduling Rating</td>
+                                                    <td><span id="canfeedschedulerating">0.00 Out of 5</span></td>
+                                                </tr>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+                            @*<div class="card">
+                                    <div class="card-body">
+                                        <p class="card-text">Total Candidates : <span><strong>@Model.CandidatesCountObj.TotalCandidates</strong></span></p>
+                                        <div>
+                                            <div id="candidatesPieId" class="PieId"></div>
+                                        </div>
+                                    </div>
+                                </div>*@
                         </div>
                         <div class="col-lg-4 col-md-4 col-sm-4">
 
@@ -936,25 +959,25 @@
             { y: @Model.CandidatesCountObj.Pending, label: "Pending" }]
 
 
-        var chart = new CanvasJS.Chart("candidatesPieId", {
-           theme: "light2",
-            width: 350,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: null,
-            data: [{
-                type: "pie",
-                startAngle: 60,
-                innerRadius: 55,
-                indexLabelFontSize: 15,
-                indexLabelFontColor: "#9a9a9a",
-                indexLabel: "{label}  {y}",
-                toolTipContent: "<b>{label} </b>({y})",
+        //var chart = new CanvasJS.Chart("candidatesPieId", {
+        //   theme: "light2",
+        //    width: 350,//in pixels
+        //    height: 200,//in pixels
+        //    animationEnabled: true,
+        //    title: null,
+        //    data: [{
+        //        type: "pie",
+        //        startAngle: 60,
+        //        innerRadius: 55,
+        //        indexLabelFontSize: 15,
+        //        indexLabelFontColor: "#9a9a9a",
+        //        indexLabel: "{label}  {y}",
+        //        toolTipContent: "<b>{label} </b>({y})",
 
-                dataPoints: candidateCountObj
-            }]
-        });
-        chart.render();
+        //        dataPoints: candidateCountObj
+        //    }]
+        //});
+       // chart.render();
     }
 
 
@@ -1109,5 +1132,17 @@
     function OpenRibbonDetails(actionstatus) {
         window.location.href = "/Dashboard/UnassignedInterviews?actionstatus=" + actionstatus;
     }
+</script>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '/Survey/FetchCandidateFeedBackDetails',
+            success: function (data) {
+                $("#canfeedInterviewrating").text(data.avgQ1 + " Out of 5");
+                $("#canfeedInterviewerrating").text(data.avgQ2 + " Out of 5");
+                $("#canfeedschedulerating").text(data.avgQ6 + " Out of 5");
+            }
+        });
+    });
 </script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>

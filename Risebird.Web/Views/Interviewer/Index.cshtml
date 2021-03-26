@@ -293,7 +293,7 @@
 
                                                     <th>Primary Skills</th>
                                                     <th>Resume Link</th>
-
+                                                    <th>Password</th>
                                                     <th class="disabled-sorting text-center">Actions</th>
                                                 </tr>
                                             </thead>
@@ -307,7 +307,7 @@
 
                                                     <th>Primary Skills</th>
                                                     <th>Resume Link</th>
-
+                                                    <th>Password</th>
                                                     <th class="disabled-sorting text-center">Actions</th>
                                                 </tr>
                                             </tfoot>
@@ -451,7 +451,19 @@
                                                             <td>No Resume</td>
                                                         }
 
+                                                        <td>
+                                                            <div style="position:relative">
+                                                                <div class="secret-pass passshow" id="password-field_@item.id" type="password">@item.UserPassword</div>
+                                                                @if (item.UserPassword != null && item.UserPassword != "")
+                                                                {<span class="secret" id="secret_@item.id" style="top:0px;">********</span>
+                                                                    <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
+                                                                }
+                                                                else
+                                                                { <span toggle="#password-field_@item.id" class=" toggle-password" id="toggle-password_@item.id"></span>}
+                                                            </div>
 
+
+                                                        </td>
 
 
                                                         <td class="text-right action">
@@ -669,7 +681,7 @@
 
 @if (ViewBag.Message != null)
 {
-<script type="text/javascript">
+    <script type="text/javascript">
         $(document).ready(function () {
             my_code();
         });
@@ -685,7 +697,8 @@
         }
 
         //window.onload = my_code();
-</script>}
+    </script>
+}
 
 
 
@@ -1350,6 +1363,28 @@
         $("#CompanyType").val(companyType);
         $("#Domain").val(domain);
     }
+
+
+    function showhidepass(id) {
+        var value = document.getElementById("password-field_" + id);
+        if (value.getAttribute("type") == "text") {
+            value.setAttribute("type", "password");
+            $("#secret_" + id).show();
+            $("#password-field_" + id).addClass('passshow');
+
+            $("#toggle-password_" + id).removeClass("fa-eye-slash");
+        }
+        else {
+            value.setAttribute("type", "text");
+            $("#password-field_" + id).removeClass('passshow');
+            $("#toggle-password_" + id).addClass("fa-eye-slash");
+            $("#secret_" + id).hide();
+
+        }
+
+    }
+
+
 
 
 </script>

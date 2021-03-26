@@ -2404,6 +2404,61 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<int> FetchAllInterviewidfromIrf(string IRFid)
+        {
+            try
+            {
+                var _survey = _meetingRespository.FetchAllInterviewidfromIrf(IRFid);
+                return _survey;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IEnumerable<int> FetchAllInterviewidByClient(int Clientid, string emailid)
+        {
+            try
+            {
+                var _survey = _meetingRespository.FetchAllInterviewidByClient(Clientid, emailid);
+                return _survey;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IEnumerable<SurveyDetails> FetchSurveyClientName(List<SurveyDetails> _lst)
+        {
+            try
+            {
+                var _survey = _meetingRespository.FetchSurveyClientName(_lst);
+                return _survey;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IEnumerable<SurveyDetails> FetchSurveyCandidateEmails(List<SurveyDetails> _lst)
+        {
+            try
+            {
+                var _survey = _meetingRespository.FetchSurveyCandidateEmails(_lst);
+                return _survey;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue)
         public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue,string Comment)
         {
             try

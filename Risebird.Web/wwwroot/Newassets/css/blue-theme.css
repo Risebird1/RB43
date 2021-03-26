@@ -366,6 +366,9 @@ textarea::-webkit-scrollbar-thumb {
     background: #8ec9f9 !important;
     border-color: #8ec9f9 !important;
 }
+#interviewer.table.dataTable > thead > tr > th.overlay-relative {
+    color: #000 !important
+}
 .ref-btn{background:#fff;}
 
 .show-interest {

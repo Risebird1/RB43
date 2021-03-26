@@ -25,7 +25,7 @@ CREATE PROCEDURE [dbo].[usp_MyProfile]
 @MobileNumber nvarchar(200),
 @AltMobileNumber nvarchar(200),
 @ResumeLink nvarchar(max),
-@v_ProfileId int output
+@InterviewerProfileId int
 
 AS
 
@@ -50,13 +50,12 @@ Begin
 			[AltMobileNumber] = @AltMobileNumber,
 			[ResumeLink] = @ResumeLink
 
-	where userId = @UserId;
+	where id = @InterviewerProfileId;
 	
-  select @v_ProfileId = id from [dbo].[InterviewerProfile] where UserId = @UserId;
 
-  delete from TransInterviewerAvailability where InterviewerProfileId=@v_ProfileId
+  delete from TransInterviewerAvailability where InterviewerProfileId=@InterviewerProfileId
 
-  delete from TransInterviewerAccDetails where InterviewerProfileId=@v_ProfileId
+  delete from TransInterviewerAccDetails where InterviewerProfileId=@InterviewerProfileId
 
 End
 

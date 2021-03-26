@@ -63,124 +63,117 @@
                 Thank you for attending Risebird Video Interviews event. Your feedback will help us to improve.
             </h5>
             <br />
-            @if (ViewBag.Status == "Complete")
+            @using (Html.BeginForm("Index", "Survey", FormMethod.Post, new { @id = "surveyform" }))
             {
-                <h5 style="text-align:center">Thanks for the feedback</h5>
-            }
-            else
-            {
-                @using (Html.BeginForm("Index", "Survey", FormMethod.Post, new { @id = "surveyform" }))
-                {
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    @Html.HiddenFor(m => m.interviewid)
-                    @Html.HiddenFor(m => m.Type)
-                    <p>
-                        <b> @Html.LabelFor(model => model.EmailAddress)</b>
-                        @Html.TextBoxFor(m => m.EmailAddress, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
-                    </p>
-                    <p><b>1. Overall, how would you rate the video interview experience?</b></p>
-                    @Html.HiddenFor(m => m.Question1)
-                    <div class="star-rating">
-                        <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeQuestion1(5)" />
-                        <label for="Q1_5" class="star">&#9733;</label>
-                        <input type="radio" id="Q1_4" name="rating1" value="4" onclick="ChangeQuestion1(4)" />
-                        <label for="Q1_4" class="star">&#9733;</label>
-                        <input type="radio" id="Q1_3" name="rating1" value="3" onclick="ChangeQuestion1(3)" />
-                        <label for="Q1_3" class="star">&#9733;</label>
-                        <input type="radio" id="Q1_2" name="rating1" value="2" onclick="ChangeQuestion1(2)" />
-                        <label for="Q1_2" class="star">&#9733;</label>
-                        <input type="radio" id="Q1_1" name="rating1" value="1" onclick="ChangeQuestion1(1)" />
-                        <label for="Q1_1" class="star">&#9733;</label>
-                    </div>
-                    @Html.ValidationMessageFor(model => model.Question1, "", new { @class = "text-danger" })
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(m => m.interviewid)
+                @Html.HiddenFor(m => m.Type)
+                <p>
+                    <b> @Html.LabelFor(model => model.EmailAddress)</b>
+                    @Html.TextBoxFor(m => m.EmailAddress, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
+                </p>
+                <p><b>1. Overall, how would you rate the video interview experience?</b></p>
+                @Html.HiddenFor(m => m.Question1)
+                <div class="star-rating">
+                    <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeQuestion1(5)" />
+                    <label for="Q1_5" class="star">&#9733;</label>
+                    <input type="radio" id="Q1_4" name="rating1" value="4" onclick="ChangeQuestion1(4)" />
+                    <label for="Q1_4" class="star">&#9733;</label>
+                    <input type="radio" id="Q1_3" name="rating1" value="3" onclick="ChangeQuestion1(3)" />
+                    <label for="Q1_3" class="star">&#9733;</label>
+                    <input type="radio" id="Q1_2" name="rating1" value="2" onclick="ChangeQuestion1(2)" />
+                    <label for="Q1_2" class="star">&#9733;</label>
+                    <input type="radio" id="Q1_1" name="rating1" value="1" onclick="ChangeQuestion1(1)" />
+                    <label for="Q1_1" class="star">&#9733;</label>
+                </div>
+                @Html.ValidationMessageFor(model => model.Question1, "", new { @class = "text-danger" })
 
-                    <p><b>2. How would you rate the evaluation process of interviewer?</b></p>
-                    @Html.HiddenFor(m => m.Question2)
-                    <div class="star-rating">
-                        <input type="radio" id="Q2_5" name="rating2" value="5" onclick="ChangeQuestion2(5)" />
-                        <label for="Q2_5" class="star">&#9733;</label>
-                        <input type="radio" id="Q2_4" name="rating2" value="4" onclick="ChangeQuestion2(4)" />
-                        <label for="Q2_4" class="star">&#9733;</label>
-                        <input type="radio" id="Q2_3" name="rating2" value="3" onclick="ChangeQuestion2(3)" />
-                        <label for="Q2_3" class="star">&#9733;</label>
-                        <input type="radio" id="Q2_2" name="rating2" value="2" onclick="ChangeQuestion2(2)" />
-                        <label for="Q2_2" class="star">&#9733;</label>
-                        <input type="radio" id="Q2_1" name="rating2" value="1" onclick="ChangeQuestion2(1)" />
-                        <label for="Q2_1" class="star">&#9733;</label>
-                    </div>
-                    @Html.ValidationMessageFor(model => model.Question2, "", new { @class = "text-danger" })
-                    <p><b>3. Given a chance would you like to reappear for the video interview? </b></p>
-                    <div class="col-md-12">@Html.RadioButtonFor(m => m.Question3, "1") No, I am satisfied with the interviewer and evaluation process</div>
-                    <div class="col-md-12">@Html.RadioButtonFor(m => m.Question3, "2") Yes, I didn't get a fair chance and I can do better</div>
-                    @Html.ValidationMessageFor(model => model.Question3, "", new { @class = "text-danger" })
-                    <p>&nbsp;</p>
-                    <p><b>4. What did you like about the video interviews event?</b></p>
-                    <p>
-                        @Html.TextAreaFor(m => m.Question4, new { @class = "form-control" })
-                    </p>
-                    @Html.ValidationMessageFor(model => model.Question4, "", new { @class = "text-danger" })
-                    <p><b>5. What did you dislike about the video interviews event? </b></p>
-                    <p>
-                        @Html.TextAreaFor(m => m.Question5, new { @class = "form-control" })
-                    </p>
-                    @Html.ValidationMessageFor(model => model.Question5, "", new { @class = "text-danger" })
-                    <p><b>6. How friendly was the Risebird staff from scheduling to completion of interviews ? </b></p>
-                    @Html.HiddenFor(m => m.Question6)
-                    <div class="star-rating">
-                        <input type="radio" id="Q6_5" name="rating6" value="5" onclick="ChangeQuestion6(5)" />
-                        <label for="Q6_5" class="star">&#9733;</label>
-                        <input type="radio" id="Q6_4" name="rating6" value="4" onclick="ChangeQuestion6(4)" />
-                        <label for="Q6_4" class="star">&#9733;</label>
-                        <input type="radio" id="Q6_3" name="rating6" value="3" onclick="ChangeQuestion6(3)" />
-                        <label for="Q6_3" class="star">&#9733;</label>
-                        <input type="radio" id="Q6_2" name="rating6" value="2" onclick="ChangeQuestion6(2)" />
-                        <label for="Q6_2" class="star">&#9733;</label>
-                        <input type="radio" id="Q6_1" name="rating6" value="1" onclick="ChangeQuestion6(1)" />
-                        <label for="Q6_1" class="star">&#9733;</label>
-                    </div>
-                    @Html.ValidationMessageFor(model => model.Question6, "", new { @class = "text-danger" })
-                    <p><b>7. Please share comment for Interviewer.</b></p>
-                    <p>
-                        @Html.TextAreaFor(m => m.CommentforInterviewer, new { @class = "form-control" })
-                    </p>
-                    <p><b>8. Your Details</b></p>
-                    <div>
-                        @Html.LabelFor(model => model.Name)
-                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control mb10" })
-                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-                    </div>
-                    <div>
-                        @Html.LabelFor(model => model.Phone)
-                        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", @type = "number" })
-                        @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                <p><b>2. How would you rate the evaluation process of interviewer?</b></p>
+                @Html.HiddenFor(m => m.Question2)
+                <div class="star-rating">
+                    <input type="radio" id="Q2_5" name="rating2" value="5" onclick="ChangeQuestion2(5)" />
+                    <label for="Q2_5" class="star">&#9733;</label>
+                    <input type="radio" id="Q2_4" name="rating2" value="4" onclick="ChangeQuestion2(4)" />
+                    <label for="Q2_4" class="star">&#9733;</label>
+                    <input type="radio" id="Q2_3" name="rating2" value="3" onclick="ChangeQuestion2(3)" />
+                    <label for="Q2_3" class="star">&#9733;</label>
+                    <input type="radio" id="Q2_2" name="rating2" value="2" onclick="ChangeQuestion2(2)" />
+                    <label for="Q2_2" class="star">&#9733;</label>
+                    <input type="radio" id="Q2_1" name="rating2" value="1" onclick="ChangeQuestion2(1)" />
+                    <label for="Q2_1" class="star">&#9733;</label>
+                </div>
+                @Html.ValidationMessageFor(model => model.Question2, "", new { @class = "text-danger" })
+                <p><b>3. Given a chance would you like to reappear for the video interview? </b></p>
+                <div class="col-md-12">@Html.RadioButtonFor(m => m.Question3, "1") No, I am satisfied with the interviewer and evaluation process</div>
+                <div class="col-md-12">@Html.RadioButtonFor(m => m.Question3, "2") Yes, I didn't get a fair chance and I can do better</div>
+                @Html.ValidationMessageFor(model => model.Question3, "", new { @class = "text-danger" })
+                <p>&nbsp;</p>
+                <p><b>4. What did you like about the video interviews event?</b></p>
+                <p>
+                    @Html.TextAreaFor(m => m.Question4, new { @class = "form-control" })
+                </p>
+                @Html.ValidationMessageFor(model => model.Question4, "", new { @class = "text-danger" })
+                <p><b>5. What did you dislike about the video interviews event? </b></p>
+                <p>
+                    @Html.TextAreaFor(m => m.Question5, new { @class = "form-control" })
+                </p>
+                @Html.ValidationMessageFor(model => model.Question5, "", new { @class = "text-danger" })
+                <p><b>6. How friendly was the Risebird staff from scheduling to completion of interviews ? </b></p>
+                @Html.HiddenFor(m => m.Question6)
+                <div class="star-rating">
+                    <input type="radio" id="Q6_5" name="rating6" value="5" onclick="ChangeQuestion6(5)" />
+                    <label for="Q6_5" class="star">&#9733;</label>
+                    <input type="radio" id="Q6_4" name="rating6" value="4" onclick="ChangeQuestion6(4)" />
+                    <label for="Q6_4" class="star">&#9733;</label>
+                    <input type="radio" id="Q6_3" name="rating6" value="3" onclick="ChangeQuestion6(3)" />
+                    <label for="Q6_3" class="star">&#9733;</label>
+                    <input type="radio" id="Q6_2" name="rating6" value="2" onclick="ChangeQuestion6(2)" />
+                    <label for="Q6_2" class="star">&#9733;</label>
+                    <input type="radio" id="Q6_1" name="rating6" value="1" onclick="ChangeQuestion6(1)" />
+                    <label for="Q6_1" class="star">&#9733;</label>
+                </div>
+                @Html.ValidationMessageFor(model => model.Question6, "", new { @class = "text-danger" })
+                <p><b>7. Please share comment for Interviewer.</b></p>
+                <p>
+                    @Html.TextAreaFor(m => m.CommentforInterviewer, new { @class = "form-control" })
+                </p>
+                <p><b>8. Your Details</b></p>
+                <div>
+                    @Html.LabelFor(model => model.Name)
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control mb10" })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+                <div>
+                    @Html.LabelFor(model => model.Phone)
+                    @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", @type = "number" })
+                    @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
 
+                </div>
+                <br />
+                <br />
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="text" id="txtCaptcha" disabled class="form-control" style="text-align: center; border: 1px solid black; font-weight: bold; font-size: 20px; font-family: Modern" />
                     </div>
-                    <br />
-                    <br />
-                    <div class="row">
-                        <div class="col-md-4">
-                            <input type="text" id="txtCaptcha" disabled class="form-control" style="text-align: center; border: 1px solid black; font-weight: bold; font-size: 20px; font-family: Modern" />
-                        </div>
-                        <div class="col-md-1">
-                            <a class="mdc-fab app-fab--absolute priority" style="cursor:pointer" aria-label="Refresh">
-                                <span onclick="GenerateCaptcha();" title="Refresh" class="mdc-fab__icon material-icons">
-                                    <svg width="1.7em" height="1.7em" viewBox="0 0 16 16" class="bi bi-arrow-clockwise" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
-                                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
-                                    </svg>
-                                </span>
-                            </a>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text" id="txtCompare" class="form-control" />
-                        </div>
+                    <div class="col-md-1">
+                        <a class="mdc-fab app-fab--absolute priority" style="cursor:pointer" aria-label="Refresh">
+                            <span onclick="GenerateCaptcha();" title="Refresh" class="mdc-fab__icon material-icons">
+                                <svg width="1.7em" height="1.7em" viewBox="0 0 16 16" class="bi bi-arrow-clockwise" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
+                                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
+                                </svg>
+                            </span>
+                        </a>
                     </div>
-                    <br />
-                    <div>
-                        <input type="button" class="btn btn-primary card-title-space" value="Submit" onclick="formsubmit()" />
+                    <div class="col-md-4">
+                        <input type="text" id="txtCompare" class="form-control" />
                     </div>
-                }
+                </div>
+                <br />
+                <div>
+                    <input type="button" id="btnSubmit" class="btn btn-primary card-title-space" value="Submit" onclick="formsubmit()" />
+                </div>
             }
         </div>
     </div>
@@ -195,6 +188,7 @@
     function formsubmit() {
         var returnvalue = ValidCaptcha();
         if (returnvalue == true) {
+            $("#btnSubmit").attr("disable", "disable");
             $("#surveyform").submit();
         }
         else {

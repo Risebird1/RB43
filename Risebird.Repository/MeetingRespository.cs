@@ -4103,5 +4103,127 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public IEnumerable<int> FetchAllInterviewidfromIrf(string IRFid)
+        {
+            try
+            {
+                var query = "Select im.id from InterviewMeetings im join InterviewComments ic on ic.Interviewid=im.id where Irfid=@irfid and ic.MeetingStatus=4";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfid", IRFid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<int> FetchAllInterviewidByClient(int Clientid, string emailid)
+        {
+            try
+            {
+                int Userid = 0;
+                var Usquery = "Select id from UserList where Emailid=@Emailid";
+                var usdynamicParameters = new DynamicParameters();
+                usdynamicParameters.Add("@Emailid", emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var resultset = con.Query<int>(Usquery, usdynamicParameters);
+                    Userid = resultset.FirstOrDefault();
+                }
+                var query = "Select distinct im.id from IRF join InterviewMeetings im on im.IRFId=IRF.IRFId join TransClientUser tcu on tcu.IRFId=IRF.id Where IRF.ClientId=@Clientid and tcu.ClientUserId=@UserId and im.confirmationStatus=1";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@UserId", Userid);
+                dynamicParameters.Add("@Clientid", Clientid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<SurveyDetails> FetchSurveyClientName(List<SurveyDetails> _lst)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable Surveysetdt = new DataTable();
+                    Surveysetdt.Columns.Add("CuratedGroupId", typeof(int));
+                    Surveysetdt.Columns.Add("IRFId", typeof(int));
+                    Surveysetdt.Columns.Add("IsAdded", typeof(bool));
+
+                    foreach (var item in _lst)
+                    {
+                        Surveysetdt.Rows.Add(item.interviewid, 0, true);
+                    }
+
+                    SqlCommand cmdSurveyset = new SqlCommand("usp_SurveyClientDetails", con);
+                    cmdSurveyset.CommandType = CommandType.StoredProcedure;
+                    cmdSurveyset.Parameters.Add(new SqlParameter("@SurveyBulkDetails", SqlDbType.Structured));
+                    cmdSurveyset.Parameters["@SurveyBulkDetails"].Value = Surveysetdt;
+                    con.Open();
+                    var result = new List<SurveyDetails>();
+                    var dr = cmdSurveyset.ExecuteReader();
+                    while (dr.Read())
+                    {
+                        result.Add(new SurveyDetails { interviewid = Convert.ToInt32(dr["interviewid"].ToString()), ClientName = dr["ClientName"].ToString() });
+                    }
+                    con.Close();
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<SurveyDetails> FetchSurveyCandidateEmails(List<SurveyDetails> _lst)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable Surveysetdt = new DataTable();
+                    Surveysetdt.Columns.Add("CuratedGroupId", typeof(int));
+                    Surveysetdt.Columns.Add("IRFId", typeof(int));
+                    Surveysetdt.Columns.Add("IsAdded", typeof(bool));
+
+                    foreach (var item in _lst)
+                    {
+                        Surveysetdt.Rows.Add(item.interviewid, 0, true);
+                    }
+
+                    SqlCommand cmdSurveyset = new SqlCommand("usp_SurveyCandidateEmail", con);
+                    cmdSurveyset.CommandType = CommandType.StoredProcedure;
+                    cmdSurveyset.Parameters.Add(new SqlParameter("@SurveyBulkDetails", SqlDbType.Structured));
+                    cmdSurveyset.Parameters["@SurveyBulkDetails"].Value = Surveysetdt;
+                    con.Open();
+                    var result = new List<SurveyDetails>();
+                    var dr = cmdSurveyset.ExecuteReader();
+                    while (dr.Read())
+                    {
+                        result.Add(new SurveyDetails { interviewid = Convert.ToInt32(dr["interviewid"].ToString()), Intervieweremail = dr["EmailAddress"].ToString() });
+                    }
+                    con.Close();
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
