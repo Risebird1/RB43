@@ -55,7 +55,7 @@
                         </strong>
 
                     }
-                 
+
 
                     @if (ViewBag.actionstatus == "MeetingStatus")
                     {<strong>
@@ -63,22 +63,27 @@
                         </strong>
 
                     }
-                  
+
                     @if (ViewBag.actionstatus == "QcPending")
                     {<strong>
                             Qc Pending
                         </strong>
 
                     }
-                
+
 
                     @if (ViewBag.actionstatus == "UnAssignedCoordianter")
                     {<strong>
-    Unassigned RB Co-ordinator
-</strong>
-
+                            Unassigned RB Co-ordinator
+                        </strong>
                     }
-                
+
+                    @if (ViewBag.actionstatus == "ZoomLink")
+                    {<strong>
+                            Missing ZoomLink
+                        </strong>
+                    }
+
                 </a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
