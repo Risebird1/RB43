@@ -116,8 +116,8 @@ namespace Risebird.Business.Interface
         Task<string> RBUpdateStatusDetails(string EmailId);
         Task<List<RBInterviewDetails>> FetchFNDetails(string EmailId);
         Task<List<RBInterviewDetails>> RBInterviewerDetails(int interviewerid, int flag);
-        Task<string> RBAddPoints(int interviewerid, int Points, string Comment);
-        Task<string> RBConfirmPayment(int interviewerid, int index);
+        Task<string> RBAddPoints(int interviewerid, int Points, string Comment,DateTime PointDate);
+        Task<string> RBConfirmPayment(int interviewerid, int index, DateTime st, DateTime se);
         Task<List<string>> FetchInterviewerList(string searchterm);
         Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount);
         Task<List<RBInterviewDetails>> FNGenerateInvoiceDetails(DateTime st, DateTime se);
@@ -133,6 +133,7 @@ namespace Risebird.Business.Interface
         IEnumerable<SurveyDetails> FetchSurveyClientName(List<SurveyDetails> _lst);
         IEnumerable<SurveyDetails> FetchSurveyCandidateEmails(List<SurveyDetails> _lst);
         Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue);
+        Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue,string Comment);
         Task<List<RBInterviewDetails>> FetchFNPaymentHistory();
         Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailId, bool isFilter = false, DateTime? startDate= null, DateTime? endDate= null);
     }
