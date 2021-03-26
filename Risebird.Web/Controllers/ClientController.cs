@@ -810,112 +810,18 @@ namespace Risebird.Web.Controllers
                         {
                             meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
                         }
+
                         //ViewBag.IsSelected = false;
-                        foreach (var m in meetings)
-                        {
-                            if (m.InterviewStatus.HasValue)
-                            {
-                                m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
-                            }
-                            if (m.L2InterviewStatus.HasValue)
-                            {
-                                m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
-                            }
-                            if (m.L2InterviewStatus.HasValue)
-                            {
-                                m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
-                            }
-                            if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
-                            {
-                                m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
-                            }
-                            if (m.PreparationStatus.HasValue)
-                            {
-                                m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
-                            }
-                            if (m.OfferStatus.HasValue && m.OfferStatus != -1)
-                            {
-                                m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
-                            }
-                            if (m.MeetingStatus.HasValue)
-                            {
-                                m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
-                            }
-                            if (m.QCStatus.HasValue)
-                            {
-                                m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                            }
-                            if (m.IsApproved.HasValue && m.IsApproved != -1)
-                            {
-                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
-                            }
-                            if (m.IsSelected.HasValue && m.IsSelected != -1)
-                            {
-                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
-                            }
 
-
-                            if (m.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
-                            {
-                                if (m.interviewDate < DateTime.Now && m.MeetingStatusStatusDesc == MeetingStatus.Scheduled.GetDescription())
-                                {
-                                    m.MeetingStatusStatusDesc = "Status Pending";
-
-                                }
-                            }
-                            else
-                            {
-                                m.MeetingStatusStatusDesc = string.Empty;
-
-                            }
-
-                            
-                            if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0 || m.QCStatus==2))
-                            {
-                                m.intervieweStatusStatDesc = "QC Pending";
-                            }
-                            if (m.intervieweStatusStatDesc == null)
-                            {
-                                m.intervieweStatusStatDesc = string.Empty;
-                            }
-                        }
-
+                        SetMeetingsProperties(meetings);
+                        
                         if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("AllPriorityClientMeetingsfilters"));
-                            if (filter.StartDate != null && filter.EndDate != null)
-                            {
-                                meetings = meetings.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-                            }
-
-                            filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = meetings.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                            filter.RFID = filter.RFID == null ? filter.RFID = meetings.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
-                            filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
-                            filter.ConfirmationStatus = filter.ConfirmationStatus == null ? filter.ConfirmationStatus = meetings.Select(x => x.confirmationStatus).ToArray() : filter.ConfirmationStatus = filter.ConfirmationStatus;
-                            filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = meetings.Select(x => x.MeetingStatusStatusDesc).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
-                            filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = meetings.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
-                            filter.ApprovalStatus = filter.ApprovalStatus == null ? filter.ApprovalStatus = meetings.Select(x => x.NextLevelApprovalStat).ToArray() : filter.ApprovalStatus = filter.ApprovalStatus;
-                            filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = meetings.Select(x => x.FinalSelectionStat).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
-                            filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
-                            filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
-                            //filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = meetings.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
-                            filter.ClientName = filter.ClientName == null ? filter.ClientName = meetings.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
-
-
-                            meetings = meetings.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                            && filter.RFID.Contains(c.IRFId)
-                            && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
-                            && (filter.ConfirmationStatus.Count() > 0 ? filter.ConfirmationStatus.Contains(c.confirmationStatus) : c.confirmationStatus == null)
-                            && (filter.MeetingStatus.Count() > 0 ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
-                            && (filter.InterviewStatus.Count() > 0 ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
-                            && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
-                            && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
-                            && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
-                            && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
-                            && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)).ToList();
-
-
+                            //Apply filter and get the filtered meetings back
+                            meetings = ApplyAllMeetingsFilter(filter, meetings);
                         }
+
                         ViewBag.ClientHRList = meetings.Select(x => x.ClientHrContact).Distinct();
                         ViewBag.ClientNameList = meetings.Select(x => x.ClientName).Distinct();
                         ViewBag.IRFList = meetings.Select(x => x.IRFId).Distinct();
@@ -1014,105 +920,10 @@ namespace Risebird.Web.Controllers
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
                         //ViewBag.IsSelected = false;
-                        foreach (var m in meetings)
-                        {
-                            if (m.InterviewStatus.HasValue)
-                            {
-                                m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
-                            }
-                            if (m.L2InterviewStatus.HasValue)
-                            {
-                                m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
-                            }
-                            if (m.L2InterviewStatus.HasValue)
-                            {
-                                m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
-                            }
-                            if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
-                            {
-                                m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
-                            }
-                            if (m.PreparationStatus.HasValue)
-                            {
-                                m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
-                            }
-                            if (m.OfferStatus.HasValue && m.OfferStatus != -1)
-                            {
-                                m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
-                            }
-                            if (m.MeetingStatus.HasValue)
-                            {
-                                m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
-                            }
-                            if (m.QCStatus.HasValue)
-                            {
-                                m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                            }
-                            if (m.IsApproved.HasValue && m.IsApproved != -1)
-                            {
-                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
-                            }
-                            if (m.IsSelected.HasValue && m.IsSelected != -1)
-                            {
-                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
-                            }
+                        SetMeetingsProperties(meetings);
 
-                            if (m.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
-                            {
-                                if (m.interviewDate < DateTime.Now && m.MeetingStatusStatusDesc == MeetingStatus.Scheduled.GetDescription())
-                                {
-                                    m.MeetingStatusStatusDesc = "Status Pending";
+                        meetings = ApplyAllMeetingsFilter(filter, meetings);
 
-                                }
-                            }
-                            //else
-                            //{
-                            //    m.MeetingStatusStatusDesc = string.Empty;
-
-                            //}
-
-
-                            if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0 || m.QCStatus == 2))
-                            {
-                                m.intervieweStatusStatDesc = "QC Pending";
-                            }
-                            if (m.intervieweStatusStatDesc == null)
-                            {
-                                m.intervieweStatusStatDesc = string.Empty;
-                            }
-                        }
-
-
-                        if (filter.StartDate != null && filter.EndDate != null)
-                        {
-                            meetings = meetings.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-                        }
-
-                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = meetings.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                        filter.RFID = filter.RFID == null ? filter.RFID = meetings.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
-                        filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
-                        filter.ConfirmationStatus = filter.ConfirmationStatus == null ? filter.ConfirmationStatus = meetings.Select(x => x.confirmationStatus).ToArray() : filter.ConfirmationStatus = filter.ConfirmationStatus;
-                        filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = meetings.Select(x => x.MeetingStatusStatusDesc).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
-                        filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = meetings.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
-                        filter.ApprovalStatus = filter.ApprovalStatus == null ? filter.ApprovalStatus = meetings.Select(x => x.NextLevelApprovalStat).ToArray() : filter.ApprovalStatus = filter.ApprovalStatus;
-                        filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = meetings.Select(x => x.FinalSelectionStat).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
-                        filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
-                        filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
-                        //filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = meetings.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
-                        filter.ClientName = filter.ClientName == null ? filter.ClientName = meetings.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
-
-
-                        meetings = meetings.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                        && filter.RFID.Contains(c.IRFId)
-                        && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
-                        && (filter.ConfirmationStatus.Count() > 0 ? filter.ConfirmationStatus.Contains(c.confirmationStatus) : c.confirmationStatus == null)
-                        && (filter.MeetingStatus.Count() > 0 ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
-                        && (filter.InterviewStatus.Count() > 0 ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
-                        && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
-                        && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
-                        && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
-                        && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
-                        && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)).ToList();
                         ViewBag.ClientHRList = meetings.Select(x => x.ClientHrContact).Distinct();
                         ViewBag.ClientNameList = meetings.Select(x => x.ClientName).Distinct();
                         ViewBag.IRFList = meetings.Select(x => x.IRFId).Distinct();
@@ -1177,6 +988,116 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("AllMeetings");
             }
 
+        }
+
+
+        private void SetMeetingsProperties(List<MeetingVM> meetings)
+        {
+            foreach (var m in meetings)
+            {
+                if (m.InterviewStatus.HasValue)
+                {
+                    m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
+                }
+                if (m.L2InterviewStatus.HasValue)
+                {
+                    m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                }
+                if (m.L2InterviewStatus.HasValue)
+                {
+                    m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                }
+                if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
+                {
+                    m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                }
+                if (m.PreparationStatus.HasValue)
+                {
+                    m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                }
+                if (m.OfferStatus.HasValue && m.OfferStatus != -1)
+                {
+                    m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
+                }
+                if (m.MeetingStatus.HasValue)
+                {
+                    m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                }
+                if (m.QCStatus.HasValue)
+                {
+                    m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                }
+                if (m.IsApproved.HasValue && m.IsApproved != -1)
+                {
+                    m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                }
+                if (m.IsSelected.HasValue && m.IsSelected != -1)
+                {
+                    m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
+                }
+
+
+                if (m.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                {
+                    if (m.interviewDate < DateTime.Now && m.MeetingStatusStatusDesc == MeetingStatus.Scheduled.GetDescription())
+                    {
+                        m.MeetingStatusStatusDesc = "Status Pending";
+
+                    }
+                }
+                else
+                {
+                    m.MeetingStatusStatusDesc = string.Empty;
+
+                }
+
+
+                if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0 || m.QCStatus == 2))
+                {
+                    m.intervieweStatusStatDesc = "QC Pending";
+                }
+                if (m.intervieweStatusStatDesc == null)
+                {
+                    m.intervieweStatusStatDesc = string.Empty;
+                }
+            }
+            return;
+        }
+
+        private List<MeetingVM> ApplyAllMeetingsFilter(InterviewFilter filter, List<MeetingVM> meetings)
+        {
+            if (filter.StartDate != null && filter.EndDate != null)
+            {
+                meetings = meetings.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+            }
+
+            filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = meetings.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+            filter.RFID = filter.RFID == null ? filter.RFID = meetings.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
+            filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
+            filter.ConfirmationStatus = filter.ConfirmationStatus == null ? filter.ConfirmationStatus = meetings.Select(x => x.confirmationStatus).ToArray() : filter.ConfirmationStatus = filter.ConfirmationStatus;
+            filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = meetings.Select(x => x.MeetingStatusStatusDesc).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
+            filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = meetings.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
+            filter.ApprovalStatus = filter.ApprovalStatus == null ? filter.ApprovalStatus = meetings.Select(x => x.NextLevelApprovalStat).ToArray() : filter.ApprovalStatus = filter.ApprovalStatus;
+            filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = meetings.Select(x => x.FinalSelectionStat).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
+            filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
+            filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
+            //filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = meetings.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
+            filter.ClientName = filter.ClientName == null ? filter.ClientName = meetings.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+
+
+            meetings = meetings.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+            && filter.RFID.Contains(c.IRFId)
+            && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
+            && (filter.ConfirmationStatus.Count() > 0 ? filter.ConfirmationStatus.Contains(c.confirmationStatus) : c.confirmationStatus == null)
+            && (filter.MeetingStatus.Count() > 0 ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
+            && (filter.InterviewStatus.Count() > 0 ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
+            && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
+            && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
+            && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
+            && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
+            && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)).ToList();
+
+            return meetings;
         }
 
         [HttpPost]
@@ -1402,181 +1323,15 @@ namespace Risebird.Web.Controllers
                 }
 
                 meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-                foreach (var meeting in meetings)
-                {
-                    if (meeting.InterviewStatus != null)
-                    {
-                        meeting.InterviewStatusDescription = ((InterviewStatus)meeting.InterviewStatus).GetDescription();
-                    }
-                    if (meeting.MeetingStatus != null)
-                    {
-                        meeting.MeetingStatusDescription = ((MeetingStatus)meeting.MeetingStatus).GetDescription();
-                    }
-                }
-                foreach (var m in meetings)
-                {
-                    if (m.InterviewStatus.HasValue)
-                    {
-                        m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
-                    }
-                    if (m.L2InterviewStatus.HasValue)
-                    {
-                        m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
-                    }
-                    if (m.L2InterviewStatus.HasValue)
-                    {
-                        m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
-                    }
-                    if (m.JoiningStatus.HasValue)
-                    {
-                        m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
-                    }
-                    if (m.PreparationStatus.HasValue)
-                    {
-                        m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
-                    }
-                    if (m.OfferStatus.HasValue)
-                    {
-                        m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
-                    }
-                    if (m.MeetingStatus.HasValue)
-                    {
-                        m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
-                    }
-                    if (m.QCStatus.HasValue)
-                    {
-                        m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                    }
 
-                    if (m.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
-                    {
-                        if (m.interviewDate < DateTime.Now && m.MeetingStatusStatusDesc == MeetingStatus.Scheduled.GetDescription())
-                        {
-                            m.MeetingStatusStatusDesc = "Status Pending";
-
-                        }
-                    }
-                    else
-                    {
-                        m.MeetingStatusStatusDesc = string.Empty;
-
-                    }
-                    if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0  || m.QCStatus==2))
-                    {
-                        m.intervieweStatusStatDesc = "QC Pending";
-                    }
-                    if (m.intervieweStatusStatDesc == null)
-                    {
-                        m.intervieweStatusStatDesc = string.Empty;
-                    }
-
-                }
+                SetMeetingsProperties(meetings);
+                
                 if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                 {
                     var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("AllPriorityClientMeetingsfilters"));
-                    if (filter.StartDate != null && filter.EndDate != null)
-                    {
-                        meetings = meetings.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-                    }
 
-                    filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = meetings.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                    filter.RFID = filter.RFID == null ? filter.RFID = meetings.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
-                    filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
-                    filter.ConfirmationStatus = filter.ConfirmationStatus == null ? filter.ConfirmationStatus = meetings.Select(x => x.confirmationStatus).ToArray() : filter.ConfirmationStatus = filter.ConfirmationStatus;
-                    filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = meetings.Select(x => x.MeetingStatusStatusDesc).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
-                    filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = meetings.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
-                    filter.ApprovalStatus = filter.ApprovalStatus == null ? filter.ApprovalStatus = meetings.Select(x => x.NextLevelApprovalStat).ToArray() : filter.ApprovalStatus = filter.ApprovalStatus;
-                    filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = meetings.Select(x => x.FinalSelectionStat).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
-                    filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
-                    filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
-                    filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = meetings.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
-                    filter.ClientName = filter.ClientName == null ? filter.ClientName = meetings.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
-
-
-                    meetings = meetings.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                    && filter.RFID.Contains(c.IRFId)
-                    && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
-                    && (filter.ConfirmationStatus.Count() > 0 ? filter.ConfirmationStatus.Contains(c.confirmationStatus) : c.confirmationStatus == null)
-                    && (filter.MeetingStatus.Count() > 0 ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
-                    && (filter.InterviewStatus.Count() > 0 ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
-                    && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
-                    && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
-                    && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
-                    && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
-                    && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
-                    && (filter.Interviewer.Count() > 0 ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
-
-                    //if (meetings.Count == 0 && filter.StartDate != null && filter.EndDate != null)
-                    //{
-                    //    meetings = _meetingService.GetClientMeetingList(emailid);
-                    //    meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-
-                    //    foreach (var m in meetings)
-                    //    {
-                    //        if (m.InterviewStatus.HasValue)
-                    //        {
-                    //            m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
-                    //        }
-                    //        if (m.L2InterviewStatus.HasValue)
-                    //        {
-                    //            m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
-                    //        }
-                    //        if (m.L2InterviewStatus.HasValue)
-                    //        {
-                    //            m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
-                    //        }
-                    //        if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
-                    //        {
-                    //            m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
-                    //        }
-                    //        if (m.PreparationStatus.HasValue)
-                    //        {
-                    //            m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
-                    //        }
-                    //        if (m.OfferStatus.HasValue && m.OfferStatus != -1)
-                    //        {
-                    //            m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
-                    //        }
-                    //        if (m.MeetingStatus.HasValue)
-                    //        {
-                    //            m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
-                    //        }
-                    //        if (m.QCStatus.HasValue)
-                    //        {
-                    //            m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                    //        }
-                    //        if (m.IsApproved.HasValue)
-                    //        {
-                    //            m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
-                    //        }
-                    //        if (m.IsSelected.HasValue)
-                    //        {
-                    //            m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
-                    //        }
-                    //        if (m.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
-                    //        {
-                    //            if (m.interviewDate < DateTime.Now && m.MeetingStatusStatusDesc == MeetingStatus.Scheduled.GetDescription())
-                    //            {
-                    //                m.MeetingStatusStatusDesc = "Status Pending";
-
-                    //            }
-                    //        }
-                    //        else
-                    //        {
-                    //            m.MeetingStatusStatusDesc = string.Empty;
-
-                    //        }
-                    //        if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0))
-                    //        {
-                    //            m.intervieweStatusStatDesc = "QC Pending";
-                    //        }
-                    //        if (m.intervieweStatusStatDesc == null)
-                    //        {
-                    //            m.intervieweStatusStatDesc = string.Empty;
-                    //        }
-                    //    }
-                    //    meetings = meetings.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-                    //}
+                    meetings = ApplyAllMeetingsFilter(filter, meetings);
+                    
                 }
 
 

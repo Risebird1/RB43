@@ -947,7 +947,9 @@
                     confirmButtonText: 'Close!',
                     allowOutsideClick: false
                 }).then(function () {
-                    window.location = "/IRF/Index";
+                    //window.location = "/IRF/Index";
+                    location.reload(true);
+
                 })
             }
             else if (result.dismiss === 'cancel') {
@@ -1006,7 +1008,8 @@
                     confirmButtonText: 'Close!',
                     allowOutsideClick: false
                 }).then(function () {
-                    window.location = "/IRF/Index";
+                    //window.location = "/IRF/Index";
+                    location.reload(true);
                 })
             }
             else if (result.dismiss === 'cancel') {
