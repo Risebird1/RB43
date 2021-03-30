@@ -48,6 +48,7 @@ namespace Risebird.Entities.ViewModel
         public string Interviewer { get; set; }
         public string CandidateEmail { get; set; }
         public string PrimarySkill { get; set; }
+        public string CandidateName { get; set; }
     }
     public class SurveyDetails
     {
