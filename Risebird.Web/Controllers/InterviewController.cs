@@ -6290,6 +6290,157 @@ namespace Risebird.Web.Controllers
         }
 
 
+        [HttpPost]
+        public JsonResult MyInterviewJson(string searchValue)
+        {
+            try
+            {
+                int Page = 1;
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); return x; }).ToList();
+                        foreach (var item in myInterview)
+                        {
+                            if (!string.IsNullOrEmpty(item.resumeLink))
+                            {
+                                try
+                                {
+                                    item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
+
+                                }
+                                catch (Exception)
+                                {
+                                    item.resumeLink = "";
+                                }
+                            }
+                            else
+                            {
+                                item.resumeLink = "";
+                            }
+
+                            if (item.InterviewStatus.HasValue)
+                            {
+                                item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                            }
+                            if (item.MeetingStatus.HasValue)
+                            {
+                                item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
+
+                            }
+                        }
+                        if (HttpContext.Session.GetString("MyInterviewfilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<MyInterviewFilter>(HttpContext.Session.GetString("MyInterviewfilters"));
+
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+                            }
+                            else if (filter.StartDate != null && filter.EndDate == null)
+                            {
+                                //filter.EndDate = filter.StartDate;
+
+                                myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate /*&& t.interviewDate.Date <= filter.EndDate*/).ToList();
+
+                            }
+                            else if (filter.StartDate == null && filter.EndDate != null)
+                            {
+                                //filter.StartDate = filter.EndDate;
+
+                                myInterview = myInterview.Where(t => /*t.interviewDate.Date >= filter.StartDate &&*/ t.interviewDate.Date <= filter.EndDate).ToList();
+
+                            }
+
+                            //filter.InterviewDuration = filter.InterviewDuration == null ? filter.InterviewDuration = myInterview.Select(x => x.interviewDuration).ToArray() : filter.InterviewDuration = filter.InterviewDuration;
+                            filter.InterviewSlot = filter.InterviewSlot == null ? filter.InterviewSlot = myInterview.Select(x => x.interviewSlot).ToArray() : filter.InterviewSlot = filter.InterviewSlot;
+                            filter.JobLevel = filter.JobLevel == null ? filter.JobLevel = myInterview.Select(x => x.JobLevelDesc).ToArray() : filter.JobLevel = filter.JobLevel;
+                            filter.InterviewDate = filter.InterviewDate == null ? filter.InterviewDate = myInterview.Select(x => Convert.ToString(x.interviewDate)).ToArray() : filter.InterviewDate = filter.InterviewDate;
+                            filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = myInterview.Select(x => x.candidateName).ToArray() : filter.CandidateName = filter.CandidateName;
+                            filter.RisebirdHR = filter.RisebirdHR == null ? filter.RisebirdHR = myInterview.Select(x => x.risebirdHR).ToArray() : filter.RisebirdHR = filter.RisebirdHR;
+                            //filter.InterviewDuration.Contains(c.interviewDuration)
+                            myInterview = myInterview.Where(c => (filter.InterviewSlot.Count() > 0 ? filter.InterviewSlot.Contains(c.interviewSlot) : c.interviewSlot == null)
+                            && (filter.JobLevel.Count() > 0 ? filter.JobLevel.Contains(c.JobLevelDesc) : c.JobLevelDesc == null)
+                           && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
+                           && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
+                           && (filter.RisebirdHR.Count() > 0 ? filter.RisebirdHR.Contains(c.risebirdHR) : c.risebirdHR == null)).ToList();
+
+
+                        }
+                        if (HttpContext.Session.GetString("MyInterviewfilters") == null)
+                        {
+                            myInterview = myInterview.Where(x => x.interviewDate.Date >= DateTime.Now.Date || (x.MeetingStatus == null && x.interviewDate.Date < DateTime.Now.Date)).ToList();
+
+                        }
+                       
+
+                        if (!String.IsNullOrEmpty(searchValue))
+                        {
+                            searchValue = searchValue.ToUpper();
+                            myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.MeetingStatusDesc) ? x.MeetingStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusDesc == "")
+                            || (!String.IsNullOrEmpty(x.InterviewStatusDesc) ? x.InterviewStatusDesc.ToUpper().Contains(searchValue) : x.InterviewStatusDesc == "")).ToList();
+
+                        }
+                        int totalcount = myInterview.Count;
+                        int Pagestart = 0;
+                        int Pageend = 0;
+
+                        Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                        int a = myInterview.Count / 10;
+                        if (myInterview.Count % 10 == 0)
+                        {
+                            Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                        }
+                        else
+                        {
+                            a = a + 1;
+                            if (a == Page)
+                            {
+                                Pageend = myInterview.Count;
+                            }
+                            else
+                            {
+                                Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                            }
+                        }
+                        if (myInterview.Count == 0)
+                        {
+                            Pagestart = 0;
+                            Pageend = 0;
+                        }
+                        return Json(new { result = myInterview.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = myInterview.Count });
+
+                    }
+                    else
+                    {
+                        return Json("failed");
+                    }
+
+                }
+
+                else
+                {
+                    return Json("failed");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("failed");
+            }
+        }
+
+
+
+
+
+
 
 
 
