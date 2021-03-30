@@ -248,8 +248,8 @@
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th id='start'>Date</th>
                                                             <th style="text-align:center">Slot</th>
-                                                            <th style="text-align:center">Call Interviewer</th>
-                                                            <th style="text-align:center">Call Candidate</th>
+                                                            <th style="text-align:center">Interviewer</th>
+                                                            <th style="text-align:center">Candidate</th>
                                                             <th>Skill Channel</th>
                                                             <th>Candidate Name</th>
                                                             <th>Interviewer</th>
@@ -265,8 +265,8 @@
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th>Date</th>
                                                             <th style="text-align:center">Slot</th>
-                                                            <th style="text-align:center">Call Interviewer</th>
-                                                            <th style="text-align:center">Call Candidate</th>
+                                                            <th style="text-align:center">Interviewer</th>
+                                                            <th style="text-align:center">Candidate</th>
                                                             <th>Skill Channel</th>
                                                             <th>Candidate Name</th>
                                                             <th>Interviewer</th>
@@ -326,10 +326,10 @@
                                                                 @if (item.candidateName != null && item.candidateName != "")
                                                                 {
 
-                                                                    @if (item.IsOnilne == 1 && item.candidateName.Length > 15)
+                                                                    @if (item.IsOnilne == 1 && item.candidateName.Length > 10)
                                                                     {
                                                                         <td>
-                                                                            <a onclick="directopenChat('@item.candidateEmail')"> <span class="dot" style="background-color:green"></span>@item.candidateName.Substring(0, 15)...</a>
+                                                                            <a onclick="directopenChat('@item.candidateEmail')"> <span class="dot" style="background-color:green"></span>@item.candidateName.Substring(0, 10)...</a>
                                                                         </td>
                                                                     }
                                                                     else
@@ -340,7 +340,7 @@
 
 
                                                                             <td class="cadName">
-                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 15)... </a>
+                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 10)... </a>
                                                                             </td>
                                                                         }
 
@@ -404,12 +404,12 @@
 
 
 
-                                                                    @if (item.candidateEmail.Length > 10)
+                                                                    @if (item.candidateEmail.Length > 13)
                                                                     {
 
 
                                                                         <td class="cadEmail">
-                                                                            <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 10)... </a>
+                                                                            <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 13)... </a>
                                                                         </td>
                                                                     }
 
@@ -432,16 +432,16 @@
 
                                                                     <td></td>
                                                                 }
-                                                                @if (item.ClientHrContact != null && item.ClientHrContact != "")
-                                                                {@if (item.ClientHrContact.Length > 10)
+                                                                @if (item.ClientName != null && item.ClientName != "")
+                                                                {@if (item.ClientName.Length > 10)
                                                                     {
-                                                                        <td style="text-align: center"> @item.ClientName.Substring(0, 10)... </td>
+                                                                        <td style="text-align: center"><a onclick="" data-tooltip="@item.ClientName"> @item.ClientName.Substring(0, 10)...</a> </td>
                                                                     }
 
                                                                     else
                                                                     {
 
-                                                                        <td style="text-align: center"> @item.ClientName </td>
+                                                            <td style="text-align: center"> <a onclick=""> @item.ClientName</a> </td>
 
                                                                     }
                                                             }
@@ -969,8 +969,8 @@
                 else {
 
 
-                    if (data[i].candidateName.length > 15) {
-                        html += '<td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 15) + '... </a></td>';
+                    if (data[i].candidateName.length > 10) {
+                        html += '<td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 10) + '... </a></td>';
                     }
                     else {
                         html += '  <td class="cadName"><a onclick=""><span class="dot"></span> ' + data[i].candidateName + ' </a></td>';
@@ -997,8 +997,8 @@
 
 
             if (data[i].candidateEmail != null && data[i].candidateEmail != "") {
-                if (data[i].candidateEmail.length > 10) {
-                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].candidateEmail + '"> ' + data[i].candidateEmail.substring(0, 10) + '... </a></td>';
+                if (data[i].candidateEmail.length > 13) {
+                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].candidateEmail + '"> ' + data[i].candidateEmail.substring(0, 13) + '... </a></td>';
                 }
                 else {
                     html += '  <td class="cadEmail"><a onclick=""> ' + data[i].candidateEmail + ' </a></td>';
@@ -1022,9 +1022,9 @@
                 html += '<td></td>';
             }
 
-            if (data[i].clientHrContact != null && data[i].clientHrContact != "") {
-                if (data[i].clientHrContact.length > 10) {
-                    html += '  <td style="text-align: center"> ' + data[i].clientHrContact.substring(0, 10) + '... </td>';
+            if (data[i].clientName != null && data[i].clientName != "") {
+                if (data[i].clientName.length > 10) {
+                    html += '  <td style="text-align: center"> ' + data[i].clientName.substring(0, 10) + '... </td>';
                 }
 
                 else {
