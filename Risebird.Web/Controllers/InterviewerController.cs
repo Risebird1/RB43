@@ -453,7 +453,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
                     {
                         InterviewerProfileVM model = _interviewerService.GetInterviewerProfileById(userId);
                         // Get all the select Lists
