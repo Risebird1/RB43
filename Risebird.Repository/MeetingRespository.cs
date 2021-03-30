@@ -3271,7 +3271,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select CandidateEmail,Interviewer,ul.id,ir.JDTiltle as PrimarySkill from interviewmeetings im join IRF ir on ir.IRFId=im.IRFId left join userlist ul on im.interviewer=ul.emailid where im.id=@interviewid";
+                var query = "Select CandidateEmail,Interviewer,ul.id,ir.JDTiltle as PrimarySkill,(ulc.FirstName) as CandidateName from interviewmeetings im join IRF ir on ir.IRFId=im.IRFId left join userlist ul on im.interviewer=ul.emailid left join Userlist ulc on ulc.Emailid=im.CandidateEmail where im.id=@interviewid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@interviewid", interviewid);
 
