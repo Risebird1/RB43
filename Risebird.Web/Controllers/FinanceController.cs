@@ -214,7 +214,7 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "Finance")
                 {
                     var model = await _meetingService.FetchFNDetails(emailid);
-
+                    ViewBag.setvalueforfunction = 1;
                     if (String.IsNullOrEmpty(searchValue))
                     {
                         if (!String.IsNullOrEmpty(SearchValue))
@@ -485,6 +485,7 @@ namespace Risebird.Web.Controllers
             }
             return Json(result);
         }
+
         /// <summary>
         /// Finace Team may be find data on date basis and Pending and Submitted 
         /// </summary>
@@ -492,11 +493,15 @@ namespace Risebird.Web.Controllers
         /// <param name="se"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> FNGenerateInvoiceJson(DateTime st, DateTime se)
+        public async Task<JsonResult> FNGenerateInvoiceJson(int? PageSet, DateTime st, DateTime se)
         {
             try
             {
-                int Page = 1;
+                int Page = 0;
+                if (PageSet == null || PageSet == 0)
+                    Page = 1;
+                else
+                    Page = Convert.ToInt32(PageSet);
                 var model = await _meetingService.FNGenerateInvoiceDetails(st, se);
                 int totalcount = model.Count;
                 int Pagestart = 0;
@@ -527,7 +532,7 @@ namespace Risebird.Web.Controllers
                     Pageend = 0;
                 }
                 _modelDetails = model;
-                return Json(new { result = model.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count });
+                return Json(new { result = model.Skip((Page - 1) * 10).Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count, currentpage = Page });
             }
             catch (Exception ex)
             {
