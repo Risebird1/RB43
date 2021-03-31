@@ -52,7 +52,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings(DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings(DateTime startDate, DateTime endDate, string emailId=null)
         {
             try
             {
@@ -61,6 +61,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("startDate", startDate);
                     parameters.Add("endDate", endDate);
+                    parameters.Add("EmailId", emailId);
                     var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIAllDateWiseInterviewMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
@@ -2404,13 +2405,15 @@ namespace Risebird.Repository
 
         }
 
-        public async Task<IEnumerable<Meeting>> GetHROpenInterviews()
+        public async Task<IEnumerable<Meeting>> GetHROpenInterviews(string emailId)
         {
             try
             {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@EmailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_HROpenInterviews",
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_HROpenInterviews", dynamicParameters,
                          commandType: CommandType.StoredProcedure);
                 }
 

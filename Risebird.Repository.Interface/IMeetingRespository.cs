@@ -9,7 +9,7 @@ namespace Risebird.Repository.Interface
     public interface IMeetingRespository
     {
         Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings();
-        Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings(DateTime startDate, DateTime endDate);
+        Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings(DateTime startDate, DateTime endDate, string emailId = null);
         Task<bool> AddMeeting(MeetingVM meeting);
         Task<MeetingVM> GetInterviewMeetingById(int id);
         Task<bool> UpdateMeeting(MeetingVM meeting);
@@ -88,7 +88,7 @@ namespace Risebird.Repository.Interface
         Task DeleteInterview(int imid);
         bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink, int candidateType = 0);
         Task<IEnumerable<string>> GetEmailsforBroadcast(string profile);
-        Task<IEnumerable<Meeting>> GetHROpenInterviews();
+        Task<IEnumerable<Meeting>> GetHROpenInterviews(string emailId);
         string HRAssignYourself(int meetingid, string hrMailId);
         Task<IEnumerable<Meeting>> GetHRAssignedInterviews(string emailID);
         bool HRUnassignYourself(int meetingid);
