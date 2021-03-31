@@ -50,11 +50,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate)
+        public List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate, string emailId = null)
         {
             try
             {
-                return _meetingRespository.GetAllInterviewMeetings(startDate, endDate).Result.OrderByDescending(x => x.interviewDate).ToList();
+                return _meetingRespository.GetAllInterviewMeetings(startDate, endDate, emailId).Result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
             {
@@ -1505,11 +1505,11 @@ namespace Risebird.Business
 
         }
 
-        public IEnumerable<Meeting> GetHROpenInterviews()
+        public IEnumerable<Meeting> GetHROpenInterviews(string emailId)
         {
             try
             {
-                var openMeeting = _meetingRespository.GetHROpenInterviews().Result.OrderByDescending(x => x.interviewDate);
+                var openMeeting = _meetingRespository.GetHROpenInterviews(emailId).Result.OrderByDescending(x => x.interviewDate);
                 return openMeeting;
             }
             catch (Exception ex)
