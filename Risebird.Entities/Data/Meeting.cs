@@ -99,5 +99,7 @@ namespace Risebird.Entities.Data
         public string NickName { get; set; }
         public int? HeuristicProfileType { get; set; }
         public string HeuristicProfileTypeDesc { get; set; }
+        public string CandidateClientHR { get; set; }
+
     }
 }

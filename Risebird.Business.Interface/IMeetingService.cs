@@ -11,7 +11,7 @@ namespace Risebird.Business.Interface
     {
         List<MeetingVM> GetMeetingList();
         bool AddMeeting(MeetingVM meeting);
-        List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate);
+        List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate, string emailId = null);
         bool UpdateMeeting(MeetingVM meetingToUpdate);
         List<MeetingVM> MultipleCandidateInvites();
         MeetingVM GetMeeting(int id);
@@ -68,7 +68,7 @@ namespace Risebird.Business.Interface
         Task<bool> DeleteInterview(int imid);
         bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink, int candidateType = 0);
         Task<string> Broadcast(BroadcastModel model);
-        IEnumerable<Meeting> GetHROpenInterviews();
+        IEnumerable<Meeting> GetHROpenInterviews(string emailId);
         string HRAssignYourself(int meetingid, string hrMailId);
         IEnumerable<Meeting> GetHRAssignedInterviews(string emailID);
         bool HRUnassignYourself(int meetingid);

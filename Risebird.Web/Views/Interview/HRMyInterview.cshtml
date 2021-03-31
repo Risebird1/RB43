@@ -12,9 +12,12 @@
     dynamic filter = null;
     string strtDte = String.Empty;
     string endDte = String.Empty;
-    //string[] RFID = new string[] { };
+    string[] RFID = new string[] { };
     string[] Interviewer = new string[] { };
     string[] primarySkills = new string[] { };
+    string[] ClientHR = new string[] { };
+    string[] ClientName = new string[] { };
+    string[] Client = new string[] { };
 
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("HRfilters") != null)
@@ -24,8 +27,12 @@
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
     Interviewer = filter.Interviewer != null ? filter.Interviewer : new string[] { };
     primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
-
+    RFID = filter.RFID != null ? filter.RFID : new string[] { };
+    ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
+    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
+    Client = filter.Client != null ? filter.Client : new string[] { };
 }
+
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=679876534" />
 <script type="text/javascript" src="https//code.jquery.com/jquery-1.10.2.min.js"></script>
@@ -183,11 +190,56 @@
 
                                                                 </div>
                                                             </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
+                                                                    Client
+                                                                    HR
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.CandidateClientHR).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
 
 
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">
+                                                                    Client
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="Client" name="Client" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.ClientCompName).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">RFID</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
 
-
-
+                                                                        @foreach (var item in Model.Select(x => x.IRFID).Distinct().ToList())
+                                                                        {
+                                                                            @if (!string.IsNullOrEmpty(item))
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                         <div class="col-md-6 col-sm-6">
                                                             <div class="form-group">
@@ -197,6 +249,22 @@
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="Interviewer" name="Interviewer" class="form-control multiselect" multiple="multiple">
                                                                         @foreach (var item in Model.Select(x => x.interviewer).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">
+                                                                    End Client Name
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
                                                                             {
@@ -254,7 +322,8 @@
                                                             <th>Candidate Name</th>
                                                             <th>Interviewer</th>
                                                             <th>Candidate Email</th>
-                                                            <th>Client Name</th>
+                                                            <th>Client</th>
+                                                            
                                                             <th>Zoom Link</th>
                                                             <th class="disabled-sorting text-center">Actions</th>
 
@@ -271,7 +340,8 @@
                                                             <th>Candidate Name</th>
                                                             <th>Interviewer</th>
                                                             <th>Candidate Email</th>
-                                                            <th>Client Name</th>
+                                                            <th>Client</th>
+                                                           
                                                             <th>Zoom Link</th>
                                                             <th class="disabled-sorting text-center">Actions</th>
 
@@ -383,21 +453,11 @@
                                                                         </td>
                                                                     }
 
-
-
-
-
                                                                 }
-
                                                                 else
                                                                 {
-
                                                                     <td></td>
                                                                 }
-
-
-
-
 
                                                                 @if (item.candidateEmail != null && item.candidateEmail != "")
                                                                 {
@@ -407,12 +467,10 @@
                                                                     @if (item.candidateEmail.Length > 13)
                                                                     {
 
-
                                                                         <td class="cadEmail">
                                                                             <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 13)... </a>
                                                                         </td>
                                                                     }
-
 
                                                                     else
                                                                     {
@@ -421,36 +479,31 @@
                                                                         </td>
                                                                     }
 
-
-
-
-
                                                                 }
 
                                                                 else
                                                                 {
-
                                                                     <td></td>
                                                                 }
-                                                                @if (item.ClientName != null && item.ClientName != "")
-                                                                {@if (item.ClientName.Length > 10)
+                                                                 @if (!string.IsNullOrEmpty(item.ClientCompName))
+                                                                {
+                                                                    @if (item.ClientName.Length > 10)
                                                                     {
                                                                         <td style="text-align: center"><a onclick="" data-tooltip="@item.ClientName"> @item.ClientName.Substring(0, 10)...</a> </td>
                                                                     }
 
                                                                     else
                                                                     {
-
-                                                            <td style="text-align: center"> <a onclick=""> @item.ClientName</a> </td>
-
+                                                                        <td style="text-align: center"> @item.ClientCompName </td>
                                                                     }
-                                                            }
+                                                                }
 
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
 
+                                                               
 
 
                                                                 @if (item.zoomLink != null && item.zoomLink != "")
@@ -493,6 +546,7 @@
                                                                             <th>Candidate Mobile</th>
                                                                             <th style="text-align:center">Call Client HR</th>
                                                                             <th style="text-align:center">Call Staffing Agency</th>
+                                                                            <th style="text-align:center">End Client Name</th>
                                                                             <th>Quality Controller</th>
                                                                             <th>HR Comments</th>
                                                                             <th>Client HR </th>
@@ -578,7 +632,7 @@
                                                                                 {
 
                                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Click here to call Client HR">
-                                                                                        <span onclick="ModalButtonClick('@item.ClientHrMobile','@item.ClientHrContact','Client HR')" data-original-title="Tooltip on top" title="Click here to call the candidate" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                                        <span onclick="ModalButtonClick('@item.ClientHrMobile','@item.CandidateClientHR','Client HR')" data-original-title="Tooltip on top" title="Click here to call the candidate" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
                                                                                     </button>
 
 
@@ -598,21 +652,40 @@
                                                                                 }
 
                                                                             </td>
+                                                                            @if (!string.IsNullOrEmpty(item.ClientName))
+                                                                            {
+                                                                                @if (item.ClientName.Length > 10)
+                                                                                {
+                                                                                    <td style="text-align: center"> @item.ClientName.Substring(0, 10)... </td>
+                                                                                }
+
+                                                                                else
+                                                                                {
+
+                                                                                    <td style="text-align: center"> <a onclick=""> @item.ClientName</a> </td>
+
+                                                                                }
+                                                                            }
+
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+                                                                            }
 
                                                                             <td>@item.QCInterviewer</td>
                                                                             <td>@item.HRComment</td>
-                                                                            @if (item.ClientHrContact != null && item.ClientHrContact != "")
+                                                                            @if (!string.IsNullOrEmpty(item.CandidateClientHR))
                                                                             {
-                                                                                @if (item.ClientHrContact.Length > 13)
+                                                                                @if (item.CandidateClientHR.Length > 13)
                                                                                 {
                                                                                     <td class="cadEmail">
-                                                                                        <a onclick="" data-tooltip="@item.ClientHrContact"> @item.ClientHrContact.Substring(0, 13)... </a>
+                                                                                        <a onclick="" data-tooltip="@item.CandidateClientHR"> @item.CandidateClientHR.Substring(0, 13)... </a>
                                                                                     </td>
                                                                                 }
                                                                                 else
                                                                                 {
                                                                                     <td class="cadEmail">
-                                                                                        <a onclick=""> @item.ClientHrContact </a>
+                                                                                        <a onclick=""> @item.CandidateClientHR </a>
                                                                                     </td>
                                                                                 }
                                                                             }
@@ -827,7 +900,6 @@
     </div>
 
 </div>
-</div>
 
 
 <script type="text/javascript">
@@ -855,14 +927,38 @@
                     maxHeight: 200
             });
 
+            $("#RFID").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#ClientHR").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+
+            $("#ClientName").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#Client").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+
 
 
 
     });
     function ResetFilter() {
-
         window.location.href = "/Interview/ResetHRInterviewFilter";
-
     }
 
     function ApplySessionFilter() {
@@ -870,22 +966,28 @@
         var endDte = '@endDte';
         var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
         var interviewer =  @Html.Raw(Json.Serialize(Interviewer));
-
+        var rFID =  @Html.Raw(Json.Serialize(RFID));
+        var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
+        var clientName =  @Html.Raw(Json.Serialize(ClientName));
+        var client =  @Html.Raw(Json.Serialize(Client));
 
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
         $("#PrimarySkill").val(primarySkillsArr);
         $("#Interviewer").val(interviewer);
+        $("#RFID").val(rFID);
+        $("#ClientHR").val(clientHR);
+        $("#ClientName").val(clientName);
+        $("#Client").val(client);
         var form = $("#form").serialize();
     }
 
 </script>
 <script>
     //var interviewUnassignedMinutes;
-    $(document).ready(function () {
-
-
+   
         $(document).ready(function () {
+            
             $('#dataTables_filter').keyup(function () {
                 oTable.fnFilter($(this).val());
             });
@@ -895,7 +997,6 @@
                 $(this).hide();
                 searchResult();
             });
-
         });
 
 </script>
@@ -1010,18 +1111,6 @@
 
 
 
-            if (data[i].clientHrContact != null && data[i].clientHrContact != "") {
-                if (data[i].clientHrContact.length > 10) {
-                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].clientHrContact + '"> ' + data[i].clientHrContact.substring(0, 10) + '... </a></td>';
-                }
-                else {
-                    html += '  <td class="cadEmail"><a onclick=""> ' + data[i].clientHrContact + ' </a></td>';
-                }
-            }
-            else {
-                html += '<td></td>';
-            }
-
             if (data[i].clientName != null && data[i].clientName != "") {
                 if (data[i].clientName.length > 10) {
                     html += '  <td style="text-align: center"> ' + data[i].clientName.substring(0, 10) + '... </td>';
@@ -1029,7 +1118,7 @@
 
                 else {
 
-                    html += '  <td style="text-align: center"> ' + data[i].clientName + ' </td>';
+                    html += '  <td style="text-align: center"> ' + data[i].clientCompName + ' </td>';
 
                 }
             }
@@ -1038,6 +1127,8 @@
                 html += ' <td></td>';
             }
 
+
+            
 
 
             if (data[i].zoomLink != null && data[i].zoomLink != "") {
@@ -1080,6 +1171,7 @@
             html += ' <th>JD Link</th>';
             html += '  <th style="text-align:center">Call Client HR</th>';
             html += ' <th style="text-align:center">Call Staffing Agency</th>';
+            html += '<th style="text-align:center">End Client Name</th>'
             html += '  <th>Quality Controller</th>';
             html += ' <th>HR Comments</th>';
             html += '<th>Client HR</th>'
@@ -1121,7 +1213,7 @@
 
             if (data[i].clientHrMobile != null && data[i].clientHrMobile != "") {
 
-                html += ' <input type="hidden" id="hidclienthr' + data[i].id + '" value="' + data[i].clientHrContact + '"/> <button class="mdc-fab app-fab--absolute" aria-label="Click here to call Client HR">';
+                html += ' <input type="hidden" id="hidclienthr' + data[i].id + '" value="' + data[i].candidateClientHR + '"/> <button class="mdc-fab app-fab--absolute" aria-label="Click here to call Client HR">';
                 html += '   <span onclick="ModalButtonClickJson(' + data[i].clientHrMobile + ',' + data[i].id + ',3)" data-original-title="Tooltip on top" title="Click here to call the candidate" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>';
                 html += '   </button>';
 
@@ -1145,6 +1237,22 @@
             }
 
             html += '</td>';
+            if (data[i].clientName != null && data[i].clientName != "") {
+                if (data[i].clientName.length > 10) {
+                    html += '  <td style="text-align: center"> ' + data[i].clientName.substring(0, 10) + '... </td>';
+                }
+
+                else {
+
+                    html += '  <td style="text-align: center"> ' + data[i].clientName + ' </td>';
+
+                }
+            }
+
+            else {
+                html += ' <td></td>';
+            }
+
             if (data[i].qcInterviewer != null && data[i].qcInterviewer != "") {
                 html += '<td>' + data[i].qcInterviewer + '</td>';
             }
@@ -1161,13 +1269,13 @@
                 html += '   <td>No JD</td>';
             }
             html += '   <td style="text-align: center">';
-            if (data[i].clientHrContact != null && item.clientHrContact != "") {
-                if (data[i].clientHrContact.length > 13) {
-                    html += ' <td class="cadEmail"><a onclick="" data-tooltip="' + data[i].clientHrContact + '">' + data[i].clientHrContact.substring(0, 13) + '... </a></td>';
+            if (data[i].candidateClientHR != null && data[i].candidateClientHR != "") {
+                if (data[i].candidateClientHR.length > 13) {
+                    html += ' <td class="cadEmail"><a onclick="" data-tooltip="' + data[i].candidateClientHR + '">' + data[i].candidateClientHR.substring(0, 13) + '... </a></td>';
 
                 }
                 else {
-                    html += ' <td class="cadEmail"> <a onclick="">' + data[i].clientHrContact + '</a></td>';
+                    html += ' <td class="cadEmail"> <a onclick="">' + data[i].candidateClientHR + '</a></td>';
 
                 }
             } else {
@@ -1448,48 +1556,22 @@
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
-
+        $(document).ready(function () {
+            my_code();
+        });
         function my_code() {
             var msg = '@ViewBag.Message';
-
-
-
             if (msg.includes("Success")) {
-                swal({
-                    title: 'Successful',
-                    text: '@ViewBag.Message',
-                    type: 'success',
-                    showConfirmButton: true
-
-                },
-                    function (value) //confirm
-                    {
-                        //if Yes do this
-                        window.location.href = '/Interview/HRMyInterview';
-                    }
-                )
-
+                swal.fire("Successful",'@ViewBag.Message', "success");
             }
             else {
-                swal({
-                    title: 'Failed',
-                    text: '@ViewBag.Message',
-                    type: 'error',
-                    showConfirmButton: true
-
-                },
-                    function ()
-                    {
-                        window.location.href = '/Interview/HRMyInterview';
-                    }
-                )
+                swal.fire("Failed", '@ViewBag.Message', "error");
             }
 
         }
 
-        window.onload = my_code();
     </script>
-
+    
 }
 <script>
     var meetingId;

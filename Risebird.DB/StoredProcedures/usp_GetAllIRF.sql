@@ -128,7 +128,25 @@ Else if(@Profile='CuratedUser')
   group by irf.id, irf.IRFId, irf.JDTiltle, irf.StartDate, irf.EndDate, irf.IsDeleted,  
   irf.CalendlyLink, irf.IsPaused, irf.ClientName,  
   Client.[Name], tsm.SelectedMeetings, sub.SubId  
- End  
+ End 
+Else if(@Profile='HR')  
+ Begin  
+  
+  select irf.id, irf.IRFId, irf.JDTiltle, irf.StartDate, irf.EndDate, irf.JDLink,irf.RisebirdHr, irf.PerMintuteRate, irf.IsDeleted,  
+  irf.TotalInvites, irf.CalendlyLink, irf.TotalBudget, irf.CompanyDetails, irf.Discount, irf.IsBiometricEnabled, irf.PriorityLevel,Client.CuratedLink as CuratedLink, irf.IsPaused, irf.ClientName,  
+  Client.[Name] as ClientCompName, tcm.ConfirmedMeetings, ttm.TotalMeetings, tsm.SelectedMeetings, tschm.ScheduledMeetings, (irf.PerMintuteRate*tcm.ConfirmedMeetings) as TotalBudgetConsumed  
+  from irf left join InterviewMeetings im on irf.IRFId = im.IRFId inner join Client on IRF.ClientId = Client.id left join @tbl_ConfirmedMeetings tcm on irf.id = tcm.IRFId  
+  left join @tbl_TotalMeetings ttm on irf.id=ttm.IRFId  
+  left join @tbl_SelectedMeetings tsm on irf.id=tsm.IRFId  
+  left join @tbl_CompletedMeetings tschm on irf.id= tschm.IRFId  
+  join TransHR th on th.IRFId = irf.id
+  join HR on HR.id = th.HRId
+  join UserList ulh on ulh.id = HR.UserId 
+  where ulh.EmailId=@EmailId
+  group by irf.id, irf.IRFId, irf.JDTiltle, irf.StartDate, irf.EndDate, irf.JDLink,irf.RisebirdHr, irf.PerMintuteRate, irf.IsDeleted,  
+  irf.TotalInvites, irf.CalendlyLink, irf.TotalBudget, irf.CompanyDetails,irf.Discount,Client.CuratedLink , irf.IsBiometricEnabled, irf.PriorityLevel, irf.IsPaused, irf.ClientName,  
+  Client.[Name], tcm.ConfirmedMeetings, ttm.TotalMeetings, tsm.SelectedMeetings, tschm.ScheduledMeetings, (irf.PerMintuteRate*tcm.ConfirmedMeetings)   
+ End
 Else  
 begin  
   select irf.id, irf.IRFId, irf.JDTiltle, irf.StartDate, irf.EndDate, irf.JDLink,irf.RisebirdHr, irf.PerMintuteRate, irf.IsDeleted,  
