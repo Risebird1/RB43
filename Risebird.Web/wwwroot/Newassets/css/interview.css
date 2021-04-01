@@ -943,7 +943,7 @@ table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.data
 }
 
 table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
-    padding: 7px;
+    padding: 5px 4px;
     font-weight: normal !important;
 }
 

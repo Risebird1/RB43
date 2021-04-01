@@ -1,7 +1,9 @@
 body {
     background: #ebecf1;
 }
-
+.availbg {
+    background: #fff;
+}
 .main-panel {
     background: #ebecf1;
 }

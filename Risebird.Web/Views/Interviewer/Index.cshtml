@@ -309,8 +309,8 @@
                                                     <th id="start">First Name</th>
                                                     <th>Last Name</th>
                                                     <th>Email Id</th>
-                                                    <th>Mobile Number</th>
                                                     <th>Primary Skills</th>
+                                                    <th>Assessment Group</th>
                                                     <th>Resume Link</th>
                                                     <th>Password</th>
                                                     <th class="disabled-sorting text-center">Actions</th>
@@ -322,8 +322,8 @@
                                                     <th>First Name</th>
                                                     <th>Last Name</th>
                                                     <th>Email Id</th>
-                                                    <th>Mobile Number</th>
                                                     <th>Primary Skills</th>
+                                                    <th>Assessment Group</th>
                                                     <th>Resume Link</th>
                                                     <th>Password</th>
                                                     <th class="disabled-sorting text-center">Actions</th>
@@ -332,191 +332,243 @@
                                             <tbody id="tblbodyInterviewerProfile">
                                                 @foreach (var item in Model)
                                                 {
-                                                    <tr id=@item.id data-changes="1">
-                                                        <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
-                                                        @if (item.FirstName != null && item.FirstName != "")
+                                                <tr id=@item.id data-changes="1">
+                                                    <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                                                    @if (item.FirstName != null && item.FirstName != "")
+                                                    {
+
+
+                                                        @if (item.FirstName.Length > 20)
                                                         {
 
 
-                                                            @if (item.FirstName.Length > 20)
-                                                            {
-
-
-                                                                <td class="cadName">
-                                                                    <a onclick="" data-tooltip="@item.FirstName"> @item.FirstName.Substring(0, 20)... </a>
-                                                                </td>
-                                                            }
-
-
-                                                            else
-                                                            {
-                                                                <td class="cadName">
-                                                                    <a onclick=""> @item.FirstName </a>
-                                                                </td>
-                                                            }
-
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-
-                                                        @if (item.LastName != null && item.LastName != "")
-                                                        {
-
-
-                                                            @if (item.LastName.Length > 15)
-                                                            {
-
-
-                                                                <td class="cadLast">
-                                                                    <a onclick="" data-tooltip="@item.LastName"> @item.LastName.Substring(0, 15)... </a>
-                                                                </td>
-                                                            }
-
-
-                                                            else
-                                                            {
-                                                                <td class="cadLast">
-                                                                    <a onclick=""> @item.LastName </a>
-                                                                </td>
-                                                            }
-
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-
-                                                        @if (item.EmailId != null && item.EmailId != "")
-                                                        {
-
-                                                            @if (item.EmailId.Length > 13)
-                                                            {
-
-
-                                                                <td class="cadEmail">
-                                                                    <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0, 13)... </a>
-                                                                </td>
-                                                            }
-
-
-                                                            else
-                                                            {
-                                                                <td class="cadEmail">
-                                                                    <a onclick=""> @item.EmailId </a>
-                                                                </td>
-                                                            }
-
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-
-                                                        <td>@item.MobileNumber</td>
-
-
-                                                        <td class="interview-com">
-
-
-                                                            <div id="section">
-                                                                @if (item.PrimarySkill != null && item.PrimarySkill != "")
-                                                                {
-                                                                    @if (item.PrimarySkill.Length > 35)
-                                                                    {
-                                                                        <div class="article">
-                                                                            <p style="margin-bottom:0px;">
-                                                                                @item.PrimarySkill.Substring(0, 35)
-                                                                            </p>
-                                                                            <p class="moretext_@item.id moretext">
-                                                                                @item.PrimarySkill.Substring(35, @item.PrimarySkill.Length - 35)
-                                                                            </p>
-                                                                        </div>
-                                                                        <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <div class="article">
-
-                                                                            <p>
-                                                                                @item.PrimarySkill.Substring(0, @item.PrimarySkill.Length)
-                                                                            </p>
-                                                                        </div>}
-                                                                }
-                                                                else
-                                                                { <div></div>}
-
-
-                                                            </div>
-
-
-
-
-                                                        </td>
-
-
-
-                                                        @if (item.ResumeLink != null && item.ResumeLink != "")
-                                                        {
-                                                            <td>
-
-                                                                <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink.Replace(" ","%20")>Resume</a>
+                                                            <td class="cadName">
+                                                                <a onclick="" data-tooltip="@item.FirstName"> @item.FirstName.Substring(0, 20)... </a>
                                                             </td>
                                                         }
+
+
                                                         else
                                                         {
-                                                            <td>No Resume</td>
+                                                            <td class="cadName">
+                                                                <a onclick=""> @item.FirstName </a>
+                                                            </td>
                                                         }
 
-                                                        <td>
-                                                            <div style="position:relative">
-                                                                <div class="secret-pass passshow" id="password-field_@item.id" type="password">@item.UserPassword</div>
-                                                                @if (item.UserPassword != null && item.UserPassword != "")
-                                                                {<span class="secret" id="secret_@item.id" style="top:0px;">********</span>
-                                                                    <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+
+                                                    @if (item.LastName != null && item.LastName != "")
+                                                    {
+
+
+                                                        @if (item.LastName.Length > 15)
+                                                        {
+
+
+                                                            <td class="cadLast">
+                                                                <a onclick="" data-tooltip="@item.LastName"> @item.LastName.Substring(0, 15)... </a>
+                                                            </td>
+                                                        }
+
+
+                                                        else
+                                                        {
+                                                            <td class="cadLast">
+                                                                <a onclick=""> @item.LastName </a>
+                                                            </td>
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+
+                                                    @if (item.EmailId != null && item.EmailId != "")
+                                                    {
+
+                                                        @if (item.EmailId.Length > 11)
+                                                        {
+
+
+                                                            <td class="cadEmail">
+                                                                <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0, 11)... </a>
+                                                            </td>
+                                                        }
+
+
+                                                        else
+                                                        {
+                                                            <td class="cadEmail">
+                                                                <a onclick=""> @item.EmailId </a>
+                                                            </td>
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+
+                                                 
+
+
+                                                    <td class="interview-com">
+
+
+                                                        <div id="section">
+                                                            @if (item.PrimarySkill != null && item.PrimarySkill != "")
+                                                            {
+                                                                @if (item.PrimarySkill.Length > 23)
+                                                                {
+                                                                    <div class="article">
+                                                                        <p style="margin-bottom:0px;">
+                                                                            @item.PrimarySkill.Substring(0, 23)
+                                                                        </p>
+                                                                        <p class="moretext_@item.id moretext">
+                                                                            @item.PrimarySkill.Substring(23, @item.PrimarySkill.Length - 23)
+                                                                        </p>
+                                                                    </div>
+                                                                    <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
                                                                 }
                                                                 else
-                                                                { <span toggle="#password-field_@item.id" class=" toggle-password" id="toggle-password_@item.id"></span>}
-                                                            </div>
+                                                                {
+                                                                    <div class="article">
 
-
-                                                        </td>
-
-
-                                                        <td class="text-right action">
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Recommendation">
-                                                                <span onclick="location.href = '@Url.Action("InterviewerRecommendation", "Interviewer", new {  id = item.UserId })'" title="Recommendation" class="mdc-fab__icon material-icons">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" style="top: -1px;position: relative;">
-                                                                        <path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"></path>
-                                                                    </svg>
-                                                                </span>
-                                                            </button>
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Interviewer Profile">
-                                                                <span onclick="location.href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId})'" title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                            </button>
-
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Click here to add Interviewer Employer Details">
-                                                                <span onclick="location.href = '@Url.Action("IndexEmployer", "Interviewer", new { id = item.id})'" title="Click here to add Interviewer Employer Details" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M10 8c1.66 0 2.99-1.34 2.99-3S11.66 2 10 2 7 3.34 7 5s1.34 3 3 3zm-6 2V8h2V6H4V4H2v2H0v2h2v2h2zm6 0c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></span>
-                                                            </button>
-
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                            {
-                                                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.FirstName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone"></span></span></span>
-
+                                                                        <p>
+                                                                            @item.PrimarySkill.Substring(0, @item.PrimarySkill.Length)
+                                                                        </p>
+                                                                    </div>}
                                                             }
+                                                            else
+                                                            { <div></div>}
+
+
+                                                        </div>
 
 
 
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete Interviewer Profile">
-                                                                <span onclick="javascript:DeleteEntityfromEnvironment('@item.UserId','@item.FirstName');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                            </button>
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Assessments">
-                                                                <span onclick="location.href = '@Url.Action("AssessmentForApproval", "Interviewer", new { EmailAddress = item.EmailId , id = item.id })'" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></span>
-                                                            </button>
 
+                                                    </td>
+
+
+
+                                                    <td class="interview-com">
+
+
+                                                        <div id="section">
+                                                            @if (item.AssessmentGroupId != null && item.AssessmentGroupId != "")
+                                                            {
+                                                                @if (item.AssessmentGroupId.Length > 23)
+                                                                {
+                                                                    <div class="article">
+                                                                        <p style="margin-bottom:0px;">
+                                                                            @item.AssessmentGroupId.Substring(0, 23)
+                                                                        </p>
+                                                                        <p class="moretext1_@item.id moretext">
+                                                                            @item.AssessmentGroupId.Substring(23, @item.AssessmentGroupId.Length - 23)
+                                                                        </p>
+                                                                    </div>
+                                                                    <a onclick="moreless1(@item.id)" class="moreless-button" value="Readmore" id="read1_@item.id" href="#">Read more</a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="article">
+
+                                                                        <p>
+                                                                            @item.AssessmentGroupId.Substring(0, @item.AssessmentGroupId.Length)
+                                                                        </p>
+                                                                    </div>}
+                                                            }
+                                                            else
+                                                            { <div></div>}
+
+
+                                                        </div>
+
+
+
+
+                                                    </td>
+
+
+
+                                                    @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                    {
+                                                        <td>
+
+                                                            <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink.Replace(" ","%20")>Resume</a>
                                                         </td>
-                                                    </tr>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Resume</td>
+                                                    }
+
+                                                    <td>
+                                                        <div style="position:relative">
+                                                            <div class="secret-pass passshow" id="password-field_@item.id" type="password">@item.UserPassword</div>
+                                                            @if (item.UserPassword != null && item.UserPassword != "")
+                                                            {<span class="secret" id="secret_@item.id" style="top:0px;">********</span>
+                                                                <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
+                                                            }
+                                                            else
+                                                            { <span toggle="#password-field_@item.id" class=" toggle-password" id="toggle-password_@item.id"></span>}
+                                                        </div>
+
+
+                                                    </td>
+
+
+                                                    <td class="text-right action">
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Recommendation">
+                                                            <span onclick="location.href = '@Url.Action("InterviewerRecommendation", "Interviewer", new {  id = item.UserId })'" title="Recommendation" class="mdc-fab__icon material-icons">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" style="top: -1px;position: relative;">
+                                                                    <path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"></path>
+                                                                </svg>
+                                                            </span>
+                                                        </button>
+
+
+                                                        <button class="mdc-fab app-fab--absolute" data-toggle="modal" onclick="openAvailDetailsModel(@item.id)">
+
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" /></svg>
+                                                        </button>
+
+                                                        <button class="mdc-fab app-fab--absolute" data-toggle="modal" onclick="openBankDetailsModel(@item.id)">
+
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z" /></svg>
+                                                        </button>
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Interviewer Profile">
+                                                            <span onclick="location.href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId})'" title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                        </button>
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Click here to add Interviewer Employer Details">
+                                                            <span onclick="location.href = '@Url.Action("IndexEmployer", "Interviewer", new { id = item.id})'" title="Click here to add Interviewer Employer Details" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M10 8c1.66 0 2.99-1.34 2.99-3S11.66 2 10 2 7 3.34 7 5s1.34 3 3 3zm-6 2V8h2V6H4V4H2v2H0v2h2v2h2zm6 0c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></span>
+                                                        </button>
+
+                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                        {
+                                                            <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.FirstName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone"></span></span></span>
+
+                                                        }
+
+
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete Interviewer Profile">
+                                                            <span onclick="javascript:DeleteEntityfromEnvironment('@item.UserId','@item.FirstName');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Assessments">
+                                                            <span onclick="location.href = '@Url.Action("AssessmentForApproval", "Interviewer", new { EmailAddress = item.EmailId , id = item.id })'" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></span>
+                                                        </button>
+
+                                                    </td>
+                                                </tr>
 
 
                                                     <tr class="collapse @item.id">
@@ -526,6 +578,7 @@
                                                                 <tr>
                                                                     <th>Lead Interviewer</th>
                                                                     <th>Coded Resume Link</th>
+                                                                    <th>Mobile Number</th>
                                                                     <th>Approved</th>
                                                                     <th>City</th>
                                                                     <th>Current Role</th>
@@ -559,7 +612,7 @@
                                                                     {
                                                                         <td>No Coded Resume</td>
                                                                     }
-
+                                                                    <td>@item.MobileNumber</td>
 
                                                                     @if (item.IsApproved == true)
                                                                     {
@@ -709,6 +762,103 @@
 
 </div>
 
+<div id="bankModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" /></svg>
+
+                </div>
+                <h5 class="modal-title pull-left">Bank Details</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeBankDetailsModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+               <div class="col-md-12 ">
+                        <div class="row">
+
+                            <div class="col-md-4 col-sm-4 pr-1">
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
+                                    <input id="txt_accname" class="form-control text-box single-line" type="text" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 px-1">
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
+                                    <input id="txt_accno" class="form-control text-box single-line" type="number" value="" />
+                                   
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 pl-1">
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
+                                    <input id="txt_accifsc" class="form-control text-box single-line" type="text" value="" />
+                 
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 pr-1">
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
+                                    <input id="#txt_accupi" class="form-control text-box single-line" type="text" value="" />
+                                 
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 px-1">
+                                <div class="form-group">
+                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="bankLocation">PAN</label>
+                                    <input id="#txt_accpan" class="form-control text-box single-line" type="text" value="" />
+                                   
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color:#fff;line-height: 13px;" type="button" onclick="closeBankDetailsModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="availModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" /></svg>
+                </div>
+                <h5 class="modal-title pull-left">Availability Details</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeAvailDetailsModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div id="availDetails" class="modal-body">
+                <div class="col-md-12 ">
+                    <div class="row">
+
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color:#fff;line-height: 13px;" type="button" onclick="closeAvailDetailsModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @if (ViewBag.Message != null)
 {
@@ -734,6 +884,83 @@
 
 
 <script>
+    function closeBankDetailsModel() {
+        var modal = document.getElementById("bankModal");
+        modal.style.display = "none";
+    }
+
+    function bindbankDetailsData(data) {
+
+        $('#txt_accname').val(data.accountName);
+        $('#txt_accno').val(data.accountNumber);
+        $('#txt_accifsc').val(data.ifscCode);
+        $('#txt_accupi').val(data.upiId);
+        $('#txt_accpan').val(data.pan);
+
+    }
+    function openBankDetailsModel(interviewerid) {
+        $.ajax({
+            type: "POST",
+            url: "/Interviewer/BankDetailsJson",
+            data: { interviewerid: interviewerid},
+            success: function (data) {
+                var modal = document.getElementById("bankModal");
+                modal.style.display = "block";
+                bankDetailsData(data);
+            }
+        });
+    }
+
+
+
+    function closeAvailDetailsModel() {
+        var modal = document.getElementById("availModal");
+        modal.style.display = "none";
+    }
+
+    function bindavailDetailsData(data) {
+        var html = '';
+        html += '  <table class="table table-bordered mbn" id="availabilityDetailsTable">';
+        html += '<thead class="tableHeaderClass">';
+        html += ' <tr>';
+        html += '  <th width="40%" class="table_heading">Week Day</th>';
+        html += '  <th width="40%" class="table_heading">Week End</th>';
+        html += '  <th width="10%" class="table_heading">Is Available On Public Holidays</th>';
+        html += ' </tr>';
+        html += ' </thead>';
+        html += '  <tbody>'; 
+        for (var i = 0; i < data.length; i++) {
+         
+            html += ' <tr class="availbg">';
+                html += ' <td><input class = "select-css form-control text-box single-line" type ="text" value="' + data[i].weekday+'"/></td>';
+                html += '<td><input class = "select-css form-control text-box single-line" type ="text" value="' + data[i].weekend +'"/></td>';
+               
+                if (data[i].isAvailableOnPublicHolidays==1) {
+                    html += '  <td style="text-align:center">Available on Public Holiday</td>';
+                }
+                else { html += '  <td style="text-align:center">Not Available on Public Holiday</td>';}
+            html += '  </tr>';
+           
+             }
+
+        html += ' </tbody>';
+        html += '</table>';
+        $('#availDetails').empty().html(html);
+    }
+    function openAvailDetailsModel(interviewerid) {
+        $.ajax({
+            type: "POST",
+            url: "/Interviewer/AvailDetailsJson",
+            data: { interviewerid: interviewerid },
+            success: function (data) {
+                var modal = document.getElementById("availModal");
+                modal.style.display = "block";
+                bindavailDetailsData(data);
+            }
+        });
+    }
+
+
 
     function DeleteEntityfromEnvironmentJson(userId) {
         var firstnamne = $('#hidfirstname' + userId).val();
@@ -957,8 +1184,8 @@
 
 
             if (data[i].emailId != null && data[i].emailId != "") {
-                if (data[i].emailId.length > 13) {
-                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].emailId + '">' + data[i].emailId.substring(0, 13) + '...  </a></td>';
+                if (data[i].emailId.length > 11) {
+                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].emailId + '">' + data[i].emailId.substring(0, 11) + '...  </a></td>';
                 }
                 else {
                     html += '  <td class="cadEmail"><a onclick="">' + data[i].emailId + ' </a></td>';
@@ -968,14 +1195,14 @@
                 html += '<td></td>';
             }
 
-            html += '  <td>' + data[i].mobileNumber + '</td>';
+            
             html += '<td class="interview-com">';
             html += ' <div id="section">';
             if (data[i].primarySkill != null && data[i].primarySkill != "") {
-                if (data[i].primarySkill.length > 35) {
+                if (data[i].primarySkill.length > 23) {
                     html += '  <div class="article">';
-                    html += '  <p style="margin-bottom:0px;">' + data[i].primarySkill.substring(0, 35) + '</p>';
-                    html += '   <p class="moretext_' + data[i].id + ' moretext">' + data[i].primarySkill.substring(40, data[i].primarySkill.length - 35) + '</p>';
+                    html += '  <p style="margin-bottom:0px;">' + data[i].primarySkill.substring(0, 23) + '</p>';
+                    html += '   <p class="moretext_' + data[i].id + ' moretext">' + data[i].primarySkill.substring(23, data[i].primarySkill.length - 23) + '</p>';
                     html += '</div>';
                 }
                 else {
@@ -986,6 +1213,26 @@
                 html += '<div></div>';
             }
             html += ' <a onclick="moreless(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read_' + data[i].id + '" href="#">Read more</a>';
+            html += '</div>';
+            html += ' </td>';
+
+            html += '<td class="interview-com">';
+            html += ' <div id="section">';
+            if (data[i].assessmentGroupId != null && data[i].assessmentGroupId != "") {
+                if (data[i].assessmentGroupId.length > 23) {
+                    html += '  <div class="article">';
+                    html += '  <p style="margin-bottom:0px;">' + data[i].assessmentGroupId.substring(0, 23) + '</p>';
+                    html += '   <p class="moretext1_' + data[i].id + ' moretext">' + data[i].assessmentGroupId.substring(23, data[i].assessmentGroupId.length - 23) + '</p>';
+                    html += '</div>';
+                }
+                else {
+                    html += '<div class="article"><p>' + data[i].assessmentGroupId.substring(0, data[i].assessmentGroupId.length) + '</p></div>';
+                }
+            }
+            else {
+                html += '<div></div>';
+            }
+            html += ' <a onclick="moreless1(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read1_' + data[i].id + '" href="#">Read more</a>';
             html += '</div>';
             html += ' </td>';
             html += '  <td><a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink.replace(" ", "%20") + '>Resume</a></td>';
@@ -1005,11 +1252,18 @@
             html += '  </svg>';
             html += '  </a>';
             html += '  </button>';
+            html += '  <button class="mdc-fab app-fab--absolute" data-toggle="modal" onclick="openAvailDetailsModel('+data[i].id+')">';
+            html += '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" /></svg>';
+            html += '  </button>';
+            html += ' <button class="mdc-fab app-fab--absolute" data-toggle="modal" onclick="openBankDetailsModel(' + data[i].id +')">';
+
+            html += '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z" /></svg>';
+            html += '</button>';
             html += ' <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Interviewer Profile">';
             html += ' <a href = "/Interviewer/EditInterviewerProfile/?userId=' + data[i].userId + '" title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></a>';
             html += '  </button>';
             html += '  <button class="mdc-fab app-fab--absolute" aria-label="Click here to add Interviewer Employer Details">';
-            html += ' <a href = "/Interviewer/IndexEmployer?id= ' + data[i].id + '" title="Click here to add Interviewer Employer Details" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M10 8c1.66 0 2.99-1.34 2.99-3S11.66 2 10 2 7 3.34 7 5s1.34 3 3 3zm-6 2V8h2V6H4V4H2v2H0v2h2v2h2zm6 0c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></a>';
+            html += ' <a href = "/Interviewer/IndexEmployer?id= ' + data[i].id + '" title="Click here to add Interviewer Employer Details"  class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M10 8c1.66 0 2.99-1.34 2.99-3S11.66 2 10 2 7 3.34 7 5s1.34 3 3 3zm-6 2V8h2V6H4V4H2v2H0v2h2v2h2zm6 0c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></a>';
             html += '  </button>';
                 @*if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
   {
@@ -1039,6 +1293,7 @@
             html += '  <tr>';
             html += ' <th>Lead Interviewer</th>';
             html += ' <th>Coded Resume Link</th>';
+            html += '<th>Mobile Number</th>'
             html += ' <th>Approved</th>';
             html += '  <th>City</th>';
             html += '  <th>Current Role</th>';
@@ -1066,6 +1321,7 @@
             else {
                 html += ' <td>No Coded Resume</td>';
             }
+            html += '  <td>' + data[i].mobileNumber + '</td>';
 
             if (data[i].isApproved == true) {
                 html += '<td>Approved</td>';
@@ -1178,6 +1434,20 @@
         } else {
             $('#read_' + id).empty().html('Read less');
             $('#read_' + id).val('Readmore');
+
+        }
+    }
+
+    function moreless1(id) {
+
+        $('.moretext1_' + id).slideToggle();
+        if ($('#read1_' + id).val() == 'Readmore') {
+            $('#read1_' + id).empty().html('Read more');
+            $('#read1_' + id).val('Readless');
+        } else {
+            $('#read1_' + id).empty().html('Read less');
+            $('#read1_' + id).val('Readmore');
+
         }
     }
 

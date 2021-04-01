@@ -123,8 +123,8 @@
                                                             <td>@item.Comment<input type="hidden" id="hidcomment_@item.id" value="@item.Comment" /></td>
                                                             <td>@item.Points<input type="hidden" id="hidpoint_@item.id" value="@item.Points" /></td>
                                                             <td>
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Detail View">
-                                                                    <span onclick="DetailedView(@item.id)" title="Detail View" class="mdc-fab__icon material-icons">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Detailed View">
+                                                                    <span onclick="DetailedView(@item.id)" title="Detailed View" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
                                                                             <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
                                                                             <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
@@ -550,7 +550,7 @@
         html += '   <th>Rate</th>';
         html += '   <th>Amount</th>';
         html += '   <th>Meeting Status</th>';
-
+        html += '   <th>Interview Status</th>';
         html += '</tr>';
         html += '</thead>';
         html += '<tbody>';
@@ -566,6 +566,11 @@
                 html += '                               <td></td>';
             } else {
                 html += '                               <td>' + data[i].meetingStatusDetails + '</td>';
+            }
+            if (data[i].InterviewStatusDetails == null) {
+                html += '                               <td></td>';
+            } else {
+                html += '                               <td>' + data[i].InterviewStatusDetails + '</td>';
             }
             html += '                           </tr>';
         }
