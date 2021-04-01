@@ -2257,7 +2257,22 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        [HttpPost]
+        public JsonResult BankDetailsJson(int interviewerid) {
+            var results = _interviewerService.fetchBankDetails(interviewerid);
+            return Json(results.Result);
+
+        }
+        [HttpPost]
+        public JsonResult AvailDetailsJson(int interviewerid)
+        {
+            var results = _interviewerService.fetchAvailDetails(interviewerid);
+            return Json(results.Result);
+
+        }
+
+
     }
 
-
 }
+

@@ -36,7 +36,13 @@ body {
     bottom: 90%;
     left: 90%;
 }
-    #interviewer.table.dataTable thead > tr > th.sorting{padding-right:0px!important;}
+input#txt_accno[type=number] {
+    border-radius: 3px !important;
+    height: 44px !important;
+}
+#interviewer.table.dataTable thead > tr > th.sorting {
+    padding-right: 0px !important;
+}
 .ch-btn {
     width: 220px;
     margin-right: 10px;
@@ -52,6 +58,7 @@ audio{outline:0px;border:0px;}
 .mobile-view-chn, .mobile-view-ac {
     display: none
 }
+.availbg td{border:0px;}
 .available {
     color: #1f9007;
     padding: 2px 0px;
@@ -1400,8 +1407,9 @@ table.journey td.cadSkill {
 }
 
 .table-striped.table-bordered th {
-    background: rgba(220, 220, 220, 0.3) !important;
+    background: rgba(179, 172, 172, 0.3)!important
 }
+
 
 table {
     border-collapse: inherit;
@@ -1460,7 +1468,7 @@ table.interviewertable th, table.interviewertable td {
 .scroller-payment {
     height: 200px;
 }
-.rbpay .modal-dialog{max-width:850px!important}
+.rbpay .modal-dialog{max-width:920px!important}
 .video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
     position: absolute;
     bottom: 100%;
@@ -6433,7 +6441,7 @@ blockquote {
     margin-left: 0px;
     margin-top: 0px;
     position: absolute;
-    z-index: 2;
+    z-index: 1;
     left: 0;
     top: 35%;
 }

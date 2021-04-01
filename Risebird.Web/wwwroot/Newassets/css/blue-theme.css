@@ -73,7 +73,7 @@ td.detail-row {
     .child-section .table-striped tbody tr:nth-of-type(even) {
         background: #fff;
     }
-table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead > th, table.journey th {
+table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead > th, table.journey th, table.table-bordered > thead > th {
     background: #e0e0e0 !important;
 }
 
@@ -356,6 +356,9 @@ textarea::-webkit-scrollbar-thumb {
 
 .mdc-card button.dropdown-toggle:focus {
     border-bottom: 2px #42a5f5 solid !important;
+}
+.availbg {
+    background: #fff;
 }
 
 .multiselect-container.dropdown-menu {

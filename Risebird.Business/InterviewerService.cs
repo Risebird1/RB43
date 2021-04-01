@@ -771,5 +771,39 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<TransInterviewerAccDetails> fetchBankDetails(int interviewerid)
+        {
+            try
+            {
+               
+                var result = await _interviewerRepository.fetchBankDetails(interviewerid);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+
+        public async Task<List<TransInterviewerAvailability>> fetchAvailDetails(int interviewerid)
+        {
+            try
+            {
+
+                var result = await _interviewerRepository.fetchAvailDetails(interviewerid);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
