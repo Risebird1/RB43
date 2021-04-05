@@ -128,7 +128,7 @@
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <form action="@Url.Action("HROpenInterview","Interview")" method="post" id="form">
+                                        <form action="@Url.Action("OpenInterviews","HR")" method="post" id="form">
 
                                             <div class="modal-body">
                                                 <div class="row">
@@ -441,7 +441,7 @@
 
                                                                 <td class="text-right four text-center">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Assign Yourself">
-                                                                        <span onclick="location.href = '@Url.Action("HRAssignYourself", "Interview", new { id = item.id, InterviewDate=item.interviewDate})'" title="Assign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg></span>
+                                                                        <span onclick="location.href = '@Url.Action("HRAssignYourself", "HR", new { id = item.id, InterviewDate=item.interviewDate})'" title="Assign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg></span>
 
                                                                     </button>
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
@@ -497,7 +497,7 @@
                                         </div>
 
                                         <div class="col-sm-12 col-md-7 dataTables_paginate pull-right" id="divmeetingpages">
-                                            @Html.PagedListPager(Model, Page => Url.Action("HROpenInterview", new { Page = Page }))
+                                            @Html.PagedListPager(Model, Page => Url.Action("OpenInterviews", new { Page = Page }))
                                         </div>
                                     </div>
                                 </div>
@@ -555,7 +555,7 @@
         });
         function my_code() {
             var msg = '@ViewBag.Message';
-            if (msg.includes("Success")) {
+            if (msg.toLowerCase().includes("success")) {
                 swal.fire("Successful",'@ViewBag.Message', "success");
             }
             else {
@@ -567,6 +567,7 @@
     </script>
     
 }
+        }
 
 
 <script type="text/javascript">
@@ -625,7 +626,7 @@
 
     });
     function ResetFilter() {
-        window.location.href = "/Interview/ResetHROpenInterviewFilter";
+        window.location.href = "/HR/ResetHROpenInterviewFilter";
     }
 
     function ApplySessionFilter() {
@@ -700,7 +701,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/Interview/HROpenInterviewJson",
+            url: "/HR/HROpenInterviewJson",
             data: { 'searchValue': $('#txtmeeting_filter').val() },
             success: function (data) {
                 if (data != "failed") {
@@ -804,7 +805,7 @@
 
             html += '  <td class="text-center four">';
 
-            html += '   <a href ="/Interview/HRAssignYourself?id=' + data[i].id + ' & InterviewDate=' + data[i].interviewDate + '" title="Assign Yourself" class="mdc-fab app-fab--absolute"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg></a>';
+            html += '   <a href ="/HR/HRAssignYourself?id=' + data[i].id + ' & InterviewDate=' + data[i].interviewDate + '" title="Assign Yourself" class="mdc-fab app-fab--absolute"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg></a>';
 
             html += '   </td>';
             html += '  </tr>';
@@ -854,18 +855,18 @@
             if (i == 1) {
                 html += '   <li class="active"><span>1</span></li>';
             } else if (i <= 10) {
-                html += '<li><a href="/Interview/HROpenInterview?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+                html += '<li><a href="/HR/OpenInterviews?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
             } else if (i == 11) {
                 html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/Interview/HROpenInterview?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/Interview/HROpenInterview?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/HR/OpenInterviews?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/HR/OpenInterviews?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
             } else {
                 break;
             }
             if (pagecount <= 10 && i == pagecount && i != 1) {
                 html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/Interview/HROpenInterview?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/Interview/HROpenInterview?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/HR/OpenInterviews?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/HR/OpenInterviews?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
             }
         }
         html += '</ul>';
@@ -926,58 +927,7 @@
         $(".dataTables_filter input").val('');
         searchResult();
     }
-    function FilterInterviews(filterValue) {
-
-        $.ajax({
-            type: "GET",
-            url: "/Interview/GetFilteredOpenInterviews",
-            data: { 'filterValue': filterValue },
-            success: function (data) {
-                if (data == '' && filterValue == 'seven') {
-                    $('#tableID').html('');
-                    $('#tableID').html('No interviews for the next seven days.');
-                    $('#tableID').css("margin-left", "452px");
-                    return;
-                }
-                if (data == '' && filterValue == 'all') {
-                    $('#tableID').html('');
-                    $('#tableID').html('No interviews.');
-                    $('#tableID').css("margin-left", "452px");
-                    return;
-                }
-                if (data == '') {
-                    $('#tableID').html('');
-                    $('#tableID').html('No interviews for ' + filterValue + '.');
-                    $('#tableID').css("margin-left", "452px");
-                    return;
-                }
-                $('#tableID').css("margin-left", "");
-                $('#tableID').html('');
-                $('#tableID').html(data);
-
-                $('#OpeninterviewList').DataTable({
-                    "pagingType": "full_numbers",
-                    "lengthMenu": [
-                        [10, 25, 50, -1],
-                        [10, 25, 50, "All"]
-                    ],
-                    responsive: true,
-                    language: {
-                        search: "_INPUT_",
-                        searchPlaceholder: "Search records",
-                    }
-
-                });
-                var table = $('#OpeninterviewList').DataTable();
-
-
-
-            },
-            error: function (err) {
-                alert(err.responseText);
-            }
-        });
-    }
+    
 </script>
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")

@@ -76,21 +76,17 @@
                     <div>
 
 
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="
-
-        float: left;
-        margin-right: 5px;
-    " data-toggle="modal" data-target="#filterModal">
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-toggle="modal" data-target="#filterModal">
 
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
                         </button>
 
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded four" style="float: left;">
-                            <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="HRMyInterview" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
+                            <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "HR", actMethod ="MyInterviews" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
                         </button>
 
-                        <i type="submit" class="fa fa-file-excel-o excel-file export five pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("HRInterviewsExporttoExcel", "Interview")'"></i>
+                        <i type="submit" class="fa fa-file-excel-o excel-file export five pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("HRInterviewsExporttoExcel", "HR")'"></i>
 
 
 
@@ -143,7 +139,7 @@
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            <form action="@Url.Action("HRMyInterview","Interview")" method="post" id="form">
+                                            <form action="@Url.Action("MyInterviews","HR")" method="post" id="form">
 
                                                 <div class="modal-body">
                                                     <div class="row">
@@ -715,7 +711,7 @@
                                         </div>
 
                                         <div class="col-sm-12 col-md-7 dataTables_paginate pull-right" id="divmeetingpages">
-                                            @Html.PagedListPager(Model, Page => Url.Action("HRMyInterview", new { Page = Page }))
+                                            @Html.PagedListPager(Model, Page => Url.Action("MyInterviews", new { Page = Page }))
                                         </div>
 
                                     </div>
@@ -956,7 +952,7 @@
 
     });
     function ResetFilter() {
-        window.location.href = "/Interview/ResetHRInterviewFilter";
+        window.location.href = "/HR/ResetHRInterviewFilter";
     }
 
     function ApplySessionFilter() {
@@ -1005,7 +1001,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/Interview/HRMyInterviewJson",
+            url: "/HR/HRMyInterviewJson",
             data: { 'searchValue': $('#txtmeeting_filter').val() },
             success: function (data) {
                 if (data != "failed") {
@@ -1326,18 +1322,18 @@
             if (i == 1) {
                 html += '   <li class="active"><span>1</span></li>';
             } else if (i <= 10) {
-                html += '<li><a href="/Interview/HRMyInterview?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+                html += '<li><a href="/HR/MyInterviews?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
             } else if (i == 11) {
                 html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/Interview/HRMyInterview?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/Interview/HRMyInterview?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/HR/MyInterviews?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/HR/MyInterviews?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
             } else {
                 break;
             }
             if (pagecount <= 10 && i == pagecount && i != 1) {
                 html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/Interview/HRMyInterview?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/Interview/HRMyInterview?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/HR/MyInterviews?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/HR/MyInterviews?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
             }
         }
         html += '</ul>';
@@ -1523,7 +1519,7 @@
                 return new Promise(function (resolve, reject) {
                     //var IdIRF = dataID;
                     $.ajax({
-                        url: '/Interview/HRUnassignYourself?id=' + meetingId,
+                        url: '/HR/HRUnassignYourself?id=' + meetingId,
                         success: function (result) {
                             resolve(result)
 
@@ -1547,7 +1543,7 @@
                     confirmButtonText: 'Close!',
                     allowOutsideClick: false
                 }).then(function () {
-                    window.location = "/Interview/HRMyInterview";
+                    window.location = "/HR/MyInterviews";
                 })
             }
             else if (result.dismiss === 'cancel') {
@@ -1570,7 +1566,7 @@
         });
         function my_code() {
             var msg = '@ViewBag.Message';
-            if (msg.includes("Success")) {
+            if (msg.toLowerCase().includes("success")) {
                 swal.fire("Successful",'@ViewBag.Message', "success");
             }
             else {
@@ -1642,7 +1638,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/Interview/SaveHRComment",
+            url: "/HR/SaveHRComment",
             contentType: false,
             processData: false,
             data: formdata,

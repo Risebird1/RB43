@@ -45,5 +45,7 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<string>> GetAllTagsFromIRF();
         Task<InterviewReport> GetInterviewerRecommendationDetails(int Userid);
         Task<bool> InterviewerRecommendation(InterviewReport reportModel);
+        Task<TransInterviewerAccDetails> fetchBankDetails(int interviewerid);
+        Task<List<TransInterviewerAvailability>> fetchAvailDetails(int interviewerid);
     }
 }
