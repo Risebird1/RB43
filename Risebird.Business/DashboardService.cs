@@ -430,11 +430,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<List<MeetingVM>> FetchRibbonDetailsValues(string actionstatus)
+        public async Task<List<MeetingVM>> FetchRibbonDetailsValues(string actionstatus, string emailid, int actiontype)
         {
             try
             {
-                return await _dashboardRespository.FetchRibbonDetailsValues(actionstatus);
+                return await _dashboardRespository.FetchRibbonDetailsValues(actionstatus, emailid, actiontype);
             }
             catch (Exception ex)
             {
@@ -442,11 +442,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus)
+        public async Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus, string emailid, int actiontype)
         {
             try
             {
-                return await _dashboardRespository.FetchRibbonDetailsValuesbydate(actionstatus);
+                return await _dashboardRespository.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype);
             }
             catch (Exception ex)
             {
