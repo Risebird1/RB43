@@ -34,7 +34,7 @@
 }
 
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=679876534" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=679876589" />
 <script type="text/javascript" src="https//code.jquery.com/jquery-1.10.2.min.js"></script>
 
 <div class="main-panel" id="main-panel">
@@ -64,17 +64,17 @@
     <!-- End Navbar -->
 
 
-    <div class="pt30">
-        <div class="col-md-12 nopad" style="margin:0px;">
-            <div class="card-header bg-w clearfix">
-                <div style=" margin-bottom: 0px; top: -21px; position: relative;">
+    <div>
+        <div>
+            <div>
+                <div style="margin-bottom: 0px; top: -2px; position: relative;">
 
                     <div class="table-responsive-sm">
-                        <table class="table  table-bordered table-striped bod" style="margin-bottom:10px">
+                        <table class="table  table-striped no-border" cellpadding="0" cellspacing="0">
                             <tbody>
                                 <tr>
                                     <td width="20%" style="border: 0px; padding: 0px; height: 0px; line-height: 30px;">
-                                        <table width="100%">
+                                        <table width="100%" class="no-border my_interview">
                                             <tr>
                                                 <td class="un-right">
                                                     @*<div class="countdown__timer flip" style="cursor:pointer" onclick="OpenRibbonDetails('InterviewCount')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunassignedinterviewcount">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span></strong></div>*@
@@ -93,13 +93,13 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td class="text-left un-left"><strong>Unassigned Interview </strong></td>
+                                                <td class="text-left un-left tdgap"><strong>Unassigned Interview </strong></td>
 
                                             </tr>
                                         </table>
                                     </td>
                                     <td width="20%" style="border: 0px; padding: 0px; height: 0px; line-height: 30px;">
-                                        <table width="100%">
+                                        <table width="100%" class="no-border my_interview">
                                             <tr>
                                                 <td class="un-right">
                                                     @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>*@
@@ -122,13 +122,13 @@
 
 
                                                 </td>
-                                                <td class="text-left un-left"><strong>Status Pending</strong></td>
+                                                <td class="text-left un-left tdgap"><strong>Status Pending</strong></td>
 
                                             </tr>
                                         </table>
                                     </td>
                                     <td width="20%" style="border: 0px; padding: 0px; height: 0px; line-height: 30px;">
-                                        <table width="100%">
+                                        <table width="100%" class="no-border my_interview">
                                             <tr>
                                                 <td class="un-right">
                                                     @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('QcPending')"><strong title="Unassigned Interview Count: 0"><span id="ribbonunfilledinterviewstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledInterviewStatusCount</span></strong></span>*@
@@ -151,13 +151,13 @@
 
 
                                                 </td>
-                                                <td class="text-left un-left"><strong>QC Pending</strong></td>
+                                                <td class="text-left un-left tdgap"><strong>QC Pending</strong></td>
 
                                             </tr>
                                         </table>
                                     </td>
                                     <td width="20%" style="border: 0px; padding: 0px; height: 0px; line-height: 30px;">
-                                        <table width="100%">
+                                        <table width="100%" class="no-border my_interview">
                                             <tr>
                                                 <td class="un-right">
                                                     @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('UnAssignedCoordianter')"><strong title="Unassigned Interview Count: 0"><span id="ribbonunfilledcommentscount">@Model.NotUpdatedMeetingsObj.UnfilledCommentsCount</span></strong></span>*@
@@ -181,13 +181,13 @@
 
 
                                                 </td>
-                                                <td class="text-left un-left"><strong>Pending Candidate Feedback</strong></td>
+                                                <td class="text-left un-left tdgap"><strong>Pending Candidate Feedback</strong></td>
 
                                             </tr>
                                         </table>
                                     </td>
                                     <td width="20%" style="border: 0px; padding: 0px; height: 0px; line-height: 30px;">
-                                        <table width="100%">
+                                        <table width="100%" class="no-border my_interview">
                                             <tr>
                                                 <td class="un-right">
                                                     @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>*@

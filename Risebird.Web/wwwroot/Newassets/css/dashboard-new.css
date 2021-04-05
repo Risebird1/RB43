@@ -58,6 +58,22 @@ audio{outline:0px;border:0px;}
 .mobile-view-chn, .mobile-view-ac {
     display: none
 }
+.no-border {
+    border: 0px !important
+}
+.my_interview .un-right {
+    width: 60px;
+}
+    .my_interview .un-right .flipper {
+    position: relative;
+    top: -12px;
+    left: -18px;
+}
+
+.my_interview .un-left {
+    width: 80%;
+    padding: 8px 20px 5px 20px !important;
+}
 .availbg td{border:0px;}
 .available {
     color: #1f9007;
@@ -3510,7 +3526,7 @@ button.btn {
     .mobpad {
         padding: 0px !important;
     }
-
+   
     .navbar {
         padding-top: 0;
     }
