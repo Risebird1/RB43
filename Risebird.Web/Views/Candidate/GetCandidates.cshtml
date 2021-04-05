@@ -1126,7 +1126,6 @@
     </script>
     <script>
     function DeleteCandidate(id, emailId) {
-        debugger;
         //var IdIRF = dataID;
         var irfName = '@ViewBag.IRFName';
         var irfId = '@ViewBag.IRFId';
@@ -1143,7 +1142,14 @@
                 return new Promise(function (resolve, reject) {
                     //var IdIRF = dataID;
                     $.ajax({
-                        url: '/Candidate/Delete?id=' + id + '&irfId=' + irfId + '&IRFName=' + irfName,
+                        //url: '/Candidate/Delete?id=' + id + '&irfId=' + irfId + '&IRFName=' + irfName,
+                        url: '/Candidate/Delete',
+                        method: 'POST',
+                        data: {
+                            'id': id,
+                            'irfId': irfId,
+                            'IRFName': irfName
+                        },
                         success: function (result) {
                             resolve(result)
 
