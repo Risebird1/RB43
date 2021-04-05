@@ -13,6 +13,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Risebird.CommonHelper;
+using Microsoft.Extensions.Configuration;
 
 namespace Risebird.Web.Controllers
 {
@@ -24,13 +25,17 @@ namespace Risebird.Web.Controllers
         private readonly INotificationHelper _notificationHelper;
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IUserService _userService;
-        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IUserService userService)
+        private IConfiguration _configuration;
+        private readonly IMeetingService _meetingService;
+        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IUserService userService, IConfiguration configuration, IMeetingService meetingService)
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
             _azureStorageHelper = azureStorageHelper;
             _userService = userService;
+            _configuration = configuration;
+            _meetingService = meetingService;
         }
         [Authorize]
         public async Task<IActionResult> Index()
@@ -888,7 +893,7 @@ namespace Risebird.Web.Controllers
                             filter.ClientHREmail = filter.ClientHREmail == null ? filter.ClientHREmail = modelList.Select(x => x.ClientHrContact).ToArray() : filter.ClientHREmail = filter.ClientHREmail;
                             modelList = modelList.Where(c => (filter.Client.Count() > 0 ? filter.Client.Contains(c.Name) : c.Name == null)
                             && (filter.ClientHREmail.Count() > 0 ? filter.ClientHREmail.Contains(c.ClientHrContact) : c.ClientHrContact == null)).ToList();
-                            
+
                             modelList = modelList.Select(x =>
                             {
                                 x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
@@ -992,10 +997,41 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        public async Task<JsonResult> FetchRibbonValues()
+        public async Task<JsonResult> FetchRibbonValues(int section)
         {
-            var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCount();
-            return Json(Ribbonmodel);
+            if (section == 1)
+            {
+                var modelData = new List<SurveyVM>();
+                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
+                string email = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    email = HttpContext.Session.GetString("email")?.Trim();
+                    email = email.Replace("\"", "");
+                }
+                var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCountbyHr(email);
+                var myInterview = _meetingService.GetHRAssignedInterviews(email);
+                var interviewerids = myInterview.Select(x => x.id).Distinct().ToList();
+                int countvalue = 0;
+                if (interviewerids != null)
+                {
+                    foreach (var item in interviewerids)
+                    {
+                        if (result.Where(x => x.interviewid == item).Count() == 0)
+                        {
+                            countvalue++;
+                        }
+                    }
+                }
+                Ribbonmodel.UnfilledCommentsCount = countvalue;
+                return Json(Ribbonmodel);
+            }
+            else
+            {
+                var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCount();
+                return Json(Ribbonmodel);
+            }
         }
     }
 }

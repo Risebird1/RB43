@@ -715,7 +715,6 @@ namespace Risebird.Repository
             }
             return null;
         }
-
         public async Task<List<string>> FetchHRList(string searchterm)
         {
             try
@@ -966,6 +965,28 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
+        }
+        public async Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCountbyHr(string Emailid)
+        {
+            try
+            {
+                string query = string.Empty;
+                DateTime currentdate = DateTime.Now;
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@currentdate", currentdate);
+                dp.Add("@@emailID", Emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<NotUpdatedMeetings>(con, "usp_GetNotUpdatedMeetingsCountforHR", dp,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

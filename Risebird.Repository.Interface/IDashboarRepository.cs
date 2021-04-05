@@ -41,5 +41,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<CandidateStatus>> GetClientCandidatesCurrentStatus(string emailId);
         Task<List<MeetingVM>> FetchRibbonDetailsValues(string actionstatus);
         Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus);
+        Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCountbyHr(string Emailid);
     }
 }

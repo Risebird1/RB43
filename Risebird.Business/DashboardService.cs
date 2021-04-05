@@ -353,7 +353,6 @@ namespace Risebird.Business
                 return null;
             }
         }
-
         public async Task<List<string>> FetchHRList(string searchterm)
         {
             try
@@ -455,6 +454,17 @@ namespace Risebird.Business
                 return null;
             }
         }
-
+        public async Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCountbyHr(string Emailid)
+        {
+            try
+            {
+                return await _dashboardRespository.GetNotUpdatedMeetingsCountbyHr(Emailid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
