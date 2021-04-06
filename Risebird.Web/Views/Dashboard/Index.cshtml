@@ -1108,6 +1108,7 @@
     function setRibbon() {
         $.ajax({
             url: '/Dashboard/FetchRibbonValues',
+            data: { section: 0 },
             success: function (data) {
                 $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount").text(data.unfilledMeetingStatusCount);

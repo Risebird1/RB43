@@ -52,7 +52,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings(DateTime startDate, DateTime endDate, string emailId=null)
+        public async Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings(DateTime startDate, DateTime endDate, string emailId = null)
         {
             try
             {
@@ -4131,6 +4131,7 @@ namespace Risebird.Repository
             }
             return null;
         }
+
         public IEnumerable<int> FetchAllInterviewidByClient(int Clientid, string emailid)
         {
             try
@@ -4234,5 +4235,6 @@ namespace Risebird.Repository
             }
             return null;
         }
+        
     }
 }

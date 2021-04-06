@@ -38,7 +38,8 @@ namespace Risebird.Business.Interface
         Task<bool> DeleteChannelInterviewer(int id);
         Task<bool> ChannelInterviewerAction(int id, string action);
         Task<CandidateCurrentStatusCount> GetClientCandidatesCurrentStatusCount(string emailId);
-        Task<List<MeetingVM>> FetchRibbonDetailsValues(string actionstatus);
-        Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus);
+        Task<List<MeetingVM>> FetchRibbonDetailsValues(string actionstatus, string emailid, int actiontype);
+        Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus, string emailid, int actiontype);
+        Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCountbyHr(string Emailid);
     }
 }
