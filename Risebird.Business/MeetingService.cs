@@ -2243,7 +2243,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<string> RBAddPoints(int interviewerid, int Points, string Comment,DateTime PointDate)
+        public async Task<string> RBAddPoints(int interviewerid, int Points, string Comment, DateTime PointDate)
         {
             try
             {
@@ -2458,12 +2458,12 @@ namespace Risebird.Business
                 return null;
             }
         }
-     
-        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue,string Comment)
+
+        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue, string Comment)
         {
             try
             {
-                var result = _meetingRespository.InsertPaymentHistory(Interviewer, Amount, actionvalue,Comment);
+                var result = _meetingRespository.InsertPaymentHistory(Interviewer, Amount, actionvalue, Comment);
                 return result.Result;
             }
             catch (Exception e)
@@ -2485,6 +2485,7 @@ namespace Risebird.Business
                 return null;
             }
         }
+       
     }
 }
 
