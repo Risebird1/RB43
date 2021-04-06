@@ -912,6 +912,10 @@ namespace Risebird.Web.Controllers
                         {
                             modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus, emailid, actiontype);
                         }
+                        if (modelList == null)
+                        {
+                            modelList = new List<MeetingVM>();
+                        }
                         ViewBag.actionstatus = actionstatus;
                         ViewBag.Actiontype = actiontype;
                         if (HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
@@ -947,6 +951,10 @@ namespace Risebird.Web.Controllers
                             else
                             {
                                 modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype);
+                            }
+                            if (modelList == null)
+                            {
+                                modelList = new List<MeetingVM>();
                             }
                             if (filter.StartDate != null && filter.EndDate != null)
                             {
@@ -1041,6 +1049,10 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype);
+                        }
+                        if (modelList == null)
+                        {
+                            modelList = new List<MeetingVM>();
                         }
                         ViewBag.actionstatus = actionstatus;
                         ViewBag.Actiontype = actiontype;

@@ -72,12 +72,16 @@
                     }
 
 
-                    @if (ViewBag.actionstatus == "UnAssignedCoordianter")
+                    @if (ViewBag.actionstatus == "UnAssignedCoordianter" && ViewBag.Actiontype == 0)
                     {<strong>
                             Unassigned RB Co-ordinator
                         </strong>
                     }
-
+                    @if (ViewBag.actionstatus == "UnAssignedCoordianter" && ViewBag.Actiontype == 1)
+                    {<strong>
+                            PENDING CANDIDATE FEEDBACK
+                        </strong>
+                    }
                     @if (ViewBag.actionstatus == "ZoomLink")
                     {<strong>
                             Missing Zoom Link

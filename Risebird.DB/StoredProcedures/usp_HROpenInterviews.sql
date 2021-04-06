@@ -28,7 +28,7 @@ join CandidatesMaster cm on cm.UserId = ul.id
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId=irf.id
 join Client cl on cl.id = irf.ClientId
 join TransHR th on th.IRFId=irf.id
-where HRCoordinatorEmailId is null and confirmationStatus = 1 and th.HRId=@hrId
+where HRCoordinatorEmailId is null and confirmationStatus = 1 and th.HRId=@hrId and im.interviewDate>=getdate()
 END
 GO
 
