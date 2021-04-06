@@ -614,11 +614,13 @@
                                                                 @if (item.candidateEmail != null && item.candidateEmail != "")
                                                                 {
 
-                                                                    @if (item.candidateEmail.Length > 10)
+
+
+                                                                    @if (item.candidateEmail.Length > 13)
                                                                     {
 
                                                                         <td class="cadEmail">
-                                                                            <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 10)... </a>
+                                                                            <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 13)... </a>
                                                                         </td>
                                                                     }
 
@@ -635,11 +637,11 @@
                                                                 {
                                                                     <td></td>
                                                                 }
-                                                                @if (!string.IsNullOrEmpty(item.ClientCompName))
+                                                                 @if (!string.IsNullOrEmpty(item.ClientCompName))
                                                                 {
-                                                                    @if (item.ClientCompName.Length > 10)
+                                                                    @if (item.ClientName.Length > 10)
                                                                     {
-                                                                        <td style="text-align: center"> @item.ClientCompName.Substring(0, 10)... </td>
+                                                                        <td style="text-align: center"><a onclick="" data-tooltip="@item.ClientName"> @item.ClientName.Substring(0, 10)...</a> </td>
                                                                     }
 
                                                                     else
@@ -1261,20 +1263,9 @@
 
 
 
-            //if (data[i].clientHrContact != null && data[i].clientHrContact != "") {
-            //    if (data[i].clientHrContact.length > 10) {
-            //        html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].clientHrContact + '"> ' + data[i].clientHrContact.substring(0, 10) + '... </a></td>';
-            //    }
-            //    else {
-            //        html += '  <td class="cadEmail"><a onclick=""> ' + data[i].clientHrContact + ' </a></td>';
-            //    }
-            //}
-            //else {
-            //    html += '<td></td>';
-            //}
-            if (data[i].clientCompName != null && data[i].clientCompName != "") {
-                if (data[i].clientCompName.length > 10) {
-                    html += '  <td style="text-align: center"> ' + data[i].clientCompName.substring(0, 10) + '... </td>';
+            if (data[i].clientName != null && data[i].clientName != "") {
+                if (data[i].clientName.length > 10) {
+                    html += '  <td style="text-align: center"> ' + data[i].clientName.substring(0, 10) + '... </td>';
                 }
 
                 else {
