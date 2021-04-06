@@ -9,7 +9,7 @@
         public string EducationMode { get; set; }
         public string CollegeType { get; set; }
         public string UniversityName { get; set; }
-        public int PassOutYear { get; set; }
+        public int? PassOutYear { get; set; }
         public bool AnyGap { get; set; }
     }
 }
