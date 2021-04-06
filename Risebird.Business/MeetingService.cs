@@ -354,7 +354,7 @@ namespace Risebird.Business
         {
             try
             {
-                return new SelectList(_meetingRespository.GetIRFList(), "IRFId", "IRFId");
+                return new SelectList(_meetingRespository.GetIRFList().Where(x=>x.EndDate > DateTime.Now), "IRFId", "IRFId");
             }
 
             catch (Exception e)

@@ -307,10 +307,16 @@
                     $.ajax({
                         url: '/User/Delete',
                         data: { 'id': userId },
-                        type: 'get',
+                        type: 'POST',
                         success: function (result) {
-                            resolve(result)
+                            if (result) {
+                                resolve(result)
 
+                            }
+                            else {
+                                swal.fire("Error deleting!", "Please try again", "error");
+
+                            }
                         },
                         error: function () {
                             //reject("error message")
