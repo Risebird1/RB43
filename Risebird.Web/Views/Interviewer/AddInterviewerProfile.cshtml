@@ -305,7 +305,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerSkill[0].SkillId", (SelectList)Model.SkillTypeList, "Select", new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerSkill[0].SkillId", (SelectList)Model.SkillTypeList, "Select", new { @class = "select-css form-control text-box single-line",@required="required" })
                                                         </td>
                                                         <td>
                                                             @Html.DropDownList("InterviewerSkill[0].Category", (SelectList)Model.SkillCategoryList, "Select", new { @class = "select-css form-control text-box single-line" })

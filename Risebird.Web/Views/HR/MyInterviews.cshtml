@@ -770,25 +770,32 @@
                                                                                         {
                                                                                             <td>No JD</td>
                                                                                         }
-                                                                                        <td style="text-align: center">
-                                                                                            @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
-                                                                                            {
 
-                                                                                                @item.InterviewerPhone
+                                                                                        @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
+                                                                                        {
+                                                                                            <td style="text-align: center"> @item.InterviewerPhone</td>
 
 
-                                                                                            }
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <td></td>
+                                                                                        }
 
-                                                                                        </td>
-                                                                                        <td style="text-align: center">
-                                                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                                            {
 
+                                                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                        {
+
+                                                                                            <td style="text-align: center">
                                                                                                 @item.MobileNumber
+                                                                                            </td>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <td></td>
+                                                                                        }
 
-                                                                                            }
 
-                                                                                        </td>
                                                                                         @if (item.MeetingStatusDesc != "0")
                                                                                         {
                                                                                             <td> @item.MeetingStatusDesc</td>
@@ -799,7 +806,14 @@
                                                                                         }
 
                                                                                         <td> @item.InterviewStatusDesc</td>
-                                                                                        <td> @item.videoLink</td>
+                                                                                        @if (item.videoLink.Length > 28)
+                                                                                        {
+                                                                                            <td><a onclick="" data-tooltip="@item.videoLink"> @item.videoLink.Substring(0, 28)...</a></td>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <td> @item.videoLink</td>
+                                                                                        }
 
                                                                                         <td style="text-align: center">
                                                                                             @if (item.ClientHrMobile != null && item.ClientHrMobile != string.Empty)
@@ -851,33 +865,36 @@
                                                                                         {
                                                                                             <td>@item.QCStatusDesc</td>
                                                                                         }
-                                                                                        else{<td></td>}
-                                                                                            <td>@item.HRComment</td>
-                                                                                            @if (!string.IsNullOrEmpty(item.CandidateClientHR))
+                                                                                        else
+                                                                                        {
+                                                                                            <td></td>
+                                                                                        }
+                                                                                        <td>@item.HRComment</td>
+                                                                                        @if (!string.IsNullOrEmpty(item.CandidateClientHR))
+                                                                                        {
+                                                                                            @if (item.CandidateClientHR.Length > 13)
                                                                                             {
-                                                                                                @if (item.CandidateClientHR.Length > 13)
-                                                                                                {
-                                                                                                    <td class="cadEmail">
-                                                                                                        <a onclick="" data-tooltip="@item.CandidateClientHR"> @item.CandidateClientHR.Substring(0, 13)... </a>
-                                                                                                    </td>
-                                                                                                }
-                                                                                                else
-                                                                                                {
-                                                                                                    <td class="cadEmail">
-                                                                                                        <a onclick=""> @item.CandidateClientHR </a>
-                                                                                                    </td>
-                                                                                                }
+                                                                                                <td class="cadEmail">
+                                                                                                    <a onclick="" data-tooltip="@item.CandidateClientHR"> @item.CandidateClientHR.Substring(0, 13)... </a>
+                                                                                                </td>
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                                <td></td>
+                                                                                                <td class="cadEmail">
+                                                                                                    <a onclick=""> @item.CandidateClientHR </a>
+                                                                                                </td>
                                                                                             }
-                                                                                            <td>@item.ClientHrMobile</td>
-                                                                                            <td>@item.StaffingAgencyMobile</td>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <td></td>
+                                                                                        }
+                                                                                        <td>@item.ClientHrMobile</td>
+                                                                                        <td>@item.StaffingAgencyMobile</td>
 
 
 
-                                                                                        </tr>
+                                                                                    </tr>
 
                                                                                 </table>
 
@@ -1348,10 +1365,16 @@
             html += '  <th>Primary Skill</th>';
             html += ' <th>Resume</th>';
             html += ' <th>JD Link</th>';
+            html += ' <th>Interviewer Mobile</th>';
+            html += '  <th>Candidate Mobile</th>';
+            html += '   <th>Meeting Status</th>';
+            html += '  <th>Interview Status</th>';
+            html += '    <th>Video Link</th>';
             html += '  <th style="text-align:center">Call Client HR</th>';
             html += ' <th style="text-align:center">Call Staffing Agency</th>';
             html += '<th style="text-align:center">End Client Name</th>'
             html += '  <th>Quality Controller</th>';
+            html += ' <th>QC Status</th>';
             html += ' <th>HR Comments</th>';
             html += '<th>Client HR</th>'
             html += '<th>Client HR Contact</th>';
@@ -1388,6 +1411,38 @@
             else {
                 html += '<td></td>';
             }
+            if (data[i].interviewerPhone != null && data[i].interviewerPhone != "") {
+                html += ' <td style="text-align: center">' + data[i].interviewerPhone + '</td>';
+            }
+            else {
+                html += '  <td></td>';
+            }
+
+            if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
+
+                html += '  <td style="text-align: center">' + data[i].mobileNumber + '</td>';
+
+            }
+            else {
+                html += '  <td></td>';
+            }
+
+
+            if (data[i].meetingStatusDesc != "0") {
+                html += '   <td>' + data[i].meetingStatusDesc + '</td>';
+            }
+            else {
+                html += '  <td></td>';
+            }
+
+            html += '   <td>' + data[i].interviewStatusDesc + '</td>';
+            if (data[i].videoLink.length > 28) {
+                html += '    <td><a onclick="" data-tooltip="' + data[i].videoLink + '">' + data[i].videoLink.substring(0, 28) + '...</a></td>';
+            }
+            else {
+                html += '<td> ' + data[i].videoLink + '</td>';
+            }
+
 
 
             if (data[i].clientHrMobile != null && data[i].clientHrMobile != "") {
@@ -1437,87 +1492,97 @@
             }
 
             else {
-                html += '   <td>No JD</td>';
-            }
-
-            if (data[i].hrComment != null && data[i].hrComment != "") {
-                html += ' <td>' + data[i].hrComment + '</td>';
-            }
-
-            else {
-                html += '   <td>No JD</td>';
-            }
-            html += '   <td style="text-align: center">';
-            if (data[i].candidateClientHR != null && data[i].candidateClientHR != "") {
-                if (data[i].candidateClientHR.length > 13) {
-                    html += ' <td class="cadEmail"><a onclick="" data-tooltip="' + data[i].candidateClientHR + '">' + data[i].candidateClientHR.substring(0, 13) + '... </a></td>';
-
-                }
-                else {
-                    html += ' <td class="cadEmail"> <a onclick="">' + data[i].candidateClientHR + '</a></td>';
-
-                }
-            } else {
-                html += '<td></td>';
-            }
-            if (data[i].clientHrMobile != null && data[i].clientHrMobile != "") {
-                html += '<td>' + data[i].clientHrMobile + '</td>';
-            }
-            else {
-                html += '   <td>No JD</td>';
-            }
-
-            if (data[i].staffingAgencyMobile != null && data[i].staffingAgencyMobile != "") {
-                html += ' <td>' + data[i].staffingAgencyMobile + '</td>';
-            }
-            else {
-                html += '   <td>No JD</td>';
+                html += '   <td></td>';
             }
 
 
+            if (data[i].qcStatusDesc != "0") {
+   
+                html += '  <td>' + data[i].qcStatusDesc+'</td>';
 
-            html += ' </tr>';
+}
+else {
+    html += '   <td></td>';
+}
 
-            html += ' </table>';
+if (data[i].hrComment != null && data[i].hrComment != "") {
+    html += ' <td>' + data[i].hrComment + '</td>';
+}
 
-            html += ' </td>';
-            html += '  </tr>';
-
-
-
-        }
-        $("#tblbodyHRMyInterview").empty().html(html);
-    }
-    function bindPages(pagecount, startpage, endpage, totalcount) {
-        var html = '';
-        html += '<div class="pagination-container">';
-        html += '<ul class="pagination">';
-        for (var i = 1; i <= pagecount; i++) {
-            if (i == 1) {
-                html += '   <li class="active"><span>1</span></li>';
-            } else if (i <= 10) {
-                html += '<li><a href="/HR/MyInterviews?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
-            } else if (i == 11) {
-                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/HR/MyInterviews?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/HR/MyInterviews?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-            } else {
-                break;
-            }
-            if (pagecount <= 10 && i == pagecount && i != 1) {
-                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/HR/MyInterviews?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/HR/MyInterviews?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-            }
-        }
-        html += '</ul>';
-        html += '</div>';
-        $("#divmeetingpages").empty().html(html);
-        var pagestartdetails = '';
-        pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
-        $("#divmeetingentries").empty().html(pagestartdetails);
+else {
+    html += '   <td>No JD</td>';
+}
+html += '   <td style="text-align: center">';
+if (data[i].candidateClientHR != null && data[i].candidateClientHR != "") {
+    if (data[i].candidateClientHR.length > 13) {
+        html += ' <td class="cadEmail"><a onclick="" data-tooltip="' + data[i].candidateClientHR + '">' + data[i].candidateClientHR.substring(0, 13) + '... </a></td>';
 
     }
+    else {
+        html += ' <td class="cadEmail"> <a onclick="">' + data[i].candidateClientHR + '</a></td>';
+
+    }
+} else {
+    html += '<td></td>';
+}
+if (data[i].clientHrMobile != null && data[i].clientHrMobile != "") {
+    html += '<td>' + data[i].clientHrMobile + '</td>';
+}
+else {
+    html += '   <td>No JD</td>';
+}
+
+if (data[i].staffingAgencyMobile != null && data[i].staffingAgencyMobile != "") {
+    html += ' <td>' + data[i].staffingAgencyMobile + '</td>';
+}
+else {
+    html += '   <td>No JD</td>';
+}
+
+
+
+html += ' </tr>';
+
+html += ' </table>';
+
+html += ' </td>';
+html += '  </tr>';
+
+
+
+}
+$("#tblbodyHRMyInterview").empty().html(html);
+}
+function bindPages(pagecount, startpage, endpage, totalcount) {
+var html = '';
+html += '<div class="pagination-container">';
+html += '<ul class="pagination">';
+for (var i = 1; i <= pagecount; i++) {
+if (i == 1) {
+    html += '   <li class="active"><span>1</span></li>';
+} else if (i <= 10) {
+    html += '<li><a href="/HR/MyInterviews?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+} else if (i == 11) {
+    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+    html += '<li class="PagedList-skipToNext"><a href="/HR/MyInterviews?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+    html += '<li class="PagedList-skipToLast"><a href="/HR/MyInterviews?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+} else {
+    break;
+}
+if (pagecount <= 10 && i == pagecount && i != 1) {
+    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+    html += '<li class="PagedList-skipToNext"><a href="/HR/MyInterviews?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+    html += '<li class="PagedList-skipToLast"><a href="/HR/MyInterviews?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+}
+}
+html += '</ul>';
+html += '</div>';
+$("#divmeetingpages").empty().html(html);
+var pagestartdetails = '';
+pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
+$("#divmeetingentries").empty().html(pagestartdetails);
+
+}
 </script>
 
 

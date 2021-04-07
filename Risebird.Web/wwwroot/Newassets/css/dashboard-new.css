@@ -66,7 +66,7 @@ audio{outline:0px;border:0px;}
 }
     .my_interview .un-right .flipper {
     position: relative;
-    top: -14px;
+    top: -13px;
     left: -18px;
 }
 .my_interview .countdown__timer {
@@ -252,7 +252,7 @@ audio{outline:0px;border:0px;}
     font-weight: bolder;
     font-size: 36px;
     width: 68px;
-    height: 45px;
+    height: 46px;
     margin: 0px auto;
     line-height: 25px;
     text-align: center;
