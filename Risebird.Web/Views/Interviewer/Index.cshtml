@@ -619,7 +619,7 @@
 
 
 
-                                                               
+
 
                                                                     @if (item.IsApproved == true)
                                                                     {
@@ -811,14 +811,14 @@
                         <div class="col-md-4 col-sm-4 pr-1">
                             <div class="form-group">
                                 <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
-                                <input id="#txt_accupi" class="form-control text-box single-line" type="text" value="" />
+                                <input id="txt_accupi" class="form-control text-box single-line" type="text" value="" />
 
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-4 px-1">
                             <div class="form-group">
                                 <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="bankLocation">PAN</label>
-                                <input id="#txt_accpan" class="form-control text-box single-line" type="text" value="" />
+                                <input id="txt_accpan" class="form-control text-box single-line" type="text" value="" />
 
                             </div>
                         </div>
@@ -897,7 +897,7 @@
     }
 
     function bindbankDetailsData(data) {
-
+        
         $('#txt_accname').val(data.accountName);
         $('#txt_accno').val(data.accountNumber);
         $('#txt_accifsc').val(data.ifscCode);
@@ -913,7 +913,7 @@
             success: function (data) {
                 var modal = document.getElementById("bankModal");
                 modal.style.display = "block";
-                bankDetailsData(data);
+                bindbankDetailsData(data);
             }
         });
     }
