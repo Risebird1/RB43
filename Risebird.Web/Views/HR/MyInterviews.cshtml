@@ -806,13 +806,13 @@
                                                                                         }
 
                                                                                         <td> @item.InterviewStatusDesc</td>
-                                                                                        @if (item.videoLink.Length > 28)
+                                                                                        @if (item.videoLink != null && item.videoLink != "")
                                                                                         {
-                                                                                            <td><a onclick="" data-tooltip="@item.videoLink"> @item.videoLink.Substring(0, 28)...</a></td>
+                                                                                            <td> <a id="videoId" target="_blank" title="Video" href=@item.videoLink.Replace(" ","%20")>Video</a> </td>
                                                                                         }
                                                                                         else
                                                                                         {
-                                                                                            <td> @item.videoLink</td>
+                                                                                            <td>No Video</td>
                                                                                         }
 
                                                                                         <td style="text-align: center">

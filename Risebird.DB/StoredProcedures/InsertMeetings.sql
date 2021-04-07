@@ -27,7 +27,8 @@ Create PROCEDURE [dbo].[InsertMeetings]
 @staffingAgenecy varchar(200),
 @interviewOnDevice varchar(500),
 @currentEmployerName varchar(200),
-@textreminder nvarchar(200)
+@textreminder nvarchar(200),
+@zoomMeetingId bigint
 AS
 Begin
 declare @InterviewId int; 
@@ -60,6 +61,7 @@ INSERT INTO [dbo].[InterviewMeetings]
            ,[sCreatedBy]
            ,[dtCreatedOn]
 		   ,[MobileNumber]
+		   ,[ZoomMeetingId]
            )
      VALUES
            (@IRFId,
@@ -81,7 +83,8 @@ INSERT INTO [dbo].[InterviewMeetings]
 @interviewOnDevice,
 'Clendly',
 GETUTCDATE(),
-@textreminder  
+@textreminder,
+@zoomMeetingId
 )
 
 set @InterviewId=SCOPE_IDENTITY()
@@ -107,7 +110,8 @@ set @InterviewId = (select id from InterviewMeetings where candidateEmail = @can
 		   ,[PreferredLocation]=@prefferedLocation
 		   ,[ExpectedPerHourRate]=@expectedPerHourRate
 		   ,[joiningTime]=@joiningTime
-		   ,[staffingAgency]=@staffingAgenecy
+		   ,[staffingAgency]=@staffingAgenecy,
+		   [ZoomMeetingId]=@zoomMeetingId
  WHERE     id=@InterviewId
  
  
