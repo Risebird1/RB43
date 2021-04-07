@@ -61,7 +61,7 @@
                         <div class="searchCon">
 
                             <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                            <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.Searchvalue">
+                            <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="">
 
 
 
@@ -123,8 +123,8 @@
                                                             <td>@item.Comment<input type="hidden" id="hidcomment_@item.id" value="@item.Comment" /></td>
                                                             <td>@item.Points<input type="hidden" id="hidpoint_@item.id" value="@item.Points" /></td>
                                                             <td>
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Detail View">
-                                                                    <span onclick="DetailedView(@item.id)" title="Detail View" class="mdc-fab__icon material-icons">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Detailed View">
+                                                                    <span onclick="DetailedView(@item.id)" title="Detailed View" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
                                                                             <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
                                                                             <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
@@ -330,7 +330,7 @@
                                 <div class="col-md-6"><p class="desp-label" style="margin-bottom: 5px; font-size: 16px;">End Date</p><input type="date" id="insedate" class="form-control" style="margin-bottom: 10px;" /></div>
                             </div>
                             <div class="col-md-12">
-                                <input type="button" value="Search" onclick="SearchInvoice()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right card-title-space" />
+                                <input type="button" value="Search" onclick="SearchInvoice(1)" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right card-title-space" />
                             </div>
                         </div>
                     </div>
@@ -353,7 +353,7 @@
             success: function (data) {
                 if (data != "failed") {
                     bindtableData(data.result);
-                    bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
+                    bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry, 1);
                 }
             }
         });
@@ -405,26 +405,43 @@
         }
         $("#tblbodyPayment").empty().html(html);
     }
-    function bindPages(pagecount, startpage, endpage, totalcount) {
+    function bindPages(pagecount, startpage, endpage, totalcount, currentpage) {
         var html = '';
         html += '<div class="pagination-container">';
         html += '<ul class="pagination">';
         for (var i = 1; i <= pagecount; i++) {
-            if (i == 1) {
-                html += '   <li class="active"><span>1</span></li>';
+            if (i == currentpage) {
+                html += '   <li class="active"><span>' + i + '</span></li>';
             } else if (i <= 10) {
-                html += '<li><a href="/Finance/FNPayment?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+                if (Generateinvoiceflag == 2) {
+                    html += '<li><a onclick="FinacneChangePage(' + i + ')">' + i + '</a></li> ';
+                } else {
+                    html += '<li><a href="/Finance/FNPayment?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '&st=' + St_date + '&se=' + Se_date + '">' + i + '</a></li>';
+                }
             } else if (i == 11) {
-                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/Finance/FNPayment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                if (Generateinvoiceflag == 2) {
+                    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                    html += '<li class="PagedList-skipToNext"><a onclick="FinacneChangePage(2)" rel="next">&gt;</a></li>';
+                    html += '<li class="PagedList-skipToLast"><a onclick="FinacneChangePage(' + pagecount + ')">&gt;&gt;</a></li>';
+                }
+                else {
+                    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                    html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                    html += '<li class="PagedList-skipToLast"><a href="/Finance/FNPayment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                }
             } else {
                 break;
             }
             if (pagecount <= 10 && i == pagecount && i != 1) {
-                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/Finance/FNPayment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                if (Generateinvoiceflag == 2) {
+                    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                    html += '<li class="PagedList-skipToNext"><a onclick="FinacneChangePage(2)" rel="next">&gt;</a></li>';
+                    html += '<li class="PagedList-skipToLast"><a onclick="FinacneChangePage(' + pagecount + ')">&gt;&gt;</a></li>';
+                } else {
+                    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                    html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                    html += '<li class="PagedList-skipToLast"><a href="/Finance/FNPayment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                }
             }
         }
         html += '</ul>';
@@ -451,6 +468,9 @@
         var model = document.getElementById("myAddpointsModel");
         model.style.display = "block";
         $("#txtInterviewerid").val(interviewerid);
+        $("#txtPoints").val("");
+        $("#txtComments").val("");
+        $("#addPointDate").val("");
     }
     function openmyQueryModeljson(interviewerid) {
         openmyQueryModel($("#hidcomment_" + interviewerid).val());
@@ -459,6 +479,7 @@
         var model = document.getElementById("myQueryModel");
         model.style.display = "block";
         $("#txtqueryEmailid").val(Emailid);
+        $("#txtquery").val("");
     }
     function AddPoints() {
         var addpointdate = $("#addPointDate").val();
@@ -529,7 +550,7 @@
         html += '   <th>Rate</th>';
         html += '   <th>Amount</th>';
         html += '   <th>Meeting Status</th>';
-
+        html += '   <th>Interview Status</th>';
         html += '</tr>';
         html += '</thead>';
         html += '<tbody>';
@@ -545,6 +566,11 @@
                 html += '                               <td></td>';
             } else {
                 html += '                               <td>' + data[i].meetingStatusDetails + '</td>';
+            }
+            if (data[i].InterviewStatusDetails == null) {
+                html += '                               <td></td>';
+            } else {
+                html += '                               <td>' + data[i].InterviewStatusDetails + '</td>';
             }
             html += '                           </tr>';
         }
@@ -657,7 +683,10 @@
             Swal.fire("Fill all the fields.");
         }
     }
-    function SearchInvoice() {
+    function FinacneChangePage(pagenumber) {
+        SearchInvoice(pagenumber);
+    }
+    function SearchInvoice(pagenumber) {
         var st = $("#instdate").val();
         var se = $("#insedate").val();
         if (st.trim() != "" && se.trim() != "") {
@@ -669,14 +698,14 @@
                 $.ajax({
                     type: "POST",
                     url: "/finance/FNGenerateInvoiceJson",
-                    data: { 'st': st, 'se': se },
+                    data: { 'PageSet': pagenumber, 'st': st, 'se': se },
                     success: function (data) {
                         if (data != "failed") {
                             Generateinvoiceflag = 2;
                             St_date = st;
                             Se_date = se;
                             bindtableData(data.result);
-                            bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
+                            bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry, data.currentpage);
                             closemyinvoiceModel();
                         }
                     }

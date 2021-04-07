@@ -1844,6 +1844,62 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<TransInterviewerAccDetails> fetchBankDetails(int interviewerid)
+        {
+            try
+            { var query = "Select * from TransInterviewerAccDetails Where InterviewerProfileId=@id";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters parametersRecomm = new DynamicParameters();
+                    parametersRecomm.Add("@id", interviewerid);
+           
+                   
+                  var results = await SqlMapper.QueryAsync<TransInterviewerAccDetails>(con,query, parametersRecomm,
+                           commandType: CommandType.Text);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+
+        public async Task<List<TransInterviewerAvailability>> fetchAvailDetails(int interviewerid)
+        {
+            try
+            {
+
+                var query = "Select * from TransInterviewerAvailability Where InterviewerProfileId=@id";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters parametersRecomm = new DynamicParameters();
+                    parametersRecomm.Add("@id", interviewerid);
+
+
+                    var results = await SqlMapper.QueryAsync<TransInterviewerAvailability>(con, query, parametersRecomm,
+                             commandType: CommandType.Text);
+                    return results.ToList();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 
 }

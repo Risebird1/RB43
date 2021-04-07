@@ -77,6 +77,8 @@ namespace Risebird.Web.Controllers
 
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
                     {
                         ViewBag.profile = profileName;
@@ -91,7 +93,7 @@ namespace Risebird.Web.Controllers
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("Interviewfilters"));
                             if (filter.StartDate != null && filter.EndDate != null)
                             {
-                                modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1));
+                                modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), emailId);
                             }
                             modelList = modelList.Select(x =>
                             {
@@ -158,7 +160,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
 
-                            modelList = _meetingService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1));
+                            modelList = _meetingService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), emailId);
                             modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
                             foreach (var item in modelList)
                             {
@@ -226,7 +228,7 @@ namespace Risebird.Web.Controllers
                     var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("Interviewfilters"));
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
-                        modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1));
+                        modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), emailid);
 
                     }
                     modelList = modelList.Select(x =>
@@ -293,7 +295,7 @@ namespace Risebird.Web.Controllers
 
                     if (modelList.Count == 0 && filter.StartDate != null && filter.EndDate != null)
                     {
-                        modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1));
+                        modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), emailid);
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
                         modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
                         modelList = modelList.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
@@ -302,7 +304,7 @@ namespace Risebird.Web.Controllers
                 else
                 {
 
-                    modelList = _meetingService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1));
+                    modelList = _meetingService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), emailid);
                     modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
                     modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
                 }
@@ -553,174 +555,6 @@ namespace Risebird.Web.Controllers
 
         }
 
-        [Authorize]
-        [HttpGet]
-        public FileContentResult HRInterviewsExporttoExcel()
-        {
-            string userEmailId = string.Empty;
-            ExcelPackage Ep = new ExcelPackage();
-            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("My Interviews");
-            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Interviews" + ".xlsx";
-            try
-            {
-
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-
-
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
-                var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
-                if (HttpContext.Session.GetString("HRfilters") != null)
-                {
-                    var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("Interviewfilters"));
-
-                    if (filter.StartDate != null && filter.EndDate != null)
-                    {
-                        myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-                    }
-                    else if (filter.StartDate != null && filter.EndDate == null)
-                    {
-                        myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate).ToList();
-                    }
-                    else if (filter.StartDate == null && filter.EndDate != null)
-                    {
-
-                        myInterview = myInterview.Where(t => t.interviewDate.Date <= filter.EndDate).ToList();
-
-                    }
-
-                    filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = myInterview.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                    filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = myInterview.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
-
-                    myInterview = myInterview.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                    && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
-
-
-                }
-                else
-                {
-                    myInterview = myInterview.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
-
-                }
-                myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-                foreach (var item in myInterview)
-                {
-                    if (!string.IsNullOrEmpty(item.resumeLink))
-                    {
-                        try
-                        {
-                            item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
-
-                        }
-                        catch (Exception)
-                        {
-                            item.resumeLink = "";
-                        }
-                    }
-                    else
-                    {
-                        item.resumeLink = "";
-                    }
-
-                }
-                var modelList = myInterview;
-                Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
-                Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
-                Sheet.Cells["A1:Z1"].Style.WrapText = true;
-                //Sheet.Column(1).Width = 30;
-                //Sheet.Column(2).Width = 30;
-                int startColumn = 1; int endColumn = 40;
-                for (int a = startColumn; a <= endColumn; a++)
-                {
-                    Sheet.Column(a).Width = 40;
-                }
-                Sheet.Cells[1, 1].Value = "Date";
-                Sheet.Cells[1, 2].Value = "Slot";
-                Sheet.Cells[1, 3].Value = "Candidate Name";
-                Sheet.Cells[1, 4].Value = "Interviewer";
-                Sheet.Cells[1, 5].Value = "Candidate Email";
-                Sheet.Cells[1, 6].Value = "Primary Skill";
-                Sheet.Cells[1, 7].Value = "Resume";
-                Sheet.Cells[1, 8].Value = "JD Link";
-                Sheet.Cells[1, 9].Value = "Client Hr";
-                Sheet.Cells[1, 10].Value = "QCInterviewer";
-                Sheet.Cells[1, 11].Value = "HR Comment";
-
-                //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
-                int i = 2;
-                //string LastAction = null; ;
-
-                if (modelList.Count() > 0)
-                {
-                    foreach (var item in modelList)
-                    {
-                        Sheet.Cells[i, 1].Value = item.interviewDate.ToString("MM/dd/yyyy HH:mm"); ;
-                        Sheet.Cells[i, 2].Value = item.interviewSlot;
-                        Sheet.Cells[i, 3].Value = item.candidateName;
-                        Sheet.Cells[i, 4].Value = item.interviewer;
-                        Sheet.Cells[i, 5].Value = item.candidateEmail;
-                        Sheet.Cells[i, 6].Value = item.JDTiltle.Split("|")[0];
-                        if (!string.IsNullOrEmpty(item.resumeLink))
-                        {
-                            try
-                            {
-                                Sheet.Cells[i, 7].Hyperlink = new Uri(item.resumeLink, UriKind.Absolute);
-                                Sheet.Cells[i, 7].Value = "Resume";
-                                Sheet.Cells[i, 7].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 7].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                            }
-                            catch (Exception)
-                            {
-                                Sheet.Cells[i, 7].Value = "No Resume";
-                            }
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 7].Value = "No Resume";
-                        }
-                        if (!string.IsNullOrEmpty(item.JDLink))
-                        {
-                            try
-                            {
-                                Sheet.Cells[i, 8].Hyperlink = new Uri(item.JDLink, UriKind.Absolute);
-                                Sheet.Cells[i, 8].Value = "JD Link";
-                                Sheet.Cells[i, 8].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 8].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                            }
-                            catch (Exception)
-                            {
-                                Sheet.Cells[i, 8].Value = "No Link";
-                            }
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 8].Value = "No Link";
-                        }
-                        Sheet.Cells[i, 9].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 10].Value = item.QCInterviewer;
-                        Sheet.Cells[i, 11].Value = item.HRComment;
-
-                        i++;
-                    }
-                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
-                }
-                else
-                {
-                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
-                    Rng.Value = "No data available in table !!!";
-                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
-                }
-
-            }
-            catch (Exception)
-            {
-                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
-                Rng.Value = "Data export failed !!!";
-                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
-            }
-
-        }
         [Authorize]
         public async Task<IActionResult> MultipleCandidateInvites()
         {
@@ -982,6 +816,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
                     {
                         ViewBag.profile = profileName;
@@ -998,7 +834,7 @@ namespace Risebird.Web.Controllers
 
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1));
+                            modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), emailId);
                         }
 
 
@@ -1958,9 +1794,15 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
-                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); return x; }).ToList();
+                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription();x.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)Convert.ToInt32(x.HeuristicProfileType)).GetDescription();  return x; }).ToList();
                         foreach (var item in myInterview)
                         {
+                            if (item.HeuristicProfileTypeDesc=="0") {
+
+                                item.HeuristicProfileTypeDesc = "";
+
+
+                            }
                             if (!string.IsNullOrEmpty(item.resumeLink))
                             {
                                 try
@@ -5186,506 +5028,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        #region HR
-
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> HROpenInterview(int? Page, string searchValue)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "HR")
-                    {
-                        var meetings = _meetingService.GetHROpenInterviews();
-                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-
-                        var list = new SelectList(new[]
-                                                {
-                                                    new { ID = "Today", Name = "Today"},
-                                                    new { ID = "Tomorrow", Name = "Tomorrow"  },
-                                                    new { ID = "Next Seven Days", Name = "Next Seven Days" },
-                                                    new { ID = "All", Name = "All"},
-                                                },
-                                                "ID", "Name", "All");
-                        ViewData["list"] = list;
-                        if (TempData["SuccessErrorMessageHR"] != null)
-                        {
-                            ViewBag.Message = TempData["SuccessErrorMessageHR"].ToString();
-                            TempData.Remove("SuccessErrorMessageHR");
-                        }
-
-
-
-
-                        if (!String.IsNullOrEmpty(searchValue))
-                        {
-                            searchValue = searchValue.ToUpper();
-                            meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")).ToList();
-
-                        }
-                        ViewBag.TotalCount = meetings.Count();
-
-                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
-                        int a = meetings.Count() / 10;
-                        if (meetings.Count() % 10 == 0)
-                        {
-                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                        }
-                        else
-                        {
-                            a = a + 1;
-                            if (a == Page)
-                            {
-                                ViewBag.PageEndCount = meetings.Count();
-                            }
-                            else
-                            {
-                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-
-                            }
-
-                        }
-                        if (meetings.Count() == 0)
-                        {
-                            ViewBag.PageStartCount = 0;
-                            ViewBag.PageEndCount = 0;
-                        }
-                        _modelDetail = (List<Meeting>)meetings;
-                        return View(meetings.ToPagedList(Page ?? 1, 10));
-                        //return View(meetings);
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-
-        [Authorize]
-        public async Task<IActionResult> HRAssignYourself(int id, string InterviewDate)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    if (profileName == "HR")
-                    {
-                        var result = _meetingService.HRAssignYourself(id, emailid.ToLower());
-                        TempData["SuccessErrorMessageHR"] = result;
-                        ViewBag.Message = result;
-                        return RedirectToAction("HROpenInterview");
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("HROpenInterview");
-            }
-        }
-
-
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> HRMyInterview(int? Page, string searchValue)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "HR")
-                    {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
-                        if (HttpContext.Session.GetString("HRfilters") != null)
-                        {
-                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("HRfilters"));
-
-                            if (filter.StartDate != null && filter.EndDate != null)
-                            {
-                                myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-                            }
-                            else if (filter.StartDate != null && filter.EndDate == null)
-                            {
-                                myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate).ToList();
-                            }
-                            else if (filter.StartDate == null && filter.EndDate != null)
-                            {
-
-                                myInterview = myInterview.Where(t => t.interviewDate.Date <= filter.EndDate).ToList();
-
-                            }
-
-                            filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = myInterview.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                            filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = myInterview.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
-
-                            myInterview = myInterview.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                            && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
-
-
-                        }
-                        else
-                        {
-                            myInterview = myInterview.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
-
-                        }
-                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-                        foreach (var item in myInterview)
-                        {
-                            if (!string.IsNullOrEmpty(item.resumeLink))
-                            {
-                                try
-                                {
-                                    item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
-
-                                }
-                                catch (Exception)
-                                {
-                                    item.resumeLink = "";
-                                }
-                            }
-                            else
-                            {
-                                item.resumeLink = "";
-                            }
-
-                        }
-                        if (TempData["SuccessErrorMessageHR"] != null)
-                        {
-                            ViewBag.Message = TempData["SuccessErrorMessageHR"].ToString();
-                            TempData.Remove("SuccessErrorMessageHR");
-                        }
-
-                        if (!String.IsNullOrEmpty(searchValue))
-                        {
-                            searchValue = searchValue.ToUpper();
-                            myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "")).ToList();
-
-                        }
-                        ViewBag.TotalCount = myInterview.Count();
-
-                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
-                        int a = myInterview.Count() / 10;
-                        if (myInterview.Count() % 10 == 0)
-                        {
-                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                        }
-                        else
-                        {
-                            a = a + 1;
-                            if (a == Page)
-                            {
-                                ViewBag.PageEndCount = myInterview.Count();
-                            }
-                            else
-                            {
-                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-
-                            }
-
-                        }
-                        if (myInterview.Count() == 0)
-                        {
-                            ViewBag.PageStartCount = 0;
-                            ViewBag.PageEndCount = 0;
-                        }
-                        _modelDetail = (List<Meeting>)myInterview;
-                        return View(myInterview.ToPagedList(Page ?? 1, 10));
-
-                        // return View(myInterview);
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> HRMyInterview(InterviewFilter filter, int? Page, string searchValue)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    if (filter != null)
-                    {
-                        HttpContext.Session.SetString("HRfilters", JsonConvert.SerializeObject(filter));
-                    }
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "HR")
-                    {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
-
-                        if (filter.StartDate != null && filter.EndDate != null)
-                        {
-                            myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-                        }
-                        else if (filter.StartDate != null && filter.EndDate == null)
-                        {
-                            myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate).ToList();
-                        }
-                        else if (filter.StartDate == null && filter.EndDate != null)
-                        {
-
-                            myInterview = myInterview.Where(t => t.interviewDate.Date <= filter.EndDate).ToList();
-
-                        }
-
-                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = myInterview.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                        filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = myInterview.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
-
-                        myInterview = myInterview.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                        && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
-
-                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-                        foreach (var item in myInterview)
-                        {
-                            if (!string.IsNullOrEmpty(item.resumeLink))
-                            {
-                                try
-                                {
-                                    item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
-
-                                }
-                                catch (Exception)
-                                {
-                                    item.resumeLink = "";
-                                }
-                            }
-                            else
-                            {
-                                item.resumeLink = "";
-                            }
-
-                        }
-
-                        if (TempData["SuccessErrorMessageHR"] != null)
-                        {
-                            ViewBag.Message = TempData["SuccessErrorMessageHR"].ToString();
-                            TempData.Remove("SuccessErrorMessageHR");
-                        }
-
-                        if (!String.IsNullOrEmpty(searchValue))
-                        {
-                            searchValue = searchValue.ToUpper();
-                            myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "")).ToList();
-
-                        }
-                        ViewBag.TotalCount = myInterview.Count();
-
-                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
-                        int a = myInterview.Count() / 10;
-                        if (myInterview.Count() % 10 == 0)
-                        {
-                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                        }
-                        else
-                        {
-                            a = a + 1;
-                            if (a == Page)
-                            {
-                                ViewBag.PageEndCount = myInterview.Count();
-                            }
-                            else
-                            {
-                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-
-                            }
-
-                        }
-                        if (myInterview.Count() == 0)
-                        {
-                            ViewBag.PageStartCount = 0;
-                            ViewBag.PageEndCount = 0;
-                        }
-                        _modelDetail = (List<Meeting>)myInterview;
-                        return View(myInterview.ToPagedList(Page ?? 1, 10));
-
-                        //  return View(myInterview);
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> HRUnassignYourself(int id)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var email = HttpContext.Session.GetString("email");
-                    email = email.Replace("\"", "");
-                    if (profileName == "HR")
-                    {
-                        if (_meetingService.HRUnassignYourself(id))
-                        {
-                            return Json(new { url = Url.Action("HRMyInterview", "Interview") });
-
-                        }
-                        else
-                        {
-                            return Json(new { url = Url.Action("HRMyInterview", "Interview") });
-                        }
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { url = Url.Action("HRMyInterview", "Interview") });
-            }
-        }
-        #endregion
-        [Authorize]
-        [HttpPost]
-        public async Task<bool> SaveHRComment()
-        {
-            try
-            {
-                var loggedInUser = HttpContext.Session.GetString("email");
-                loggedInUser = loggedInUser.Replace("\"", "").Trim();
-
-                var nvc = Request.Form;
-                string comment = string.Empty;
-                string candidateDetails = string.Empty;
-                int id = 0;
-                if (!string.IsNullOrEmpty(nvc["id"]))
-                {
-                    id = Convert.ToInt32(nvc["id"]);
-                }
-
-                if (!string.IsNullOrEmpty(nvc["comment"]))
-                {
-                    comment = nvc["comment"];
-                }
-                if (!string.IsNullOrEmpty(nvc["candidateDetails"]))
-                {
-                    candidateDetails = nvc["candidateDetails"];
-                }
-
-                string uploadedFileURL = string.Empty;
-
-                if (id != 0 && !string.IsNullOrEmpty(comment))
-                {
-                    if (Request.Form.Files.Count() > 0)
-                    {
-                        var imageFile = Request.Form.Files[0];
-                        await _azureStorageHelper.InsertBlob(imageFile.FileName, "images", imageFile);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("images");
-                        var blob = containerRef.GetBlockBlobReference(imageFile.FileName);
-                        uploadedFileURL = blob.Uri.ToString();
-                        if (string.IsNullOrEmpty(uploadedFileURL))
-                        {
-                            TempData["SuccessErrorMessageHR"] = "Error uploading the image!";
-                            return false;
-                        }
-
-                    }
-                    else
-                    {
-                        if (!string.IsNullOrEmpty(nvc["uploadedFileURL"]))
-                        {
-                            uploadedFileURL = nvc["uploadedFileURL"];
-                        }
-                    }
-                    var result = await _meetingService.SaveHRComment(id, comment, uploadedFileURL, loggedInUser, candidateDetails);
-                    if (result)
-                    {
-                        TempData["SuccessErrorMessageHR"] = "HR comments saved Successfully!";
-
-                    }
-                    else
-                        TempData["SuccessErrorMessageHR"] = "Failed to save HR comments!";
-
-                    return result;
-                }
-                else
-                {
-                    TempData["SuccessErrorMessageHR"] = "Failed to save HR comments!";
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
-            }
-
-
-
-
-        }
-
         [AllowAnonymous]
         public async Task<IActionResult> CandidateVideoPage(int id)
         {
@@ -6189,27 +5531,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        [Authorize]
-        public async Task<IActionResult> ResetHRInterviewFilter()
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    HttpContext.Session.Remove("HRfilters");
-                    return RedirectToAction("HRMyInterview");
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("Index");
-            }
-        }
+        
+
 
         [HttpPost]
         public JsonResult FetchCandidateFeedback(int interviewid)
@@ -6238,57 +5561,6 @@ namespace Risebird.Web.Controllers
                 return Json("Fail to send feedback form, please try again.");
             }
         }
-
-
-        [HttpPost]
-        public JsonResult HRMyInterviewJson(string searchValue)
-        {
-            try
-            {
-                int Page = 1;
-                var myInterview = _modelDetail;
-                Searchvalue = searchValue;
-                if (!String.IsNullOrEmpty(searchValue))
-                {
-                    searchValue = searchValue.ToUpper();
-                    myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "")).ToList();
-                }
-                int totalcount = myInterview.Count;
-                int Pagestart = 0;
-                int Pageend = 0;
-
-                Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
-                int a = myInterview.Count / 10;
-                if (myInterview.Count % 10 == 0)
-                {
-                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                }
-                else
-                {
-                    a = a + 1;
-                    if (a == Page)
-                    {
-                        Pageend = myInterview.Count;
-                    }
-                    else
-                    {
-                        Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                    }
-                }
-                if (myInterview.Count == 0)
-                {
-                    Pagestart = 0;
-                    Pageend = 0;
-                }
-                return Json(new { result = myInterview.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = myInterview.Count });
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json("failed");
-            }
-        }
-
 
         [HttpPost]
         public JsonResult MyInterviewJson(string searchValue)
@@ -6435,65 +5707,6 @@ namespace Risebird.Web.Controllers
                 return Json("failed");
             }
         }
-
-
-
-
-
-
-
-
-
-        [HttpPost]
-        public JsonResult HROpenInterviewJson(string searchValue)
-        {
-            try
-            {
-                int Page = 1;
-                var meetings = _modelDetail;
-                Searchvalue = searchValue;
-                if (!String.IsNullOrEmpty(searchValue))
-                {
-                    searchValue = searchValue.ToUpper();
-                    meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")).ToList();
-
-                }
-                int totalcount = meetings.Count();
-                int Pagestart = 0;
-                int Pageend = 0;
-
-                Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
-                int a = meetings.Count() / 10;
-                if (meetings.Count() % 10 == 0)
-                {
-                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                }
-                else
-                {
-                    a = a + 1;
-                    if (a == Page)
-                    {
-                        Pageend = meetings.Count();
-                    }
-                    else
-                    {
-                        Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                    }
-                }
-                if (meetings.Count() == 0)
-                {
-                    Pagestart = 0;
-                    Pageend = 0;
-                }
-                return Json(new { result = meetings.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = meetings.Count });
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json("failed");
-            }
-        }
-
 
 
         [HttpGet]

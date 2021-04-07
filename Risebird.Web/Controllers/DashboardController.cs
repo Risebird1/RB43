@@ -13,6 +13,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Risebird.CommonHelper;
+using Microsoft.Extensions.Configuration;
 
 namespace Risebird.Web.Controllers
 {
@@ -24,13 +25,17 @@ namespace Risebird.Web.Controllers
         private readonly INotificationHelper _notificationHelper;
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IUserService _userService;
-        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IUserService userService)
+        private IConfiguration _configuration;
+        private readonly IMeetingService _meetingService;
+        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IUserService userService, IConfiguration configuration, IMeetingService meetingService)
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
             _azureStorageHelper = azureStorageHelper;
             _userService = userService;
+            _configuration = configuration;
+            _meetingService = meetingService;
         }
         [Authorize]
         public async Task<IActionResult> Index()
@@ -862,7 +867,7 @@ namespace Risebird.Web.Controllers
         #endregion
 
         [Authorize]
-        public async Task<IActionResult> UnassignedInterviews(string actionstatus)
+        public async Task<IActionResult> UnassignedInterviews(string actionstatus, int actiontype)
         {
             try
             {
@@ -870,16 +875,91 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        //var modelList = await _dashboardService.GetNotUpdatedMeetings();
-                        var modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus);
+                        var modelList = new List<MeetingVM>();
+                        if (actiontype == 1 && actionstatus == "UnAssignedCoordianter")
+                        {
+                            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                            var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
+
+                            var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
+                            var interviewerids = myInterview.Select(x => x.id).Distinct().ToList();
+                            if (interviewerids != null)
+                            {
+                                foreach (var item in myInterview)
+                                {
+                                    if (result.Where(x => x.interviewid == item.id).Count() == 0)
+                                    {
+                                        modelList.Add(new MeetingVM
+                                        {
+                                            IRFId = item.IRFID,
+                                            interviewDate = item.interviewDate,
+                                            candidateName = item.candidateName,
+                                            candidateEmail = item.candidateEmail,
+                                            imid = item.id,
+                                            interviewer = item.interviewer,
+                                            confirmationStatus = "1",
+                                            HRCoordinatorEmailId = emailid,
+                                            MeetingStatus = item.MeetingStatus,
+                                            InterviewStatus = item.InterviewStatus,
+                                        }); 
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus, emailid, actiontype);
+                        }
+                        if (modelList == null)
+                        {
+                            modelList = new List<MeetingVM>();
+                        }
                         ViewBag.actionstatus = actionstatus;
+                        ViewBag.Actiontype = actiontype;
                         if (HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<UnassignedInterviewsFilter>(HttpContext.Session.GetString("UnassignedInterviewsFilters"));
-                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus);
+                            if (actiontype == 1 && actionstatus == "UnAssignedCoordianter")
+                            {
+                                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                                var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
+                                var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
+                                var interviewerids = myInterview.Select(x => x.id).Distinct().ToList();
+                                if (interviewerids != null)
+                                {
+                                    foreach (var item in myInterview)
+                                    {
+                                        if (result.Where(x => x.interviewid == item.id).Count() == 0)
+                                        {
+                                            modelList.Add(new MeetingVM
+                                            {
+                                                IRFId = item.IRFID,
+                                                interviewDate = item.interviewDate,
+                                                candidateName = item.candidateName,
+                                                candidateEmail = item.candidateEmail,
+                                                imid = item.id,
+                                                interviewer = item.interviewer,
+                                                confirmationStatus = "1",
+                                                HRCoordinatorEmailId = emailid,
+                                                MeetingStatus = item.MeetingStatus,
+                                                InterviewStatus = item.InterviewStatus,
+                                            }); 
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype);
+                            }
+                            if (modelList == null)
+                            {
+                                modelList = new List<MeetingVM>();
+                            }
                             if (filter.StartDate != null && filter.EndDate != null)
                             {
                                 modelList = modelList.Where(x => x.interviewDate >= filter.StartDate && x.interviewDate <= filter.EndDate).ToList();
@@ -888,7 +968,7 @@ namespace Risebird.Web.Controllers
                             filter.ClientHREmail = filter.ClientHREmail == null ? filter.ClientHREmail = modelList.Select(x => x.ClientHrContact).ToArray() : filter.ClientHREmail = filter.ClientHREmail;
                             modelList = modelList.Where(c => (filter.Client.Count() > 0 ? filter.Client.Contains(c.Name) : c.Name == null)
                             && (filter.ClientHREmail.Count() > 0 ? filter.ClientHREmail.Contains(c.ClientHrContact) : c.ClientHrContact == null)).ToList();
-                            
+
                             modelList = modelList.Select(x =>
                             {
                                 x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
@@ -919,7 +999,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> UnassignedInterviews(UnassignedInterviewsFilter filter, string actionstatus)
+        public async Task<IActionResult> UnassignedInterviews(UnassignedInterviewsFilter filter, string actionstatus, int actiontype)
         {
             try
             {
@@ -927,6 +1007,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
 
@@ -934,8 +1016,52 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.SetString("UnassignedInterviewsFilters", JsonConvert.SerializeObject(filter));
                         }
-                        var modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus);
+                        var modelList = new List<MeetingVM>();
+                        if (actiontype == 1 && actionstatus == "UnAssignedCoordianter")
+                        {
+                            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                            var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
+                            string email = string.Empty;
+                            if (HttpContext.Session.GetString("email") != null)
+                            {
+                                email = HttpContext.Session.GetString("email")?.Trim();
+                                email = email.Replace("\"", "");
+                            }
+                            var myInterview = _meetingService.GetHRAssignedInterviews(email);
+                            var interviewerids = myInterview.Select(x => x.id).Distinct().ToList();
+                            if (interviewerids != null)
+                            {
+                                foreach (var item in myInterview)
+                                {
+                                    if (result.Where(x => x.interviewid == item.id).Count() == 0)
+                                    {
+                                        modelList.Add(new MeetingVM
+                                        {
+                                            IRFId = item.IRFID,
+                                            interviewDate = item.interviewDate,
+                                            candidateName = item.candidateName,
+                                            candidateEmail = item.candidateEmail,
+                                            imid = item.id,
+                                            interviewer = item.interviewer,
+                                            confirmationStatus = "1",
+                                            HRCoordinatorEmailId = email,
+                                            MeetingStatus = item.MeetingStatus,
+                                            InterviewStatus = item.InterviewStatus,
+                                        }); 
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype);
+                        }
+                        if (modelList == null)
+                        {
+                            modelList = new List<MeetingVM>();
+                        }
                         ViewBag.actionstatus = actionstatus;
+                        ViewBag.Actiontype = actiontype;
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
                             modelList = modelList.Where(x => x.interviewDate >= filter.StartDate && x.interviewDate <= filter.EndDate).ToList();
@@ -992,10 +1118,41 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        public async Task<JsonResult> FetchRibbonValues()
+        public async Task<JsonResult> FetchRibbonValues(int section)
         {
-            var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCount();
-            return Json(Ribbonmodel);
+            if (section == 1)
+            {
+                var modelData = new List<SurveyVM>();
+                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
+                string email = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    email = HttpContext.Session.GetString("email")?.Trim();
+                    email = email.Replace("\"", "");
+                }
+                var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCountbyHr(email);
+                var myInterview = _meetingService.GetHRAssignedInterviews(email);
+                var interviewerids = myInterview.Select(x => x.id).Distinct().ToList();
+                int countvalue = 0;
+                if (interviewerids != null)
+                {
+                    foreach (var item in interviewerids)
+                    {
+                        if (result.Where(x => x.interviewid == item).Count() == 0)
+                        {
+                            countvalue++;
+                        }
+                    }
+                }
+                Ribbonmodel.UnfilledCommentsCount = countvalue;
+                return Json(Ribbonmodel);
+            }
+            else
+            {
+                var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCount();
+                return Json(Ribbonmodel);
+            }
         }
     }
 }

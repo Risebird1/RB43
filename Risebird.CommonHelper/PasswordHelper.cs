@@ -24,12 +24,23 @@ namespace Risebird.CommonHelper
 
             const int maxValue = 999;
             string number = rand.Next(maxValue + 1).ToString("D3");
+            string password = string.Empty;
+            if(user.FirstName.Length >= 4)
+            {
+                password = user.FirstName.Substring(0,4).ToUpper() + "@" + number;
+            }
+            else
+            {
+                //string name = string.Empty;
+                string name = user.FirstName + user.LastName;
+                password = name.Length >= 4 ? (name.Substring(0, 4).ToUpper() + "@" + number) : (password = name.ToUpper() + "@" + number);
+            }
             var userobj = new UserList
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 EmailId = user.EmailId,
-                UserPassword = user.FirstName.ToUpper() + "@" + number
+                UserPassword = password
             };
             if (await _b2CClientService.CreateUser(userobj))
             {

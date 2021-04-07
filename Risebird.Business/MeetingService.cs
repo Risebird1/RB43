@@ -50,11 +50,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate)
+        public List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate, string emailId = null)
         {
             try
             {
-                return _meetingRespository.GetAllInterviewMeetings(startDate, endDate).Result.OrderByDescending(x => x.interviewDate).ToList();
+                return _meetingRespository.GetAllInterviewMeetings(startDate, endDate, emailId).Result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
             {
@@ -354,7 +354,7 @@ namespace Risebird.Business
         {
             try
             {
-                return new SelectList(_meetingRespository.GetIRFList(), "IRFId", "IRFId");
+                return new SelectList(_meetingRespository.GetIRFList().Where(x=>x.EndDate > DateTime.Now), "IRFId", "IRFId");
             }
 
             catch (Exception e)
@@ -1505,11 +1505,11 @@ namespace Risebird.Business
 
         }
 
-        public IEnumerable<Meeting> GetHROpenInterviews()
+        public IEnumerable<Meeting> GetHROpenInterviews(string emailId)
         {
             try
             {
-                var openMeeting = _meetingRespository.GetHROpenInterviews().Result.OrderByDescending(x => x.interviewDate);
+                var openMeeting = _meetingRespository.GetHROpenInterviews(emailId).Result.OrderByDescending(x => x.interviewDate);
                 return openMeeting;
             }
             catch (Exception ex)
@@ -2243,7 +2243,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<string> RBAddPoints(int interviewerid, int Points, string Comment,DateTime PointDate)
+        public async Task<string> RBAddPoints(int interviewerid, int Points, string Comment, DateTime PointDate)
         {
             try
             {
@@ -2458,12 +2458,12 @@ namespace Risebird.Business
                 return null;
             }
         }
-     
-        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue,string Comment)
+
+        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue, string Comment)
         {
             try
             {
-                var result = _meetingRespository.InsertPaymentHistory(Interviewer, Amount, actionvalue,Comment);
+                var result = _meetingRespository.InsertPaymentHistory(Interviewer, Amount, actionvalue, Comment);
                 return result.Result;
             }
             catch (Exception e)
@@ -2485,6 +2485,7 @@ namespace Risebird.Business
                 return null;
             }
         }
+       
     }
 }
 

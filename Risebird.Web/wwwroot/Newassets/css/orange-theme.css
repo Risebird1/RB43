@@ -9,7 +9,9 @@ body {
 .share-btn, .view-video {
     color: #504d4d !important
 }
-
+.availbg {
+    background: #fff;
+}
 .bl-bg {
     background: #ebecf1;
 }

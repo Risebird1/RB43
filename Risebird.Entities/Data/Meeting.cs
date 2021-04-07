@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Risebird.Entities.ViewModel;
+using System;
 
 namespace Risebird.Entities.Data
 {
@@ -98,6 +99,8 @@ namespace Risebird.Entities.Data
         public string ZoomId { get; set; }
         public string NickName { get; set; }
         public int? HeuristicProfileType { get; set; }
+
         public string HeuristicProfileTypeDesc { get; set; }
+        public string CandidateClientHR { get; set; }
     }
 }

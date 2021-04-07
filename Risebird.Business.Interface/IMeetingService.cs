@@ -11,7 +11,7 @@ namespace Risebird.Business.Interface
     {
         List<MeetingVM> GetMeetingList();
         bool AddMeeting(MeetingVM meeting);
-        List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate);
+        List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate, string emailId = null);
         bool UpdateMeeting(MeetingVM meetingToUpdate);
         List<MeetingVM> MultipleCandidateInvites();
         MeetingVM GetMeeting(int id);
@@ -68,7 +68,7 @@ namespace Risebird.Business.Interface
         Task<bool> DeleteInterview(int imid);
         bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink, int candidateType = 0);
         Task<string> Broadcast(BroadcastModel model);
-        IEnumerable<Meeting> GetHROpenInterviews();
+        IEnumerable<Meeting> GetHROpenInterviews(string emailId);
         string HRAssignYourself(int meetingid, string hrMailId);
         IEnumerable<Meeting> GetHRAssignedInterviews(string emailID);
         bool HRUnassignYourself(int meetingid);
@@ -116,7 +116,7 @@ namespace Risebird.Business.Interface
         Task<string> RBUpdateStatusDetails(string EmailId);
         Task<List<RBInterviewDetails>> FetchFNDetails(string EmailId);
         Task<List<RBInterviewDetails>> RBInterviewerDetails(int interviewerid, int flag);
-        Task<string> RBAddPoints(int interviewerid, int Points, string Comment,DateTime PointDate);
+        Task<string> RBAddPoints(int interviewerid, int Points, string Comment, DateTime PointDate);
         Task<string> RBConfirmPayment(int interviewerid, int index, DateTime st, DateTime se);
         Task<List<string>> FetchInterviewerList(string searchterm);
         Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount);
@@ -132,9 +132,10 @@ namespace Risebird.Business.Interface
         IEnumerable<int> FetchAllInterviewidByClient(int Clientid, string emailid);
         IEnumerable<SurveyDetails> FetchSurveyClientName(List<SurveyDetails> _lst);
         IEnumerable<SurveyDetails> FetchSurveyCandidateEmails(List<SurveyDetails> _lst);
-    
-        Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue,string Comment);
+
+        Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue, string Comment);
         Task<List<RBInterviewDetails>> FetchFNPaymentHistory();
-        Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailId, bool isFilter = false, DateTime? startDate= null, DateTime? endDate= null);
+        Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailId, bool isFilter = false, DateTime? startDate = null, DateTime? endDate = null);
+        
     }
 }

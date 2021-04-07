@@ -2,11 +2,34 @@
 @model X.PagedList.IPagedList<Risebird.Entities.Data.Meeting>
 @using X.PagedList.Mvc.Core;
 @using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+@using Risebird.Entities.ViewModel;
 @using System.Text.RegularExpressions
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "HR Open Interviews";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = String.Empty;
+    string endDte = String.Empty;
+    string[] RFID = new string[] { };
+    string[] Interviewer = new string[] { };
+    string[] primarySkills = new string[] { };
+    string[] ClientHR = new string[] { };
+    string[] ClientName = new string[] { };
+    string[] Client = new string[] { };
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("OpenHRfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("OpenHRfilters"));
+    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
+    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    Interviewer = filter.Interviewer != null ? filter.Interviewer : new string[] { };
+    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
+    RFID = filter.RFID != null ? filter.RFID : new string[] { };
+    ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
+    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
+    Client = filter.Client != null ? filter.Client : new string[] { };
 }
 
 <!-- Keep the Page Content Here.-->
@@ -51,6 +74,11 @@
                 <div class="pull-right client-ms">
                     <div>
 
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-toggle="modal" data-target="#filterModal">
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
+
                         <div id="meeting_filter" class="dataTables_filter pull-left">
 
                             <div class="searchCon">
@@ -88,6 +116,179 @@
                         </div>
                         <div class="dataloading">
 
+                            <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <form action="@Url.Action("OpenInterviews","HR")" method="post" id="form">
+
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                Start Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+
+
+
+
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                End Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
+                                                                Client
+                                                                HR
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.CandidateClientHR).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">
+                                                                Client
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="Client" name="Client" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.ClientCompName).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">RFID</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in Model.Select(x => x.IRFID).Distinct().ToList())
+                                                                    {
+                                                                        @if (!string.IsNullOrEmpty(item))
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Interviewer">
+                                                                Interviewer
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="Interviewer" name="Interviewer" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.interviewer).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">
+                                                                End Client Name
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div>
+                                                                <div class="col-md-12 col-sm-12">
+
+
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
+
+
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
+
+
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+
                             <div>
                                 <div id="tableID" class="second">
                                     <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
@@ -104,7 +305,8 @@
                                                             <th>Candidate Name</th>
                                                             <th>Resume</th>
                                                             <th>JD Link</th>
-                                                            <th>Client Name</th>
+                                                            <th>Client</th>
+                                                            <th>End Client Name</th>
                                                             <th>ClientHR</th>
                                                             <th>Interviewer</th>
                                                             <th class="disabled-sorting text-center">Actions</th>
@@ -119,7 +321,8 @@
                                                             <th>Candidate Name</th>
                                                             <th>Resume</th>
                                                             <th>JD Link</th>
-                                                            <th>Client Name</th>
+                                                            <th>Client</th>
+                                                            <th>End Client Name</th>
                                                             <th>ClientHR</th>
                                                             <th>Interviewer</th>
                                                             <th class="disabled-sorting text-center">Actions</th>
@@ -167,7 +370,7 @@
                                                                 }
                                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                                 {
-                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                                    <td> <a target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
                                                                 }
                                                                 else
                                                                 {
@@ -175,22 +378,23 @@
                                                                 }
                                                                 @if (item.JDLink != null && item.JDLink != "")
                                                                 {
-                                                                    <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                                    <td>  <a target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
                                                                 }
                                                                 else
                                                                 {
                                                                     <td>No JD</td>
                                                                 }
 
-                                                                <th>@item.ClientCompName</th>
-                                                                @if (item.ClientHrContact != null && item.ClientHrContact != "")
+                                                                <td>@item.ClientCompName</td>
+                                                                <td>@item.ClientName</td>
+                                                                @if (item.CandidateClientHR != null && item.CandidateClientHR != "")
                                                                 {
-                                                                    @if (item.ClientHrContact.Length > 15)
+                                                                    @if (item.CandidateClientHR.Length > 15)
                                                                     {
 
 
                                                                         <td class="cadEmail">
-                                                                            <a onclick="" data-tooltip="@item.ClientHrContact"> @item.ClientHrContact.Substring(0, 15)... </a>
+                                                                            <a onclick="" data-tooltip="@item.CandidateClientHR"> @item.CandidateClientHR.Substring(0, 15)... </a>
                                                                         </td>
                                                                     }
 
@@ -198,7 +402,7 @@
                                                                     else
                                                                     {
                                                                         <td class="cadEmail">
-                                                                            <a onclick=""> @item.ClientHrContact </a>
+                                                                            <a onclick=""> @item.CandidateClientHR </a>
                                                                         </td>
                                                                     }
 
@@ -237,7 +441,7 @@
 
                                                                 <td class="text-right four text-center">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Assign Yourself">
-                                                                        <span onclick="location.href = '@Url.Action("HRAssignYourself", "Interview", new { id = item.id, InterviewDate=item.interviewDate})'" title="Assign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg></span>
+                                                                        <span onclick="location.href = '@Url.Action("HRAssignYourself", "HR", new { id = item.id, InterviewDate=item.interviewDate})'" title="Assign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg></span>
 
                                                                     </button>
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
@@ -293,7 +497,7 @@
                                         </div>
 
                                         <div class="col-sm-12 col-md-7 dataTables_paginate pull-right" id="divmeetingpages">
-                                            @Html.PagedListPager(Model, Page => Url.Action("HROpenInterview", new { Page = Page }))
+                                            @Html.PagedListPager(Model, Page => Url.Action("OpenInterviews", new { Page = Page }))
                                         </div>
                                     </div>
                                 </div>
@@ -344,50 +548,110 @@
 
 @if (ViewBag.Message != null)
 {
-    <script type="text/javascript">
 
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
         function my_code() {
             var msg = '@ViewBag.Message';
-
-
-
-            if (msg.includes("success")) {
-                swal({
-                    title: 'Successful',
-                    text: '@ViewBag.Message',
-                    type: 'success',
-                    showConfirmButton: true
-
-                },
-                    function (value) //confirm
-                    {
-                        //if Yes do this
-                        window.location.href = '/Interview/HROpenInterview';
-                    }
-                )
-
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful",'@ViewBag.Message', "success");
             }
             else {
-                swal({
-                    title: 'Failed',
-                    text: '@ViewBag.Message',
-                    type: 'error',
-                    showConfirmButton: true
-
-                },
-                    function ()
-                    {
-                        window.location.href = '/Interview/HROpenInterview';
-                    }
-                )
+                swal.fire("Failed", '@ViewBag.Message', "error");
             }
 
         }
 
-        window.onload = my_code();
     </script>
-
+    
 }
+        }
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+            $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+              }
+
+            $("#PrimarySkill").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '100%',
+                    maxHeight: 200
+                });
+
+
+            $("#Interviewer").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '100%',
+                    maxHeight: 200
+            });
+
+            $("#RFID").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#ClientHR").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+
+            $("#ClientName").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#Client").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+
+
+
+
+    });
+    function ResetFilter() {
+        window.location.href = "/HR/ResetHROpenInterviewFilter";
+    }
+
+    function ApplySessionFilter() {
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
+        var interviewer =  @Html.Raw(Json.Serialize(Interviewer));
+        var rFID =  @Html.Raw(Json.Serialize(RFID));
+        var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
+        var clientName =  @Html.Raw(Json.Serialize(ClientName));
+        var client =  @Html.Raw(Json.Serialize(Client));
+
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        $("#PrimarySkill").val(primarySkillsArr);
+        $("#Interviewer").val(interviewer);
+        $("#RFID").val(rFID);
+        $("#ClientHR").val(clientHR);
+        $("#ClientName").val(clientName);
+        $("#Client").val(client);
+        var form = $("#form").serialize();
+    }
+
+</script>
+
 <script>
     var closeMember = document.getElementById("membersPopUp");
     // When the user clicks on <span> (x), close the modal
@@ -437,7 +701,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/Interview/HROpenInterviewJson",
+            url: "/HR/HROpenInterviewJson",
             data: { 'searchValue': $('#txtmeeting_filter').val() },
             success: function (data) {
                 if (data != "failed") {
@@ -489,130 +753,130 @@
                 html += '<td></td>';
             }
             if (data[i].resumeLink != null && data[i].resumeLink != "") {
-                html += '   <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a></td>';
+                html += '   <td> <a target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a></td>';
             }
             else {
                 html += '   <td>No Resume</td>';
             }
             if (data[i].jdLink != null && data[i].jdLink != "") {
-                html += '  <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=' + data[i].jdLink + '>JDLink</a></td>';
+                html += '  <td>  <a target="_blank" title="JDLink" href=' + data[i].jdLink + '>JDLink</a></td>';
             }
             else {
                 html += '    <td>No JD</td>';
             }
 
+            html += '  <th>' + data[i].clientCompName + '</th>';
+            html += '  <th>' + data[i].clientName + '</th>';
 
-            html += '  <th>' + data[i].clientCompName +'</th>';
+            if (data[i].candidateClientHR != null && data[i].candidateClientHR != "") {
 
-    if (data[i].clientHrContact != null && data[i].clientHrContact != "") {
+                if (data[i].candidateClientHR.length > 15) {
 
-        if (data[i].clientHrContact.length > 15) {
-
-            html += ' <td class="cadEmail"><a onclick="" data-tooltip="' + data[i].clientHrContact + '">' + data[i].clientHrContact.substring(0, 15) + '... </a> </td>';
+                    html += ' <td class="cadEmail"><a onclick="" data-tooltip="' + data[i].candidateClientHR + '">' + data[i].candidateClientHR.substring(0, 15) + '... </a> </td>';
 
 
+                }
+
+
+                else {
+                    html += '  <td class="cadEmail"> <a onclick="">' + data[i].candidateClientHR + '</a></td>';
+
+
+                }
+
+            }
+            else {
+                html += '    <td></td>';
+            }
+
+
+
+            if (data[i].interviewer != null && data[i].interviewer != "") {
+                if (data[i].interviewer.length > 15) {
+                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].interviewer + '">' + data[i].interviewer.substring(0, 15) + '... </a></td>';
+                }
+                else {
+                    html += '<td class="cadEmail"><a onclick="">' + data[i].interviewer + '</a></td>';
+                }
+            }
+            else {
+                html += '<td></td>';
+            }
+
+            html += '  <td class="text-center four">';
+
+            html += '   <a href ="/HR/HRAssignYourself?id=' + data[i].id + ' & InterviewDate=' + data[i].interviewDate + '" title="Assign Yourself" class="mdc-fab app-fab--absolute"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg></a>';
+
+            html += '   </td>';
+            html += '  </tr>';
+            html += '  <tr class="collapse ' + data[i].id + '">';
+
+            html += '<td colspan="999" class="child-section">';
+            html += ' <table class="table table-striped">';
+            html += '  <tr>';
+            html += ' <th>Quality Controller</th>';
+            html += '<th>Slot</th>';
+            html += ' <th>Duration</th>';
+            html += ' </tr>';
+            html += '  <tr>';
+            if (data[i].qcInterviewer != null && data[i].qcInterviewer != "") {
+                html += '  <td> ' + data[i].qcInterviewer + '</td>';
+            }
+            else {
+                html += '  <td></td>';
+            }
+
+            if (data[i].interviewSlot != null && data[i].interviewSlot != "") {
+                html += '   <td>' + data[i].interviewSlot + ' </td>';
+            }
+            else {
+                html += '    <td></td>';
+            }
+
+            if (data[i].interviewDuration != null && data[i].interviewDuration != "") {
+                html += '     <td>' + data[i].interviewDuration + ' </td>';
+            }
+            else {
+                html += '   <td></td>';
+            }
+
+            html += '  </tr>';
+            html += '   </table>';
+            html += '   </td>';
+            html += '   </tr>';
         }
-
-
-        else {
-            html += '  <td class="cadEmail"> <a onclick="">' + data[i].clientHrContact + '</a></td>';
-
-
+        $("#tblbodyHROpenInterview").empty().html(html);
+    }
+    function bindPages(pagecount, startpage, endpage, totalcount) {
+        var html = '';
+        html += '<div class="pagination-container">';
+        html += '<ul class="pagination">';
+        for (var i = 1; i <= pagecount; i++) {
+            if (i == 1) {
+                html += '   <li class="active"><span>1</span></li>';
+            } else if (i <= 10) {
+                html += '<li><a href="/HR/OpenInterviews?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+            } else if (i == 11) {
+                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/HR/OpenInterviews?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/HR/OpenInterviews?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            } else {
+                break;
+            }
+            if (pagecount <= 10 && i == pagecount && i != 1) {
+                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/HR/OpenInterviews?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/HR/OpenInterviews?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            }
         }
+        html += '</ul>';
+        html += '</div>';
+        $("#divmeetingpages").empty().html(html);
+        var pagestartdetails = '';
+        pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
+        $("#divmeetingentries").empty().html(pagestartdetails);
 
     }
-    else {
-        html += '    <td></td>';
-    }
-
-
-
-    if (data[i].interviewer != null && data[i].interviewer != "") {
-        if (data[i].interviewer.length > 15) {
-            html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].interviewer + '">' + data[i].interviewer.substring(0, 15) + '... </a></td>';
-        }
-        else {
-            html += '<td class="cadEmail"><a onclick="">' + data[i].interviewer + '</a></td>';
-        }
-    }
-    else {
-        html += '<td></td>';
-    }
-
-    html += '  <td class="text-center four">';
-
-    html += '   <a href ="/Interview/HRAssignYourself?id=' + data[i].id + ' & InterviewDate=' + data[i].interviewDate + '" title="Assign Yourself" class="mdc-fab app-fab--absolute"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg></a>';
-
-    html += '   </td>';
-    html += '  </tr>';
-    html += '  <tr class="collapse ' + data[i].id + '">';
-
-    html += '<td colspan="999" class="child-section">';
-    html += ' <table class="table table-striped">';
-    html += '  <tr>';
-    html += ' <th>Quality Controller</th>';
-    html += '<th>Slot</th>';
-    html += ' <th>Duration</th>';
-    html += ' </tr>';
-    html += '  <tr>';
-    if (data[i].qcInterviewer != null && data[i].qcInterviewer != "") {
-        html += '  <td> ' + data[i].qcInterviewer + '</td>';
-    }
-    else {
-        html += '  <td></td>';
-    }
-
-    if (data[i].interviewSlot != null && data[i].interviewSlot != "") {
-        html += '   <td>' + data[i].interviewSlot + ' </td>';
-    }
-    else {
-        html += '    <td></td>';
-    }
-
-    if (data[i].interviewDuration != null && data[i].interviewDuration != "") {
-        html += '     <td>' + data[i].interviewDuration + ' </td>';
-    }
-    else {
-        html += '   <td></td>';
-    }
-
-    html += '  </tr>';
-    html += '   </table>';
-    html += '   </td>';
-    html += '   </tr>';
-}
-$("#tblbodyHROpenInterview").empty().html(html);
-}
-function bindPages(pagecount, startpage, endpage, totalcount) {
-var html = '';
-html += '<div class="pagination-container">';
-html += '<ul class="pagination">';
-for (var i = 1; i <= pagecount; i++) {
-    if (i == 1) {
-        html += '   <li class="active"><span>1</span></li>';
-    } else if (i <= 10) {
-        html += '<li><a href="/Interview/HROpenInterview?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
-    } else if (i == 11) {
-        html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-        html += '<li class="PagedList-skipToNext"><a href="/Interview/HROpenInterview?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-        html += '<li class="PagedList-skipToLast"><a href="/Interview/HROpenInterview?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-    } else {
-        break;
-    }
-    if (pagecount <= 10 && i == pagecount && i != 1) {
-        html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-        html += '<li class="PagedList-skipToNext"><a href="/Interview/HROpenInterview?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-        html += '<li class="PagedList-skipToLast"><a href="/Interview/HROpenInterview?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-    }
-}
-html += '</ul>';
-html += '</div>';
-$("#divmeetingpages").empty().html(html);
-var pagestartdetails = '';
-pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
-$("#divmeetingentries").empty().html(pagestartdetails);
-
-}
 </script>
 
 <script>
@@ -663,58 +927,7 @@ $("#divmeetingentries").empty().html(pagestartdetails);
         $(".dataTables_filter input").val('');
         searchResult();
     }
-    function FilterInterviews(filterValue) {
-
-        $.ajax({
-            type: "GET",
-            url: "/Interview/GetFilteredOpenInterviews",
-            data: { 'filterValue': filterValue },
-            success: function (data) {
-                if (data == '' && filterValue == 'seven') {
-                    $('#tableID').html('');
-                    $('#tableID').html('No interviews for the next seven days.');
-                    $('#tableID').css("margin-left", "452px");
-                    return;
-                }
-                if (data == '' && filterValue == 'all') {
-                    $('#tableID').html('');
-                    $('#tableID').html('No interviews.');
-                    $('#tableID').css("margin-left", "452px");
-                    return;
-                }
-                if (data == '') {
-                    $('#tableID').html('');
-                    $('#tableID').html('No interviews for ' + filterValue + '.');
-                    $('#tableID').css("margin-left", "452px");
-                    return;
-                }
-                $('#tableID').css("margin-left", "");
-                $('#tableID').html('');
-                $('#tableID').html(data);
-
-                $('#OpeninterviewList').DataTable({
-                    "pagingType": "full_numbers",
-                    "lengthMenu": [
-                        [10, 25, 50, -1],
-                        [10, 25, 50, "All"]
-                    ],
-                    responsive: true,
-                    language: {
-                        search: "_INPUT_",
-                        searchPlaceholder: "Search records",
-                    }
-
-                });
-                var table = $('#OpeninterviewList').DataTable();
-
-
-
-            },
-            error: function (err) {
-                alert(err.responseText);
-            }
-        });
-    }
+    
 </script>
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")

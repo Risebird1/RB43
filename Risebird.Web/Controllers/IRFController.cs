@@ -956,7 +956,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName=="Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var result = await _irfService.ArchiveIRF(id);
                         return Json(result);
@@ -987,7 +987,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName=="Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var result = await _irfService.UnArchiveIRF(id);
                         return Json(result);
@@ -1397,7 +1397,7 @@ namespace Risebird.Web.Controllers
                     var Skillset = _irfRepository.GetSkills();
                     if (Skillset != null)
                     {
-                        Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+                        Skillset = Skillset.OrderBy(x => !String.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
                     }
                     ViewBag.Skill = new SelectList(Skillset, "id", "Name");
                     ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");

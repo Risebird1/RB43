@@ -11,18 +11,24 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[usp_HROpenInterviews] 
+@EmailId varchar(100)
 AS
 BEGIN
+declare @hrId int
+set @hrId = (select HR.id from UserList ul join HR on HR.UserId=ul.id where EmailId=@EmailId and idProfile=2)
+
 select im.id, im.IRFId,irf.Id as irfIntId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,
 im.confirmationStatus, im.interviewer, im.candidateName, im.QCInterviewer,
 ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,irf.ClientName, cl.[Name] as ClientCompName,
+ca.ClientHRAttemptContact as CandidateClientHR, irf.JDTiltle,
 irf.JDLink from InterviewMeetings im  
 inner join IRF irf on im.IRFId=irf.IRFId   
 left join [dbo].[UserList] ul on im.candidateEmail = ul.EmailId
 join CandidatesMaster cm on cm.UserId = ul.id
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId=irf.id
 join Client cl on cl.id = irf.ClientId
-where HRCoordinatorEmailId is null and confirmationStatus = 1
+join TransHR th on th.IRFId=irf.id
+where HRCoordinatorEmailId is null and confirmationStatus = 1 and th.HRId=@hrId and im.interviewDate>=getdate()
 END
 GO
 

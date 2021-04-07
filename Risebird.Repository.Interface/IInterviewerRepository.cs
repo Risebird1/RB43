@@ -60,5 +60,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<TechSkillReport> GetTechSkillReport(int id);
         Task<InterviewReport> GetInterviewerRecommendationDetails(int Userid);
         Task<bool> InterviewerRecommendation(InterviewReport reportDetails);
+        Task<TransInterviewerAccDetails> fetchBankDetails(int interviewerid);
+        Task<List<TransInterviewerAvailability>> fetchAvailDetails(int interviewerid);
     }
 }
