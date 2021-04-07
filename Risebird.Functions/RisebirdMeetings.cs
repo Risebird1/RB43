@@ -56,6 +56,7 @@ namespace Risebird.Functions
             string interviewOnDevice = string.Empty;
             string currentEmployerName = string.Empty;
             string textreminder = string.Empty;
+            long? zoommeetingId = null;
             var children = stuff.Children().GetEnumerator();
             while (children.MoveNext())
             {
@@ -114,6 +115,27 @@ namespace Risebird.Functions
                                     return req.CreateResponse(HttpStatusCode.OK, "Past date Interview Update " + "Ok");
                                 }
                                 zoomLink = ((JProperty)mainFamilies1).Value["location"].ToString();
+                                if (!string.IsNullOrEmpty(zoomLink))
+                                {
+                                    try
+                                    {
+                                        zoommeetingId = Convert.ToInt64(zoomLink.Split('/').Last());
+                                    }
+                                    catch (Exception)
+                                    {
+                                        try
+                                        {
+                                            var link = zoomLink.Split('?').First();
+                                            zoommeetingId = Convert.ToInt64(link.Split('/').Last());
+                                        }
+                                        catch (Exception)
+                                        {
+                                            zoommeetingId = null;
+                                        }
+                                       
+                                    }
+                                  
+                                }
                             }
                             else if (((JToken)mainFamilies1).Path == "payload.invitee")
                             {
@@ -228,6 +250,8 @@ namespace Risebird.Functions
                 cmd.Parameters.Add(new SqlParameter("@interviewOnDevice", interviewOnDevice));
                 cmd.Parameters.Add(new SqlParameter("@currentEmployerName", currentEmployerName));
                 cmd.Parameters.Add(new SqlParameter("@textreminder", textreminder));
+                cmd.Parameters.Add(new SqlParameter("@zoomMeetingId", zoommeetingId));
+
                 cmd.ExecuteScalar();
 
                 log.Info("Interview update in database ended.");
