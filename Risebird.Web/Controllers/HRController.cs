@@ -418,7 +418,7 @@ namespace Risebird.Web.Controllers
                             myInterview = myInterview.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
 
                         }
-                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.MeetingStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); x.intervieweStatus = ((InterviewStatus)Convert.ToInt32(x.intervieweStatus)).GetDescription(); x.QCStatusDesc = ((QCStatus)Convert.ToInt32(x.QCStatus)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {
                             if (!string.IsNullOrEmpty(item.resumeLink))
@@ -549,7 +549,7 @@ namespace Risebird.Web.Controllers
                         && ((filter.Client != null && filter.Client.Count() > 0) ? filter.Client.Contains(c.ClientCompName) : c.ClientCompName == null)
                         && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
 
-                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.MeetingStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); x.intervieweStatus = ((InterviewStatus)Convert.ToInt32(x.intervieweStatus)).GetDescription(); x.QCStatusDesc = ((QCStatus)Convert.ToInt32(x.QCStatus)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {
                             if (!string.IsNullOrEmpty(item.resumeLink))

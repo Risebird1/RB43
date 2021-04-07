@@ -11,7 +11,7 @@ namespace Risebird.Entities.ViewModel
     {
         public int id { get; set; }
 
-        [DisplayName("IRFId")]
+        [DisplayName("Skill Channel ID")]
         [Required]
         public string IRFId { get; set; }
 
