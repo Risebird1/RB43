@@ -672,6 +672,13 @@ select * {
     .mdc-card .modal .modal-content .modal-body .mdc-button--raised:not(:disabled), .mdc-card .modal .modal-content .modal-body .mdc-button--unelevated:not(:disabled), .modal .modal-content .modal-body .mdc-button--raised:not(:disabled), .modal .modal-content .modal-body .mdc-button--unelevated:not(:disabled) {
         border: 1px #77737359 solid !important;
     }
+
+.my_interview .un-left strong {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: bold;
+    color: #969494;
+}
 .availbg {
     background: #131313;
 }
