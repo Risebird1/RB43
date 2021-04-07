@@ -20,7 +20,7 @@ namespace Risebird.Entities.ViewModel
         public List<MeetingVM> SubVideo_List { get; set; }
         public int imid { get; set; }
 
-        [Display(Name = "IRF ID")]
+        [Display(Name = "Skill Channel ID")]
         [Required(ErrorMessage = "Please enter existing IRF Name.")]
         public string IRFId { get; set; }
 

@@ -903,7 +903,9 @@ namespace Risebird.Web.Controllers
                                             interviewer = item.interviewer,
                                             confirmationStatus = "1",
                                             HRCoordinatorEmailId = emailid,
-                                        }); ;
+                                            MeetingStatus = item.MeetingStatus,
+                                            InterviewStatus = item.InterviewStatus,
+                                        }); 
                                     }
                                 }
                             }
@@ -943,7 +945,9 @@ namespace Risebird.Web.Controllers
                                                 interviewer = item.interviewer,
                                                 confirmationStatus = "1",
                                                 HRCoordinatorEmailId = emailid,
-                                            }); ;
+                                                MeetingStatus = item.MeetingStatus,
+                                                InterviewStatus = item.InterviewStatus,
+                                            }); 
                                         }
                                     }
                                 }
@@ -1041,7 +1045,9 @@ namespace Risebird.Web.Controllers
                                             interviewer = item.interviewer,
                                             confirmationStatus = "1",
                                             HRCoordinatorEmailId = email,
-                                        }); ;
+                                            MeetingStatus = item.MeetingStatus,
+                                            InterviewStatus = item.InterviewStatus,
+                                        }); 
                                     }
                                 }
                             }

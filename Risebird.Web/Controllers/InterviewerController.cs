@@ -615,7 +615,7 @@ namespace Risebird.Web.Controllers
             var Skillset = _skillService.GetSkills();
             if (Skillset != null)
             {
-                Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+                Skillset = Skillset.OrderBy(x => !String.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
             }
             model.SkillTypeList = new SelectList(Skillset, "id", "Name");
 
