@@ -31,6 +31,153 @@ body {
     .clearfix:after {
         clear: both;
     }
+
+.marquee {
+    width: 100%;
+    height: 48px;
+    margin: 0 auto;
+    overflow: hidden;
+    white-space: nowrap;
+    background: #dedede;
+}
+
+.marquee-content {
+    display: inline-block;
+    margin-top: 0px;
+    animation: marquee 20s linear infinite;
+}
+.item-collection-1 {
+    position: relative;
+    left: 0%;
+    animation: swap 20s linear infinite;
+}
+@keyframes swap {
+    0%, 50% {
+        left: 0%;
+    }
+
+    50.01%, 100% {
+        left: 100%;
+    }
+}
+
+.marquee-content:hover {
+    animation-play-state: paused
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes marquee2 {
+    from {
+        transform: translateX(0%);
+    }
+
+    to {
+        transform: translateX(-200%);
+    }
+}
+:root {
+    --marquee-width: 80vw;
+    --marquee-height: 20vh;
+    /* --marquee-elements: 12; */ /* defined with JavaScript */
+    --marquee-elements-displayed: 5;
+    --marquee-element-width: calc(var(--marquee-width) / var(--marquee-elements-displayed));
+    --marquee-animation-duration: calc(var(--marquee-elements) * 6s);
+}
+
+.marquees {
+    width: var(--marquee-width);
+    height: var(--marquee-height);
+
+    color: #eee;
+    overflow: hidden;
+    position: relative;
+    width:100%;
+}
+
+    .marquees:before, .marquees:after {
+        position: absolute;
+        top: 0;
+        width: 10rem;
+        height: 100%;
+        content: "";
+        z-index: 1;
+    }
+
+    .marquees:before {
+        left: 0;
+       
+    }
+
+    .marquees:after {
+        right: 0;
+
+    }
+.marquees-content .front-card, .marquees-content .back-card {
+    top: 9px;
+    left: 9px;
+}
+
+.marquees-content .un-left {
+    width: 80%;
+    padding: 0px 20px !important;
+}
+.marquees-content {
+    list-style: none;
+    height: 100%;
+    display: flex;
+    animation: scrolling var(--marquee-animation-duration) linear infinite;
+}
+ .marquees-content:hover {
+  animation-play-state: paused;
+} 
+@keyframes scrolling {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(calc(-1 * var(--marquee-element-width) * var(--marquee-elements)));
+    }
+}
+
+.marquee-content li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* text-align: center; */
+    flex-shrink: 0;
+    width: var(--marquee-element-width);
+    max-height: 100%;
+    width: auto;
+    font-size: calc(var(--marquee-height)*3/4); /* 5rem; */
+    white-space: nowrap;
+}
+
+
+@media (max-width: 600px) {
+    html {
+        font-size: 12px;
+    }
+
+    :root {
+        --marquee-width: 100vw;
+        --marquee-height: 16vh;
+        --marquee-elements-displayed: 3;
+    }
+
+    .marquee:before, .marquee:after {
+        width: 5rem;
+    }
+}
  .cadfName [data-tooltip]:before {
     position: absolute;
     bottom: 90%;
