@@ -1,7 +1,7 @@
 ﻿@model Risebird.Entities.Data.Recruiter
 @{
     ViewData["Title"] = "Add Recruiter";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml"; 
 }
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
@@ -55,17 +55,20 @@
                                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
 
-                                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
 
-                                        </div>
+                                            </div>
                                     </div>
 
                                     <div class="col-md-4 col-sm-4 px-1 pull-left">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                            </div>
 
                                             @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
                                             @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
@@ -76,7 +79,9 @@
                                     <div class="col-md-4 col-sm-4 pl-1 pull-left">
 
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                            </div>
 
                                             @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control" } })
                                             @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
@@ -86,12 +91,13 @@
 
                                     <div class="col-md-4 col-sm-4 pr-1 pull-left">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
 
-                                            @Html.EditorFor(model => model.Domain, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
-                                            @Html.ValidationMessageFor(model => model.Domain, "", new { @class = "text-danger" })
+                                                @Html.EditorFor(model => model.Domain, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
+                                                @Html.ValidationMessageFor(model => model.Domain, "", new { @class = "text-danger" })
 
-                                        </div>
+                                            </div>
                                     </div>
                                     <div class="col-md-4 col-sm-4 px-1 pull-left">
                                         <div class="form-group">

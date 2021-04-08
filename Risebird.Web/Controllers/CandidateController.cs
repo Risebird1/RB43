@@ -1394,6 +1394,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpPost]
         public async Task<IActionResult> Delete(int id, int irfId, string IRFName)
         {
             try
@@ -2076,6 +2077,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpPost]
         public async Task<IActionResult> DeleteStatus(int id)
         {
             try

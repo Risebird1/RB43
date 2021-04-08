@@ -615,7 +615,7 @@ namespace Risebird.Web.Controllers
             var Skillset = _skillService.GetSkills();
             if (Skillset != null)
             {
-                Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+                Skillset = Skillset.OrderBy(x => !String.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
             }
             model.SkillTypeList = new SelectList(Skillset, "id", "Name");
 
@@ -2258,21 +2258,26 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public JsonResult BankDetailsJson(int interviewerid) {
+        public JsonResult BankDetailsJson(int interviewerid)
+        {
             var results = _interviewerService.fetchBankDetails(interviewerid);
             return Json(results.Result);
 
         }
         [HttpPost]
-        public JsonResult AvailDetailsJson(int interviewerid)
+        public async Task<JsonResult> AvailDetailsJson(int interviewerid)
         {
-            var results = _interviewerService.fetchAvailDetails(interviewerid);
-            return Json(results.Result);
-
+            var results = await _interviewerService.fetchAvailDetails(interviewerid);
+            if (results != null)
+            {
+                foreach (var item in results)
+                {
+                    item.Weekday = ((Weekday)Convert.ToInt32(item.Weekday)).GetDescription();
+                    item.Weekend = ((Weekend)Convert.ToInt32(item.Weekend)).GetDescription();
+                }
+            }
+            return Json(results);
         }
-
-
     }
-
 }
 

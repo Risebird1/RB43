@@ -67,10 +67,10 @@
     <div>
         <div>
             <div>
-                <div style="margin-bottom: 0px; top: -2px; position: relative;">
+                <div style="margin-bottom: 0px; top: 0px;left:2px; position: relative;">
 
                     <div class="table-responsive-sm">
-                        <table class="table  table-striped no-border" cellpadding="0" cellspacing="0">
+                        <table class="table  table-striped no-border" cellpadding="0" cellspacing="0" style="margin-bottom:0px;">
                             <tbody>
                                 <tr>
                                     <td width="20%" style="border: 0px; padding: 0px; height: 0px; line-height: 30px;">
@@ -221,599 +221,440 @@
                     </div>
 
                 </div>
-                <div class="pull-left">
-                    <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title">My Interviews</h4></div>
-                </div>
-
-                <div class="pull-right client-ms">
-                    <div>
 
 
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-toggle="modal" data-target="#filterModal">
+                <div class="pt30">
+                    <div class="col-md-12 nopad" style="margin:0px;">
+                        <div class="card-header bg-w clearfix">
 
-                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                            <div class="mdc-button__ripple"></div>
-                        </button>
-
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded four" style="float: left;">
-                            <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "HR", actMethod ="MyInterviews" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
-                        </button>
-
-                        <i type="submit" class="fa fa-file-excel-o excel-file export five pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("HRInterviewsExporttoExcel", "HR")'"></i>
-
-
-
-                        <div id="meeting_filter" class="dataTables_filter pull-left">
-
-                            <div class="searchCon">
-
-                                <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.Searchvalue">
-                                <span class="ref-btn" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
-
+                            <div class="pull-left">
+                                <h4 class="card-title"></h4>
+                                <div class="mobile-view"> <h4 class="card-title">My Interviews</h4></div>
                             </div>
-                        </div>
+
+                            <div class="pull-right client-ms">
+                                <div>
+
+
+                                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-toggle="modal" data-target="#filterModal">
+
+                                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                        <div class="mdc-button__ripple"></div>
+                                    </button>
+
+                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded four" style="float: left;">
+                                        <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "HR", actMethod ="MyInterviews" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
+                                    </button>
+
+                                    <i type="submit" class="fa fa-file-excel-o excel-file export five pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("HRInterviewsExporttoExcel", "HR")'"></i>
 
 
 
+                                    <div id="meeting_filter" class="dataTables_filter pull-left">
 
+                                        <div class="searchCon">
 
-                    </div>
-                </div>
+                                            <button onclick="searchResult()" type="button" id="search">&nbsp</button>
+                                            <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.Searchvalue">
+                                            <span class="ref-btn" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
 
-
-            </div>
-        </div>
-    </div>
-
-    <div class="content client">
-        <div class="row bl-bg">
-            <div class="col-md-12">
-                <div class="mdc-card card bl-bg">
-
-                    <div class="mdc-card-wrapper__text-section">
-                        <div class="toolbar">
-                            <!--        Here you can write extra buttons/actions for the toolbar              -->
-                        </div>
-                        <div class="loader text-center">
-                            <img src="~/Newassets/img/lazyload.gif" />
-                        </div>
-                        <div class="dataloading">
-
-                            <div class="toolbar">
-
-                                <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg" role="document">
-                                        <div class="modal-content">
-                                            <div class="filheader">
-                                                <div class="filavatar">
-                                                    <span class="fa fa-filter"></span>
-                                                </div>
-                                                <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
-                                            </div>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                            <form action="@Url.Action("MyInterviews","HR")" method="post" id="form">
-
-                                                <div class="modal-body">
-                                                    <div class="row">
-                                                        <div class="col-md-6 col-sm-6 border-rv">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
-                                                                    Start Date
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <input id="StartDate" name="StartDate" type="date" class="form-control">
-                                                                </div>
-                                                            </div>
-
-
-
-
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
-                                                                    End Date
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <input id="EndDate" name="EndDate" type="date" class="form-control">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6 border-rv">
-
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
-
-                                                                        @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-
-
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
-                                                                    Client
-                                                                    HR
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.CandidateClientHR).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">
-                                                                    Client
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="Client" name="Client" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.ClientCompName).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">RFID</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
-
-                                                                        @foreach (var item in Model.Select(x => x.IRFID).Distinct().ToList())
-                                                                        {
-                                                                            @if (!string.IsNullOrEmpty(item))
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Interviewer">
-                                                                    Interviewer
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="Interviewer" name="Interviewer" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.interviewer).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">
-                                                                    End Client Name
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <div>
-                                                                    <div class="col-md-12 col-sm-12">
-
-
-                                                                        <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                                                                            <font style="font-size:12px;"> Reset Filter</font>
-                                                                        </button>
-
-
-                                                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
-                                                                            <font style="font-size:12px;"> Apply Filter</font>
-                                                                        </button>
-
-
-                                                                    </div>
-
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </form>
                                         </div>
                                     </div>
 
+
+
+
+
                                 </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    </div>
+                </div>
+
+                <div class="content client">
+                    <div class="row bl-bg">
+                        <div class="col-md-12">
+                            <div class="mdc-card card bl-bg">
+
+                                <div class="mdc-card-wrapper__text-section">
+                                    <div class="toolbar">
+                                        <!--        Here you can write extra buttons/actions for the toolbar              -->
+                                    </div>
+                                    <div class="loader text-center">
+                                        <img src="~/Newassets/img/lazyload.gif" />
+                                    </div>
+                                    <div class="dataloading">
+
+                                        <div class="toolbar">
+
+                                            <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="filheader">
+                                                            <div class="filavatar">
+                                                                <span class="fa fa-filter"></span>
+                                                            </div>
+                                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                                        </div>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                        <form action="@Url.Action("MyInterviews","HR")" method="post" id="form">
+
+                                                            <div class="modal-body">
+                                                                <div class="row">
+                                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                                        <div class="form-group">
+                                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                                Start Date
+                                                                            </label>
+                                                                            <div class="col-md-12 col-sm-12">
+                                                                                <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                                            </div>
+                                                                        </div>
 
 
-                                <div id="tableID" class="second">
-                                    <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                                        <div class="clearfix"></div>
-                                        <div class="col-sm-12 nopad">
-                                            <div class="table-responsive">
-                                                <table id="MyInterviewList" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style="border-right: 0px !important;"></th>
-                                                            <th id='start'>Date</th>
-                                                            <th style="text-align:center">Slot</th>
-                                                            <th style="text-align:center">Interviewer</th>
-                                                            <th style="text-align:center">Candidate</th>
-                                                            <th>Skill Channel</th>
-                                                            <th>Candidate Name</th>
-                                                            <th>Interviewer</th>
-                                                            <th>Candidate Email</th>
-                                                            <th>Client</th>
-
-                                                            <th>Zoom Link</th>
-                                                            <th class="disabled-sorting text-center">Actions</th>
-
-                                                        </tr>
-                                                    </thead>
-                                                    <tfoot>
-                                                        <tr>
-                                                            <th style="border-right: 0px !important;"></th>
-                                                            <th>Date</th>
-                                                            <th style="text-align:center">Slot</th>
-                                                            <th style="text-align:center">Interviewer</th>
-                                                            <th style="text-align:center">Candidate</th>
-                                                            <th>Skill Channel</th>
-                                                            <th>Candidate Name</th>
-                                                            <th>Interviewer</th>
-                                                            <th>Candidate Email</th>
-                                                            <th>Client</th>
-
-                                                            <th>Zoom Link</th>
-                                                            <th class="disabled-sorting text-center">Actions</th>
-
-                                                        </tr>
-                                                    </tfoot>
-                                                    <tbody id="tblbodyHRMyInterview">
 
 
-                                                        @foreach (var item in Model)
-                                                        {
-                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+                                                                    </div>
+                                                                    <div class="col-md-6 col-sm-6">
+                                                                        <div class="form-group">
+                                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                                End Date
+                                                                            </label>
+                                                                            <div class="col-md-12 col-sm-12">
+                                                                                <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6 col-sm-6 border-rv">
 
-                                                            <tr id=@item.id data-changes="1">
-                                                                <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
-                                                                <td> @item.interviewDate </td>
-                                                                @if (@item.interviewSlot == "Morning")
-                                                                {
-                                                                    <td><a style="color:darkorange;font-weight: bold"> @item.interviewSlot</a></td>
+                                                                        <div class="form-group">
+                                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                                            <div class="col-md-12 col-sm-12">
+                                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
 
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td><a style="color:darkblue;font-weight: bold"> @item.interviewSlot</a></td>
-                                                                }
-                                                                <td style="text-align: center">
-                                                                    @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
+                                                                                    @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                                    {
+                                                                                        @if (item != null && item != "")
+                                                                                        {
+                                                                                            <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
+                                                                                        }
+                                                                                    }
+                                                                                </select>
+
+
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
+                                                                                Client
+                                                                                HR
+                                                                            </label>
+                                                                            <div class="col-md-12 col-sm-12">
+                                                                                <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                                                    @foreach (var item in Model.Select(x => x.CandidateClientHR).Distinct().ToList())
+                                                                                    {
+                                                                                        @if (item != null && item != "")
+                                                                                        {
+                                                                                            <option value="@item">@item</option>
+                                                                                        }
+                                                                                    }
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                        <div class="form-group">
+                                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">
+                                                                                Client
+                                                                            </label>
+                                                                            <div class="col-md-12 col-sm-12">
+                                                                                <select id="Client" name="Client" class="form-control multiselect" multiple="multiple">
+                                                                                    @foreach (var item in Model.Select(x => x.ClientCompName).Distinct().ToList())
+                                                                                    {
+                                                                                        @if (item != null && item != "")
+                                                                                        {
+                                                                                            <option value="@item">@item</option>
+                                                                                        }
+                                                                                    }
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">RFID</label>
+                                                                            <div class="col-md-12 col-sm-12">
+                                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+
+                                                                                    @foreach (var item in Model.Select(x => x.IRFID).Distinct().ToList())
+                                                                                    {
+                                                                                        @if (!string.IsNullOrEmpty(item))
+                                                                                        {
+                                                                                            <option value="@item">@item</option>
+                                                                                        }
+                                                                                    }
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6 col-sm-6">
+                                                                        <div class="form-group">
+                                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Interviewer">
+                                                                                Interviewer
+                                                                            </label>
+                                                                            <div class="col-md-12 col-sm-12">
+                                                                                <select id="Interviewer" name="Interviewer" class="form-control multiselect" multiple="multiple">
+                                                                                    @foreach (var item in Model.Select(x => x.interviewer).Distinct().ToList())
+                                                                                    {
+                                                                                        @if (item != null && item != "")
+                                                                                        {
+                                                                                            <option value="@item">@item</option>
+                                                                                        }
+                                                                                    }
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">
+                                                                                End Client Name
+                                                                            </label>
+                                                                            <div class="col-md-12 col-sm-12">
+                                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                                    @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
+                                                                                    {
+                                                                                        @if (item != null && item != "")
+                                                                                        {
+                                                                                            <option value="@item">@item</option>
+                                                                                        }
+                                                                                    }
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <div>
+                                                                                <div class="col-md-12 col-sm-12">
+
+
+                                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                                    </button>
+
+
+                                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                                    </button>
+
+
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
+                                            <div id="tableID" class="second">
+                                                <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                                    <div class="clearfix"></div>
+                                                    <div class="col-sm-12 nopad">
+                                                        <div class="table-responsive">
+                                                            <table id="MyInterviewList" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th style="border-right: 0px !important;"></th>
+                                                                        <th id='start'>Date</th>
+                                                                        <th style="text-align:center">Slot</th>
+                                                                        <th style="text-align:center">Interviewer</th>
+                                                                        <th style="text-align:center">Candidate</th>
+                                                                        <th>Skill Channel</th>
+                                                                        <th>Candidate Name</th>
+                                                                        <th>Interviewer</th>
+                                                                        <th>Candidate Email</th>
+                                                                        <th>Client</th>
+
+                                                                        <th>Zoom Link</th>
+                                                                        <th class="disabled-sorting text-center">Actions</th>
+
+                                                                    </tr>
+                                                                </thead>
+                                                                <tfoot>
+                                                                    <tr>
+                                                                        <th style="border-right: 0px !important;"></th>
+                                                                        <th>Date</th>
+                                                                        <th style="text-align:center">Slot</th>
+                                                                        <th style="text-align:center">Interviewer</th>
+                                                                        <th style="text-align:center">Candidate</th>
+                                                                        <th>Skill Channel</th>
+                                                                        <th>Candidate Name</th>
+                                                                        <th>Interviewer</th>
+                                                                        <th>Candidate Email</th>
+                                                                        <th>Client</th>
+
+                                                                        <th>Zoom Link</th>
+                                                                        <th class="disabled-sorting text-center">Actions</th>
+
+                                                                    </tr>
+                                                                </tfoot>
+                                                                <tbody id="tblbodyHRMyInterview">
+
+
+                                                                    @foreach (var item in Model)
                                                                     {
+                                                                        var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer">
-                                                                            <span onclick="ModalButtonClick('@item.InterviewerPhone','@item.interviewer','Interviewer')" data-original-title="Tooltip on top" title="Click here to call the interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                        </button>
-
-
-                                                                    }
-
-
-                                                                </td>
-
-                                                                <td style="text-align: center">
-                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                    {
-
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate">
-                                                                            <span onclick="ModalButtonClick('@item.MobileNumber','@item.candidateName','Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                        </button>
-
-
-                                                                    }
-
-                                                                </td>
-                                                                <td style="text-align: center"> @item.IRFID </td>
-                                                                @if (item.candidateName != null && item.candidateName != "")
-                                                                {
-
-                                                                    @if (item.IsOnilne == 1 && item.candidateName.Length > 10)
-                                                                    {
-                                                                        <td>
-                                                                            <a onclick="directopenChat('@item.candidateEmail')"> <span class="dot" style="background-color:green"></span>@item.candidateName.Substring(0, 10)...</a>
-                                                                        </td>
-                                                                    }
-                                                                    else
-                                                                    {
-
-                                                                        @if (item.candidateName.Length > 15)
-                                                                        {
-
-
-                                                                            <td class="cadName">
-                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 10)... </a>
-                                                                            </td>
-                                                                        }
-
-
-                                                                        else
-                                                                        {
-                                                                            <td class="cadName">
-                                                                                <a onclick=""><span class="dot"></span> @item.candidateName </a>
-                                                                            </td>
-                                                                        }
-
-
-                                                                    }
-
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td></td>
-                                                                }
-
-                                                                @if (item.interviewer != null && item.interviewer != "")
-                                                                {
-
-
-
-                                                                    @if (item.interviewer.Length > 10)
-                                                                    {
-
-
-                                                                        <td class="cadEmail">
-                                                                            <a onclick="" data-tooltip="@item.interviewer"> @item.interviewer.Substring(0, 10)... </a>
-                                                                        </td>
-                                                                    }
-
-
-                                                                    else
-                                                                    {
-                                                                        <td class="cadEmail">
-                                                                            <a onclick=""> @item.interviewer </a>
-                                                                        </td>
-                                                                    }
-
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td></td>
-                                                                }
-
-                                                                @if (item.candidateEmail != null && item.candidateEmail != "")
-                                                                {
-
-                                                                    @if (item.candidateEmail.Length > 10)
-                                                                    {
-
-                                                                        <td class="cadEmail">
-                                                                            <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 10)... </a>
-                                                                        </td>
-                                                                    }
-
-                                                                    else
-                                                                    {
-                                                                        <td class="cadEmail">
-                                                                            <a onclick=""> @item.candidateEmail </a>
-                                                                        </td>
-                                                                    }
-
-                                                                }
-
-                                                                else
-                                                                {
-                                                                    <td></td>
-                                                                }
-                                                                @if (!string.IsNullOrEmpty(item.ClientCompName))
-                                                                {
-                                                                    @if (item.ClientCompName.Length > 10)
-                                                                    {
-                                                                        <td style="text-align: center"> @item.ClientCompName.Substring(0, 10)... </td>
-                                                                    }
-
-                                                                    else
-                                                                    {
-                                                                        <td style="text-align: center"> @item.ClientCompName </td>
-                                                                    }
-                                                                }
-
-                                                                else
-                                                                {
-                                                                    <td></td>
-                                                                }
-
-
-
-
-                                                                @if (item.zoomLink != null && item.zoomLink != "")
-                                                                {
-                                                                    <td> <a id="zoomlinkId" target="_blank" title="Zoom Link" href=@item.zoomLink>Zoom Link</a></td>
-                                                                }
-                                                                else
-                                                                {
-
-                                                                    <td>No Zoom Link</td>
-
-                                                                }
-
-                                                                <td class="text-right">
-
-                                                                    <button class="mdc-fab app-fab--absolute sampleQues" aria-label="UnAssign Yourself">
-                                                                        <span onclick="javascript:UnAssignInterviewer('@item.id');" title="UnAssign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
-                                                                    </button>
-                                                                    <button class="mdc-fab app-fab--absolute itemques" aria-label="Co-ordinating HR Comments">
-                                                                        <span onclick="OpenCommentModal('@item.id','@item.interviewDate', '@item.HRComment', '@item.HRImageFileURL', '@item.candidateEmail', '@item.candidateName')" title="Co-ordinating HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
-                                                                    </button>
-
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
-                                                                        <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
-                                                                    </button>
-                                                                </td>
-
-                                                            </tr>
-
-
-                                                            <tr class="collapse @item.id">
-
-                                                                <td colspan="999" class="child-section">
-                                                                    <table class="table table-striped table-responsive">
-                                                                        <tr>
-                                                                            <th>Primary Skill</th>
-                                                                            <th>Resume</th>
-                                                                            <th>JD Link</th>
-                                                                            <th>Interviewer Mobile</th>
-                                                                            <th>Candidate Mobile</th>
-                                                                            <th style="text-align:center">Call Client HR</th>
-                                                                            <th style="text-align:center">Call Staffing Agency</th>
-                                                                            <th style="text-align:center">End Client Name</th>
-                                                                            <th>Quality Controller</th>
-                                                                            <th>HR Comments</th>
-                                                                            <th>Client HR </th>
-                                                                            <th>Client HR Contact</th>
-                                                                            <th>Staffing Agency Contact</th>
-                                                                        </tr>
-
-                                                                        <tr>
-
-
-
-                                                                            @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
+                                                                        <tr id=@item.id data-changes="1">
+                                                                            <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                                                                            <td> @item.interviewDate </td>
+                                                                            @if (@item.interviewSlot == "Morning")
                                                                             {
+                                                                                <td><a style="color:darkorange;font-weight: bold"> @item.interviewSlot</a></td>
 
-                                                                                @if (item.JDTiltle.Split("|")[0].Length > 20)
-                                                                                {
-
-
-                                                                                    <td class="cadSkill">
-                                                                                        <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0].Substring(0, 20)... </a>
-                                                                                    </td>
-                                                                                }
-
-
-                                                                                else
-                                                                                {
-                                                                                    <td class="cadSkill">
-                                                                                        <a onclick=""> @item.JDTiltle.Split("|")[0] </a>
-                                                                                    </td>
-                                                                                }
-
-                                                                            }
-
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }
-
-
-
-
-
-                                                                            @if (item.resumeLink != null && item.resumeLink != "")
-                                                                            {
-                                                                                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
                                                                             }
                                                                             else
                                                                             {
-                                                                                <td>No Resume</td>
-                                                                            }
-
-                                                                            @if (item.JDLink != null && item.JDLink != "")
-                                                                            {
-                                                                                <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td>No JD</td>
+                                                                                <td><a style="color:darkblue;font-weight: bold"> @item.interviewSlot</a></td>
                                                                             }
                                                                             <td style="text-align: center">
                                                                                 @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
                                                                                 {
 
-                                                                                    @item.InterviewerPhone
+                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer">
+                                                                                        <span onclick="ModalButtonClick('@item.InterviewerPhone','@item.interviewer','Interviewer')" data-original-title="Tooltip on top" title="Click here to call the interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                                    </button>
 
 
                                                                                 }
 
+
                                                                             </td>
+
                                                                             <td style="text-align: center">
                                                                                 @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                                 {
 
-                                                                                    @item.MobileNumber
-
-                                                                                }
-
-                                                                            </td>
-
-
-                                                                            <td style="text-align: center">
-                                                                                @if (item.ClientHrMobile != null && item.ClientHrMobile != string.Empty)
-                                                                                {
-
-                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to call Client HR">
-                                                                                        <span onclick="ModalButtonClick('@item.ClientHrMobile','@item.CandidateClientHR','Client HR')" data-original-title="Tooltip on top" title="Click here to call the candidate" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate">
+                                                                                        <span onclick="ModalButtonClick('@item.MobileNumber','@item.candidateName','Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
                                                                                     </button>
 
 
                                                                                 }
 
                                                                             </td>
+                                                                            <td style="text-align: center"> @item.IRFID </td>
+                                                                            @if (item.candidateName != null && item.candidateName != "")
+                                                                            {
 
-                                                                            <td style="text-align: center">
-                                                                                @if (item.StaffingAgencyMobile != null && item.StaffingAgencyMobile != string.Empty)
+                                                                                @if (item.IsOnilne == 1 && item.candidateName.Length > 10)
+                                                                                {
+                                                                                    <td>
+                                                                                        <a onclick="directopenChat('@item.candidateEmail')"> <span class="dot" style="background-color:green"></span>@item.candidateName.Substring(0, 10)...</a>
+                                                                                    </td>
+                                                                                }
+                                                                                else
                                                                                 {
 
-                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to call Staffing Agency">
-                                                                                        <span onclick="ModalButtonClick('@item.StaffingAgencyMobile','@item.staffingAgency','Staffing Agency')" data-original-title="Tooltip on top" title="Click here to call the candidate" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                                    </button>
+                                                                                    @if (item.candidateName.Length > 15)
+                                                                                    {
+
+
+                                                                                        <td class="cadName">
+                                                                                            <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 10)... </a>
+                                                                                        </td>
+                                                                                    }
+
+
+                                                                                    else
+                                                                                    {
+                                                                                        <td class="cadName">
+                                                                                            <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                                        </td>
+                                                                                    }
 
 
                                                                                 }
 
-                                                                            </td>
-                                                                            @if (!string.IsNullOrEmpty(item.ClientName))
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+                                                                            }
+
+                                                                            @if (item.interviewer != null && item.interviewer != "")
+                                                                            {
+
+
+
+                                                                                @if (item.interviewer.Length > 10)
+                                                                                {
+
+
+                                                                                    <td class="cadEmail">
+                                                                                        <a onclick="" data-tooltip="@item.interviewer"> @item.interviewer.Substring(0, 10)... </a>
+                                                                                    </td>
+                                                                                }
+
+
+                                                                                else
+                                                                                {
+                                                                                    <td class="cadEmail">
+                                                                                        <a onclick=""> @item.interviewer </a>
+                                                                                    </td>
+                                                                                }
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+                                                                            }
+
+                                                                            @if (item.candidateEmail != null && item.candidateEmail != "")
+                                                                            {
+
+
+
+                                                                                @if (item.candidateEmail.Length > 13)
+                                                                                {
+
+                                                                                    <td class="cadEmail">
+                                                                                        <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 13)... </a>
+                                                                                    </td>
+                                                                                }
+
+                                                                                else
+                                                                                {
+                                                                                    <td class="cadEmail">
+                                                                                        <a onclick=""> @item.candidateEmail </a>
+                                                                                    </td>
+                                                                                }
+
+                                                                            }
+
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+                                                                            }
+                                                                            @if (!string.IsNullOrEmpty(item.ClientCompName))
                                                                             {
                                                                                 @if (item.ClientName.Length > 10)
                                                                                 {
-                                                                                    <td style="text-align: center"> @item.ClientName.Substring(0, 10)... </td>
+                                                                                    <td style="text-align: center"><a onclick="" data-tooltip="@item.ClientName"> @item.ClientName.Substring(0, 10)...</a> </td>
                                                                                 }
 
                                                                                 else
                                                                                 {
-
-                                                                                    <td style="text-align: center"> <a onclick=""> @item.ClientName</a> </td>
-
+                                                                                    <td style="text-align: center"> @item.ClientCompName </td>
                                                                                 }
                                                                             }
 
@@ -822,234 +663,422 @@
                                                                                 <td></td>
                                                                             }
 
-                                                                            <td>@item.QCInterviewer</td>
-                                                                            <td>@item.HRComment</td>
-                                                                            @if (!string.IsNullOrEmpty(item.CandidateClientHR))
+
+
+
+                                                                            @if (item.zoomLink != null && item.zoomLink != "")
                                                                             {
-                                                                                @if (item.CandidateClientHR.Length > 13)
-                                                                                {
-                                                                                    <td class="cadEmail">
-                                                                                        <a onclick="" data-tooltip="@item.CandidateClientHR"> @item.CandidateClientHR.Substring(0, 13)... </a>
-                                                                                    </td>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <td class="cadEmail">
-                                                                                        <a onclick=""> @item.CandidateClientHR </a>
-                                                                                    </td>
-                                                                                }
+                                                                                <td> <a id="zoomlinkId" target="_blank" title="Zoom Link" href=@item.zoomLink>Zoom Link</a></td>
                                                                             }
                                                                             else
                                                                             {
-                                                                                <td></td>
+
+                                                                                <td>No Zoom Link</td>
+
                                                                             }
-                                                                            <td>@item.ClientHrMobile</td>
-                                                                            <td>@item.StaffingAgencyMobile</td>
 
+                                                                            <td class="text-right">
 
+                                                                                <button class="mdc-fab app-fab--absolute sampleQues" aria-label="UnAssign Yourself">
+                                                                                    <span onclick="javascript:UnAssignInterviewer('@item.id');" title="UnAssign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
+                                                                                </button>
+                                                                                <button class="mdc-fab app-fab--absolute itemques" aria-label="Co-ordinating HR Comments">
+                                                                                    <span onclick="OpenCommentModal('@item.id','@item.interviewDate', '@item.HRComment', '@item.HRImageFileURL', '@item.candidateEmail', '@item.candidateName')" title="Co-ordinating HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
+                                                                                </button>
+
+                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
+                                                                                    <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
+                                                                                </button>
+                                                                            </td>
 
                                                                         </tr>
 
-                                                                    </table>
 
-                                                                </td>
-                                                            </tr>
+                                                                        <tr class="collapse @item.id">
+
+                                                                            <td colspan="999" class="child-section">
+                                                                                <table class="table table-striped table-responsive">
+                                                                                    <tr>
+                                                                                        <th>Primary Skill</th>
+                                                                                        <th>Resume</th>
+                                                                                        <th>JD Link</th>
+                                                                                        <th>Interviewer Mobile</th>
+                                                                                        <th>Candidate Mobile</th>
+                                                                                        <th>Meeting Status</th>
+                                                                                        <th>Interview Status</th>
+                                                                                        <th>Video Link</th>
+                                                                                        <th style="text-align:center">Call Client HR</th>
+                                                                                        <th style="text-align:center">Call Staffing Agency</th>
+                                                                                        <th style="text-align:center">End Client Name</th>
+                                                                                        <th>Quality Controller</th>
+                                                                                        <th>QC Status</th>
+                                                                                        <th>HR Comments</th>
+                                                                                        <th>Client HR </th>
+                                                                                        <th>Client HR Contact</th>
+                                                                                        <th>Staffing Agency Contact</th>
+                                                                                    </tr>
+
+                                                                                    <tr>
 
 
-                                                        }
-                                                    </tbody>
-                                                </table>
+
+                                                                                        @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
+                                                                                        {
+
+                                                                                            @if (item.JDTiltle.Split("|")[0].Length > 20)
+                                                                                            {
+
+
+                                                                                                <td class="cadSkill">
+                                                                                                    <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0].Substring(0, 20)... </a>
+                                                                                                </td>
+                                                                                            }
+
+
+                                                                                            else
+                                                                                            {
+                                                                                                <td class="cadSkill">
+                                                                                                    <a onclick=""> @item.JDTiltle.Split("|")[0] </a>
+                                                                                                </td>
+                                                                                            }
+
+                                                                                        }
+
+                                                                                        else
+                                                                                        {
+                                                                                            <td></td>
+                                                                                        }
+
+
+
+
+
+                                                                                        @if (item.resumeLink != null && item.resumeLink != "")
+                                                                                        {
+                                                                                            <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <td>No Resume</td>
+                                                                                        }
+
+                                                                                        @if (item.JDLink != null && item.JDLink != "")
+                                                                                        {
+                                                                                            <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <td>No JD</td>
+                                                                                        }
+                                                                                        <td style="text-align: center">
+                                                                                            @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
+                                                                                            {
+
+                                                                                                @item.InterviewerPhone
+
+
+                                                                                            }
+
+                                                                                        </td>
+                                                                                        <td style="text-align: center">
+                                                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                            {
+
+                                                                                                @item.MobileNumber
+
+                                                                                            }
+
+                                                                                        </td>
+                                                                                        @if (item.MeetingStatusDesc != "0")
+                                                                                        {
+                                                                                            <td> @item.MeetingStatusDesc</td>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <td></td>
+                                                                                        }
+
+                                                                                        <td> @item.InterviewStatusDesc</td>
+                                                                                        <td> @item.videoLink</td>
+
+                                                                                        <td style="text-align: center">
+                                                                                            @if (item.ClientHrMobile != null && item.ClientHrMobile != string.Empty)
+                                                                                            {
+
+                                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Click here to call Client HR">
+                                                                                                    <span onclick="ModalButtonClick('@item.ClientHrMobile','@item.CandidateClientHR','Client HR')" data-original-title="Tooltip on top" title="Click here to call the candidate" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                                                </button>
+
+
+                                                                                            }
+
+                                                                                        </td>
+
+                                                                                        <td style="text-align: center">
+                                                                                            @if (item.StaffingAgencyMobile != null && item.StaffingAgencyMobile != string.Empty)
+                                                                                            {
+
+                                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Click here to call Staffing Agency">
+                                                                                                    <span onclick="ModalButtonClick('@item.StaffingAgencyMobile','@item.staffingAgency','Staffing Agency')" data-original-title="Tooltip on top" title="Click here to call the candidate" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                                                </button>
+
+
+                                                                                            }
+
+                                                                                        </td>
+                                                                                        @if (!string.IsNullOrEmpty(item.ClientName))
+                                                                                        {
+                                                                                            @if (item.ClientName.Length > 10)
+                                                                                            {
+                                                                                                <td style="text-align: center"> @item.ClientName.Substring(0, 10)... </td>
+                                                                                            }
+
+                                                                                            else
+                                                                                            {
+
+                                                                                                <td style="text-align: center"> <a onclick=""> @item.ClientName</a> </td>
+
+                                                                                            }
+                                                                                        }
+
+                                                                                        else
+                                                                                        {
+                                                                                            <td></td>
+                                                                                        }
+
+                                                                                        <td>@item.QCInterviewer</td>
+                                                                                        @if (item.QCStatusDesc != "0")
+                                                                                        {
+                                                                                            <td>@item.QCStatusDesc</td>
+                                                                                        }
+                                                                                        else{<td></td>}
+                                                                                            <td>@item.HRComment</td>
+                                                                                            @if (!string.IsNullOrEmpty(item.CandidateClientHR))
+                                                                                            {
+                                                                                                @if (item.CandidateClientHR.Length > 13)
+                                                                                                {
+                                                                                                    <td class="cadEmail">
+                                                                                                        <a onclick="" data-tooltip="@item.CandidateClientHR"> @item.CandidateClientHR.Substring(0, 13)... </a>
+                                                                                                    </td>
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                    <td class="cadEmail">
+                                                                                                        <a onclick=""> @item.CandidateClientHR </a>
+                                                                                                    </td>
+                                                                                                }
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <td></td>
+                                                                                            }
+                                                                                            <td>@item.ClientHrMobile</td>
+                                                                                            <td>@item.StaffingAgencyMobile</td>
+
+
+
+                                                                                        </tr>
+
+                                                                                </table>
+
+                                                                            </td>
+                                                                        </tr>
+
+
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-5 pull-left" id="divmeetingentries">
+                                                        Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-7 dataTables_paginate pull-right" id="divmeetingpages">
+                                                        @Html.PagedListPager(Model, Page => Url.Action("MyInterviews", new { Page = Page }))
+                                                    </div>
+
+                                                </div>
+
                                             </div>
                                         </div>
 
-                                        <div class="col-sm-12 col-md-5 pull-left" id="divmeetingentries">
-                                            Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
-                                        </div>
-
-                                        <div class="col-sm-12 col-md-7 dataTables_paginate pull-right" id="divmeetingpages">
-                                            @Html.PagedListPager(Model, Page => Url.Action("MyInterviews", new { Page = Page }))
-                                        </div>
 
                                     </div>
-
+                                    <!-- end content-->
                                 </div>
+                                <!--  end card  -->
                             </div>
-
-
+                            <!-- end col-md-12 -->
                         </div>
-                        <!-- end content-->
-                    </div>
-                    <!--  end card  -->
-                </div>
-                <!-- end col-md-12 -->
-            </div>
 
 
-            <div id="interviewerMemberModal" class="modal modal-bg">
-                <!-- Modal content -->
-                <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
+                        <div id="interviewerMemberModal" class="modal modal-bg">
+                            <!-- Modal content -->
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
 
 
-                        <div class="filheader">
-                            <div class="filavatar">
-                                <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                                    <div class="filheader">
+                                        <div class="filavatar">
+                                            <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                                        </div>
+                                        <h5 class="modal-title pull-left" id="memberHeading">Interviewer Details</h5>
+                                    </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true" id="membersPopUp" style="cursor:pointer;">&times;</span>
+                                    </button>
+
+                                    <div class="modal-body" id="memberTableBody">
+
+
+
+
+
+                                    </div>
+                                </div>
+
                             </div>
-                            <h5 class="modal-title pull-left" id="memberHeading">Interviewer Details</h5>
                         </div>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true" id="membersPopUp" style="cursor:pointer;">&times;</span>
-                        </button>
-
-                        <div class="modal-body" id="memberTableBody">
 
 
 
 
-
-                        </div>
-                    </div>
-
-                </div>
-            </div>
+                        <div id="myModal" class="modal" style=" display: none; /* Hidden by default */ position: fixed; /* Stay in place */ z-index: 1; /* Sit on top */ padding-top: 100px; /* Location of the box */ left: 0; top: 0; width: 100%; /* Full width */ height: 100%; /* Full height */ overflow: auto; /* Enable scroll if needed */ background-color: rgb(0,0,0); /* Fallback color */ background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ ">
+                            <!-- Modal content -->
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
 
 
+                                    <div class="filheader">
+                                        <div class="filavatar">
+                                            <span class="publicsharing-icon">
 
 
-            <div id="myModal" class="modal" style=" display: none; /* Hidden by default */ position: fixed; /* Stay in place */ z-index: 1; /* Sit on top */ padding-top: 100px; /* Location of the box */ left: 0; top: 0; width: 100%; /* Full width */ height: 100%; /* Full height */ overflow: auto; /* Enable scroll if needed */ background-color: rgb(0,0,0); /* Fallback color */ background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ ">
-                <!-- Modal content -->
-                <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                                            </span>
+                                        </div>
+                                        <h5 class="modal-title pull-left" id="idCallingTitle">Call!</h5>
+                                    </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                                    </button>
 
 
-                        <div class="filheader">
-                            <div class="filavatar">
-                                <span class="publicsharing-icon">
+                                    <div class="modal-body" style="padding: 2px 16px;">
+
+                                        <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
 
 
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
-                                </span>
-                            </div>
-                            <h5 class="modal-title pull-left" id="idCallingTitle">Call!</h5>
-                        </div>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
-                        </button>
-
-
-                        <div class="modal-body" style="padding: 2px 16px;">
-
-                            <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
-
-
-                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" tyle="margin: 10px auto;
+                                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" tyle="margin: 10px auto;
     display: block;" class="btn btn-fill btn-danger" value="Hang Up">
 
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-
-
-            <div id="hrCommentModal" class="modal modal-bg">
-                <!-- Modal content -->
-                <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
-
-
-
-                        <div class="filheader">
-                            <div class="filavatar">
-                                <span class="publicsharing-icon">
-
-
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
-                                </span>
-                            </div>
-                            <h5 class="modal-title pull-left" id="hrCommentHeading" style="font-size:20.5px!important;"></h5>
-                        </div>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true" id="hrCommentPopUp" style="cursor:pointer;">&times;</span>
-                        </button>
-
-
-
-                        <div class="modal-body">
-
-                            <div class="col-md-12 col-sm-12 ">
-                                <div class="form-group">
-                                    <label class="control-label  desp-label">Comment</label>
-                                    <div>
-                                        <div class="text-areadiv1">
-                                            <textarea class="scrollbar" style="width:100%;" id="hrCommentValue"></textarea>
-                                        </div>
                                     </div>
 
                                 </div>
-                                <div class="form-group clearfix">
 
-                                    <div class="col-md-3 nopad pull-left">
-                                        <label class="control-label  desp-label"><i class="fa fa-cloud-upload upload-btn"></i>Upload Image</label>
+                            </div>
+                        </div>
+
+
+                        <div id="hrCommentModal" class="modal modal-bg">
+                            <!-- Modal content -->
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+
+
+
+                                    <div class="filheader">
+                                        <div class="filavatar">
+                                            <span class="publicsharing-icon">
+
+
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
+                                            </span>
+                                        </div>
+                                        <h5 class="modal-title pull-left" id="hrCommentHeading" style="font-size:20.5px!important;"></h5>
                                     </div>
-                                    <div class="col-md-9 nopad pull-left ">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true" id="hrCommentPopUp" style="cursor:pointer;">&times;</span>
+                                    </button>
 
-                                        <div class="file-upload">
-                                            <div class="file-select">
-                                                <div class="file-select-button" id="fileName">Choose File</div>
-                                                <div class="file-select-name" id="noFile">No file chosen...</div>
-                                                <input type="file" name="chooseFile" id="idHRImageFile" accept=".jpg, .png, .jpeg">
+
+
+                                    <div class="modal-body">
+
+                                        <div class="col-md-12 col-sm-12 ">
+                                            <div class="form-group">
+                                                <label class="control-label  desp-label">Comment</label>
+                                                <div>
+                                                    <div class="text-areadiv1">
+                                                        <textarea class="scrollbar" style="width:100%;" id="hrCommentValue"></textarea>
+                                                    </div>
+                                                </div>
+
                                             </div>
+                                            <div class="form-group clearfix">
+
+                                                <div class="col-md-3 nopad pull-left">
+                                                    <label class="control-label  desp-label"><i class="fa fa-cloud-upload upload-btn"></i>Upload Image</label>
+                                                </div>
+                                                <div class="col-md-9 nopad pull-left ">
+
+                                                    <div class="file-upload">
+                                                        <div class="file-select">
+                                                            <div class="file-select-button" id="fileName">Choose File</div>
+                                                            <div class="file-select-name" id="noFile">No file chosen...</div>
+                                                            <input type="file" name="chooseFile" id="idHRImageFile" accept=".jpg, .png, .jpeg">
+                                                        </div>
+                                                    </div>
+
+
+
+                                                    <!--<input type="file"--> @*style="width:100%;"*@ <!--id="idHRImageFile" accept=".jpg, .png, .jpeg">-->
+                                                </div>
+                                            </div>
+
+                                            <div class="clearfix">
+                                                <div id="id_UploadedImageDiv">
+                                                    <label class="control-label  desp-label">Uploaded Image URL</label>
+                                                    <div class="pull-left">
+                                                        <a class="click-btn" id="idHRImageFileURL">Click here</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <label class="text-danger" id="hrErrorMessage" style="color:red"></label>
+
+                                            </div>
+
+
+
+
                                         </div>
 
 
 
-                                        <!--<input type="file"--> @*style="width:100%;"*@ <!--id="idHRImageFile" accept=".jpg, .png, .jpeg">-->
                                     </div>
-                                </div>
 
-                                <div class="clearfix">
-                                    <div id="id_UploadedImageDiv">
-                                        <label class="control-label  desp-label">Uploaded Image URL</label>
-                                        <div class="pull-left">
-                                            <a class="click-btn" id="idHRImageFileURL">Click here</a>
+                                    <div class="card-footer">
+                                        <div class="col-md-12 form-group text-center">
+                                            <input type="button" onclick="SaveHRCommentPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
                                         </div>
                                     </div>
-                                </div>
 
-                                <div>
-                                    <label class="text-danger" id="hrErrorMessage" style="color:red"></label>
 
                                 </div>
 
-
-
-
                             </div>
 
-
-
                         </div>
-
-                        <div class="card-footer">
-                            <div class="col-md-12 form-group text-center">
-                                <input type="button" onclick="SaveHRCommentPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
-                            </div>
-                        </div>
-
-
                     </div>
 
+                    <!-- end row -->
                 </div>
 
             </div>
-        </div>
-
-        <!-- end row -->
-    </div>
-
-</div>
 
 
 <script type="text/javascript">
@@ -1261,20 +1290,9 @@
 
 
 
-            //if (data[i].clientHrContact != null && data[i].clientHrContact != "") {
-            //    if (data[i].clientHrContact.length > 10) {
-            //        html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].clientHrContact + '"> ' + data[i].clientHrContact.substring(0, 10) + '... </a></td>';
-            //    }
-            //    else {
-            //        html += '  <td class="cadEmail"><a onclick=""> ' + data[i].clientHrContact + ' </a></td>';
-            //    }
-            //}
-            //else {
-            //    html += '<td></td>';
-            //}
-            if (data[i].clientCompName != null && data[i].clientCompName != "") {
-                if (data[i].clientCompName.length > 10) {
-                    html += '  <td style="text-align: center"> ' + data[i].clientCompName.substring(0, 10) + '... </td>';
+            if (data[i].clientName != null && data[i].clientName != "") {
+                if (data[i].clientName.length > 10) {
+                    html += '  <td style="text-align: center"> ' + data[i].clientName.substring(0, 10) + '... </td>';
                 }
 
                 else {

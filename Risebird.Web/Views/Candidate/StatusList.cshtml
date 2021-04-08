@@ -4,7 +4,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-</style>
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 
@@ -377,7 +376,9 @@
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
                     $.ajax({
-                        url: '/Candidate/DeleteStatus?id=' + id ,
+                        url: '/Candidate/DeleteStatus',
+                        method: 'POST',
+                        data: { 'id': id },
                         success: function (result) {
                             if (result) {
                                 resolve(result)

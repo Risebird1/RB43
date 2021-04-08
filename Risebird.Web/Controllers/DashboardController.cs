@@ -39,7 +39,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         public async Task<IActionResult> Index()
-        {
+        { 
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -903,7 +903,9 @@ namespace Risebird.Web.Controllers
                                             interviewer = item.interviewer,
                                             confirmationStatus = "1",
                                             HRCoordinatorEmailId = emailid,
-                                        }); ;
+                                            MeetingStatus = item.MeetingStatus,
+                                            InterviewStatus = item.InterviewStatus,
+                                        }); 
                                     }
                                 }
                             }
@@ -911,6 +913,10 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus, emailid, actiontype);
+                        }
+                        if (modelList == null)
+                        {
+                            modelList = new List<MeetingVM>();
                         }
                         ViewBag.actionstatus = actionstatus;
                         ViewBag.Actiontype = actiontype;
@@ -939,7 +945,9 @@ namespace Risebird.Web.Controllers
                                                 interviewer = item.interviewer,
                                                 confirmationStatus = "1",
                                                 HRCoordinatorEmailId = emailid,
-                                            }); ;
+                                                MeetingStatus = item.MeetingStatus,
+                                                InterviewStatus = item.InterviewStatus,
+                                            }); 
                                         }
                                     }
                                 }
@@ -947,6 +955,10 @@ namespace Risebird.Web.Controllers
                             else
                             {
                                 modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype);
+                            }
+                            if (modelList == null)
+                            {
+                                modelList = new List<MeetingVM>();
                             }
                             if (filter.StartDate != null && filter.EndDate != null)
                             {
@@ -1033,7 +1045,9 @@ namespace Risebird.Web.Controllers
                                             interviewer = item.interviewer,
                                             confirmationStatus = "1",
                                             HRCoordinatorEmailId = email,
-                                        }); ;
+                                            MeetingStatus = item.MeetingStatus,
+                                            InterviewStatus = item.InterviewStatus,
+                                        }); 
                                     }
                                 }
                             }
@@ -1041,6 +1055,10 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype);
+                        }
+                        if (modelList == null)
+                        {
+                            modelList = new List<MeetingVM>();
                         }
                         ViewBag.actionstatus = actionstatus;
                         ViewBag.Actiontype = actiontype;

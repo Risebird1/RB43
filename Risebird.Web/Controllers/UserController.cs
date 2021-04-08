@@ -232,22 +232,17 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [Authorize]
+        [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (_userService.DeleteUser(id))
-                    {
-                        TempData["SuccessErrorMessageUser"] = "User is deleted Successfully";
-                        return Json(new { url = Url.Action("Index", "User") });
-                    }
-                    else
-                    {
-                        TempData["SuccessErrorMessageUser"] = "Deletion of User Failed";
-                        return Json(new { url = Url.Action("Index", "User") });
-                    }
+                    var result = _userService.DeleteUser(id);
+                    return Json(result);
+                   
                 }
                 else
                 {
@@ -258,8 +253,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageUser"] = "Deletion of User Failed";
-                return RedirectToAction("Index");
+                return Json(false);
             }
         }
 
