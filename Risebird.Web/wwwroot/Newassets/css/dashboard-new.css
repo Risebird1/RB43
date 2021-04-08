@@ -86,7 +86,7 @@ body {
 }
 :root {
     --marquee-width: 80vw;
-    --marquee-height: 20vh;
+    --marquee-height: 6vh;
     /* --marquee-elements: 12; */ /* defined with JavaScript */
     --marquee-elements-displayed: 5;
     --marquee-element-width: calc(var(--marquee-width) / var(--marquee-elements-displayed));
