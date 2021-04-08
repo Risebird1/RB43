@@ -39,7 +39,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         public async Task<IActionResult> Index()
-        {
+        { 
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
