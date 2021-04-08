@@ -1325,13 +1325,13 @@ namespace Risebird.Web.Controllers
                 meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
                 SetMeetingsProperties(meetings);
-                
+
                 if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                 {
                     var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("AllPriorityClientMeetingsfilters"));
 
                     meetings = ApplyAllMeetingsFilter(filter, meetings);
-                    
+
                 }
 
 
@@ -1340,21 +1340,22 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells["A1:N1"].Style.WrapText = true;
                 //Sheet.Column(1).Width = 30;
                 //Sheet.Column(2).Width = 30;
-                int startColumn = 1; int endColumn = 10;
+                int startColumn = 1; int endColumn = 12;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
                     Sheet.Column(a).Width = 30;
                 }
                 Sheet.Cells[1, 1].Value = "Interview Date";
                 Sheet.Cells[1, 2].Value = "Candidate name";
-                Sheet.Cells[1, 3].Value = "Client HR";
-                Sheet.Cells[1, 4].Value = "End Client Name";
-                Sheet.Cells[1, 5].Value = "Primary Skill";
-                Sheet.Cells[1, 6].Value = "Confirmation Status";
-                Sheet.Cells[1, 7].Value = "Meeting Status";
-                Sheet.Cells[1, 8].Value = "Interview Status";
-                Sheet.Cells[1, 9].Value = "Video Link";
-                Sheet.Cells[1, 10].Value = "Interviewer Comment";
+                Sheet.Cells[1, 3].Value = "Candidate Email";
+                Sheet.Cells[1, 4].Value = "Client HR";
+                Sheet.Cells[1, 5].Value = "End Client Name";
+                Sheet.Cells[1, 6].Value = "Primary Skill";
+                Sheet.Cells[1, 7].Value = "Confirmation Status";
+                Sheet.Cells[1, 8].Value = "Meeting Status";
+                Sheet.Cells[1, 9].Value = "Interview Status";
+                Sheet.Cells[1, 10].Value = "Video Link";
+                Sheet.Cells[1, 11].Value = "Interviewer Comment";
                 //Sheet.Cells[1, 11].Value = "Report Link";
 
                 int i = 2;
@@ -1366,10 +1367,11 @@ namespace Risebird.Web.Controllers
                     {
                         Sheet.Cells[i, 1].Value = item.interviewDate.ToString("MM/dd/yyyy HH:mm");
                         Sheet.Cells[i, 2].Value = item.candidateName;
-                        Sheet.Cells[i, 3].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 4].Value = item.ClientName;
-                        Sheet.Cells[i, 5].Value = item.JDTiltle.Split("|")[0];
-                        Sheet.Cells[i, 6].Value = item.confirmationStatus;
+                        Sheet.Cells[i, 3].Value = item.candidateEmail;
+                        Sheet.Cells[i, 4].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 5].Value = item.ClientName;
+                        Sheet.Cells[i, 6].Value = item.JDTiltle.Split("|")[0];
+                        Sheet.Cells[i, 7].Value = item.confirmationStatus;
 
 
                         //if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
@@ -1390,13 +1392,13 @@ namespace Risebird.Web.Controllers
                         //}
 
 
-                        if(!string.IsNullOrEmpty(item.MeetingStatusStatusDesc))
+                        if (!string.IsNullOrEmpty(item.MeetingStatusStatusDesc))
                         {
-                            Sheet.Cells[i, 7].Value = item.MeetingStatusStatusDesc;
+                            Sheet.Cells[i, 8].Value = item.MeetingStatusStatusDesc;
                         }
                         else
                         {
-                            Sheet.Cells[i, 7].Value = string.Empty;
+                            Sheet.Cells[i, 8].Value = string.Empty;
                         }
                         //Sheet.Cells[i, 7].Value = item.MeetingStatusDescription;
 
@@ -1417,11 +1419,11 @@ namespace Risebird.Web.Controllers
 
                         if (!string.IsNullOrEmpty(item.intervieweStatusStatDesc))
                         {
-                            Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
+                            Sheet.Cells[i, 9].Value = item.intervieweStatusStatDesc;
                         }
                         else
                         {
-                            Sheet.Cells[i, 8].Value = string.Empty;
+                            Sheet.Cells[i, 9].Value = string.Empty;
                         }
 
 
@@ -1439,28 +1441,28 @@ namespace Risebird.Web.Controllers
                         {
                             try
                             {
-                                Sheet.Cells[i, 9].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                Sheet.Cells[i, 9].Value = "Video Link";
-                                Sheet.Cells[i, 9].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 9].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, 10].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                Sheet.Cells[i, 10].Value = "Video Link";
+                                Sheet.Cells[i, 10].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 10].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
                             catch (Exception)
                             {
-                                Sheet.Cells[i, 9].Value = "No Video";
+                                Sheet.Cells[i, 10].Value = "No Video";
                             }
                         }
                         else
                         {
-                            Sheet.Cells[i, 9].Value = "No Video";
+                            Sheet.Cells[i, 10].Value = "No Video";
                         }
 
                         if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                         {
-                            Sheet.Cells[i, 10].Value = item.InterviewerComment;
+                            Sheet.Cells[i, 11].Value = item.InterviewerComment;
                         }
                         else
                         {
-                            Sheet.Cells[i, 10].Value = "";
+                            Sheet.Cells[i, 11].Value = "";
                         }
 
 
@@ -2655,17 +2657,18 @@ namespace Risebird.Web.Controllers
                     Sheet.Column(a).Width = 30;
                 }
                 Sheet.Cells[1, 1].Value = "Interview Date";
-                Sheet.Cells[1, 2].Value = "Candidate name";
-                Sheet.Cells[1, 3].Value = "Client HR";
-                Sheet.Cells[1, 4].Value = "End Client Name";
-                Sheet.Cells[1, 5].Value = "Primary Skill";
-                Sheet.Cells[1, 6].Value = "Video";
+                Sheet.Cells[1, 2].Value = "Candidate Name";
+                Sheet.Cells[1, 3].Value = "Candidate Email";
+                Sheet.Cells[1, 4].Value = "Client HR";
+                Sheet.Cells[1, 5].Value = "End Client Name";
+                Sheet.Cells[1, 6].Value = "Primary Skill";
+                Sheet.Cells[1, 7].Value = "Video";
                 //Sheet.Cells[1, 8].Value = "Report Link";
-                Sheet.Cells[1, 7].Value = "Interviewer Comment";
-                Sheet.Cells[1, 8].Value = "Approval Status";
-                Sheet.Cells[1, 9].Value = "Approval Comments ";
-                Sheet.Cells[1, 10].Value = "Final Selection Status";
-                Sheet.Cells[1, 11].Value = "Final Selection Comments";
+                Sheet.Cells[1, 8].Value = "Interviewer Comment";
+                Sheet.Cells[1, 9].Value = "Approval Status";
+                Sheet.Cells[1, 10].Value = "Approval Comments ";
+                Sheet.Cells[1, 11].Value = "Final Selection Status";
+                Sheet.Cells[1, 12].Value = "Final Selection Comments";
 
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
@@ -2677,36 +2680,37 @@ namespace Risebird.Web.Controllers
                     {
                         Sheet.Cells[i, 1].Value = item.interviewDate.ToString("MM/dd/yyyy HH:mm");
                         Sheet.Cells[i, 2].Value = item.candidateName;
-                        Sheet.Cells[i, 3].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 4].Value = item.ClientName;
-                        Sheet.Cells[i, 5].Value = item.JDTiltle.Split("|")[0];
+                        Sheet.Cells[i, 3].Value = item.candidateEmail;
+                        Sheet.Cells[i, 4].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 5].Value = item.ClientName;
+                        Sheet.Cells[i, 6].Value = item.JDTiltle.Split("|")[0];
                         if (!string.IsNullOrEmpty(item.VideoLink))
                         {
                             try
                             {
-                                Sheet.Cells[i, 6].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                Sheet.Cells[i, 6].Value = "Video Link";
-                                Sheet.Cells[i, 6].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 6].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, 7].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                Sheet.Cells[i, 7].Value = "Video Link";
+                                Sheet.Cells[i, 7].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 7].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
                             catch (Exception)
                             {
-                                Sheet.Cells[i, 6].Value = "No Video";
+                                Sheet.Cells[i, 7].Value = "No Video";
                             }
                         }
                         else
                         {
-                            Sheet.Cells[i, 6].Value = "No Video";
+                            Sheet.Cells[i, 7].Value = "No Video";
                         }
                         //Sheet.Cells[i, 8].Hyperlink = new Uri("https://portal.risebird.io/Interview/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
                         //Sheet.Cells[i, 8].Value = "Report Link";
                         //Sheet.Cells[i, 8].Style.Font.UnderLine = true;
                         //Sheet.Cells[i, 8].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                        Sheet.Cells[i, 7].Value = item.InterviewerComment;
-                        Sheet.Cells[i, 8].Value = item.NextLevelApprovalStat;
-                        Sheet.Cells[i, 9].Value = item.ApprovalComments;
-                        Sheet.Cells[i, 10].Value = item.FinalSelectionStat;
-                        Sheet.Cells[i, 11].Value = item.FinalComments;
+                        Sheet.Cells[i, 8].Value = item.InterviewerComment;
+                        Sheet.Cells[i, 9].Value = item.NextLevelApprovalStat;
+                        Sheet.Cells[i, 10].Value = item.ApprovalComments;
+                        Sheet.Cells[i, 11].Value = item.FinalSelectionStat;
+                        Sheet.Cells[i, 12].Value = item.FinalComments;
 
                         i++;
                     }

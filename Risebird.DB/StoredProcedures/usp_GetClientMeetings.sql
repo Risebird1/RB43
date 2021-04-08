@@ -32,7 +32,7 @@ if(@roleId=1)
 		IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,
 		ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,
 		ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,
-		cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline
+		cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, ca.ClientHRAttemptContact as CandidateClientHR
 		from InterviewMeetings im 
 		inner join IRF on im.IRFId = IRF.IRFId 
 		left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId 
@@ -60,7 +60,7 @@ else if(@roleId=4)
 		IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,
 		ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,
 		ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,
-		cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline
+		cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, ca.ClientHRAttemptContact as CandidateClientHR
 		from InterviewMeetings im 
 		inner join IRF on im.IRFId = IRF.IRFId 
 		left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId 
@@ -87,7 +87,7 @@ else
 		IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,
 		ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,
 		ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,
-		cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline
+		cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, ca.ClientHRAttemptContact as CandidateClientHR
 		from InterviewMeetings im 
 		inner join IRF on im.IRFId = IRF.IRFId 
 		left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId 
