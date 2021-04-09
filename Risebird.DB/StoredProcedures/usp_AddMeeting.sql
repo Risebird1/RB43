@@ -34,8 +34,8 @@ Create PROCEDURE [dbo].[usp_AddMeeting]
 @staffingAgency varchar(200),
 @currentEmployerName varchar(200),
 @MobileNumber nvarchar(200),
-@QCInterviewer varchar(200)
-
+@QCInterviewer varchar(200),
+@zoomMeetingId bigint
 AS
 Begin
 
@@ -67,6 +67,7 @@ Begin
 			   ,[dtCreatedOn]
 			   ,[MobileNumber]
 			   ,[QCInterviewer]
+			   ,[ZoomMeetingId]
 			   )
 		 VALUES
 			   (@IRFId,
@@ -89,7 +90,8 @@ Begin
 	'System',
 	GETUTCDATE(),
 	@MobileNumber,
-	@QCInterviewer
+	@QCInterviewer,
+	@zoomMeetingId
 	)
 
 	set @InterviewId=SCOPE_IDENTITY()

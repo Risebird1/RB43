@@ -31,7 +31,8 @@ Create PROCEDURE [dbo].[usp_UpdateMeeting]
 @currentEmployerName varchar(200),
 @MobileNumber nvarchar(200),
 @HRCoordinatorEmailId varchar(100),
-@QCInterviewer varchar(200)
+@QCInterviewer varchar(200),
+@zoomMeetingId bigint
 
 AS
 Begin
@@ -61,6 +62,7 @@ Begin
 					   ,[interviewer]= @interviewer
 					   ,[HRCoordinatorEmailId] =@HRCoordinatorEmailId
 					   ,[QCInterviewer]=@QCInterviewer
+					   ,[ZoomMeetingId]=@zoomMeetingId
 			WHERE id = @interviewId        
     
 		End
