@@ -27,7 +27,7 @@ suit.Status as IsIntrested ,
 rtvsl.Status as ShortListstatus,
 patchvideoCount.MeetingCount as MeetingPatchCount,
 (CASE WHEN ic.CandidateAvailable = 1 THEN 'Available' ELSE 'NotAvailable' END)  as CandidateAvailable,  
- Techscore.TechSkillScore as TechSkillScore  
+ Techscore.TechSkillScore as TechSkillScore, ic.ThumbnailTimeSeconds  
 from InterviewMeetings im            
 inner join IRF on im.IRFId = IRF.IRFId          
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId       
@@ -51,7 +51,7 @@ im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtC
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,     
 ca.Phone, ca.ResumeLink ,  ca.CostEstimate,IRF.id ,IRF.JDLink ,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,    
 ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id ,ic.ThumbnailImage       
-, QCF.InterviewId ,suit.Status ,rtvsl.Status ,ic.CandidateAvailable,patchvideoCount.MeetingCount,Techscore.TechSkillScore 
+, QCF.InterviewId ,suit.Status ,rtvsl.Status ,ic.CandidateAvailable,patchvideoCount.MeetingCount,Techscore.TechSkillScore, ic.ThumbnailTimeSeconds 
 END        
            
 		   

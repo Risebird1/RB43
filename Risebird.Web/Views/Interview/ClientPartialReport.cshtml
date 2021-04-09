@@ -1,4 +1,7 @@
-﻿
+﻿@using Microsoft.Extensions.Configuration;
+
+@inject IConfiguration configuration
+
 
 @model Risebird.Entities.ViewModel.InterviewReport
 @{
@@ -220,34 +223,47 @@
 
                                             {
 
-                                                if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                                @*if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                {
+                <p></p>
+                <video width="320" height="240" style="width:100%" class="vjs-tech" controls controlsList="nodownload">
+                    <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                    <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+
+                    Your browser does not support the video tag.
+                </video>
+            }
+
+            else if (Url.Content(Model.VideoLink).Contains("manifest"))
+            {
+                <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
+                    <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+
+                </video>
+            }
+
+
+            else
+            {
+                <iframe width="420" height="345" style="width:99.5%;border:0; margin:0px 0px 15px 0px;" src="@Url.Content(Model.VideoLink)"></iframe>
+
+            }*@
+                                                string appendTime;
+                                                if (Model.ThumbnailTimeSeconds == 0)
                                                 {
-                                                <p></p>
-                                                <video width="320" height="240" style="width:100%" class="vjs-tech" controls controlsList="nodownload">
-                                                    <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                                    <source src=@Url.Content(Model.VideoLink) type="video/ogg">
-
-                                                    Your browser does not support the video tag.
+                                                    appendTime = configuration["ThumbnailTimeDefault"];
+                                                }
+                                                else
+                                                {
+                                                    appendTime = Model.ThumbnailTimeSeconds.ToString();
+                                                }
+                                                var src = Model.VideoLink + "#t=" + appendTime;
+                                                <video width="400" controls="controls" preload="metadata">
+                                                    <source src='@src' type="video/mp4">
                                                 </video>
                                             }
 
-                                            else if (Url.Content(Model.VideoLink).Contains("manifest"))
-                                            {
-                                                <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
-                                                    <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
-
-                                                </video>
-                                            }
-
-
-                                            else
-                                            {
-                                                <iframe width="420" height="345" style="width:99.5%;border:0; margin:0px 0px 15px 0px;" src="@Url.Content(Model.VideoLink)"></iframe>
-
-                                            }
-                                        }
-
-                                            </p>
+                                        </p>
                                         </div><!--end of col-md-12-->
 
                                     </div>

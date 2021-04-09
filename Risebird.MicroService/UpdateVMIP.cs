@@ -57,7 +57,7 @@ namespace Risebird.MicroService
                     {
                         //if (string.IsNullOrEmpty(vm.PublicIP) && string.IsNullOrEmpty(vm.PrivateIP))
                         //{
-                            
+
                         //}
                         string resourceType = "Microsoft.Network/networkInterfaces";
                         var credentials = _azureHelper.GetAzureCredential();
