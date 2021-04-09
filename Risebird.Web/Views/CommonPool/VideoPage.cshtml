@@ -2,6 +2,9 @@
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
+@using Microsoft.Extensions.Configuration;
+
+@inject IConfiguration configuration
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Video Page";
@@ -72,7 +75,7 @@
                 <div class="navbar-toggle">
                     <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
                 </div>
-                <a  class="navbar-brand card-title">Common Pool</a>
+                <a class="navbar-brand card-title">Common Pool</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> </button>
         </div>
@@ -97,7 +100,7 @@
                         {
                             @if (ViewBag.actionstatus != "SkillChannel")
                             {
-                                <button  class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1" data-toggle="modal" data-target="#filterModal">
+                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1" data-toggle="modal" data-target="#filterModal">
                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                     <div class="mdc-button__ripple"></div>
                                 </button>
@@ -442,70 +445,72 @@
                                                             <div class="row counts-liks">
                                                                 @if (ViewBag.VideoStatus != "Public")
                                                                 {
-                                                                <div class="k col-md-6">
-                                                                    @if (Model.IsLike == "Liked")
-                                                                    {
-                                                                        <div class="btn2">
-                                                                            <span class="pull-left">
-                                                                                <span class="commonpoolvideo_4">
-                                                                                    <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click" style="color: blue;font-size: 24px;padding-right:10px">
+                                                                    <div class="k col-md-6">
+                                                                        @if (Model.IsLike == "Liked")
+                                                                        {
+                                                                            <div class="btn2">
+                                                                                <span class="pull-left">
+                                                                                    <span class="commonpoolvideo_4">
+                                                                                        <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click" style="color: blue;font-size: 24px;padding-right:10px">
 
-                                                                                        <label id="pTotalvideolike">@Model.TotalVedioLike</label>
-                                                                                    </i>
+                                                                                            <label id="pTotalvideolike">@Model.TotalVedioLike</label>
+                                                                                        </i>
+                                                                                    </span>
                                                                                 </span>
-                                                                            </span>
-                                                                            <span class="pull-left">
-                                                                                <span class="commonpoolvideo_5">
-                                                                                    <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style=" color: #504d4d;
+                                                                                <span class="pull-left">
+                                                                                    <span class="commonpoolvideo_5">
+                                                                                        <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style=" color: #504d4d;
         font-size: 24px;
         padding-right: 10px">
-                                                                                        <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
-                                                                                    </i>
+                                                                                            <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
+                                                                                        </i>
+                                                                                    </span>
                                                                                 </span>
-                                                                            </span>
-</div>
-                                                                    }
-                                                                    else if (Model.IsLike == "Disliked")
-                                                                    {
-                                                                        <div class="btn3">
+                                                                            </div>
+                                                                        }
+                                                                        else if (Model.IsLike == "Disliked")
+                                                                        {
+                                                                            <div class="btn3">
+                                                                                <span class="pull-left">
+                                                                                    <span id="commonpoolvideo_4">
+                                                                                        <i class="fa fa-thumbs-up fa-5px " aria-hidden="true" id="toggle-click" style="color: #504d4d;
+        font-size: 24px;
+        padding-right: 10px">
+
+                                                                                            <label id="pTotalvideolike">@Model.TotalVedioLike</label>
+                                                                                        </i>
+                                                                                    </span>
+                                                                                </span>
+                                                                                <span class="pull-left">
+                                                                                    <span id="commonpoolvideo_5">
+                                                                                        <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: blue; font-size: 24px;padding-right:10px">
+                                                                                            <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
+                                                                                        </i>
+                                                                                    </span>
+                                                                                </span>
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
                                                                             <span class="pull-left">
                                                                                 <span id="commonpoolvideo_4">
-                                                                                    <i class="fa fa-thumbs-up fa-5px " aria-hidden="true" id="toggle-click" style="color: #504d4d;
+                                                                                    <i class="fa fa-thumbs-up fa-5px btn2" aria-hidden="true" id="toggle-click" style="color: #504d4d;
         font-size: 24px;
-        padding-right: 10px">
-
+        padding-right: 30px">
+                                                                                        &nbsp;
                                                                                         <label id="pTotalvideolike">@Model.TotalVedioLike</label>
                                                                                     </i>
                                                                                 </span>
                                                                             </span>
                                                                             <span class="pull-left">
                                                                                 <span id="commonpoolvideo_5">
-                                                                                    <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: blue; font-size: 24px;padding-right:10px">
+                                                                                    <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style=" color: #504d4d;
+        font-size: 24px;
+        padding-right: 10px">
                                                                                         <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
                                                                                     </i>
                                                                                 </span>
-                                                                            </span>
-                                                                        </div>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <span class="pull-left">
-                                                                            <span id="commonpoolvideo_4">
-                                                                                <i class="fa fa-thumbs-up fa-5px btn2" aria-hidden="true" id="toggle-click" style="color: #504d4d;
-        font-size: 24px;
-        padding-right: 30px">
-                                                                                    &nbsp;
-                                                                                    <label id="pTotalvideolike">@Model.TotalVedioLike</label>
-                                                                                </i>
-                                                                            </span>
-                                                                        </span>
-                                                                        <span class="pull-left">
-                                                                            <span id="commonpoolvideo_5">
-                                                                                <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style=" color: #504d4d;
-        font-size: 24px;
-        padding-right: 10px">
-                                                                                    <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
-                                                                                </i></span></span>}
+                                                                            </span>}
                                                                     </div>
                                                                 }
 
@@ -549,12 +554,12 @@
                                                                 }
                                                                 else
                                                                 {
-                                                            <div class="col-md-4 views tooltip1" style="text-align: end;">
-                                                                <span id="commonpoolvideo_7">
-                                                                    <i class="fa fa-video video-icon"></i>
-                                                                    <input class="view-video" type="button" onclick="openVideoDetailsModel()" value="Share/View Details" />
-                                                                </span>
-                                                            </div>
+                                                                    <div class="col-md-4 views tooltip1" style="text-align: end;">
+                                                                        <span id="commonpoolvideo_7">
+                                                                            <i class="fa fa-video video-icon"></i>
+                                                                            <input class="view-video" type="button" onclick="openVideoDetailsModel()" value="Share/View Details" />
+                                                                        </span>
+                                                                    </div>
                                                                 }
                                                             </div>
 
@@ -599,7 +604,8 @@
                                                                                                                 <span class="candidate">@videolist.VideoTitle</span>
                                                                                                             }
                                                                                                         }
-                                                                                                        else { <span></span>}
+                                                                                                        else
+                                                                                                        { <span></span>}
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>
@@ -1301,7 +1307,7 @@
                                                                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
                                                                             @if (Model.MeetingPatch.FirstOrDefault().Priority == videolist.Priority)
                                                                             {
-                                                                                <div  id="commonpoolvideo_18" class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
+                                                                                <div id="commonpoolvideo_18" class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
                                                                                     <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
                                                                                     <div class="video-card-image active-video" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)" disabled="true">
 
@@ -1331,7 +1337,8 @@
                                                                                                     <span class="candidate">@videolist.VideoTitle</span>
                                                                                                 }
                                                                                             }
-                                                                                            else{<span></span>}
+                                                                                            else
+                                                                                            {<span></span>}
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -1374,7 +1381,8 @@
                                                                                                     <span class="candidate">@videolist.VideoTitle</span>
                                                                                                 }
                                                                                             }
-                                                                                            else { <span></span>}
+                                                                                            else
+                                                                                            { <span></span>}
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -1406,11 +1414,12 @@
                                                                                         {
                                                                                             <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
                                                                                         }
-                                                                                        @if (videolist.VideoLink.Contains(".mp4"))
+                                                                                        @*@if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
                                                                                             @if (videolist.ThumbnailImage != null)
                                                                                             {
-                                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
+                                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                                            }
                                                                                             <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
@@ -1429,9 +1438,40 @@
                                                                                         else
                                                                                         {
                                                                                             @if (videolist.ThumbnailImage != null)
-                                                                                            {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
+                                                                                            {
+                                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                                            }
                                                                                             else
-                                                                                            { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
+                                                                                            {
+                                                                                                <img src="~/RiseTube/img/video-icon.png" />
+                                                                                            }
+                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                        }*@
+                                                                                        @{
+                                                                                            string appendTime;
+                                                                                            if (videolist.ThumbnailTimeSeconds == 0)
+                                                                                            {
+                                                                                                appendTime = configuration["ThumbnailTimeDefault"];
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                appendTime = videolist.ThumbnailTimeSeconds.ToString();
+                                                                                            }
+                                                                                            var src = videolist.VideoLink + "#t=" + appendTime;
+                                                                                            <video  style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                                <source src="@src" type="video/mp4">
+                                                                                            </video>
+                                                                                            @if (Model.IsClientCurated)
+                                                                                            {
+                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                                            }
+                                                                                        }
 
                                                                                     </div>
                                                                                     <div class="video-card-body">
@@ -1461,9 +1501,10 @@
                                                                                                 {
                                                                                                     <span>@videolist.JDTiltle</span>}
                                                                                             }
-                                                                                            else {<span></span>}
+                                                                                            else
+                                                                                            {<span></span>}
 
-                                                                                            </div>
+                                                                                        </div>
                                                                                         <div class="video-page text-success">
                                                                                             &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
                                                                                             <span class="divider-g">
@@ -1488,12 +1529,13 @@
                                                                                             {
                                                                                                 @if (videolist.joiningTime.Length > 10)
                                                                                                 {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
-                                                                                                else
-                                                                                                {
+                                                                                            else
+                                                                                            {
                                                                                                 <span id="join_time"> @videolist.joiningTime</span>}
                                                                                             }
-                                                                                            else { <span></span>}
-                                                                                            </div>
+                                                                                            else
+                                                                                            { <span></span>}
+                                                                                        </div>
 
                                                                                         <div class="video-info">
                                                                                             <span>Expected Salary:</span>
@@ -1507,8 +1549,9 @@
                                                                                                 {
                                                                                                     <span>@videolist.expectedPerHourRate</span>}
                                                                                             }
-                                                                                            else { <span></span> }
-                                                                                            </div>
+                                                                                            else
+                                                                                            { <span></span>}
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             }
@@ -1561,14 +1604,19 @@
                                                                                 {
                                                                                     <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
                                                                                 }
-                                                                                @if (videolist.VideoLink.Contains(".mp4"))
+                                                                                @*@if (videolist.VideoLink.Contains(".mp4"))
                                                                                 {
                                                                                     @if (videolist.ThumbnailImage != null)
                                                                                     {
-                                                                                        <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
+                                                                                        <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                                    }
                                                                                     <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
                                                                                         <source src="@videolist.VideoLink" type="video/mp4">
                                                                                     </video>
+
+
+
+
                                                                                     @if (Model.IsClientCurated)
                                                                                     {
                                                                                         <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
@@ -1584,14 +1632,42 @@
                                                                                 else
                                                                                 {
                                                                                     @if (videolist.ThumbnailImage != null)
-                                                                                    {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
+                                                                                    {
+                                                                                        <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                                    }
                                                                                     else
-                                                                                    { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
+                                                                                    {
+                                                                                        <img src="~/RiseTube/img/video-icon.png" />
+                                                                                    }
+                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                }*@
+                                                                                @{
+                                                                                    string appendTime;
+                                                                                    if (videolist.ThumbnailTimeSeconds == 0)
+                                                                                    {
+                                                                                        appendTime = configuration["ThumbnailTimeDefault"];
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        appendTime = videolist.ThumbnailTimeSeconds.ToString();
+                                                                                    }
+                                                                                    var src = videolist.VideoLink + "#t=" + appendTime;
+                                                                                    <video style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                        <source src="@src" type="video/mp4">
+                                                                                    </video>
 
+                                                                                    @if (Model.IsClientCurated)
+                                                                                    {
+                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
 
-                                                                                @*
-                                                                                    <div class="time">3:50</div>
-                                                                                *@
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                                    }
+                                                                                }
+
                                                                             </div>
                                                                             <div class="video-card-body">
                                                                                 <div class="video-title">
@@ -1617,9 +1693,10 @@
                                                                                         {
                                                                                             <span>@videolist.JDTiltle</span>}
                                                                                     }
-                                                                                    else { <span></span>}
+                                                                                    else
+                                                                                    { <span></span>}
 
-                                                                                    </div>
+                                                                                </div>
                                                                                 <div class="video-page text-success">
                                                                                     &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
                                                                                     <span class="divider-g">
@@ -1645,12 +1722,13 @@
 
                                                                                         @if (videolist.joiningTime.Length > 10)
                                                                                         {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
-                                                                                        else
-                                                                                        {
+                                                                                    else
+                                                                                    {
                                                                                         <span id="join_time"> @videolist.joiningTime</span>}
                                                                                     }
-                                                                                    else{<span></span>}
-                                                                                    </div>
+                                                                                    else
+                                                                                    {<span></span>}
+                                                                                </div>
 
                                                                                 <div class="video-info">
                                                                                     <span>Expected Salary:</span>
@@ -1664,8 +1742,9 @@
                                                                                         {
                                                                                             <span>@videolist.expectedPerHourRate</span>}
                                                                                     }
-                                                                                    else { <span></span>}
-                                                                                    </div>
+                                                                                    else
+                                                                                    { <span></span>}
+                                                                                </div>
                                                                             </div>
                                                                         </div>
 
@@ -1704,14 +1783,17 @@
                                                             <div id="commonpoolvideo_18" class="video-card video-card-list  videosidelist">
                                                                 <div class="video-card-image">
                                                                     <div class="count-bg"><span>6</span></div>
-                                                                    @if (videolist.VideoLink.Contains(".mp4"))
+                                                                    @*@if (videolist.VideoLink.Contains(".mp4"))
                                                                     {
                                                                         @if (videolist.ThumbnailImage != null)
                                                                         {
-                                                                            <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
+                                                                            <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                        }
                                                                         <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
                                                                             <source src="@videolist.VideoLink" type="video/mp4">
                                                                         </video>
+
+
                                                                         @if (Model.IsClientCurated)
                                                                         {
                                                                             <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
@@ -1727,14 +1809,45 @@
                                                                     else
                                                                     {
                                                                         @if (videolist.ThumbnailImage != null)
-                                                                        {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
+                                                                        {
+                                                                            <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                        }
                                                                         else
-                                                                        { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
+                                                                        {
+                                                                            <img src="~/RiseTube/img/video-icon.png" />
+                                                                        }
+                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                    }*@
+                                                                    @{
+                                                                        string appendTime;
+                                                                        if (videolist.ThumbnailTimeSeconds == 0)
+                                                                        {
+                                                                            appendTime = configuration["ThumbnailTimeDefault"];
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            appendTime = videolist.ThumbnailTimeSeconds.ToString();
+                                                                        }
+                                                                        var src = videolist.VideoLink + "#t=" + appendTime;
 
 
-                                                                    @*
-                                                                        <div class="time">3:50</div>
-                                                                    *@
+                                                                        <video style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                            <source src="@src" type="video/mp4">
+                                                                        </video>
+                                                                        @if (Model.IsClientCurated)
+                                                                        {
+                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                        }
+                                                                    }
+
+
+
                                                                 </div>
                                                                 <div class="video-card-body">
                                                                     <div class="video-title">
@@ -1760,9 +1873,10 @@
                                                                             {
                                                                                 <span>@videolist.JDTiltle</span>}
                                                                         }
-                                                                        else { <span></span>}
+                                                                        else
+                                                                        { <span></span>}
 
-                                                                        </div>
+                                                                    </div>
                                                                     <div class="video-page text-success">
                                                                         &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
                                                                         <span class="divider-g">
@@ -3952,486 +4066,486 @@
     @if (pfName == "Client")
     {
         @*<script src="~/Newassets/js/enjoyhint.min.js"></script>
-        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-        <script>
+            <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+            <script>
 
 
-            var enjoyhint_instance = new EnjoyHint({});
+                var enjoyhint_instance = new EnjoyHint({});
 
-            var enjoyhint_script_steps = [
-                {
-                    'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
-                    'nextButton': { className: "myNext", text: "Continue" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btn1': 'Filter here based on available attributes or reset filter if applied earlier',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btnvideo': 'Candidate Video',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btn2': 'Click here to like the Candidate Video',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btn3': 'Click here to unlike Candidate Video',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
+                var enjoyhint_script_steps = [
+                    {
+                        'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
+                        'nextButton': { className: "myNext", text: "Continue" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .btn1': 'Filter here based on available attributes or reset filter if applied earlier',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .btnvideo': 'Candidate Video',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .btn2': 'Click here to like the Candidate Video',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .btn3': 'Click here to unlike Candidate Video',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
 
 
-                {
-                    'next .sharebtn1': 'Share the video by clicking here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .item1': 'Interview Report Summary',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                    {
+                        'next .sharebtn1': 'Share the video by clicking here',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .item1': 'Interview Report Summary',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
 
-                },
-                {
-                    'next .itemchart': 'Check candidate overall score here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .itemchart': 'Check candidate overall score here',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
 
-                },
-                {
-                    'next .itemcomment': 'Check interviewer comments here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .itemcomment': 'Check interviewer comments here',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
 
-                },
-                {
-                    'next .item2': 'Candidate Details',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .item2': 'Candidate Details',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
 
-                },
-                {
-                    'next .item3': 'Tech Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .item3': 'Tech Skill Report',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
 
-                },
-                {
-                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
 
-                },
+                    },
 
-                {
-                    'next .item5': 'General Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                    {
+                        'next .item5': 'General Skill Report',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
 
-                },
-                {
-                    'next .item6': 'Joinability Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .item6': 'Joinability Report',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
 
-                },
-                {
-                    'next .item7': 'Selectability Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .item7': 'Selectability Report',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
 
-                },
-                {
-                    'next .post': 'Collaborative decision making.Write your comment and click post',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .videosidelist': 'Same skill Candidates Video ',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
-                }
+                    },
+                    {
+                        'next .post': 'Collaborative decision making.Write your comment and click post',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .videosidelist': 'Same skill Candidates Video ',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
+                    }
 
-            ];
-            setTimeout(function () {
-                enjoyhint_instance.set(enjoyhint_script_steps);
-                enjoyhint_instance.run();
-            }, 10000)
-        </script>*@
+                ];
+                setTimeout(function () {
+                    enjoyhint_instance.set(enjoyhint_script_steps);
+                    enjoyhint_instance.run();
+                }, 10000)
+            </script>*@
 
 
         @*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
 
-        <script type="text/javascript">
-            hopscotch.registerHelper('addOverlay', function () {
-                $('body').append('<div class="overlay"></div>');
-            });
-
-            hopscotch.registerHelper('removeOverlay', function () {
-                $('.overlay').fadeOut(function () {
-                    $(this).remove();
-                    $('.helper').remove();
+            <script type="text/javascript">
+                hopscotch.registerHelper('addOverlay', function () {
+                    $('body').append('<div class="overlay"></div>');
                 });
-            });
 
-            hopscotch.listen('show', function () {
-                var elementObject = $(hopscotch.getCurrTarget(tour));
-                var element = $('#' + elementObject[0].id);
+                hopscotch.registerHelper('removeOverlay', function () {
+                    $('.overlay').fadeOut(function () {
+                        $(this).remove();
+                        $('.helper').remove();
+                    });
+                });
 
-                element.prev().removeClass('overlay-relative');
-                element.addClass('overlay-relative');
+                hopscotch.listen('show', function () {
+                    var elementObject = $(hopscotch.getCurrTarget(tour));
+                    var element = $('#' + elementObject[0].id);
 
-                if ($('.helper').length !== 0) {
+                    element.prev().removeClass('overlay-relative');
+                    element.addClass('overlay-relative');
 
-                    // Use Helper Layer for hilight target element.
-                    var helper = $('.helper');
-                    var padding = 5;
-                    var helperPosX = element.position().left - padding;
-                    var helperPosY = element.position().top - padding;
-                    var targetWidth = element.outerWidth();
-                    var targetHeight = element.outerHeight();
+                    if ($('.helper').length !== 0) {
 
-                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+                        // Use Helper Layer for hilight target element.
+                        var helper = $('.helper');
+                        var padding = 5;
+                        var helperPosX = element.position().left - padding;
+                        var helperPosY = element.position().top - padding;
+                        var targetWidth = element.outerWidth();
+                        var targetHeight = element.outerHeight();
 
-                    helper.css('width', targetWidth);
-                    helper.css('height', targetHeight);
-                    helper.offset({ left: helperPosX, top: helperPosY });
+                        console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                        console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-                } else {
+                        helper.css('width', targetWidth);
+                        helper.css('height', targetHeight);
+                        helper.offset({ left: helperPosX, top: helperPosY });
 
-                    // Add Helper Layer for highlight target element.
-                    var newHelper = '<div class="helper"></div>';
-                    $('body').append(newHelper);
+                    } else {
 
-                    var helper = $('.helper');
-                    var padding = 5;
-                    var helperPosX = element.position().left - padding;
-                    var helperPosY = element.position().top - padding;
-                    var targetWidth = element.outerWidth();
-                    var targetHeight = element.outerHeight();
+                        // Add Helper Layer for highlight target element.
+                        var newHelper = '<div class="helper"></div>';
+                        $('body').append(newHelper);
 
-                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+                        var helper = $('.helper');
+                        var padding = 5;
+                        var helperPosX = element.position().left - padding;
+                        var helperPosY = element.position().top - padding;
+                        var targetWidth = element.outerWidth();
+                        var targetHeight = element.outerHeight();
 
-                    helper.css('width', targetWidth);
-                    helper.css('height', targetHeight);
-                    helper.offset({ left: helperPosX, top: helperPosY });
-                }
+                        console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                        console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-            });
+                        helper.css('width', targetWidth);
+                        helper.css('height', targetHeight);
+                        helper.offset({ left: helperPosX, top: helperPosY });
+                    }
 
-            var tour = {
-                id: "hello-hopscotch",
-                showCloseButton: false,
-                steps: [
-                    
-                  
-                    {
-                        title: "Candidate Video",
-                        content: "Candidate Video will be played here",
-                        target: "commonpoolvideo_3",
-                        showPrevButton: true,
-                        placement: "right",
-                        zindex: 999999,
-                        xOffset: 5,
-                        yOffset: 20,
-                        onPrev: function () {
+                });
 
-                            $('#commonpoolvideo_3').removeClass('overlay-relative');
-                            $('.helper').remove();
+                var tour = {
+                    id: "hello-hopscotch",
+                    showCloseButton: false,
+                    steps: [
+
+
+                        {
+                            title: "Candidate Video",
+                            content: "Candidate Video will be played here",
+                            target: "commonpoolvideo_3",
+                            showPrevButton: true,
+                            placement: "right",
+                            zindex: 999999,
+                            xOffset: 5,
+                            yOffset: 20,
+                            onPrev: function () {
+
+                                $('#commonpoolvideo_3').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onNext: function () {
+
+                                $('#commonpoolvideo_3').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+
                         },
-                        onNext: function () {
 
-                            $('#commonpoolvideo_3').removeClass('overlay-relative');
-                            $('.helper').remove();
+
+                        {
+                            title: "Share",
+                            content: "Click here to generate public share URL of the candidate",
+                            target: "commonpoolvideo_6",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            placement: "bottom",
+                            xOffset: 'center',
+                            arrowOffset: 'center',
+                            onNext: function () {
+                                $('#commonpoolvideo_6').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#commonpoolvideo_6').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
 
-                    },
-                    
-                    
-                    {
-                        title: "Share",
-                        content: "Click here to generate public share URL of the candidate",
-                        target: "commonpoolvideo_6",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#commonpoolvideo_6').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Share/View Details",
+                            content: "Click here to check video view stats",
+                            target: "commonpoolvideo_7",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            placement: "bottom",
+                            xOffset: 'center',
+                            arrowOffset: 'center',
+                            onNext: function () {
+                                $('#commonpoolvideo_7').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#commonpoolvideo_7').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#commonpoolvideo_6').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
-                    {
-                        title: "Share/View Details",
-                        content: "Click here to check video view stats",
-                        target: "commonpoolvideo_7",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#commonpoolvideo_7').removeClass('overlay-relative');
-                            $('.helper').remove();
+
+
+                        {
+                            title: "Report Summary",
+                            content: "View the Candidate Report Summary",
+                            target: "commonpoolvideo_8",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            placement: "bottom",
+                            xOffset: 'center',
+                            arrowOffset: 'center',
+                            onNext: function () {
+                                $('#commonpoolvideo_8').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#commonpoolvideo_8').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#commonpoolvideo_7').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-
-                    {
-                        title: "Report Summary",
-                        content: "View the Candidate Report Summary",
-                        target: "commonpoolvideo_8",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#commonpoolvideo_8').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Overall Score",
+                            content: "Check Candidate Overall Score here",
+                            target: "commonpoolvideo_9",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            placement: "bottom",
+                            xOffset: 'center',
+                            arrowOffset: 'center',
+                            onNext: function () {
+                                $('#commonpoolvideo_9').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#commonpoolvideo_9').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#commonpoolvideo_8').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-                    {
-                        title: "Overall Score",
-                        content: "Check Candidate Overall Score here",
-                        target: "commonpoolvideo_9",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#commonpoolvideo_9').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Interviewer Comment",
+                            content: "Check Interviewer Comments here",
+                            target: "commonpoolvideo_10",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            placement: "bottom",
+                            xOffset: 'center',
+                            arrowOffset: 'center',
+                            onNext: function () {
+                                $('#commonpoolvideo_10').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#commonpoolvideo_10').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#commonpoolvideo_9').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-                    {
-                        title: "Interviewer Comment",
-                        content: "Check Interviewer Comments here",
-                        target: "commonpoolvideo_10",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#commonpoolvideo_10').removeClass('overlay-relative');
-                            $('.helper').remove();
+
+                        {
+                            title: "Candidate Details",
+                            content: "View the details of the Candidate here",
+                            target: "commonpoolvideo_11",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            placement: "bottom",
+                            xOffset: 'center',
+                            arrowOffset: 'center',
+                            onNext: function () {
+                                $('#commonpoolvideo_11').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#commonpoolvideo_11').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#commonpoolvideo_10').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-
-                    {
-                        title: "Candidate Details",
-                        content: "View the details of the Candidate here",
-                        target: "commonpoolvideo_11",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#commonpoolvideo_11').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Tech Skill Report",
+                            content: "View the Tech Skill Report here",
+                            target: "commonpoolvideo_12",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            placement: "bottom",
+                            xOffset: 'center',
+                            arrowOffset: 'center',
+                            onNext: function () {
+                                $('#commonpoolvideo_12').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#commonpoolvideo_12').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#commonpoolvideo_11').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-                    {
-                        title: "Tech Skill Report",
-                        content: "View the Tech Skill Report here",
-                        target: "commonpoolvideo_12",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#commonpoolvideo_12').removeClass('overlay-relative');
-                            $('.helper').remove();
+
+                        {
+                            title: "Questions Discussed",
+                            content: "Questions discussed during interview and see the specific part of the video by clicking on the question",
+                            target: "commonpoolvideo_13",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            placement: "bottom",
+                            xOffset: 'center',
+                            arrowOffset: 'center',
+                            onNext: function () {
+                                $('#commonpoolvideo_13').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#commonpoolvideo_13').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#commonpoolvideo_12').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-
-                    {
-                        title: "Questions Discussed",
-                        content: "Questions discussed during interview and see the specific part of the video by clicking on the question",
-                        target: "commonpoolvideo_13",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#commonpoolvideo_13').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "General Skill Report",
+                            content: "View the General Skill Report here",
+                            target: "commonpoolvideo_14",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            placement: "bottom",
+                            xOffset: 'center',
+                            arrowOffset: 'center',
+                            onNext: function () {
+                                $('#commonpoolvideo_14').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#commonpoolvideo_14').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#commonpoolvideo_13').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-                    {
-                        title: "General Skill Report",
-                        content: "View the General Skill Report here",
-                        target: "commonpoolvideo_14",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#commonpoolvideo_14').removeClass('overlay-relative');
-                            $('.helper').remove();
+
+                        {
+                            title: "Joinability Report",
+                            content: "View the Joinability Report here",
+                            target: "commonpoolvideo_15",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            placement: "bottom",
+                            xOffset: 'center',
+                            arrowOffset: 'center',
+                            onNext: function () {
+                                $('#commonpoolvideo_15').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#commonpoolvideo_15').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#commonpoolvideo_14').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-
-                    {
-                        title: "Joinability Report",
-                        content: "View the Joinability Report here",
-                        target: "commonpoolvideo_15",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#commonpoolvideo_15').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Selectability Report",
+                            content: "View the Selectability Report here",
+                            target: "commonpoolvideo_16",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            placement: "bottom",
+                            xOffset: 'center',
+                            arrowOffset: 'center',
+                            onNext: function () {
+                                $('#commonpoolvideo_16').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#commonpoolvideo_16').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#commonpoolvideo_15').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-                    {
-                        title: "Selectability Report",
-                        content: "View the Selectability Report here",
-                        target: "commonpoolvideo_16",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#commonpoolvideo_16').removeClass('overlay-relative');
-                            $('.helper').remove();
+
+
+                        {
+                            title: "Similar Skill Video",
+                            content: "Checkout Similar Skill Candidates Video",
+                            target: "commonpoolvideo_18",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            placement: "bottom",
+                            xOffset: 'center',
+                            arrowOffset: 'center',
+                            onNext: function () {
+                                $('#commonpoolvideo_18').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#commonpoolvideo_18').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#commonpoolvideo_16').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
-
-                   
-
-                    {
-                        title: "Similar Skill Video",
-                        content: "Checkout Similar Skill Candidates Video",
-                        target: "commonpoolvideo_18",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#commonpoolvideo_18').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Candidate Stats Menu",
+                            content: "Click on Candidate Stats menu to see its features",
+                            target: "status_menu",
+                            placement: "top",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 10,
+                            xOffset: 10,
+                            arrowOffset: 'left',
+                            onNext: function () {
+                                $('#status_menu').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#status_menu').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#commonpoolvideo_18').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
-                    {
-                        title: "Candidate Stats Menu",
-                        content: "Click on Candidate Stats menu to see its features",
-                        target: "status_menu",
-                        placement: "top",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 10,
-                        xOffset: 10,
-                        arrowOffset: 'left',
-                        onNext: function () {
-                            $('#status_menu').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#status_menu').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-                    
 
-                ],
-                onStart: ["addOverlay"],
-                onEnd: ["removeOverlay"],
-            };
+                    ],
+                    onStart: ["addOverlay"],
+                    onEnd: ["removeOverlay"],
+                };
 
-            hopscotch.startTour(tour);
+                hopscotch.startTour(tour);
 
-        </script>*@
+            </script>*@
 
 
 

@@ -51,6 +51,7 @@ SELECT [InterviewMeetings].id as imid
 	 ,IRF.IsBiometricEnabled
 	 ,HRCoordinatorEmailId
 	 ,QCInterviewer
+	 ,InterviewComments.ThumbnailTimeSeconds
 FROM [dbo].[InterviewMeetings]
 inner join 
 IRF on [InterviewMeetings].IRFId = IRF.IRFId

@@ -290,399 +290,402 @@
                                                         }
                                                         @foreach (var item in Model)
                                                         {
-                                                    <tr>
+                                                            <tr>
 
-                                                        @if (item.CandidateName != null && item.CandidateName != "")
-                                                        {
-                                                            @if (item.CandidateName.Length > 15)
-                                                            {
+                                                                @if (item.CandidateName != null && item.CandidateName != "")
+                                                                {
+                                                                    @if (item.CandidateName.Length > 15)
+                                                                    {
 
 
-                                                                <td class="cadName text-left pl15">
-                                                                    <a onclick="" data-tooltip="@item.CandidateName"> @item.CandidateName.Substring(0, 15)... </a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td class="text-left pl15">
-                                                                    <a onclick=""> @item.CandidateName </a>
-                                                                </td>
-                                                            }
+                                                                        <td class="cadName text-left pl15">
+                                                                            <a onclick="" data-tooltip="@item.CandidateName"> @item.CandidateName.Substring(0, 15)... </a>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td class="text-left pl15">
+                                                                            <a onclick=""> @item.CandidateName </a>
+                                                                        </td>
+                                                                    }
 
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+
+
+
+                                                                @if (item.CandidateEmailId != null && item.CandidateEmailId != "")
+                                                                {
+                                                                    @if (item.CandidateEmailId.Length > 18)
+                                                                    {
+
+
+                                                                        <td class="cadEmail text-left pl15">
+                                                                            <a onclick="" data-tooltip="@item.CandidateEmailId"> @item.CandidateEmailId.Substring(0, 18)... </a>
+                                                                        </td>
+                                                                    }
+
+
+                                                                    else
+                                                                    {
+                                                                        <td class="cadEmail text-left pl15">
+                                                                            @item.CandidateEmailId
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
 }
 
+                                                                @if (item.PrimarySkill != null && item.PrimarySkill != "")
+                                                                {
 
-
-                                                        @if (item.CandidateEmailId != null && item.CandidateEmailId != "")
-                                                        {
-                                                            @if (item.CandidateEmailId.Length > 18)
-                                                            {
-
-
-                                                                <td class="cadEmail text-left pl15">
-                                                                    <a onclick="" data-tooltip="@item.CandidateEmailId"> @item.CandidateEmailId.Substring(0, 18)... </a>
-                                                                </td>
-                                                            }
-
-
-                                                            else
-                                                            {
-                                                                <td class="cadEmail text-left pl15">
-                                                                    @item.CandidateEmailId
-                                                                </td>
-                                                            }
-                                                        }
-                                                        else { <td></td>}
-
-                                                        @if (item.PrimarySkill != null && item.PrimarySkill != "")
-                                                        {
-
-                                                            @if (item.PrimarySkill.Length > 15)
-                                                            {
-
-
-                                                                <td class="cadEmail text-left pl15">
-                                                                    <a onclick="" data-tooltip="@item.PrimarySkill"> @item.PrimarySkill.Substring(0, 15)... </a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td class="text-left pl15">
-                                                                    <a onclick=""> @item.PrimarySkill </a>
-                                                                </td>
-                                                            }
-
-
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-
-
-
-
-
-
-
-                                                        @if (item.HREmail != null && item.HREmail != "")
-                                                        {
-
-                                                            @if (item.HREmail.Length > 15)
-                                                            {
-
-
-                                                                <td class="cadEmail text-left pl15">
-                                                                    <a onclick="" data-tooltip="@item.HREmail"> @item.HREmail.Substring(0, 15)... </a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td class="text-left pl15">
-                                                                    <a onclick=""> @item.HREmail </a>
-                                                                </td>
-                                                            }
-
-
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-
-
-                                                        @*@if (item.OnboardingDetails != null)
-        {
-            <td style="padding:10px 0px;">
-                <div class="timeline-section-tl">
-                    <div class="tl-round round1" style="background-color: #35353599;"></div>
-                    <div class="circle-wrap">
-                        <div class="circle" id="circle0" style="left: 0%;">
-                            <div class="popupSpan">
-                                <div class="event2Bubble">
-                                    <div class="eventTime">
-                                        <div class="DayDigit">@item.OnboardingDetails.Date</div>
-                                        <div class="Day">
-                                            @item.OnboardingDetails.Day
-                                            <div class="MonthYear">@item.OnboardingDetails.StatusDate</div>
-                                        </div>
-                                    </div>
-                                    <div class="eventTitle">@item.OnboardingDetails.Status</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </td>
-        }
-        else
-        {
-            <td></td>
-        }*@
-                                                        @if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
-                                                        {
-                                                            <td style="padding:10px 0px;">
-                                                                <div class="timeline-section-tl">
-                                                                    @foreach (var status in item.ScheduleStatus)
+                                                                    @if (item.PrimarySkill.Length > 15)
                                                                     {
-                                                                        <div class="tl-round round1" style="background-color: #35353599;"></div>
-                                                                        <div class="circle-wrap">
 
-                                                                            @if (status.Status == "Scheduled")
-                                                                            {
-                                                                                <div class="circle schedule" id="circle0" style="left: 0%;">
-                                                                                    <div class="popupSpan">
 
-                                                                                        <div class="event2Bubble">
-                                                                                            <div class="eventTime">
-                                                                                                <div class="DayDigit">@status.Date</div>
-                                                                                                <div class="Day">
-                                                                                                    @status.Day
-                                                                                                    <div class="MonthYear">
-                                                                                                        @status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time
+                                                                        <td class="cadEmail text-left pl15">
+                                                                            <a onclick="" data-tooltip="@item.PrimarySkill"> @item.PrimarySkill.Substring(0, 15)... </a>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td class="text-left pl15">
+                                                                            <a onclick=""> @item.PrimarySkill </a>
+                                                                        </td>
+                                                                    }
+
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+
+
+
+
+
+
+
+                                                                @if (item.HREmail != null && item.HREmail != "")
+                                                                {
+
+                                                                    @if (item.HREmail.Length > 15)
+                                                                    {
+
+
+                                                                        <td class="cadEmail text-left pl15">
+                                                                            <a onclick="" data-tooltip="@item.HREmail"> @item.HREmail.Substring(0, 15)... </a>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td class="text-left pl15">
+                                                                            <a onclick=""> @item.HREmail </a>
+                                                                        </td>
+                                                                    }
+
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+
+
+                                                                @*@if (item.OnboardingDetails != null)
+                                                                    {
+                                                                        <td style="padding:10px 0px;">
+                                                                            <div class="timeline-section-tl">
+                                                                                <div class="tl-round round1" style="background-color: #35353599;"></div>
+                                                                                <div class="circle-wrap">
+                                                                                    <div class="circle" id="circle0" style="left: 0%;">
+                                                                                        <div class="popupSpan">
+                                                                                            <div class="event2Bubble">
+                                                                                                <div class="eventTime">
+                                                                                                    <div class="DayDigit">@item.OnboardingDetails.Date</div>
+                                                                                                    <div class="Day">
+                                                                                                        @item.OnboardingDetails.Day
+                                                                                                        <div class="MonthYear">@item.OnboardingDetails.StatusDate</div>
                                                                                                     </div>
                                                                                                 </div>
-
+                                                                                                <div class="eventTitle">@item.OnboardingDetails.Status</div>
                                                                                             </div>
-                                                                                            <div class="eventTitle">@status.Status</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                            }
-                                                                            else
+                                                                            </div>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+                                                                    }*@
+                                                                @if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
+                                                                {
+                                                                    <td style="padding:10px 0px;">
+                                                                        <div class="timeline-section-tl">
+                                                                            @foreach (var status in item.ScheduleStatus)
                                                                             {
-                                                                                <div class="circle" id="circle0" style="left: 0%;">
-                                                                                    <div class="popupSpan">
+                                                                                <div class="tl-round round1" style="background-color: #35353599;"></div>
+                                                                                <div class="circle-wrap">
 
-                                                                                        <div class="event2Bubble">
-                                                                                            <div class="eventTime">
-                                                                                                <div class="DayDigit">@status.Date</div>
-                                                                                                <div class="Day">
-                                                                                                    @status.Day
-                                                                                                    <div class="MonthYear">
-                                                                                                        @status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time
+                                                                                    @if (status.Status == "Scheduled")
+                                                                                    {
+                                                                                        <div class="circle schedule" id="circle0" style="left: 0%;">
+                                                                                            <div class="popupSpan">
+
+                                                                                                <div class="event2Bubble">
+                                                                                                    <div class="eventTime">
+                                                                                                        <div class="DayDigit">@status.Date</div>
+                                                                                                        <div class="Day">
+                                                                                                            @status.Day
+                                                                                                            <div class="MonthYear">
+                                                                                                                @status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time
+                                                                                                            </div>
+                                                                                                        </div>
+
                                                                                                     </div>
+                                                                                                    <div class="eventTitle">@status.Status</div>
                                                                                                 </div>
-
                                                                                             </div>
-                                                                                            <div class="eventTitle">@status.Status</div>
                                                                                         </div>
-                                                                                    </div>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <div class="circle" id="circle0" style="left: 0%;">
+                                                                                            <div class="popupSpan">
+
+                                                                                                <div class="event2Bubble">
+                                                                                                    <div class="eventTime">
+                                                                                                        <div class="DayDigit">@status.Date</div>
+                                                                                                        <div class="Day">
+                                                                                                            @status.Day
+                                                                                                            <div class="MonthYear">
+                                                                                                                @status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time
+                                                                                                            </div>
+                                                                                                        </div>
+
+                                                                                                    </div>
+                                                                                                    <div class="eventTitle">@status.Status</div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    }
+
                                                                                 </div>
                                                                             }
 
                                                                         </div>
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+
+                                                                @if (item.MeetingStatus != null && item.MeetingStatus.Count() != 0)
+                                                                {
+                                                                    <td style="padding:10px 0px;">
+                                                                        <div class="timeline-section-tl">
+                                                                            <div class="tl-round round1" style="background-color: #35353599;"></div>
+                                                                            <div class="circle-wrap">
+                                                                                @foreach (var status in item.MeetingStatus)
+                                                                                {
+
+                                                                                    if (status.Status == "Completed")
+                                                                                    {
+                                                                                        <div class="circle completed" id="circle0" style="left: 0%;">
+                                                                                            <div class="popupSpan">
+                                                                                                <div class="popupSpan">
+                                                                                                    <div class="event2Bubble">
+                                                                                                        <div class="eventTime">
+                                                                                                            <div class="DayDigit">@status.Date</div>
+                                                                                                            <div class="Day">
+                                                                                                                @status.Day
+                                                                                                                <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div class="eventTitle">@status.Status</div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <div class="circle pending" id="circle0" style="left: 0%;">
+                                                                                            <div class="popupSpan">
+                                                                                                <div class="popupSpan">
+                                                                                                    <div class="event2Bubble">
+                                                                                                        <div class="eventTime">
+                                                                                                            <div class="DayDigit">@status.Date</div>
+                                                                                                            <div class="Day">
+                                                                                                                @status.Day
+                                                                                                                <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div class="eventTitle">@status.Status</div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    }
+
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+                                                                @if (item.InterviewStatus != null && item.InterviewStatus.Count() != 0)
+                                                                {
+                                                                    <td style="padding:10px 0px;">
+                                                                        <div class="timeline-section-tl">
+                                                                            <div class="tl-round round1" style="background-color: #35353599;"></div>
+                                                                            <div class="circle-wrap">
+                                                                                @foreach (var status in item.InterviewStatus)
+                                                                                {
+                                                                                    @if (status.Status == "Border Line")
+                                                                                    {
+                                                                                        <div class="circle borderline" id="circle0" style="left: 0%;">
+                                                                                            <div class="popupSpan">
+
+                                                                                                <div class="event2Bubble">
+                                                                                                    <div class="eventTime">
+                                                                                                        <div class="DayDigit">@status.Date</div>
+                                                                                                        <div class="Day">
+                                                                                                            @status.Day
+                                                                                                            <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="eventTitle">@status.Status</div>
+                                                                                                </div>
+
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    }
+                                                                                    else if (status.Status == "Selected")
+                                                                                    {
+                                                                                        <div class="circle selected" id="circle0" style="left: 0%;">
+                                                                                            <div class="popupSpan">
+                                                                                                <div class="event2Bubble">
+                                                                                                    <div class="eventTime">
+                                                                                                        <div class="DayDigit">@status.Date</div>
+                                                                                                        <div class="Day">
+                                                                                                            @status.Day
+                                                                                                            <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="eventTitle">@status.Status</div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    }
+                                                                                    else if (status.Status == "NoShow")
+                                                                                    {
+                                                                                        <div class="circle noshow" id="circle0" style="left: 0%;">
+                                                                                            <div class="popupSpan">
+                                                                                                <div class="event2Bubble">
+                                                                                                    <div class="eventTime">
+                                                                                                        <div class="DayDigit">@status.Date</div>
+                                                                                                        <div class="Day">
+                                                                                                            @status.Day
+                                                                                                            <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="eventTitle">@status.Status</div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    }
+
+                                                                                    else if (status.Status == "Dropped")
+                                                                                    {
+                                                                                        <div class="circle dropped" id="circle0" style="left: 0%;">
+                                                                                            <div class="popupSpan">
+                                                                                                <div class="event2Bubble">
+                                                                                                    <div class="eventTime">
+                                                                                                        <div class="DayDigit">@status.Date</div>
+                                                                                                        <div class="Day">
+                                                                                                            @status.Day
+                                                                                                            <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="eventTitle">@status.Status</div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <div class="circle rejected" id="circle0" style="left: 0%;">
+                                                                                            <div class="popupSpan">
+                                                                                                <div class="event2Bubble">
+                                                                                                    <div class="eventTime">
+                                                                                                        <div class="DayDigit">@status.Date</div>
+                                                                                                        <div class="Day">
+                                                                                                            @status.Day
+                                                                                                            <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="eventTitle">@status.Status</div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    }
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="timeline-section-tl" style="background:none; border:none">
+                                                                            <div class="tl-round round1" style="background-color:#35353599;"></div>
+                                                                        </div>
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+
+                                                                }
+                                                                <td>
+                                                                    @if (item.CurrentStatus == "Selected")
+                                                                    {
+                                                                        <p class="select">@item.CurrentStatus</p>
                                                                     }
 
-                                                                </div>
-                                                            </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
+                                                                    else if (item.CurrentStatus == "Rejected")
+                                                                    {
+                                                                        <p class="reject">@item.CurrentStatus</p>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <p>@item.CurrentStatus</p>
+                                                                    }
+                                                                </td>
 
-                                                        @if (item.MeetingStatus != null && item.MeetingStatus.Count() != 0)
-                                                        {
-                                                            <td style="padding:10px 0px;">
-                                                                <div class="timeline-section-tl">
-                                                                    <div class="tl-round round1" style="background-color: #35353599;"></div>
-                                                                    <div class="circle-wrap">
-                                                                        @foreach (var status in item.MeetingStatus)
-                                                                        {
+                                                                <td>
+                                                                    @if ((item.CurrentMeetingStatus == 4) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1) && ((item.CurrentInterviewStatus != 4 && item.CurrentInterviewStatus != 2) || (item.QCStatus == 1 && (item.CurrentInterviewStatus == 4 || item.CurrentInterviewStatus == 2))))
+                                                                    {
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                            <span onclick="location.href = '@Url.Action("AddReport", "Interview", new {  interviewId = item.InterviewId, irfId= item.IRFId, isClient = true,actiontype="IRFCandidate"})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="#fff" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"></path></svg></span>
+                                                                        </button>
 
-                                                                            if (status.Status == "Completed")
-                                                                            {
-                                                                                <div class="circle completed" id="circle0" style="left: 0%;">
-                                                                                    <div class="popupSpan">
-                                                                                        <div class="popupSpan">
-                                                                                            <div class="event2Bubble">
-                                                                                                <div class="eventTime">
-                                                                                                    <div class="DayDigit">@status.Date</div>
-                                                                                                    <div class="Day">
-                                                                                                        @status.Day
-                                                                                                        <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="eventTitle">@status.Status</div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <div class="circle pending" id="circle0" style="left: 0%;">
-                                                                                    <div class="popupSpan">
-                                                                                        <div class="popupSpan">
-                                                                                            <div class="event2Bubble">
-                                                                                                <div class="eventTime">
-                                                                                                    <div class="DayDigit">@status.Date</div>
-                                                                                                    <div class="Day">
-                                                                                                        @status.Day
-                                                                                                        <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="eventTitle">@status.Status</div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <p></p>
+                                                                    }
+                                                                </td>
 
-                                                                        }
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                        @if (item.InterviewStatus != null && item.InterviewStatus.Count() != 0)
-                                                        {
-                                                            <td style="padding:10px 0px;">
-                                                                <div class="timeline-section-tl">
-                                                                    <div class="tl-round round1" style="background-color: #35353599;"></div>
-                                                                    <div class="circle-wrap">
-                                                                        @foreach (var status in item.InterviewStatus)
-                                                                        {
-                                                                            @if (status.Status == "Border Line")
-                                                                            {
-                                                                                <div class="circle borderline" id="circle0" style="left: 0%;">
-                                                                                    <div class="popupSpan">
-
-                                                                                        <div class="event2Bubble">
-                                                                                            <div class="eventTime">
-                                                                                                <div class="DayDigit">@status.Date</div>
-                                                                                                <div class="Day">
-                                                                                                    @status.Day
-                                                                                                    <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="eventTitle">@status.Status</div>
-                                                                                        </div>
-
-                                                                                    </div>
-                                                                                </div>
-                                                                            }
-                                                                            else if (status.Status == "Selected")
-                                                                            {
-                                                                                <div class="circle selected" id="circle0" style="left: 0%;">
-                                                                                    <div class="popupSpan">
-                                                                                        <div class="event2Bubble">
-                                                                                            <div class="eventTime">
-                                                                                                <div class="DayDigit">@status.Date</div>
-                                                                                                <div class="Day">
-                                                                                                    @status.Day
-                                                                                                    <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="eventTitle">@status.Status</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            }
-                                                                            else if (status.Status == "NoShow")
-                                                                            {
-                                                                                <div class="circle noshow" id="circle0" style="left: 0%;">
-                                                                                    <div class="popupSpan">
-                                                                                        <div class="event2Bubble">
-                                                                                            <div class="eventTime">
-                                                                                                <div class="DayDigit">@status.Date</div>
-                                                                                                <div class="Day">
-                                                                                                    @status.Day
-                                                                                                    <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="eventTitle">@status.Status</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            }
-
-                                                                            else if (status.Status == "Dropped")
-                                                                            {
-                                                                                <div class="circle dropped" id="circle0" style="left: 0%;">
-                                                                                    <div class="popupSpan">
-                                                                                        <div class="event2Bubble">
-                                                                                            <div class="eventTime">
-                                                                                                <div class="DayDigit">@status.Date</div>
-                                                                                                <div class="Day">
-                                                                                                    @status.Day
-                                                                                                    <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="eventTitle">@status.Status</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <div class="circle rejected" id="circle0" style="left: 0%;">
-                                                                                    <div class="popupSpan">
-                                                                                        <div class="event2Bubble">
-                                                                                            <div class="eventTime">
-                                                                                                <div class="DayDigit">@status.Date</div>
-                                                                                                <div class="Day">
-                                                                                                    @status.Day
-                                                                                                    <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="eventTitle">@status.Status</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            }
-                                                                        }
-                                                                    </div>
-                                                                </div>
-                                                                <div class="timeline-section-tl" style="background:none; border:none">
-                                                                    <div class="tl-round round1" style="background-color:#35353599;"></div>
-                                                                </div>
-                                                            </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-
-                                                        }
-                                                        <td>
-                                                            @if (item.CurrentStatus == "Selected")
-                                                            {
-                                                                <p class="select">@item.CurrentStatus</p>
-                                                            }
-
-                                                            else if (item.CurrentStatus == "Rejected")
-                                                            {
-                                                                <p class="reject">@item.CurrentStatus</p>
-                                                            }
-                                                            else
-                                                            {
-                                                                <p>@item.CurrentStatus</p>
-                                                            }
-                                                        </td>
-
-                                                        <td>
-                                                            @if ((item.CurrentMeetingStatus == 4) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1) && ((item.CurrentInterviewStatus != 4 && item.CurrentInterviewStatus != 2) || (item.QCStatus == 1 && (item.CurrentInterviewStatus == 4 || item.CurrentInterviewStatus == 2))))
-                                                            {
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                    <span onclick="location.href = '@Url.Action("AddReport", "Interview", new {  interviewId = item.InterviewId, irfId= item.IRFId, isClient = true})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="#fff" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"></path></svg></span>
-                                                                </button>
-
-                                                            }
-                                                            else
-                                                            {
-                                                                <p></p>
-                                                            }
-                                                        </td>
-
-                                                    </tr>
+                                                            </tr>
 
                                                         }
 
@@ -852,282 +855,282 @@
 
 
 @*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
-{
+    {
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
 
-    <script type="text/javascript">
-        hopscotch.registerHelper('addOverlay', function () {
-            $('body').append('<div class="overlay"></div>');
-        });
-
-        hopscotch.registerHelper('removeOverlay', function () {
-            $('.overlay').fadeOut(function () {
-                $(this).remove();
-                $('.helper').remove();
+        <script type="text/javascript">
+            hopscotch.registerHelper('addOverlay', function () {
+                $('body').append('<div class="overlay"></div>');
             });
-        });
 
-        hopscotch.listen('show', function () {
-            var elementObject = $(hopscotch.getCurrTarget(tour));
-            var element = $('#' + elementObject[0].id);
+            hopscotch.registerHelper('removeOverlay', function () {
+                $('.overlay').fadeOut(function () {
+                    $(this).remove();
+                    $('.helper').remove();
+                });
+            });
 
-            element.prev().removeClass('overlay-relative');
-            element.addClass('overlay-relative');
+            hopscotch.listen('show', function () {
+                var elementObject = $(hopscotch.getCurrTarget(tour));
+                var element = $('#' + elementObject[0].id);
 
-            if ($('.helper').length !== 0) {
+                element.prev().removeClass('overlay-relative');
+                element.addClass('overlay-relative');
 
-                // Use Helper Layer for hilight target element.
-                var helper = $('.helper');
-                var padding = 5;
-                var helperPosX = element.position().left - padding;
-                var helperPosY = element.position().top - padding;
-                var targetWidth = element.outerWidth();
-                var targetHeight = element.outerHeight();
+                if ($('.helper').length !== 0) {
 
-                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+                    // Use Helper Layer for hilight target element.
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
 
-                helper.css('width', targetWidth);
-                helper.css('height', targetHeight);
-                helper.offset({ left: helperPosX, top: helperPosY });
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-            } else {
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
 
-                // Add Helper Layer for highlight target element.
-                var newHelper = '<div class="helper"></div>';
-                $('body').append(newHelper);
+                } else {
 
-                var helper = $('.helper');
-                var padding = 5;
-                var helperPosX = element.position().left - padding;
-                var helperPosY = element.position().top - padding;
-                var targetWidth = element.outerWidth();
-                var targetHeight = element.outerHeight();
+                    // Add Helper Layer for highlight target element.
+                    var newHelper = '<div class="helper"></div>';
+                    $('body').append(newHelper);
 
-                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
 
-                helper.css('width', targetWidth);
-                helper.css('height', targetHeight);
-                helper.offset({ left: helperPosX, top: helperPosY });
-            }
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-        });
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
+                }
 
-        var tour = {
-            id: "hello-hopscotch",
-            showCloseButton: false,
-            steps: [
-                {
-                    title: "Candidate Status",
-                    content: "View the status of the candidates and click on next button to know its features",
-                    target: "getstatus_1",
-                    placement: "bottom",
-                    showPrevButton: true,
+            });
 
-                    highlight: true,
-                    zindex: 999999,
-                    yOffset: 10,
+            var tour = {
+                id: "hello-hopscotch",
+                showCloseButton: false,
+                steps: [
+                    {
+                        title: "Candidate Status",
+                        content: "View the status of the candidates and click on next button to know its features",
+                        target: "getstatus_1",
+                        placement: "bottom",
+                        showPrevButton: true,
 
-                    onCTA: function () {
-                        hopscotch.showStep(2);
-                        $('#getstatus_1').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onNext: function () {
-                        $('#getstatus_1').removeClass('overlay-relative');
-                        $('.helper').remove();
+                        highlight: true,
+                        zindex: 999999,
+                        yOffset: 10,
 
-                    }
-                },
+                        onCTA: function () {
+                            hopscotch.showStep(2);
+                            $('#getstatus_1').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onNext: function () {
+                            $('#getstatus_1').removeClass('overlay-relative');
+                            $('.helper').remove();
 
-                {
-                    title: "Excel",
-                    content: "Click here to export the Selected Candidate data in excel sheet",
-                    target: "getstatus_2",
-                    showPrevButton: true,
-                    placement: "left",
-                    zindex: 999999,
-                    xOffset: -50,
-                    onPrev: function () {
-
-                        $('#getstatus_2').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onNext: function () {
-
-                        $('#getstatus_2').removeClass('overlay-relative');
-                        $('.helper').remove();
+                        }
                     },
 
-                },
+                    {
+                        title: "Excel",
+                        content: "Click here to export the Selected Candidate data in excel sheet",
+                        target: "getstatus_2",
+                        showPrevButton: true,
+                        placement: "left",
+                        zindex: 999999,
+                        xOffset: -50,
+                        onPrev: function () {
 
+                            $('#getstatus_2').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onNext: function () {
 
-                {
-                    title: "Filter",
-                    content: "Filter based on available attributes or reset filter if applied earlier",
-                    target: "getstatus_3",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "left",
-                    onPrev: function () {
+                            $('#getstatus_2').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
 
-                        $('#getstatus_3').removeClass('overlay-relative');
-                        $('.helper').remove();
                     },
 
-                    onNext: function () {
 
-                        $('#getstatus_3').removeClass('overlay-relative');
-                        $('.helper').remove();
+                    {
+                        title: "Filter",
+                        content: "Filter based on available attributes or reset filter if applied earlier",
+                        target: "getstatus_3",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "left",
+                        onPrev: function () {
+
+                            $('#getstatus_3').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+
+                        onNext: function () {
+
+                            $('#getstatus_3').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+
+                    },
+                    {
+                        title: "Primary Skill",
+                        content: "Showing the Primary Skill of the candidate here",
+                        target: "getstatus_4",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#getstatus_4').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_4').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+                    {
+                        title: "Schedule Staus",
+                        content: "Schedule Staus (added, invitation sent, profile added, scheduled, call) of all candidates will be viewed here",
+                        target: "getstatus_5",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#getstatus_5').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_5').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
 
-                },
-                {
-                    title: "Primary Skill",
-                    content: "Showing the Primary Skill of the candidate here",
-                    target: "getstatus_4",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#getstatus_4').removeClass('overlay-relative');
-                        $('.helper').remove();
+
+                    {
+                        title: "Meeting Staus",
+                        content: "Meeting Staus (No Show, Dropped, Completed) of all candidates will be viewed here",
+                        target: "getstatus_6",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#getstatus_6').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_6').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
-                    onPrev: function () {
-                        $('#getstatus_4').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-                {
-                    title: "Schedule Staus",
-                    content: "Schedule Staus (added, invitation sent, profile added, scheduled, call) of all candidates will be viewed here",
-                    target: "getstatus_5",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#getstatus_5').removeClass('overlay-relative');
-                        $('.helper').remove();
+
+                    {
+                        title: "Interview Staus",
+                        content: "Interview Staus (Selected, Rejected, BorderLine) of all candidates will be viewed here",
+                        target: "getstatus_7",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#getstatus_7').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_7').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
-                    onPrev: function () {
-                        $('#getstatus_5').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
 
+                    {
+                        title: "Current Staus",
+                        content: "Current Staus (Selected, Rejected, BorderLine, No Show, Scheduled,Cancelled,Called Candidate,Invitation Sent, Not Responding,New) of all candidates will be viewed here",
+                        target: "getstatus_8",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "left",
+                        xOffset: 0,
 
-                {
-                    title: "Meeting Staus",
-                    content: "Meeting Staus (No Show, Dropped, Completed) of all candidates will be viewed here",
-                    target: "getstatus_6",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#getstatus_6').removeClass('overlay-relative');
-                        $('.helper').remove();
+                        onNext: function () {
+                            $('#getstatus_8').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_8').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
-                    onPrev: function () {
-                        $('#getstatus_6').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
 
-                {
-                    title: "Interview Staus",
-                    content: "Interview Staus (Selected, Rejected, BorderLine) of all candidates will be viewed here",
-                    target: "getstatus_7",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#getstatus_7').removeClass('overlay-relative');
-                        $('.helper').remove();
+                    {
+                        title: "Report",
+                        content: "Open & generate the candidate report if available",
+                        target: "getstatus_9",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "left",
+                        xOffset: 0,
+
+                        onNext: function () {
+                            $('#getstatus_9').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_9').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
-                    onPrev: function () {
-                        $('#getstatus_7').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
 
-                {
-                    title: "Current Staus",
-                    content: "Current Staus (Selected, Rejected, BorderLine, No Show, Scheduled,Cancelled,Called Candidate,Invitation Sent, Not Responding,New) of all candidates will be viewed here",
-                    target: "getstatus_8",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "left",
-                    xOffset: 0,
-
-                    onNext: function () {
-                        $('#getstatus_8').removeClass('overlay-relative');
-                        $('.helper').remove();
+                    {
+                        title: "Back to List",
+                        content: "Click here to go back to Skill Channel Page",
+                        target: "getstatus_10",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "left",
+                        yOffset: -20,
+                        xOffset: -350,
+                        onNext: function () {
+                            $('#getstatus_10').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#getstatus_10').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
-                    onPrev: function () {
-                        $('#getstatus_8').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
 
-                {
-                    title: "Report",
-                    content: "Open & generate the candidate report if available",
-                    target: "getstatus_9",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "left",
-                    xOffset: 0,
+                ],
+                onStart: ["addOverlay"],
+                onEnd: ["removeOverlay"],
+            };
 
-                    onNext: function () {
-                        $('#getstatus_9').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#getstatus_9').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
+            hopscotch.startTour(tour);
 
-                {
-                    title: "Back to List",
-                    content: "Click here to go back to Skill Channel Page",
-                    target: "getstatus_10",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "left",
-                    yOffset: -20,
-                    xOffset: -350,
-                    onNext: function () {
-                        $('#getstatus_10').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#getstatus_10').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
+        </script>
 
-            ],
-            onStart: ["addOverlay"],
-            onEnd: ["removeOverlay"],
-        };
-
-        hopscotch.startTour(tour);
-
-    </script>
-
-}*@
+    }*@
 
 
 

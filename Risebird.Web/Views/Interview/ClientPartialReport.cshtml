@@ -1,4 +1,7 @@
-﻿
+﻿@using Microsoft.Extensions.Configuration;
+
+@inject IConfiguration configuration
+
 
 @model Risebird.Entities.ViewModel.InterviewReport
 @{
@@ -147,7 +150,7 @@
                                         </div>
 
                                     </div>
-                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
@@ -220,34 +223,47 @@
 
                                             {
 
-                                                if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                                @*if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                {
+                <p></p>
+                <video width="320" height="240" style="width:100%" class="vjs-tech" controls controlsList="nodownload">
+                    <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                    <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+
+                    Your browser does not support the video tag.
+                </video>
+            }
+
+            else if (Url.Content(Model.VideoLink).Contains("manifest"))
+            {
+                <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
+                    <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+
+                </video>
+            }
+
+
+            else
+            {
+                <iframe width="420" height="345" style="width:99.5%;border:0; margin:0px 0px 15px 0px;" src="@Url.Content(Model.VideoLink)"></iframe>
+
+            }*@
+                                                string appendTime;
+                                                if (Model.ThumbnailTimeSeconds == 0)
                                                 {
-                                                <p></p>
-                                                <video width="320" height="240" style="width:100%" class="vjs-tech" controls controlsList="nodownload">
-                                                    <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                                    <source src=@Url.Content(Model.VideoLink) type="video/ogg">
-
-                                                    Your browser does not support the video tag.
+                                                    appendTime = configuration["ThumbnailTimeDefault"];
+                                                }
+                                                else
+                                                {
+                                                    appendTime = Model.ThumbnailTimeSeconds.ToString();
+                                                }
+                                                var src = Model.VideoLink + "#t=" + appendTime;
+                                                <video width="400" controls="controls" preload="metadata">
+                                                    <source src='@src' type="video/mp4">
                                                 </video>
                                             }
 
-                                            else if (Url.Content(Model.VideoLink).Contains("manifest"))
-                                            {
-                                                <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
-                                                    <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
-
-                                                </video>
-                                            }
-
-
-                                            else
-                                            {
-                                                <iframe width="420" height="345" style="width:99.5%;border:0; margin:0px 0px 15px 0px;" src="@Url.Content(Model.VideoLink)"></iframe>
-
-                                            }
-                                        }
-
-                                            </p>
+                                        </p>
                                         </div><!--end of col-md-12-->
 
                                     </div>
@@ -311,7 +327,7 @@
 
                                                         </span>
                                                     </div>
-                                                
+
 
                                                     <div class="form-group">
                                                         @Html.LabelFor(model => model.ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -996,7 +1012,21 @@
                                         </div><!--end of col-md-12-->
 
                                     </div>
+                                    <div class="card-footer ">
+                                        <div class="row">
 
+                                            <div class="col-md-12 mc-button-area">
+                                                @if (ViewBag.actiontype == "IRFCandidate")
+                                                {
+                                                    @Html.ActionLink("Back to List", "GetCandidateStatus", "IRF", new { id = ViewBag.IRFID }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                }
+                                                else if (ViewBag.actiontype == "Candidate")
+                                                {
+                                                    @Html.ActionLink("Back to List", "CandidateTimeline", "Candidate", null, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
                                     @Html.HiddenFor(m => m.id)
                                     @Html.HiddenFor(m => m.IRFId)
                                     @Html.HiddenFor(m => m.InterviewId)
@@ -1010,45 +1040,45 @@
                                 </div>
                             </form>
 
-                        <div id="myModal" class="modal modal-bg">
-                            <!-- Modal content -->
-                            <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
-                                 
+                            <div id="myModal" class="modal modal-bg">
+                                <!-- Modal content -->
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
 
 
-                                    <div class="filheader">
-                                        <div class="filavatar">
-                
-                                            <svg  class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)"  d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z" /></svg>
+
+                                        <div class="filheader">
+                                            <div class="filavatar">
+
+                                                <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z" /></svg>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="ApproveModalLabel"> Approved For Next Round</h5>
                                         </div>
-                                        <h5 class="modal-title pull-left" id="ApproveModalLabel"> Approved For Next Round</h5>
-                                    </div>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true" id="approvePopUp">&times;</span>
-                                    </button>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true" id="approvePopUp">&times;</span>
+                                        </button>
 
 
 
-                                    <div class="modal-body">
-                                        <div class="form-group">
+                                        <div class="modal-body">
+                                            <div class="form-group">
 
-                                            <label for="approveDropdown" class="control-label">Approved For Next Round</label>
-                                            <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                                                <label for="approveDropdown" class="control-label">Approved For Next Round</label>
+                                                <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                                            </div>
+                                            <div id="approvalComments" class="form-group">
+                                                <label class="control-label">Approval Comments</label>
+                                                <input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px">
+                                            </div>
+                                            <div>
+                                                <input type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                                            </div>
                                         </div>
-                                        <div id="approvalComments" class="form-group">
-                                            <label class="control-label">Approval Comments</label>
-                                            <input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px">
-                                        </div>
-                                        <div>
-                                            <input type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
-                                        </div>
+
                                     </div>
 
                                 </div>
-
                             </div>
-                        </div>
 
                             <div id="mySelectionModal" class="modal modal-bg" tabindex="-1" role="dialog" aria-labelledby="mySelectionModalLabel" aria-hidden="true">
                                 <!-- Modal content -->

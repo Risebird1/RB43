@@ -1,0 +1,28 @@
+/****** Object:  StoredProcedure [dbo].[usp_GetAccounts]    Script Date: 24-03-2020 8.20.45 PM ******/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_UpdateUploadedVideoLink'))
+BEGIN
+    DROP PROCEDURE dbo.usp_UpdateUploadedVideoLink
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+CREATE PROCEDURE [dbo].[usp_UpdateUploadedVideoLink]  
+@interviewId int,
+@videoLink varchar(1000)
+AS  
+Begin 
+
+update InterviewComments set VideoLink=@videoLink where InterviewId=@interviewId
+
+End
+GO
+
+

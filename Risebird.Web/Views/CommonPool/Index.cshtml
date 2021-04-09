@@ -4,6 +4,10 @@
 @using Risebird.Entities.ViewModel
 @using X.PagedList.Mvc.Core;
 @using X.PagedList;
+
+@using Microsoft.Extensions.Configuration;
+@inject IConfiguration configuration
+
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Common Pool";
@@ -335,7 +339,7 @@
                                                     {
                                                         <div class="count-bg"><span>@item.MeetingPatchCount</span></div>
                                                     }
-                                                    @if (item.VideoLink.Contains(".mp4"))
+                                                    @*@if (item.VideoLink.Contains(".mp4"))
                                                     {
                                                         @if (item.ThumbnailImage != null)
                                                         {
@@ -344,6 +348,8 @@
                                                         <video controls class="video-thumb">
                                                             <source src="@item.VideoLink" type="video/mp4">
                                                         </video>
+                                                       
+                                                        }
                                                         @if (item.CandidateAvailable == "Available")
                                                         {
                                                             <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid })'" style=" cursor: pointer;"></a>
@@ -363,8 +369,29 @@
                                                         {
                                                             <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid })'" style=" cursor: pointer;"></a>
                                                         }
-                                                    }
+                                                    }*@
+                                                    @if (item.VideoLink != null && Url.Content(item.VideoLink) != null)
+                                                    {
+                                                        string appendTime;
+                                                        if (item.ThumbnailTimeSeconds == 0)
+                                                        {
+                                                            appendTime = configuration["ThumbnailTimeDefault"];
+                                                        }
+                                                        else
+                                                        {
+                                                            appendTime = item.ThumbnailTimeSeconds.ToString();
+                                                        }
+                                                        var src = item.VideoLink + "#t=" + appendTime;
 
+
+                                                        <video class="video-thumb">
+                                                            <source src="@src" type="video/mp4">
+                                                        </video>
+                                                    }
+                                                    @if (item.CandidateAvailable == "Available")
+                                                    {
+                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid })'" style=" cursor: pointer;"></a>
+                                                    }
 
                                                 </div>
                                                 <div class="video-card-body">
@@ -403,15 +430,16 @@
                                                                 <span class="designation pull-left">@item.JDTiltle</span>
                                                             }
                                                         }
-                                                        else { <span></span>}
+                                                        else
+                                                        { <span></span>}
                                                         <span class="pull-left">
                                                             @if (item.CandidateAvailable == "Available")
                                                             {
-                                                            <span class="available"> &nbsp; @item.CandidateAvailable</span>
+                                                                <span class="available"> &nbsp; @item.CandidateAvailable</span>
                                                             }
                                                             else
                                                             {
-                                                        <span class="unavailable"> &nbsp; @item.CandidateAvailable</span>}
+                                                                <span class="unavailable"> &nbsp; @item.CandidateAvailable</span>}
 
                                                         </span>
                                                         <span class="pull-right">
@@ -468,7 +496,7 @@
                                                                 }
                                                             }
                                                         </span>
-                                                        
+
 
                                                         @if (item.MobileNumber != null)
                                                         {
@@ -504,17 +532,18 @@
 
                                                         @if (item.joiningTime != null && item.joiningTime != "")
                                                         {
-                                                        @if (item.joiningTime.Length > 12)
-                                                        {
+                                                            @if (item.joiningTime.Length > 12)
+                                                            {
 
                                                                 <a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="join"> @item.joiningTime</span>
+                                                            }
                                                         }
                                                         else
-                                                        {
-                                                                <span class="join"> @item.joiningTime</span>
-                                                        }
-                                                        }
-                                                        else { <span></span>}
+                                                        { <span></span>}
                                                     </div>
 
                                                     <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
@@ -534,7 +563,7 @@
                                                         <span>Expected Salary:</span>
                                                         @if (item.expectedPerHourRate != null && item.expectedPerHourRate != "")
                                                         {
-                                                        @if (@item.expectedPerHourRate.Length > 5)
+                                                            @if (@item.expectedPerHourRate.Length > 5)
                                                             {
                                                                 <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>}
 
@@ -542,7 +571,8 @@
                                                             {
                                                                 <span>@item.expectedPerHourRate</span>}
                                                         }
-                                                        else { <span></span>}
+                                                        else
+                                                        { <span></span>}
                                                     </div>
 
                                                     <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
@@ -558,7 +588,8 @@
                                                                 else
                                                                 {<span>@item.preferredLocation</span>}
                                                             }
-                                                            else { <span></span>}
+                                                            else
+                                                            { <span></span>}
                                                         </span>
 
                                                     </div>

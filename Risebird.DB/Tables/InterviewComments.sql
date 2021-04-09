@@ -36,7 +36,8 @@ CREATE TABLE [dbo].[InterviewComments](
 	[MoveToCP] [bit] NULL,
     [CandidateAvailable] [bit] NULL,
     [IsLock] [bit] NULL,
-    [ClientUserid] [int] NULL
+    [ClientUserid] [int] NULL,
+    [ThumbnailTimeSeconds][int] NULL
 
 	CONSTRAINT [FK_Interview] FOREIGN KEY (InterviewId) REFERENCES InterviewMeetings(id),
 
@@ -138,7 +139,16 @@ BEGIN
     ALTER TABLE InterviewComments
     Add ClientUserid int
 END
- 
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ThumbnailTimeSeconds')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    ADD ThumbnailTimeSeconds int
+END 
 End
 GO
 

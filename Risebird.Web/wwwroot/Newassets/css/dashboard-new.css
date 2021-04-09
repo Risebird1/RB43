@@ -86,7 +86,7 @@ body {
 }
 :root {
     --marquee-width: 80vw;
-    --marquee-height: 20vh;
+    /*--marquee-height: 20vh;*/
     /* --marquee-elements: 12; */ /* defined with JavaScript */
     --marquee-elements-displayed: 5;
     --marquee-element-width: calc(var(--marquee-width) / var(--marquee-elements-displayed));
@@ -95,7 +95,7 @@ body {
 
 .marquees {
     width: var(--marquee-width);
-    height: var(--marquee-height);
+    /*height: var(--marquee-height);*/
 
     color: #eee;
     overflow: hidden;
@@ -132,7 +132,7 @@ body {
 }
 .marquees-content {
     list-style: none;
-    height: 100%;
+    /*height: 100%;*/
     display: flex;
     animation: scrolling var(--marquee-animation-duration) linear infinite;
 }
@@ -156,7 +156,7 @@ body {
     /* text-align: center; */
     flex-shrink: 0;
     width: var(--marquee-element-width);
-    max-height: 100%;
+    /*max-height: 100%;*/
     width: auto;
     font-size: calc(var(--marquee-height)*3/4); /* 5rem; */
     white-space: nowrap;
@@ -170,7 +170,7 @@ body {
 
     :root {
         --marquee-width: 100vw;
-        --marquee-height: 16vh;
+        /*--marquee-height: 16vh;*/
         --marquee-elements-displayed: 3;
     }
 

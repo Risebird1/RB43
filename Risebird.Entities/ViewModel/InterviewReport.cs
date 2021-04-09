@@ -304,6 +304,9 @@ namespace Risebird.Entities.ViewModel
         public int InterviewerProfileId { get; set; }
         public int Userid { get; set; }
         public SelectList DomainList { get; set; }
+
+        [Display(Name = "Thumbnail Time(Seconds)")]
+        public int ThumbnailTimeSeconds { get; set; }
     }
     public class RBInterviewDetails
     {
