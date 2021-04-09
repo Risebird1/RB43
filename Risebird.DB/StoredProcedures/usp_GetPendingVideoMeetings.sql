@@ -1,0 +1,30 @@
+/****** Object:  StoredProcedure [dbo].[usp_GetAccounts]    Script Date: 24-03-2020 8.20.45 PM ******/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetPendingVideoMeetings'))
+BEGIN
+    DROP PROCEDURE dbo.usp_GetPendingVideoMeetings
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+CREATE PROCEDURE [dbo].[usp_GetPendingVideoMeetings]  
+@timeStart datetime,
+@timeEnd datetime
+AS  
+Begin 
+
+select im.id as imid, im.ZoomMeetingId, im.interviewDate from InterviewMeetings im 
+left join InterviewComments ic on ic.InterviewId=im.id
+where im.interviewDate<@timeEnd and im.interviewDate>@timeStart and (ic.VideoLink is null or ic.VideoLink='') and im.ZoomMeetingId is not null
+
+End
+GO
+
+

@@ -950,6 +950,7 @@ namespace Risebird.Business
                 reportModel.IRFName = irfDetails.IRFId;
                 reportModel.PrimarySkill = irfDetails.JDTiltle.Split("|")[0];
                 reportModel.joiningTime = interviewDetails.joiningTime;
+                reportModel.ThumbnailTimeSeconds = interviewDetails.ThumbnailTimeSeconds;
                 return reportModel;
             }
 
@@ -1223,12 +1224,7 @@ namespace Risebird.Business
         {
             try
             {
-                var meeting = await _meetingRespository.GetMeetingbyid(id, Email);
-                if (meeting == null)
-                    return null;
-                else
-                    return meeting;
-
+                return await _meetingRespository.GetMeetingbyid(id, Email);
             }
 
             catch (Exception e)

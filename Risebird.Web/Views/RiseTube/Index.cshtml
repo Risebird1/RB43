@@ -4,6 +4,10 @@
 @using Risebird.Entities.ViewModel
 @using X.PagedList.Mvc.Core;
 @using X.PagedList;
+@using Microsoft.Extensions.Configuration;
+
+@inject IConfiguration configuration
+
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "RiseTube";
@@ -217,7 +221,7 @@
                                                     {
                                                         <div class="count-bg"><span>@item.MeetingPatchCount</span></div>
                                                     }
-                                                    @if (item.VideoLink.Contains(".mp4"))
+                                                    @*@if (item.VideoLink.Contains(".mp4"))
                                                     {
                                                         @if (item.ThumbnailImage != null)
                                                         {
@@ -226,6 +230,28 @@
                                                         <video controls class="video-thumb" controlsList="nodownload">
                                                             <source src="@item.VideoLink" type="video/mp4">
                                                         </video>
+
+                                                        @if (item.VideoLink != null && Url.Content(item.VideoLink) != null)
+                                                        {
+                                                            string appendTime;
+                                                            if (item.ThumbnailTimeSeconds == 0)
+                                                            {
+                                                                appendTime = configuration["ThumbnailTimeDefault"];
+                                                            }
+                                                            else
+                                                            {
+                                                                appendTime = item.ThumbnailTimeSeconds.ToString();
+                                                            }
+                                                            var src = item.VideoLink + "#t=" + appendTime;
+                                                           
+                                                            <video class="video-thumb" controlsList="nodownload">
+                                                                <source src="@src" type="video/mp4">
+                                                            </video>
+                                                        }
+
+
+
+
                                                         <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
                                                     }
                                                     else
@@ -239,7 +265,30 @@
                                                             <img src="~/RiseTube/img/video-icon.png" class="thumb-height" />
                                                         }
                                                         <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
+                                                    }*@
+
+                                                    @if (item.VideoLink != null && Url.Content(item.VideoLink) != null)
+                                                    {
+                                                        string appendTime;
+                                                        if (item.ThumbnailTimeSeconds == 0)
+                                                        {
+                                                            appendTime = configuration["ThumbnailTimeDefault"];
+                                                        }
+                                                        else
+                                                        {
+                                                            appendTime = item.ThumbnailTimeSeconds.ToString();
+                                                        }
+                                                        var src = item.VideoLink + "#t=" + appendTime;
+                                                        
+                                                        <video class="video-thumb" controlsList="nodownload">
+                                                            <source src="@src" type="video/mp4">
+                                                        </video>
                                                     }
+
+
+
+
+                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
 
 
                                                 </div>
@@ -271,7 +320,8 @@
                                                             {
                                                                 <span class="designation">@item.JDTiltle</span>}
                                                         }
-                                                        else { <span></span>}
+                                                        else
+                                                        { <span></span>}
 
 
                                                         @if (item.MobileNumber != null && !(ViewBag.Profile == "CuratedUser"))
@@ -288,7 +338,7 @@
                                                                 <span>Matching Fee:</span> @if (@item.CostEstimate.Length > 10)
                                                                 {
                                                                     <a href="#" data-tooltip="@item.CostEstimate"> <span class="expected-salari">@item.CostEstimate</span></a>
-                                                                 }
+                                                                }
 
                                                                 else
                                                                 {
@@ -367,8 +417,9 @@
                                                             else
                                                             {
                                                                 <span>@item.expectedPerHourRate</span>}
-                                                        }
-                                                        else { <span></span>}
+                                                    }
+                                                    else
+                                                    { <span></span>}
                                                     </div>
 
                                                     <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
@@ -381,13 +432,14 @@
                                                                 @if (@item.ClientName.Length > 10)
                                                                 {
                                                                     <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.ClientName</span></a>
-                                                                    }
+                                                                }
                                                                 else
                                                                 {
                                                                     <span>@item.ClientName</span>
-                                                                    }
+                                                                }
                                                             }
-                                                            else { <span></span>}
+                                                            else
+                                                            { <span></span>}
                                                         </span>
 
                                                     </div>

@@ -1,6 +1,10 @@
 ﻿
 
 @model Risebird.Entities.ViewModel.InterviewReport
+
+@using Microsoft.Extensions.Configuration;
+
+@inject IConfiguration configuration
 @{
     ViewData["Title"] = "Interview Report";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -251,28 +255,41 @@
                                             @Html.HiddenFor(x => Model.VideoLink)
                                             @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                             {
-                                                if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                                @*if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                                    {
+                                                        <video width="320" height="240" style="width:100%" controls controlsList="nodownload">
+                                                            <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                                                            <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                    }
+
+                                                    else if (Url.Content(Model.VideoLink).Contains("manifest"))
+                                                    {
+                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
+                                                            <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+
+                                                        </video>
+                                                    }
+                                                    else
+                                                    {
+                                                        <iframe width="420" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
+
+                                                    }*@
+                                                string appendTime;
+                                                if (Model.ThumbnailTimeSeconds == 0)
                                                 {
-                                                    <video width="320" height="240" style="width:100%" controls controlsList="nodownload">
-                                                        <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                                        <source src=@Url.Content(Model.VideoLink) type="video/ogg">
-
-                                                        Your browser does not support the video tag.
-                                                    </video>
-                                                }
-
-                                                else if (Url.Content(Model.VideoLink).Contains("manifest"))
-                                                {
-                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
-                                                        <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
-
-                                                    </video>
+                                                    appendTime = configuration["ThumbnailTimeDefault"];
                                                 }
                                                 else
                                                 {
-                                                    <iframe width="420" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
-
+                                                    appendTime = Model.ThumbnailTimeSeconds.ToString();
                                                 }
+                                                var src = Model.VideoLink + "#t=" + appendTime;
+                                                <video width="400" controls="controls" preload="metadata">
+                                                    <source src='@src' type="video/mp4">
+                                                </video>
                                             }
                                         </p>
 
@@ -344,7 +361,7 @@
 
                                                     </span>
                                                 </div>
-                                                
+
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                     @Html.TextBoxFor(m => m.ApprovalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
