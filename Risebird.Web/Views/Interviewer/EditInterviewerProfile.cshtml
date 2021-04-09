@@ -823,10 +823,10 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekday", (SelectList)Model.WeekDayList, new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekday", (SelectList)Model.WeekDayList, "Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekend", (SelectList)Model.WeekEndList, new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekend", (SelectList)Model.WeekEndList, "Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
                                                         <td>
                                                             <div class="mdc-checkbox">
@@ -856,10 +856,10 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekday, (SelectList)Model.WeekDayList, new { @class = "select-css form-control text-box single-line" })
+                                                                @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekday, (SelectList)Model.WeekDayList, "Select", new { @class = "select-css form-control text-box single-line" })
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekend, (SelectList)Model.WeekEndList, new { @class = "select-css form-control text-box single-line" })
+                                                                @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekend, (SelectList)Model.WeekEndList, "Select", new { @class = "select-css form-control text-box single-line" })
                                                             </td>
                                                             <td>
                                                                 <div class="mdc-checkbox">
