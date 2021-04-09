@@ -1012,7 +1012,21 @@
                                         </div><!--end of col-md-12-->
 
                                     </div>
+                                    <div class="card-footer ">
+                                        <div class="row">
 
+                                            <div class="col-md-12 mc-button-area">
+                                                @if (ViewBag.actiontype == "IRFCandidate")
+                                                {
+                                                    @Html.ActionLink("Back to List", "GetCandidateStatus", "IRF", new { id = ViewBag.IRFID }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                }
+                                                else if (ViewBag.actiontype == "Candidate")
+                                                {
+                                                    @Html.ActionLink("Back to List", "CandidateTimeline", "Candidate", null, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
                                     @Html.HiddenFor(m => m.id)
                                     @Html.HiddenFor(m => m.IRFId)
                                     @Html.HiddenFor(m => m.InterviewId)
