@@ -65,8 +65,8 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");//"CuratedUser";
-                var emailid = HttpContext.Session.GetString("email")?.Trim();//"harshitjajoorb@gmail.com"
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance")
                 {
@@ -105,58 +105,8 @@ namespace Risebird.Web.Controllers
                     if (HttpContext.Session.GetString("IRFfilters") != null)
                     {
                         var filter = JsonConvert.DeserializeObject<IRFFilter>(HttpContext.Session.GetString("IRFfilters"));
-                        if (filter.StartDate != null && filter.EndDate != null)
-                        {
-                            model.IRFList = irfList.Where(t => t.StartDate >= filter.StartDate && t.EndDate <= filter.EndDate).ToList();
-                        }
-                        else
-                        {
-                            model.IRFList = irfList.Where(x => x.EndDate >= DateTime.Now);
-                        }
-                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = irfList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                        filter.RFID = filter.RFID == null ? filter.RFID = model.IRFList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
-                        filter.ArchiveStatus = filter.ArchiveStatus ?? (filter.ArchiveStatus = model.IRFList.Select(x => x.ArchiveStatus).ToArray());
-                        filter.SubscriptionStatus = filter.SubscriptionStatus ?? (filter.SubscriptionStatus = model.IRFList.Select(x => x.SubscriptionStatus).ToArray());
-                        filter.ClientName = filter.ClientName == null ? filter.ClientName = model.IRFList.Select(x => x.ClientCompName).ToArray() : filter.ClientName = filter.ClientName;
-                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                        ApplyIRFFilter(filter, model);
 
-                        model.IRFList = model.IRFList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                        && filter.RFID.Contains(c.IRFId)
-                        && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
-                        && (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
-                        && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientCompName) : c.ClientCompName == null)
-                        && (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.JDTiltle) : c.JDTiltle == null)).ToList();
-
-                        if (model.IRFList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
-                        {
-                            model.IRFList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
-                        }
-                        foreach (var item in model.IRFList)
-                        {
-                            if (item.IsPaused)
-                            {
-                                item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
-                                item.IRFStatus = "Paused";
-                            }
-
-                            else if (item.IsDeleted)
-                            {
-                                item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
-                                item.IRFStatus = "Archived";
-                            }
-
-                            else if (item.EndDate >= DateTime.Now)
-                            {
-                                item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
-                                item.IRFStatus = "Active";
-                            }
-                            else
-                            {
-                                item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
-                                item.IRFStatus = "Archived";
-                            }
-                        }
-                        model.IRFList = model.IRFList.OrderByDescending(x => x.EndDate).ToList();
                     }
 
                     model.Profile = profileName;
@@ -193,66 +143,17 @@ namespace Risebird.Web.Controllers
                 {
 
                     var model = new IRFViewModel();
-                    var irfList = _irfService.GetAllIRFs(emailid, profileName);
-                    irfList.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
-                    if (filter.StartDate != null && filter.EndDate != null)
-                    {
-                        irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
-                    }
-                    else
-                    {
-                        irfList = irfList.Where(x => x.EndDate.Date > DateTime.Now);
-                    }
                     if (profileName != null && profileName.Contains("Client"))
                     {
                         model.IsClientUser = true;
                     }
-                    filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = irfList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                    filter.RFID = filter.RFID == null ? filter.RFID = irfList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
-                    filter.ArchiveStatus = filter.ArchiveStatus ?? (filter.ArchiveStatus = irfList.Select(x => x.ArchiveStatus).ToArray());
-                    filter.SubscriptionStatus = filter.SubscriptionStatus ?? (filter.SubscriptionStatus = irfList.Select(x => x.SubscriptionStatus).ToArray());
-                    filter.ClientName = filter.ClientName == null ? filter.ClientName = irfList.Select(x => x.ClientCompName).ToArray() : filter.ClientName = filter.ClientName;
-                    filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
 
-                    irfList = irfList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                    && filter.RFID.Contains(c.IRFId)
-                    && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
-                    && (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
-                    && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientCompName) : c.ClientCompName == null)
-                    && (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.JDTiltle) : c.JDTiltle == null)).ToList();
+                    model.IRFList = _irfService.GetAllIRFs(emailid, profileName);
+                    model.IRFList.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
+                    model.IRFList = model.IRFList.Where(x => x.EndDate.Date > DateTime.Now).OrderByDescending(y => y.EndDate);
+                    
+                    ApplyIRFFilter(filter, model);
 
-
-                    if (irfList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
-                    {
-                        irfList = _irfService.GetAllIRFs(emailid, profileName).Where(x => x.StartDate.Date >= filter.StartDate && x.EndDate.Date <= filter.EndDate);
-                        irfList.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
-
-                    }
-                    foreach (var item in irfList)
-                    {
-                        if (item.IsPaused)
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
-                            item.IRFStatus = "Paused";
-                        }
-
-                        else if (item.IsDeleted)
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
-                            item.IRFStatus = "Archived";
-                        }
-                        else if (item.EndDate >= DateTime.Now)
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
-                            item.IRFStatus = "Active";
-                        }
-                        else
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
-                            item.IRFStatus = "Archived";
-                        }
-                    }
-                    model.IRFList = irfList.OrderByDescending(x => x.EndDate).ToList();
                     model.Profile = profileName;
                     return View(model);
 
@@ -266,6 +167,66 @@ namespace Risebird.Web.Controllers
             {
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+
+
+        private void ApplyIRFFilter(IRFFilter filter, IRFViewModel model)
+        {
+            if (filter.StartDate != null && filter.EndDate != null)
+            {
+                model.IRFList = model.IRFList.Where(t => t.StartDate >= filter.StartDate && t.EndDate <= filter.EndDate).ToList();
+            }
+            else
+            {
+                model.IRFList = model.IRFList.Where(x => x.EndDate >= DateTime.Now);
+            }
+            filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+            filter.RFID = filter.RFID == null ? filter.RFID = model.IRFList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
+            filter.ArchiveStatus = filter.ArchiveStatus ?? (filter.ArchiveStatus = model.IRFList.Select(x => x.ArchiveStatus).ToArray());
+            filter.SubscriptionStatus = filter.SubscriptionStatus ?? (filter.SubscriptionStatus = model.IRFList.Select(x => x.SubscriptionStatus).ToArray());
+            filter.ClientName = filter.ClientName == null ? filter.ClientName = model.IRFList.Select(x => x.ClientCompName).ToArray() : filter.ClientName = filter.ClientName;
+            //filter.EndClientName = filter.EndClientName == null ? filter.EndClientName = model.IRFList.Select(x => x.ClientName).ToArray() : filter.EndClientName = filter.EndClientName;
+            filter.EndClientName = filter.EndClientName ?? model.IRFList.Select(x => x.ClientName).ToArray();
+            filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+
+            model.IRFList = model.IRFList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+            && filter.RFID.Contains(c.IRFId)
+            && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
+            && (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
+            && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientCompName) : c.ClientCompName == null)
+            && (filter.EndClientName.Count() > 0 ? filter.EndClientName.Contains(c.ClientName) : c.ClientName == null)
+            && (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.JDTiltle) : c.JDTiltle == null)).ToList();
+
+            if (model.IRFList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
+            {
+                model.IRFList = model.IRFList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
+            }
+            foreach (var item in model.IRFList)
+            {
+                if (item.IsPaused)
+                {
+                    item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
+                    item.IRFStatus = "Paused";
+                }
+
+                else if (item.IsDeleted)
+                {
+                    item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                    item.IRFStatus = "Archived";
+                }
+
+                else if (item.EndDate >= DateTime.Now)
+                {
+                    item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                    item.IRFStatus = "Active";
+                }
+                else
+                {
+                    item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                    item.IRFStatus = "Archived";
+                }
+            }
+            model.IRFList = model.IRFList.OrderByDescending(x => x.EndDate).ToList();
         }
 
         [Authorize]

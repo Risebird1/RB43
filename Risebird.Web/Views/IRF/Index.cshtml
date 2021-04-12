@@ -16,11 +16,13 @@
     string[] SubscriptionStatus = new string[] { };
     string[] ClientRole = new string[] { };
     string[] PrimarySkill = new string[] { };
+    string[] EndClientName = new string[] { };
+
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters") != null)
 {
     filter = JsonConvert.DeserializeObject<IRFFilter>
-(HttpContextAccessor.HttpContext.Session.GetString("IRFfilters"));
+    (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters"));
     strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
     primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
@@ -30,7 +32,7 @@
     ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
     ClientRole = filter.ClientRole != null ? filter.ClientRole : new string[] { };
     PrimarySkill = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
-
+    EndClientName = filter.EndClientName != null ? filter.EndClientName : new string[] { };
 }
 <link href="~/Newassets/css/irf.css?v=123456" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=123456" />
@@ -172,6 +174,21 @@
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.IRFList.Select(x => x.ClientCompName).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">End Client Name</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="EndClientName" name="EndClientName" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.IRFList.Select(x => x.ClientName).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -1449,6 +1466,12 @@
                 selectedClass: 'active1',
                  buttonWidth: '100%',
                 maxHeight: 200
+             });
+            $("#EndClientName").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
             });
         });
 
@@ -1464,6 +1487,7 @@
             var subscriptionStatus =  @Html.Raw(Json.Serialize(SubscriptionStatus));
             var clientRole =  @Html.Raw(Json.Serialize(ClientRole));
             var primarySkill= @Html.Raw(Json.Serialize(PrimarySkill));
+            var endClientName =  @Html.Raw(Json.Serialize(EndClientName));
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
@@ -1473,6 +1497,7 @@
             $("#SubscriptionStatus").val(subscriptionStatus);
             $("#ClientRole").val(clientRole);
             $("#PrimarySkill").val(primarySkill);
+            $("#EndClientName").val(endClientName);
 
             var form = $("#form").serialize();
 

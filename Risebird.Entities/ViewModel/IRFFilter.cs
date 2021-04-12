@@ -9,6 +9,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public string[] ClientName { get; set; }
+        public string[] EndClientName { get; set; }
         public string[] ArchiveStatus { get; set; }
         public string[] SubscriptionStatus { get; set; }
         public string[] ClientRole { get; set; }

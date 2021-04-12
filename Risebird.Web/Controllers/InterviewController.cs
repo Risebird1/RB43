@@ -498,7 +498,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 14].Value = item.risebirdHR;
                         Sheet.Cells[i, 15].Value = item.MobileNumber;
                         Sheet.Cells[i, 16].Value = item.Client;
-                        Sheet.Cells[i, 17].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 17].Value = item.CandidateClientHR;
                         Sheet.Cells[i, 18].Value = item.ClientName;
                         if (!string.IsNullOrEmpty(item.VideoLink))
                         {
