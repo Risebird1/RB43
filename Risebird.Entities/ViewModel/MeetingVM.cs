@@ -75,7 +75,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Interviewer")]
         public string interviewer { get; set; }
         [Display(Name = "Preferred Location")]
-       
+
         public string preferredLocation { get; set; }
         [Display(Name = "Staffing Agency")]
 
@@ -84,7 +84,7 @@ namespace Risebird.Entities.ViewModel
 
         public string expectedPerHourRate { get; set; }
         [Display(Name = "Notice Period")]
- 
+
         public string joiningTime { get; set; }
         public string InterviewerComment { get; set; }
         public int? InterviewStatus { get; set; }
@@ -238,6 +238,7 @@ namespace Risebird.Entities.ViewModel
         public bool UnlockVideo { get; set; }
         public string CandidateClientHR { get; set; }
         public int ThumbnailTimeSeconds { get; set; }
+        public string WhoJoined { get; set; }
     }
     public class VedioComments
     {
