@@ -67,7 +67,7 @@
     <div>
         <div>
             <div>
-                <div style=" margin-bottom: 0px; top: -20px; position: relative;">
+                <div style=" margin-bottom: 0px; position: relative;">
 
                     <div class="marquees">
                         <ul class="marquees-content">
@@ -214,7 +214,7 @@
                                 </table>
                             </li>
                             <li style="border: 0px; padding: 0px;  line-height: 30px;">
-                                <table width="100%">
+                                <table width="100%" class="no-border my_interview">
                                     <tr>
                                         <td class="un-right">
                                             @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>*@
@@ -224,13 +224,13 @@
                                                 <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('UnAttendedZoomLink')">
                                                     <div class="card-image">
                                                         <div class="header-front"></div>
-                                                        <span style="cursor:pointer" id="ribbonUnAttendedZoomLinkcount" class="card-title">@Model.NotUpdatedMeetingsObj.UnAttendedZoomLink</span>
+                                                        <span style="cursor:pointer" id="ribbonUnAttendedZoomLinkcount" class="card-title">0</span>
                                                     </div>
                                                 </div>
                                                 <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('UnAttendedZoomLink')">
                                                     <div class="card-image">
                                                         <div class="header-back"></div>
-                                                        <span style="cursor:pointer" id="ribbonUnAttendedZoomLinkcount_1" class="card-title">@Model.NotUpdatedMeetingsObj.UnAttendedZoomLink</span>
+                                                        <span style="cursor:pointer" id="ribbonUnAttendedZoomLinkcount_1" class="card-title">0</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2019,6 +2019,15 @@
     });
 </script>
 
-<!-- PAGE CONTENT WRAPPER -->
-/* CSS Document */
+<script>
+    const root = document.documentElement;
+    const marqueeElementsDisplayed = getComputedStyle(root).getPropertyValue("--marquee-elements-displayed");
+    const marqueeContent = document.querySelector("ul.marquees-content");
+
+    root.style.setProperty("--marquee-elements", marqueeContent.children.length);
+
+    for (let i = 0; i < marqueeElementsDisplayed; i++) {
+        marqueeContent.appendChild(marqueeContent.children[i].cloneNode(true));
+    }
+</script>
 
