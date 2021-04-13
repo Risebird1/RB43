@@ -56,7 +56,7 @@ namespace Risebird.Functions
             string interviewOnDevice = string.Empty;
             string currentEmployerName = string.Empty;
             string textreminder = string.Empty;
-            long? zoommeetingId = null;
+            long zoommeetingId = 0;
             var children = stuff.Children().GetEnumerator();
             while (children.MoveNext())
             {
@@ -130,7 +130,7 @@ namespace Risebird.Functions
                                         }
                                         catch (Exception)
                                         {
-                                            zoommeetingId = null;
+                                            zoommeetingId = 0;
                                         }
                                        
                                     }

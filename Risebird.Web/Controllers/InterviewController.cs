@@ -1294,6 +1294,28 @@ namespace Risebird.Web.Controllers
                         {
                             meeting.QCInterviewer = meeting.QCInterviewer.Trim();
                         }
+
+                        if (!string.IsNullOrEmpty(meeting.zoomLink))
+                        {
+                            try
+                            {
+                                meeting.ZoomMeetingId = Convert.ToInt64(meeting.zoomLink.Split('/').Last());
+                            }
+                            catch (Exception)
+                            {
+                                try
+                                {
+                                    var link = meeting.zoomLink.Split('?').First();
+                                    meeting.ZoomMeetingId = Convert.ToInt64(link.Split('/').Last());
+                                }
+                                catch (Exception)
+                                {
+                                    meeting.ZoomMeetingId = 0;
+                                }
+
+                            }
+                        }
+
                         if (ModelState.IsValid)
                         {
                             if (meeting.File == null && (meeting.resumeLink == null))
@@ -1520,6 +1542,29 @@ namespace Risebird.Web.Controllers
                         {
                             meetingUpdated.QCInterviewer = meetingUpdated.QCInterviewer.Trim();
                         }
+
+                        if (!string.IsNullOrEmpty(meetingUpdated.zoomLink))
+                        {
+                            try
+                            {
+                                meetingUpdated.ZoomMeetingId = Convert.ToInt64(meetingUpdated.zoomLink.Split('/').Last());
+                            }
+                            catch (Exception)
+                            {
+                                try
+                                {
+                                    var link = meetingUpdated.zoomLink.Split('?').First();
+                                    meetingUpdated.ZoomMeetingId = Convert.ToInt64(link.Split('/').Last());
+                                }
+                                catch (Exception)
+                                {
+                                    meetingUpdated.ZoomMeetingId = 0;
+                                }
+
+                            }
+                            
+                        }
+
                         if (ModelState.IsValid)
                         {
                             //String uploadedFileURL = String.Empty;

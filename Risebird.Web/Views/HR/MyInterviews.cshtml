@@ -858,8 +858,14 @@
                                                                             {
                                                                                 <td></td>
                                                                             }
-
-                                                                            <td> @item.InterviewStatusDesc</td>
+                                                                            @if (item.InterviewStatusDesc != null && item.InterviewStatusDesc != "")
+                                                                            {
+                                                                                <td> @item.InterviewStatusDesc</td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+}
                                                                             @if (item.videoLink != null && item.videoLink != "")
                                                                             {
                                                                                 <td> <a id="videoId" target="_blank" title="Video" href=@item.videoLink.Replace(" ","%20")>Video</a> </td>
@@ -1273,7 +1279,7 @@
         var html = '';
         if (data.length == 0) {
             html += '  <tr>';
-            html += ' <td colspan="9" class="text-center">No data available in table</td>';
+            html += ' <td colspan="10" class="text-center">No data available in table</td>';
             html += ' </tr>';
         }
 
@@ -1488,17 +1494,20 @@
             else {
                 html += '  <td></td>';
             }
+            if (data[i].interviewStatusDesc != null && data[i].interviewStatusDesc != "") {
+                html += '   <td>' + data[i].interviewStatusDesc + '</td>';
+            }
+            else { html += '  <td></td>'; }
 
-            html += '   <td>' + data[i].interviewStatusDesc + '</td>';
-            if (data[i].videoLink.length > 28) {
-                html += '    <td><a onclick="" data-tooltip="' + data[i].videoLink + '">' + data[i].videoLink.substring(0, 28) + '...</a></td>';
+            if (data[i].videoLink != null && data[i].videoLink != "") {
+
+                html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink.replace(" ", "%20") + '>Video</a> </td>';
+
             }
             else {
-                html += '<td> ' + data[i].videoLink + '</td>';
+                html += '<td>No Video</td>';
             }
-
-
-
+            html += ' <td style="text-align: center">';
             if (data[i].clientHrMobile != null && data[i].clientHrMobile != "") {
 
                 html += ' <input type="hidden" id="hidclienthr' + data[i].id + '" value="' + data[i].candidateClientHR + '"/> <button class="mdc-fab app-fab--absolute" aria-label="Click here to call Client HR">';

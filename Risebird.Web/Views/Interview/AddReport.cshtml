@@ -252,17 +252,11 @@
 
                                 @if (ViewBag.Profile != "Interviewer")
                                 {
-                                    <div class="row">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.ThumbnailTimeSeconds, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(model => model.ThumbnailTimeSeconds, new { type = "number", @class = "form-control text-box single-line" })
-                                        </div>
 
-                                    </div>
 
                                     <div class="row">
-                                        
-                                        <div class="col-md-6 col-sm-6 ">
+
+                                        <div class="col-md-6 col-sm-6">
 
                                             <div class="card">
 
@@ -330,7 +324,13 @@
                                             </div>
 
                                         </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.ThumbnailTimeSeconds, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.TextBoxFor(model => model.ThumbnailTimeSeconds, new { type = "number", @class = "form-control text-box single-line col-lg-12 col-md-12 col-sm-12 col-xs-12" })
+                                            </div>
 
+                                        </div>
                                     </div>
                                 }
 
@@ -491,12 +491,12 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <p style="min-height:20px;border:1px #1d181817 solid">
+                                        <div class="videoConplayer">
                                             @Html.HiddenFor(x => Model.VideoLink)
                                             @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                             {
                                                 string appendTime;
-                                                if(Model.ThumbnailTimeSeconds==0)
+                                                if (Model.ThumbnailTimeSeconds == 0)
                                                 {
                                                     appendTime = configuration["ThumbnailTimeDefault"];
                                                 }
@@ -504,12 +504,12 @@
                                                 {
                                                     appendTime = Model.ThumbnailTimeSeconds.ToString();
                                                 }
-                                                var src = Model.VideoLink + "#t=" +appendTime;
-                                                <video width="400" controls="controls" preload="metadata">
+                                                var src = Model.VideoLink + "#t=" + appendTime;
+                                                <video width="600" controls="controls" preload="metadata">
                                                     <source src='@src' type="video/mp4">
                                                 </video>
                                             }
-                                        </p>
+                                        </div>
 
 
                                     </div><!--end of col-md-12-->
@@ -1108,6 +1108,7 @@
                                                             </td>
                                                             <td class="control-width">
                                                                 @Html.TextBoxFor(m => m.Proctoring.LipsHeadphone, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+
                                                             </td>
 
                                                         </tr>
