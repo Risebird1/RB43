@@ -274,11 +274,10 @@ audio {
 }
 
     .my_interview .un-right .flipper {
-        position: relative;
-        top: -13px;
-        left: -18px;
-    }
-
+    position: relative;
+    top: -11px;
+    left: -17px;
+}
 .my_interview .countdown__timer {
     box-shadow: 0px 2px #cccccc80;
 }

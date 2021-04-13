@@ -87,6 +87,11 @@
                             Missing Zoom Link
                         </strong>
                     }
+                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                    {<strong>
+                            Participant Waiting
+                        </strong>
+                    }
 
                 </a>
             </div>
@@ -262,16 +267,15 @@
                                                     <th>Interview Date</th>
                                                     <th>Candidate Name</th>
                                                     <th>Candidate Email</th>
-
                                                     <th>Interviewer</th>
-
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
-
+                                                    <th>Client Name</th>
                                                     <th>Co-ordinating HR</th>
-
-
-
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                    {
+                                                        <th>Who Joined</th>
+                                                    }
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -280,16 +284,15 @@
                                                     <th>Interview Date</th>
                                                     <th>Candidate Name</th>
                                                     <th>Candidate Email</th>
-
                                                     <th>Interviewer</th>
-
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
-
+                                                    <th>Client Name</th>
                                                     <th>Co-ordinating HR</th>
-
-
-
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                    {
+                                                        <th>Who Joined</th>
+                                                    }
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -300,12 +303,7 @@
                                                         <td title=@item.IRFId> @item.IRFId </td>
                                                         <td> @item.interviewDate </td>
                                                         <td>@item.candidateName</td>
-
-
                                                         <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
-
-
-
                                                         @if (@item.interviewer != null || @item.interviewer != "")
                                                         {
                                                             <td>
@@ -316,9 +314,6 @@
                                                         {
                                                             <td></td>
                                                         }
-
-
-
                                                         @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
                                                         {
                                                             <td>Scheduled</td>
@@ -329,11 +324,12 @@
                                                         }
                                                         <td> @item.intervieweStatusStatDesc</td>
 
-
-
-
+                                                        <td>@item.Name</td>
                                                         <td>@item.HRCoordinatorEmailId</td>
-
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                        {
+                                                            <td>@item.WhoJoined</td>
+                                                        }
                                                     </tr>
                                                 }
                                             </tbody>
