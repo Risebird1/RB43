@@ -1156,14 +1156,16 @@
                 $("#ribbonunfilledcommentscount_1").text(data.unfilledCommentsCount);
                 $("#ribbonmissingzoomlinkcount_1").text(data.missingZoomLink);
                 $("#ribbonUnAttendedZoomLinkcount_1").text(data.unAttendedZoomLink);
+
+                if (parseInt(data.unAttendedZoomLink) > 0) {
+                    var audio = document.getElementById("chatAudio");
+                    audio.play();
+                    //Send Mail
+                }
             }
         });
         $(".flipper").toggleClass("flip");
         setTimeout(setRibbon, 30000);
-        //setTimeout(function () {
-        //    $(".flipper").removeClass("flip");
-        //}, 1000);
-
     }
     function OpenRibbonDetails(actionstatus) {
         window.location.href = "/Dashboard/UnassignedInterviews?actionstatus=" + actionstatus;
