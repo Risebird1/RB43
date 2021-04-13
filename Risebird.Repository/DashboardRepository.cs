@@ -914,7 +914,28 @@ namespace Risebird.Repository
                         query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where confirmationStatus=1 and (zoomLink is null or zoomLink='') and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID";
                     }
                 }
-
+                else if (actionstatus == "UnAttendedZoomLink")
+                {
+                    if (actiontype == 0)
+                    {
+                        query = "Select distinct * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id Outer Apply (select distinct STUFF((SELECT distinct ', ' + t1.ParticipantName from ZoomMeetingTransmission t1 where t.Meetingid = t1.Meetingid FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'),1,2,'') WhoJoined from ZoomMeetingTransmission t where t.Event='PARTICIPANT_JOINED' and t.Meetingid=im.ZoomMeetingId) WhoJoined where im.ZoomMeetingId in (Select t1.meetingid from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io' group by meetingid) as t1 join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io' group by meetingid) as t2 on t1.Meetingid=t2.Meetingid where (t1.meetingMember-t2.meetingMember)=1)";
+                    }
+                    else
+                    {
+                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId Outer Apply (select distinct STUFF((SELECT distinct ', ' + t1.ParticipantName from ZoomMeetingTransmission t1 where t.Meetingid = t1.Meetingid FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'),1,2,'') WhoJoined from ZoomMeetingTransmission t where t.Event='PARTICIPANT_JOINED' and t.Meetingid=im.ZoomMeetingId) WhoJoined where confirmationStatus=1 and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID and im.ZoomMeetingId in (Select t1.meetingid from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io' group by meetingid) as t1 join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io' group by meetingid) as t2 on t1.Meetingid=t2.Meetingid where (t1.meetingMember-t2.meetingMember)=1)";
+                    }
+                }
+                else if (actionstatus == "VideoLink")
+                {
+                    if (actiontype == 0)
+                    {
+                        query = "Select distinct * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='')";
+                    }
+                    else
+                    {
+                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID";
+                    }
+                }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = new List<MeetingVM>();
@@ -1004,6 +1025,28 @@ namespace Risebird.Repository
                         query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where confirmationStatus=1 and (zoomLink is null or zoomLink='') and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID";
                     }
                 }
+                else if (actionstatus == "UnAttendedZoomLink")
+                {
+                    if (actiontype == 0)
+                    {
+                        query = "Select distinct * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id Outer Apply (select distinct STUFF((SELECT distinct ', ' + t1.ParticipantName from ZoomMeetingTransmission t1 where t.Meetingid = t1.Meetingid FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'),1,2,'') WhoJoined from ZoomMeetingTransmission t where t.Event='PARTICIPANT_JOINED' and t.Meetingid=im.ZoomMeetingId) WhoJoined where im.ZoomMeetingId in (Select t1.meetingid from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io' group by meetingid) as t1 join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io' group by meetingid) as t2 on t1.Meetingid=t2.Meetingid where (t1.meetingMember-t2.meetingMember)=1)";
+                    }
+                    else
+                    {
+                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId Outer Apply (select distinct STUFF((SELECT distinct ', ' + t1.ParticipantName from ZoomMeetingTransmission t1 where t.Meetingid = t1.Meetingid FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'),1,2,'') WhoJoined from ZoomMeetingTransmission t where t.Event='PARTICIPANT_JOINED' and t.Meetingid=im.ZoomMeetingId) WhoJoined where confirmationStatus=1 and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID and im.ZoomMeetingId in (Select t1.meetingid from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io' group by meetingid) as t1 join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io' group by meetingid) as t2 on t1.Meetingid=t2.Meetingid where (t1.meetingMember-t2.meetingMember)=1)";
+                    }
+                }
+                else if (actionstatus == "VideoLink")
+                {
+                    if (actiontype == 0)
+                    {
+                        query = "Select distinct * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='')";
+                    }
+                    else
+                    {
+                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID";
+                    }
+                }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = new List<MeetingVM>();
@@ -1017,7 +1060,7 @@ namespace Risebird.Repository
                         dp.Add("@emailID", emailid);
                         results = (List<MeetingVM>)await con.QueryAsync<MeetingVM>(query, dp);
                     }
-                    if (actionstatus == "MeetingStatus")
+                    if (actionstatus == "MeetingStatus" || actionstatus == "VideoLink")
                     {
                         results = results.Where(x => x.interviewDate < DateTime.Now).ToList();
                     }
