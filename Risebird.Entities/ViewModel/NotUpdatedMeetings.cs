@@ -12,5 +12,6 @@ namespace Risebird.Entities.ViewModel
         public int UnfilledCommentsCount { get; set; }
         public int MissingZoomLink { get; set; }
         public int UnAttendedZoomLink { get; set; }
+        public int MissingVideoLink { get; set; }
     }
 }

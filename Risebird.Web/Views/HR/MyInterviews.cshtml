@@ -242,6 +242,35 @@
                                     </tr>
                                 </table>
                             </li>
+                            <li style="border: 0px; padding: 0px;  line-height: 30px;">
+                                <table width="100%" class="no-border my_interview">
+                                    <tr>
+                                        <td class="un-right">
+                                            @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>*@
+
+
+                                            <div class="flipper">
+                                                <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('VideoLink')">
+                                                    <div class="card-image">
+                                                        <div class="header-front"></div>
+                                                        <span style="cursor:pointer" id="ribbonmissingvideolinkcount" class="card-title">0</span>
+                                                    </div>
+                                                </div>
+                                                <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('VideoLink')">
+                                                    <div class="card-image">
+                                                        <div class="header-back"></div>
+                                                        <span style="cursor:pointer" id="ribbonmissingvideolinkcount_1" class="card-title">0</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </td>
+                                        <td class="text-left un-left"><strong>Missing Zoom Link</strong></td>
+
+                                    </tr>
+                                </table>
+                            </li>
                         </ul>
                     </div>
 
@@ -1975,6 +2004,7 @@
                 $("#ribbonunfilledinterviewstatuscount").text(data.unfilledInterviewStatusCount);
                 $("#ribbonunfilledcommentscount").text(data.unfilledCommentsCount);
                 $("#ribbonmissingzoomlinkcount").text(data.missingZoomLink);
+                $("#ribbonmissingvideolinkcount").text(data.missingVideoLink);
                 $("#ribbonUnAttendedZoomLinkcount").text(data.unAttendedZoomLink);
 
                 $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
@@ -1982,6 +2012,7 @@
                 $("#ribbonunfilledinterviewstatuscount_1").text(data.unfilledInterviewStatusCount);
                 $("#ribbonunfilledcommentscount_1").text(data.unfilledCommentsCount);
                 $("#ribbonmissingzoomlinkcount_1").text(data.missingZoomLink);
+                $("#ribbonmissingvideolinkcount_1").text(data.missingVideoLink);
                 $("#ribbonUnAttendedZoomLinkcount_1").text(data.unAttendedZoomLink);
 
             }
