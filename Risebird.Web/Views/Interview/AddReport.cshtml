@@ -930,18 +930,19 @@
 
                                     </div>
                                 }
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Upload Video & Thumbnail</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
+                                @if (ViewBag.Profile != "Interviewer" && ViewBag.Profile != "Client")
+                                {
+                                    <div class="proctor">
+
+                                        <input class="toggle-box" id="identifier-1" type="checkbox">
+                                        <label for="identifier-1">
+                                            <div class="multiple_row">
+                                                <h2>Upload Video & Thumbnail</h2>
+                                            </div>
+                                        </label>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
 
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-
-                                        @if (ViewBag.Profile != "Interviewer" && ViewBag.Profile != "Client")
-                                        {
 
 
                                             <div class="row">
@@ -1022,14 +1023,14 @@
 
                                                 </div>
                                             </div>
-                                        }
-                                    </div><!--end of col-md-12-->
 
-                                </div>
+                                        </div><!--end of col-md-12-->
+
+                                    </div>}
                                 <div>
-                                    <div class="proctor">
-                                        <input class="toggle-box" id="identifier-1" type="checkbox">
-                                        <label for="identifier-1">
+                                  <div class="proctor">
+                                        <input class="toggle-box" id="identifier-2" type="checkbox">
+                                        <label for="identifier-2">
                                             <div class="multiple_row">
                                                 <h2>Proctoring Report</h2>
                                             </div>
