@@ -47,7 +47,37 @@ body {
     margin-top: 0px;
     animation: marquee 20s linear infinite;
 }
-
+.proctor .toggle-box:checked + label:before {
+    border-style: solid;
+    border-width: 0.15em 0.15em 0 0;
+    content: '';
+    border-radius: 0px !important;
+    display: inline-block;
+    height: 0.45em;
+    left: -0.15em;
+    position: relative;
+    top: 0.5em;
+    transform: rotate( -45deg );
+    vertical-align: top;
+    width: 0.45em;
+}
+.proctor .toggle-box + label:before {
+    border-style: solid;
+    border-width: 0.15em 0.15em 0 0;
+    content: '';
+    border-radius: 0px !important;
+    display: inline-block;
+    height: 0.45em;
+    left: -0.15em;
+    position: relative;
+    top: 0.2em;
+    vertical-align: top;
+    width: 0.45em;
+    transform: rotate(135deg);
+}
+.choose-file .mdc-radio {
+    padding: 0px 0 0 0px !important;
+}
 .item-collection-1 {
     position: relative;
     left: 0%;
