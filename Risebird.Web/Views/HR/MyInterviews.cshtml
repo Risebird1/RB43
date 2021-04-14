@@ -1487,6 +1487,18 @@
                 html += '  <td></td>';
             }
 
+            html += '   <td>' + data[i].interviewStatusDesc + '</td>';
+            if (data[i].videoLink != null && data[i].videoLink != "") {
+
+                if (data[i].videoLink.length > 25) {
+                    html += '<td><a onclick="" data-tooltip="'+ data[i].videoLink +'">' + data[i].videoLink.substring(0, 25) + '...</a></td>';
+                }
+                else {
+                    html += '<td>' + data[i].videoLink + '</td>';
+                }
+
+            }
+            else { html += '<td></td>';}
 
             if (data[i].meetingStatusDesc != "0") {
                 html += '   <td>' + data[i].meetingStatusDesc + '</td>';
