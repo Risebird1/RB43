@@ -303,7 +303,7 @@ table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.data
 
 
 .table > thead > tr > th, .table > tfoot > tr > th {
-    padding: 7px;
+    padding:5px;
     font-weight: normal !important;
 }
 

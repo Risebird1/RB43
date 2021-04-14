@@ -222,13 +222,19 @@
             confirmButtonText: 'Yes, delete it!',
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
-                    //var IdIRF = dataID;
                     $.ajax({
                         url: '/User/DeleteResumeEvaluator',
                         data: { 'id': userId },
-                        type: 'get',
+                        type: 'POST',
                         success: function (result) {
-                            resolve(result)
+                            if (result == true) {
+                                resolve(result)
+
+                            }
+                            else {
+                                swal.fire("Error deleting!", "Please try again", "error");
+
+                            }
 
                         },
                         error: function () {
