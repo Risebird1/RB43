@@ -1157,9 +1157,20 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public JsonResult SendNotoificationForParticipantWaiting()
+        public async Task<JsonResult> SendNotoificationForParticipantWaiting()
         {
-            //Send mail only one time no duplicate mail
+            var Ribbonmodel = await _dashboardService.SendNotoificationForParticipantWaiting();
+            foreach (var item in Ribbonmodel)
+            {
+                if (item.isInterviewerWaiting)
+                {
+
+                }
+                else
+                {
+
+                }
+            }
             return Json("Success");
         }
     }

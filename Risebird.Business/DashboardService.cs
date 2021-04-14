@@ -466,5 +466,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<MeetingDetailsForParticipant>> SendNotoificationForParticipantWaiting()
+        {
+            try
+            {
+                return await _dashboardRespository.SendNotoificationForParticipantWaiting();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

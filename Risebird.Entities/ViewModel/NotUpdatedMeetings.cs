@@ -14,4 +14,13 @@ namespace Risebird.Entities.ViewModel
         public int UnAttendedZoomLink { get; set; }
         public int MissingVideoLink { get; set; }
     }
+    public class MeetingDetailsForParticipant
+    {
+        public string candidateEmail { get; set; }
+        public string risebirdHR { get; set; }
+        public string interviewer { get; set; }
+        public string emergencyinterviewer { get; set; }
+        public string Meetingid { get; set; }
+        public bool isInterviewerWaiting { get; set; }
+    }
 }
