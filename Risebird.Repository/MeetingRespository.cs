@@ -4246,7 +4246,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@timeEnd", DateTime.Now.AddHours(-2));
-                    parameters.Add("@timeStart", DateTime.Now.AddDays(-6));
+                    parameters.Add("@timeStart", DateTime.Now.AddDays(-7));
                     var result = SqlMapper.Query<PendingVideoMeetingsData>(con, "usp_GetPendingVideoMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
