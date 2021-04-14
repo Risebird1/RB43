@@ -50,5 +50,7 @@ namespace Risebird.CommonHelper.Interface
         string RBFNPaymentConfirmationNotification(Mail model, string amount, string fileName);
         string SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill);
         string CandidateShortlistNotification(Mail model, string currenturl, string comment, string email, string[] videoidlist);
+        string InterviewerWaitingNotification(Mail model);
+        string CandidateWaitingNotification(Mail model);
     }
 }

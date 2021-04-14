@@ -1164,11 +1164,23 @@ namespace Risebird.Web.Controllers
             {
                 if (item.isInterviewerWaiting)
                 {
-
+                    Mail _mail = new Mail
+                    {
+                        TO = item.candidateEmail,
+                        CC = item.risebirdHR,
+                        Subject = $"Interviewer Waiting for Start the interview"
+                    };
+                    var resultset = _notificationHelper.InterviewerWaitingNotification(_mail);
                 }
                 else
                 {
-
+                    Mail _mail = new Mail
+                    {
+                        TO = item.emergencyinterviewer + ";" + item.interviewer,
+                        CC = item.risebirdHR,
+                        Subject = $"Candidate join the meeting and waiting for interviewer"
+                    };
+                    var resultset = _notificationHelper.CandidateWaitingNotification(_mail);
                 }
             }
             return Json("Success");
