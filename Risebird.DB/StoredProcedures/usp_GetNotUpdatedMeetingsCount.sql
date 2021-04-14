@@ -28,7 +28,7 @@ and DATEDIFF(DAY, interviewDate, @currentdate)<7 ) as UnfilledInterviewStatusCou
 (select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and (zoomLink is null or zoomLink='') and interviewDate>@currentdate) as MissingZoomLink,    
 (Select Count(t1.meetingMember-t2.meetingMember) from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io'  group by meetingid) as t1    
 join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io'  group by meetingid) as t2 on t1.Meetingid=t2.Meetingid where (t1.meetingMember-t2.meetingMember)=1) as UnAttendedZoomLink,
-(select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and interviewDate<@currentdate) as MissingVideoLink
+(select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and DATEDIFF(DAY, interviewDate, @currentdate)<7) as MissingVideoLink
 End             
       
       

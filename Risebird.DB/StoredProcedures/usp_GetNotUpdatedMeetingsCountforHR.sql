@@ -32,7 +32,7 @@ where HRCoordinatorEmailId =@emailID and confirmationStatus = 1 and th.HRId=@hrI
 (select Count(im.id) from InterviewMeetings im  join IRF on irf.irfid=im.IRFId join TransHR th on th.IRFId = irf.id where HRCoordinatorEmailId =@emailID and confirmationStatus = 1 and th.HRId=@hrId and confirmationStatus=1 and im.ZoomMeetingId in(Select  
  Count(t1.meetingMember-t2.meetingMember) from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io'  group by meetingid) as t1    
 join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io'  group by meetingid) as t2 on t1.Meetingid=t2.Meetingid where (t1.meetingMember-t2.meetingMember)=1)) as UnAttendedZoomLink,
-(select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id join IRF on irf.irfid=im.IRFId join TransHR th on th.IRFId = irf.id where HRCoordinatorEmailId =@emailID and confirmationStatus = 1 and th.HRId=@hrId and ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and interviewDate<@currentdate) as MissingVideoLink
+(select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id join IRF on irf.irfid=im.IRFId join TransHR th on th.IRFId = irf.id where HRCoordinatorEmailId =@emailID and confirmationStatus = 1 and th.HRId=@hrId and ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and DATEDIFF(DAY, interviewDate, @currentdate)<7) as MissingVideoLink
 End               
     
     GO

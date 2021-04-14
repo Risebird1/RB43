@@ -919,7 +919,7 @@
                                                                             </td>
                                                                             @if (!string.IsNullOrEmpty(item.ClientName))
                                                                             {
-                                                                                @if (item.ClientName.Length > 10)
+                                                                                @if (item.ClientName.Length > 15)
                                                                                 {
                                                                                     <td style="text-align: center"> @item.ClientName.Substring(0, 10)... </td>
                                                                                 }
@@ -949,7 +949,7 @@
                                                                             <td>@item.HRComment</td>
                                                                             @if (!string.IsNullOrEmpty(item.CandidateClientHR))
                                                                             {
-                                                                                @if (item.CandidateClientHR.Length > 13)
+                                                                                @if (item.CandidateClientHR.Length > 15)
                                                                                 {
                                                                                     <td class="cadEmail">
                                                                                         <a onclick="" data-tooltip="@item.CandidateClientHR"> @item.CandidateClientHR.Substring(0, 13)... </a>
@@ -1343,7 +1343,7 @@
                 else {
 
 
-                    if (data[i].candidateName.length > 10) {
+                    if (data[i].candidateName.length > 15) {
                         html += '<td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 10) + '... </a></td>';
                     }
                     else {
@@ -1357,7 +1357,7 @@
 
 
             if (data[i].interviewer != null && data[i].interviewer != "") {
-                if (data[i].interviewer.length > 8) {
+                if (data[i].interviewer.length > 15) {
                     html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].interviewer + '"> ' + data[i].interviewer.substring(0, 8) + '... </a></td>';
                 }
                 else {
@@ -1371,7 +1371,7 @@
 
 
             if (data[i].candidateEmail != null && data[i].candidateEmail != "") {
-                if (data[i].candidateEmail.length > 13) {
+                if (data[i].candidateEmail.length > 15) {
                     html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].candidateEmail + '"> ' + data[i].candidateEmail.substring(0, 13) + '... </a></td>';
                 }
                 else {
@@ -1385,7 +1385,7 @@
 
 
             if (data[i].clientName != null && data[i].clientName != "") {
-                if (data[i].clientName.length > 10) {
+                if (data[i].clientName.length > 15) {
                     html += '  <td style="text-align: center"> ' + data[i].clientName.substring(0, 10) + '... </td>';
                 }
 
@@ -1416,7 +1416,7 @@
             }
 
             if (data[i].risebirdHR != null && data[i].risebirdHR != "") {
-                if (data[i].risebirdHR.length > 8) {
+                if (data[i].risebirdHR.length > 15) {
                     html += '  <td> ' + data[i].risebirdHR.substring(0, 8) + '... </td>';
                 }
                 else {
