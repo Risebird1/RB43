@@ -610,7 +610,7 @@
                                                             @if (item.candidateName != null && item.candidateName != "")
                                                             {
 
-                                                                @if (item.IsOnilne == 1 && item.candidateName.Length > 8)
+                                                                @if (item.IsOnilne == 1 && item.candidateName.Length > 15)
                                                                 {
                                                                     <td>
                                                                         <a onclick="directopenChat('@item.candidateEmail')"> <span class="dot" style="background-color:green"></span>@item.candidateName.Substring(0, 8)...</a>
@@ -619,7 +619,7 @@
                                                                 else
                                                                 {
 
-                                                                    @if (item.candidateName.Length > 10)
+                                                                    @if (item.candidateName.Length > 15)
                                                                     {
 
 
@@ -650,7 +650,7 @@
 
 
 
-                                                                @if (item.interviewer.Length > 8)
+                                                                @if (item.interviewer.Length > 15)
                                                                 {
 
 
@@ -678,7 +678,7 @@
 
 
 
-                                                                @if (item.candidateEmail.Length > 10)
+                                                                @if (item.candidateEmail.Length > 15)
                                                                 {
 
                                                                     <td class="cadEmail">
@@ -701,7 +701,7 @@
                                                             }
                                                             @if (!string.IsNullOrEmpty(item.ClientCompName))
                                                             {
-                                                                @if (item.ClientName.Length > 10)
+                                                                @if (item.ClientName.Length > 15)
                                                                 {
                                                                     <td style="text-align: center"><a onclick="" data-tooltip="@item.ClientName"> @item.ClientName.Substring(0, 10)...</a> </td>
                                                                 }
@@ -735,7 +735,7 @@
                                                             }
                                                             @if (!string.IsNullOrEmpty(item.risebirdHR))
                                                             {
-                                                                @if (item.risebirdHR.Length > 8)
+                                                                @if (item.risebirdHR.Length > 15)
                                                                 {
                                                                     <td><a onclick="" data-tooltip="@item.risebirdHR">@item.risebirdHR.Substring(0, 8)...</a></td>
                                                                     }
