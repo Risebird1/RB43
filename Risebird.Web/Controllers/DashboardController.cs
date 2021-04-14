@@ -1156,5 +1156,11 @@ namespace Risebird.Web.Controllers
                 return Json(Ribbonmodel);
             }
         }
+        [HttpPost]
+        public JsonResult SendNotoificationForParticipantWaiting()
+        {
+            //Send mail only one time no duplicate mail
+            return Json("Success");
+        }
     }
 }

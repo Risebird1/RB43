@@ -24,7 +24,7 @@ select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration
 im.confirmationStatus, im.interviewer, im.candidateName, im.QCInterviewer, ca.Phone as MobileNumber, im.zoomLink,  
 ca.ResumeLink as resumeLink ,irf.JDLink, ca.CandidateMasterId, uli.MobileNumber as InterviewerPhone, im.HRComment, IRF.JDTiltle, IRF.id as irfIntId,IRF.ClientName,  
 im.HRImageFileURL, im.candidateEmail, ul.FirstName as candidateName,   
-ca.ClientHRAttemptContact as CandidateClientHR, irf.ClientName, cl.[Name] as ClientCompName,  ic.MeetingStatus,ic.InterviewStatus, ic.videoLink, qc.QCStatus
+ca.ClientHRAttemptContact as CandidateClientHR, irf.ClientName, cl.[Name] as ClientCompName,  ic.MeetingStatus,ic.InterviewStatus, ic.videoLink, qc.QCStatus, im.risebirdHR
 from InterviewMeetings im   left join interviewcomments ic on ic.interviewid = im.id left join QCFeedbackReport qc on qc.InterviewId = im.id  
 inner join IRF  irf on im.IRFId=irf.IRFId  
 left join UserList ul on ul.EmailId = im.candidateEmail  

@@ -28,7 +28,7 @@ suit.Status as IsIntrested,
 rtvsl.Status as ShortListstatus,  
 patchvideoCount.MeetingCount as MeetingPatchCount,  
 ts.Sharedon as SharedOn,(CASE WHEN ic.CandidateAvailable = 1 THEN 'Available' ELSE 'NotAvailable' END) as CandidateAvailable,    
- Techscore.TechSkillScore as TechSkillScore ,ic.IsLock,ucl.EmailId      
+ Techscore.TechSkillScore as TechSkillScore ,ic.IsLock,ucl.EmailId, ic.ThumbnailTimeSeconds      
 from InterviewMeetings im                
 inner join IRF on im.IRFId = IRF.IRFId              
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId       
@@ -52,7 +52,8 @@ im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtC
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,       
 ul.MobileNumber, ca.ResumeLink , IRF.id,IRF.JDLink ,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,      
 ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id ,      
-ic.ThumbnailImage,cl.CuratedLink , QCF.InterviewId ,suit.Status,rtvsl.Status,patchvideoCount.MeetingCount ,ts.Sharedon,ic.CandidateAvailable,Techscore.TechSkillScore,ic.IsLock,ucl.EmailId      
+ic.ThumbnailImage,cl.CuratedLink , QCF.InterviewId ,suit.Status,rtvsl.Status,patchvideoCount.MeetingCount,
+ts.Sharedon,ic.CandidateAvailable,Techscore.TechSkillScore,ic.IsLock,ucl.EmailId, ic.ThumbnailTimeSeconds      
      
                
 End         

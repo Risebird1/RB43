@@ -659,7 +659,7 @@ namespace Risebird.Repository
             parameters.Add("@MobileNumber", entity.MobileNumber);
             parameters.Add("@HRCoordinatorEmailId", entity.HRCoordinatorEmailId);
             parameters.Add("@QCInterviewer", entity.QCInterviewer);
-
+            parameters.Add("@zoomMeetingId", entity.ZoomMeetingId);
 
             return parameters;
         }
@@ -688,6 +688,7 @@ namespace Risebird.Repository
                 parameters.Add("@currentEmployerName", meeting.currentEmployerName);
                 parameters.Add("@MobileNumber", meeting.MobileNumber);
                 parameters.Add("@QCInterviewer", meeting.QCInterviewer);
+                parameters.Add("@zoomMeetingId", meeting.ZoomMeetingId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_AddMeeting", parameters,
@@ -1250,6 +1251,7 @@ namespace Risebird.Repository
                     parameters.Add("@videolink", reportDetails.VideoLink);
                     parameters.Add("@ThumbnailImage", reportDetails.ThumbnailImage);
                     parameters.Add("@FeedbackAudioLink", reportDetails.FeedbackAudioLink);
+                    parameters.Add("@ThumbnailTimeSeconds", reportDetails.ThumbnailTimeSeconds);
                     DynamicParameters parametersPoints = new DynamicParameters();
                     if (reportDetails.MeetingStatus == 4)
                     {
@@ -4235,6 +4237,55 @@ namespace Risebird.Repository
             }
             return null;
         }
-        
+
+        public async Task<IEnumerable<PendingVideoMeetingsData>> GetPendingVideoMeetings()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeEnd", DateTime.Now.AddHours(-6));
+                    parameters.Add("@timeStart", DateTime.Now.AddDays(-3));
+                    var result = SqlMapper.Query<PendingVideoMeetingsData>(con, "usp_GetPendingVideoMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> UpdateUploadedVideoLink(int interviewId, string videoLink)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@videoLink", videoLink);
+                    var result = SqlMapper.Query(con, "usp_UpdateUploadedVideoLink", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+
+        }
     }
 }

@@ -290,7 +290,6 @@
 
 </div>
 
-
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
@@ -299,7 +298,7 @@
         });
         function my_code() {
             var msg = '@ViewBag.Message';
-            if (msg.includes("Success")) {
+            if (msg.includes("success")) {
                 swal.fire("Successful",'@ViewBag.Message', "success");
             }
             else {

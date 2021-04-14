@@ -990,6 +990,7 @@
                         url: '/Interviewer/DeleteInterviewerProfile',
                         data: { 'UserId': UserId },
                         type: 'Delete',
+                        method:'POST',
                         success: function (result) {
                             if (result == true) {
                                 resolve(result)

@@ -1,0 +1,207 @@
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using Azure.Storage.Blobs;
+using Azure.Storage.Sas;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using RestSharp;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
+using Risebird.Repository.Interface;
+
+namespace Risebird.MicroService
+{
+    public class ZoomService
+    {
+        private readonly IConfiguration _configuration;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IMeetingRespository _meetingRespository;
+        private readonly IAzureStorageHelper _azureStorageHelper;
+
+        private readonly INotificationHelper _notificationHelper;
+
+        private readonly string connectionString;
+        private readonly string ContainerName;
+        private readonly string SASConnectionString;
+
+        public ZoomService(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository)
+        {
+            _configuration = configuration;
+            _applicationErrorLogger = applicationErrorLogger;
+            _notificationHelper = notificationHelper;
+            _azureStorageHelper = azureStorageHelper;
+            _meetingRespository = meetingRespository;
+            connectionString = _configuration["ConnectionString:DBConnectionString"];
+            ContainerName = _configuration["SASURLSettings:ContainerName"];
+            SASConnectionString = _configuration["SASURLSettings:ConnectionString"];
+
+
+        }
+        [FunctionName("ZoomService")]
+        public async Task Run([TimerTrigger("0 0 */2 * * *")]TimerInfo myTimer, ILogger log)// after every 2 hour 0 0 */2 * * *
+        {
+            try
+            {
+                //get all the completed meetings where video upload is pending
+
+                var pendingVideoMeetings = await _meetingRespository.GetPendingVideoMeetings();
+
+
+                Parallel.ForEach(pendingVideoMeetings, meeting =>
+               {
+                   
+                   if (!string.IsNullOrEmpty(meeting.ZoomMeetingId))
+                   {
+                       //var zoomMeetingId = zoomLinkArray[zoomLinkArrayLength.Value - 1];
+
+                       //get jwt authentication token 
+                       string token = ZoomToken();
+
+                       //create HTTP Rest Client
+                       var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"/meetings/{meeting.ZoomMeetingId}/recordings"));
+
+                       //create HTTP Request 
+                       var request = new RestRequest(Method.GET);
+                       request.AddHeader("content-type", "application/json");
+                       request.AddHeader("authorization", "Bearer " + token);
+                       IRestResponse response = client.Execute(request);
+                       var content = response.Content;
+
+                       var convertedResponse = JsonConvert.DeserializeObject<ZoomRecordingResponse>(content);
+
+                       //get the download url from the response
+                       if (convertedResponse.recording_files != null && convertedResponse.recording_files.Count() > 0)
+                       {
+                           var videoRecordingFiles = convertedResponse.recording_files.Where(x => x.file_type == "MP4" && x.status.ToLower() == "completed");
+                           
+                           if (videoRecordingFiles != null || videoRecordingFiles.Count() == 1)
+                           {
+                               var downloadUrl = videoRecordingFiles.FirstOrDefault().download_url;
+
+                               //upload the video to azure blob using the download_Url
+
+                               WebClient myWebClient = new WebClient();
+                               string uploadedVideoUrl = string.Empty;
+                               string sasUrl = string.Empty;
+                               using (Stream myStream = myWebClient.OpenRead(downloadUrl))
+                               {
+                                   var topic = convertedResponse.topic?.Replace(" ", "_");
+                                   var fileName = string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy’-‘MM’-‘dd’T’HH’:’mm’:’ss") : topic;
+
+                                   uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, ContainerName, null, myStream).Result;
+
+                                   //generate SAS URL from the uploaded video url
+                                   var sas = CreateSasUrl();
+
+                                   if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
+                                   {
+                                       sasUrl = uploadedVideoUrl + "?" + sas;
+                                   }
+                               }
+                               if (!string.IsNullOrEmpty(sasUrl))
+                               {
+                                   //insert the SAS URL of the video in the database table
+                                    var result = _meetingRespository.UpdateUploadedVideoLink(meeting.imid, sasUrl).Result;
+                               }
+                           }
+
+
+                       }
+
+                   }
+               });
+
+
+                log.LogInformation($"C# Zoom Service function executed at: {DateTime.Now}");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        private string ZoomToken()
+        {
+            // Token will be good for 1 day
+            DateTime Expiry = DateTime.UtcNow.AddDays(1);
+
+
+            string ApiKey = _configuration["ZoomAppDetails:apiKey"];
+            string ApiSecret = _configuration["ZoomAppDetails:secretKey"];
+
+            int ts = (int)(Expiry - new DateTime(1970, 1, 1)).TotalSeconds;
+
+            // Create Security key  using private key above:
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ApiSecret));
+
+            // length should be >256b
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            //Finally create a Token
+            var header = new JwtHeader(credentials);
+
+            //Zoom Required Payload
+            var payload = new JwtPayload
+            {
+                { "iss", ApiKey},
+                { "exp", ts },
+            };
+
+            var secToken = new JwtSecurityToken(header, payload);
+            var handler = new JwtSecurityTokenHandler();
+
+            // Token to String so you can use it in your client
+            var tokenString = handler.WriteToken(secToken);
+
+            return tokenString;
+        }
+
+        private string CreateSasUrl()
+        {
+            BlobContainerClient blobcontainerclient = new BlobContainerClient(SASConnectionString, ContainerName);
+            var uri = GetServiceSasUriForContainer(blobcontainerclient);
+            return uri.AbsoluteUri.ToString().Split("?")[1].ToString();
+        }
+        private Uri GetServiceSasUriForContainer(BlobContainerClient containerClient, string storedPolicyName = null)
+        {
+            if (containerClient.CanGenerateSasUri)
+            {
+                BlobSasBuilder sasBuilder = new BlobSasBuilder()
+                {
+                    BlobContainerName = containerClient.Name,
+                    Resource = "c",
+                };
+                if (storedPolicyName == null)
+                {
+
+                    sasBuilder.SetPermissions(BlobContainerSasPermissions.Read);
+                    sasBuilder.StartsOn = DateTimeOffset.UtcNow;
+                    sasBuilder.ExpiresOn = DateTimeOffset.UtcNow.AddMonths(7);
+                    sasBuilder.Protocol = SasProtocol.Https;
+
+                }
+                else
+                {
+                    sasBuilder.Identifier = storedPolicyName;
+                }
+                Uri sasUri = containerClient.GenerateSasUri(sasBuilder);
+                return sasUri;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+    }
+}

@@ -2,6 +2,10 @@
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
+@using Microsoft.Extensions.Configuration;
+
+@inject IConfiguration configuration
+
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Interviewer Video";
@@ -221,7 +225,8 @@
                                                                                                         <div class="video-card-body" onclick="changeVideo(@videolist.Priority)">
                                                                                                             <div class="video-title">
 
-                                                                                                                @if (videolist.VideoTitle != null && videolist.VideoTitle != "") { 
+                                                                                                                @if (videolist.VideoTitle != null && videolist.VideoTitle != "")
+                                                                                                                {
                                                                                                                     @if (videolist.VideoTitle.Length > 11)
                                                                                                                     {
                                                                                                                         <a data-tooltip="@videolist.VideoTitle" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.VideoTitle</span> </a>
@@ -230,10 +235,11 @@
                                                                                                                     {
                                                                                                                         <span class="candidate">@videolist.VideoTitle</span>
                                                                                                                     }
-                                                                                                                   }
+                                                                                                                }
 
-                                                                                                                else{
-                                                                                                                <span></span>
+                                                                                                                else
+                                                                                                                {
+                                                                                                                    <span></span>
                                                                                                                 }
                                                                                                             </div>
                                                                                                         </div>
@@ -261,8 +267,8 @@
                                                                                                         <div class="video-card-body" onclick="changeVideo(@videolist.Priority)">
                                                                                                             <div class="video-title">
 
-                                                                                        @if (videolist.VideoTitle != null && videolist.VideoTitle != "")
-                                                                                        {
+                                                                                                                @if (videolist.VideoTitle != null && videolist.VideoTitle != "")
+                                                                                                                {
                                                                                                                     @if (videolist.VideoTitle.Length > 11)
                                                                                                                     {
                                                                                                                         <a data-tooltip="@videolist.VideoTitle" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.VideoTitle</span> </a>
@@ -271,8 +277,9 @@
                                                                                                                     {
                                                                                                                         <span class="candidate">@videolist.VideoTitle</span>
                                                                                                                     }
-                                                                                                  }
-                                                                                                    else { <span></span>}
+                                                                                                                }
+                                                                                                                else
+                                                                                                                { <span></span>}
                                                                                                             </div>
                                                                                                         </div>
                                                                                                     </div>
@@ -1108,7 +1115,8 @@
                                                                                                     <span class="candidate">@videolist.VideoTitle</span>
                                                                                                 }
                                                                                             }
-                                                                                            else{<span></span>}
+                                                                                            else
+                                                                                            {<span></span>}
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -1146,8 +1154,9 @@
                                                                                                     <span class="candidate">@videolist.VideoTitle</span>
                                                                                                 }
                                                                                             }
-                                                                                            else{
-                                                                                            <span></span>}
+                                                                                            else
+                                                                                            {
+                                                                                                <span></span>}
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -1180,11 +1189,12 @@
                                                                                         {
                                                                                             <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
                                                                                         }
-                                                                                        @if (videolist.VideoLink.Contains(".mp4"))
+                                                                                        @*@if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
                                                                                             @if (videolist.ThumbnailImage != null)
                                                                                             {
-                                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
+                                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                                            }
                                                                                             <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
@@ -1194,9 +1204,33 @@
                                                                                         else
                                                                                         {
                                                                                             @if (videolist.ThumbnailImage != null)
-                                                                                            {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
+                                                                                            {
+                                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                                            }
                                                                                             else
-                                                                                            { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
+                                                                                            {
+                                                                                                <img src="~/RiseTube/img/video-icon.png" />
+                                                                                            }
+                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                        }*@
+
+                                                                                        @{
+                                                                                            string appendTime;
+                                                                                            if (videolist.ThumbnailTimeSeconds == 0)
+                                                                                            {
+                                                                                                appendTime = configuration["ThumbnailTimeDefault"];
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                appendTime = videolist.ThumbnailTimeSeconds.ToString();
+                                                                                            }
+                                                                                            var src = videolist.VideoLink + "#t=" + appendTime;
+                                                                                            <video style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
+                                                                                                <source src="@src" type="video/mp4">
+                                                                                            </video>
+
+                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                        }
 
                                                                                     </div>
                                                                                     <div class="video-card-body">
@@ -1230,7 +1264,8 @@
                                                                                                     <span>@videolist.JDTiltle</span>
                                                                                                 }
                                                                                             }
-                                                                                            else{<span></span>}
+                                                                                            else
+                                                                                            {<span></span>}
 
                                                                                         </div>
                                                                                         <div class="video-page text-success">
@@ -1258,11 +1293,12 @@
                                                                                             {
                                                                                                 @if (videolist.joiningTime.Length > 10)
                                                                                                 {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
-                                                                                                else
-                                                                                                {
+                                                                                            else
+                                                                                            {
                                                                                                 <span id="join_time"> @videolist.joiningTime</span>}
                                                                                             }
-                                                                                            else{<span></span>}
+                                                                                            else
+                                                                                            {<span></span>}
                                                                                         </div>
 
                                                                                         <div class="video-info">
@@ -1277,7 +1313,8 @@
                                                                                                 {
                                                                                                     <span>@videolist.expectedPerHourRate</span>}
                                                                                             }
-                                                                                            else{<span></span>}
+                                                                                            else
+                                                                                            {<span></span>}
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -1386,9 +1423,10 @@
                                                                                         {
                                                                                             <span>@videolist.JDTiltle</span>}
                                                                                     }
-                                                                                    else { <span></span>}
+                                                                                    else
+                                                                                    { <span></span>}
 
-                                                                                    </div>
+                                                                                </div>
                                                                                 <div class="video-page text-success">
                                                                                     &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
                                                                                     <span class="divider-g">
@@ -1429,11 +1467,12 @@
                                                                                         @if (videolist.expectedPerHourRate.Length > 10)
                                                                                         {<a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
 
-                                                                                        else
-                                                                                        {<span>@videolist.expectedPerHourRate</span>}
+                                                                                    else
+                                                                                    {<span>@videolist.expectedPerHourRate</span>}
                                                                                     }
-                                                                                    else{<span></span>}
-                                                                                    </div>
+                                                                                    else
+                                                                                    {<span></span>}
+                                                                                </div>
                                                                             </div>
                                                                         </div>
 
@@ -1515,9 +1554,10 @@
                                                                             {
                                                                                 <span>@videolist.JDTiltle</span>}
                                                                         }
-                                                                        else{<td></td>}
+                                                                        else
+                                                                        {<td></td>}
 
-                                                                        </div>
+                                                                    </div>
                                                                     <div class="video-page text-success">
                                                                         &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
                                                                         <span class="divider-g">
@@ -1541,13 +1581,14 @@
 
                                                                         @if (videolist.joiningTime != null && videolist.joiningTime != "")
                                                                         {
-                                                                        @if (videolist.joiningTime.Length > 10)
+                                                                            @if (videolist.joiningTime.Length > 10)
                                                                             {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
-                                                                            else
-                                                                            {
+                                                                        else
+                                                                        {
                                                                             <span id="join_time"> @videolist.joiningTime</span>}
                                                                         }
-                                                                        else{<span></span>}
+                                                                        else
+                                                                        {<span></span>}
                                                                     </div>
 
                                                                     <div class="video-info">
@@ -1557,10 +1598,11 @@
                                                                             @if (videolist.expectedPerHourRate.Length > 10)
                                                                             {<a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
 
-                                                                            else
-                                                                            {<span>@videolist.expectedPerHourRate</span>}
+                                                                        else
+                                                                        {<span>@videolist.expectedPerHourRate</span>}
                                                                         }
-                                                                        else { <span></span>}
+                                                                        else
+                                                                        { <span></span>}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -2154,7 +2196,7 @@
                 // Create series
                 var series = chart.series.push(new am4charts.ColumnSeries());
                 series.dataFields.valueY = "visits";
-           
+
                 series.dataFields.categoryX = "country";
                 series.name = "Visits";
                 series.colorField = "color";

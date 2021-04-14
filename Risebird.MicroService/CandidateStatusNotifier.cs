@@ -35,7 +35,7 @@ namespace Risebird.MicroService
         }
 
         [FunctionName("CandidateStatusNotifier")]
-        public async Task Run([TimerTrigger("0 0 0 * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, ILogger log)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace Risebird.MicroService
                         foreach (var irf in irfList)
                         {
                             var candidates = new List<string>();
-                            
+
                             var mailList = await _irfRepository.GetIRFClientsEmail(irf);
                             if (mailList == null || mailList.Count() == 0)
                             {

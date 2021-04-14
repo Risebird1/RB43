@@ -42,6 +42,7 @@ namespace Risebird.MicroService
             builder.Services.AddScoped<ISpeechToTextHelper, SpeechToTextHelper>();
             builder.Services.AddScoped<ICandidateRepository, CandidateRepository>();
             builder.Services.AddScoped<IIRFRepository, IRFRepository>();
+            builder.Services.AddScoped<IMeetingRespository, MeetingRespository>();
 
         }
 

@@ -672,6 +672,7 @@ namespace Risebird.Web.Controllers
             model.AssessmentGroupList = AssessmentselectList;
         }
 
+        [HttpPost]
         public async Task<IActionResult> DeleteInterviewerProfile(int UserId)
         {
             try
