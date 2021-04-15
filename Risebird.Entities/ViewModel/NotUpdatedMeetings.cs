@@ -22,5 +22,6 @@ namespace Risebird.Entities.ViewModel
         public string emergencyinterviewer { get; set; }
         public string Meetingid { get; set; }
         public bool isInterviewerWaiting { get; set; }
+        public string EmailType { get; set; }
     }
 }

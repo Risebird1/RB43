@@ -1159,24 +1159,48 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> SendNotoificationForParticipantWaiting()
         {
+            //Check all mails and sent according to that all 5 mails
             var Ribbonmodel = await _dashboardService.SendNotoificationForParticipantWaiting();
             foreach (var item in Ribbonmodel)
             {
-                if (item.isInterviewerWaiting)
+                if (item.EmailType == "reaminder")
+                {
+                    if (item.isInterviewerWaiting)
+                    {
+                        Mail _mail = new Mail
+                        {
+                            TO = item.candidateEmail,
+                            CC = item.risebirdHR,
+                            Subject = $"Interviewer Waiting for Start the interview"
+                        };
+                        var resultset = _notificationHelper.InterviewerWaitingNotification(_mail);
+                    }
+                    else
+                    {
+                        Mail _mail = new Mail
+                        {
+                            TO = item.interviewer,
+                            CC = item.risebirdHR,
+                            Subject = $"Candidate join the meeting and waiting for interviewer"
+                        };
+                        var resultset = _notificationHelper.CandidateWaitingNotification(_mail);
+                    }
+                }
+                else if (item.EmailType == "EI")
+                {
+                    Mail _mail = new Mail
+                    {
+                        TO = item.emergencyinterviewer,
+                        CC = item.risebirdHR,
+                        Subject = $"Candidate join the meeting and waiting for interviewer"
+                    };
+                    var resultset = _notificationHelper.CandidateWaitingNotification(_mail);
+                }
+                else if (item.EmailType == "Reschedule")
                 {
                     Mail _mail = new Mail
                     {
                         TO = item.candidateEmail,
-                        CC = item.risebirdHR,
-                        Subject = $"Interviewer Waiting for Start the interview"
-                    };
-                    var resultset = _notificationHelper.InterviewerWaitingNotification(_mail);
-                }
-                else
-                {
-                    Mail _mail = new Mail
-                    {
-                        TO = item.emergencyinterviewer + ";" + item.interviewer,
                         CC = item.risebirdHR,
                         Subject = $"Candidate join the meeting and waiting for interviewer"
                     };
