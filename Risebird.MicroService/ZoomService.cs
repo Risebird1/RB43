@@ -48,7 +48,7 @@ namespace Risebird.MicroService
 
         }
         [FunctionName("ZoomService")]
-        public async Task Run([TimerTrigger("0 0 */2 * * *")]TimerInfo myTimer, ILogger log)// after every 2 hour 0 0 */2 * * *
+        public async Task Run([TimerTrigger("0 */30 * * * *")]TimerInfo myTimer, ILogger log)// after every 2 hour 0 0 */2 * * *
         {
             try
             {
@@ -62,6 +62,27 @@ namespace Risebird.MicroService
                    
                    if (!string.IsNullOrEmpty(meeting.ZoomMeetingId))
                    {
+                       if(meeting.ZoomMeetingId=="0" && !string.IsNullOrEmpty(meeting.zoomLink))
+                       {
+                           long zoommeetingId = 0;
+                           try
+                           {
+                               zoommeetingId = Convert.ToInt64(meeting.zoomLink.Split('/').Last());
+                           }
+                           catch (Exception)
+                           {
+                               try
+                               {
+                                   var link = meeting.zoomLink.Split('?').First();
+                                   zoommeetingId = Convert.ToInt64(link.Split('/').Last());
+                               }
+                               catch (Exception)
+                               {
+                                   zoommeetingId = 0;
+                               }
+                           }
+                           meeting.ZoomMeetingId = zoommeetingId.ToString();
+                       }
                        //var zoomMeetingId = zoomLinkArray[zoomLinkArrayLength.Value - 1];
 
                        //get jwt authentication token 

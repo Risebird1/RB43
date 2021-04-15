@@ -20,7 +20,7 @@ CREATE PROCEDURE [dbo].[usp_GetPendingVideoMeetings]
 AS  
 Begin 
 
-select im.id as imid, im.ZoomMeetingId, im.interviewDate from InterviewMeetings im 
+select im.id as imid, im.ZoomMeetingId, im.interviewDate, im.zoomLink from InterviewMeetings im 
 left join InterviewComments ic on ic.InterviewId=im.id
 where im.interviewDate<@timeEnd and im.interviewDate>@timeStart and (ic.VideoLink is null or ic.VideoLink='') and im.ZoomMeetingId is not null
 
