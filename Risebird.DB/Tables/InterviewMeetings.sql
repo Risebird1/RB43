@@ -32,7 +32,10 @@ CREATE TABLE [dbo].[InterviewMeetings](
 	[sModifiedBy] [varchar](100) NOT NULL CONSTRAINT [DF_InterviewMeetings_sModifiedBy]  DEFAULT ('NA'),	
 	[dtModifiedOn] [varchar](100) NOT NULL CONSTRAINT [DF_InterviewMeetings_dtModifiedOn]  DEFAULT ('NA'),	
     [ZoomMeetingId][bigint] NULL,
-    [IsMeetingNotificationSent][bit] NULL
+    [IsMeetingNotificationSent][bit] NULL,
+	[NotificationSentDate] [DateTime] NULL,	
+    [IsNotificationSentToEI][bit] NULL,
+    [IsRescheduleNotificationSent][bit] NULL
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -167,7 +170,33 @@ BEGIN
     ALTER TABLE InterviewMeetings
     Add IsMeetingNotificationSent bit
 END
-
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'NotificationSentDate')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add NotificationSentDate datetime
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsNotificationSentToEI')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add IsNotificationSentToEI  bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsRescheduleNotificationSent')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add IsRescheduleNotificationSent  bit
+END
 END
 GO
 
