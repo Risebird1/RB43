@@ -24,5 +24,6 @@ namespace Risebird.Entities.ViewModel
         public bool isInterviewerWaiting { get; set; }
         public string EmailType { get; set; }
         public string zoomlink { get; set; }
+        public string CalendlyLink { get; set; }
     }
 }

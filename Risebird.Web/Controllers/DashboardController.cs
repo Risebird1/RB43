@@ -1206,14 +1206,13 @@ namespace Risebird.Web.Controllers
                 }
                 else if (item.EmailType == "Reschedule")
                 {
-                    //Send with reschedule link
                     Mail _mail = new Mail
                     {
                         TO = item.candidateEmail,
                         CC = item.risebirdHR,
-                        Subject = $"Candidate join the meeting and waiting for interviewer"
+                        Subject = $"Appology for inconvience please reschedule the meeting"
                     };
-                    var resultset = _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.zoomlink);
+                    var resultset = _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.CalendlyLink);
                 }
             }
             return Json("Success");
