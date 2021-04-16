@@ -1172,7 +1172,7 @@ namespace Risebird.Web.Controllers
                             CC = item.risebirdHR,
                             Subject = $"Interviewer Waiting for you to Start the interview"
                         };
-                        var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink);
+                        var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer");
                     }
                     else
                     {
@@ -1182,19 +1182,27 @@ namespace Risebird.Web.Controllers
                             CC = item.risebirdHR,
                             Subject = $"Candidate join the meeting and waiting for interviewer"
                         };
-                        var resultset = _notificationHelper.CandidateWaitingNotification(_mail, item.zoomlink);
+                        var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate");
                     }
                 }
                 else if (item.EmailType == "EI")
                 {
                     //reassign Interviewer link- openinterviewer
+                    string linkurl = Request.Host.ToString() + "/Interview/OpenInterview";
                     Mail _mail = new Mail
                     {
                         TO = item.emergencyinterviewer,
                         CC = item.risebirdHR,
                         Subject = $"Candidate join the meeting and waiting for interviewer"
                     };
-                    var resultset = _notificationHelper.CandidateWaitingNotification(_mail, item.zoomlink);
+                    var resultset = _notificationHelper.CandidateWaitingNotification(_mail, linkurl);
+                    Mail _mail1 = new Mail
+                    {
+                        TO = item.candidateEmail,
+                        CC = item.risebirdHR,
+                        Subject = $"Risebird: Appology for delay in interview"
+                    };
+                    var resultset1 = _notificationHelper.AppologyNotificationToCandidate(_mail1);
                 }
                 else if (item.EmailType == "Reschedule")
                 {
@@ -1205,7 +1213,7 @@ namespace Risebird.Web.Controllers
                         CC = item.risebirdHR,
                         Subject = $"Candidate join the meeting and waiting for interviewer"
                     };
-                    var resultset = _notificationHelper.CandidateWaitingNotification(_mail, item.zoomlink);
+                    var resultset = _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.zoomlink);
                 }
             }
             return Json("Success");
