@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
@@ -28,27 +29,22 @@ namespace Risebird.MicroService
         private readonly IMeetingRespository _meetingRespository;
         private readonly IAzureStorageHelper _azureStorageHelper;
 
-        private readonly INotificationHelper _notificationHelper;
-
-        private readonly string connectionString;
         private readonly string ContainerName;
         private readonly string SASConnectionString;
 
-        public ZoomService(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository)
+        public ZoomService(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
-            _notificationHelper = notificationHelper;
             _azureStorageHelper = azureStorageHelper;
             _meetingRespository = meetingRespository;
-            connectionString = _configuration["ConnectionString:DBConnectionString"];
             ContainerName = _configuration["SASURLSettings:ContainerName"];
             SASConnectionString = _configuration["SASURLSettings:ConnectionString"];
 
 
         }
         [FunctionName("ZoomService")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")]TimerInfo myTimer, ILogger log)// after every 2 hour 0 0 */2 * * *
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)// after every 2 hour 0 0 */2 * * *
         {
             try
             {
@@ -58,90 +54,104 @@ namespace Risebird.MicroService
 
 
                 Parallel.ForEach(pendingVideoMeetings, meeting =>
-               {
-                   
-                   if (!string.IsNullOrEmpty(meeting.ZoomMeetingId))
-                   {
-                       if(meeting.ZoomMeetingId=="0" && !string.IsNullOrEmpty(meeting.zoomLink))
-                       {
-                           long zoommeetingId = 0;
-                           try
-                           {
-                               zoommeetingId = Convert.ToInt64(meeting.zoomLink.Split('/').Last());
-                           }
-                           catch (Exception)
-                           {
-                               try
-                               {
-                                   var link = meeting.zoomLink.Split('?').First();
-                                   zoommeetingId = Convert.ToInt64(link.Split('/').Last());
-                               }
-                               catch (Exception)
-                               {
-                                   zoommeetingId = 0;
-                               }
-                           }
-                           meeting.ZoomMeetingId = zoommeetingId.ToString();
-                       }
-                       //var zoomMeetingId = zoomLinkArray[zoomLinkArrayLength.Value - 1];
+                {
 
-                       //get jwt authentication token 
-                       string token = ZoomToken();
+                    if (!string.IsNullOrEmpty(meeting.ZoomMeetingId))
+                    {
+                        if (meeting.ZoomMeetingId == "0" && !string.IsNullOrEmpty(meeting.zoomLink))
+                        {
+                            long zoommeetingId = 0;
+                            try
+                            {
+                                zoommeetingId = Convert.ToInt64(meeting.zoomLink.Split('/').Last());
+                            }
+                            catch (Exception)
+                            {
+                                try
+                                {
+                                    var link = meeting.zoomLink.Split('?').First();
+                                    zoommeetingId = Convert.ToInt64(link.Split('/').Last());
+                                }
+                                catch (Exception)
+                                {
+                                    zoommeetingId = 0;
+                                }
+                            }
+                            meeting.ZoomMeetingId = zoommeetingId.ToString();
+                        }
 
-                       //create HTTP Rest Client
-                       var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"/meetings/{meeting.ZoomMeetingId}/recordings"));
+                        //get jwt authentication token 
+                        string token = ZoomToken();
 
-                       //create HTTP Request 
-                       var request = new RestRequest(Method.GET);
-                       request.AddHeader("content-type", "application/json");
-                       request.AddHeader("authorization", "Bearer " + token);
-                       IRestResponse response = client.Execute(request);
-                       var content = response.Content;
+                        //create HTTP Rest Client
+                        var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"/meetings/{meeting.ZoomMeetingId}/recordings"));
 
-                       var convertedResponse = JsonConvert.DeserializeObject<ZoomRecordingResponse>(content);
+                        //create HTTP Request 
+                        var request = new RestRequest(Method.GET);
+                        request.AddHeader("content-type", "application/json");
+                        request.AddHeader("authorization", "Bearer " + token);
+                        IRestResponse response = client.Execute(request);
+                        var content = response.Content;
 
-                       //get the download url from the response
-                       if (convertedResponse.recording_files != null && convertedResponse.recording_files.Count() > 0)
-                       {
-                           var videoRecordingFiles = convertedResponse.recording_files.Where(x => x.file_type == "MP4" && x.status.ToLower() == "completed");
-                           
-                           if (videoRecordingFiles != null || videoRecordingFiles.Count() == 1)
-                           {
-                               var downloadUrl = videoRecordingFiles.FirstOrDefault().download_url;
+                        var convertedResponse = JsonConvert.DeserializeObject<ZoomRecordingResponse>(content);
 
-                               //upload the video to azure blob using the download_Url
+                        //get the download url from the response
+                        if (convertedResponse.recording_files != null && convertedResponse.recording_files.Count() > 0)
+                        {
+                            var videoRecordingFiles = convertedResponse.recording_files.Where(x => x.file_type == "MP4" && x.status.ToLower() == "completed");
 
-                               WebClient myWebClient = new WebClient();
-                               string uploadedVideoUrl = string.Empty;
-                               string sasUrl = string.Empty;
-                               using (Stream myStream = myWebClient.OpenRead(downloadUrl))
-                               {
-                                   var topic = convertedResponse.topic?.Replace(" ", "_");
-                                   var fileName = string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy’-‘MM’-‘dd’T’HH’:’mm’:’ss") : topic;
+                            if (videoRecordingFiles != null || videoRecordingFiles.Count() == 1)
+                            {
+                                var downloadUrl = videoRecordingFiles.FirstOrDefault().download_url;
 
-                                   uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, ContainerName, null, myStream).Result;
+                                //upload the video to azure blob using the download_Url
 
-                                   //generate SAS URL from the uploaded video url
-                                   var sas = CreateSasUrl();
+                                WebClient myWebClient = new WebClient();
+                                string uploadedVideoUrl = string.Empty;
+                                string sasUrl = string.Empty;
+                                using (Stream myStream = myWebClient.OpenRead(downloadUrl))
+                                {
+                                    var topic = convertedResponse.topic?.Replace(" ", "_").Replace("/", "-").Replace("\t", "").Replace("\n", "").Replace("\r", "");
+                                    var fileName = string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy-MM-ddTHH:mm:ss") : topic;
 
-                                   if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
-                                   {
-                                       sasUrl = uploadedVideoUrl + "?" + sas;
-                                   }
-                               }
-                               if (!string.IsNullOrEmpty(sasUrl))
-                               {
-                                   //insert the SAS URL of the video in the database table
+                                    try
+                                    {
+                                        uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, ContainerName, null, myStream).Result;
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                        return;
+                                    }
+
+                                    log.LogInformation($"Zoom : Video uploaded in blob for meeting with Id {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+
+
+                                    //generate SAS URL from the uploaded video url
+                                    var sas = CreateSasUrl();
+
+                                    if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
+                                    {
+                                        sasUrl = uploadedVideoUrl + "?" + sas;
+                                    }
+                                }
+                                if (!string.IsNullOrEmpty(sasUrl))
+                                {
+                                    //insert the SAS URL of the video in the database table
                                     var result = _meetingRespository.UpdateUploadedVideoLink(meeting.imid, sasUrl).Result;
-                               }
-                           }
+
+                                    log.LogInformation($"Zoom : Video link updated in database for meeting with Id {meeting.ZoomMeetingId} at: {DateTime.Now}");
 
 
-                       }
+                                }
+                            }
 
-                   }
-               });
 
+                        }
+
+                    }
+                });
 
                 log.LogInformation($"C# Zoom Service function executed at: {DateTime.Now}");
             }
