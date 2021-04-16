@@ -2648,7 +2648,8 @@ namespace Risebird.Web.Controllers
                                         EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim(),
                                         ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null) ? workSheet.Cells[rowIterator, 3].Value.ToString() : string.Empty,         //workSheet.Cells[rowIterator, 3].Value.ToString();
                                         Phone = (workSheet.Cells[rowIterator, 4].Value != null) ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString()) : string.Empty,                  // "+" + workSheet.Cells[rowIterator, 10].Value.ToString();
-                                        ClientHREmail = (workSheet.Cells[rowIterator, 5].Value != null) ? workSheet.Cells[rowIterator, 5].Value.ToString() : string.Empty,
+                                        //ClientHREmail = (workSheet.Cells[rowIterator, 5].Value != null) ? workSheet.Cells[rowIterator, 5].Value.ToString() : string.Empty,
+                                        ClientHREmail = workSheet.Cells[rowIterator, 5].Value.ToString().Trim(),
                                         //ProfileSource = (workSheet.Cells[rowIterator, 6].Value != null) ? workSheet.Cells[rowIterator, 6].Value.ToString() : string.Empty,
                                         ProfileSource = workSheet.Cells[rowIterator, 6].Value.ToString().Trim(),
                                         IRFId = IRFId
@@ -2673,7 +2674,7 @@ namespace Risebird.Web.Controllers
 
                         else
                         {
-                            return "Failed to import candidates!";
+                            return "Failed to import candidates! Kindly check the file you have chosen.";
 
                         }
                     }
@@ -2684,7 +2685,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to import candidates!"; ;
+                return "Failed to import candidates! Kindly make sure the data contains all the required fields."; ;
             }
             return null;
         }
