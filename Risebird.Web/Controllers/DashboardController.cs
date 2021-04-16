@@ -1159,7 +1159,6 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> SendNotoificationForParticipantWaiting()
         {
-            //Check all mails and sent according to that all 5 mails
             var Ribbonmodel = await _dashboardService.SendNotoificationForParticipantWaiting();
             foreach (var item in Ribbonmodel)
             {
@@ -1171,9 +1170,9 @@ namespace Risebird.Web.Controllers
                         {
                             TO = item.candidateEmail,
                             CC = item.risebirdHR,
-                            Subject = $"Interviewer Waiting for Start the interview"
+                            Subject = $"Interviewer Waiting for you to Start the interview"
                         };
-                        var resultset = _notificationHelper.InterviewerWaitingNotification(_mail);
+                        var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink);
                     }
                     else
                     {
@@ -1183,28 +1182,30 @@ namespace Risebird.Web.Controllers
                             CC = item.risebirdHR,
                             Subject = $"Candidate join the meeting and waiting for interviewer"
                         };
-                        var resultset = _notificationHelper.CandidateWaitingNotification(_mail);
+                        var resultset = _notificationHelper.CandidateWaitingNotification(_mail, item.zoomlink);
                     }
                 }
                 else if (item.EmailType == "EI")
                 {
+                    //reassign Interviewer link- openinterviewer
                     Mail _mail = new Mail
                     {
                         TO = item.emergencyinterviewer,
                         CC = item.risebirdHR,
                         Subject = $"Candidate join the meeting and waiting for interviewer"
                     };
-                    var resultset = _notificationHelper.CandidateWaitingNotification(_mail);
+                    var resultset = _notificationHelper.CandidateWaitingNotification(_mail, item.zoomlink);
                 }
                 else if (item.EmailType == "Reschedule")
                 {
+                    //Send with reschedule link
                     Mail _mail = new Mail
                     {
                         TO = item.candidateEmail,
                         CC = item.risebirdHR,
                         Subject = $"Candidate join the meeting and waiting for interviewer"
                     };
-                    var resultset = _notificationHelper.CandidateWaitingNotification(_mail);
+                    var resultset = _notificationHelper.CandidateWaitingNotification(_mail, item.zoomlink);
                 }
             }
             return Json("Success");

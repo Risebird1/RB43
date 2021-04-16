@@ -23,5 +23,6 @@ namespace Risebird.Entities.ViewModel
         public string Meetingid { get; set; }
         public bool isInterviewerWaiting { get; set; }
         public string EmailType { get; set; }
+        public string zoomlink { get; set; }
     }
 }

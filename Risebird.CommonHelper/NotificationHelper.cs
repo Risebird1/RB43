@@ -1341,7 +1341,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string InterviewerWaitingNotification(Mail model)
+        public string InterviewerWaitingNotification(Mail model, string zoomlink)
         {
             try
             {
@@ -1353,9 +1353,9 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-
+                object[] parameters = new object[] { zoomlink };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerWaitingNotification.html");
-                string msgBody = string.Format(rawEmail, null);
+                string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return SendMail(msg);
             }
@@ -1364,7 +1364,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string CandidateWaitingNotification(Mail model)
+        public string CandidateWaitingNotification(Mail model, string zoomlink)
         {
             try
             {
@@ -1376,9 +1376,9 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-
+                object[] parameters = new object[] { zoomlink };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateWaitingNotification.html");
-                string msgBody = string.Format(rawEmail, null);
+                string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return SendMail(msg);
             }
