@@ -4285,7 +4285,76 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
-
+        }
+        public async Task<IEnumerable<Meeting>> FetchOpenMeetingById(string id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@meetingid", Convert.ToInt64(id));
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_FetchOpenMeetingById", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string CheckMeetingAssignationValidation(string Emailid)
+        {
+            try
+            {
+                var query = "Select Count(*) from UserList where Emailid=@Emailid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", Emailid.Trim());
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    if (results.FirstOrDefault() > 0)
+                    {
+                        return "Valid";
+                    }
+                    else
+                    {
+                        return "Email id is not valid.";
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+        }
+        public string ReAssignMeeting(int id, string interviewerMail)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<string>(
+                        con, "update [dbo].[InterviewMeetings] set interviewer=@value,EIAssigned=1 where id = @meetingid", new { value = interviewerMail, id }, commandType: Text);
+                    return "Interview assigned Successfully.";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
         }
     }
 }

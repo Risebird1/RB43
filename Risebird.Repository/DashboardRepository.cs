@@ -929,11 +929,11 @@ namespace Risebird.Repository
                 {
                     if (actiontype == 0)
                     {
-                        query = "Select distinct * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='')";
+                        query = "Select distinct * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and DATEDIFF(DAY, im.interviewDate, GETDATE())<7";
                     }
                     else
                     {
-                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID";
+                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID and DATEDIFF(DAY, im.interviewDate, GETDATE())<7";
                     }
                 }
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -1096,6 +1096,23 @@ namespace Risebird.Repository
                     var result = await SqlMapper.QueryAsync<NotUpdatedMeetings>(con, "usp_GetNotUpdatedMeetingsCountforHR", dp,
                         commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<List<MeetingDetailsForParticipant>> SendNotoificationForParticipantWaiting()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MeetingDetailsForParticipant>(con, "usp_FetchParticipantZoomMeetingWaiting", null,
+                        commandType: CommandType.StoredProcedure);
+                    return (List<MeetingDetailsForParticipant>)result;
                 }
             }
             catch (SqlException ex)
