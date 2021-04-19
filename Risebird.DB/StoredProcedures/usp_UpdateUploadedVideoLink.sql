@@ -16,11 +16,12 @@ GO
 
 CREATE PROCEDURE [dbo].[usp_UpdateUploadedVideoLink]  
 @interviewId int,
-@videoLink varchar(1000)
+@videoLink varchar(1000),
+@videoDuration int
 AS  
 Begin 
 
-update InterviewComments set VideoLink=@videoLink where InterviewId=@interviewId
+update InterviewComments set VideoLink=@videoLink, VideoDuration = @videoDuration where InterviewId=@interviewId
 
 End
 GO

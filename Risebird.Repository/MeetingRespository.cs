@@ -4262,7 +4262,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<bool> UpdateUploadedVideoLink(int interviewId, string videoLink)
+        public async Task<bool> UpdateUploadedVideoLink(int interviewId, string videoLink, int videoDuration)
         {
             try
             {
@@ -4271,6 +4271,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@interviewId", interviewId);
                     parameters.Add("@videoLink", videoLink);
+                    parameters.Add("@videoDuration", videoDuration);
                     var result = SqlMapper.Query(con, "usp_UpdateUploadedVideoLink", parameters,
                         commandType: CommandType.StoredProcedure);
                     return true;
