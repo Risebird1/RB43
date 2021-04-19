@@ -1200,7 +1200,7 @@ namespace Risebird.Web.Controllers
                     {
                         TO = item.candidateEmail,
                         CC = item.risebirdHR,
-                        Subject = $"Risebird: Appology for delay in interview"
+                        Subject = $"Risebird: Apology for delay in interview"
                     };
                     var resultset1 = _notificationHelper.AppologyNotificationToCandidate(_mail1);
                 }
