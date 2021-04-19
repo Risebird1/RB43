@@ -1188,7 +1188,7 @@ namespace Risebird.Web.Controllers
                 else if (item.EmailType == "EI")
                 {
                     //reassign Interviewer link- openinterviewer
-                    string linkurl = Request.Host.ToString() + "/Interview/OpenInterview";
+                    string linkurl = Request.Host.ToString() + "/Interview/ReassignMeetingByEI/" + item.Meetingid;
                     Mail _mail = new Mail
                     {
                         TO = item.emergencyinterviewer,

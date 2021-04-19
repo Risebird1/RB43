@@ -1562,7 +1562,7 @@ namespace Risebird.Web.Controllers
                                 }
 
                             }
-                            
+
                         }
 
                         if (ModelState.IsValid)
@@ -5886,5 +5886,16 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [AllowAnonymous]
+        public IActionResult ReassignMeetingByEI(string id)
+        {
+            var meetings = _meetingService.FetchOpenMeetingById(id);
+            return View(meetings);
+        }
+        public JsonResult ReassignMeeting(string id, string meetingid,string Emailid)
+        {
+            var meetings = _meetingService.ReassignMeeting(id, meetingid, Emailid);
+            return Json(meetings);
+        }
     }
 }
