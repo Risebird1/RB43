@@ -42,5 +42,6 @@ namespace Risebird.Repository.Interface
         Task<List<MeetingVM>> FetchRibbonDetailsValues(string actionstatus, string emailid, int actiontype);
         Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus, string emailid, int actiontype);
         Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCountbyHr(string Emailid);
+        Task<List<MeetingDetailsForParticipant>> SendNotoificationForParticipantWaiting();
     }
 }

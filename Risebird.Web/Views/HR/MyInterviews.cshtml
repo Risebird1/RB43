@@ -213,14 +213,14 @@
                                     </tr>
                                 </table>
                             </li>
-                            <!--<li style="border: 0px; padding: 0px;  line-height: 30px;">
+                            <li style="border: 0px; padding: 0px;  line-height: 30px;">
                                 <table width="100%" class="no-border my_interview">
                                     <tr>
-                                        <td class="un-right">-->
-                                            @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>*@
+                                        <td class="un-right">
+                                            <span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>
 
 
-                                            <!--<div class="flipper">
+                                            <div class="flipper">
                                                 <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('UnAttendedZoomLink')">
                                                     <div class="card-image">
                                                         <div class="header-front"></div>
@@ -241,7 +241,7 @@
 
                                     </tr>
                                 </table>
-                            </li>-->
+                            </li>
                             <li style="border: 0px; padding: 0px;  line-height: 30px;">
                                 <table width="100%" class="no-border my_interview">
                                     <tr>
@@ -610,7 +610,7 @@
                                                             @if (item.candidateName != null && item.candidateName != "")
                                                             {
 
-                                                                @if (item.IsOnilne == 1 && item.candidateName.Length > 15)
+                                                                @if (item.IsOnilne == 1 && item.candidateName.Length > 8)
                                                                 {
                                                                     <td>
                                                                         <a onclick="directopenChat('@item.candidateEmail')"> <span class="dot" style="background-color:green"></span>@item.candidateName.Substring(0, 8)...</a>
@@ -619,7 +619,7 @@
                                                                 else
                                                                 {
 
-                                                                    @if (item.candidateName.Length > 15)
+                                                                    @if (item.candidateName.Length > 10)
                                                                     {
 
 
@@ -650,7 +650,7 @@
 
 
 
-                                                                @if (item.interviewer.Length > 15)
+                                                                @if (item.interviewer.Length > 8)
                                                                 {
 
 
@@ -678,7 +678,7 @@
 
 
 
-                                                                @if (item.candidateEmail.Length > 15)
+                                                                @if (item.candidateEmail.Length > 10)
                                                                 {
 
                                                                     <td class="cadEmail">
@@ -701,7 +701,7 @@
                                                             }
                                                             @if (!string.IsNullOrEmpty(item.ClientCompName))
                                                             {
-                                                                @if (item.ClientName.Length > 15)
+                                                                @if (item.ClientName.Length > 10)
                                                                 {
                                                                     <td style="text-align: center"><a onclick="" data-tooltip="@item.ClientName"> @item.ClientName.Substring(0, 10)...</a> </td>
                                                                 }
@@ -735,7 +735,7 @@
                                                             }
                                                             @if (!string.IsNullOrEmpty(item.risebirdHR))
                                                             {
-                                                                @if (item.risebirdHR.Length > 15)
+                                                                @if (item.risebirdHR.Length > 8)
                                                                 {
                                                                     <td><a onclick="" data-tooltip="@item.risebirdHR">@item.risebirdHR.Substring(0, 8)...</a></td>
                                                                     }
@@ -919,7 +919,7 @@
                                                                             </td>
                                                                             @if (!string.IsNullOrEmpty(item.ClientName))
                                                                             {
-                                                                                @if (item.ClientName.Length > 15)
+                                                                                @if (item.ClientName.Length > 10)
                                                                                 {
                                                                                     <td style="text-align: center"> @item.ClientName.Substring(0, 10)... </td>
                                                                                 }
@@ -949,7 +949,7 @@
                                                                             <td>@item.HRComment</td>
                                                                             @if (!string.IsNullOrEmpty(item.CandidateClientHR))
                                                                             {
-                                                                                @if (item.CandidateClientHR.Length > 15)
+                                                                                @if (item.CandidateClientHR.Length > 13)
                                                                                 {
                                                                                     <td class="cadEmail">
                                                                                         <a onclick="" data-tooltip="@item.CandidateClientHR"> @item.CandidateClientHR.Substring(0, 13)... </a>
@@ -1343,7 +1343,7 @@
                 else {
 
 
-                    if (data[i].candidateName.length > 15) {
+                    if (data[i].candidateName.length > 10) {
                         html += '<td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 10) + '... </a></td>';
                     }
                     else {
@@ -1357,7 +1357,7 @@
 
 
             if (data[i].interviewer != null && data[i].interviewer != "") {
-                if (data[i].interviewer.length > 15) {
+                if (data[i].interviewer.length > 8) {
                     html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].interviewer + '"> ' + data[i].interviewer.substring(0, 8) + '... </a></td>';
                 }
                 else {
@@ -1371,7 +1371,7 @@
 
 
             if (data[i].candidateEmail != null && data[i].candidateEmail != "") {
-                if (data[i].candidateEmail.length > 15) {
+                if (data[i].candidateEmail.length > 13) {
                     html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].candidateEmail + '"> ' + data[i].candidateEmail.substring(0, 13) + '... </a></td>';
                 }
                 else {
@@ -1385,7 +1385,7 @@
 
 
             if (data[i].clientName != null && data[i].clientName != "") {
-                if (data[i].clientName.length > 15) {
+                if (data[i].clientName.length > 10) {
                     html += '  <td style="text-align: center"> ' + data[i].clientName.substring(0, 10) + '... </td>';
                 }
 
@@ -1416,7 +1416,7 @@
             }
 
             if (data[i].risebirdHR != null && data[i].risebirdHR != "") {
-                if (data[i].risebirdHR.length > 15) {
+                if (data[i].risebirdHR.length > 8) {
                     html += '  <td> ' + data[i].risebirdHR.substring(0, 8) + '... </td>';
                 }
                 else {

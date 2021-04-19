@@ -1104,5 +1104,22 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<List<MeetingDetailsForParticipant>> SendNotoificationForParticipantWaiting()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MeetingDetailsForParticipant>(con, "usp_FetchParticipantZoomMeetingWaiting", null,
+                        commandType: CommandType.StoredProcedure);
+                    return (List<MeetingDetailsForParticipant>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
