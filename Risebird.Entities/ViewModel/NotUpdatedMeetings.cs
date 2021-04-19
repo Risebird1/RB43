@@ -25,5 +25,6 @@ namespace Risebird.Entities.ViewModel
         public string EmailType { get; set; }
         public string zoomlink { get; set; }
         public string CalendlyLink { get; set; }
+        public string HRCoordinatorEmailId { get; set; }
     }
 }

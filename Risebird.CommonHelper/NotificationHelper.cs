@@ -1379,7 +1379,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string CandidateWaitingNotification(Mail model, string zoomlink)
+        public string CandidateWaitingEINotification(Mail model, string zoomlink)
         {
             try
             {
@@ -1389,7 +1389,8 @@ namespace Risebird.CommonHelper
                 var toMails = model.TO.Split(";");
                 foreach (var mail in toMails)
                 {
-                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    //msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
                 var ccMails = model.CC.Split(";");
                 foreach (var mail in ccMails)
@@ -1397,7 +1398,7 @@ namespace Risebird.CommonHelper
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
                 object[] parameters = new object[] { zoomlink };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateWaitingNotification.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return SendMail(msg);

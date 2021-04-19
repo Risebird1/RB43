@@ -51,7 +51,7 @@ namespace Risebird.CommonHelper.Interface
         string SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill);
         string CandidateShortlistNotification(Mail model, string currenturl, string comment, string email, string[] videoidlist);
         string InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting);
-        string CandidateWaitingNotification(Mail model, string zoomlink);
+        string CandidateWaitingEINotification(Mail model, string zoomlink);
         string AppologyNotificationToCandidate(Mail model);
         string ReScheduleNotificationToCandidate(Mail model, string zoomlink);
     }
