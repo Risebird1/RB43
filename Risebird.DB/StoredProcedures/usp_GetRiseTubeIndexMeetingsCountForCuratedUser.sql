@@ -47,7 +47,8 @@ if(@searchValue is not null)
 				im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.JoiningBiometryScore,     
 				ca.Phone, ca.ResumeLink ,  ca.CostEstimate,IRF.id ,IRF.JDLink ,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,    
 				ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id ,ic.ThumbnailImage       
-				, QCF.InterviewId ,suit.Status ,rtvsl.Status ,ic.CandidateAvailable,patchvideoCount.MeetingCount,Techscore.TechSkillScore) a
+				, QCF.InterviewId ,suit.Status ,rtvsl.Status ,ic.CandidateAvailable,
+				patchvideoCount.MeetingCount,Techscore.TechSkillScore, ic.ThumbnailTimeSeconds) a
 
 	End
 
@@ -76,7 +77,8 @@ Else
 				im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.JoiningBiometryScore,     
 				ca.Phone, ca.ResumeLink ,  ca.CostEstimate,IRF.id ,IRF.JDLink ,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,    
 				ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id ,ic.ThumbnailImage       
-				, QCF.InterviewId ,suit.Status ,rtvsl.Status ,ic.CandidateAvailable,patchvideoCount.MeetingCount,Techscore.TechSkillScore) a
+				, QCF.InterviewId ,suit.Status ,rtvsl.Status ,ic.CandidateAvailable,patchvideoCount.MeetingCount,
+				Techscore.TechSkillScore, ic.ThumbnailTimeSeconds) a
 	End
 
 
