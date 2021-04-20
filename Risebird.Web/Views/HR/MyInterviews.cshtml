@@ -2042,7 +2042,6 @@
     }
 </script>
 <script>
-    var bipsoundcount = 0;
     $(document).ready(function () {
         setRibbon();
         $('[data-toggle="tooltip"]').tooltip();
@@ -2070,11 +2069,12 @@
                 $("#ribbonmissingvideolinkcount_1").text(data.missingVideoLink);
                 $("#ribbonUnAttendedZoomLinkcount_1").text(data.unAttendedZoomLink);
                 if (parseInt(data.unAttendedZoomLink) > 0) {
+                    var bipsoundcount = localStorage.getItem("bipsoundcount");
                     if (parseInt(data.unAttendedZoomLink) > parseInt(bipsoundcount)) {
                         var audio = document.getElementById("chatAudio");
                         audio.play();
                     }
-                    bipsoundcount = parseInt(data.unAttendedZoomLink);
+                    localStorage.setItem("bipsoundcount", data.unAttendedZoomLink);
                     //Send Mail
                     $.ajax({
                         type: 'POST',
