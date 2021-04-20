@@ -113,6 +113,19 @@ namespace Risebird.MicroService
                             ActionDate
                         });
                     }
+                    string connectionStringtest = "Server=tcp:risebirdtest.database.windows.net,1433;Initial Catalog=productTestProdDB;Persist Security Info=False;User ID=risebirdtestadmin;Password=Ri$£bird@567;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+                    using (SqlConnection conntest = new SqlConnection(connectionStringtest))
+                    {
+                        string sqlProcReport = "INSERT INTO ZoomMeetingTransmission Values (@eventType, @UserName, @Meetingid,@Emailid,@ActionDate);";
+                        var result3 = conntest.Execute(sqlProcReport, new
+                        {
+                            eventType,
+                            UserName,
+                            Meetingid,
+                            Emailid,
+                            ActionDate
+                        });
+                    }
                 }
                 catch (Exception ex)
                 {
