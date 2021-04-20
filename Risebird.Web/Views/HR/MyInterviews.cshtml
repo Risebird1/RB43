@@ -568,178 +568,181 @@
                                                         {
                                                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-                                                        <tr id=@item.id data-changes="1">
-                                                            <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
-                                                            <td> @item.interviewDate </td>
-                                                            @if (@item.interviewSlot == "Morning")
-                                                            {
-                                                                <td><a style="color:darkorange;font-weight: bold"> @item.interviewSlot</a></td>
-
-                                                            }
-                                                            else
-                                                            {
-                                                                <td><a style="color:darkblue;font-weight: bold"> @item.interviewSlot</a></td>
-                                                            }
-                                                            <td style="text-align: center">
-                                                                @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
+                                                            <tr id=@item.id data-changes="1">
+                                                                <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                                                                <td> @item.interviewDate </td>
+                                                                @if (@item.interviewSlot == "Morning")
                                                                 {
+                                                                    <td><a style="color:darkorange;font-weight: bold"> @item.interviewSlot</a></td>
 
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer">
-                                                                        <span onclick="ModalButtonClick('@item.InterviewerPhone','@item.interviewer','Interviewer')" data-original-title="Tooltip on top" title="Click here to call the interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                    </button>
-
-
-                                                                }
-
-
-                                                            </td>
-
-                                                            <td style="text-align: center">
-                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                {
-
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate">
-                                                                        <span onclick="ModalButtonClick('@item.MobileNumber','@item.candidateName','Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                    </button>
-
-
-                                                                }
-
-                                                            </td>
-                                                            <td style="text-align: center"> @item.IRFID </td>
-                                                            @if (item.candidateName != null && item.candidateName != "")
-                                                            {
-
-                                                                @if (item.IsOnilne == 1 && item.candidateName.Length > 8)
-                                                                {
-                                                                    <td>
-                                                                        <a onclick="directopenChat('@item.candidateEmail')"> <span class="dot" style="background-color:green"></span>@item.candidateName.Substring(0, 8)...</a>
-                                                                    </td>
                                                                 }
                                                                 else
                                                                 {
+                                                                    <td><a style="color:darkblue;font-weight: bold"> @item.interviewSlot</a></td>
+                                                                }
+                                                                <td style="text-align: center">
+                                                                    @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
+                                                                    {
 
-                                                                    @if (item.candidateName.Length > 10)
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer">
+                                                                            <span onclick="ModalButtonClick('@item.InterviewerPhone','@item.interviewer','Interviewer')" data-original-title="Tooltip on top" title="Click here to call the interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                        </button>
+
+
+                                                                    }
+
+
+                                                                </td>
+
+                                                                <td style="text-align: center">
+                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                    {
+
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate">
+                                                                            <span onclick="ModalButtonClick('@item.MobileNumber','@item.candidateName','Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                        </button>
+
+
+                                                                    }
+
+                                                                </td>
+                                                                <td style="text-align: center"> @item.IRFID </td>
+                                                                @if (item.candidateName != null && item.candidateName != "")
+                                                                {
+
+                                                                    @if (item.IsOnilne == 1 && item.candidateName.Length > 8)
+                                                                    {
+                                                                        <td>
+                                                                            <a onclick="directopenChat('@item.candidateEmail')"> <span class="dot" style="background-color:green"></span>@item.candidateName.Substring(0, 8)...</a>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+
+                                                                        @if (item.candidateName.Length > 10)
+                                                                        {
+
+
+                                                                            <td class="cadName">
+                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 10)... </a>
+                                                                            </td>
+                                                                        }
+
+
+                                                                        else
+                                                                        {
+                                                                            <td class="cadName">
+                                                                                <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                            </td>
+                                                                        }
+
+
+                                                                    }
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+
+                                                                @if (item.interviewer != null && item.interviewer != "")
+                                                                {
+
+
+
+                                                                    @if (item.interviewer.Length > 8)
                                                                     {
 
 
-                                                                        <td class="cadName">
-                                                                            <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 10)... </a>
+                                                                        <td class="cadEmail">
+                                                                            <a onclick="" data-tooltip="@item.interviewer"> @item.interviewer.Substring(0, 8)... </a>
                                                                         </td>
                                                                     }
 
 
                                                                     else
                                                                     {
-                                                                        <td class="cadName">
-                                                                            <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                        <td class="cadEmail">
+                                                                            <a onclick=""> @item.interviewer </a>
                                                                         </td>
                                                                     }
 
-
                                                                 }
-
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-
-                                                            @if (item.interviewer != null && item.interviewer != "")
-                                                            {
-
-
-
-                                                                @if (item.interviewer.Length > 8)
-                                                                {
-
-
-                                                                    <td class="cadEmail">
-                                                                        <a onclick="" data-tooltip="@item.interviewer"> @item.interviewer.Substring(0, 8)... </a>
-                                                                    </td>
-                                                                }
-
-
                                                                 else
                                                                 {
-                                                                    <td class="cadEmail">
-                                                                        <a onclick=""> @item.interviewer </a>
-                                                                    </td>
+                                                                    <td></td>
                                                                 }
 
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-
-                                                            @if (item.candidateEmail != null && item.candidateEmail != "")
-                                                            {
-
-
-
-                                                                @if (item.candidateEmail.Length > 10)
+                                                                @if (item.candidateEmail != null && item.candidateEmail != "")
                                                                 {
 
-                                                                    <td class="cadEmail">
-                                                                        <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 10)... </a>
-                                                                    </td>
-                                                                }
-
-                                                                else
-                                                                {
-                                                                    <td class="cadEmail">
-                                                                        <a onclick=""> @item.candidateEmail </a>
-                                                                    </td>
-                                                                }
-
-                                                            }
-
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-                                                            @if (!string.IsNullOrEmpty(item.ClientCompName))
-                                                            {
-                                                                @if (item.ClientName.Length > 10)
-                                                                {
-                                                                    <td style="text-align: center"><a onclick="" data-tooltip="@item.ClientName"> @item.ClientName.Substring(0, 10)...</a> </td>
-                                                                }
-
-                                                                else
-                                                                {
-                                                                    <td style="text-align: center"> @item.ClientCompName </td>
-                                                                }
-                                                            }
-
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
 
 
+                                                                    @if (item.candidateEmail.Length > 10)
+                                                                    {
 
-
-                                                            @if (item.zoomLink != null && item.zoomLink != "")
-                                                            {
-
-
-
-                                                                <td> <a id="zoomlinkId" target="_blank" title="Zoom Link" href=@item.zoomLink>Zoom Link</a></td>
-                                                            }
-                                                            else
-                                                            {
-
-                                                                <td>No Zoom Link</td>
-
-                                                            }
-                                                            @if (!string.IsNullOrEmpty(item.risebirdHR))
-                                                            {
-                                                                @if (item.risebirdHR.Length > 8)
-                                                                {
-                                                                    <td><a onclick="" data-tooltip="@item.risebirdHR">@item.risebirdHR.Substring(0, 8)...</a></td>
+                                                                        <td class="cadEmail">
+                                                                            <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 10)... </a>
+                                                                        </td>
                                                                     }
-                                                                    else {<td>@item.risebirdHR</td> }
+
+                                                                    else
+                                                                    {
+                                                                        <td class="cadEmail">
+                                                                            <a onclick=""> @item.candidateEmail </a>
+                                                                        </td>
+                                                                    }
+
+                                                                }
+
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+                                                                @if (!string.IsNullOrEmpty(item.ClientCompName))
+                                                                {
+                                                                    @if (item.ClientName.Length > 10)
+                                                                    {
+                                                                        <td style="text-align: center"><a onclick="" data-tooltip="@item.ClientName"> @item.ClientName.Substring(0, 10)...</a> </td>
+                                                                    }
+
+                                                                    else
+                                                                    {
+                                                                        <td style="text-align: center"> @item.ClientCompName </td>
+                                                                    }
+                                                                }
+
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+
+
+
+
+                                                                @if (item.zoomLink != null && item.zoomLink != "")
+                                                                {
+
+
+
+                                                                    <td> <a id="zoomlinkId" target="_blank" title="Zoom Link" href=@item.zoomLink>Zoom Link</a></td>
+                                                                }
+                                                                else
+                                                                {
+
+                                                                    <td>No Zoom Link</td>
+
+                                                                }
+                                                                @if (!string.IsNullOrEmpty(item.risebirdHR))
+                                                                {
+                                                                    @if (item.risebirdHR.Length > 8)
+                                                                    {
+                                                                        <td><a onclick="" data-tooltip="@item.risebirdHR">@item.risebirdHR.Substring(0, 8)...</a></td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>@item.risebirdHR</td>
+}
                                                                 }
                                                                 else
                                                                 {
@@ -882,7 +885,7 @@
                                                                             else
                                                                             {
                                                                                 <td></td>
-}
+                                                                            }
                                                                             @if (item.videoLink != null && item.videoLink != "")
                                                                             {
                                                                                 <td> <a id="videoId" target="_blank" title="Video" href=@item.videoLink.Replace(" ","%20")>Video</a> </td>
@@ -1420,10 +1423,10 @@
                     html += '  <td> ' + data[i].risebirdHR.substring(0, 8) + '... </td>';
                 }
                 else {
-                    html += '<td>' + data[i].risebirdHR+ ' </td>';
+                    html += '<td>' + data[i].risebirdHR + ' </td>';
                 }
 
-                }
+            }
             else {
 
                 html += '  <td>No Zoom Id</td>';
@@ -1521,14 +1524,14 @@
             if (data[i].videoLink != null && data[i].videoLink != "") {
 
                 if (data[i].videoLink.length > 25) {
-                    html += '<td><a onclick="" data-tooltip="'+ data[i].videoLink +'">' + data[i].videoLink.substring(0, 25) + '...</a></td>';
+                    html += '<td><a onclick="" data-tooltip="' + data[i].videoLink + '">' + data[i].videoLink.substring(0, 25) + '...</a></td>';
                 }
                 else {
                     html += '<td>' + data[i].videoLink + '</td>';
                 }
 
             }
-            else { html += '<td></td>';}
+            else { html += '<td></td>'; }
 
             if (data[i].meetingStatusDesc != "0") {
                 html += '   <td>' + data[i].meetingStatusDesc + '</td>';
@@ -2065,7 +2068,21 @@
                 $("#ribbonmissingzoomlinkcount_1").text(data.missingZoomLink);
                 $("#ribbonmissingvideolinkcount_1").text(data.missingVideoLink);
                 $("#ribbonUnAttendedZoomLinkcount_1").text(data.unAttendedZoomLink);
-
+                if (parseInt(data.unAttendedZoomLink) > 0) {
+                    var bipsoundcount = localStorage.getItem("bipsoundcount");
+                    if (parseInt(data.unAttendedZoomLink) > parseInt(bipsoundcount)) {
+                        var audio = document.getElementById("chatAudio");
+                        audio.play();
+                    }
+                    localStorage.setItem("bipsoundcount", data.unAttendedZoomLink);
+                    //Send Mail
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Dashboard/SendNotoificationForParticipantWaiting',
+                        success: function (data) {
+                        }
+                    });
+                }
             }
         });
         $(".flipper").toggleClass("flip");
