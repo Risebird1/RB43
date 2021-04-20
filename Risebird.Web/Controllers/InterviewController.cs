@@ -3069,7 +3069,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> AddComments(int interviewId)
+        public async Task<IActionResult>  AddComments(int interviewId)
         {
             try
             {
