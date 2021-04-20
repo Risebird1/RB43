@@ -430,23 +430,10 @@
                                                             <div class="single-video" id="divvideochange">
                                                                 @if (Model.VideoLink != null && Model.VideoLink != "")
                                                                 {
-                                                                    @if (@Model.VideoLink.Contains(".mp4") || @Model.VideoLink.Contains(".org"))
-                                                                    {
-                                                                        <video id="risetubevideo_3" controls class="vjs-tech video-width" controlsList="nodownload" autoplay>
-                                                                            <source src="@Model.VideoLink" type="video/mp4" autoplay>
-                                                                            <source src="@Model.VideoLink" type="video/mp4">
-                                                                        </video>
-                                                                    }
-                                                                    else if (Model.VideoLink.Contains("/manifest"))
-                                                                    {
-                                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' disablePictureInPicture controlsList="nofullscreen nodownload playsinline " autoplay>
-                                                                            <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
-                                                                        </video>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <iframe width="100%" class="vjs-tech btnvideo" height="315" src="@Model.VideoLink" allowfullscreen></iframe>
-                                                                    }
+                                                                    <video id="risetubevideo_3" controls class="vjs-tech video-width" controlsList="nodownload" autoplay>
+                                                                        <source src="@Model.VideoLink" type="video/mp4" autoplay>
+                                                                        <source src="@Model.VideoLink" type="video/mp4">
+                                                                    </video>
                                                                 }
                                                                 else
                                                                 {
@@ -1595,41 +1582,41 @@
                                                                                             <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
                                                                                         }
                                                                                         @*@if (videolist.VideoLink.Contains(".mp4"))
-                                                                                        {
-                                                                                            @if (videolist.ThumbnailImage != null)
                                                                                             {
-                                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
-                                                                                            }
-                                                                                            <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
-                                                                                                <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                            </video>
+                                                                                                @if (videolist.ThumbnailImage != null)
+                                                                                                {
+                                                                                                    <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                                                }
+                                                                                                <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
+                                                                                                    <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                                </video>
 
 
 
-                                                                                            @if (Model.IsClientCurated)
-                                                                                            {
-                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                                @if (Model.IsClientCurated)
+                                                                                                {
+                                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                                                }
 
                                                                                             }
                                                                                             else
                                                                                             {
+                                                                                                @if (videolist.ThumbnailImage != null)
+                                                                                                {
+                                                                                                    <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                    <img src="~/RiseTube/img/video-icon.png" />
+                                                                                                }
                                                                                                 <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-
-                                                                                            }
-
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            @if (videolist.ThumbnailImage != null)
-                                                                                            {
-                                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
-                                                                                            }
-                                                                                            else
-                                                                                            {
-                                                                                                <img src="~/RiseTube/img/video-icon.png" />
-                                                                                            }
-                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                                        }*@
+                                                                                            }*@
 
                                                                                         @{
                                                                                             string appendTime;
@@ -1788,41 +1775,41 @@
                                                                                     <div class="underline--magical"></div>
                                                                                 }
                                                                                 @*@if (videolist.VideoLink.Contains(".mp4"))
-                                                                                {
-                                                                                    @if (videolist.ThumbnailImage != null)
                                                                                     {
-                                                                                        <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
-                                                                                    }
-                                                                                    <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload ">
-                                                                                        <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                    </video>
+                                                                                        @if (videolist.ThumbnailImage != null)
+                                                                                        {
+                                                                                            <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                                        }
+                                                                                        <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload ">
+                                                                                            <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                        </video>
 
-                                                                                    
 
-                                                                                    @if (Model.IsClientCurated)
-                                                                                    {
-                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                                        @if (Model.IsClientCurated)
+                                                                                        {
+                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                                        }
 
                                                                                     }
                                                                                     else
                                                                                     {
+                                                                                        @if (videolist.ThumbnailImage != null)
+                                                                                        {
+                                                                                            <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <img src="~/RiseTube/img/video-icon.png" />
+                                                                                        }
                                                                                         <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-
-                                                                                    }
-
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    @if (videolist.ThumbnailImage != null)
-                                                                                    {
-                                                                                        <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        <img src="~/RiseTube/img/video-icon.png" />
-                                                                                    }
-                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                                }*@
+                                                                                    }*@
 
                                                                                 @{
                                                                                     string appendTime;
@@ -1835,7 +1822,7 @@
                                                                                         appendTime = videolist.ThumbnailTimeSeconds.ToString();
                                                                                     }
                                                                                     var src = videolist.VideoLink + "#t=" + appendTime;
-                                                                                    <video  style=" background:black!important;width:100%; height:100% " controlsList="nodownload ">
+                                                                                    <video style=" background:black!important;width:100%; height:100% " controlsList="nodownload ">
                                                                                         <source src="@src" type="video/mp4">
                                                                                     </video>
 
@@ -1965,39 +1952,39 @@
                                                                         <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
                                                                     }
                                                                     @*@if (videolist.VideoLink.Contains(".mp4"))
-                                                                    {
-                                                                        @if (videolist.ThumbnailImage != null)
                                                                         {
-                                                                            <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
-                                                                        }
-                                                                        <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
-                                                                            <source src="@videolist.VideoLink" type="video/mp4">
-                                                                        </video>
-                                                                        
-                                                                        @if (Model.IsClientCurated)
-                                                                        {
-                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                            @if (videolist.ThumbnailImage != null)
+                                                                            {
+                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                            }
+                                                                            <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
+                                                                                <source src="@videolist.VideoLink" type="video/mp4">
+                                                                            </video>
+
+                                                                            @if (Model.IsClientCurated)
+                                                                            {
+                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                            }
 
                                                                         }
                                                                         else
                                                                         {
+                                                                            @if (videolist.ThumbnailImage != null)
+                                                                            {
+                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <img src="~/RiseTube/img/video-icon.png" />
+                                                                            }
                                                                             <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-
-                                                                        }
-
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        @if (videolist.ThumbnailImage != null)
-                                                                        {
-                                                                            <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <img src="~/RiseTube/img/video-icon.png" />
-                                                                        }
-                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                    }*@
+                                                                        }*@
                                                                     @{
                                                                         string appendTime;
                                                                         if (videolist.ThumbnailTimeSeconds == 0)
@@ -4155,19 +4142,11 @@
         var videourl = $("#txtvideopri_" + index).val();
         var html = '';
 
-        if (videourl.includes(".mp4") || videourl.includes(".org")) {
-            html += '<video controls class="vjs-tech video-width btnvideo" controlsList="nodownload "  autoplay>';
-            html += '<source src="' + videourl + '" type="video/mp4">';
-            html += '</video>';
-        }
-        else if (videourl.includes("/manifest")) {
-            html += '<video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup="{ "logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false } " disablePictureInPicture controlsList="nofullscreen nodownload" playsinline style="pointer-events: none;" autoplay>';
-            html += '<source src="' + videourl + '" type="application/vnd.ms-sstr+xml" />';
-            html += ' </video>';
-        }
-        else {
-            html += '           <iframe width="100%" class="vjs-tech btnvideo" height="315" src="' + videourl + '" allowfullscreen></iframe>';
-        }
+
+        html += '<video controls class="vjs-tech video-width btnvideo" controlsList="nodownload "  autoplay>';
+        html += '<source src="' + videourl + '" type="video/mp4">';
+        html += '</video>';
+
         $("#divvideochange").empty().html(html);
     }
 </script>
