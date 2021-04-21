@@ -24,7 +24,7 @@ namespace Risebird.MicroService
             _dashboardService = dashboardService;
         }
         [FunctionName("SendMeetingNotification")]
-        public async void Run([TimerTrigger("0 * 5 * * *")] TimerInfo myTimer, ILogger log)
+        public async void Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try

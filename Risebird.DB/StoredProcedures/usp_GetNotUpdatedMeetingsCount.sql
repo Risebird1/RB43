@@ -10,7 +10,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Create PROCEDURE [dbo].[usp_GetNotUpdatedMeetingsCount]                   
+CREATE PROCEDURE [dbo].[usp_GetNotUpdatedMeetingsCount]                   
 @currentdate datetime                
 AS                          
 Begin                         
@@ -29,15 +29,9 @@ and DATEDIFF(DAY, interviewDate, @currentdate)<7 ) as UnfilledInterviewStatusCou
 (Select Count(*) from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io'  group by meetingid) as t1        
 left join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io'  group by meetingid) as t2 on t1.Meetingid=t2.Meetingid 
 join InterviewMeetings im on im.ZoomMeetingid=t1.meetingid
-where (t1.meetingMember-t2.meetingMember)=1 and im.Interviewdate<=dateadd(minute,332,getdate())) as UnAttendedZoomLink,    
+where (ISNULL(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1 and dateadd(minute,2,im.Interviewdate)<=dateadd(minute,330,getdate()) and dateadd(minute,15,im.Interviewdate)>=dateadd(minute,330,getdate())) as UnAttendedZoomLink,    
 (select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7) as MissingVideoLink    
 End                 
- 
- 
-
-      
-      
-      
-        
+         
 
 GO
