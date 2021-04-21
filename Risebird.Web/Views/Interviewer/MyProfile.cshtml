@@ -315,7 +315,11 @@
 
 
 <script>
-
+    $('form').submit(function () {
+        if ($(this).valid()) {
+            $(':submit', this).attr('disabled', 'disabled');
+        }
+    });
     function addAvailabilityDetails() {
 
         var table = document.getElementById("availabilityDetailsTable");

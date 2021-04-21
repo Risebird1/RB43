@@ -75,6 +75,10 @@ body {
     width: 0.45em;
     transform: rotate(135deg);
 }
+.wsp-normal{white-space:normal!important;}
+.myinterview_modal .btn-group {
+    width: 290px !important;
+}
 .choose-file .mdc-radio {
     padding: 0px 0 0 0px !important;
 }
@@ -3746,6 +3750,9 @@ button.btn {
 }
 
 @media (max-width: 767px) {
+    .myinterview_modal .btn-group {
+        width: 100% !important;
+    }
     .timer {
         font-size: 15px !important;
     }

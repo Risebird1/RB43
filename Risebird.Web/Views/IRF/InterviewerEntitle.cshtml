@@ -85,7 +85,7 @@
                             <table class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
-                                        <th width="70%">Assessment Group</th>
+                                        <th >Assessment Group</th>
                                         <th>Primary Skills</th>
                                         <th>Number Of Assessments</th>
                                         <th>Action</th>
@@ -97,7 +97,7 @@
                                     {
                                         <tr>
                                             <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.AssessmentGroup</a></td>
-                                            <td><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.PrimarySkills </a></td>
+                                            <td><a class="wsp-normal" href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.PrimarySkills </a></td>
                                             <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.Assessmentcount</a></td>
                                             <td class="text-right four">
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Edit">
