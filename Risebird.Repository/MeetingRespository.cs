@@ -1252,10 +1252,12 @@ namespace Risebird.Repository
                     parameters.Add("@ThumbnailImage", reportDetails.ThumbnailImage);
                     parameters.Add("@FeedbackAudioLink", reportDetails.FeedbackAudioLink);
                     parameters.Add("@ThumbnailTimeSeconds", reportDetails.ThumbnailTimeSeconds);
+                    parameters.Add("@VideoDuration", reportDetails.VideoDuration);
                     DynamicParameters parametersPoints = new DynamicParameters();
                     if (reportDetails.MeetingStatus == 4)
                     {
-                        parametersPoints.Add("@Points", 100);
+                        int points = Convert.ToInt16((100/60) * (reportDetails.VideoDuration));
+                        parametersPoints.Add("@Points", points);
                     }
                     else if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)
                     {
@@ -4262,7 +4264,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<bool> UpdateUploadedVideoLink(int interviewId, string videoLink)
+        public async Task<bool> UpdateUploadedVideoLink(int interviewId, string videoLink, int videoDuration)
         {
             try
             {
@@ -4271,6 +4273,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@interviewId", interviewId);
                     parameters.Add("@videoLink", videoLink);
+                    parameters.Add("@videoDuration", videoDuration);
                     var result = SqlMapper.Query(con, "usp_UpdateUploadedVideoLink", parameters,
                         commandType: CommandType.StoredProcedure);
                     return true;

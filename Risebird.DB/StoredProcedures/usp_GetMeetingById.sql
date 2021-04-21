@@ -52,6 +52,7 @@ SELECT [InterviewMeetings].id as imid
 	 ,HRCoordinatorEmailId
 	 ,QCInterviewer
 	 ,InterviewComments.ThumbnailTimeSeconds
+	 , InterviewComments.VideoDuration
 FROM [dbo].[InterviewMeetings]
 inner join 
 IRF on [InterviewMeetings].IRFId = IRF.IRFId

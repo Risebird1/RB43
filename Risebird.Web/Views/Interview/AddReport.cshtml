@@ -982,11 +982,6 @@
                                                                 </div>
 
 
-
-
-
-
-
                                                                 <div class="" style="display:none" id="linkDiv">
                                                                     @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
@@ -1023,10 +1018,22 @@
 
                                                 </div>
                                             </div>
+                                            @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "HR")
+                                            {
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.VideoDuration, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(model => model.VideoDuration, new { type = "number", @class = "form-control text-box single-line col-lg-12 col-md-12 col-sm-12 col-xs-12" })
+                                                    </div>
+                                                </div>
+                                            }
+
 
                                         </div><!--end of col-md-12-->
 
-                                    </div>}
+                                    </div>
+                                    
+                                }
                                 <div>
                                   <div class="proctor">
                                         <input class="toggle-box" id="identifier-2" type="checkbox">
@@ -1300,9 +1307,10 @@
                             @Html.HiddenFor(x => x.OldInterviewStatus)
                             @Html.HiddenFor(x => x.OldMeetingStatus)
                             @Html.HiddenFor(x => x.OverallScore)
-                            @if (ViewBag.Profile == "Interviewer")
+                            @if (ViewBag.Profile == "Interviewer" || ViewBag.Profile == "Quality Controller")
                             {
                                 @Html.HiddenFor(x => x.ThumbnailTimeSeconds)
+                                @Html.HiddenFor(x => x.VideoDuration)
                             }
                         </form>
                     </div>
