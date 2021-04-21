@@ -3069,7 +3069,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult>  AddComments(int interviewId)
+        public async Task<IActionResult> AddComments(int interviewId)
         {
             try
             {
@@ -5890,9 +5890,15 @@ namespace Risebird.Web.Controllers
         public IActionResult ReassignMeetingByEI(string id)
         {
             var meetings = _meetingService.FetchOpenMeetingById(id);
+            var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+            if (menus != null)
+            {
+                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+            }
             return View(meetings);
         }
-        public JsonResult ReassignMeeting(string id, string meetingid,string Emailid)
+        public JsonResult ReassignMeeting(string id, string meetingid, string Emailid)
         {
             var meetings = _meetingService.ReassignMeeting(id, meetingid, Emailid);
             return Json(meetings);
