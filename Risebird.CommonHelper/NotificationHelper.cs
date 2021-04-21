@@ -1427,7 +1427,7 @@ namespace Risebird.CommonHelper
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateWaitingForInterviewer.html");
-                string msgBody = string.Format(rawEmail, null);
+                string msgBody = rawEmail;
                 msg.HtmlContent = msgBody;
                 return SendMail(msg);
             }
