@@ -129,9 +129,9 @@
                                         </button>
 
 
-                                        <form action="@Url.Action("MyInterview","Interview")" method="post" id="form">
+                                        <form action="@Url.Action("MyInterview","Interview")" method="post" id="form" class="myinterview_modal">
 
-                                            <div class="modal-body">
+                                            <div class="modal-body ">
                                                 <div class="row">
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
@@ -341,7 +341,7 @@
                                                         @if (Model.Count == 0)
                                                         {
                                                             <tr>
-                                                                <td colspan="9" class="text-center">No data available in table</td>
+                                                                <td colspan="12" class="text-center">No data available in table</td>
                                                             </tr>
                                                         }
 
@@ -1120,7 +1120,7 @@
         var html = '';
         if (data.length == 0) {
             html += '  <tr>';
-            html += ' <td colspan="9" class="text-center">No data available in table</td>';
+            html += ' <td colspan="12" class="text-center">No data available in table</td>';
             html += ' </tr>';
         }
 

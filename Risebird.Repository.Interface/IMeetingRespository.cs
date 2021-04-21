@@ -163,7 +163,7 @@ namespace Risebird.Repository.Interface
         Task<List<RBInterviewDetails>> FetchFNPaymentHistory();
         Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailID, bool isFilter = false, DateTime? startDate = null, DateTime? endDate = null);
         Task<IEnumerable<PendingVideoMeetingsData>> GetPendingVideoMeetings();
-        Task<bool> UpdateUploadedVideoLink(int interviewId, string videoLink);
+        Task<bool> UpdateUploadedVideoLink(int interviewId, string videoLink, int videoDuration);
         Task<IEnumerable<Meeting>> FetchOpenMeetingById(string id);
         string CheckMeetingAssignationValidation(string Emailid);
         string ReAssignMeeting(int id, string interviewerMail);
