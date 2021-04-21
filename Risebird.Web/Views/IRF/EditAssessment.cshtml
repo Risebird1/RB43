@@ -14,9 +14,11 @@
         @Html.HiddenFor(model => model._skilldetails.id)
         <div class="clearfix">
             <div class="form-group col-lg-12  col-md-12 col-sm-12  pull-left">
-                @Html.LabelFor(model => model._skilldetails.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                <div class="mandate">
+                    @Html.LabelFor(model => model._skilldetails.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red"> * </span>
+                </div>
                 @*@Html.DropDownListFor(m => m._skilldetails.SelectedSkillIds, new SelectList(Model._skilldetails.PrimarySkills, "Value", "Text", Model._skilldetails.SelectedSkillIds), new { @id = "select", @class = "form-control" })*@
-                <select id="zskilldetails_SelectedSkillIds" name="_skilldetails.SelectedSkillIds" class="form-control multiselect" multiple="multiple" style="width:100%">
+                <select id="zskilldetails_SelectedSkillIds" name="_skilldetails.SelectedSkillIds" class="form-control multiselect" multiple="multiple" style="width:100%" required="required">
                     @foreach (var item in Model._skilldetails.PrimarySkillsList.ToList())
                     {
                         @if (item != null)
@@ -36,10 +38,11 @@
                 @Html.ValidationMessageFor(model => model._skilldetails.SelectedSkillIds, "", new { @class = "text-danger" })
             </div>
             <div class="form-group col-lg-12  col-md-12 col-sm-12 pull-left">
-                @Html.LabelFor(model => model._skilldetails.AssessmentGroupName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                @Html.EditorFor(model => model._skilldetails.AssessmentGroupName, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
-                @Html.ValidationMessageFor(model => model._skilldetails.AssessmentGroupName, "", new { @class = "text-danger" })
-            </div>
+                <div class="mandate">
+                    @Html.LabelFor(model => model._skilldetails.AssessmentGroupName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red"> * </span></div>
+                    @Html.EditorFor(model => model._skilldetails.AssessmentGroupName, new { htmlAttributes = new { @class = "form-control", @type = "text", @required = "required" } })
+                    @Html.ValidationMessageFor(model => model._skilldetails.AssessmentGroupName, "", new { @class = "text-danger" })
+                </div>
         </div>
         <div>
             <div class="card-footer" style="margin-top: 15px;">
