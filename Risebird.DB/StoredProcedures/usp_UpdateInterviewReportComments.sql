@@ -18,7 +18,8 @@ CREATE PROCEDURE [dbo].[usp_UpdateInterviewReportComments](
 		@MeetingStatus int = null,			
 		@ThumbnailImage varchar(Max),
 		@FeedbackAudioLink nvarchar(max) =null,
-		@ThumbnailTimeSeconds int = null)
+		@ThumbnailTimeSeconds int = null,
+		@VideoDuration int = null)
 AS  
 Begin Try  
   BEGIN TRAN UpdateUser   
@@ -35,7 +36,8 @@ Begin Try
 				    VideoLink = ISNULL(@videolink, VideoLink) ,
 				    ThumbnailImage=ISNULL(@ThumbnailImage,ThumbnailImage),
 				    FeedbackAudioLink = ISNULL(@FeedbackAudioLink, FeedbackAudioLink),
-					ThumbnailTimeSeconds = ISNULL(@ThumbnailTimeSeconds, ThumbnailTimeSeconds)
+					ThumbnailTimeSeconds = ISNULL(@ThumbnailTimeSeconds, ThumbnailTimeSeconds),
+					VideoDuration = ISNULL(@VideoDuration, VideoDuration)
 					WHERE interviewId = @InterviewId  
   
                       
@@ -51,7 +53,8 @@ Begin Try
 						  VideoLink,
 						  ThumbnailImage,
 						  FeedbackAudioLink,
-						  ThumbnailTimeSeconds)   
+						  ThumbnailTimeSeconds,
+						  VideoDuration)   
 					VALUES  
 						 (@interviewId,  
 						  @InterviewStatus,  
@@ -61,7 +64,8 @@ Begin Try
 						  @videolink,
 						  @ThumbnailImage,
 						  @FeedbackAudioLink,
-						  @ThumbnailTimeSeconds)  
+						  @ThumbnailTimeSeconds,
+						  @VideoDuration)  
 
 					IF NOT EXISTS(SELECT 1 FROM InterviewReport where InterviewId= @InterviewId)
 					BEGIN

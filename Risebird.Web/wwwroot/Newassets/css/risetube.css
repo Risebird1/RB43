@@ -1536,7 +1536,7 @@ table {
     margin: 0 auto;
     text-align: center;
     position: relative;
-    z-index: 2;
+    z-index: 1;
 }
 
 .newsletter .video-title span {

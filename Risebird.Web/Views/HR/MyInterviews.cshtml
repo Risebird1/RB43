@@ -33,8 +33,9 @@
     Client = filter.Client != null ? filter.Client : new string[] { };
 }
 
-<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=679876589" />
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=5643" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=679876534" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <script type="text/javascript" src="https//code.jquery.com/jquery-1.10.2.min.js"></script>
 
 <div class="main-panel" id="main-panel">
@@ -49,9 +50,11 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand card-title">
-                    My Interviews
-                </a>
+                <div class="hrmyinterview_1">
+                    <a class="navbar-brand card-title">
+                        My Interviews
+                    </a>
+                </div>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -71,7 +74,7 @@
 
                     <div class="marquees">
                         <ul class="marquees-content">
-                            <li style="border: 0px; padding: 0px;  line-height: 30px;">
+                            <li class="hrmyinterview_2" style="border: 0px; padding: 0px;  line-height: 30px;">
                                 <table width="100%" class="no-border my_interview">
                                     <tr>
                                         <td class="un-right">
@@ -96,7 +99,7 @@
                                     </tr>
                                 </table>
                             </li>
-                            <li style="border: 0px; padding: 0px;  line-height: 30px;">
+                            <li class="hrmyinterview_3" style="border: 0px; padding: 0px;  line-height: 30px;">
                                 <table width="100%" class="no-border my_interview">
                                     <tr>
                                         <td class="un-right">
@@ -125,7 +128,7 @@
                                     </tr>
                                 </table>
                             </li>
-                            <li style="border: 0px; padding: 0px;  line-height: 30px;">
+                            <li class="hrmyinterview_4" style="border: 0px; padding: 0px;  line-height: 30px;">
                                 <table width="100%" class="no-border my_interview">
                                     <tr>
                                         <td class="un-right">
@@ -154,7 +157,7 @@
                                     </tr>
                                 </table>
                             </li>
-                            <li style="border: 0px; padding: 0px;  line-height: 30px;">
+                            <li class="hrmyinterview_5" style="border: 0px; padding: 0px;  line-height: 30px;">
                                 <table width="100%" class="no-border my_interview">
                                     <tr>
                                         <td class="un-right">
@@ -184,7 +187,7 @@
                                     </tr>
                                 </table>
                             </li>
-                            <li style="border: 0px; padding: 0px;  line-height: 30px;">
+                            <li class="hrmyinterview_6" style="border: 0px; padding: 0px;  line-height: 30px;">
                                 <table width="100%" class="no-border my_interview">
                                     <tr>
                                         <td class="un-right">
@@ -213,14 +216,14 @@
                                     </tr>
                                 </table>
                             </li>
-                            <li style="border: 0px; padding: 0px;  line-height: 30px;">
+                            <!--<li style="border: 0px; padding: 0px;  line-height: 30px;">
                                 <table width="100%" class="no-border my_interview">
                                     <tr>
-                                        <td class="un-right">
-                                            <span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>
+                                        <td class="un-right">-->
+                            @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>*@
 
 
-                                            <div class="flipper">
+                            <!--<div class="flipper">
                                                 <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('UnAttendedZoomLink')">
                                                     <div class="card-image">
                                                         <div class="header-front"></div>
@@ -241,8 +244,8 @@
 
                                     </tr>
                                 </table>
-                            </li>
-                            <li style="border: 0px; padding: 0px;  line-height: 30px;">
+                            </li>-->
+                            <li class="hrmyinterview_7" style="border: 0px; padding: 0px;  line-height: 30px;">
                                 <table width="100%" class="no-border my_interview">
                                     <tr>
                                         <td class="un-right">
@@ -290,17 +293,25 @@
                                 <div>
 
 
-                                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-toggle="modal" data-target="#filterModal">
+                                    <div class="pull-left">
+                                        <div class="hrmyinterview_8">
+                                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-toggle="modal" data-target="#filterModal">
 
-                                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                        <div class="mdc-button__ripple"></div>
-                                    </button>
+                                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                                <div class="mdc-button__ripple"></div>
+                                            </button>
+                                        </div>
 
-                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded four" style="float: left;">
-                                        <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "HR", actMethod ="MyInterviews" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
-                                    </button>
+                                    </div>
+                                    <div class="pull-left">
+                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded four" style="float: left;">
+                                            <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "HR", actMethod ="MyInterviews" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
+                                        </button>
+                                    </div>
 
-                                    <i type="submit" class="fa fa-file-excel-o excel-file export five pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("HRInterviewsExporttoExcel", "HR")'"></i>
+                                    <div class="pull-left">
+                                        <div class="hrmyinterview_9"><i type="submit" class="fa fa-file-excel-o excel-file export five pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("HRInterviewsExporttoExcel", "HR")'"></i></div>
+                                    </div>
 
 
 
@@ -533,12 +544,12 @@
                                                             <th style="text-align:center">Interviewer</th>
                                                             <th style="text-align:center">Candidate</th>
                                                             <th>Skill Channel</th>
-                                                            <th>Candidate Name</th>
-                                                            <th>Interviewer</th>
-                                                            <th>Candidate Email</th>
-                                                            <th>Client</th>
-                                                            <th>Zoom Link</th>
-                                                            <th>Zoom Id</th>
+                                                            <th class="hrmyinterview_10">Candidate Name</th>
+                                                            <th class="hrmyinterview_11">Interviewer</th>
+                                                            <th class="hrmyinterview_12">Candidate Email</th>
+                                                            <th class="hrmyinterview_13">Client</th>
+                                                            <th class="hrmyinterview_14">Zoom Link</th>
+                                                            <th class="hrmyinterview_15">Zoom Id</th>
                                                             <th class="disabled-sorting text-center">Actions</th>
 
                                                         </tr>
@@ -580,16 +591,16 @@
                                                                 {
                                                                     <td><a style="color:darkblue;font-weight: bold"> @item.interviewSlot</a></td>
                                                                 }
-                                                                <td style="text-align: center">
-                                                                    @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
-                                                                    {
-
+                                                            <td style="text-align: center">
+                                                                @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
+                                                                {
+                                                                    <span class="hrmyinterview_16">
                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer">
                                                                             <span onclick="ModalButtonClick('@item.InterviewerPhone','@item.interviewer','Interviewer')" data-original-title="Tooltip on top" title="Click here to call the interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
                                                                         </button>
+                                                                        </span>
 
-
-                                                                    }
+                                                                        }
 
 
                                                                 </td>
@@ -597,15 +608,15 @@
                                                                 <td style="text-align: center">
                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                     {
+                                                                        <span class="hrmyinterview_17">
+    <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate">
+        <span onclick="ModalButtonClick('@item.MobileNumber','@item.candidateName','Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+    </button></span>
 
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate">
-                                                                            <span onclick="ModalButtonClick('@item.MobileNumber','@item.candidateName','Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                        </button>
 
+    }
 
-                                                                    }
-
-                                                                </td>
+</td>
                                                                 <td style="text-align: center"> @item.IRFID </td>
                                                                 @if (item.candidateName != null && item.candidateName != "")
                                                                 {
@@ -751,25 +762,27 @@
 
                                                                 }
 
-                                                                <td class="text-right">
-
+                                                            <td class="text-right">
+                                                                <span class="hrmyinterview_18">
                                                                     <button class="mdc-fab app-fab--absolute sampleQues" aria-label="UnAssign Yourself">
                                                                         <span onclick="javascript:UnAssignInterviewer('@item.id');" title="UnAssign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
                                                                     </button>
+                                                                </span>
+                                                                <span class="hrmyinterview_19">
                                                                     <button class="mdc-fab app-fab--absolute itemques" aria-label="Co-ordinating HR Comments">
                                                                         <span onclick="OpenCommentModal('@item.id','@item.interviewDate', '@item.HRComment', '@item.HRImageFileURL', '@item.candidateEmail', '@item.candidateName')" title="Co-ordinating HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
                                                                     </button>
-
+                                                                </span>
+                                                                <span class="hrmyinterview_20">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
                                                                         <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
-                                                                    </button>
-                                                                </td>
+                                                                    </button></span>
+                                                            </td>
 
                                                             </tr>
 
 
                                                             <tr class="collapse @item.id">
-
                                                                 <td colspan="999" class="child-section">
                                                                     <table class="table table-striped table-responsive">
                                                                         <tr>
@@ -2117,16 +2130,568 @@
         }
     });
 </script>
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"HR\"")
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
 
-<script>
-    const root = document.documentElement;
-    const marqueeElementsDisplayed = getComputedStyle(root).getPropertyValue("--marquee-elements-displayed");
-    const marqueeContent = document.querySelector("ul.marquees-content");
+    <script type="text/javascript">
+        hopscotch.registerHelper('addOverlay', function () {
+            $('body').append('<div class="overlay"></div>');
+        });
 
-    root.style.setProperty("--marquee-elements", marqueeContent.children.length);
+        hopscotch.registerHelper('removeOverlay', function () {
+            $('.overlay').fadeOut(function () {
+                $(this).remove();
+                $('.helper').remove();
+            });
+        });
 
-    for (let i = 0; i < marqueeElementsDisplayed; i++) {
-        marqueeContent.appendChild(marqueeContent.children[i].cloneNode(true));
-    }
-</script>
+        hopscotch.listen('show', function () {
+            var elementObject = $(hopscotch.getCurrTarget(tour));
+            // var element = $('#' + elementObject[0].id);
+            var element = $('.' + elementObject[0].className);
+            element.prev().removeClass('overlay-relative');
+            element.addClass('overlay-relative');
+
+            if ($('.helper').length !== 0) {
+
+                // Use Helper Layer for hilight target element.
+                var helper = $('.helper');
+                var padding = 5;
+                var helperPosX = element.position().left - padding;
+                var helperPosY = element.position().top - padding;
+                var targetWidth = element.outerWidth();
+                var targetHeight = element.outerHeight();
+
+                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                helper.css('width', targetWidth);
+                helper.css('height', targetHeight);
+                helper.offset({ left: helperPosX, top: helperPosY });
+
+            } else {
+
+                // Add Helper Layer for highlight target element.
+                var newHelper = '<div class="helper"></div>';
+                $('body').append(newHelper);
+
+                var helper = $('.helper');
+                var padding = 5;
+                var helperPosX = element.position().left - padding;
+                var helperPosY = element.position().top - padding;
+                var targetWidth = element.outerWidth();
+                var targetHeight = element.outerHeight();
+
+                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                helper.css('width', targetWidth);
+                helper.css('height', targetHeight);
+                helper.offset({ left: helperPosX, top: helperPosY });
+            }
+
+        });
+
+        var tour = {
+            id: "hello-hopscotch",
+            showCloseButton: false,
+            steps: [
+
+                {
+                    title: "My Interviews",
+                    content: "View all My Interviews detail here and click on next button to know its features <br/><br/> Note: If any interview is not available here then to assign an interview you have to go to <b>Open Interviews</b>",
+                    target: ".hrmyinterview_1",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    highlight: true,
+                    zindex: 999999,
+                    yOffset: 10,
+
+                    onCTA: function () {
+                        hopscotch.showStep(2);
+                        $('.hrmyinterview_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onNext: function () {
+                        $('.hrmyinterview_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+
+                    }
+                },
+
+
+                {
+                    title: "Unassigned Interview",
+                    content: "Showing Unassigned Interview count here",
+                    target: ".hrmyinterview_2",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: 0,
+                    yOffset: 10,
+                    onPrev: function () {
+
+                        $('.hrmyinterview_2').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.hrmyinterview_2').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+
+                {
+                    title: "Status Pending",
+                    content: "Showing Status Pending count here",
+                    target: ".hrmyinterview_3",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: 0,
+                    yOffset: 10,
+                    onPrev: function () {
+
+                        $('.hrmyinterview_3').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.hrmyinterview_3').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "QC Pending",
+                    content: "Showing QC Pending count here",
+                    target: ".hrmyinterview_4",
+                    placement: "bottom",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    xOffset: 0,
+                    yOffset: -10,
+                    onPrev: function () {
+
+                        $('.hrmyinterview_4').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.hrmyinterview_4').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Pending Candidate Feedback",
+                    content: "Showing QC Pending count here",
+                    target: ".hrmyinterview_5",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: 0,
+                    yOffset: -10,
+                    onPrev: function () {
+
+                        $('.hrmyinterview_5').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.hrmyinterview_5').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Missing Zoom Link",
+                    content: "Showing Missing Zoom Link count here",
+                    target: ".hrmyinterview_6",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: 0,
+                    yOffset: -10,
+                    onPrev: function () {
+
+                        $('.hrmyinterview_6').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.hrmyinterview_6').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Missing Video Link",
+                    content: "Showing Missing Zoom Link count here",
+                    target: ".hrmyinterview_7",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: 0,
+                    yOffset: -10,
+                    onPrev: function () {
+
+                        $('.hrmyinterview_7').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.hrmyinterview_7').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Filter",
+                    content: "Filter based on available attributes or reset filter if applied earlier",
+                    target: ".hrmyinterview_8",
+                    placement: "left",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: 0,
+                    yOffset: -10,
+                    onPrev: function () {
+
+                        $('.hrmyinterview_8').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.hrmyinterview_8').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Export",
+                    content: "Click here to export the Interviews data in excel sheet",
+                    target: ".hrmyinterview_9",
+                    placement: "left",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    xOffset: 0,
+                    yOffset: -10,
+                    onPrev: function () {
+
+                        $('.hrmyinterview_9').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.hrmyinterview_8').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Candidate Name",
+                    content: "Showing the Candidate Name here",
+                    target: ".hrmyinterview_10",
+                    showPrevButton: true,
+                    placement: "left",
+                    zindex: 999999,
+                    xOffset: 10,
+                    onPrev: function () {
+
+                        $('.hrmyinterview_10').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onNext: function () {
+
+                        $('.hrmyinterview_10').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                },
+
+
+                {
+                    title: "Interviewer Email",
+                    content: "Showing the Interviewer Email here",
+                    target: ".hrmyinterview_11",
+                    showPrevButton: true,
+                    placement: "left",
+                    zindex: 999999,
+                    xOffset: 10,
+                    onPrev: function () {
+
+                        $('.hrmyinterview_11').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onNext: function () {
+
+                        $('.hrmyinterview_11').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                },
+
+
+
+                {
+                    title: "Candidate Email",
+                    content: "Showing the Candidate Email here",
+                    target: ".hrmyinterview_12",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('.hrmyinterview_12').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('.hrmyinterview_12').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+
+
+                {
+                    title: "Client",
+                    content: "Showing Client here",
+                    target: ".hrmyinterview_13",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('.hrmyinterview_13').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('.hrmyinterview_13').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+                {
+                    title: "Zoom Link",
+                    content: "Showing zoom link here",
+                    target: ".hrmyinterview_14",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('.hrmyinterview_14').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('.hrmyinterview_14').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Zoom Id",
+                    content: "Showing zoom link here",
+                    target: ".hrmyinterview_15",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('.hrmyinterview_15').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('.hrmyinterview_15').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Call Interviewer",
+                    content: "Click here to call Interviewer",
+                    target: ".hrmyinterview_16",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "left",
+                    yOffset: -20,
+                    xOffset: 10,
+                    onNext: function () {
+                        $('.hrmyinterview_16').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('.hrmyinterview_16').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Call Candidate",
+                    content: "Click here to call Candidate",
+                    target: ".hrmyinterview_17",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "left",
+                    yOffset: -20,
+                    xOffset: 10,
+                    onNext: function () {
+                        $('.hrmyinterview_17').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('.hrmyinterview_17').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+
+                {
+                    title: "UnAssign Yourself",
+                    content: "Click here to unassign an interview ",
+                    target: ".hrmyinterview_18",
+                    placement: "left",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    xOffset: 10,
+                    yOffset: -20,
+                    onNext: function () {
+                        $('.hrmyinterview_18').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('.hrmyinterview_18').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Co-ordinating HR Comments",
+                    content: "Click here to add comment for interview",
+                    target: ".hrmyinterview_19",
+                    placement: "left",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    yOffset: -20,
+                    xOffset: 0,
+                    onNext: function () {
+                        $('.hrmyinterview_19').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('.hrmyinterview_19').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+                {
+                    title: "Interviewing Member",
+                    content: "Click here to add interviewers detail",
+                    target: ".hrmyinterview_20",
+                    placement: "left",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    yOffset: -20,
+                    xOffset: 0,
+                    onNext: function () {
+                        $('.hrmyinterview_20').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('.hrmyinterview_20').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+
+                {
+                    title: "Risetube",
+                    content: "Click on Risetube menu to see its features",
+                    target: "risetube_menu",
+                    placement: "bottom",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    yOffset: -20,
+                    xOffset: 10,
+                    onNext: function () {
+                        $('#risetube_menu').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#risetube_menu').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+            ],
+            onStart: ["addOverlay"],
+            onEnd: ["removeOverlay"],
+        };
+
+        hopscotch.startTour(tour);
+
+    </script>
+}
+
+    <script>
+        const root = document.documentElement;
+        const marqueeElementsDisplayed = getComputedStyle(root).getPropertyValue("--marquee-elements-displayed");
+        const marqueeContent = document.querySelector("ul.marquees-content");
+
+        root.style.setProperty("--marquee-elements", marqueeContent.children.length);
+
+        for (let i = 0; i < marqueeElementsDisplayed; i++) {
+            marqueeContent.appendChild(marqueeContent.children[i].cloneNode(true));
+        }
+    </script>
 

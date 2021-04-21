@@ -4652,125 +4652,384 @@
 }
 
 
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+    pfName = pfName.Replace("\"", "");
+    @if (pfName == "HR")
+    {
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+
+        <script type="text/javascript">
+            hopscotch.registerHelper('addOverlay', function () {
+                $('body').append('<div class="overlay"></div>');
+            });
+
+            hopscotch.registerHelper('removeOverlay', function () {
+                $('.overlay').fadeOut(function () {
+                    $(this).remove();
+                    $('.helper').remove();
+                });
+            });
+
+            hopscotch.listen('show', function () {
+                var elementObject = $(hopscotch.getCurrTarget(tour));
+                var element = $('#' + elementObject[0].id);
+
+                element.prev().removeClass('overlay-relative');
+                element.addClass('overlay-relative');
+
+                if ($('.helper').length !== 0) {
+
+                    // Use Helper Layer for hilight target element.
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
+
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
+
+                } else {
+
+                    // Add Helper Layer for highlight target element.
+                    var newHelper = '<div class="helper"></div>';
+                    $('body').append(newHelper);
+
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
+
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
+                }
+
+            });
+
+            var tour = {
+                id: "hello-hopscotch",
+                showCloseButton: false,
+                steps: [
+
+
+                    {
+                        title: "Candidate Video",
+                        content: "Candidate Video will be played here",
+                        target: "risetubevideo_3",
+                        showPrevButton: true,
+                        placement: "right",
+                        zindex: 999999,
+                        xOffset: 5,
+                        yOffset: 20,
+                        onPrev: function () {
+
+                            $('#risetubevideo_3').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onNext: function () {
+
+                            $('#risetubevideo_3').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+
+                    },
 
 
 
-@*<script src="~/Newassets/js/enjoyhint.min.js"></script>
-    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+
+                    {
+                        title: "Share",
+                        content: "Click here to generate public share URL of the candidate",
+                        target: "risetubevideo_6",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_6').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_6').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                    {
+                        title: "Share/View Details",
+                        content: "Click here to check video view stats",
+                        target: "risetubevideo_7",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_7').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_7').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
 
 
-    <script>
 
-        var enjoyhint_instance = new EnjoyHint({});
-
-        var enjoyhint_script_steps = [
-            {
-                'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
-                'nextButton': { className: "myNext", text: "Continue" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .btn1': 'Filter here based on available attributes or reset filter if applied earlier',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .btnvideo': 'Candidate Video',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .btn2': 'Click here to like the Candidate Video',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .btn3': 'Click here to unlike Candidate Video',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
+                    {
+                        title: "Report Summary",
+                        content: "View the Candidate Report Summary",
+                        target: "risetubevideo_8",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_8').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_8').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
 
 
-            {
-                'next .sharebtn1': 'Share the video by clicking here',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .item1': 'Interview Report Summary',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
+                    {
+                        title: "Overall Score",
+                        content: "Check Candidate Overall Score here",
+                        target: "risetubevideo_9",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_9').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_9').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
 
-            },
-            {
-                'next .itemchart': 'Check candidate overall score here',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
 
-            },
-            {
-                'next .itemcomment': 'Check interviewer comments here',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
+                    {
+                        title: "Interviewer Comment",
+                        content: "Check Interviewer Comments here",
+                        target: "risetubevideo_10",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_10').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_10').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
 
-            },
-            {
-                'next .item2': 'Candidate Details',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
 
-            },
-            {
-                'next .item3': 'Tech Skill Report',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
 
-            },
-            {
-                'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
+                    {
+                        title: "Candidate Details",
+                        content: "View the Candidate details",
+                        target: "risetubevideo_12",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_12').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_12').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
 
-            },
 
-            {
-                'next .item5': 'General Skill Report',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
+                    {
+                        title: "Tech Skill Report",
+                        content: "View the Tech Skill Report ",
+                        target: "risetubevideo_13",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_13').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_13').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
 
-            },
-            {
-                'next .item6': 'Joinability Report',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
 
-            },
-            {
-                'next .item7': 'Selectability Report',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
 
-            },
-            {
-                'next .post': 'Collaborative decision making.Write your comment and click post',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .videosidelist': 'Same skill Candidates Video ',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
-            }
+                    {
+                        title: "Questions Discussed",
+                        content: "Questions discussed during interview and see the specific part of the video by clicking on the question ",
+                        target: "risetubevideo_14",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_14').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_14').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
 
-        ];
-        setTimeout(function () {
-            enjoyhint_instance.set(enjoyhint_script_steps);
-            enjoyhint_instance.run();
-        }, 10000)
-    </script>*@
+
+                    {
+                        title: "General Skill Report",
+                        content: "View the General Skill Report",
+                        target: "risetubevideo_15",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_15').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_15').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+
+                    {
+                        title: "Joinability Report",
+                        content: "View the Joinability Report",
+                        target: "risetubevideo_16",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_16').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_16').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Selectability Report",
+                        content: "View the Selectability Report",
+                        target: "risetubevideo_17",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_17').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_17').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+
+
+                    {
+                        title: "Similar Skill Video",
+                        content: "Checkout Similar Skill Candidates Video",
+                        target: "risetubevideo_19",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#risetubevideo_19').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetubevideo_19').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+                    {
+                        title: "Skill",
+                        content: "Click on Skill menu to see its features",
+                        target: "skillchannel_menu",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 10,
+                        yOffset: -20,
+                        onNext: function () {
+                            $('#skillchannel_menu').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skillchannel_menu').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                ],
+                onStart: ["addOverlay"],
+                onEnd: ["removeOverlay"],
+            };
+
+            hopscotch.startTour(tour);
+
+        </script>
+
+    }
+
+
+}
+
+
+
 
 
 
