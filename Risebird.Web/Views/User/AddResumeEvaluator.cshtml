@@ -37,7 +37,7 @@
                 <div class="mdc-card card bg-white">
 
                     <div class="mdc-card-wrapper__text-section">
-                        @using (Html.BeginForm("AddResumeEvaluator", "User", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "saveBtn()" }))
+                        @using (Html.BeginForm("AddResumeEvaluator", "User", FormMethod.Post, new { enctype = "multipart/form-data"}))
                         {
 
                             @Html.AntiForgeryToken()
@@ -131,6 +131,8 @@
         $("#btnUpload").attr("disabled", "disabled");
     }
 </script>
+
+
 
 
 

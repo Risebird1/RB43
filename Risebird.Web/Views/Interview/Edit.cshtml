@@ -43,7 +43,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card bg-white">
                     <div class="mdc-card-wrapper__text-section">
-                        @using (Html.BeginForm("Edit", "Interview", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        @using (Html.BeginForm("Edit", "Interview", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return (checkValidation());" }))
                         {
                             @Html.AntiForgeryToken()
 
@@ -317,3 +317,54 @@
     });
 </script>
 
+<script>
+    function checkDate() {
+
+        var interviewDate = new Date(document.getElementById("interviewDate").value);
+
+        var todayDate = new Date();
+
+        if (todayDate.getTime() > interviewDate.getTime()) {
+
+            document.getElementById("error_interviewDate").innerHTML = "Interview Date time should be greater than current Date time.";
+            return false;
+        }
+        else
+            document.getElementById("error_interviewDate").innerHTML = "";
+        return true;
+    }
+    function CheckResume() {
+        var linkDisplay = document.getElementById("linkDiv").style.display;
+        if (linkDisplay == "block") {
+            if (document.getElementById("resumeLink").value == '') {
+                document.getElementById("error_linkDiv").innerHTML = "Please enter a Resume Link.";
+                return false;
+            }
+            else {
+                document.getElementById("error_linkDiv").innerHTML = "";
+                return true;
+            }
+        }
+        else {
+            if (document.getElementById("File").value == '') {
+                document.getElementById("uploadDiv").style.display = 'block';
+                document.getElementById("error_uploadDiv").innerHTML = "Please upload a File.";
+
+                return false;
+            }
+            else {
+                document.getElementById("error_uploadDiv").innerHTML = "";
+                return true;
+            }
+        }
+    }
+
+    function checkValidation() {
+        if (CheckResume && checkDate && $('#confirmationStatus').val() != '') {
+            $("#btnUpload").attr("disabled", "disabled");
+            return true;
+        }
+        else { return false; }
+
+    }
+</script>
