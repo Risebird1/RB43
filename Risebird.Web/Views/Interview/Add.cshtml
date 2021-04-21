@@ -42,7 +42,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card bg-white">
                     <div class="mdc-card-wrapper__text-section">
-                        @using (Html.BeginForm("Add", "Interview", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return (CheckResume() && checkDate());" }))
+                        @using (Html.BeginForm("Add", "Interview", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return (checkValidation());" }))
                         {
 
                             @Html.AntiForgeryToken()
@@ -402,6 +402,15 @@
                 return true;
             }
         }
+    }
+
+    function checkValidation() {
+        if (CheckResume && checkDate && $('#confirmationStatus').val()!='') {
+            $("#btnUpload").attr("disabled", "disabled");
+            return true;
+        }
+        else { return false;}
+       
     }
 </script>
 

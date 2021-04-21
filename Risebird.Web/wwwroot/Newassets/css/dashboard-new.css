@@ -3950,7 +3950,12 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     -ms-transform: rotate(90deg);
     transform: rotate( 360deg );
 }
-
+.videopad {
+    padding-right: 0px;
+}
+.modal #addPointDate[type="date"] {
+    background-size: 3% !important;
+}
 .multiselect.dropdown-toggle .caret {
     display: none
 }
@@ -8735,6 +8740,10 @@ div.tagsinput {
 }
 /* END Animations */
 @media only screen and (max-width: 767px) {
+    .videopad {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
     .PieId {
         width: 100%;
     }
