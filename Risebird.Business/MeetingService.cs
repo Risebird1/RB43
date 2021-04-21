@@ -951,6 +951,7 @@ namespace Risebird.Business
                 reportModel.PrimarySkill = irfDetails.JDTiltle.Split("|")[0];
                 reportModel.joiningTime = interviewDetails.joiningTime;
                 reportModel.ThumbnailTimeSeconds = interviewDetails.ThumbnailTimeSeconds;
+                reportModel.VideoDuration = interviewDetails.VideoDuration;
                 return reportModel;
             }
 
