@@ -9,11 +9,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
     
-      
-    
-        
-          
-        
         
           
         
@@ -59,7 +54,7 @@ DECLARE @MeetingNotificationReschedule TABLE(
 )        
         
 ;with CTE(Meetingid,candidateEmail,interviewer,risebirdHR,emergencyinterviewer,isInterviewerWaiting,EmailType,zoomLink,CalendlyLink,HRCoordinatorEmailId) as (        
-Select distinct t1.Meetingid,im.candidateEmail,im.interviewer,im.risebirdHR,'' as emergencyinterviewer,     
+Select distinct t1.Meetingid,im.candidateEmail,im.interviewer,irf.risebirdHR,'' as emergencyinterviewer,     
 (CASE WHEN (ip.NickName is null or ip.NickName='') THEN 0 ELSE 1 END) as isInterviewerWaiting,'reaminder' as EmailType,im.zoomLink,IRF.CalendlyLink,im.HRCoordinatorEmailId from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where  
 Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io'  group by meetingid) as t1            
 left join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io'  group by meetingid) as t2 on t1.Meetingid=t2.Meetingid        
@@ -75,7 +70,7 @@ Update InterviewMeetings set IsMeetingNotificationSent=1,NotificationSentDate=Ge
       
       
 Insert into @MeetingNotificationEI      
-Select distinct im.ZoomMeetingId as Meetingid,im.candidateEmail,im.interviewer,im.risebirdHR,ei.emergencyinterviewer,      
+Select distinct im.ZoomMeetingId as Meetingid,im.candidateEmail,im.interviewer,irf.risebirdHR,ei.emergencyinterviewer,      
 (CASE WHEN (ip.NickName is null or ip.NickName='') THEN 0 ELSE 1 END) as isInterviewerWaiting,'EI' as EmailType,im.zoomLink,IRF.CalendlyLink,im.HRCoordinatorEmailId from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io'  group       
 by meetingid) as t1      
 left join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io'  group by meetingid) as t2 on t1.Meetingid=t2.Meetingid        
@@ -93,7 +88,7 @@ where ((Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1 or (Isnull(t2.m
 Update InterviewMeetings set IsNotificationSentToEI=1 where ZoomMeetingId in (Select Meetingid from @MeetingNotificationEI)        
       
 Insert into @MeetingNotificationReschedule      
-Select distinct im.ZoomMeetingId as Meetingid,im.candidateEmail,im.interviewer,im.risebirdHR,ei.emergencyinterviewer,      
+Select distinct im.ZoomMeetingId as Meetingid,im.candidateEmail,im.interviewer,irf.risebirdHR,ei.emergencyinterviewer,      
 (CASE WHEN (ip.NickName is null or ip.NickName='') THEN 0 ELSE 1 END) as isInterviewerWaiting,'Reschedule' as EmailType,im.zoomLink,IRF.CalendlyLink,im.HRCoordinatorEmailId from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io'  group by meetingid) as t1      
 left join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io'  group by meetingid) as t2 on t1.Meetingid=t2.Meetingid        
 join InterviewMeetings im on im.ZoomMeetingId=t1.Meetingid      
@@ -116,6 +111,18 @@ Union
 Select * from @MeetingNotificationReschedule      
       
 END      
+      
+      
+        
+             
+    
+        
+          
+        
+        
+          
+        
+    
       
       
         
