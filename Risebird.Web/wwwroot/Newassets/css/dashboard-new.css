@@ -232,6 +232,11 @@ input#txt_accno[type=number] {
 #interviewer.table.dataTable thead > tr > th.sorting {
     padding-right: 0px !important;
 }
+.table-bordered th.overlay-relative {
+    color: #000;
+    background: #e0e0e0 !important;
+}
+
 
 .ch-btn {
     width: 220px;
@@ -341,7 +346,9 @@ audio {
 #MyRibbonDetailsPopup .modal-lg {
     max-width: 800px !important;
 }
-
+.interviewerSkills .overlay-relative {
+    color:#fff!important;
+}
 .countdown__timer.front-card:after, .countdown__timer.back-card:after {
     border-top: solid 1px #22222226;
 }
@@ -449,7 +456,7 @@ audio {
 .un-right {
     width: 70px;
     float: right;
-    height: 46px;
+    height: 45px;
 }
 /*Styling*/
 .header-front {
@@ -3962,11 +3969,11 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     height: 100%;
     width: 100%;
     background: rgba(0,0,0,.8);
-    z-index: 1;
+    z-index: 2;
 }
-
 .table-striped.table-bordered th.overlay-relative {
     color: #000;
+    background: #e0e0e0 !important;
 }
 
 .overlay-relative {
