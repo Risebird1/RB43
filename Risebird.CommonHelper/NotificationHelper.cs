@@ -1387,9 +1387,9 @@ namespace Risebird.CommonHelper
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "New Channel Alert");
                 msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
+                msg.AddTo(msg.From);
                 foreach (var mail in toMails)
                 {
-                    //msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                     msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
                 var ccMails = model.CC.Split(";");

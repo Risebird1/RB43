@@ -1162,6 +1162,15 @@ namespace Risebird.Web.Controllers
             var Ribbonmodel = await _dashboardService.SendNotoificationForParticipantWaiting();
             foreach (var item in Ribbonmodel)
             {
+                string CCEmails = string.Empty;
+                if (item.HRCoordinatorEmailId == item.risebirdHR)
+                {
+                    CCEmails = item.risebirdHR;
+                }
+                else
+                {
+                    CCEmails = item.risebirdHR + ";" + item.HRCoordinatorEmailId;
+                }
                 if (item.EmailType == "reaminder")
                 {
                     if (item.isInterviewerWaiting)
@@ -1169,7 +1178,7 @@ namespace Risebird.Web.Controllers
                         Mail _mail = new Mail
                         {
                             TO = item.candidateEmail,
-                            CC = item.risebirdHR + ";" + item.HRCoordinatorEmailId,
+                            CC = CCEmails,
                             Subject = $"Interviewer Waiting for you to Start the interview"
                         };
                         var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer");
@@ -1179,7 +1188,7 @@ namespace Risebird.Web.Controllers
                         Mail _mail = new Mail
                         {
                             TO = item.interviewer,
-                            CC = item.risebirdHR + ";" + item.HRCoordinatorEmailId,
+                            CC = CCEmails,
                             Subject = $"Candidate join the meeting and waiting for interviewer"
                         };
                         var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate");
@@ -1192,14 +1201,14 @@ namespace Risebird.Web.Controllers
                     Mail _mail = new Mail
                     {
                         TO = item.emergencyinterviewer,
-                        CC = item.risebirdHR + ";" + item.HRCoordinatorEmailId,
+                        CC = CCEmails,
                         Subject = $"Candidate join the meeting and waiting for interviewer"
                     };
                     var resultset = _notificationHelper.CandidateWaitingEINotification(_mail, linkurl);
                     Mail _mail1 = new Mail
                     {
                         TO = item.candidateEmail,
-                        CC = item.risebirdHR + ";" + item.HRCoordinatorEmailId,
+                        CC = CCEmails,
                         Subject = $"Risebird: Apology for delay in interview"
                     };
                     var resultset1 = _notificationHelper.AppologyNotificationToCandidate(_mail1);
@@ -1209,7 +1218,7 @@ namespace Risebird.Web.Controllers
                     Mail _mail = new Mail
                     {
                         TO = item.candidateEmail,
-                        CC = item.risebirdHR + ";" + item.HRCoordinatorEmailId,
+                        CC = CCEmails,
                         Subject = $"Appology for inconvience please reschedule the meeting"
                     };
                     var resultset = _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.CalendlyLink);
