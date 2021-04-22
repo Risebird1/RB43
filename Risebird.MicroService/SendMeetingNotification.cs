@@ -74,7 +74,7 @@ namespace Risebird.MicroService
                     else if (item.EmailType == "EI")
                     {
                         //reassign Interviewer link- openinterviewer
-                        string linkurl = Request.Host.ToString() + "/Interview/ReassignMeetingByEI/" + item.Meetingid;
+                        string linkurl = "https://portal.risebird.io/Interview/ReassignMeetingByEI/" + item.Meetingid;
                         Mail _mail = new Mail
                         {
                             TO = item.emergencyinterviewer,
