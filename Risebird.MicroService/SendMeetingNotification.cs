@@ -39,7 +39,14 @@ namespace Risebird.MicroService
                     }
                     else
                     {
-                        CCEmails = item.risebirdHR + ";" + item.HRCoordinatorEmailId;
+                        if (!String.IsNullOrEmpty(item.HRCoordinatorEmailId))
+                        {
+                            CCEmails = item.risebirdHR + ";" + item.HRCoordinatorEmailId;
+                        }
+                        else
+                        {
+                            CCEmails = item.risebirdHR;
+                        }
                     }
                     if (item.EmailType == "reaminder")
                     {
@@ -51,7 +58,7 @@ namespace Risebird.MicroService
                                 CC = CCEmails,
                                 Subject = $"Interviewer Waiting for you to Start the interview"
                             };
-                            var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer");
+                            var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer", item.candidateName);
                         }
                         else
                         {
@@ -61,27 +68,37 @@ namespace Risebird.MicroService
                                 CC = CCEmails,
                                 Subject = $"Candidate join the meeting and waiting for interviewer"
                             };
-                            var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate");
+                            var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate", item.candidateName);
                         }
                     }
                     else if (item.EmailType == "EI")
                     {
                         //reassign Interviewer link- openinterviewer
-                        string linkurl = "https://portal.risebird.io/Interview/ReassignMeetingByEI/" + item.Meetingid;
+                        string linkurl = Request.Host.ToString() + "/Interview/ReassignMeetingByEI/" + item.Meetingid;
                         Mail _mail = new Mail
                         {
                             TO = item.emergencyinterviewer,
                             CC = CCEmails,
-                            Subject = $"Candidate join the meeting and waiting for interviewer"
+                            Subject = $"Candidate joined the meeting and waiting for the interviewer"
                         };
                         var resultset = _notificationHelper.CandidateWaitingEINotification(_mail, linkurl);
                         Mail _mail1 = new Mail
                         {
                             TO = item.candidateEmail,
                             CC = CCEmails,
-                            Subject = $"Risebird: Apology for delay in interview"
+                            Subject = $"Risebird: Apology for the delay in the interview"
                         };
-                        var resultset1 = _notificationHelper.AppologyNotificationToCandidate(_mail1);
+                        var resultset1 = _notificationHelper.AppologyNotificationToCandidate(_mail1, item.candidateName);
+                    }
+                    else if (item.EmailType == "CandidateApology")
+                    {
+                        Mail _mail1 = new Mail
+                        {
+                            TO = item.candidateEmail,
+                            CC = CCEmails,
+                            Subject = $"Risebird: Apology for the delay in the interview"
+                        };
+                        var resultset1 = _notificationHelper.AppologyNotificationToCandidateSecond(_mail1, item.candidateName);
                     }
                     else if (item.EmailType == "Reschedule")
                     {
@@ -89,9 +106,9 @@ namespace Risebird.MicroService
                         {
                             TO = item.candidateEmail,
                             CC = CCEmails,
-                            Subject = $"Appology for inconvience please reschedule the meeting"
+                            Subject = $"Apology for inconvience please reschedule the interview"
                         };
-                        var resultset = _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.CalendlyLink);
+                        var resultset = _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.CalendlyLink, item.candidateName);
                     }
                 }
             }
