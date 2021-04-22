@@ -4344,7 +4344,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
-                        con, "update [dbo].[InterviewMeetings] set interviewer=@value,EIAssigned=1 where ZoomMeetingId = @meetingid", new { value = interviewerMail, meetingid=id }, commandType: Text);
+                        con, "update [dbo].[InterviewMeetings] set interviewer=@value,EIAssigned=1 where id = @meetingid", new { value = interviewerMail, meetingid=id }, commandType: Text);
                     return "Interview assigned Successfully.";
                 }
             }
