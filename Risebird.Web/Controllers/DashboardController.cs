@@ -1202,14 +1202,14 @@ namespace Risebird.Web.Controllers
                     {
                         TO = item.emergencyinterviewer,
                         CC = CCEmails,
-                        Subject = $"Candidate join the meeting and waiting for interviewer"
+                        Subject = $"Candidate joined the meeting and waiting for the interviewer"
                     };
                     var resultset = _notificationHelper.CandidateWaitingEINotification(_mail, linkurl);
                     Mail _mail1 = new Mail
                     {
                         TO = item.candidateEmail,
                         CC = CCEmails,
-                        Subject = $"Risebird: Apology for delay in interview"
+                        Subject = $"Risebird: Apology for the delay in the interview"
                     };
                     var resultset1 = _notificationHelper.AppologyNotificationToCandidate(_mail1);
                 }
@@ -1219,7 +1219,7 @@ namespace Risebird.Web.Controllers
                     {
                         TO = item.candidateEmail,
                         CC = CCEmails,
-                        Subject = $"Appology for inconvience please reschedule the meeting"
+                        Subject = $"Apology for inconvience please reschedule the interview"
                     };
                     var resultset = _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.CalendlyLink);
                 }
