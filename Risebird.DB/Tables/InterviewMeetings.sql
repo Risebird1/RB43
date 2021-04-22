@@ -36,7 +36,8 @@ CREATE TABLE [dbo].[InterviewMeetings](
 	[NotificationSentDate] [DateTime] NULL,	
     [IsNotificationSentToEI][bit] NULL,
     [IsRescheduleNotificationSent][bit] NULL,
-    [EIAssigned][bit] NULL
+    [EIAssigned][bit] NULL,
+    [IsNotificationSentToCandidate][bit] NULL
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -206,6 +207,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewMeetings
     Add EIAssigned  bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsNotificationSentToCandidate')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add IsNotificationSentToCandidate  bit
 END
 END
 GO
