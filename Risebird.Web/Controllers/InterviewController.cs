@@ -5898,6 +5898,7 @@ namespace Risebird.Web.Controllers
             }
             return View(meetings);
         }
+        [AllowAnonymous]
         public JsonResult ReassignMeeting(string id, string meetingid, string Emailid)
         {
             var meetings = _meetingService.ReassignMeeting(id, meetingid, Emailid);

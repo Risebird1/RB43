@@ -92,11 +92,6 @@
                             Participant Waiting
                         </strong>
                     }
-                    @if (ViewBag.actionstatus == "VideoLink")
-                    {<strong>
-                         Missing Video Link
-                     </strong>
-                    }
 
                 </a>
             </div>
@@ -309,7 +304,7 @@
                                                         <td> @item.interviewDate </td>
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                         {
-                                                            <td style="color:limegreen">@item.WhoJoined</td>
+                                                            <td style="color: #0b8c0b;">@item.WhoJoined</td>
                                                         }
                                                         <td>@item.candidateName</td>
                                                         <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
