@@ -1202,7 +1202,7 @@ namespace Risebird.Web.Controllers
                     {
                         TO = item.emergencyinterviewer,
                         CC = CCEmails,
-                        Subject = $"Candidate join the meeting and waiting for interviewer"
+                        Subject = $"Candidate joined the meeting and waiting for the interviewer"
                     };
                     var resultset = _notificationHelper.CandidateWaitingEINotification(_mail, linkurl);
                     Mail _mail1 = new Mail
