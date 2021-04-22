@@ -1169,7 +1169,14 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    CCEmails = item.risebirdHR + ";" + item.HRCoordinatorEmailId;
+                    if (!String.IsNullOrEmpty(item.HRCoordinatorEmailId))
+                    {
+                        CCEmails = item.risebirdHR + ";" + item.HRCoordinatorEmailId;
+                    }
+                    else
+                    {
+                        CCEmails = item.risebirdHR;
+                    }
                 }
                 if (item.EmailType == "reaminder")
                 {
