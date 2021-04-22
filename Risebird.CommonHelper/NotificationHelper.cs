@@ -1346,7 +1346,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "RiseBird Interview Alert");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Alert");
                 msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
                 foreach (var mail in toMails)
@@ -1384,7 +1384,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "RiseBird Interview Alert");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Alert");
                 msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
                 msg.AddTo(msg.From);
@@ -1413,7 +1413,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "RiseBird Interview Alert");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Alert");
                 msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
 
@@ -1441,7 +1441,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "RiseBird Interview Alert");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Alert");
                 msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
                 foreach (var mail in toMails)
