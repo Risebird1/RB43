@@ -1219,7 +1219,7 @@ namespace Risebird.Web.Controllers
                     {
                         TO = item.candidateEmail,
                         CC = CCEmails,
-                        Subject = $"Appology for inconvience please reschedule the meeting"
+                        Subject = $"Apology for inconvience please reschedule the interview"
                     };
                     var resultset = _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.CalendlyLink);
                 }
