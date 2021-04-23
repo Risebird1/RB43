@@ -2087,15 +2087,16 @@
                         var audio = document.getElementById("chatAudio");
                         audio.play();
                     }
-                    localStorage.setItem("bipsoundcount", data.unAttendedZoomLink);
+                    
                     //Send Mail
-                    $.ajax({
-                        type: 'POST',
-                        url: '/Dashboard/SendNotoificationForParticipantWaiting',
-                        success: function (data) {
-                        }
-                    });
+                    //$.ajax({
+                    //    type: 'POST',
+                    //    url: '/Dashboard/SendNotoificationForParticipantWaiting',
+                    //    success: function (data) {
+                    //    }
+                    //});
                 }
+                localStorage.setItem("bipsoundcount", data.unAttendedZoomLink);
             }
         });
         $(".flipper").toggleClass("flip");
