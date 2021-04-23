@@ -167,5 +167,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Meeting>> FetchOpenMeetingById(string id);
         string CheckMeetingAssignationValidation(string Emailid);
         string ReAssignMeeting(int id, string interviewerMail);
+        Task<string> FetchInterviewerCodedName(string emailId);
     }
 }

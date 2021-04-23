@@ -82,20 +82,21 @@
                                 <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="MyInterview" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
                             </button>
                         </div>
-                        <div class="pull-left">
+                        <div class="pull-left filtercon">
                             <div id="myinterview_3">
-                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-toggle="modal" data-target="#filterModal">
+                                <a onclick="" data-tooltip="To visualize the previous date data please apply filter" data-placement="left">
+                                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-toggle="modal" data-target="#filterModal">
 
-                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                    <div class="mdc-button__ripple"></div>
-                                </button>
-                            </div>
+                                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                        <div class="mdc-button__ripple"></div>
+                                    </button></a>
+</div>
                         </div>
 
 
 
                     </div>
-                    <div class="note-filter text-right"> Note: To visualize the previous date data please apply filter</div>
+                    <div class="note-filter text-right"> Note: Always join the meeting using your Coded Name <B>(@ViewBag.CodedName)</B></div>
                 </div>
             </div>
         </div>
@@ -307,13 +308,12 @@
                                                             <th style="border-left: 0px !important;">Date</th>
                                                             <th style="text-align:center">Slot</th>
                                                             <th style="text-align:center">Call Candidate</th>
-                                                            <th style="text-align:center">Call HR</th>
                                                             <th id="myinterview_4">Candidate Name</th>
                                                             <th>Interview level</th>
                                                             <th id="myinterview_5">JD Link</th>
                                                             <th>Skill Channel</th>
                                                             <th id="myinterview_6">Resume</th>
-                                                            <th id="myinterview_7">Zoom Id</th>
+                                                            <th id="myinterview_7">Zoom Link</th>
                                                             <th class="disabled-sorting text-left">Actions</th>
 
                                                         </tr>
@@ -325,13 +325,12 @@
                                                             <th style="border-left: 0px !important;">Date</th>
                                                             <th style="text-align:center">Slot</th>
                                                             <th style="text-align:center">Call Candidate</th>
-                                                            <th style="text-align:center">Call Coordinating HR</th>
                                                             <th>Candidate Name</th>
                                                             <th>Interview level</th>
                                                             <th>JD Link</th>
                                                             <th>Skill Channel</th>
                                                             <th>Resume</th>
-                                                            <th>Zoom Id</th>
+                                                            <th>Zoom Link</th>
                                                             <th class="disabled-sorting text-left">Actions</th>
 
                                                         </tr>
@@ -377,18 +376,7 @@
                                                                     }
 
                                                                 </td>
-                                                                <td style="text-align:center">
-                                                                    @if (item.HRMobileNumber != null && item.HRMobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
-                                                                    {
-
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">
-                                                                            <span onclick="ModalButtonClick('@item.HRCoordinatorEmailId','@item.HRMobileNumber')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                        </button>
-
-
-                                                                    }
-
-                                                                </td>
+                                                               
 
                                                                 @if (item.candidateName != null && item.candidateName != "")
                                                                 {
@@ -433,24 +421,16 @@
                                                                     <td>No Resume</td>
                                                                 }
 
-                                                                @if (item.risebirdHR != null && item.risebirdHR != "")
+                                                                @if (item.zoomLink != null && item.zoomLink != "")
                                                                 {
-                                                                    @if (item.risebirdHR.Length > 10)
-                                                                    {
-
+                                                                   
                                                                         <td class="cadName">
-                                                                            <a onclick="" data-tooltip="@item.risebirdHR"> @item.risebirdHR.Substring(0, 10)... </a>
+                                                                            <a target="_blank" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>  
                                                                         </td>
 
                                                                     }
 
-                                                                    else
-                                                                    {
-                                                                        <td class="cadName">
-                                                                            <a onclick=""> @item.risebirdHR </a>
-                                                                        </td>
-                                                                    }
-                                                                }
+                                                             
                                                                 else
                                                                 {
                                                                     <td></td>
@@ -485,11 +465,12 @@
 
                                                             <tr class="collapse @item.id">
                                                                 <td colspan="999" class="child-section">
-                                                                    <table class="table table-striped table-responsive">
+                                                                    <table class="table table-striped">
                                                                         <tr>
                                                                             <th>Duration</th>
                                                                             <th>Job Level</th>
                                                                             <th>Candidate Email</th>
+                                                                            <th>Candidate HR</th>
                                                                             <th>Meeting Status</th>
                                                                             <th>Interview Status</th>
                                                                             <th>Co-ordinating HR</th>
@@ -512,6 +493,19 @@
 
                                                                                 <td> @Regex.Replace(@item.candidateEmail, "[a-zA-Z0-9.-]", "*")</td>
                                                                             }
+
+                                                                            <td style="text-align:center">
+                                                                                @if (item.HRMobileNumber != null && item.HRMobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                                                                                {
+
+                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">
+                                                                                        <span onclick="ModalButtonClick('@item.HRCoordinatorEmailId','@item.HRMobileNumber')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                                    </button>
+
+
+                                                                                }
+
+                                                                            </td>
                                                                             <td>@item.MeetingStatusDesc</td>
                                                                             <td>@item.InterviewStatusDesc</td>
                                                                             <td>@item.HRCoordinatorEmailId</td>
@@ -1154,17 +1148,7 @@
             }
 
             html += '  </td>';
-            html += '   <td style="text-align:center">';
-            if (data[i].hrMobileNumber != null && data[i].hrMobileNumber != '' && newDateObj <= new Date(data[i].interviewDate) && new Date(data[i].interviewDate) <= newObj) {
-
-                html += '  <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">';
-                html += ' <span onclick = "ModalButtonClick(' + "'" + data[i].hrCoordinatorEmailId + "'" + ',' + "'" + data[i].hrMobileNumber + "'" + ')" data-original-title="Tooltip on top" title = "Click here to call the candidate." class="mdc-fab__icon material-icons" > <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span > ';
-                html += '  </button>';
-
-
-            }
-
-            html += ' </td>';
+            
 
             if (data[i].candidateName != null && data[i].candidateName != "") {
                 if (data[i].candidateName.length > 13) {
@@ -1247,6 +1231,7 @@
             html += '   <th>Duration</th>';
             html += '   <th>Job Level</th>';
             html += '  <th>Candidate Email</th>';
+            html += '  <th>Call HR</th>';
             html += '  <th>Meeting Status</th>';
             html += '  <th>Interview Status</th>';
             html += '  <th>Co-ordinating HR</th>';
@@ -1264,7 +1249,18 @@
     else {
 
         html += ' <td> ' + data[i].candidateName + '</td>';
-    }
+            }
+            html += '   <td style="text-align:center">';
+            if (data[i].hrMobileNumber != null && data[i].hrMobileNumber != '' && newDateObj <= new Date(data[i].interviewDate) && new Date(data[i].interviewDate) <= newObj) {
+
+                html += '  <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">';
+                html += ' <span onclick = "ModalButtonClick(' + "'" + data[i].hrCoordinatorEmailId + "'" + ',' + "'" + data[i].hrMobileNumber + "'" + ')" data-original-title="Tooltip on top" title = "Click here to call the candidate." class="mdc-fab__icon material-icons" > <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span > ';
+                html += '  </button>';
+
+
+            }
+
+            html += ' </td>';
     html += '  <td>' + data[i].meetingStatusDesc + '</td>';
     if (data[i].interviewStatusDesc != null && data[i].interviewStatusDesc != "") {
         html += '  <td>' + data[i].interviewStatusDesc + '</td>';
@@ -1563,8 +1559,8 @@ $("#divmeetingentries").empty().html(pagestartdetails);
                 },
 
                 {
-                    title: "Zoom Id",
-                    content: "Find the Zoom Id here",
+                    title: "Zoom Link",
+                    content: "Find the Zoom Link here",
                     target: "myinterview_7",
                     showPrevButton: true,
                     zindex: 999999,

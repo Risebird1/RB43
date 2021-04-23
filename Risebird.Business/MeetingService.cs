@@ -2516,6 +2516,20 @@ namespace Risebird.Business
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
         }
+        public string FetchInterviewerCodedName(string emailID)
+        {
+            try
+            {
+                var codedname = _meetingRespository.FetchInterviewerCodedName(emailID).Result;
+
+                return codedname;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
     }
 }
 

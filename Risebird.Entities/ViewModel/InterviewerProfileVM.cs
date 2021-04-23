@@ -23,9 +23,9 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
-        [Required(ErrorMessage = "Please Enter Nick Name")]
-        [Display(Name = "Nick Name")]
-        [Remote("IsNickNameExists", "Interviewer", AdditionalFields = "UserId", ErrorMessage = "Nick Name already in use")]
+        [Required(ErrorMessage = "Please Enter Coded Name")]
+        [Display(Name = "Coded Name")]
+        [Remote("IsNickNameExists", "Interviewer", AdditionalFields = "UserId", ErrorMessage = "Coded Name already in use")]
         public string NickName { get; set; }
 
         [Display(Name = "Email ID")]

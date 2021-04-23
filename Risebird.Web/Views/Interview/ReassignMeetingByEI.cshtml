@@ -175,7 +175,7 @@
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
-                    <span><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
+                    <span><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
                 </div>
                 <h5 class="modal-title pull-left">Assign Meeting with your registered Emailid</h5>
             </div>
@@ -384,3 +384,25 @@
         modal.style.display = "none";
     }
 </script>
+
+<style>
+    .filheader {
+        padding: 10px;
+    }
+
+    .filavatar {
+        width: 45px;
+        float: left;
+        border-radius: 50%;
+        margin: 0;
+        background: #42a5f5;
+        text-align: center;
+        height: 45px;
+    }
+
+        .filavatar .fa-filter {
+            font-size: 25px;
+            color: #fff;
+            padding: 13px 30px 0px 13px;
+        }
+</style>
