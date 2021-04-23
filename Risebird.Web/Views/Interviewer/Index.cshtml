@@ -1271,7 +1271,7 @@
             html += '</div>';
             html += ' </td>';
             html += '  <td><a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink.replace(" ", "%20") + '>Resume</a></td>';
-
+            html += '<td><b>' + data[i].nickName + '</b></td>';
             html += '   <td class="text-center action">';
             html += '  <button class="mdc-fab app-fab--absolute" aria-label="Recommendation">';
             html += '   <a href="/Interviewer/InterviewerRecommendation/'+data[i].userId +'" title="Recommendation" class="mdc-fab__icon material-icons">';
