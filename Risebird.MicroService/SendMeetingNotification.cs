@@ -27,6 +27,7 @@ namespace Risebird.MicroService
         public async void Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
         {
 
+
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try
             {
@@ -67,7 +68,7 @@ namespace Risebird.MicroService
                             {
                                 TO = item.interviewer,
                                 CC = CCEmails,
-                                Subject = $"Candidate join the meeting and waiting for interviewer"
+                                Subject = item.candidateName + "Candidate join the meeting and waiting for interviewer"
                             };
                             var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate", item.candidateName);
                         }
@@ -80,7 +81,7 @@ namespace Risebird.MicroService
                         {
                             TO = item.emergencyinterviewer,
                             CC = CCEmails,
-                            Subject = $"Candidate joined the meeting and waiting for the interviewer"
+                            Subject = item.candidateName + "Candidate joined the meeting and waiting for the interviewer"
                         };
                         var resultset = _notificationHelper.CandidateWaitingEINotification(_mail, linkurl);
                         Mail _mail1 = new Mail
