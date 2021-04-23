@@ -1220,7 +1220,7 @@ namespace Risebird.Web.Controllers
                     };
                     var resultset1 = _notificationHelper.AppologyNotificationToCandidate(_mail1, item.candidateName);
                 }
-                else if (item.EmailType == "CandidateApology")
+                else if (item.EmailType == "CApology")
                 {
                     Mail _mail1 = new Mail
                     {

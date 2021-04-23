@@ -1195,12 +1195,12 @@
                         audio.play();
                     }
                     //Send Mail
-                    $.ajax({
-                        type: 'POST',
-                        url: '/Dashboard/SendNotoificationForParticipantWaiting',
-                        success: function (data) {
-                        }
-                    });
+                    //$.ajax({
+                    //    type: 'POST',
+                    //    url: '/Dashboard/SendNotoificationForParticipantWaiting',
+                    //    success: function (data) {
+                    //    }
+                    //});
                 }
                 localStorage.setItem("bipsoundcount", data.unAttendedZoomLink);
             }

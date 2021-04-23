@@ -26,6 +26,7 @@ namespace Risebird.MicroService
         [FunctionName("SendMeetingNotification")]
         public async void Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
         {
+
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try
             {
@@ -90,7 +91,7 @@ namespace Risebird.MicroService
                         };
                         var resultset1 = _notificationHelper.AppologyNotificationToCandidate(_mail1, item.candidateName);
                     }
-                    else if (item.EmailType == "CandidateApology")
+                    else if (item.EmailType == "CApology")
                     {
                         Mail _mail1 = new Mail
                         {
