@@ -5471,7 +5471,7 @@ namespace Risebird.Web.Controllers
                     HttpClient httpClient = new HttpClient();
                     httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
 
-                    httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
+                    await httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
 
                     TempData["SuccessErrorMessageInterview"] = "Sentiment analysis started successfully!";
                 }
