@@ -489,7 +489,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-               await  _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
@@ -610,7 +610,7 @@ namespace Risebird.Repository
             try
             {
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@vmId", vmId) ;
+                dynamicParameters.Add("@vmId", vmId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = SqlMapper.Query(con, "usp_RemoveVM", dynamicParameters,
@@ -637,7 +637,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@time", DateTime.Now.AddHours(-2));
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await  SqlMapper.QueryAsync<VMActionPerformed>(con, "usp_GetVMStarterEmailId", dynamicParameters,
+                    var result = await SqlMapper.QueryAsync<VMActionPerformed>(con, "usp_GetVMStarterEmailId", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return result;
                 }

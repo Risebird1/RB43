@@ -5,12 +5,11 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
-    public class ActivityTrackerService: IActivityTrackerService
+    public class ActivityTrackerService : IActivityTrackerService
     {
         private readonly IActivityTrackerRepository _activityTrackerRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;

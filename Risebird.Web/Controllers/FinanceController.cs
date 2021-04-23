@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using iTextSharp.text;
+using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using OfficeOpenXml;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.ViewModel;
-using Risebird.Repository.Interface;
-using OfficeOpenXml;
 using Risebird.Entities.Enum;
-using X.PagedList;
-using iTextSharp.text.pdf;
-using iTextSharp.text;
+using Risebird.Entities.ViewModel;
+using System;
+using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Threading.Tasks;
+using X.PagedList;
 
 namespace Risebird.Web.Controllers
 {

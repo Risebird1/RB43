@@ -135,7 +135,7 @@ namespace Risebird.Business
 
                 if (project != null)
                 {
-                    project.ProjectIRFMappings = (IList<ProjectIRFMapping>) (objList);
+                    project.ProjectIRFMappings = (IList<ProjectIRFMapping>)(objList);
                     return project;
                 }
                 return null;

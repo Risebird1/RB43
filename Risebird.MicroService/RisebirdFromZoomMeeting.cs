@@ -1,18 +1,15 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using Dapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Linq;
-using System.Text;
+using System;
 using System.Data.SqlClient;
-using Dapper;
-using Risebird.Entities.Enum;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -16,6 +11,11 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using X.PagedList;
 
 namespace Risebird.Web.Controllers
@@ -221,7 +221,7 @@ namespace Risebird.Web.Controllers
                     //                    newModel.Add(item);
                     //                }
                     //            }
-                                
+
                     //        }
                     //        else
                     //        {
@@ -2622,7 +2622,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
 
-                    if (Request != null)
+                    if (Request != null && formCollection.Files.Count > 0)
                     {
                         var file = formCollection.Files[0];
 
@@ -2642,23 +2642,32 @@ namespace Risebird.Web.Controllers
                                 var noOfRow = workSheet.Dimension.End.Row;
                                 for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
                                 {
-                                    var candidate = new CandidateQuickAddModel
+                                    if (workSheet.Cells[rowIterator, 2].Value != null)
                                     {
-                                        Name = (workSheet.Cells[rowIterator, 1] != null) ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
-                                        EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim(),
-                                        ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null) ? workSheet.Cells[rowIterator, 3].Value.ToString() : string.Empty,         //workSheet.Cells[rowIterator, 3].Value.ToString();
-                                        Phone = (workSheet.Cells[rowIterator, 4].Value != null) ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString()) : string.Empty,                  // "+" + workSheet.Cells[rowIterator, 10].Value.ToString();
-                                        ClientHREmail = (workSheet.Cells[rowIterator, 5].Value != null) ? workSheet.Cells[rowIterator, 5].Value.ToString() : string.Empty,
-                                        //ProfileSource = (workSheet.Cells[rowIterator, 6].Value != null) ? workSheet.Cells[rowIterator, 6].Value.ToString() : string.Empty,
-                                        ProfileSource = workSheet.Cells[rowIterator, 6].Value.ToString().Trim(),
-                                        IRFId = IRFId
-                                    };
-                                    candidateList.Add(candidate);
+                                        var candidate = new CandidateQuickAddModel
+                                        {
+                                            Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
+                                            EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim(),
+                                            ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null)
+                                                ? workSheet.Cells[rowIterator, 3].Value.ToString()
+                                                : string.Empty,
+                                            Phone = (workSheet.Cells[rowIterator, 4].Value != null)
+                                                ? ("+" + workSheet.Cells[rowIterator, 4].Value)
+                                                : string.Empty,
+                                            ClientHREmail = workSheet.Cells[rowIterator, 5].Value != null
+                                                ? workSheet.Cells[rowIterator, 5].Value.ToString()
+                                                : string.Empty,
+                                            ProfileSource = workSheet.Cells[rowIterator, 6].Value != null ? workSheet.Cells[rowIterator, 6].Value.ToString() : string.Empty,
+                                            IRFId = IRFId
+                                        };
+
+                                        candidateList.Add(candidate);
+                                    }
                                 }
 
                             }
                             StringBuilder result = new StringBuilder();
-                            if (candidateList != null && candidateList.Count() > 0)
+                            if (candidateList != null && candidateList.Any())
                             {
                                 result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite).Result;
                             }
@@ -2667,16 +2676,14 @@ namespace Risebird.Web.Controllers
                                 result.Append("No candidates to add!");
                             }
                             return result.ToString();
-
-
                         }
-
                         else
                         {
                             return "Failed to import candidates!";
 
                         }
                     }
+                    return "Please select valid file for import!";
                 }
 
 

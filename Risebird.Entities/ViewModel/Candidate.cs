@@ -92,7 +92,7 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Profile Type")]
         public int Heuristicsscore { get; set; }
         public string HeuristicsscoreDesc { get; set; }
-       
+
         public SelectList Heuristicsscorelist { get; set; }
 
         [Display(Name = "Available for Full-time")]

@@ -50,7 +50,7 @@ namespace Risebird.Business
             {
                 UserDetails userDetails = new UserDetails
                 {
-                    FirstName = interviewerProfile.FirstName.Replace(" ",""),
+                    FirstName = interviewerProfile.FirstName.Replace(" ", ""),
                     LastName = interviewerProfile.LastName.Replace(" ", ""),
                     EmailId = interviewerProfile.EmailId.Replace(" ", "")
                 };
@@ -775,7 +775,7 @@ namespace Risebird.Business
         {
             try
             {
-               
+
                 var result = await _interviewerRepository.fetchBankDetails(interviewerid);
 
                 return result;

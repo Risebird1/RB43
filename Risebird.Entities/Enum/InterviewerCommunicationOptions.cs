@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Risebird.Entities.Enum
 {
@@ -23,6 +20,6 @@ namespace Risebird.Entities.Enum
 
         VeryGood = 3
 
-        
+
     }
 }

@@ -8,12 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
 {
-    public class ActivityTrackerRepository: IActivityTrackerRepository
+    public class ActivityTrackerRepository : IActivityTrackerRepository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;

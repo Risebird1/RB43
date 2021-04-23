@@ -45,7 +45,7 @@ namespace Risebird.Web.Controllers
             _userService = userService;
         }
 
-      
+
         /// <summary>
         /// Method to apply filters on index page
         /// </summary>
@@ -105,7 +105,7 @@ namespace Risebird.Web.Controllers
                         }
 
 
-                        
+
                         if (profileName == "CuratedUser")
                         {
                             foreach (var item in modelList)
@@ -135,7 +135,7 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.searchvalue = "";
                         }
-                        
+
 
                         var remainder = totalMeetings % 12;
                         if (remainder == 0)
@@ -209,7 +209,7 @@ namespace Risebird.Web.Controllers
                         {
                             Page = 1;
                         }
-                        
+
                         var modelList = new List<MeetingVM>();
                         int totalMeetings = 0;
 
@@ -220,7 +220,7 @@ namespace Risebird.Web.Controllers
                             filter.StartDate = filter.StartDate == null ? new DateTime(1753, 1, 1) : filter.StartDate;
                             filter.EndDate = filter.EndDate == null ? DateTime.MaxValue : filter.EndDate;
 
-                            if(profileName == "CuratedUser")
+                            if (profileName == "CuratedUser")
                             {
                                 modelList = await _meetingService.GetRiseTubeMeetingsPagedFiltered(profileName, emailid, Page.Value, filter.StartDate.Value, filter.EndDate.Value, searchvalue);
                                 totalMeetings = await _meetingService.GetRisetubeIndexMeetingsFilteredCount(profileName, emailid, filter.StartDate.Value, filter.EndDate.Value, searchvalue);
@@ -236,7 +236,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             if (profileName == "Client")
-                            {                               
+                            {
                                 modelList = await _meetingService.GetRiseTubeMeetingsPagedFiltered(profileName, emailid, Page.Value, DateTime.Now.Date.AddDays(-30), DateTime.Now.Date, searchvalue, ClientId);
                                 totalMeetings = await _meetingService.GetRisetubeIndexMeetingsFilteredCount(profileName, emailid, DateTime.Now.Date.AddDays(-30), DateTime.Now.Date, searchvalue, ClientId);
 
@@ -257,7 +257,7 @@ namespace Risebird.Web.Controllers
                             }
                         }
 
-                        
+
                         if (profileName == "CuratedUser")
                         {
                             foreach (var item in modelList)
@@ -288,7 +288,7 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.searchvalue = "";
                         }
-                        
+
 
                         var remainder = totalMeetings % 12;
                         if (remainder == 0)
@@ -2119,7 +2119,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
 
         [AllowAnonymous]
         public async Task<IActionResult> SharedIndex(int? Page, string searchvalue)
@@ -2129,7 +2129,7 @@ namespace Risebird.Web.Controllers
                 var profileName = "CuratedUser";
 
                 {
-                    
+
                     var modelList = new List<MeetingVM>();
 
                     if (Page == null || Page == 0)
@@ -2140,7 +2140,7 @@ namespace Risebird.Web.Controllers
 
                     foreach (var item in modelList)
                     {
-                       
+
                         var usernames = item.candidateName.Trim().Split(" ");
                         var namemodel = String.Empty;
                         foreach (var name in usernames)
@@ -2152,7 +2152,7 @@ namespace Risebird.Web.Controllers
 
                         }
                         item.candidateName = namemodel;
-                     
+
                     }
 
 
@@ -2186,13 +2186,13 @@ namespace Risebird.Web.Controllers
                         ViewBag.Pages = (totalMeetings / 12) + 1;
 
                     }
-                    
+
                     ViewBag.Page = Page.Value;
                     ViewBag.MeetingsCount = totalMeetings;
                     ViewBag.Remainder = remainder;
                     return View(modelList);
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -2226,7 +2226,7 @@ namespace Risebird.Web.Controllers
                             int totalMeetings = 0;
                             var heuristicLevels =
                                 (from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
-                                    select (s.GetDescription())).ToArray();
+                                 select (s.GetDescription())).ToArray();
 
                             ViewBag.HeuristicLevels = heuristicLevels;
 
@@ -2308,10 +2308,10 @@ namespace Risebird.Web.Controllers
                     }
                 }
 
-                
-               return RedirectToAction("SignOut", "Session");
 
-                
+                return RedirectToAction("SignOut", "Session");
+
+
 
             }
             catch (Exception ex)
@@ -2324,19 +2324,19 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> RBOnDemandTalent(int? Page,TalentOnDemandFilter filter, string searchvalue=null )
+        public async Task<IActionResult> RBOnDemandTalent(int? Page, TalentOnDemandFilter filter, string searchvalue = null)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    
+
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Client")
                     {
-                       
-                        
+
+
                         if (filter != null)
                         {
                             HttpContext.Session.SetString("TalentOnDemandFilter", JsonConvert.SerializeObject(filter));
@@ -3002,16 +3002,16 @@ namespace Risebird.Web.Controllers
                 var model = new MeetingTranscriptModel();
                 int count = 0;
                 model.ConvertedText = string.Empty;
-                var tableEntries =  _azureStorageHelper.GetAllEntities<SpeechToTextServiceModel>("SpeechToTextTbl");
+                var tableEntries = _azureStorageHelper.GetAllEntities<SpeechToTextServiceModel>("SpeechToTextTbl");
                 var requiredEntry = new SpeechToTextServiceModel();
                 if (tableEntries != null && tableEntries.Count() != 0)
                 {
                     requiredEntry = tableEntries.Where(x => x.PartitionKey == imid.ToString()).FirstOrDefault();
                 }
-                if(requiredEntry != null)
+                if (requiredEntry != null)
                 {
                     string convertedText = string.Empty;
-                    if(!string.IsNullOrEmpty(requiredEntry.KeyWords))
+                    if (!string.IsNullOrEmpty(requiredEntry.KeyWords))
                     {
                         var keywords = requiredEntry.KeyWords.Split(",");
                         foreach (var keyword in keywords)
@@ -3024,7 +3024,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     count = count + 1;
                                 }
-                                
+
                                 //word = "<mark>" + word + "</mark>";
                                 word = " <span style=\"background-color:Red;\">" + word + "</span>";
                                 word = " <span style=\"color:#fff;\">" + word + "</span>";
@@ -3034,7 +3034,7 @@ namespace Risebird.Web.Controllers
 
                         }
                     }
-                    
+
                     model.ConvertedText = requiredEntry.ConvertedText;
                     model.Total = count;
                 }

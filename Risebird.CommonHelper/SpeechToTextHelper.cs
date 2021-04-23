@@ -1,9 +1,6 @@
 ﻿using Microsoft.CognitiveServices.Speech.Audio;
 using Risebird.CommonHelper.Interface;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Risebird.CommonHelper
 {
@@ -54,8 +51,8 @@ namespace Risebird.CommonHelper
             return AudioStreamFormat.GetWaveFormatPCM(samplesPerSecond, (byte)bitsPerSample, (byte)channels);
         }
 
-        
+
     }
 
-    
+
 }

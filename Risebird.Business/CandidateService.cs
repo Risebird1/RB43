@@ -1,16 +1,15 @@
-﻿using Risebird.Business.Interface;
+﻿using Microsoft.Extensions.Configuration;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Twilio;
-using Microsoft.Extensions.Configuration;
-using Twilio.Types;
 using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
 
 namespace Risebird.Business
 {
@@ -74,7 +73,7 @@ namespace Risebird.Business
                 TwilioClient.Init(twilioAccountSID, twilioAuthToken);
                 var to = new PhoneNumber(phoneNumber);
                 var from = new PhoneNumber(twilioVoiceCallNumber);
-                
+
                 var call = await CallResource.CreateAsync(
                     to: to,
                     from: from,
@@ -94,7 +93,7 @@ namespace Risebird.Business
                     }
                 }
                 return false;
-                
+
             }
 
             catch (Exception e)

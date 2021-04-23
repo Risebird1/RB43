@@ -307,7 +307,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Thumbnail Time(Seconds)")]
         public int ThumbnailTimeSeconds { get; set; }
-        
+
         [Display(Name = "Video Duration(Minutes)")]
         public int VideoDuration { get; set; }
     }

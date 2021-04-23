@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Risebird.Entities.ViewModel
+﻿namespace Risebird.Entities.ViewModel
 {
     public class TransInterviewerSkillsofSkills
     {
@@ -12,5 +10,5 @@ namespace Risebird.Entities.ViewModel
         public string LevelName { get; set; }
         public int Weightage { get; set; }
     }
-    
+
 }

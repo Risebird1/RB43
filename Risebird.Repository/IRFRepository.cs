@@ -1356,7 +1356,7 @@ namespace Risebird.Repository
             }
         }
 
-        
+
         public IEnumerable<TransSkill> GetSkillsbyIRFid(int id)
         {
             try
@@ -3934,7 +3934,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        
+
         public async Task<Candidate> GetCandidateByIRF(int irfId, string emailId)
         {
             try

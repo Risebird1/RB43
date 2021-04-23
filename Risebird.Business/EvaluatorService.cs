@@ -176,7 +176,7 @@ namespace Risebird.Business
             {
 
                 // check whether a feedback for the interviewId has already been submitted
-                var techReport =  (IList<TechSkillEvaluatorReport>)(await _evaluatorRespository.GetTechReport(candidateId, irfId));
+                var techReport = (IList<TechSkillEvaluatorReport>)(await _evaluatorRespository.GetTechReport(candidateId, irfId));
 
                 if (techReport == null || !techReport.Any())
                 {

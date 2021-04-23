@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -11,6 +7,9 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -47,10 +46,10 @@ namespace Risebird.Web.Controllers
                             }
 
 
-                            filter.PerformedBy = filter.PerformedBy == null ? model.Select(x=>x.PerformedBy).ToArray() :filter.PerformedBy;
-                            filter.ActivityType = filter.ActivityType == null ? model.Select(x=>x.ActivityTypeDesc).ToArray() :filter.ActivityType;
-                            
-                            model = model.Where(c =>((filter.PerformedBy != null && filter.PerformedBy.Count() > 0) ? filter.PerformedBy.Contains(c.PerformedBy) : c.PerformedBy == null)
+                            filter.PerformedBy = filter.PerformedBy == null ? model.Select(x => x.PerformedBy).ToArray() : filter.PerformedBy;
+                            filter.ActivityType = filter.ActivityType == null ? model.Select(x => x.ActivityTypeDesc).ToArray() : filter.ActivityType;
+
+                            model = model.Where(c => ((filter.PerformedBy != null && filter.PerformedBy.Count() > 0) ? filter.PerformedBy.Contains(c.PerformedBy) : c.PerformedBy == null)
                             && ((filter.ActivityType != null && filter.ActivityType.Count() > 0) ? filter.ActivityType.Contains(c.ActivityTypeDesc) : c.ActivityTypeDesc == null)).ToList();
 
 
@@ -89,7 +88,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin")
                     {
-                        
+
                         if (filter != null)
                         {
                             HttpContext.Session.SetString("ActivityTrackerFilters", JsonConvert.SerializeObject(filter));
@@ -105,7 +104,7 @@ namespace Risebird.Web.Controllers
                         filter.PerformedBy = filter.PerformedBy == null ? model.Select(x => x.PerformedBy).ToArray() : filter.PerformedBy;
                         filter.ActivityType = filter.ActivityType == null ? model.Select(x => x.ActivityTypeDesc).ToArray() : filter.ActivityType;
 
-                        model = model.Where(c =>((filter.PerformedBy != null && filter.PerformedBy.Count() > 0) ? filter.PerformedBy.Contains(c.PerformedBy) : c.PerformedBy == null)
+                        model = model.Where(c => ((filter.PerformedBy != null && filter.PerformedBy.Count() > 0) ? filter.PerformedBy.Contains(c.PerformedBy) : c.PerformedBy == null)
                         && ((filter.ActivityType != null && filter.ActivityType.Count() > 0) ? filter.ActivityType.Contains(c.ActivityTypeDesc) : c.ActivityTypeDesc == null)).ToList();
 
                         return View(model);
@@ -199,7 +198,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 4].Value = "Performed At";
                 Sheet.Cells[1, 5].Value = "Performed By";
                 Sheet.Cells[1, 6].Value = "Uploaded File";
-                
+
                 int i = 2;
 
                 if (model.Count() > 0)
@@ -211,7 +210,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 3].Value = item.Summary;
                         Sheet.Cells[i, 4].Value = item.PerformedAt.ToString("MM/dd/yyyy HH:mm");
                         Sheet.Cells[i, 5].Value = item.PerformedBy;
-                        
+
 
                         if (!string.IsNullOrEmpty(item.FileUrl))
                         {
@@ -231,8 +230,8 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 6].Value = "No file uploaded";
                         }
-                        
-                        
+
+
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);

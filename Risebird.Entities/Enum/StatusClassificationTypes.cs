@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+﻿using System.ComponentModel;
 
 namespace Risebird.Entities.Enum
 {
     public enum StatusClassificationTypes
     {
         [Description("Meeting Status")]
-        MeetingStatusType=1,
+        MeetingStatusType = 1,
 
         [Description("Interview Status")]
         InterviewStatusType = 2,

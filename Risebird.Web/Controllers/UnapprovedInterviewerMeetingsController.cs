@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,6 +9,10 @@ using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -64,8 +64,8 @@ namespace Risebird.Web.Controllers
                             filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = modelList.Select(x => x.MeetingStatusStatusDesc).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
                             filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = modelList.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
                             filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = modelList.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
-                            
-                            modelList = modelList.Where(c => filter.PrimarySkill != null &&  filter.PrimarySkill.Contains(c.PrimarySkill)
+
+                            modelList = modelList.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.PrimarySkill)
                             && filter.SCID.Contains(c.ISCId)
                             && ((filter.ConfirmationStatus != null && filter.ConfirmationStatus.Count() > 0) ? filter.ConfirmationStatus.Contains(c.confirmationStatus) : c.confirmationStatus == null)
                             && ((filter.MeetingStatus != null && filter.MeetingStatus.Count() > 0) ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
@@ -76,8 +76,8 @@ namespace Risebird.Web.Controllers
                         else
                         {
 
-                            modelList =(await _unapprovedInterviewerMeetingsService.GetAllUnapprovedInterviewerMeetings(DateTime.Now.Date, DateTime.Now.Date.AddDays(1))).ToList();
-                            modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewerApproved)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription();  return x; }).ToList();
+                            modelList = (await _unapprovedInterviewerMeetingsService.GetAllUnapprovedInterviewerMeetings(DateTime.Now.Date, DateTime.Now.Date.AddDays(1))).ToList();
+                            modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewerApproved)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         }
                         ViewBag.CurrentUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
 
@@ -180,7 +180,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 16].Value = "HR Comments";
                 Sheet.Cells[1, 17].Value = "Interview Duration";
 
-                
+
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
                 //string LastAction = null; ;
@@ -198,7 +198,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 6].Value = item.interviewer != null ? item.interviewer : string.Empty;
                         Sheet.Cells[i, 7].Value = item.confirmationStatus;
 
-                        if(item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
+                        if (item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
                         {
                             Sheet.Cells[i, 8].Value = "Scheduled";
                         }
@@ -257,7 +257,7 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 11].Value = "No link";
                         }
-                        Sheet.Cells[i, 12].Value = item.ZoomId!=null?item.ZoomId:string.Empty;
+                        Sheet.Cells[i, 12].Value = item.ZoomId != null ? item.ZoomId : string.Empty;
 
                         if (!string.IsNullOrEmpty(item.VideoLink))
                         {
@@ -278,12 +278,12 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 13].Value = "No Video";
                         }
 
-                        Sheet.Cells[i, 14].Value = item.interviewSlot!=null? item.interviewSlot:"No Interview Slot";
-                        Sheet.Cells[i, 15].Value = item.HRCoordinatorEmailId!=null? item.HRCoordinatorEmailId : "NA";
-                        Sheet.Cells[i, 16].Value = item.HRComment!=null? item.HRComment : "NA";
+                        Sheet.Cells[i, 14].Value = item.interviewSlot != null ? item.interviewSlot : "No Interview Slot";
+                        Sheet.Cells[i, 15].Value = item.HRCoordinatorEmailId != null ? item.HRCoordinatorEmailId : "NA";
+                        Sheet.Cells[i, 16].Value = item.HRComment != null ? item.HRComment : "NA";
                         Sheet.Cells[i, 17].Value = item.interviewDuration.ToString();
 
-                        
+
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -437,7 +437,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        
+
                         InterviewerMeetingVM meetingToUpdate = _unapprovedInterviewerMeetingsService.GetMeeting(id);
                         if (meetingToUpdate == null)
                             return RedirectToAction("Index");
@@ -572,6 +572,6 @@ namespace Risebird.Web.Controllers
 
         }
 
-        
+
     }
 }

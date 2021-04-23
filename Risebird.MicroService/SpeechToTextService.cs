@@ -1,20 +1,18 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Microsoft.Extensions.Configuration;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
-using System.Linq;
-using System.Text;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -38,7 +36,7 @@ namespace Risebird.MicroService
             connectionString = _configuration["ConnectionString:DBConnectionString"];
 
         }
-        
+
         [FunctionName("SpeechToTextService")]
         public async Task<IActionResult> Run(
            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "SpeechToTextService")] HttpRequest req,
@@ -123,7 +121,7 @@ namespace Risebird.MicroService
                             {
                                 if (e.Result.Reason == ResultReason.RecognizedSpeech)
                                 {
-                                    if(result==string.Empty)
+                                    if (result == string.Empty)
                                     {
                                         result = e.Result.Text;
                                     }

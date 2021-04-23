@@ -291,7 +291,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> UpdateActionPerformed( int vmId, string emailId, string action)
+        public async Task<bool> UpdateActionPerformed(int vmId, string emailId, string action)
         {
             try
             {

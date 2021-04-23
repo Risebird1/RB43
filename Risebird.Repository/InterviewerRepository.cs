@@ -62,7 +62,7 @@ namespace Risebird.Repository
                 DynamicParameters parameters = SetSPParametersForInterviewProfile(interviewerProfile);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    
+
                     await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
                        commandType: CommandType.StoredProcedure);
 
@@ -1847,15 +1847,16 @@ namespace Risebird.Repository
         public async Task<TransInterviewerAccDetails> fetchBankDetails(int interviewerid)
         {
             try
-            { var query = "Select * from TransInterviewerAccDetails Where InterviewerProfileId=@id";
+            {
+                var query = "Select * from TransInterviewerAccDetails Where InterviewerProfileId=@id";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     DynamicParameters parametersRecomm = new DynamicParameters();
                     parametersRecomm.Add("@id", interviewerid);
-           
-                   
-                  var results = await SqlMapper.QueryAsync<TransInterviewerAccDetails>(con,query, parametersRecomm,
-                           commandType: CommandType.Text);
+
+
+                    var results = await SqlMapper.QueryAsync<TransInterviewerAccDetails>(con, query, parametersRecomm,
+                             commandType: CommandType.Text);
                     return results.FirstOrDefault();
                 }
             }

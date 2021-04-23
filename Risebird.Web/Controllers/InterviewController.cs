@@ -15,7 +15,6 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -1828,7 +1827,7 @@ namespace Risebird.Web.Controllers
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> MyInterview(int? Page, string searchValue)
-        {  
+        {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)

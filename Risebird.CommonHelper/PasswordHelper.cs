@@ -1,8 +1,6 @@
 ﻿using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
@@ -15,7 +13,7 @@ namespace Risebird.CommonHelper
         public PasswordHelper(IB2CClientService b2CClientService)
         {
             _b2CClientService = b2CClientService;
-            
+
         }
 
         public async Task<string> GenerateUserPassword(UserDetails user)
@@ -25,9 +23,9 @@ namespace Risebird.CommonHelper
             const int maxValue = 999;
             string number = rand.Next(maxValue + 1).ToString("D3");
             string password = string.Empty;
-            if(user.FirstName.Length >= 4)
+            if (user.FirstName.Length >= 4)
             {
-                password = user.FirstName.Substring(0,4).ToUpper() + "@" + number;
+                password = user.FirstName.Substring(0, 4).ToUpper() + "@" + number;
             }
             else
             {

@@ -1256,7 +1256,7 @@ namespace Risebird.Repository
                     DynamicParameters parametersPoints = new DynamicParameters();
                     if (reportDetails.MeetingStatus == 4)
                     {
-                        int points = Convert.ToInt16((100/60) * (reportDetails.VideoDuration));
+                        int points = Convert.ToInt16((100 / 60) * (reportDetails.VideoDuration));
                         parametersPoints.Add("@Points", points);
                     }
                     else if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)
@@ -4344,7 +4344,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
-                        con, "update [dbo].[InterviewMeetings] set interviewer=@value,EIAssigned=1 where id = @meetingid", new { value = interviewerMail, meetingid=id }, commandType: Text);
+                        con, "update [dbo].[InterviewMeetings] set interviewer=@value,EIAssigned=1 where id = @meetingid", new { value = interviewerMail, meetingid = id }, commandType: Text);
                     return "Interview assigned Successfully.";
                 }
             }
@@ -4369,7 +4369,7 @@ namespace Risebird.Repository
                     DynamicParameters dp = new DynamicParameters();
                     dp.Add("@Emailid", emailId);
 
-                   var  results = await con.QueryAsync<string>(query, dp);
+                    var results = await con.QueryAsync<string>(query, dp);
                     return results.FirstOrDefault();
                 }
 

@@ -45,7 +45,7 @@
 //        public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
 //        {
 //            //var date = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss");
-           
+
 //            //get the meeting Id
 //            var zoomMeetingId = "82495565803";
 //            string token = ZoomToken();
@@ -100,7 +100,7 @@
 //            log.LogInformation($"C# Zoom Start Video Timer trigger function executed at: {DateTime.Now}");
 //        }
 
-        
+
 //        private string ZoomToken()
 //        {
 //            // Token will be good for 20 minutes
