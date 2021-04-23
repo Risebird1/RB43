@@ -1828,7 +1828,7 @@ namespace Risebird.Web.Controllers
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> MyInterview(int? Page, string searchValue)
-        {
+        {  
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -1840,6 +1840,8 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                        var codedname = _meetingService.FetchInterviewerCodedName(emailid);
+                        ViewBag.CodedName = codedname;
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); x.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)Convert.ToInt32(x.HeuristicProfileType)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {
@@ -2113,6 +2115,8 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                        var codedname = _meetingService.FetchInterviewerCodedName(emailid);
+                        ViewBag.CodedName = codedname;
                         // myInterview = myInterview.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 

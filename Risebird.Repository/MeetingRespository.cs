@@ -4359,5 +4359,32 @@ namespace Risebird.Repository
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
         }
+        public async Task<string> FetchInterviewerCodedName(string emailId)
+        {
+            try
+            {
+                var query = "Select ip.NickName from InterviewerProfile ip join UserList ul on ip.UserId=ul.id where ul.EmailId=@Emailid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters dp = new DynamicParameters();
+                    dp.Add("@Emailid", emailId);
+
+                   var  results = await con.QueryAsync<string>(query, dp);
+                    return results.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
+
     }
 }
