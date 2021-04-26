@@ -1,11 +1,12 @@
+using System;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
-using System;
 
 namespace Risebird.MicroService
 {
@@ -53,13 +54,20 @@ namespace Risebird.MicroService
                     {
                         if (item.isInterviewerWaiting)
                         {
+                            if (!String.IsNullOrEmpty(item.ClientHrContact))
+                            {
+                                if (!CCEmails.Contains(item.ClientHrContact))
+                                {
+                                    CCEmails = CCEmails + ";" + item.ClientHrContact;
+                                }
+                            }
                             Mail _mail = new Mail
                             {
                                 TO = item.candidateEmail,
                                 CC = CCEmails,
-                                Subject = $"Interviewer Waiting for you to Start the interview"
+                                Subject = item.ClientName + " " + item.PrimarySkill + " Interview-  Interviewer is waiting for you. Please join immediately."
                             };
-                            var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer", item.candidateName);
+                            var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer", item.candidateName, item.interviewDate.ToString());
                         }
                         else
                         {
@@ -67,9 +75,9 @@ namespace Risebird.MicroService
                             {
                                 TO = item.interviewer,
                                 CC = CCEmails,
-                                Subject = item.candidateName + "Candidate join the meeting and waiting for interviewer"
+                                Subject = "Risebird Interview: Are you late? Candidate (" + item.candidateName + " ) joined the meeting and waiting. Please join immediately."
                             };
-                            var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate", item.candidateName);
+                            var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate", item.candidateName, "");
                         }
                     }
                     else if (item.EmailType == "EI")
@@ -80,7 +88,7 @@ namespace Risebird.MicroService
                         {
                             TO = item.emergencyinterviewer,
                             CC = CCEmails,
-                            Subject = item.candidateName + "Candidate joined the meeting and waiting for the interviewer"
+                            Subject = "Risebird Emergency Interview-Candidate(" + item.candidateName + ") is waiting for the interviewer."
                         };
                         var resultset = _notificationHelper.CandidateWaitingEINotification(_mail, linkurl);
                         Mail _mail1 = new Mail
@@ -97,7 +105,7 @@ namespace Risebird.MicroService
                         {
                             TO = item.candidateEmail,
                             CC = CCEmails,
-                            Subject = $"Risebird: Apology for the delay in the interview"
+                            Subject = $"Risebird: Apology for ongoing delay in the interview- Please wait for 5 more mins"
                         };
                         var resultset1 = _notificationHelper.AppologyNotificationToCandidateSecond(_mail1, item.candidateName);
                     }
@@ -107,7 +115,7 @@ namespace Risebird.MicroService
                         {
                             TO = item.candidateEmail,
                             CC = CCEmails,
-                            Subject = $"Apology for inconvience please reschedule the interview"
+                            Subject = $"Risebird: Due to some emergency, the interviewer is unable to join the interview. Apology for inconvenience, please reschedule."
                         };
                         var resultset = _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.CalendlyLink, item.candidateName);
                     }

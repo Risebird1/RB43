@@ -23,5 +23,9 @@
         public string CalendlyLink { get; set; }
         public string HRCoordinatorEmailId { get; set; }
         public string candidateName { get; set; }
+        public string ClientName { get; set; }
+        public string PrimarySkill { get; set; }
+        public DateTime interviewDate { get; set; }
+        public string ClientHrContact { get; set; }
     }
 }

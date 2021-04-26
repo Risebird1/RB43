@@ -1341,7 +1341,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName)
+        public string InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName,string InterviewDate)
         {
             try
             {
@@ -1360,7 +1360,7 @@ namespace Risebird.CommonHelper
                 }
                 if (whowaiting == "Interviewer")
                 {
-                    object[] parameters = new object[] { zoomlink, candidateName };
+                    object[] parameters = new object[] { zoomlink, candidateName, InterviewDate };
                     string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerWaitingNotification.html");
                     string msgBody = string.Format(rawEmail, parameters);
                     msg.HtmlContent = msgBody;
