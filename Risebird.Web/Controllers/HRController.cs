@@ -765,7 +765,7 @@ namespace Risebird.Web.Controllers
                 var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
                 if (HttpContext.Session.GetString("HRfilters") != null)
                 {
-                    var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("Interviewfilters"));
+                    var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("HRfilters"));
 
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
@@ -848,6 +848,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 11].Value = "HR Comment";
                 Sheet.Cells[1, 12].Value = "Client";
                 Sheet.Cells[1, 13].Value = "End Client Name";
+                Sheet.Cells[1, 14].Value = "Emergency Interview";
 
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
@@ -904,6 +905,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 11].Value = item.HRComment ?? string.Empty;
                         Sheet.Cells[i, 12].Value = item.ClientCompName ?? string.Empty;
                         Sheet.Cells[i, 13].Value = item.ClientName ?? string.Empty;
+                        Sheet.Cells[i, 14].Value = item.IsEmergency ? "Yes" : "No";
 
                         i++;
                     }

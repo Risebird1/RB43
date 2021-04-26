@@ -539,6 +539,7 @@
                                                             <th>Client</th>
                                                             <th>Zoom Link</th>
                                                             <th>Zoom Id</th>
+                                                            <th>Emergency</th>
                                                             <th class="disabled-sorting text-center">Actions</th>
 
                                                         </tr>
@@ -557,6 +558,7 @@
                                                             <th>Client</th>
                                                             <th>Zoom Link</th>
                                                             <th>Zoom Id</th>
+                                                            <th>Emergency </th>
                                                             <th class="disabled-sorting text-center">Actions</th>
 
                                                         </tr>
@@ -610,21 +612,21 @@
                                                             @if (item.candidateName != null && item.candidateName != "")
                                                             {
 
-                                                                @if (item.IsOnilne == 1 && item.candidateName.Length > 15)
+                                                                @if (item.IsOnilne == 1 && item.candidateName.Length > 6)
                                                                 {
                                                                     <td>
-                                                                        <a onclick="directopenChat('@item.candidateEmail')"> <span class="dot" style="background-color:green"></span>@item.candidateName.Substring(0, 8)...</a>
+                                                                        <a onclick="directopenChat('@item.candidateEmail')"> <span class="dot" style="background-color:green"></span>@item.candidateName.Substring(0, 6)...</a>
                                                                     </td>
                                                                 }
                                                                 else
                                                                 {
 
-                                                                    @if (item.candidateName.Length > 15)
+                                                                    @if (item.candidateName.Length > 6)
                                                                     {
 
 
                                                                         <td class="cadName">
-                                                                            <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 10)... </a>
+                                                                            <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 6)... </a>
                                                                         </td>
                                                                     }
 
@@ -650,12 +652,12 @@
 
 
 
-                                                                @if (item.interviewer.Length > 15)
+                                                                @if (item.interviewer.Length > 6)
                                                                 {
 
 
                                                                     <td class="cadEmail">
-                                                                        <a onclick="" data-tooltip="@item.interviewer"> @item.interviewer.Substring(0, 8)... </a>
+                                                                        <a onclick="" data-tooltip="@item.interviewer"> @item.interviewer.Substring(0, 6)... </a>
                                                                     </td>
                                                                 }
 
@@ -678,11 +680,11 @@
 
 
 
-                                                                @if (item.candidateEmail.Length > 15)
+                                                                @if (item.candidateEmail.Length > 8)
                                                                 {
 
                                                                     <td class="cadEmail">
-                                                                        <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 10)... </a>
+                                                                        <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 8)... </a>
                                                                     </td>
                                                                 }
 
@@ -701,9 +703,9 @@
                                                             }
                                                             @if (!string.IsNullOrEmpty(item.ClientCompName))
                                                             {
-                                                                @if (item.ClientName.Length > 15)
+                                                                @if (item.ClientName.Length > 5)
                                                                 {
-                                                                    <td style="text-align: center"><a onclick="" data-tooltip="@item.ClientName"> @item.ClientName.Substring(0, 10)...</a> </td>
+                                                                    <td style="text-align: center"><a onclick="" data-tooltip="@item.ClientName"> @item.ClientName.Substring(0, 5)...</a> </td>
                                                                 }
 
                                                                 else
@@ -735,34 +737,45 @@
                                                             }
                                                             @if (!string.IsNullOrEmpty(item.risebirdHR))
                                                             {
-                                                                @if (item.risebirdHR.Length > 15)
+                                                                @if (item.risebirdHR.Length > 8)
                                                                 {
                                                                     <td><a onclick="" data-tooltip="@item.risebirdHR">@item.risebirdHR.Substring(0, 8)...</a></td>
-                                                                    }
-                                                                    else {<td>@item.risebirdHR</td> }
                                                                 }
                                                                 else
                                                                 {
-
-                                                                    <td>No Zoom Id</td>
+                                                                    <td>@item.risebirdHR</td>
 
                                                                 }
+                                                            }
+                                                            else
+                                                            {
 
-                                                                <td class="text-right">
+                                                                <td>No Zoom Id</td>
 
-                                                                    <button class="mdc-fab app-fab--absolute sampleQues" aria-label="UnAssign Yourself">
-                                                                        <span onclick="javascript:UnAssignInterviewer('@item.id');" title="UnAssign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
-                                                                    </button>
-                                                                    <button class="mdc-fab app-fab--absolute itemques" aria-label="Co-ordinating HR Comments">
-                                                                        <span onclick="OpenCommentModal('@item.id','@item.interviewDate', '@item.HRComment', '@item.HRImageFileURL', '@item.candidateEmail', '@item.candidateName')" title="Co-ordinating HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
-                                                                    </button>
+                                                            }
+                                                            @if (item.IsEmergency)
+                                                            {
+                                                                <td>Yes</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No</td>
+                                                            }
+                                                            <td class="text-right">
 
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
-                                                                        <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
-                                                                    </button>
-                                                                </td>
+                                                                <button class="mdc-fab app-fab--absolute sampleQues" aria-label="UnAssign Yourself">
+                                                                    <span onclick="javascript:UnAssignInterviewer('@item.id');" title="UnAssign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
+                                                                </button>
+                                                                <button class="mdc-fab app-fab--absolute itemques" aria-label="Co-ordinating HR Comments">
+                                                                    <span onclick="OpenCommentModal('@item.id','@item.interviewDate', '@item.HRComment', '@item.HRImageFileURL', '@item.candidateEmail', '@item.candidateName')" title="Co-ordinating HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
+                                                                </button>
 
-                                                            </tr>
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
+                                                                    <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
+                                                                </button>
+                                                            </td>
+
+                                                        </tr>
 
 
                                                             <tr class="collapse @item.id">
@@ -1337,14 +1350,14 @@
             html += '<td style="text-align: center">' + data[i].irfid + '</td>';
 
             if (data[i].candidateName != null && data[i].candidateName != "") {
-                if (data[i].isOnline == 1 && data[i].candidateName.length > 8) {
-                    html += '  <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName.substring(0, 8) + '... </a> </td>';
+                if (data[i].isOnline == 1 && data[i].candidateName.length > 6) {
+                    html += '  <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName.substring(0, 6) + '... </a> </td>';
                 }
                 else {
 
 
-                    if (data[i].candidateName.length > 15) {
-                        html += '<td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 10) + '... </a></td>';
+                    if (data[i].candidateName.length > 6) {
+                        html += '<td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 6) + '... </a></td>';
                     }
                     else {
                         html += '  <td class="cadName"><a onclick=""><span class="dot"></span> ' + data[i].candidateName + ' </a></td>';
@@ -1357,8 +1370,8 @@
 
 
             if (data[i].interviewer != null && data[i].interviewer != "") {
-                if (data[i].interviewer.length > 15) {
-                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].interviewer + '"> ' + data[i].interviewer.substring(0, 8) + '... </a></td>';
+                if (data[i].interviewer.length > 6) {
+                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].interviewer + '"> ' + data[i].interviewer.substring(0, 6) + '... </a></td>';
                 }
                 else {
                     html += '  <td class="cadEmail"><a onclick=""> ' + data[i].interviewer + ' </a></td>';
@@ -1371,8 +1384,8 @@
 
 
             if (data[i].candidateEmail != null && data[i].candidateEmail != "") {
-                if (data[i].candidateEmail.length > 15) {
-                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].candidateEmail + '"> ' + data[i].candidateEmail.substring(0, 13) + '... </a></td>';
+                if (data[i].candidateEmail.length > 8) {
+                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].candidateEmail + '"> ' + data[i].candidateEmail.substring(0, 8) + '... </a></td>';
                 }
                 else {
                     html += '  <td class="cadEmail"><a onclick=""> ' + data[i].candidateEmail + ' </a></td>';
@@ -1385,8 +1398,8 @@
 
 
             if (data[i].clientName != null && data[i].clientName != "") {
-                if (data[i].clientName.length > 15) {
-                    html += '  <td style="text-align: center"> ' + data[i].clientName.substring(0, 10) + '... </td>';
+                if (data[i].clientName.length > 8) {
+                    html += '  <td style="text-align: center"> ' + data[i].clientName.substring(0, 8) + '... </td>';
                 }
 
                 else {
@@ -1416,7 +1429,7 @@
             }
 
             if (data[i].risebirdHR != null && data[i].risebirdHR != "") {
-                if (data[i].risebirdHR.length > 15) {
+                if (data[i].risebirdHR.length > 8) {
                     html += '  <td> ' + data[i].risebirdHR.substring(0, 8) + '... </td>';
                 }
                 else {
@@ -1427,6 +1440,15 @@
             else {
 
                 html += '  <td>No Zoom Id</td>';
+
+            }
+            if (data[i].isEmergency == true) {
+                html += '<td>Yes</td>';
+
+            }
+            else {
+
+                html += '<td>No</td>';
 
             }
 

@@ -338,22 +338,23 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 17].Value = "Client HR";
                 Sheet.Cells[1, 18].Value = "End Client Name";
                 Sheet.Cells[1, 19].Value = "Video Link";
-                Sheet.Cells[1, 20].Value = "Interviewer Comment";
-                Sheet.Cells[1, 21].Value = "Staffing Agency";
-                Sheet.Cells[1, 22].Value = "Interview Duration";
-                Sheet.Cells[1, 23].Value = "Expected Joining Time";
-                Sheet.Cells[1, 24].Value = "Preferred Location";
-                Sheet.Cells[1, 25].Value = "Expected Salary";
-                Sheet.Cells[1, 26].Value = "Current Employer";
-                Sheet.Cells[1, 27].Value = "Approval Status";
-                Sheet.Cells[1, 28].Value = "Approval Comments";
-                Sheet.Cells[1, 29].Value = "Final Selection Status";
-                Sheet.Cells[1, 30].Value = "Final Selection Comments";
-                Sheet.Cells[1, 31].Value = "QC Interviewer";
-                Sheet.Cells[1, 32].Value = "QC Status";
-                Sheet.Cells[1, 33].Value = "Coordinating HR";
-                Sheet.Cells[1, 34].Value = "Job Country";
-                Sheet.Cells[1, 35].Value = "Billing Owner";
+                Sheet.Cells[1, 20].Value = "Emergency Interview";
+                Sheet.Cells[1, 21].Value = "Interviewer Comment";
+                Sheet.Cells[1, 22].Value = "Staffing Agency";
+                Sheet.Cells[1, 23].Value = "Interview Duration";
+                Sheet.Cells[1, 24].Value = "Expected Joining Time";
+                Sheet.Cells[1, 25].Value = "Preferred Location";
+                Sheet.Cells[1, 26].Value = "Expected Salary";
+                Sheet.Cells[1, 27].Value = "Current Employer";
+                Sheet.Cells[1, 28].Value = "Approval Status";
+                Sheet.Cells[1, 29].Value = "Approval Comments";
+                Sheet.Cells[1, 30].Value = "Final Selection Status";
+                Sheet.Cells[1, 31].Value = "Final Selection Comments";
+                Sheet.Cells[1, 32].Value = "QC Interviewer";
+                Sheet.Cells[1, 33].Value = "QC Status";
+                Sheet.Cells[1, 34].Value = "Coordinating HR";
+                Sheet.Cells[1, 35].Value = "Job Country";
+                Sheet.Cells[1, 36].Value = "Billing Owner";
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
                 //string LastAction = null; ;
@@ -389,47 +390,6 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 9].Value = string.Empty;
                         }
-
-                        //Sheet.Cells[i, 9].Value = item.MeetingStatusStatusDesc;
-
-
-                        //if((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                        //{
-                        //    Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
-                        //}
-                        //else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null )
-                        //{
-                        //    Sheet.Cells[i, 10].Value = "QC Pending";
-
-                        //}
-                        //else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
-                        //{
-                        //    Sheet.Cells[i, 10].Value = "QC Fail(" + item.intervieweStatusStatDesc +")";
-
-                        //}
-                        //else
-                        //{
-                        //    Sheet.Cells[i, 10].Value = string.Empty;
-
-                        //if((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                        //{
-                        //    Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
-                        //}
-                        //else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null )
-                        //{
-                        //    Sheet.Cells[i, 10].Value = "QC Pending";
-
-                        //}
-                        //else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
-                        //{
-                        //    Sheet.Cells[i, 10].Value = "QC Fail(" + item.intervieweStatusStatDesc +")";
-
-                        //}
-                        //else
-                        //{
-                        //    Sheet.Cells[i, 10].Value = string.Empty;
-
-                        //}
 
                         if (!string.IsNullOrEmpty(item.intervieweStatusStatDesc))
                         {
@@ -518,22 +478,23 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 19].Value = "No Video";
                         }
-                        Sheet.Cells[i, 20].Value = item.InterviewerComment;
-                        Sheet.Cells[i, 21].Value = item.staffingAgency;
-                        Sheet.Cells[i, 22].Value = item.interviewDuration;
-                        Sheet.Cells[i, 23].Value = item.joiningTime;
-                        Sheet.Cells[i, 24].Value = item.preferredLocation;
-                        Sheet.Cells[i, 25].Value = item.expectedPerHourRate;
-                        Sheet.Cells[i, 26].Value = item.currentEmployerName;
-                        Sheet.Cells[i, 27].Value = item.NextLevelApprovalStat ?? "";
-                        Sheet.Cells[i, 28].Value = item.ApprovalComments ?? "Comments not submitted.";
-                        Sheet.Cells[i, 29].Value = item.FinalSelectionStat ?? "";
-                        Sheet.Cells[i, 30].Value = item.FinalComments ?? "Comments not submitted.";
-                        Sheet.Cells[i, 31].Value = item.QCInterviewer;
-                        Sheet.Cells[i, 32].Value = item.QCStatusStatusDesc;
-                        Sheet.Cells[i, 33].Value = item.HRCoordinatorEmailId;
-                        Sheet.Cells[i, 34].Value = item.JobCountry;
-                        Sheet.Cells[i, 35].Value = item.BillingOwner;
+                        Sheet.Cells[i, 20].Value = item.IsEmergency ? "Yes" : "No";
+                        Sheet.Cells[i, 21].Value = item.InterviewerComment;
+                        Sheet.Cells[i, 22].Value = item.staffingAgency;
+                        Sheet.Cells[i, 23].Value = item.interviewDuration;
+                        Sheet.Cells[i, 24].Value = item.joiningTime;
+                        Sheet.Cells[i, 25].Value = item.preferredLocation;
+                        Sheet.Cells[i, 26].Value = item.expectedPerHourRate;
+                        Sheet.Cells[i, 27].Value = item.currentEmployerName;
+                        Sheet.Cells[i, 28].Value = item.NextLevelApprovalStat ?? "";
+                        Sheet.Cells[i, 29].Value = item.ApprovalComments ?? "Comments not submitted.";
+                        Sheet.Cells[i, 30].Value = item.FinalSelectionStat ?? "";
+                        Sheet.Cells[i, 31].Value = item.FinalComments ?? "Comments not submitted.";
+                        Sheet.Cells[i, 32].Value = item.QCInterviewer;
+                        Sheet.Cells[i, 33].Value = item.QCStatusStatusDesc;
+                        Sheet.Cells[i, 34].Value = item.HRCoordinatorEmailId;
+                        Sheet.Cells[i, 35].Value = item.JobCountry;
+                        Sheet.Cells[i, 36].Value = item.BillingOwner;
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
