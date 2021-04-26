@@ -1,15 +1,6 @@
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -19,6 +10,13 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -167,7 +165,7 @@ namespace Risebird.MicroService
                     {
                         _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         log.LogError($"Zoom : Video upload error for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
-                        return; 
+                        return;
                     }
                 });
 

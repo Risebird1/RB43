@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
+using System;
 using Twilio.AspNet.Core;
 using Twilio.TwiML;
 
@@ -17,7 +14,7 @@ namespace Risebird.Web.Controllers
         {
             _irfService = irfService;
         }
-        
+
         [HttpPost]
         public TwiMLResult Index(string irfId)
         {

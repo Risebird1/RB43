@@ -1,5 +1,4 @@
-﻿using Risebird.Entities.ViewModel;
-using System;
+﻿using System;
 
 namespace Risebird.Entities.Data
 {

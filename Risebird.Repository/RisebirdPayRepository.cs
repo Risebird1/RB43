@@ -2,10 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
-using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;

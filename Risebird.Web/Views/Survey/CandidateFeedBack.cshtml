@@ -61,7 +61,7 @@
 
                     @if (ViewBag.PageName == "IRF")
                     {
-                        <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back to List</a>
+                        <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="top:-9px;">Back to List</a>
                         <i type="submit" class="fa fa-file-excel-o excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateFeedBackByIRFIdExporttoExcel", "Survey", new { IRFId = ViewBag.IRFId })'"></i>
                     }
                     else
@@ -170,7 +170,7 @@
                                             <th id="cfeedback_4">Name</th>
                                             <th>Email</th>
                                             <th>Interviewer</th>
-                                            <th id="cfeedback_5">Primary Skill</th>
+                                            <th id="cfeedback_5">JD Title</th>
                                             <th id='start' title="Overall, how would you rate the video interview experience?">Question1</th>
                                             <th title="How would you rate the evaluation process of interviewer?">Question2</th>
                                             <th title="Given a chance would you like to reappear for the video interview?">Question3</th>
@@ -186,7 +186,7 @@
                                             <th>Name</th>
                                             <th>Email </th>
                                             <th>Interviewer</th>
-                                            <th>Primary Skill</th>
+                                            <th>JD Title</th>
                                             <th title="Overall, how would you rate the video interview experience?">Question1</th>
                                             <th title="How would you rate the evaluation process of interviewer?">Question2</th>
                                             <th title="Given a chance would you like to reappear for the video interview?">Question3</th>
@@ -877,8 +877,8 @@
                     }
                 },
                 {
-                    title: "Primary Skill",
-                    content: "Showing the Primary Skill of the candidate here",
+                    title: "JD Title",
+                    content: "Showing the JD title of the candidate here",
                     target: "cfeedback_5",
                     showPrevButton: true,
                     zindex: 999999,

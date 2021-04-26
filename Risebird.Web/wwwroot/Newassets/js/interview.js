@@ -19,11 +19,7 @@ $(document).ready(function () {
 });
 
 
-$('form').submit(function () {
-    if ($(this).valid()) {
-        $(':submit', this).attr('disabled', 'disabled');
-    }
-});
+
 
 
 

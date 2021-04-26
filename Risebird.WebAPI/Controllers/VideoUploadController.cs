@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Azure.Storage.Blobs;
+﻿using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +7,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.WebAPI.Controllers
 {
@@ -74,7 +74,7 @@ namespace Risebird.WebAPI.Controllers
             var sasurl = uploadedImageFileURL + "?" + sas.Result;
             return sasurl.ToString();
         }
-        
+
         public async Task InsertBlobfile(string containerName, string path)
         {
             var bytes = System.IO.File.ReadAllBytes(path);

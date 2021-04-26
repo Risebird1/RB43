@@ -192,7 +192,7 @@ namespace Risebird.Business
                 return "failed";
             }
         }
-        public string ResetCandidate(int Clientjdid, string candidateEmail,string emailid)
+        public string ResetCandidate(int Clientjdid, string candidateEmail, string emailid)
         {
             try
             {

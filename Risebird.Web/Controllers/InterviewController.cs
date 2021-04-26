@@ -15,7 +15,6 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -1523,7 +1522,7 @@ namespace Risebird.Web.Controllers
                                 }
 
                             }
-                            
+
                         }
 
                         if (ModelState.IsValid)
@@ -1801,6 +1800,8 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                        var codedname = _meetingService.FetchInterviewerCodedName(emailid);
+                        ViewBag.CodedName = codedname;
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); x.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)Convert.ToInt32(x.HeuristicProfileType)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {
@@ -2074,6 +2075,8 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                        var codedname = _meetingService.FetchInterviewerCodedName(emailid);
+                        ViewBag.CodedName = codedname;
                         // myInterview = myInterview.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
@@ -5429,7 +5432,7 @@ namespace Risebird.Web.Controllers
                     HttpClient httpClient = new HttpClient();
                     httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
 
-                    httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
+                    await httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
 
                     TempData["SuccessErrorMessageInterview"] = "Sentiment analysis started successfully!";
                 }
@@ -5847,5 +5850,23 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [AllowAnonymous]
+        public IActionResult ReassignMeetingByEI(string id)
+        {
+            var meetings = _meetingService.FetchOpenMeetingById(id);
+            var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+            if (menus != null)
+            {
+                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+            }
+            return View(meetings);
+        }
+        [AllowAnonymous]
+        public JsonResult ReassignMeeting(string id, string meetingid, string Emailid)
+        {
+            var meetings = _meetingService.ReassignMeeting(id, meetingid, Emailid);
+            return Json(meetings);
+        }
     }
 }

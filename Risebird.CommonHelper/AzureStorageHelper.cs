@@ -371,7 +371,7 @@ namespace Risebird.CommonHelper
                 //await blob.UploadFromStreamAsync(blobFile);
                 await blob.UploadFromStreamAsync(blobFileStream);
             }
-            else if(blobFileStream!=null)
+            else if (blobFileStream != null)
             {
                 blob.Properties.ContentType = "video/mp4";
                 await blob.UploadFromStreamAsync(blobFileStream);

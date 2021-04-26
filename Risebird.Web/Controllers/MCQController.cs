@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using ExcelDataReader;
+﻿using ExcelDataReader;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +11,11 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -58,7 +56,7 @@ namespace Risebird.Web.Controllers
                                       select new { ID = (int)s, Name = s.GetDescription() };
                     var skillset = _skillService.GetSkills();
                     var resultset = new MCQDropdowndetails();
-                    
+
                     resultset._ProfileTypeSkills.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
                     resultset._ProfileTypeSkills.CompentencyLevelList = new SelectList(Compentencs, "ID", "Name");
 
@@ -124,7 +122,7 @@ namespace Risebird.Web.Controllers
                                       select new { ID = (int)s, Name = s.GetDescription() };
                     var skillset = _skillService.GetSkills();
                     var resultset = new MCQDropdowndetails();
-                    
+
                     resultset._ProfileTypeSkills.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
                     resultset._ProfileTypeSkills.CompentencyLevelList = new SelectList(Compentencs, "ID", "Name");
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
@@ -341,7 +339,7 @@ namespace Risebird.Web.Controllers
                     list.SecondarySkill = _lstset.SecondarySkill;
                     await _azureTableStorageService.InsertEntity("RisebirdMCQSet", list);
                     var questions = await _azureTableStorageService.GetAllEntitiesAsync<MCQVM>("RisebirdMCQquestions");
-                    if(questions!= null)
+                    if (questions != null)
                         return Json("No questions found.");
                     questions = questions.Where(x => x.Id == partialid).ToList();
                     foreach (var item in questions)
@@ -558,8 +556,8 @@ namespace Risebird.Web.Controllers
                 }
                 break;
             }
-               
-            
+
+
             if (final == "true")
             {
                 if (Request.Form.Files.Count() > 0)
@@ -670,7 +668,7 @@ namespace Risebird.Web.Controllers
                 var resultretrun = _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany, candidatescore);
                 return Json("TestSubmit");
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return Json("Failed to submit Test");
             }
@@ -792,28 +790,28 @@ namespace Risebird.Web.Controllers
                     {
                         candidate = candidate.Where(x => x.Id == id).ToList();
                         candidateDetails = candidateDetails.Where(x => x.Id == id).ToList();
-                         candidateset = (from o in candidate
-                                            join a in candidateDetails
-                                            on o.EmailAddress.ToUpper() equals a.CandidateEmail.ToUpper()
-                                            into temp
-                                            from a in temp.DefaultIfEmpty()
-                                            select new CandidateDetailsForTestDuplicate
-                                            {
-                                                CandidateEmail = o.EmailAddress,
-                                                ClientHR = o.ClientHR,
-                                                ApplyingCompany = o.ApplyingCompany,
-                                                TotalExprience = a == null ? "" : a.TotalExprience,
-                                                Skills = a == null ? "" : a.Skills,
-                                                Id = a == null ? "" : a.PartitionKey,
-                                                CandidateScore = a == null ? 0 : a.CandidateScore,
-                                                TotalQuestions = a == null ? 0 : a.TotalQuestions,
-                                                PartitionKey = o.PartitionKey,
-                                                Sharetime = o.Timestamp.DateTime,
-                                                SameID = o.Id,
-                                                VideoLink = a == null ? "" : a.VideoLink,
-                                                Feedbackreating = a == null ? 0 : a.Feedbackreating,
-                                                FeedbackComment = a == null ? "" : a.FeedbackComment
-                                            }).ToList();
+                        candidateset = (from o in candidate
+                                        join a in candidateDetails
+                                        on o.EmailAddress.ToUpper() equals a.CandidateEmail.ToUpper()
+                                        into temp
+                                        from a in temp.DefaultIfEmpty()
+                                        select new CandidateDetailsForTestDuplicate
+                                        {
+                                            CandidateEmail = o.EmailAddress,
+                                            ClientHR = o.ClientHR,
+                                            ApplyingCompany = o.ApplyingCompany,
+                                            TotalExprience = a == null ? "" : a.TotalExprience,
+                                            Skills = a == null ? "" : a.Skills,
+                                            Id = a == null ? "" : a.PartitionKey,
+                                            CandidateScore = a == null ? 0 : a.CandidateScore,
+                                            TotalQuestions = a == null ? 0 : a.TotalQuestions,
+                                            PartitionKey = o.PartitionKey,
+                                            Sharetime = o.Timestamp.DateTime,
+                                            SameID = o.Id,
+                                            VideoLink = a == null ? "" : a.VideoLink,
+                                            Feedbackreating = a == null ? 0 : a.Feedbackreating,
+                                            FeedbackComment = a == null ? "" : a.FeedbackComment
+                                        }).ToList();
                         if (candidateset != null)
                         {
                             if (profileName == "Client")
@@ -903,7 +901,7 @@ namespace Risebird.Web.Controllers
                             await _azureTableStorageService.DeleteEntity("RisebirdMCQCandidateQuestions", item);
                         }
                         return Json("success");
-                    }                   
+                    }
                 }
                 return Json("failed to delete");
             }

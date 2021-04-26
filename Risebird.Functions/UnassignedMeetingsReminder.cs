@@ -11,7 +11,6 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using Twilio.Clients;

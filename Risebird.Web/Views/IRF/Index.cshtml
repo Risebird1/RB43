@@ -293,20 +293,20 @@
                                                 <div class="col-md-8 col-sm-8 card-header-buttons action">
                                                     @if (!@item.IsClientUser && Model.Profile != "Recruiter" && Model.Profile != "CuratedUser")
                                                     {
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                        <button id="skill_17" class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                             <span onclick="javascript:EditIRF('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                         </button>
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Candidate Curated Score">
+                                                        <button id="skill_18" class="mdc-fab app-fab--absolute" aria-label="Candidate Curated Score">
                                                             <span onclick="javascript:CandidateCuratedScore('@item.id');" title="Candidate Curated Score" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z" /></svg></span>
                                                         </button>
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Interrview Planner">
+                                                        <button id="skill_19" class="mdc-fab app-fab--absolute" aria-label="Interrview Planner">
                                                             <span onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new { irfId = item.id, irfName = item.IRFId })'" title="Interview Planner" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" /></svg></span>
                                                         </button>
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Interview Invoice">
+                                                        <button  id="skill_20" class="mdc-fab app-fab--absolute" aria-label="Interview Invoice">
                                                             <span onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" title="Interview Invoice" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" /></svg></span>
                                                         </button>
                                                         //getIRFMembers
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
+                                                        <button id="skill_21" class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
                                                             <span onclick="javascript:getIRFMembers('@item.id', '@item.IRFId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
                                                         </button>
 
@@ -315,7 +315,7 @@
                                                     {
                                                         if (!item.IsDeleted)
                                                         {
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
+                                                            <button id="skill_22" class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
                                                                 <span onclick="javascript:ArchiveIRF('@item.id', '@item.IRFId');" title="Archive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
                                                             </button>
                                                         }
@@ -433,7 +433,7 @@
                                                 <div class="stats-bttm-btn  col-lg-10 col-md-10 col-sm-10 col-xs-10">
                                                     @if (Model.Profile == "Admin" || Model.Profile == "HR")
                                                     {
-                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="Send Candidate Feedback remainder">
+                                                        <button id="skill_6" class="mdc-fab app-fab--absolute item1" aria-label="Send Candidate Feedback remainder">
                                                             <span onclick="javascript:Candidatesfeedbackremainder('@item.IRFId');" title="Send Candidate Feedback remainder" class="mdc-fab__icon material-icons">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-share-fill" viewBox="0 0 20 20">
                                                                     <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z" />
@@ -441,12 +441,12 @@
                                                             </span>
                                                         </button>
                                                     }
-                                                    <button class="mdc-fab app-fab--absolute item1" aria-label="Candidate Feedback" style=" position: relative; top: -2px;">
+                                                    <button id="skill_7" class="mdc-fab app-fab--absolute item1" aria-label="Candidate Feedback" style=" position: relative; top: -2px;">
                                                         <span onclick="javascript:Candidatesfeedback('@item.IRFId');" title="Candidates Feedback" class="mdc-fab__icon material-icons">
                                                             <i style="        font-size: 16px;position: relative;top: -1px" class="fa fa-commenting-o"></i>
                                                         </span>
                                                     </button>
-                                                    <button id="skill_6" class="mdc-fab app-fab--absolute item1" aria-label="Candidate Status">
+                                                    <button id="skill_8" class="mdc-fab app-fab--absolute item1" aria-label="Candidate Status">
                                                         <span onclick="javascript:CandidatesStatus('@item.id', '@item.IRFId');" title="Candidates Status" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb( 255,255,255)" d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
                                                     </button>
                                                     @if (Model.Profile != "CuratedUser")
@@ -455,7 +455,7 @@
                                                         {
 
 
-                                                            <button class="mdc-fab app-fab--absolute itemques" aria-label="Questions">
+                                                            <button id="skill_9" class="mdc-fab app-fab--absolute itemques" aria-label="Questions">
                                                                 <span onclick="javascript:AddComments('@item.id');" title="Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
                                                             </button>
 
@@ -464,7 +464,7 @@
 
 
 
-                                                        <button id="skill_7" class="mdc-fab app-fab--absolute item1" aria-label="Questions">
+                                                        <button id="skill_10" class="mdc-fab app-fab--absolute item1" aria-label="Candidates List">
                                                             <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
                                                         </button>
 
@@ -473,28 +473,28 @@
                                                         @if (Model.Profile != "Recruiter")
                                                         {
 
-                                                            <button id="skill_8" class="mdc-fab app-fab--absolute item2" aria-label="Meetings">
+                                                            <button id="skill_11" class="mdc-fab app-fab--absolute item2" aria-label="Meetings">
                                                                 <span onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" title="Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg></span>
                                                             </button>
 
 
 
-                                                            <button id="skill_9" class="mdc-fab app-fab--absolute item3" aria-label="Selected Candidates">
+                                                            <button id="skill_12" class="mdc-fab app-fab--absolute item3" aria-label="Selected Candidates">
                                                                 <span onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" title="Selected Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg></span>
                                                             </button>
 
-                                                            <button id="skill_10" class="mdc-fab app-fab--absolute item2" aria-label="Meetings">
+                                                            <button id="skill_13" class="mdc-fab app-fab--absolute item2" aria-label="Meetings">
                                                                 <span onclick="javascript:MultipleCandidateInvites('@item.IRFId');" title="Multiple Candidate Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 18 18"><path d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg></span>
                                                             </button>
 
-                                                            <button id="skill_11" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
+                                                            <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
                                                                 <span onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new
                                                  {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                             </button>
 
 
 
-                                                            <button id="skill_12" class="mdc-fab app-fab--absolute item5" aria-label="Stats">
+                                                            <button id="skill_15" class="mdc-fab app-fab--absolute item5" aria-label="Stats">
                                                                 <span onclick="javascript:stats('@item.id', '@item.IRFId');" title="Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>
                                                             </button>
 
@@ -504,7 +504,7 @@
 
 
 
-                                                                <button class="mdc-fab app-fab--absolute item6" aria-label="Play">
+                                                                <button id="skill_16" class="mdc-fab app-fab--absolute " aria-label="Play">
                                                                     <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
                                                                 </button>
 
@@ -519,7 +519,7 @@
 
 
 
-                                                                <button id="skill_13" class="mdc-fab app-fab--absolute item6" aria-label="Pause">
+                                                                <button id="skill_16" class="mdc-fab app-fab--absolute " aria-label="Pause">
                                                                     <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
                                                                 </button>
 
@@ -1000,7 +1000,7 @@
 
         swal.fire({
             title: 'Are you sure?',
-            text: "The Skill Channel(" + irfName +") will be archived!",
+            text: "The Skill Channel(" + irfName + ") will be archived!",
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -1872,11 +1872,8 @@
                         }
                     },
 
-
-
-
                     {
-                        title: "Candidates Status",
+                        title: "Candidate Feedback Reminder",
                         content: "Click here to see its features",
                         target: "skill_6",
                         placement: "bottom",
@@ -1896,7 +1893,7 @@
 
 
                     {
-                        title: "Candidates List",
+                        title: "Candidate Feedback",
                         content: "Click here to see its features",
                         target: "skill_7",
                         placement: "bottom",
@@ -1915,10 +1912,9 @@
                     },
 
 
-
                     {
-                        title: "Meeting",
-                        content: "Grid View of All Interview Meetings",
+                        title: "Candidates Status",
+                        content: "Click here to see its features",
                         target: "skill_8",
                         placement: "bottom",
                         showPrevButton: true,
@@ -1934,11 +1930,9 @@
                             $('.helper').remove();
                         }
                     },
-
-
                     {
-                        title: "Selected Candidates",
-                        content: "Grid View of Selected Candidate Interviews",
+                        title: "Question",
+                        content: "Click here to see its features",
                         target: "skill_9",
                         placement: "bottom",
                         showPrevButton: true,
@@ -1957,8 +1951,8 @@
 
 
                     {
-                        title: "Multiple Candidate Meetings",
-                        content: "Grid View of Multiple Candidate Invites",
+                        title: "Candidates List",
+                        content: "Click here to see its features",
                         target: "skill_10",
                         placement: "bottom",
                         showPrevButton: true,
@@ -1978,8 +1972,8 @@
 
 
                     {
-                        title: "Schedule Meeting",
-                        content: "Click here to Schedule meeting over this Skill Channel",
+                        title: "Meeting",
+                        content: "Grid View of All Interview Meetings",
                         target: "skill_11",
                         placement: "bottom",
                         showPrevButton: true,
@@ -1998,8 +1992,8 @@
 
 
                     {
-                        title: "Stats",
-                        content: "Click here to see Interview Stats",
+                        title: "Selected Candidates",
+                        content: "Grid View of Selected Candidate Interviews",
                         target: "skill_12",
                         placement: "bottom",
                         showPrevButton: true,
@@ -2016,10 +2010,9 @@
                         }
                     },
 
-
                     {
-                        title: "Pause",
-                        content: "Click here to pause this Skill Channel and by clicking, it will cancel all upcoming interviews",
+                        title: "Multiple Candidate Meetings",
+                        content: "Grid View of Multiple Candidate Invites",
                         target: "skill_13",
                         placement: "bottom",
                         showPrevButton: true,
@@ -2032,6 +2025,67 @@
                         },
                         onPrev: function () {
                             $('#skill_13').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+
+                    {
+                        title: "Schedule Meeting",
+                        content: "Click here to Schedule meeting over this Skill Channel",
+                        target: "skill_14",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_14').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_14').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Stats",
+                        content: "Click here to see Interview Stats",
+                        target: "skill_15",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_15').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_15').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Pause",
+                        content: "Click here to pause this Skill Channel and by clicking, it will cancel all upcoming interviews",
+                        target: "skill_16",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_16').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_16  ').removeClass('overlay-relative');
                             $('.helper').remove();
                         }
                     },
@@ -2093,91 +2147,594 @@
         </script>
 
 
+    }
+}
 
 
-        @*<script src="~/Newassets/js/enjoyhint.min.js"></script>
-            <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-            <script>
 
-                var enjoyhint_instance = new EnjoyHint({});
 
-                var enjoyhint_script_steps = [
-                    {
-                        'next .card-title': 'List of Skill Based Channel',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'next .filter': 'Filter here based on available attributes or reset filter if applied earlier',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'next .first': 'Skill Channel Name and Primary Skill',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'next .second': 'Client Name',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'next .three': 'Skill Channel End Date',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'next .four': 'Total interviews',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'next .five': 'Selected Candidate Count',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'next .item1': 'List of Candidates',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'next .item2': 'Grid View of All Interviews',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'next .item3': 'Grid View of Selected Candidate Interviews',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'next .item4': 'Link to Schedule meeting over this Skill Channel',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'next .item5': 'Interview Stats',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'next .item6': 'Click here to pause this Skill Channel and by clicking, it will cancel all upcoming interviews',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'click .iacm': 'Click on All Priority View menu and see its feartures'
-                    }
-                ];
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+    pfName = pfName.Replace("\"", "");
+    @if (pfName == "HR")
+    {
 
-                setTimeout(function () {
-                    enjoyhint_instance.set(enjoyhint_script_steps);
-                    enjoyhint_instance.run();
-                }, 5000)
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
 
-            </script>*@
+        <script type="text/javascript">
+            hopscotch.registerHelper('addOverlay', function () {
+                $('body').append('<div class="overlay"></div>');
+            });
+
+            hopscotch.registerHelper('removeOverlay', function () {
+                $('.overlay').fadeOut(function () {
+                    $(this).remove();
+                    $('.helper').remove();
+                });
+            });
+
+            hopscotch.listen('show', function () {
+                var elementObject = $(hopscotch.getCurrTarget(tour));
+                var element = $('#' + elementObject[0].id);
+
+                element.prev().removeClass('overlay-relative');
+                element.addClass('overlay-relative');
+
+                if ($('.helper').length !== 0) {
+
+                    // Use Helper Layer for hilight target element.
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
+
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
+
+                } else {
+
+                    // Add Helper Layer for highlight target element.
+                    var newHelper = '<div class="helper"></div>';
+                    $('body').append(newHelper);
+
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
+
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
+                }
+
+            });
+
+            var tour = {
+                id: "hello-hopscotch",
+                showCloseButton: false,
+
+                steps: [
+                    {
+                        title: "Skill Channel",
+                        content: "View the list of Skill Based Channel",
+                        target: "skill_1",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        showCTAButton: true,
+                        ctaLabel: 'Skip',
+                        highlight: true,
+                        zindex: 999999,
+                        yOffset: 10,
+                        onCTA: function () {
+                            hopscotch.showStep(2);
+                            $('#skill_1').removeClass('overlay-relative');
+                            $('.helper').remove();
+                            $('.hopscotch-bubble').remove();
+                            $('.overlay-relative').remove();
+                            $('.overlay').remove();
+                        },
+                        onNext: function () {
+                            $('#skill_1').removeClass('overlay-relative');
+                            $('.helper').remove();
+
+                        }
+                    },
+                    {
+                        title: "Filter",
+                        content: "Filter based on available attributes or reset filter if applied earlier",
+                        target: "skill_2",
+                        placement: "left",
+                        showPrevButton: true,
+
+                        zindex: 999999,
+                        xOffset: 0,
+                        yOffset: -10,
+                        onPrev: function () {
+
+                            $('#skill_2').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+
+                        onNext: function () {
+
+                            $('#skill_2').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+
+
+                    },
+
+
+
+
+
+                    {
+                        title: "Total Candidates",
+                        content: "Total no of candidate for particular skill channel",
+                        target: "skill_3",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: 10,
+                        onNext: function () {
+                            $('#skill_3').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_3').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Completed Interviews",
+                        content: "Total counts of completed interviews",
+                        target: "skill_4",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: 10,
+                        onNext: function () {
+                            $('#skill_4').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_4').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+
+                    {
+                        title: "Selected Candidates",
+                        content: "Total counts of Selected Candidates",
+                        target: "skill_5",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: 10,
+                        onNext: function () {
+                            $('#skill_5').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_5').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Candidate Feedback Reminder",
+                        content: "Click here to see its features",
+                        target: "skill_6",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_6').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_6').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+                    {
+                        title: "Candidate Feedback",
+                        content: "Click here to see its features",
+                        target: "skill_7",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_7').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_7').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                    {
+                        title: "Candidates Status",
+                        content: "Click here to see its features",
+                        target: "skill_8",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_8').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_8').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+                    {
+                        title: "Question",
+                        content: "Click here to see its features",
+                        target: "skill_9",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_9').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_9').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Candidates List",
+                        content: "Click here to see its features",
+                        target: "skill_10",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_10').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_10').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+
+                    {
+                        title: "Meeting",
+                        content: "Grid View of All Interview Meetings",
+                        target: "skill_11",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_11').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_11').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Selected Candidates",
+                        content: "Grid View of Selected Candidate Interviews",
+                        target: "skill_12",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_12').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_12').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                    {
+                        title: "Multiple Candidate Meetings",
+                        content: "Grid View of Multiple Candidate Invites",
+                        target: "skill_13",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_13').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_13').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+
+                    {
+                        title: "Schedule Meeting",
+                        content: "Click here to Schedule meeting over this Skill Channel",
+                        target: "skill_14",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_14').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_14').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Stats",
+                        content: "Click here to see Interview Stats",
+                        target: "skill_15",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_15').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_15').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Pause",
+                        content: "Click here to pause this Skill Channel and by clicking, it will cancel all upcoming interviews",
+                        target: "skill_16",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_16').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_16  ').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                    {
+                        title: "Edit",
+                        content: "Click here to edit IRF",
+                        target: "skill_17",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_17').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_17').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                   
+
+                    {
+                        title: "Candidate Curated Score",
+                        content: "Click here to add candidate curated score",
+                        target: "skill_18",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_18').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_18').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Interviewer Planner",
+                        content: "Click here to see its features",
+                        target: "skill_19",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_19').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_19').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+
+                    {
+                        title: "Interview Invoice",
+                        content: "Click here to generate invoice",
+                        target: "skill_20",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_20').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_20').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Interviewing Member",
+                        content: "Click here to view interviewers details",
+                        target: "skill_21",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_21').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_21').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Archive",
+                        content: "Click here to archive this Skill Channel",
+                        target: "skill_22",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: -15,
+                        onNext: function () {
+                            $('#skill_22').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#skill_22').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                    {
+                        title: "Interview Menu",
+                        content: "Click on Interview menu to see its features",
+                        target: "#interview_menu",
+                        placement: "top",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 20,
+                        xOffset: 10,
+                        onNext: function () {
+                            $('#interview_menu').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#interview_menu').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+
+                ],
+                onStart: ["addOverlay"],
+                onEnd: ["removeOverlay"],
+            };
+            //if (hopscotch.getState() === "hello-hopscotch:1") {
+            //    hopscotch.startTour(tour);
+            //}
+            hopscotch.startTour(tour);
+            function setCookie(key, value) {
+                var expires = new Date();
+                expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+                document.cookie = key + '=' + value + ';path=/' + ';expires=' + expires.toUTCString();
+            };
+
+            function getCookie(key) {
+                var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+                return keyValue ? keyValue[2] : null;
+            };
+
+            var tour = {
+                onEnd: function () {
+                    setCookie("toured", "toured");
+                },
+                onClose: function () {
+                    setCookie("toured", "toured");
+                }
+            };
+
+            // Initialize tour if it's the user's first time
+            if (!getCookie("toured")) {
+                hopscotch.startTour(tour);
+            }
+        </script>
+
+
     }
 }
 

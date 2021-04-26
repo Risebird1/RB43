@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using AzureVideoUpload.Models;
-using Microsoft.Extensions.Configuration;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Sas;
 using Microsoft.AspNetCore.Http;
-using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
-using Azure.Storage.Blobs;
-using Azure.Storage.Sas;
+using Microsoft.WindowsAzure.Storage.Blob;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AzureVideoUpload.Controllers
 {
@@ -144,12 +141,12 @@ namespace AzureVideoUpload.Controllers
                 };
                 if (storedPolicyName == null)
                 {
-                    
+
                     sasBuilder.SetPermissions(BlobContainerSasPermissions.Read);
                     sasBuilder.StartsOn = DateTimeOffset.UtcNow;
                     sasBuilder.ExpiresOn = DateTimeOffset.UtcNow.AddMonths(7);
                     sasBuilder.Protocol = SasProtocol.Https;
-                   
+
                 }
                 else
                 {

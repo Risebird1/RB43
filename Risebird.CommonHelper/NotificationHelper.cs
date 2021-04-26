@@ -232,7 +232,7 @@ namespace Risebird.CommonHelper
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientUser.EmailId, clientUser.EmailId.Split("@").First()));
                     }
                 }
-                else if(!string.IsNullOrEmpty(clientHREmail))
+                else if (!string.IsNullOrEmpty(clientHREmail))
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
                 }
@@ -582,7 +582,7 @@ namespace Risebird.CommonHelper
             {
                 var msg = new SendGridMessage();
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Discussion Invite");
-                msg.Subject = "Discussion Invitation(" + primarySkill +")";
+                msg.Subject = "Discussion Invitation(" + primarySkill + ")";
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerMailId, "Interviewer"));
                 msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(hrEmailId, null));
 
@@ -1014,7 +1014,7 @@ namespace Risebird.CommonHelper
                 //{
                 //    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientUser.EmailId, null));
                 //}
-                if(!string.IsNullOrEmpty(clientHREmail))
+                if (!string.IsNullOrEmpty(clientHREmail))
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
 
@@ -1341,6 +1341,159 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
+        public string InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Alert");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                var ccMails = model.CC.Split(";");
+                foreach (var mail in ccMails)
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                if (whowaiting == "Interviewer")
+                {
+                    object[] parameters = new object[] { zoomlink, candidateName, InterviewDate };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerWaitingNotification.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+                    msg.HtmlContent = msgBody;
+                    return SendMail(msg);
+                }
+                else
+                {
+                    object[] parameters = new object[] { zoomlink };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateWaitingNotification.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+                    msg.HtmlContent = msgBody;
+                    return SendMail(msg);
+                }
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public string CandidateWaitingEINotification(Mail model, string zoomlink)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Alert");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                msg.AddTo(msg.From);
+                foreach (var mail in toMails)
+                {
+                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                var ccMails = model.CC.Split(";");
+                foreach (var mail in ccMails)
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                object[] parameters = new object[] { zoomlink };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotification.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public string AppologyNotificationToCandidate(Mail model, string candidateName)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Alert");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
 
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                var ccMails = model.CC.Split(";");
+                foreach (var mail in ccMails)
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                object[] parameters = new object[] { candidateName };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateWaitingForInterviewer.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public string ReScheduleNotificationToCandidate(Mail model, string zoomlink, string candidateName)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Alert");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                var ccMails = model.CC.Split(";");
+                foreach (var mail in ccMails)
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                object[] parameters = new object[] { zoomlink, candidateName };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RescheduleInterview.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public string AppologyNotificationToCandidateSecond(Mail model, string candidateName)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Alert");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                var ccMails = model.CC.Split(";");
+                foreach (var mail in ccMails)
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                object[] parameters = new object[] { candidateName };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateWaitingApologyForInterviewer.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
     }
 }

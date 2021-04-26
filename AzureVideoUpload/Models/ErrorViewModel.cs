@@ -1,5 +1,3 @@
-using System;
-
 namespace AzureVideoUpload.Models
 {
     public class ErrorViewModel

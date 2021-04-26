@@ -41,6 +41,7 @@
 
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 
 
 <div class="main-panel" id="main-panel">
@@ -55,7 +56,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">Interviews</a>
+                <div class="interview_1"><a class="navbar-brand">Interviews</a></div>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -83,13 +84,14 @@
                             </button>
                         }
 
-
+                    <span class="interview_3">
 
                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#filterModal">
 
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
                         </button>
+                    </span>
 
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span data-toggle="tooltip" data-placement="top" title="Click here to Broadcast Message" onclick="OpenBroadcastModal()" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;"> Broadcast</font></span>
@@ -105,7 +107,7 @@
 
 
 
-                        <i type="submit" class="fa fa-file-excel-o excel-file card-title-space" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview")'"></i>
+                        <span class="interview_2"> <i type="submit" class="fa fa-file-excel-o excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview")'"></i></span>
 
                     </div>
                 </div>
@@ -379,22 +381,21 @@
                                 <div style="overflow-x:scroll" class="scrollbar" id="style-2">
 
                                     <div id="tableID" class="second interview">
-                                        <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                        <table id="" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
                                             <thead>
-                                                <tr>
-                                                    <th class="disabled-sorting" style="text-align:center">Actions</th>
+                                                <tr><th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th id='start'>Skill Channel ID</th>
                                                     <th>Interview Date</th>
                                                     <th>Candidate Name</th>
                                                     <th>Candidate Email</th>
                                                     <th>Primary Skill</th>
+                                                    <th >Zoom Link</th>
                                                     <th>Interviewer</th>
                                                     <th>Confirmation Status</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
                                                     <th>Resume</th>
                                                     <th>JD Link</th>
-                                                    <th>Zoom Link</th>
                                                     <th>Zoom ID</th>
                                                     <th>Client HR</th>
                                                     <th>End Client Name</th>
@@ -431,14 +432,16 @@
                                                     <th>Interview Date</th>
                                                     <th>Candidate Name</th>
                                                     <th>Candidate Email</th>
+
                                                     <th>Primary Skill</th>
+                                                    <th>Zoom Link</th>
                                                     <th>Interviewer</th>
                                                     <th>Confirmation Status</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
                                                     <th>Resume</th>
                                                     <th>JD Link</th>
-                                                    <th>Zoom Link</th>
+
                                                     <th>Zoom ID</th>
                                                     <th>Client HR</th>
                                                     <th>End Client Name</th>
@@ -475,46 +478,60 @@
 
                                                 <tr id=@item.imid>
                                                     <td class="text-center action">
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
-                                                            <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
-                                                        </button>
-                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Candidate Feedback" style=" position: relative; top: -3px;">
-                                                            <span onclick="CandidateFeedback(@item.imid)" title="Candidate Survey Feedback" class="mdc-fab__icon material-icons"><i style="font-size: 16px;position: relative;top: -1px;" class="fa fa-commenting-o"></i></span>
-                                                        </button>
-                                                        @if (item.IsBiometricEnabled)
-                                                        {
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                <span onclick="location.href = '@Url.Action("VerifyAudio", "Interview", new { candidateId = item.CandidateId, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
-                                                            </button>
+                                                        <span class="interview_4">
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
+                                                                <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
+                                                            </button></span>
+                                                            <span class="interview_5">
+                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Candidate Feedback" style=" position: relative; top: -3px;">
+                                                                    <span onclick="CandidateFeedback(@item.imid)" title="Candidate Survey Feedback" class="mdc-fab__icon material-icons">
+                                                                        <i style="        font-size: 16px;
+        position: relative;
+        top: -1px;
+" class="fa fa-commenting-o"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </span>
+                                                            @if (item.IsBiometricEnabled)
+                                                            {
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                    <span onclick="location.href = '@Url.Action("VerifyAudio", "Interview", new { candidateId = item.CandidateId, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                                                                </button>
 
-                                                        }
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Upload Videoes">
-                                                            @*<span onclick="OpenVideoUploadPopup(@item.imid)" title="Upload Videoes" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>*@
-                                                            <span onclick="location.href = '@Url.Action("UploadInterviewVideoes", "Interview", new { id = item.imid})'" title="Upload Videoes" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z" /></svg></span>
-                                                        </button>
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                            <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                        </button>
+                                                            }
+                                                            <span class="interview_6">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Upload Videoes">
+                                                                    @*<span onclick="OpenVideoUploadPopup(@item.imid)" title="Upload Videoes" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>*@
+                                                                    <span onclick="location.href = '@Url.Action("UploadInterviewVideoes", "Interview", new { id = item.imid})'" title="Upload Videoes" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z" /></svg></span>
+                                                                </button>
+                                                            </span>
+                                                            <span class="interview_7">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                    <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                                </button>
+                                                            </span>
+                                                            <span class="interview_8">
+                                                                <button class="mdc-fab app-fab--absolute " aria-label="Comment">
+                                                                    <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR and QC Comment" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
+                                                                </button>
+                                                            </span>
+                                                            <span class="interview_9">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                    <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                </button>
+                                                            </span>
 
-                                                        <button class="mdc-fab app-fab--absolute " aria-label="Comment">
-                                                            <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR and QC Comment" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
-                                                        </button>
+                                                            @if (item.IsBiometricEnabled == true)
+                                                            {
 
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                            <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                        </button>
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Analyse Sentiment">
+                                                                    <span onclick="SentimentModalClick('@item.imid')" title="Analyse Sentiment" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M9 14h6v1.5H9z" /><circle cx="15.5" cy="9.5" r="1.5" /><circle cx="8.5" cy="9.5" r="1.5" /><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" /></svg></span>
+                                                                </button>
 
-                                                        @if (item.IsBiometricEnabled == true)
-                                                        {
-
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Analyse Sentiment">
-                                                                <span onclick="SentimentModalClick('@item.imid')" title="Analyse Sentiment" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M9 14h6v1.5H9z" /><circle cx="15.5" cy="9.5" r="1.5" /><circle cx="8.5" cy="9.5" r="1.5" /><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" /></svg></span>
-                                                            </button>
-
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Audio to Text">
-                                                                <span onclick="location.href = '@Url.Action("UploadInterviewAudio", "Interview", new { interviewId = item.imid, candidateEmail=item.candidateEmail, irfName = item.IRFId, interviewDate=item.interviewDate, candidateName= item.candidateName})'" title="Audio to Text" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16 height=" 16 viewBox="0 0 24 24"><path d="M4 9h16v2H4zm0 4h10v2H4z" /></svg></span>
-                                                            </button>
-                                                        }
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Audio to Text">
+                                                                    <span onclick="location.href = '@Url.Action("UploadInterviewAudio", "Interview", new { interviewId = item.imid, candidateEmail=item.candidateEmail, irfName = item.IRFId, interviewDate=item.interviewDate, candidateName= item.candidateName})'" title="Audio to Text" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16 height=" 16 viewBox="0 0 24 24"><path d="M4 9h16v2H4zm0 4h10v2H4z" /></svg></span>
+                                                                </button>
+                                                            }
 
 
                                                     </td>
@@ -546,6 +563,16 @@
                                                         <td style="color:red"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
 }
                                                     <td> @item.JDTiltle.Split("|")[0] </td>
+
+                                                    @if (item.zoomLink != null && item.zoomLink != "")
+                                                    {
+                                                        <td> <a class="interview_10"  id="zoomlinkId" target="_blank" title="Zoom Link" href=@item.zoomLink>Zoom Link</a> </td>
+                                                    }
+                                                    else
+                                                    {
+
+                                                        <td><span style="color:red">No Zoom Link</span></td>
+                                                    }
                                                     @if (@item.interviewer != null || @item.interviewer != "")
                                                     {
                                                         @if (item.IsInterviewerOnline == 1)
@@ -684,15 +711,7 @@
                                                         <td>No JD</td>
                                                     }
 
-                                                    @if (item.zoomLink != null && item.zoomLink != "")
-                                                    {
-                                                        <td> <a id="zoomlinkId" target="_blank" title="Zoom Link" href=@item.zoomLink>Zoom Link</a> </td>
-                                                    }
-                                                    else
-                                                    {
 
-                                                        <td><span style="color:red">No Zoom Link</span></td>
-                                                    }
                                                     <td> @item.risebirdHR</td>
 
                                                     @if (item.IsHrOnline == 1)
@@ -738,7 +757,45 @@
 
                                                     }
                                                     <td>@item.HRCoordinatorEmailId</td>
-                                                    <td>@item.HRComment</td>
+
+                                                    <td class="interview-com">
+
+
+                                                        <div id="section">
+                                                            @if (item.HRComment != null && item.HRComment != "")
+                                                            {
+                                                                @if (item.HRComment.Length > 22)
+                                                                {
+                                                                    <div class="article">
+                                                                        <p style="margin-bottom:0px;">
+                                                                            @item.HRComment.Substring(0, 22)
+                                                                        </p>
+                                                                        <p class="moretext_@item.imid moretext">
+                                                                            @item.HRComment.Substring(22, @item.HRComment.Length - 22)
+                                                                        </p>
+                                                                    </div>
+                                                                    <a onclick="moreless(@item.imid)" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="article">
+
+                                                                        <p>
+                                                                            @item.HRComment.Substring(0, @item.HRComment.Length)
+                                                                        </p>
+                                                                    </div>}
+                                                            }
+                                                            else
+                                                            { <div></div>}
+
+
+                                                        </div>
+
+
+
+
+                                                    </td>
+                                                    @*<td>@item.HRComment</td>*@
                                                     <td>@item.staffingAgency</td>
                                                     <td> @item.interviewDuration </td>
                                                     <td> @item.joiningTime</td>
@@ -1087,7 +1144,7 @@
 
                 </div>
                 <div>
-                    <div class="col-md-12 text-right">
+                    <div class="col-md-12 text-right nopad">
                         <div>
                             <div style="display: inline-block!important;margin-bottom:10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="ResendFeedbackForm()" id="btnresendform" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Send Feedback"></div>
                             <div style="        display: inline-block !important;
@@ -1710,5 +1767,391 @@
             $('#IRFLIST').hide()
         }
     });
+</script>
+
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"HR\"")
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        hopscotch.registerHelper('addOverlay', function () {
+            $('body').append('<div class="overlay"></div>');
+        });
+
+        hopscotch.registerHelper('removeOverlay', function () {
+            $('.overlay').fadeOut(function () {
+                $(this).remove();
+                $('.helper').remove();
+            });
+        });
+
+        hopscotch.listen('show', function () {
+            var elementObject = $(hopscotch.getCurrTarget(tour));
+            // var element = $('#' + elementObject[0].id);
+            var element = $('.' + elementObject[0].className);
+            element.prev().removeClass('overlay-relative');
+            element.addClass('overlay-relative');
+
+            if ($('.helper').length !== 0) {
+
+                // Use Helper Layer for hilight target element.
+                var helper = $('.helper');
+                var padding = 5;
+                var helperPosX = element.position().left - padding;
+                var helperPosY = element.position().top - padding;
+                var targetWidth = element.outerWidth();
+                var targetHeight = element.outerHeight();
+
+                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                helper.css('width', targetWidth);
+                helper.css('height', targetHeight);
+                helper.offset({ left: helperPosX, top: helperPosY });
+
+            } else {
+
+                // Add Helper Layer for highlight target element.
+                var newHelper = '<div class="helper"></div>';
+                $('body').append(newHelper);
+
+                var helper = $('.helper');
+                var padding = 5;
+                var helperPosX = element.position().left - padding;
+                var helperPosY = element.position().top - padding;
+                var targetWidth = element.outerWidth();
+                var targetHeight = element.outerHeight();
+
+                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                helper.css('width', targetWidth);
+                helper.css('height', targetHeight);
+                helper.offset({ left: helperPosX, top: helperPosY });
+            }
+
+        });
+
+        var tour = {
+            id: "hello-hopscotch",
+            showCloseButton: false,
+            steps: [
+
+                {
+                    title: "Interviews",
+                    content: "View all Interviews detail here and click on next button to know its features",
+                    target: ".interview_1",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    highlight: true,
+                    zindex: 999999,
+                    yOffset: 10,
+
+                    onCTA: function () {
+                        hopscotch.showStep(2);
+                        $('.interview_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onNext: function () {
+                        $('.interview_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+
+                    }
+                },
+                {
+                    title: "Export",
+                    content: "Click here to export the Interviews data in excel sheet",
+                    target: ".interview_2",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: 0,
+                    yOffset: 10,
+                    onPrev: function () {
+
+                        $('.interview_2').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.interview_2').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+                {
+                    title: "Filter",
+                    content: "Filter based on available attributes or reset filter if applied earlier",
+                    target: ".interview_3",
+                    placement: "left",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset:"550",
+                    yOffset: 0,
+                    onPrev: function () {
+
+                        $('.interview_3').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.interview_3').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+
+                {
+                    title: "Interviewing Member",
+                    content: "Click here to view interviewing member",
+                    target: ".interview_4",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: -10,
+                    yOffset: 10,
+                    onPrev: function () {
+
+                        $('.interview_4').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.interview_4').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Candidate Survey Feedback",
+                    content: "Click here to view candidate survey feedback ",
+                    target: ".interview_5",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: -10,
+                    yOffset: -10,
+                    onPrev: function () {
+
+                        $('.interview_5').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.interview_5').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Upload Videos",
+                    content: "Click here to upload videos",
+                    target: ".interview_6",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: 0,
+                    yOffset: -10,
+                    onPrev: function () {
+
+                        $('.interview_6').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.interview_6').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Edit",
+                    content: "Click here to edit interview",
+                    target: ".interview_7",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: -10,
+                    yOffset: 0,
+                    onPrev: function () {
+
+                        $('.interview_7').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.interview_7').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Interview Comment",
+                    content: "Click here to add interview comment",
+                    target: ".interview_8",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    zindex: 999999,
+                    xOffset: -20,
+                    yOffset: 0,
+                    onPrev: function () {
+
+                        $('.interview_8').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.interview_8').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Feedback Report",
+                    content: "Click here to view & generate feedback report",
+                    target: ".interview_9",
+                    placement: "bottom",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    xOffset: -20,
+                    yOffset: 0,
+                    onPrev: function () {
+
+                        $('.interview_9').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                    onNext: function () {
+
+                        $('.interview_9').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+
+                },
+
+
+                {
+                    title: "Zoom Link",
+                    content: "Showing zoom link here",
+                    target: ".interview_10",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "left",
+                    xOffset: '0px',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('.interview_10').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('.interview_10').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                
+                {
+                    title: "Interviewer",
+                    content: "Click on Interviewer menu to see its features",
+                    target: ".interviewer_menu",
+                    placement: "bottom",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    yOffset: -30,
+                    xOffset: -10,
+                    onNext: function () {
+                        $('.interviewer_menu').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('.interviewer_menu').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+
+                //{
+                //    title: "Risetube",
+                //    content: "Click on Risetube menu to see its features",
+                //    target: ".risetubemenu",
+                //    placement: "left",
+                //    showPrevButton: true,
+                //    zindex: 999999,
+                //    yOffset: -20,
+                //    xOffset: 0,
+                //    onNext: function () {
+                //        $('.risetubemenu').removeClass('overlay-relative');
+                //        $('.helper').remove();
+                //    },
+                //    onPrev: function () {
+                //        $('.risetubemenu').removeClass('overlay-relative');
+                //        $('.helper').remove();
+                //    }
+                //},
+
+
+            ],
+            onStart: ["addOverlay"],
+            onEnd: ["removeOverlay"],
+        };
+
+        hopscotch.startTour(tour);
+
+    </script>
+}
+<script>
+
+
+    function moreless(id) {
+
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
+
 </script>
 

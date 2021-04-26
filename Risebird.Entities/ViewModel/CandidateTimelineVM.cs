@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -29,7 +28,7 @@ namespace Risebird.Entities.ViewModel
         public int? confirmationStatus { get; set; }
         public string PrimarySkill { get; set; }
         public DateTime? CurrentStatusDate { get; set; }
-        public string ProfileSource{ get; set; }
+        public string ProfileSource { get; set; }
         public bool IsIRFArchived { get; set; }
 
     }

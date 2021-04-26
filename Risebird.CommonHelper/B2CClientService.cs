@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
 {
-    public class B2CClientService: IB2CClientService
+    public class B2CClientService : IB2CClientService
     {
         private string aadInstance = "https://login.microsoftonline.com/";
         private string aadGraphResourceId = "https://graph.windows.net/";
@@ -53,7 +53,7 @@ namespace Risebird.CommonHelper
             if (odataResponse.Error != null)
             {
                 return false;
-               
+
             }
 
             return true;

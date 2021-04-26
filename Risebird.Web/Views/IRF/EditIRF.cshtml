@@ -31,7 +31,7 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    
+
     <div class="content client">
         <div class="row bl-bg">
             <div class="col-md-12">
@@ -318,7 +318,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.RisebirdHr, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                        @Html.Label("Channel Owner", "Channel Owner", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
                                         @Html.DropDownListFor(m => m.RisebirdHr, (SelectList)ViewBag.RiseBirdHR, new { @class = "form-control select-css " })
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
                                     </div>
@@ -1363,6 +1363,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $(".selectpicker").select2();
+          
     });
 
 
@@ -1552,7 +1553,7 @@
             }
             document.getElementById("noInterviewer").innerHTML = "";
             document.getElementById("noInterviewerDown").innerHTML = "";
-
+            $("#btnUpload").attr("disabled", "disabled");
 
             return true;
         }

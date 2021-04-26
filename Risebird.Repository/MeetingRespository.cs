@@ -1252,10 +1252,12 @@ namespace Risebird.Repository
                     parameters.Add("@ThumbnailImage", reportDetails.ThumbnailImage);
                     parameters.Add("@FeedbackAudioLink", reportDetails.FeedbackAudioLink);
                     parameters.Add("@ThumbnailTimeSeconds", reportDetails.ThumbnailTimeSeconds);
+                    parameters.Add("@VideoDuration", reportDetails.VideoDuration);
                     DynamicParameters parametersPoints = new DynamicParameters();
                     if (reportDetails.MeetingStatus == 4)
                     {
-                        parametersPoints.Add("@Points", 100);
+                        int points = Convert.ToInt16((100 / 60) * (reportDetails.VideoDuration));
+                        parametersPoints.Add("@Points", points);
                     }
                     else if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)
                     {
@@ -4286,7 +4288,103 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+        public async Task<IEnumerable<Meeting>> FetchOpenMeetingById(string id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@meetingid", Convert.ToInt64(id));
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_FetchOpenMeetingById", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string CheckMeetingAssignationValidation(string Emailid)
+        {
+            try
+            {
+                var query = "Select Count(*) from UserList where Emailid=@Emailid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", Emailid.Trim());
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    if (results.FirstOrDefault() > 0)
+                    {
+                        return "Valid";
+                    }
+                    else
+                    {
+                        return "Email id is not valid.";
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+        }
+        public string ReAssignMeeting(int id, string interviewerMail)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<string>(
+                        con, "update [dbo].[InterviewMeetings] set interviewer=@value,EIAssigned=1 where id = @meetingid", new { value = interviewerMail, meetingid = id }, commandType: Text);
+                    return "Interview assigned Successfully.";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+        }
+        public async Task<string> FetchInterviewerCodedName(string emailId)
+        {
+            try
+            {
+                var query = "Select ip.NickName from InterviewerProfile ip join UserList ul on ip.UserId=ul.id where ul.EmailId=@Emailid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters dp = new DynamicParameters();
+                    dp.Add("@Emailid", emailId);
+
+                    var results = await con.QueryAsync<string>(query, dp);
+                    return results.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
 
         }
+
     }
 }

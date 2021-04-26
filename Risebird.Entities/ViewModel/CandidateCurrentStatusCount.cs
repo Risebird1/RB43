@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Risebird.Entities.ViewModel
+﻿namespace Risebird.Entities.ViewModel
 {
     public class CandidateCurrentStatusCount
     {
@@ -19,7 +15,7 @@ namespace Risebird.Entities.ViewModel
             QCPending = 0;
             TotalCount = 0;
         }
-        
+
         public int? Proxy { get; set; }
         public int? Selected { get; set; }
         public int? Rejected { get; set; }

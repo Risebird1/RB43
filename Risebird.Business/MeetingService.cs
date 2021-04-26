@@ -354,7 +354,7 @@ namespace Risebird.Business
         {
             try
             {
-                return new SelectList(_meetingRespository.GetIRFList().Where(x=>x.EndDate > DateTime.Now), "IRFId", "IRFId");
+                return new SelectList(_meetingRespository.GetIRFList().Where(x => x.EndDate > DateTime.Now), "IRFId", "IRFId");
             }
 
             catch (Exception e)
@@ -951,6 +951,7 @@ namespace Risebird.Business
                 reportModel.PrimarySkill = irfDetails.JDTiltle.Split("|")[0];
                 reportModel.joiningTime = interviewDetails.joiningTime;
                 reportModel.ThumbnailTimeSeconds = interviewDetails.ThumbnailTimeSeconds;
+                reportModel.VideoDuration = interviewDetails.VideoDuration;
                 return reportModel;
             }
 
@@ -2481,7 +2482,54 @@ namespace Risebird.Business
                 return null;
             }
         }
-       
+        public List<Meeting> FetchOpenMeetingById(string id)
+        {
+            try
+            {
+                var openMeeting = new List<Meeting>();
+                openMeeting = _meetingRespository.FetchOpenMeetingById(id).Result.ToList();
+                openMeeting = openMeeting.Distinct().ToList();
+                openMeeting = openMeeting.OrderByDescending(x => x.interviewDate).ToList();
+                return openMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public string ReassignMeeting(string id, string meetingid, string Emailid)
+        {
+            try
+            {
+                var assignedMeeting = _meetingRespository.CheckMeetingAssignationValidation(Emailid);
+                if (assignedMeeting != "Valid")
+                {
+                    return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";
+                }
+                return _meetingRespository.ReAssignMeeting(Convert.ToInt32(id), Emailid);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+        }
+        public string FetchInterviewerCodedName(string emailID)
+        {
+            try
+            {
+                var codedname = _meetingRespository.FetchInterviewerCodedName(emailID).Result;
+
+                return codedname;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
     }
 }
 

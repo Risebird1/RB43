@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OfficeOpenXml;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -30,7 +30,7 @@ namespace Risebird.Web.Controllers
         private static List<Recruiter> _modelDetail;
         private static List<ResumeEvaluator> _modelDl;
         private static string Searchvalue;
-                private static string SearchInterviewers;
+        private static string SearchInterviewers;
         public UserController(IUserService userService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
                                 ISkillService skillService, IProfileService profileService)
 
@@ -242,7 +242,7 @@ namespace Risebird.Web.Controllers
                 {
                     var result = _userService.DeleteUser(id);
                     return Json(result);
-                   
+
                 }
                 else
                 {
@@ -444,7 +444,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        if(!string.IsNullOrEmpty(clientUserVM.FirstName))
+                        if (!string.IsNullOrEmpty(clientUserVM.FirstName))
                         {
                             clientUserVM.FirstName = clientUserVM.FirstName.Trim();
 
@@ -546,7 +546,7 @@ namespace Risebird.Web.Controllers
                     {
                         searchValue = SearchInterviewers;
                     }
-                 
+
                     ViewBag.Searchvalue = searchValue;
                     if (!String.IsNullOrEmpty(searchValue))
                     {
@@ -1226,9 +1226,9 @@ namespace Risebird.Web.Controllers
         #region Resume Evaluator functions
 
         public IActionResult ResumeEvaluators(int? Page, string searchValue)
-       
+
         {
-         
+
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -1277,7 +1277,7 @@ namespace Risebird.Web.Controllers
                     _modelDl = model;
                     return View(model.ToPagedList(Page ?? 1, 10));
 
-                  //  return View(_userService.GetResumeEvaluators());
+                    //  return View(_userService.GetResumeEvaluators());
                 }
                 else
                 {
@@ -1410,7 +1410,7 @@ namespace Risebird.Web.Controllers
                 {
                     var result = _userService.DeleteResumeEvaluator(id);
                     return Json(result);
-                    
+
                 }
                 else
                 {
@@ -2517,7 +2517,7 @@ namespace Risebird.Web.Controllers
                 int totalcount = model.Count;
                 int Pagestart = 0;
                 int Pageend = 0;
-              
+
                 ViewBag.Searchvalue = searchValue;
                 if (!String.IsNullOrEmpty(searchValue))
                 {
@@ -2549,10 +2549,10 @@ namespace Risebird.Web.Controllers
                 }
                 if (model.Count == 0)
                 {
-                   Pagestart = 0;
+                    Pagestart = 0;
                     Pageend = 0;
                 }
-           
+
                 return Json(new { result = model.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count });
             }
             catch (Exception ex)

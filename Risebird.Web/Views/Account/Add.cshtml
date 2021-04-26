@@ -38,7 +38,7 @@
                 <div class="mdc-card card bg-white">
                     <div class="mdc-card-wrapper__text-section">
 
-                        @using (Html.BeginForm("Add", "Account", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
+                        @using (Html.BeginForm("Add", "Account", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @onsubmit = "saveBtn()" }))
                         {
 
 
@@ -253,5 +253,4 @@
     }
 
 </script>
-
 

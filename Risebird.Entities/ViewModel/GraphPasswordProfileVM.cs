@@ -1,11 +1,8 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
-   public class GraphPasswordProfileVM
+    public class GraphPasswordProfileVM
     {
         [JsonProperty("password")]
         public string Password { get; set; }

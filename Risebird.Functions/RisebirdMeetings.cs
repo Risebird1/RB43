@@ -11,7 +11,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -132,7 +131,9 @@ namespace Risebird.Functions
                                         {
                                             zoommeetingId = 0;
                                         }
+
                                     }
+
                                 }
                             }
                             else if (((JToken)mainFamilies1).Path == "payload.invitee")

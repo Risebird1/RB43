@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Risebird.Entities.Enum
 {
@@ -13,46 +10,46 @@ namespace Risebird.Entities.Enum
 
         [Display(Name = "In Progress")]
         [Description("In Progress")]
-        InProgress =2,
+        InProgress = 2,
 
         [Description("Waiting For Response")]
-        WFR=3,
+        WFR = 3,
 
         [Description("Scheduled")]
-        Scheduled=4,
+        Scheduled = 4,
 
         [Description("Irrelevant")]
-        Irrelevant=5,
+        Irrelevant = 5,
 
         [Description("Duplicate")]
-        Duplicate=6,
+        Duplicate = 6,
 
         [Display(Name = "Not Interested")]
         [Description("Not Interested")]
-        NotInterested=7,
+        NotInterested = 7,
 
         [Display(Name = "Got Another Offer")]
         [Description("Got Another Offer")]
-        GotAnotherOffer=8,
+        GotAnotherOffer = 8,
 
         [Display(Name = "Cold")]
         [Description("Cold")]
-        Cold=9,
+        Cold = 9,
 
         [Display(Name = "Hold")]
         [Description("Hold")]
-        Hold=10,
+        Hold = 10,
         [Display(Name = "Invitation Sent")]
         [Description("Invitation Sent")]
-        InvitationSent=11,
+        InvitationSent = 11,
 
         [Display(Name = "Added")]
         [Description("Added")]
-        Added=12,
+        Added = 12,
 
         [Display(Name = "Reminder Call")]
         [Description("Reminder Call")]
-        ReminderCall=13,
+        ReminderCall = 13,
 
         //[Display(Name = "Meeting Status")]
         //[Description("Meeting Status")]
@@ -64,11 +61,11 @@ namespace Risebird.Entities.Enum
 
         [Display(Name = "Called")]
         [Description("Called")]
-        Called=16,
+        Called = 16,
 
         [Display(Name = "Not Responding")]
         [Description("Not Responding")]
-        NotResponding=17,
+        NotResponding = 17,
 
         //[Display(Name = "Cancelled")]
         //[Description("Cancelled")]

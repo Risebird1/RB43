@@ -1,0 +1,408 @@
+﻿@model IEnumerable<Risebird.Entities.Data.Meeting>
+
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using System.Text.RegularExpressions
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Open Interviews";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Keep the Page Content Here.-->
+
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <div id="openinterview_1">
+                    <a class="navbar-brand">
+                        Open Interviews
+                    </a>
+
+                </div>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="mt50">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Open Interviews</h4></div>
+                </div>
+
+                <div class="pull-right ">
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="toolbar">
+
+                        </div>
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+
+
+                            <div id="tableID" class="second">
+                                <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                    <div class="col-sm-12 col-md-6">
+
+                                    </div>
+
+                                    <div class="clearfix"></div>
+                                    <div class="col-sm-12 nopad">
+                                        <div class="table-responsive">
+                                            <table id="OpeninterviewList" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Duration</th>
+                                                        <th>Candidate Name</th>
+                                                        <th>Resume</th>
+                                                        <th>JD Link</th>
+                                                        <th class="disabled-sorting text-right">Actions</th>
+
+                                                    </tr>
+                                                </thead>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Duration</th>
+                                                        <th>Candidate Name</th>
+                                                        <th>Resume</th>
+                                                        <th>JD Link</th>
+                                                        <th class="disabled-sorting text-right">Actions</th>
+
+
+                                                    </tr>
+                                                </tfoot>
+                                                <tbody>
+
+                                                    @if (Model.Count() == 0)
+                                                    {
+                                                        <tr>
+                                                            <td colspan="9" class="text-center">Interview has been assigned by some other interviewer.</td>
+                                                        </tr>
+                                                    }
+                                                    @foreach (var item in Model)
+                                                    {
+                                                        <tr id=@item.id>
+                                                            <td> @item.interviewDate<input type="hidden" value="@item.zoomLink" id="zoomlink_@item.id" /> </td>
+                                                            <td> @item.interviewDuration </td>
+                                                            <td> @item.candidateName</td>
+                                                            @if (item.resumeLink != null && item.resumeLink != "")
+                                                            {
+                                                                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Resume</td>
+                                                            }
+                                                            @if (item.JDLink != null && item.JDLink != "")
+                                                            {
+                                                                <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No JD</td>
+                                                            }
+
+
+                                                            <td class="text-right">
+                                                                <button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="openAssignationPopup(@item.id)" title="Assign Yourself"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></span></button>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+
+</div>
+<div id="MyAssignationModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Assign Meeting with your registered Emailid</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeAssignationPopUp()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <input type="hidden" id="myassiinterviewid" />
+                    <input type="hidden" id="myassimeetingid" />
+                    <label class="label-field desp-label" for="Please enter RB EmailId"> Please Enter RB registered Email Id</label>
+                    <div class="sharing">
+                        <textarea spellcheck="true" class="form-control" rows="2" id="txtsharetext1" placeholder="Please enter RB EmailId" style="width:100%"></textarea>
+                        <div id="words"></div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class=" text-right">
+                        <input type="button" onclick="ReAssignMeeting()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Assign">
+                        <input style="color:#fff;line-height: 13px;" type="button" onclick="closeAssignationPopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="MeetingLinkModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Meeting Link</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeMeetingLinkModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12 nopad">
+                    <div class="video-url">
+                        <p>Please join the Meeting with only your Coded Name</p>
+                        <label class="label-field desp-label"> Meeting Link:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="closeMeetingLinkModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.includes("Success")) {
+                swal.fire("Successful",'@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+
+        }
+
+        //window.onload = my_code();
+    </script>
+}
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#OpeninterviewList').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") { $("#x").hide(); }
+                    else { $("#x").show(); }
+                });
+            }
+
+        });
+
+
+        var table = $('#OpeninterviewList').DataTable();
+
+
+    });
+
+
+    function RefreshSearch() {
+        $(".dataTables_filter input").val('');
+        searchResult();
+    }
+
+    $(document).ready(function () {
+
+        $('#dataTables_filter').keyup(function () {
+            oTable.fnFilter($(this).val());
+        });
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+</script>
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#OpeninterviewList").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#OpeninterviewList").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#OpeninterviewList").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+<script>
+    function openAssignationPopup(id, meetingid) {
+        var modal = document.getElementById("MyAssignationModel");
+        modal.style.display = "block";
+        $("#myassiinterviewid").val(id);
+        $("#myassimeetingid").val(meetingid);
+    }
+    function closeAssignationPopUp() {
+        var modal = document.getElementById("MyAssignationModel");
+        modal.style.display = "none";
+        $("#myassiinterviewid").val('');
+        $("#myassimeetingid").val('');
+    }
+    function ReAssignMeeting() {
+        if ($("#txtsharetext1").val().trim() != "") {
+            var urlcurrent = $("#zoomlink_" + $("#myassiinterviewid").val()).val();
+            $.ajax({
+                type: "POST",
+                url: "/Interview/ReassignMeeting",
+                data: { id: $("#myassiinterviewid").val(), meetingid: $("#myassimeetingid").val(), Emailid: $("#txtsharetext1").val() },
+                success: function (data) {
+                    closeAssignationPopUp();
+                    swal.fire(data);
+                    if (data == "Interview assigned Successfully.") {
+                        $("#txtvideoUrls").text(urlcurrent);
+                        var modal = document.getElementById("MeetingLinkModel");
+                        modal.style.display = "block";
+                    }
+                }
+            });
+        }
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
+    function closeMeetingLinkModel() {
+        var modal = document.getElementById("MeetingLinkModel");
+        modal.style.display = "none";
+    }
+</script>
+
+<style>
+    .filheader {
+        padding: 10px;
+    }
+
+    .filavatar {
+        width: 45px;
+        float: left;
+        border-radius: 50%;
+        margin: 0;
+        background: #42a5f5;
+        text-align: center;
+        height: 45px;
+    }
+
+        .filavatar .fa-filter {
+            font-size: 25px;
+            color: #fff;
+            padding: 13px 30px 0px 13px;
+        }
+</style>

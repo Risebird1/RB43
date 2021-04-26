@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -13,6 +9,10 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using X.PagedList;
 
 namespace Risebird.Web.Controllers
@@ -27,14 +27,14 @@ namespace Risebird.Web.Controllers
         private static string Searchvalue;
 
 
-        
+
         public HRController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> OpenInterviews(int? Page, string searchValue)

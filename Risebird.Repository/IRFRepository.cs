@@ -1356,7 +1356,7 @@ namespace Risebird.Repository
             }
         }
 
-        
+
         public IEnumerable<TransSkill> GetSkillsbyIRFid(int id)
         {
             try
@@ -1840,7 +1840,7 @@ namespace Risebird.Repository
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -3592,11 +3592,11 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return "Failed";
         }
@@ -3934,7 +3934,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        
+
         public async Task<Candidate> GetCandidateByIRF(int irfId, string emailId)
         {
             try

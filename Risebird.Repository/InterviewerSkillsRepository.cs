@@ -262,7 +262,7 @@ namespace Risebird.Repository
                     await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerSkillsChannel", parameters,
                        commandType: CommandType.StoredProcedure);
 
-                    var InterviewerSkillId= parameters.Get<int>("@idIsc");
+                    var InterviewerSkillId = parameters.Get<int>("@idIsc");
 
                     //var irfList = SqlMapper.QueryAsync<InterviewerSkillsVM>(
                     //    con, "select * from [dbo].[InterviewerSkillsChannel]", null, commandType: Text).Result.AsList();
@@ -310,7 +310,7 @@ namespace Risebird.Repository
             }
         }
 
-        private DynamicParameters SetStoredProcedureParameterForInterviewerSkills(InterviewerSkillsVM entity, bool isUpdate=false)
+        private DynamicParameters SetStoredProcedureParameterForInterviewerSkills(InterviewerSkillsVM entity, bool isUpdate = false)
         {
             var parameters = new DynamicParameters();
 
@@ -325,7 +325,7 @@ namespace Risebird.Repository
             parameters.Add("@HeuristicProfileType", entity.HeuristicProfileType);
             parameters.Add("@JDLink", entity.JDLink);
             parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
-            if(!isUpdate)
+            if (!isUpdate)
             {
                 parameters.Add("@idIsc", dbType: DbType.Int32, direction: ParameterDirection.Output);
 

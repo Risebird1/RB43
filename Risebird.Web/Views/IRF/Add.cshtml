@@ -314,7 +314,7 @@
 
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.RisebirdHr, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.Label("Channel Owner", "Channel Owner", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
 
 
@@ -1101,7 +1101,7 @@
             }
             document.getElementById("noInterviewer").innerHTML = "";
             document.getElementById("noInterviewerDown").innerHTML = "";
-
+            $("#btnUpload").attr("disabled", "disabled");
             return true;
         }
         else {

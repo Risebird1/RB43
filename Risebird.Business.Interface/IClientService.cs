@@ -18,7 +18,7 @@ namespace Risebird.Business.Interface
         IList<CandidateCuratedScore> GetCandidateJDScore(int id);
         IList<Wallet> FetchClientWallet(int clientid);
         string AddWalletPoints(int ClientId, string emailid, int points, string comment);
-        string ResetCandidate(int Clientjdid, string candidateEmail,string emailid);
+        string ResetCandidate(int Clientjdid, string candidateEmail, string emailid);
         string DeleteClientJd(int assessmentid);
     }
 }

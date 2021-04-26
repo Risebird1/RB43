@@ -38,7 +38,7 @@
 
 
                     <div class="mdc-card-wrapper__text-section">
-                        @using (Html.BeginForm("AddRecruiter", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        @using (Html.BeginForm("AddRecruiter", "User", FormMethod.Post, new { enctype = "multipart/form-data",@onsubmit ="saveBtn()" }))
                         {
 
                             @Html.AntiForgeryToken()
@@ -141,6 +141,12 @@
     </div>
 
 </div>
+
+<script>
+    function saveBtn() {
+        $("#btnUpload").attr("disabled", "disabled");
+    }
+</script>
 
 
 

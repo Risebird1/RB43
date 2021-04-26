@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -195,7 +194,7 @@ namespace Risebird.Repository
             parameters.Add("@clientName", entity.Name);
             parameters.Add("@clientDescr", entity.Description);
             parameters.Add("@GST", entity.GST);
-            parameters.Add("@officeAddress", entity.OfficeAddress);          
+            parameters.Add("@officeAddress", entity.OfficeAddress);
             parameters.Add("@Createdby", entity.Createdby);
             parameters.Add("@LogoLink", entity.LogoLink);
             parameters.Add("@CompanyLink", entity.CompanyLink);

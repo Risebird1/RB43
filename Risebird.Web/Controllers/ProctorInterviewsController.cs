@@ -54,7 +54,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "Candidate" || profileName == "ResumeEvaluator" || profileName == "Client" || profileName== "QualityController" || profileName== "CuratedUser" || profileName== "ExternalUser" || profileName== "Recruiter")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "Candidate" || profileName == "ResumeEvaluator" || profileName == "Client" || profileName == "QualityController" || profileName == "CuratedUser" || profileName == "ExternalUser" || profileName == "Recruiter")
                 {
                     var model = new VirtualMachineVM();
                     var vmList = (await _proctorInterviewsService.GetAllUserVMs(emailid, profileName)).ToList();
@@ -363,7 +363,7 @@ namespace Risebird.Web.Controllers
                     VmId = vmId,
                     VmName = vmName,
                     UsersList = (IList<TransVMUser>)(_proctorInterviewsService.GetUserList(vmId, (int)ProfileEnum.HR)),
-                    ProfileList = new SelectList(_profileService.GetProfile().Where(x=>x.id !=(int)ProfileEnum.Admin), "id", "Name",(int)ProfileEnum.HR)
+                    ProfileList = new SelectList(_profileService.GetProfile().Where(x => x.id != (int)ProfileEnum.Admin), "id", "Name", (int)ProfileEnum.HR)
                 };
                 return View(model);
             }
@@ -496,7 +496,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     //profileName = "Candidate";
                     profileName.Replace("\"", "");
-                   
+
                     ProctorQuestionsViewModel model = new ProctorQuestionsViewModel();
                     model.VmId = vmId;
                     model.QuestionList = (IList<ProctorVMQuestions>)(await _proctorInterviewsService.GetVMQuestions(vmId));
@@ -516,7 +516,7 @@ namespace Risebird.Web.Controllers
                     }
                     //HttpContext.Session.Remove("CurrentQuestion");
                     model.VMName = vmName;
-                        
+
                     return View(model);
                 }
                 else

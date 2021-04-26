@@ -1,11 +1,8 @@
 ﻿using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
-using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Risebird.Business
 {

@@ -8,12 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
 {
-    public class CandidateRepository: ICandidateRepository
+    public class CandidateRepository : ICandidateRepository
     {
 
         private readonly IConfiguration _configuration;
@@ -34,8 +33,8 @@ namespace Risebird.Repository
                 parameters.Add("@EmailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                     return await SqlMapper.QueryAsync<CandidateTimelineData>(con, "usp_GetCandidateTimeline", parameters,
-                         commandType: CommandType.StoredProcedure);
+                    return await SqlMapper.QueryAsync<CandidateTimelineData>(con, "usp_GetCandidateTimeline", parameters,
+                        commandType: CommandType.StoredProcedure);
                 }
 
             }

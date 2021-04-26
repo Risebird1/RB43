@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Risebird.Entities.Data
+﻿namespace Risebird.Entities.Data
 {
     public class RecordingFilesData
     {
@@ -11,5 +7,6 @@ namespace Risebird.Entities.Data
         public string file_type { get; set; }
         public string recording_start { get; set; }
         public string recording_end { get; set; }
+
     }
 }

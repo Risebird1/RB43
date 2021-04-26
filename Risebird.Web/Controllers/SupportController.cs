@@ -37,7 +37,7 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         _userService.UpdateUserSigInDetails(emailid);
-                     HttpContext.Session.SetString("NavigationShow", "false");
+                        HttpContext.Session.SetString("NavigationShow", "false");
                     }
 
                     var model = new SupportList();
