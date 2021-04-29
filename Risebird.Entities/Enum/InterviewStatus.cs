@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.Enum
 {
@@ -33,14 +34,19 @@ namespace Risebird.Entities.Enum
 
     public enum MeetingStatus
     {
-        [Description("No Show")]
+        [Display(Name = "No Show(Candidate)")]
+        [Description("No Show(Candidate)")]
         NoShow = 1,
         [Description("Scheduled")]
         Scheduled = 2,
         [Description("Dropped")]
         Dropped = 3,
         [Description("Completed")]
-        Completed = 4
+        Completed = 4,
+
+        [Display(Name = "No Show(Interviewer)")]
+        [Description("No Show(Interviewer)")]
+        NoShowInterviewer = 5,
 
     }
 

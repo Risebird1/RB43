@@ -891,11 +891,11 @@ namespace Risebird.Repository
                     // query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus=4 and ic.QCStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
                     if (actiontype == 0)
                     {
-                        query = "select distinct * from InterviewMeetings im inner join InterviewComments ic on ic.InterviewId= im.id left join QCFeedbackReport qc on qc.InterviewId = im.id where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null) and DATEDIFF(DAY, interviewDate, GETDATE())<7  ";
+                        query = "select distinct * from InterviewMeetings im inner join InterviewComments ic on ic.InterviewId= im.id join IRF on irf.IRFId = im.IRFId join Client cl on cl.id=irf.ClientId left join QCFeedbackReport qc on qc.InterviewId = im.id where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null or qc.QCStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7";
                     }
                     else
                     {
-                        query = "select distinct im.*,irf.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId inner join InterviewComments ic on ic.InterviewId= im.id left join QCFeedbackReport qc on qc.InterviewId = im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null) and DATEDIFF(DAY, interviewDate, GETDATE())<7 and HRCoordinatorEmailId =@emailID  and ul.EmailId=@emailID";
+                        query = "select distinct im.*,irf.*,ic.*, cl.[Name] from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on cl.id=irf.ClientId inner join InterviewComments ic on ic.InterviewId= im.id left join QCFeedbackReport qc on qc.InterviewId = im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null or qc.QCStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7 and HRCoordinatorEmailId =@emailID  and ul.EmailId=@emailID";
                     }
                 }
                 else if (actionstatus == "UnAssignedCoordianter")

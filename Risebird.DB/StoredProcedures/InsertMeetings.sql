@@ -190,13 +190,13 @@ Begin
 			insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
 			values (@irfintid, @candidateMasterId, 'Added', GETDATE(), 12, 'System')
 		End
-	Else
-		Begin
-			Update Candidate set  [Location] = @prefferedLocation, Phone = @textreminder, ClientHRAttemptContact =@ClientHrContact, 
-			ResumeLink=@resumeLink where CandidateMasterId = @candidateMasterId and IRFID= @irfintid
+	--Else
+	--	Begin
+	--		Update Candidate set  [Location] = @prefferedLocation, Phone = @textreminder, ClientHRAttemptContact =@ClientHrContact, 
+	--		ResumeLink=@resumeLink where CandidateMasterId = @candidateMasterId and IRFID= @irfintid
 
-			update UserList set MobileNumber = @textreminder where id=@candidateUserId
-		End
+	--		update UserList set MobileNumber = @textreminder where id=@candidateUserId
+	--	End
 
 End
 

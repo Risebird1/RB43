@@ -1039,8 +1039,8 @@
                                                                                         <table class="table table-bordered mbn" id="SkillTable">
                                                                                             <thead>
                                                                                                 <tr>
-                                                                                                    <th>Required Level</th>
                                                                                                     <th width="30%">Skill Name</th>
+                                                                                                    <th>Required Level</th>
                                                                                                     <th width="25%">Actual Level</th>
                                                                                                     <th>Required Weightage</th>
                                                                                                     <th width="15%">Actual Weightage</th>
@@ -1053,29 +1053,29 @@
                                                                                                 {
                                                                                                     @for (int i = 0; i < Model.IreportModel.TechSkillReportCollection.Count(); i++)
                                                                                                     {
-                                                                                                        <tr>
+                                                                                                <tr>
 
-                                                                                                            <td>
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                    <td>
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                    </td>
 
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                            </td>
+                                                                                                    <td>
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
 
-                                                                                                            <td>
-                                                                                                                @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { ID = "droplevel", @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @value = "title", onmouseover = "getOption(this)" })
+                                                                                                    </td>
+                                                                                                    <td>
+                                                                                                        @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { ID = "droplevel", @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @value = "title", onmouseover = "getOption(this)" })
 
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly", @value = "title" })
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly", @value = "title" })
-                                                                                                            </td>
-                                                                                                            @Html.HiddenFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevelId)
-                                                                                                            @Html.HiddenFor(m => m.IreportModel.TechSkillReportCollection[i].SkillId)
-                                                                                                        </tr>
+                                                                                                    </td>
+                                                                                                    <td>
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly", @value = "title" })
+                                                                                                    </td>
+                                                                                                    <td>
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly", @value = "title" })
+                                                                                                    </td>
+                                                                                                    @Html.HiddenFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevelId)
+                                                                                                    @Html.HiddenFor(m => m.IreportModel.TechSkillReportCollection[i].SkillId)
+                                                                                                </tr>
 
                                                                                                     }
                                                                                                 }
@@ -1192,10 +1192,9 @@
                                                                                         <table class="table table-bordered mbn" id="SkillGeneralTable">
                                                                                             <thead>
                                                                                                 <tr>
-
-                                                                                                    <th class="desktop-view">Required Level</th>
                                                                                                     <th width="30%">Type</th>
                                                                                                     <th width="25%">Value</th>
+                                                                                                    <th class="desktop-view">Required Level</th>
                                                                                                     <th width="15%">Actual Level</th>
                                                                                                     <th class="desktop-view">Required Weightage</th>
                                                                                                     <th width="10%">Actual Weightage</th>
@@ -1208,16 +1207,15 @@
                                                                                                     {
                                                                                                         <tr>
 
-                                                                                                            <td class="desktop-view">
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                            </td>
                                                                                                             <td>
                                                                                                                 @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].Name, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
                                                                                                             </td>
                                                                                                             <td>
                                                                                                                 @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].Value, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
                                                                                                             </td>
-
+                                                                                                            <td class="desktop-view">
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                            </td>
                                                                                                             <td>
                                                                                                                 @Html.DropDownListFor(m => m.IreportModel.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { ID = "droplevel", @class = "dropques form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
@@ -1266,9 +1264,9 @@
                                                                                         <table class="table table-bordered mbn" id="JoinabilityTable">
                                                                                             <thead>
                                                                                                 <tr>
-                                                                                                    <th class="desktop-view">Required Level</th>
                                                                                                     <th width="30%">Type</th>
                                                                                                     <th width="25%">Value</th>
+                                                                                                    <th class="desktop-view">Required Level</th>
                                                                                                     <th width="15%">Actual Level</th>
                                                                                                     <th class="desktop-view">Required Weightage</th>
                                                                                                     <th width="10%">Actual Weightage</th>
@@ -1279,33 +1277,33 @@
                                                                                                 {
                                                                                                     @for (int i = 0; i < Model.IreportModel.JoinabilityHRReportCollection.Count(); i++)
                                                                                                     {
-                                                                                                        <tr>
+                                                                                                <tr>
 
-                                                                                                            <td class="desktop-view">
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
 
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Name, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Value, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                            </td>
+                                                                                                    <td>
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Name, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                    </td>
+                                                                                                    <td>
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Value, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                    </td>
+                                                                                                    <td class="desktop-view">
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
 
-                                                                                                            <td>
-                                                                                                                @Html.DropDownListFor(m => m.IreportModel.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @readonly = "readonly" })
+                                                                                                    </td>
+                                                                                                    <td>
+                                                                                                        @Html.DropDownListFor(m => m.IreportModel.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @readonly = "readonly" })
 
-                                                                                                            </td>
-                                                                                                            <td class="desktop-view">
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                            </td>
+                                                                                                    </td>
+                                                                                                    <td class="desktop-view">
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    </td>
+                                                                                                    <td>
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    </td>
 
-                                                                                                            @Html.HiddenFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevelId)
+                                                                                                    @Html.HiddenFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevelId)
 
-                                                                                                        </tr>
+                                                                                                </tr>
 
                                                                                                     }
                                                                                                 }
@@ -1338,9 +1336,9 @@
                                                                                         <table class="table table-bordered mbn" id="SelectabilityTable">
                                                                                             <thead>
                                                                                                 <tr>
-                                                                                                    <th class="desktop-view">Required Level</th>
                                                                                                     <th width="30%">Type</th>
                                                                                                     <th width="25%">Value</th>
+                                                                                                    <th class="desktop-view">Required Level</th>
                                                                                                     <th width="15%">Actual Level</th>
                                                                                                     <th class="desktop-view">Required Weightage</th>
                                                                                                     <th width="10%">Actual Weightage</th>
@@ -1353,17 +1351,16 @@
                                                                                                     {
                                                                                                         <tr>
 
-                                                                                                            <td class="desktop-view">
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
-
-                                                                                                            </td>
                                                                                                             <td>
                                                                                                                 @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].Name, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
                                                                                                             </td>
                                                                                                             <td>
                                                                                                                 @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].Value, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
                                                                                                             </td>
+                                                                                                            <td class="desktop-view">
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
 
+                                                                                                            </td>
                                                                                                             <td>
                                                                                                                 @Html.DropDownListFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @readonly = "readonly" })
 
@@ -2593,8 +2590,8 @@
                                                         <table class="table table-bordered table-striped mbn" id="shareSkillTable">
                                                             <thead>
                                                                 <tr>
-                                                                    <th width="20%">Required Level</th>
                                                                     <th width="30%">Skill Name</th>
+                                                                    <th width="20%">Required Level</th>
                                                                     <th width="25%">Actual Level</th>
                                                                     <th width="15%">Required Weightage</th>
                                                                     <th width="15%">Actual Weightage</th>
@@ -2609,14 +2606,14 @@
                                                                     {
                                                                         <tr>
 
+
+                                                                            <td>
+                                                                                @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
+                                                                            </td>
                                                                             <td>
                                                                                 @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
 
                                                                             </td>
-                                                                            <td>
-                                                                                @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
-                                                                            </td>
-
                                                                             <td>
                                                                                 @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { ID = "sharedroplevel", @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @value = "title", onmouseover = "getOption(this)" })
 
