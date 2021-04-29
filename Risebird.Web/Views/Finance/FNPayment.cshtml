@@ -549,6 +549,7 @@
         html += '   <th>Payment Status</th>';
         html += '   <th>Rate</th>';
         html += '   <th>Amount</th>';
+        html += '   <th>Video Duration</th>';
         html += '   <th>Meeting Status</th>';
         html += '   <th>Interview Status</th>';
         html += '</tr>';
@@ -562,6 +563,14 @@
             html += '                               <td>' + data[i].status + '</td>';
             html += '                               <td>' + data[i].rate + '</td>';
             html += '                               <td>' + data[i].points + '</td>';
+
+            if (data[i].videoDuration == null) {
+                html += '                               <td></td>';
+            }
+            else {
+                html += '                               <td>' + data[i].videoDuration + '</td>';
+            }
+
             if (data[i].meetingStatusDetails == null) {
                 html += '                               <td></td>';
             } else {

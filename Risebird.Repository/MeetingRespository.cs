@@ -1254,19 +1254,32 @@ namespace Risebird.Repository
                     parameters.Add("@ThumbnailTimeSeconds", reportDetails.ThumbnailTimeSeconds);
                     parameters.Add("@VideoDuration", reportDetails.VideoDuration);
                     DynamicParameters parametersPoints = new DynamicParameters();
-                    if (reportDetails.MeetingStatus == 4)
+
+                    if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)
                     {
-                        int points = Convert.ToInt16((100 / 60) * (reportDetails.VideoDuration));
-                        parametersPoints.Add("@Points", points);
+                        parametersPoints.Add("@Points", 25);
                     }
-                    else if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)
-                    {
-                        parametersPoints.Add("@Points", 33);
-                    }
-                    else
+                    else if(reportDetails.MeetingStatus == 5)
                     {
                         parametersPoints.Add("@Points", 0);
+
                     }
+                    else if(reportDetails.MeetingStatus == 4 && reportDetails.VideoDuration != 0)
+                    {
+                        if(reportDetails.InterviewStatus==(int)InterviewStatus.Rejected)
+                        {
+                            var baseValue = 35;
+                            var pointPercent = reportDetails.VideoDuration >= 35 ? ((baseValue * 100) / 60) : ((reportDetails.VideoDuration * 100) / 60);
+                            parametersPoints.Add("@Points", pointPercent);
+                        }
+                        else
+                        {
+                            var pointPercent = reportDetails.VideoDuration >= 60 ? 100 : ((reportDetails.VideoDuration * 100) / 60);
+                            parametersPoints.Add("@Points", pointPercent);
+                        }
+                        
+                    }
+
                     parametersPoints.Add("@interviewId", reportDetails.InterviewId);
                     parametersPoints.Add("@UserEmail", reportDetails.UserDetails);
                     if (reportDetails.IsQC == true)
@@ -1414,15 +1427,22 @@ namespace Risebird.Repository
 
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewReportComments", parameters,
                             commandType: CommandType.StoredProcedure);
-                    try
-                    {
-                        SqlMapper.Query(con, "usp_InterviewAddPoints", parametersPoints,
-                                commandType: CommandType.StoredProcedure);
-                    }
-                    catch (Exception ex)
-                    {
 
+                    if (reportDetails.MeetingStatus ==  1 || reportDetails.MeetingStatus == 3 || reportDetails.MeetingStatus==5 || (reportDetails.MeetingStatus == 4 && reportDetails.VideoDuration != 0))
+                    {
+                        try
+                        {
+                            SqlMapper.Query(con, "usp_InterviewAddPoints", parametersPoints,
+                                    commandType: CommandType.StoredProcedure);
+                        }
+
+                        catch (SqlException ex)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        }
                     }
+                    
+                    
                     return true;
                 }
 

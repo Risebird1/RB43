@@ -23,6 +23,137 @@ Begin
 
 update InterviewComments set VideoLink=@videoLink, VideoDuration = @videoDuration where InterviewId=@interviewId
 
+declare
+	@interviewerUserId int,
+	@irfId int,
+	@perSuccessRate int,
+	@meetingStatus int,
+	@interviewStatus int,
+	@updatedPoints int,
+	@candidateEmail varchar(200)
+
+
+	set @interviewerUserId  = (select id from UserList where EmailId=(select interviewer from InterviewMeetings where id=@interviewId))
+	set @irfId = (select id from IRF where IRFId=(select IRFId from InterviewMeetings where id=@interviewId))
+	set @meetingStatus=(select MeetingStatus from InterviewComments where InterviewId=@interviewId)
+	set @interviewStatus=(select InterviewStatus from InterviewComments where InterviewId=@interviewId)
+	set @candidateEmail= (select candidateEmail from InterviewMeetings where id = @interviewId)
+
+
+if(@meetingStatus is not null)
+Begin
+	IF EXISTS(select 1 from TransInterviewer where IRFId=@irfId and UserId=@interviewerUserId)
+	BEGIN
+		set @perSuccessRate = (select PerSuccessRate from TransInterviewer where IRFId=@irfId and UserId=@interviewerUserId)
+
+		set @updatedPoints= dbo.func_ComputeInterviewerPoints(@perSuccessRate, @videoDuration, @meetingStatus, @interviewStatus)
+		--if(@meetingStatus = 1 or @meetingStatus=3)
+		--	begin
+		--	 set @updatedPoints = @perSuccessRate/4
+		--	end
+		--Else if(@meetingStatus=5)
+		--	begin
+		--	 set @updatedPoints = 0
+		--	end
+		--Else if(@interviewStatus=3)
+		--	Begin
+		--		if(@videoDuration>=35)
+		--			Begin
+		--				set @updatedPoints=(35*@perSuccessRate)/60
+		--			End
+		--		else
+		--			Begin
+		--				set @updatedPoints=(@videoDuration*@perSuccessRate)/60
+		--			End
+		--	End
+		--Else
+		--	Begin
+		--		if(@videoDuration>=60)
+		--			begin
+		--				set @updatedPoints = @perSuccessRate
+		--			end
+		--		Else
+		--			BEGIN
+		--				set @updatedPoints = (@perSuccessRate * @videoDuration/60)
+		--			END
+		--	End
+
+		
+
+		IF NOT EXISTS(select 1 from InterviewPoints where Interviewid = @interviewId and userid=@interviewerUserId and [Type]='Interview')
+			BEGIN
+	 
+
+			 insert into InterviewPoints(Interviewid, userid, Points, [Type], Comment, [Status], [Date])
+			 values (@interviewId, @interviewerUserId, @updatedPoints, 'Interview', @candidateEmail, 'Pending', getdate())
+
+			END
+
+		ELSE
+			BEGIN
+				update InterviewPoints set Points = @updatedPoints, [Date]=getdate()
+				where Interviewid = @interviewId and userid=@interviewerUserId and [Type]='Interview'
+			END
+		END
+ELSE IF EXISTS(select 1 from TransEmergencyInterviewer where IRFId=@irfId and UserId=@interviewerUserId)
+	BEGIN
+		set @perSuccessRate = (select PerSuccessRate from TransEmergencyInterviewer where IRFId=@irfId and UserId=@interviewerUserId)
+		
+		set @updatedPoints= dbo.func_ComputeInterviewerPoints(@perSuccessRate, @videoDuration, @meetingStatus, @interviewStatus)
+
+		--if(@meetingStatus = 1 or @meetingStatus=3)
+		--	begin
+		--	 set @updatedPoints = @perSuccessRate/4
+		--	end
+		--Else if(@meetingStatus=5)
+		--	begin
+		--	 set @updatedPoints = 0
+		--	end
+		--Else if(@interviewStatus=3)
+		--	Begin
+		--		if(@videoDuration>=35)
+		--			Begin
+		--				set @updatedPoints=(35*@perSuccessRate)/60
+		--			End
+		--		else
+		--			Begin
+		--				set @updatedPoints=(@videoDuration*@perSuccessRate)/60
+		--			End
+		--	End
+		--Else
+		--	Begin
+		--		if(@videoDuration>=60)
+		--			begin
+		--				set @updatedPoints = @perSuccessRate
+		--			end
+		--		Else
+		--			BEGIN
+		--				set @updatedPoints = (@perSuccessRate * @videoDuration/60)
+		--			END
+		--	End
+
+		
+
+		IF NOT EXISTS(select 1 from InterviewPoints where Interviewid = @interviewId and userid=@interviewerUserId and [Type]='Interview')
+			BEGIN
+	 
+
+			 insert into InterviewPoints(Interviewid, userid, Points, [Type], Comment, [Status], [Date])
+			 values (@interviewId, @interviewerUserId, @updatedPoints, 'Interview', @candidateEmail, 'Pending', getdate())
+
+			END
+
+		ELSE
+			BEGIN
+				update InterviewPoints set Points = @updatedPoints, [Date]=getdate()
+				where Interviewid = @interviewId and userid=@interviewerUserId and [Type]='Interview'
+			END
+		END
+End
+
+
+
+
 End
 GO
 
