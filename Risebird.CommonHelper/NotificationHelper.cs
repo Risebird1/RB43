@@ -1341,7 +1341,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate)
+        public string InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName,string InterviewDate)
         {
             try
             {
