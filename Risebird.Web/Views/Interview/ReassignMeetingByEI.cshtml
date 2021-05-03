@@ -219,7 +219,7 @@
             <div class="modal-body">
                 <div class="col-md-12 nopad">
                     <div class="video-url">
-                        <p>Please join the Meeting with only your Coded Name</p>
+                        <p>Please join the Meeting with only your Coded Name:<label id="lblcodedname"></label></p>
                         <label class="label-field desp-label"> Meeting Link:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
                             <p class="special-text">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
@@ -361,11 +361,13 @@
                 data: { id: $("#myassiinterviewid").val(), meetingid: $("#myassimeetingid").val(), Emailid: $("#txtsharetext1").val() },
                 success: function (data) {
                     closeAssignationPopUp();
-                    swal.fire(data);
-                    if (data == "Interview assigned Successfully.") {
+                    swal.fire(data.meetings);
+                    if (data.meetings == "Interview assigned Successfully.") {
                         $("#txtvideoUrls").text(urlcurrent);
                         var modal = document.getElementById("MeetingLinkModel");
                         modal.style.display = "block";
+                        $("#lblcodedname").text(data.codedname);
+                        $('#special_text').text('Copy Link');
                     }
                 }
             });
