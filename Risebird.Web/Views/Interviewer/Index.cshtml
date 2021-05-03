@@ -348,185 +348,179 @@
                                             <tbody id="tblbodyInterviewerProfile">
                                                 @foreach (var item in Model)
                                                 {
-                                                    <tr id=@item.id data-changes="1">
-                                                        <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
-                                                        @if (item.FirstName != null && item.FirstName != "")
+                                                <tr id=@item.id data-changes="1">
+                                                    <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                                                    @if (item.FirstName != null && item.FirstName != "")
+                                                    {
+                                                        <td class="cadName intwname">
+    <a onclick="" data-tooltip="@item.FirstName"><span class="intName"> @item.FirstName</span></a>
+</td>
+
+
+                                                        @*@if (item.FirstName.Length > 20)
                                                         {
 
 
-                                                            @if (item.FirstName.Length > 20)
-                                                            {
-
-
-                                                                <td class="cadName">
-                                                                    <a onclick="" data-tooltip="@item.FirstName"> @item.FirstName.Substring(0, 20)... </a>
-                                                                </td>
-                                                            }
-
-
-                                                            else
-                                                            {
-                                                                <td class="cadName">
-                                                                    <a onclick=""> @item.FirstName </a>
-                                                                </td>
-                                                            }
-
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-
-                                                        @if (item.LastName != null && item.LastName != "")
-                                                        {
-
-
-                                                            @if (item.LastName.Length > 15)
-                                                            {
-
-
-                                                                <td class="cadLast">
-                                                                    <a onclick="" data-tooltip="@item.LastName"> @item.LastName.Substring(0, 15)... </a>
-                                                                </td>
-                                                            }
-
-
-                                                            else
-                                                            {
-                                                                <td class="cadLast">
-                                                                    <a onclick=""> @item.LastName </a>
-                                                                </td>
-                                                            }
-
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-
-                                                        @if (item.EmailId != null && item.EmailId != "")
-                                                        {
-
-                                                            @if (item.EmailId.Length > 11)
-                                                            {
-
-
-                                                                <td class="cadEmail">
-                                                                    <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0, 11)... </a>
-                                                                </td>
-                                                            }
-
-
-                                                            else
-                                                            {
-                                                                <td class="cadEmail">
-                                                                    <a onclick=""> @item.EmailId </a>
-                                                                </td>
-                                                            }
-
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-
-
-                                                        <td>@item.MobileNumber</td>
-
-                                                        <td class="interview-com">
-
-
-                                                            <div id="section">
-                                                                @if (item.PrimarySkill != null && item.PrimarySkill != "")
-                                                                {
-                                                                    @if (item.PrimarySkill.Length > 20)
-                                                                    {
-                                                                        <div class="article">
-                                                                            <p style="margin-bottom:0px;">
-                                                                                @item.PrimarySkill.Substring(0, 20)
-                                                                            </p>
-                                                                            <p class="moretext_@item.id moretext">
-                                                                                @item.PrimarySkill.Substring(20, @item.PrimarySkill.Length - 20)
-                                                                            </p>
-                                                                        </div>
-                                                                        <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <div class="article">
-
-                                                                            <p>
-                                                                                @item.PrimarySkill.Substring(0, @item.PrimarySkill.Length)
-                                                                            </p>
-                                                                        </div>}
-                                                                }
-                                                                else
-                                                                { <div></div>}
-
-
-                                                            </div>
-
-
-
-
-                                                        </td>
-
-
-
-                                                        <td class="interview-com">
-
-
-                                                            <div id="section">
-                                                                @if (item.AssessmentGroupId != null && item.AssessmentGroupId != "")
-                                                                {
-                                                                    @if (item.AssessmentGroupId.Length > 20)
-                                                                    {
-                                                                        <div class="article">
-                                                                            <p style="margin-bottom:0px;">
-                                                                                @item.AssessmentGroupId.Substring(0, 20)
-                                                                            </p>
-                                                                            <p class="moretext1_@item.id moretext">
-                                                                                @item.AssessmentGroupId.Substring(20, @item.AssessmentGroupId.Length - 20)
-                                                                            </p>
-                                                                        </div>
-                                                                        <a onclick="moreless1(@item.id)" class="moreless-button" value="Readmore" id="read1_@item.id" href="#">Read more</a>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <div class="article">
-
-                                                                            <p>
-                                                                                @item.AssessmentGroupId.Substring(0, @item.AssessmentGroupId.Length)
-                                                                            </p>
-                                                                        </div>}
-                                                                }
-                                                                else
-                                                                { <div></div>}
-
-
-                                                            </div>
-
-
-
-
-                                                        </td>
-
-
-
-                                                        @if (item.ResumeLink != null && item.ResumeLink != "")
-                                                        {
-                                                            <td>
-
-                                                                <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink.Replace(" ","%20")>Resume</a>
+                                                            <td class="cadName">
+                                                                <a onclick="" data-tooltip="@item.FirstName"> @item.FirstName.Substring(0, 20)... </a>
                                                             </td>
                                                         }
+
+
                                                         else
                                                         {
-                                                            <td>No Resume</td>
+                                                            <td class="cadName">
+                                                                <a onclick=""> @item.FirstName </a>
+                                                            </td>
+                                                        }*@
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+
+                                                    @if (item.LastName != null && item.LastName != "")
+                                                    {
+
+
+                                                        @if (item.LastName.Length > 10)
+                                                        {
+
+
+                                                            <td class="cadLast">
+                                                                <a onclick="" data-tooltip="@item.LastName"> @item.LastName.Substring(0, 10)... </a>
+                                                            </td>
                                                         }
 
 
-                                                        <td><b>@item.NickName</b></td>
+                                                        else
+                                                        {
+                                                            <td class="cadLast">
+                                                                <a onclick=""> @item.LastName </a>
+                                                            </td>
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+
+                                                    @if (item.EmailId != null && item.EmailId != "")
+                                                    {
+
+
+                                                        <td class="cadEmail">
+                                                            <a  onclick="" data-tooltip="@item.EmailId"><span class="intEmail"> @item.EmailId</span> </a>
+                                                        </td>
+
+
+
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+
+
+                                                    <td>@item.MobileNumber</td>
+
+                                                    <td class="interview-com">
+
+
+                                                        <div id="section">
+                                                            @if (item.PrimarySkill != null && item.PrimarySkill != "")
+                                                            {
+                                                                @if (item.PrimarySkill.Length > 20)
+                                                                {
+                                                                    <div class="article">
+                                                                        <p style="margin-bottom:0px;">
+                                                                            @item.PrimarySkill.Substring(0, 20)
+                                                                        </p>
+                                                                        <p class="moretext_@item.id moretext">
+                                                                            @item.PrimarySkill.Substring(20, @item.PrimarySkill.Length - 20)
+                                                                        </p>
+                                                                    </div>
+                                                                    <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="article">
+
+                                                                        <p>
+                                                                            @item.PrimarySkill.Substring(0, @item.PrimarySkill.Length)
+                                                                        </p>
+                                                                    </div>}
+                                                            }
+                                                            else
+                                                            { <div></div>}
+
+
+                                                        </div>
+
+
+
+
+                                                    </td>
+
+
+
+                                                    <td class="interview-com">
+
+
+                                                        <div id="section">
+                                                            @if (item.AssessmentGroupId != null && item.AssessmentGroupId != "")
+                                                            {
+                                                                @if (item.AssessmentGroupId.Length > 20)
+                                                                {
+                                                                    <div class="article">
+                                                                        <p style="margin-bottom:0px;">
+                                                                            @item.AssessmentGroupId.Substring(0, 20)
+                                                                        </p>
+                                                                        <p class="moretext1_@item.id moretext">
+                                                                            @item.AssessmentGroupId.Substring(20, @item.AssessmentGroupId.Length - 20)
+                                                                        </p>
+                                                                    </div>
+                                                                    <a onclick="moreless1(@item.id)" class="moreless-button" value="Readmore" id="read1_@item.id" href="#">Read more</a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="article">
+
+                                                                        <p>
+                                                                            @item.AssessmentGroupId.Substring(0, @item.AssessmentGroupId.Length)
+                                                                        </p>
+                                                                    </div>}
+                                                            }
+                                                            else
+                                                            { <div></div>}
+
+
+                                                        </div>
+
+
+
+
+                                                    </td>
+
+
+
+                                                    @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                    {
+                                                        <td>
+
+                                                            <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink.Replace(" ","%20")>Resume</a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Resume</td>
+                                                    }
+
+
+                                                    <td><b>@item.NickName</b></td>
 
                                                     <td class="text-right action">
                                                         <span class="interviewer_9">
@@ -568,24 +562,25 @@
 
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                         {
-                                                    <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.FirstName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span title="Click here to call the candidate" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone"></span></span></span></span>
+                                                            <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.FirstName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span title="Click here to call the candidate" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone"></span></span></span></span>
 
                                                         }
 
 
 
-                                                    <span class="interviewer_15">
-                                                        <button class="mdc-fab app-fab--absolute trash-btn" title="Click here to delete Interviewer Profile">
-                                                            <span title="Click here to delete Interviewer Profile" onclick="javascript:DeleteEntityfromEnvironment('@item.UserId','@item.FirstName');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                        </button>
-                                                    </span>
-                                                    <span class="interviewer_16">
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Assessments">
-                                                            <span onclick="location.href = '@Url.Action("AssessmentForApproval", "Interviewer", new { EmailAddress = item.EmailId , id = item.id })'" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></span>
-                                                        </button></span>
+                                                        <span class="interviewer_15">
+                                                            <button class="mdc-fab app-fab--absolute trash-btn" title="Click here to delete Interviewer Profile">
+                                                                <span title="Click here to delete Interviewer Profile" onclick="javascript:DeleteEntityfromEnvironment('@item.UserId','@item.FirstName');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                            </button>
+                                                        </span>
+                                                        <span class="interviewer_16">
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Assessments">
+                                                                <span onclick="location.href = '@Url.Action("AssessmentForApproval", "Interviewer", new { EmailAddress = item.EmailId , id = item.id })'" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></span>
+                                                            </button>
+                                                        </span>
 
-</td>
-                                                    </tr>
+                                                    </td>
+                                                </tr>
 
 
                                                     <tr class="collapse @item.id">
@@ -1193,19 +1188,17 @@
             html += '  <td style="width:10px;" data-toggle="collapse" id="' + data[i].id + '" data-target=".' + data[i].id + '" class="detail-row" onclick="changeicon(' + data[i].id + ')">&nbsp;</td>';
 
             if (data[i].firstName != null && data[i].firstName != "") {
-                if (data[i].firstName.length > 20) {
-                    html += '<td class="cadName"><a onclick="" data-tooltip="' + data[i].firstName + '"> ' + data[i].firstName + '<input id = "hidfirstname' + data[i].userId + '" type = "hidden" value = "' + data[i].firstName + '" /> </a></td>';
-                }
-                else {
-                    html += '  <td class="cadName"><a onclick=""> ' + data[i].firstName + '<input id="hidfirstname' + data[i].userId + '" type="hidden" value="' + data[i].firstName + '"/> </a></td>';
-                }
+            
+                html += '<td class="cadName intwname"><a onclick="" data-tooltip="' + data[i].firstName + '"><span class="intName"> ' + data[i].firstName + '<input id = "hidfirstname' + data[i].userId + '" type = "hidden" value = "' + data[i].firstName + '" /></span></a></td>';
+                
+               
             }
             else {
                 html += '<td></td>';
             }
             if (data[i].lastName != null && data[i].lastName != "") {
-                if (data[i].lastName.length > 15) {
-                    html += '<td class="cadLast"><a onclick="" data-tooltip="' + data[i].lastName + '"> ' + data[i].lastName.substring(0, 15) + '... </a></td>';
+                if (data[i].lastName.length > 10) {
+                    html += '<td class="cadLast"><a onclick="" data-tooltip="' + data[i].lastName + '"> ' + data[i].lastName.substring(0, 10) + '... </a></td>';
                 }
                 else {
                     html += '  <td class="cadLast"><a onclick=""> ' + data[i].lastName + ' </a></td>';
@@ -1219,12 +1212,10 @@
 
 
             if (data[i].emailId != null && data[i].emailId != "") {
-                if (data[i].emailId.length > 11) {
-                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].emailId + '">' + data[i].emailId.substring(0, 11) + '...  </a></td>';
-                }
-                else {
-                    html += '  <td class="cadEmail"><a onclick="">' + data[i].emailId + ' </a></td>';
-                }
+              
+                html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].emailId + '"><span class="intEmail">' + data[i].emailId + '</span></a></td>';
+                
+                
             }
             else {
                 html += '<td></td>';

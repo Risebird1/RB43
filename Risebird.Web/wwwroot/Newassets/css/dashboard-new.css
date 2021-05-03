@@ -1634,7 +1634,7 @@ table.journey td.cadSkill {
     max-width: 250px !important
 }
 
-.cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
+.cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before, [data-tooltip]:before {
     position: absolute;
     bottom: 90%;
     left: 10%;
@@ -7012,7 +7012,24 @@ h4.card-title {
 #meeting input[type=search], #MyInterviewList_filter input[type=search], #txtmeeting_filter input[type=search], #interviewersTbl_filter input[type=search], #supportList_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #dupmeeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
     background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 78% 9px;
 }
-
+.intEmail, .intName{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: auto;
+    display: block;
+}
+.intwname [data-tooltip]:before {
+    margin-left: -20px;
+}
+.note-meeting {
+    width: auto;
+    left: 30px;
+    position: absolute;
+    z-index: 1000;
+    top: 85px;
+    font-size: 15px;
+}
 .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1, .toggle-box, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1, .toggle-box {
     display: none;
 }
@@ -8877,205 +8894,210 @@ div.tagsinput {
     }
 }
 
-@media only screen and (max-width: 1024px) {
-    .razorpay_details {
-        width: 60% !important;
+@media only screen and (max-width: 1400px) {
+    .intEmail{width:90px!important;}
+    .intName {
+        width: 58px !important;
     }
+}
+    @media only screen and (max-width: 1024px) {
+        .razorpay_details {
+            width: 60% !important;
+        }
 
-    .page-container .page-sidebar {
-        position: relative;
-        float: left;
-        width: 100%;
-    }
-
-        .page-container .page-sidebar.scroll {
+        .page-container .page-sidebar {
             position: relative;
-        }
-
-    .page-container .page-content {
-        margin-left: 0px;
-    }
-
-        .page-container .page-content .content-frame .content-frame-left,
-        .page-container .page-content .content-frame .content-frame-right {
+            float: left;
             width: 100%;
-            display: none;
         }
 
-        .page-container .page-content .content-frame .content-frame-body {
+            .page-container .page-sidebar.scroll {
+                position: relative;
+            }
+
+        .page-container .page-content {
             margin-left: 0px;
-            margin-right: 0px;
         }
 
-            .page-container .page-content .content-frame .content-frame-body.content-frame-body-left {
+            .page-container .page-content .content-frame .content-frame-left,
+            .page-container .page-content .content-frame .content-frame-right {
+                width: 100%;
+                display: none;
+            }
+
+            .page-container .page-content .content-frame .content-frame-body {
+                margin-left: 0px;
                 margin-right: 0px;
             }
 
-        .page-container .page-content .content-frame .content-frame-left-toggle,
-        .page-container .page-content .content-frame .content-frame-right-toggle {
-            display: inline-block;
-        }
+                .page-container .page-content .content-frame .content-frame-body.content-frame-body-left {
+                    margin-right: 0px;
+                }
 
-    .page-container.page-navigation-toggled .page-content {
-        margin-left: 0px;
-    }
-
-    .page-container.page-mode-rtl .page-content {
-        margin-right: 0px;
-    }
-
-    .page-container.page-navigation-top-fixed .x-navigation.x-navigation-horizontal {
-        padding-right: 0px;
-        position: relative;
-    }
-
-    .page-container.page-navigation-top-fixed .page-content {
-        padding-top: 0px;
-    }
-
-    table.journey td.cadName, table.journey td.cadEmail {
-        max-width: 200px;
-    }
-
-    .candidate table.journey td.cadEmail {
-        max-width: 160px;
-    }
-
-    table.journey td.cadSkill {
-        max-width: 150px;
-    }
-
-    .selected-priority table.journey td.cadName {
-        max-width: 250px;
-    }
-
-    .selected-priority table.journey td.cadSkill {
-        max-width: 235px;
-    }
-
-    .selected-priority .journey td.interview-com {
-        max-width: 300px;
-    }
-
-    .selected-priority table.journey td.interviewdate {
-        max-width: 160px;
-    }
-
-    .x-navigation {
-        max-height: 50px;
-        overflow: hidden;
-        background: #1b1e24;
-    }
-
-        .x-navigation.x-navigation-panel {
-            height: 50px;
-            max-height: auto;
-            overflow: visible;
-        }
-
-            .x-navigation.x-navigation-panel li.xn-icon-button {
-                width: 50px;
+            .page-container .page-content .content-frame .content-frame-left-toggle,
+            .page-container .page-content .content-frame .content-frame-right-toggle {
+                display: inline-block;
             }
 
-            .x-navigation.x-navigation-panel li.xn-search {
-                width: auto;
+        .page-container.page-navigation-toggled .page-content {
+            margin-left: 0px;
+        }
+
+        .page-container.page-mode-rtl .page-content {
+            margin-right: 0px;
+        }
+
+        .page-container.page-navigation-top-fixed .x-navigation.x-navigation-horizontal {
+            padding-right: 0px;
+            position: relative;
+        }
+
+        .page-container.page-navigation-top-fixed .page-content {
+            padding-top: 0px;
+        }
+
+        table.journey td.cadName, table.journey td.cadEmail {
+            max-width: 200px;
+        }
+
+        .candidate table.journey td.cadEmail {
+            max-width: 160px;
+        }
+
+        table.journey td.cadSkill {
+            max-width: 150px;
+        }
+
+        .selected-priority table.journey td.cadName {
+            max-width: 250px;
+        }
+
+        .selected-priority table.journey td.cadSkill {
+            max-width: 235px;
+        }
+
+        .selected-priority .journey td.interview-com {
+            max-width: 300px;
+        }
+
+        .selected-priority table.journey td.interviewdate {
+            max-width: 160px;
+        }
+
+        .x-navigation {
+            max-height: 50px;
+            overflow: hidden;
+            background: #1b1e24;
+        }
+
+            .x-navigation.x-navigation-panel {
+                height: 50px;
+                max-height: auto;
+                overflow: visible;
             }
 
-        .x-navigation .xn-search input {
+                .x-navigation.x-navigation-panel li.xn-icon-button {
+                    width: 50px;
+                }
+
+                .x-navigation.x-navigation-panel li.xn-search {
+                    width: auto;
+                }
+
+            .x-navigation .xn-search input {
+                width: 100%;
+            }
+
+            .x-navigation.x-navigation-open {
+                max-height: 1200px;
+                overflow: visible;
+            }
+
+            .x-navigation .x-navigation-control {
+                display: block;
+            }
+
+        .x-navigation-minimize {
+            display: none !important;
+        }
+
+        .x-navigation-horizontal > li > ul ul,
+        .x-navigation-horizontal > li > ul.xn-drop-left ul {
+            position: relative;
+            left: auto;
+            right: auto;
+            margin-left: 0px;
+            margin-right: 0px;
+            -moz-box-shadow: none;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+
+            .x-navigation-horizontal > li > ul ul:after {
+                display: none;
+            }
+        /* XNAV PANEL */
+        .x-navigation li > .panel {
+            width: 250px;
+        }
+        /* END XNAV PANEL */
+        /* list icons */
+        .icons-list li {
             width: 100%;
         }
-
-        .x-navigation.x-navigation-open {
-            max-height: 1200px;
-            overflow: visible;
+        /* END list icons */
+        /* Gallery */
+        .gallery .gallery-item {
+            width: 50%;
+        }
+        /* End Gallery */
+        /* Timeline */
+        .timeline .timeline-item .timeline-item-content {
+            width: 90%;
         }
 
-        .x-navigation .x-navigation-control {
-            display: block;
+            .timeline .timeline-item .timeline-item-content:before,
+            .timeline .timeline-item .timeline-item-content:after {
+                left: 90%;
+            }
+
+        .timeline .timeline-item.timeline-item-right .timeline-item-content:before,
+        .timeline .timeline-item.timeline-item-right .timeline-item-content:after {
+            right: 90%;
         }
-
-    .x-navigation-minimize {
-        display: none !important;
-    }
-
-    .x-navigation-horizontal > li > ul ul,
-    .x-navigation-horizontal > li > ul.xn-drop-left ul {
-        position: relative;
-        left: auto;
-        right: auto;
-        margin-left: 0px;
-        margin-right: 0px;
-        -moz-box-shadow: none;
-        -webkit-box-shadow: none;
-        box-shadow: none;
-    }
-
-        .x-navigation-horizontal > li > ul ul:after {
+        /* END Timeline */
+        /* Error */
+        .error-container {
+            width: 100%;
+        }
+        /* End Error */
+        /* Settings */
+        .theme-settings {
             display: none;
         }
-    /* XNAV PANEL */
-    .x-navigation li > .panel {
-        width: 250px;
-    }
-    /* END XNAV PANEL */
-    /* list icons */
-    .icons-list li {
-        width: 100%;
-    }
-    /* END list icons */
-    /* Gallery */
-    .gallery .gallery-item {
-        width: 50%;
-    }
-    /* End Gallery */
-    /* Timeline */
-    .timeline .timeline-item .timeline-item-content {
-        width: 90%;
+        /* End Settings */
+        .post-image {
+            width: 300px;
+        }
     }
 
-        .timeline .timeline-item .timeline-item-content:before,
-        .timeline .timeline-item .timeline-item-content:after {
-            left: 90%;
+
+
+
+    @media only screen and (max-width: 1400px) {
+        table.journey td.cadName, table.journey td.cadEmail {
+            max-width: 120px;
         }
 
-    .timeline .timeline-item.timeline-item-right .timeline-item-content:before,
-    .timeline .timeline-item.timeline-item-right .timeline-item-content:after {
-        right: 90%;
+        table.journey td.cadSkill {
+            max-width: 150px;
+        }
+
+        .candidate table.journey td.cadEmail {
+            max-width: 133px;
+        }
     }
-    /* END Timeline */
-    /* Error */
-    .error-container {
-        width: 100%;
-    }
-    /* End Error */
-    /* Settings */
-    .theme-settings {
+
+    .x-navigation-minimized .xn-logo {
         display: none;
     }
-    /* End Settings */
-    .post-image {
-        width: 300px;
-    }
-}
-
-
-
-
-@media only screen and (max-width: 1400px) {
-    table.journey td.cadName, table.journey td.cadEmail {
-        max-width: 120px;
-    }
-
-    table.journey td.cadSkill {
-        max-width: 150px;
-    }
-
-    .candidate table.journey td.cadEmail {
-        max-width: 133px;
-    }
-}
-
-
-.x-navigation-minimized .xn-logo {
-    display: none;
-}

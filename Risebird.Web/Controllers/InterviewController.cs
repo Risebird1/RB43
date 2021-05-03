@@ -5866,7 +5866,8 @@ namespace Risebird.Web.Controllers
         public JsonResult ReassignMeeting(string id, string meetingid, string Emailid)
         {
             var meetings = _meetingService.ReassignMeeting(id, meetingid, Emailid);
-            return Json(meetings);
+            var codedname = _meetingService.FetchInterviewerCodedName(Emailid);
+            return Json(new { meetings = meetings, codedname = codedname });
         }
     }
 }

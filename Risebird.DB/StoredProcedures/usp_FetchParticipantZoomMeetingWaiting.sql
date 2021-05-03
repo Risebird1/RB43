@@ -8,7 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO       
-  CREATE Procedure usp_FetchParticipantZoomMeetingWaiting          
+  Create Procedure usp_FetchParticipantZoomMeetingWaiting          
 AS          
 BEGIN          
           
@@ -24,10 +24,10 @@ DECLARE @MeetingNotificationDetails TABLE(
   CalendlyLink varchar(500),      
   HRCoordinatorEmailId varchar(100),  
   candidateName varchar(200),
+    InterviewDate DateTime,
+  ClientHrContact varchar(200),
   ClientName varchar(100),
-  PrimarySkill varchar(1000),
-  InterviewDate DateTime,
-  ClientHrContact varchar(200)
+  PrimarySkill varchar(1000)
 )         
 DECLARE @MeetingNotificationEI TABLE(          
         Meetingid bigINT,          
@@ -41,10 +41,10 @@ DECLARE @MeetingNotificationEI TABLE(
   CalendlyLink varchar(500),      
   HRCoordinatorEmailId varchar(100),  
   candidateName varchar(200),
-  ClientName varchar(100),
-  PrimarySkill varchar(1000),
-  InterviewDate DateTime,
-  ClientHrContact varchar(200)
+   InterviewDate DateTime,
+  ClientHrContact varchar(200),
+   ClientName varchar(100),
+  PrimarySkill varchar(1000)
 )          
 DECLARE @MeetingNotificationReschedule TABLE(          
         Meetingid bigINT,          
@@ -58,10 +58,10 @@ DECLARE @MeetingNotificationReschedule TABLE(
   CalendlyLink varchar(500),      
   HRCoordinatorEmailId varchar(100),  
   candidateName varchar(200),
-  ClientName varchar(100),
-  PrimarySkill varchar(1000),
-  InterviewDate DateTime,
-  ClientHrContact varchar(200)
+   InterviewDate DateTime,
+  ClientHrContact varchar(200),
+   ClientName varchar(100),
+  PrimarySkill varchar(1000)
 )          
 DECLARE @MeetingNotificationCandidate TABLE(          
         Meetingid bigINT,          
@@ -75,10 +75,10 @@ DECLARE @MeetingNotificationCandidate TABLE(
   CalendlyLink varchar(500),      
   HRCoordinatorEmailId varchar(100),  
   candidateName varchar(200),
+    InterviewDate DateTime,
+  ClientHrContact varchar(200),
   ClientName varchar(100),
-  PrimarySkill varchar(1000),
-  InterviewDate DateTime,
-  ClientHrContact varchar(200)
+  PrimarySkill varchar(1000)
 )      
   
 ;with CTE(Meetingid,candidateEmail,interviewer,risebirdHR,emergencyinterviewer,isInterviewerWaiting,EmailType,zoomLink,CalendlyLink,HRCoordinatorEmailId,candidateName,interviewDate,ClientHrContact,ClientName,PrimarySkill) as (          
@@ -166,7 +166,7 @@ Select * from @MeetingNotificationCandidate
 Union        
 Select * from @MeetingNotificationReschedule        
         
-END            
+END                
           
      
              
