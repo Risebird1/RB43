@@ -4920,7 +4920,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin")
                 {
                     if (await _meetingService.DeleteInterview(id))
                     {
@@ -4932,7 +4932,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageUser"] = "Deletion of Interview Failed";
+                        TempData["SuccessErrorMessageUser"] = "Delete Interview Failed";
                         if (controllerName == "IRF")
                             return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId });
                         else
@@ -4951,7 +4951,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageUser"] = "Deletion of Interview Failed";
+                TempData["SuccessErrorMessageUser"] = "Delete Interview Failed";
                 if (controllerName == "IRF")
                     return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId });
                 else

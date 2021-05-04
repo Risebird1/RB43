@@ -15,8 +15,8 @@ namespace Risebird.Entities.Enum
         [Description("Waiting For Response")]
         WFR = 3,
 
-        [Description("Scheduled")]
-        Scheduled = 4,
+        //[Description("Scheduled")]
+        //Scheduled = 4,
 
         [Description("Irrelevant")]
         Irrelevant = 5,
@@ -39,13 +39,14 @@ namespace Risebird.Entities.Enum
         [Display(Name = "Hold")]
         [Description("Hold")]
         Hold = 10,
-        [Display(Name = "Invitation Sent")]
-        [Description("Invitation Sent")]
-        InvitationSent = 11,
 
-        [Display(Name = "Added")]
-        [Description("Added")]
-        Added = 12,
+        //[Display(Name = "Invitation Sent")]
+        //[Description("Invitation Sent")]
+        //InvitationSent = 11,
+
+        //[Display(Name = "Added")]
+        //[Description("Added")]
+        //Added = 12,
 
         [Display(Name = "Reminder Call")]
         [Description("Reminder Call")]

@@ -221,7 +221,7 @@
 
 
                                                 }
-                                                @if (ViewBag.Profile == "Admin")
+                                                @if (ViewBag.Profile == "Admin" || (ViewBag.Profile == "HR" && item.IsManuallyDeletable))
                                                 {
                                                     <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
                                                         <span onclick="javascript:Delete('@item.id');" title="Delete" class="mdc-fab__icon material-icons">
@@ -229,8 +229,7 @@
                                                         </span>
                                                     </button>
                                                 }
-
-
+                                                
 
 
 

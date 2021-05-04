@@ -17,7 +17,7 @@ Create PROCEDURE [dbo].[usp_GetCandidateStatusList]
 AS  
 Begin
 
-	select cs.*, csom.StatusValue from CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id where IRFId=@IRFId and CandidateId = @CandidateId
+	select cs.*, csom.StatusValue, csom.IsManuallyDeletable from CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id where IRFId=@IRFId and CandidateId = @CandidateId
 
 End
 GO

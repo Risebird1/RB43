@@ -2086,7 +2086,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName != "Client")
+                    if (profileName == "Admin" || profileName=="HR")
                     {
                         var result = await _irfService.DeleteCandidateStatus(id);
                         return Json(result);

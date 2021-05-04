@@ -332,7 +332,7 @@
                                                                         </span>
                                                                     </button>
 
-                                                                    @if (ViewBag.profile != "Client")
+                                                                    @if (ViewBag.profile == "Admin")
                                                                     {
                                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
                                                                             <span onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete" class="mdc-fab__icon material-icons">
