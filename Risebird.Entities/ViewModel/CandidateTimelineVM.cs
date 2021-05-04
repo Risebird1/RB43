@@ -30,6 +30,8 @@ namespace Risebird.Entities.ViewModel
         public DateTime? CurrentStatusDate { get; set; }
         public string ProfileSource { get; set; }
         public bool IsIRFArchived { get; set; }
+        public string IRFName { get; set; }
+        public string Phone { get; set; }
 
     }
 
