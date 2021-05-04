@@ -240,8 +240,18 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var result = _userService.DeleteUser(id);
-                    return Json(result);
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" )
+                    {
+                        var result = _userService.DeleteUser(id);
+                        return Json(result);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                    
 
                 }
                 else
@@ -378,16 +388,27 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    if (_userService.DeleteClientUser(id))
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin")
                     {
-                        //TempData["SuccessErrorMessageClientUser"] = "Client User is deleted Successfully";
-                        return Json(new { url = Url.Action("ClientUsers", "User") });
+                        if (_userService.DeleteClientUser(id))
+                        {
+                            //TempData["SuccessErrorMessageClientUser"] = "Client User is deleted Successfully";
+                            return Json(new { url = Url.Action("ClientUsers", "User") });
+                        }
+                        else
+                        {
+                            //TempData["SuccessErrorMessageClientUser"] = "Deletion of Client User Failed";
+                            return Json(new { url = Url.Action("ClientUsers", "User") });
+                        }
+
                     }
                     else
                     {
-                        //TempData["SuccessErrorMessageClientUser"] = "Deletion of Client User Failed";
-                        return Json(new { url = Url.Action("ClientUsers", "User") });
+                        return RedirectToAction("SignOut", "Session");
                     }
+
                 }
                 else
                 {
@@ -849,15 +870,25 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (_userService.DeleteInterviewer(id))
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin")
                     {
-                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer is deleted Successfully";
-                        return Json(new { url = Url.Action("Interviewers", "User") });
+                        if (_userService.DeleteInterviewer(id))
+                        {
+                            TempData["SuccessErrorMessageInterviewer"] = "Interviewer is deleted Successfully";
+                            return Json(new { url = Url.Action("Interviewers", "User") });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageInterviewer"] = "Deletion of Interviewer Failed";
+                            return Json(new { url = Url.Action("Interviewers", "User") });
+                        }
+
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageInterviewer"] = "Deletion of Interviewer Failed";
-                        return Json(new { url = Url.Action("Interviewers", "User") });
+                        return RedirectToAction("SignOut", "Session");
                     }
                 }
                 else
@@ -1196,15 +1227,25 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (_userService.DeleteQCInterviewer(id))
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin")
                     {
-                        TempData["SuccessErrorMessageQCInterviewer"] = "QC Interviewer is deleted Successfully";
-                        return Json(new { url = Url.Action("QCInterviewers", "User") });
+                        if (_userService.DeleteQCInterviewer(id))
+                        {
+                            TempData["SuccessErrorMessageQCInterviewer"] = "QC Interviewer is deleted Successfully";
+                            return Json(new { url = Url.Action("QCInterviewers", "User") });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageQCInterviewer"] = "Deletion of QCInterviewer Failed";
+                            return Json(new { url = Url.Action("QCInterviewers", "User") });
+                        }
+
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageQCInterviewer"] = "Deletion of QCInterviewer Failed";
-                        return Json(new { url = Url.Action("QCInterviewers", "User") });
+                        return RedirectToAction("SignOut", "Account");
                     }
                 }
                 else
@@ -1408,8 +1449,17 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var result = _userService.DeleteResumeEvaluator(id);
-                    return Json(result);
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin")
+                    {
+                        var result = _userService.DeleteResumeEvaluator(id);
+                        return Json(result);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }    
 
                 }
                 else
@@ -1608,15 +1658,24 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (_userService.DeleteRecruiter(id))
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin")
                     {
-                        //TempData["SuccessErrorMessageEvaluate"] = "Resume Evaluator deleted successfully.";
-                        return Json(new { url = Url.Action("Recruiters", "User") });
+                        if (_userService.DeleteRecruiter(id))
+                        {
+                            //TempData["SuccessErrorMessageEvaluate"] = "Resume Evaluator deleted successfully.";
+                            return Json(new { url = Url.Action("Recruiters", "User") });
+                        }
+                        else
+                        {
+                            //TempData["SuccessErrorMessageEvaluate"] = "Sorry! Could not delete Resume Evaluator!";
+                            return Json(new { url = Url.Action("Recruiters", "User") });
+                        }
                     }
                     else
                     {
-                        //TempData["SuccessErrorMessageEvaluate"] = "Sorry! Could not delete Resume Evaluator!";
-                        return Json(new { url = Url.Action("Recruiters", "User") });
+                        return RedirectToAction("SignOut", "Session");
                     }
                 }
                 else
@@ -1634,877 +1693,8 @@ namespace Risebird.Web.Controllers
         }
 
         #endregion
-        public IActionResult CandidateTimeline()
-        {
+        
 
-
-            var a = new List<TimelineStatus>();
-            a.Add(new TimelineStatus
-            {
-                Status = "Onboarding",
-                StatusDate = "April 2020",
-                Date = "17",
-                Day = "Wednesday"
-            });
-
-
-            a.Add(new TimelineStatus
-            {
-                Status = "First Attempt",
-                StatusDate = "April 2020",
-                Date = "19",
-                Day = "Friday"
-            });
-
-
-
-            a.Add(new TimelineStatus
-            {
-                Status = "Second Attempt",
-                StatusDate = "April 2020",
-                Date = "23",
-                Day = "Monday"
-            });
-
-
-            a.Add(new TimelineStatus
-            {
-                Status = "Third Attempt",
-                StatusDate = "April 2020",
-                Date = "25",
-                Day = "Wednesday"
-            });
-            a.Add(new TimelineStatus
-            {
-                Status = "Fourth Attempt",
-                StatusDate = "April 2020",
-                Date = "27",
-                Day = "Friday"
-            });
-
-            a.Add(new TimelineStatus
-            {
-                Status = "Fifth Attempt",
-                StatusDate = "April 2020",
-                Date = "30",
-                Day = "Monday"
-            });
-
-
-            a.Add(new TimelineStatus
-            {
-                Status = "Sixth Attempt",
-                StatusDate = "May 2020",
-                Date = "1",
-                Day = "Tuesday"
-            });
-            a.Add(new TimelineStatus
-            {
-                Status = "Seventh Attempt",
-                StatusDate = "May 2020",
-                Date = "3",
-                Day = "Thursday"
-            });
-
-
-            a.Add(new TimelineStatus
-            {
-                Status = "Eight Attempt",
-                StatusDate = "May 2020",
-                Date = "4",
-                Day = "Friday"
-            });
-            a.Add(new TimelineStatus
-            {
-                Status = "Nineth Attempt",
-                StatusDate = "May 2020",
-                Date = "7",
-                Day = "Monday"
-            });
-            var b = new List<TimelineStatus>();
-            b.Add(new TimelineStatus
-            {
-                Status = "Schedule",
-                StatusDate = " May 2020",
-                Date = "4",
-                Day = "Monday"
-            });
-            b.Add(new TimelineStatus
-            {
-                Status = "Pending",
-                StatusDate = "May 2020",
-                Date = "7",
-                Day = "Wednesday"
-            });
-
-            b.Add(new TimelineStatus
-            {
-                Status = "Completed",
-                StatusDate = " May 2020",
-                Date = "8",
-                Day = "Thursday"
-            });
-
-
-            var c = new List<TimelineStatus>();
-            c.Add(new TimelineStatus
-            {
-                Status = "BorderLine",
-                StatusDate = " May 2020",
-                Date = "2",
-                Day = "Monday"
-
-            });
-
-            c.Add(new TimelineStatus
-            {
-                Status = "Selected",
-                StatusDate = "May 2020",
-                Date = "5",
-                Day = "Wednesday"
-            });
-
-
-            var d = new List<TimelineStatus>();
-            d.Add(new TimelineStatus
-            {
-                Status = "Onboarding",
-                StatusDate = "April 2020",
-                Date = "17",
-                Day = "Wednesday"
-            });
-
-
-            d.Add(new TimelineStatus
-            {
-                Status = "First Attempt",
-                StatusDate = "April 2020",
-                Date = "19",
-                Day = "Friday"
-            });
-
-
-
-            d.Add(new TimelineStatus
-            {
-                Status = "Second Attempt",
-                StatusDate = "April 2020",
-                Date = "23",
-                Day = "Monday"
-            });
-
-
-
-
-
-            var e = new List<TimelineStatus>();
-            e.Add(new TimelineStatus
-            {
-                Status = "Pending",
-                StatusDate = "May 2020",
-                Date = "5",
-                Day = "Monday"
-
-            });
-
-            e.Add(new TimelineStatus
-            {
-                Status = "Completed",
-                StatusDate = "May 2020",
-                Date = "7",
-                Day = "Wednesday"
-            });
-
-
-            var f = new List<TimelineStatus>();
-            f.Add(new TimelineStatus
-            {
-                Status = "NoShow",
-                StatusDate = "May 2020",
-                Date = "12",
-                Day = "Monday"
-            });
-
-            f.Add(new TimelineStatus
-            {
-                Status = "BorderLine",
-                StatusDate = "May 2020",
-                Date = "16",
-                Day = "Thursday"
-            });
-
-            f.Add(new TimelineStatus
-            {
-                Status = "Rejected",
-                StatusDate = "May 2020",
-                Date = "17",
-                Day = "Friday"
-            });
-
-
-            var g = new List<TimelineStatus>();
-            g.Add(new TimelineStatus
-            {
-                Status = "Onboarding",
-                StatusDate = "April 2020",
-                Date = "27",
-                Day = "Monday"
-            });
-
-
-            g.Add(new TimelineStatus
-            {
-                Status = "First Attempt",
-                StatusDate = "April 2020",
-                Date = "29",
-                Day = "Wednesday"
-            });
-
-
-
-            var h = new List<TimelineStatus>();
-
-
-            h.Add(new TimelineStatus
-            {
-                Status = "Schedule",
-                StatusDate = "May 2020",
-                Date = "7",
-                Day = "Wednesday"
-            });
-
-            h.Add(new TimelineStatus
-            {
-                Status = "Completed",
-                StatusDate = "May 2020",
-                Date = "9",
-                Day = "Friday"
-            });
-
-
-
-            var i = new List<TimelineStatus>();
-
-            i.Add(new TimelineStatus
-            {
-                Status = "Selected",
-                StatusDate = "May 2020",
-                Date = "17",
-                Day = "Friday"
-            });
-
-
-
-
-            var j = new List<TimelineStatus>();
-            j.Add(new TimelineStatus
-            {
-                Status = "Onboarding",
-                StatusDate = "April 2020",
-                Date = "27",
-                Day = "Monday"
-            });
-
-
-            j.Add(new TimelineStatus
-            {
-                Status = "First Attempt",
-                StatusDate = "April 2020",
-                Date = "29",
-                Day = "Wednesday"
-            });
-
-            j.Add(new TimelineStatus
-            {
-                Status = "Second Attempt",
-                StatusDate = "April 2020",
-                Date = "29",
-                Day = "Wednesday"
-            });
-
-
-            j.Add(new TimelineStatus
-            {
-                Status = "Third Attempt",
-                StatusDate = "April 2020",
-                Date = "29",
-                Day = "Wednesday"
-            });
-
-
-            j.Add(new TimelineStatus
-            {
-                Status = "Fourth Attempt",
-                StatusDate = "April 2020",
-                Date = "29",
-                Day = "Wednesday"
-            });
-            var k = new List<TimelineStatus>();
-
-
-            k.Add(new TimelineStatus
-            {
-                Status = "Schedule",
-                StatusDate = "May 2020",
-                Date = "7",
-                Day = "Wednesday"
-            });
-
-            k.Add(new TimelineStatus
-            {
-                Status = "Completed",
-                StatusDate = "May 2020",
-                Date = "9",
-                Day = "Friday"
-            });
-
-
-
-            var l = new List<TimelineStatus>();
-
-            l.Add(new TimelineStatus
-            {
-                Status = "Selected",
-                StatusDate = "May 2020",
-                Date = "17",
-                Day = "Friday"
-            });
-
-
-
-
-
-
-
-
-
-            var m = new List<TimelineStatus>();
-            m.Add(new TimelineStatus
-            {
-                Status = "Onboarding",
-                StatusDate = "April 2020",
-                Date = "27",
-                Day = "Monday"
-            });
-
-
-            m.Add(new TimelineStatus
-            {
-                Status = "First Attempt",
-                StatusDate = "April 2020",
-                Date = "29",
-                Day = "Wednesday"
-            });
-
-            m.Add(new TimelineStatus
-            {
-                Status = "Second Attempt",
-                StatusDate = "April 2020",
-                Date = "29",
-                Day = "Wednesday"
-            });
-
-
-            m.Add(new TimelineStatus
-            {
-                Status = "Third Attempt",
-                StatusDate = "April 2020",
-                Date = "29",
-                Day = "Wednesday"
-            });
-
-
-            m.Add(new TimelineStatus
-            {
-                Status = "Fourth Attempt",
-                StatusDate = "April 2020",
-                Date = "29",
-                Day = "Wednesday"
-            });
-
-
-
-
-            var n = new List<TimelineStatus>();
-
-
-            n.Add(new TimelineStatus
-            {
-                Status = "Schedule",
-                StatusDate = "May 2020",
-                Date = "7",
-                Day = "Wednesday"
-            });
-
-            n.Add(new TimelineStatus
-            {
-                Status = "Completed",
-                StatusDate = "May 2020",
-                Date = "9",
-                Day = "Friday"
-            });
-
-
-
-
-
-            var o = new List<TimelineStatus>();
-            o.Add(new TimelineStatus
-            {
-                Status = "NoShow",
-                StatusDate = "May 2020",
-                Date = "12",
-                Day = "Monday"
-            });
-
-            o.Add(new TimelineStatus
-            {
-                Status = "BorderLine",
-                StatusDate = "May 2020",
-                Date = "16",
-                Day = "Thursday"
-            });
-
-            o.Add(new TimelineStatus
-            {
-                Status = "Dropped",
-                StatusDate = "May 2020",
-                Date = "17",
-                Day = "Friday"
-            });
-            o.Add(new TimelineStatus
-            {
-                Status = "Rejected",
-                StatusDate = "May 2020",
-                Date = "20",
-                Day = "Monday"
-            });
-
-
-
-
-
-
-
-            var model = new List<CandidateTimelineVM>();
-            model.Add(new CandidateTimelineVM
-            {
-                CandidateName = "Lakshmi Tejasri",
-                HREmail = "kamini@risebird.io",
-                CurrentStatus = "Selected",
-                Report = "Available",
-                RisebirdAttempt = a,
-                MeetingStatus = b,
-                InterviewStatus = c
-
-            });
-
-
-            model.Add(new CandidateTimelineVM
-            {
-                CandidateName = "Omkar Patil",
-                HREmail = "prasad_srinivas@risebird.io	",
-                CurrentStatus = "Rejected",
-                Report = "Not Available",
-                RisebirdAttempt = d,
-                MeetingStatus = e,
-                InterviewStatus = f
-
-
-            });
-
-            model.Add(new CandidateTimelineVM
-            {
-                CandidateName = "Ashok Mannepalli",
-                HREmail = "prasad_srinivas@risebird.io	",
-                CurrentStatus = "Selected",
-                Report = "Available",
-                RisebirdAttempt = g,
-                MeetingStatus = h,
-                InterviewStatus = i
-
-
-            });
-
-
-            model.Add(new CandidateTimelineVM
-            {
-                CandidateName = "Srinivas Avoonuri",
-                HREmail = "kamini@risebird.io",
-                CurrentStatus = "Selected",
-                Report = "Available",
-                RisebirdAttempt = j,
-                MeetingStatus = k,
-                InterviewStatus = l
-
-
-            });
-
-
-
-
-            model.Add(new CandidateTimelineVM
-            {
-                CandidateName = "khushboo kumari",
-                HREmail = "kamini@risebird.io",
-                CurrentStatus = "Rejected",
-                Report = "Available",
-                RisebirdAttempt = m,
-                MeetingStatus = n,
-                InterviewStatus = o
-
-
-            });
-
-
-
-            if (HttpContext.Session.GetString("CandidateTimeLineFilter") != null)
-            {
-                var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("CandidateTimeLineFilter"));
-                filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = model.Select(x => x.HREmail).ToArray() : filter.ClientHR = filter.ClientHR;
-                filter.ConfirmationStatus = filter.ConfirmationStatus == null ? filter.ConfirmationStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.ConfirmationStatus = filter.ConfirmationStatus;
-                // filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.MeetingStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
-                // filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = model.Select(x => x.InterviewStatus).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
-
-                model = model.Where(x => ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(x.HREmail) : x.HREmail == null)
-                 && ((filter.ConfirmationStatus != null && filter.ConfirmationStatus.Count() > 0) ? filter.ConfirmationStatus.Contains(x.CurrentStatus) : x.CurrentStatus == null)).ToList();
-
-
-            }
-            return View(model);
-        }
-
-
-        [HttpPost]
-        public IActionResult CandidateTimeline(InterviewFilter filter)
-        {
-            if (filter != null)
-            {
-                HttpContext.Session.SetString("CandidateTimeLineFilter", JsonConvert.SerializeObject(filter));
-            }
-
-            var a = new List<TimelineStatus>();
-            a.Add(new TimelineStatus
-            {
-                Status = "Onboarding",
-                StatusDate = "April 2020",
-                Date = "17",
-                Day = "Wednesday"
-            });
-
-
-            a.Add(new TimelineStatus
-            {
-                Status = "First Attempt",
-                StatusDate = "April 2020",
-                Date = "19",
-                Day = "Friday"
-            });
-
-
-
-            a.Add(new TimelineStatus
-            {
-                Status = "Second Attempt",
-                StatusDate = "April 2020",
-                Date = "23",
-                Day = "Monday"
-            });
-
-
-            a.Add(new TimelineStatus
-            {
-                Status = "Third Attempt",
-                StatusDate = "April 2020",
-                Date = "25",
-                Day = "Wednesday"
-            });
-
-            a.Add(new TimelineStatus
-            {
-                Status = "Fourth Attempt",
-                StatusDate = "April 2020",
-                Date = "27",
-                Day = "Friday"
-            });
-
-            a.Add(new TimelineStatus
-            {
-                Status = "Fifth Attempt",
-                StatusDate = "April 2020",
-                Date = "30",
-                Day = "Monday"
-            });
-
-
-            a.Add(new TimelineStatus
-            {
-                Status = "Sixth Attempt",
-                StatusDate = "May 2020",
-                Date = "1",
-                Day = "Tuesday"
-            });
-            a.Add(new TimelineStatus
-            {
-                Status = "Seventh Attempt",
-                StatusDate = "May 2020",
-                Date = "3",
-                Day = "Thursday"
-            });
-
-
-            var b = new List<TimelineStatus>();
-            b.Add(new TimelineStatus
-            {
-                Status = "Schedule",
-                StatusDate = " May 2020",
-                Date = "4",
-                Day = "Monday"
-            });
-            b.Add(new TimelineStatus
-            {
-                Status = "Pending",
-                StatusDate = "May 2020",
-                Date = "7",
-                Day = "Wednesday"
-            });
-
-            b.Add(new TimelineStatus
-            {
-                Status = "Completed",
-                StatusDate = " May 2020",
-                Date = "8",
-                Day = "Thursday"
-            });
-
-
-            var c = new List<TimelineStatus>();
-            c.Add(new TimelineStatus
-            {
-                Status = "BorderLine",
-                StatusDate = " May 2020",
-                Date = "2",
-                Day = "Monday"
-
-            });
-
-            c.Add(new TimelineStatus
-            {
-                Status = "Selected",
-                StatusDate = "May 2020",
-                Date = "5",
-                Day = "Wednesday"
-            });
-
-
-            var d = new List<TimelineStatus>();
-            d.Add(new TimelineStatus
-            {
-                Status = "Onboarding",
-                StatusDate = "April 2020",
-                Date = "17",
-                Day = "Wednesday"
-            });
-
-
-            d.Add(new TimelineStatus
-            {
-                Status = "First Attempt",
-                StatusDate = "April 2020",
-                Date = "19",
-                Day = "Friday"
-            });
-
-
-
-            d.Add(new TimelineStatus
-            {
-                Status = "Second Attempt",
-                StatusDate = "April 2020",
-                Date = "23",
-                Day = "Monday"
-            });
-
-
-
-
-
-            var e = new List<TimelineStatus>();
-            e.Add(new TimelineStatus
-            {
-                Status = "Pending",
-                StatusDate = "May 2020",
-                Date = "5",
-                Day = "Monday"
-
-            });
-
-            e.Add(new TimelineStatus
-            {
-                Status = "Completed",
-                StatusDate = "May 2020",
-                Date = "7",
-                Day = "Wednesday"
-            });
-
-
-            var f = new List<TimelineStatus>();
-            f.Add(new TimelineStatus
-            {
-                Status = "NoShow",
-                StatusDate = "May 2020",
-                Date = "12",
-                Day = "Monday"
-            });
-
-            f.Add(new TimelineStatus
-            {
-                Status = "BorderLine",
-                StatusDate = "May 2020",
-                Date = "16",
-                Day = "Thursday"
-            });
-
-            f.Add(new TimelineStatus
-            {
-                Status = "Rejected",
-                StatusDate = "May 2020",
-                Date = "17",
-                Day = "Friday"
-            });
-
-
-            var g = new List<TimelineStatus>();
-            g.Add(new TimelineStatus
-            {
-                Status = "Onboarding",
-                StatusDate = "April 2020",
-                Date = "27",
-                Day = "Monday"
-            });
-
-
-            g.Add(new TimelineStatus
-            {
-                Status = "First Attempt",
-                StatusDate = "April 2020",
-                Date = "29",
-                Day = "Wednesday"
-            });
-
-
-
-            var h = new List<TimelineStatus>();
-
-
-            h.Add(new TimelineStatus
-            {
-                Status = "Schedule",
-                StatusDate = "May 2020",
-                Date = "7",
-                Day = "Wednesday"
-            });
-
-            h.Add(new TimelineStatus
-            {
-                Status = "Completed",
-                StatusDate = "May 2020",
-                Date = "9",
-                Day = "Friday"
-            });
-
-
-
-            var i = new List<TimelineStatus>();
-
-            i.Add(new TimelineStatus
-            {
-                Status = "Selected",
-                StatusDate = "May 2020",
-                Date = "17",
-                Day = "Friday"
-            });
-
-
-
-
-
-
-            var model = new List<CandidateTimelineVM>();
-            model.Add(new CandidateTimelineVM
-            {
-                CandidateName = "Lakshmi Tejasri",
-                HREmail = "kamini@risebird.io",
-                CurrentStatus = "Selected",
-                Report = "Available",
-                RisebirdAttempt = a,
-                MeetingStatus = b,
-                InterviewStatus = c
-
-            });
-
-
-            model.Add(new CandidateTimelineVM
-            {
-                CandidateName = "Omkar Patil",
-                HREmail = "prasad_srinivas@risebird.io	",
-                CurrentStatus = "Rejected",
-                Report = "Not Available",
-                RisebirdAttempt = d,
-                MeetingStatus = e,
-                InterviewStatus = f
-
-
-            });
-
-            model.Add(new CandidateTimelineVM
-            {
-                CandidateName = "Ashok Mannepalli",
-                HREmail = "prasad_srinivas@risebird.io	",
-                CurrentStatus = "Selected",
-                Report = "Available",
-                RisebirdAttempt = g,
-                MeetingStatus = h,
-                InterviewStatus = i
-
-
-            });
-
-            filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = model.Select(x => x.HREmail).ToArray() : filter.ClientHR = filter.ClientHR;
-            filter.ConfirmationStatus = filter.ConfirmationStatus == null ? filter.ConfirmationStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.ConfirmationStatus = filter.ConfirmationStatus;
-            // filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.MeetingStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
-            // filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = model.Select(x => x.InterviewStatus).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
-
-            model = model.Where(x => ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(x.HREmail) : x.HREmail == null)
-             && ((filter.ConfirmationStatus != null && filter.ConfirmationStatus.Count() > 0) ? filter.ConfirmationStatus.Contains(x.CurrentStatus) : x.CurrentStatus == null)).ToList();
-
-
-
-
-            return View(model);
-        }
-
-        public async Task<IActionResult> ResetInterviewFilter()
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    HttpContext.Session.Remove("CandidateTimeLineFilter");
-                    return RedirectToAction("CandidateTimeline");
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("CandidateTimeline");
-            }
-
-        }
 
         [HttpPost]
         public JsonResult InterviewersJson(string searchValue)
@@ -2674,13 +1864,6 @@ namespace Risebird.Web.Controllers
                 return Json("failed");
             }
         }
-
-
-
-
-
-
-
 
     }
 

@@ -26,7 +26,7 @@ IF NOT EXISTS(
     SELECT *
     FROM sys.columns
     WHERE Name IN (N'ClientId')
-      AND Object_ID = Object_ID(N'ClientId'))
+      AND Object_ID = Object_ID(N'Account'))
 BEGIN
     ALTER TABLE Account
     Add ClientId INT NOT NULL DEFAULT 0
