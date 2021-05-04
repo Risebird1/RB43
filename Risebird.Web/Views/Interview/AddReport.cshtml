@@ -76,7 +76,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
-                        <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckConditions()" id="reportForm">
+                        <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -1980,7 +1980,7 @@
 
     function CheckMeetingStatus() {
         var meetingStatusElem = document.getElementById("MeetingStatus");
-        if (meetingStatusElem.value == 2) {
+        if (meetingStatusElem.value == 2 || (meetingStatusElem.value == null || meetingStatusElem.value == '')) {
             document.getElementById("meetingStatus_Error").innerHTML = "Kindly change the Meeting Status to an appropriate value.";
             meetingStatusElem.focus();
             return false;

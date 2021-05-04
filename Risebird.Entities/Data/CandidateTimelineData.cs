@@ -27,6 +27,7 @@ namespace Risebird.Entities.Data
         public string PrimarySkill { get; set; }
         public string ProfileSource { get; set; }
         public bool IsIRFArchived { get; set; }
-
+        public string IRFName { get; set; }
+        public string Phone { get; set; }
     }
 }
