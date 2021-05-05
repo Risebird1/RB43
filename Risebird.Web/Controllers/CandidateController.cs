@@ -590,8 +590,9 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.PrimarySkill = firstData.PrimarySkill;
                     candidateTimeline.ProfileSource = firstData.ProfileSource;
                     candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
+                    candidateTimeline.IRFName = firstData.IRFName;
+                    candidateTimeline.Phone = firstData.Phone;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
-
                     //schedule status
                     var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
                     if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
@@ -758,7 +759,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells["A1:S1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:S1"].Style.Font.Size = 12;
                 Sheet.Cells["A1:S1"].Style.WrapText = true;
-                int startColumn = 1; int endColumn = 10;
+                int startColumn = 1; int endColumn = 12;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
                     Sheet.Column(a).Width = 30;
@@ -772,6 +773,8 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 7].Value = "Current Status";
                 Sheet.Cells[1, 8].Value = "Current Status Date";
                 Sheet.Cells[1, 9].Value = "Profile Source";
+                Sheet.Cells[1, 10].Value = "IRF Name";
+                Sheet.Cells[1, 11].Value = "Phone";
 
 
                 int i = 2;
@@ -829,24 +832,9 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 9].Value = string.Empty;
                         }
-                        //if (!string.IsNullOrEmpty(item.VideoLink) && item.QCInterview > 0)
-                        //{
-                        //    try
-                        //    {
-                        //        Sheet.Cells[i, 9].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                        //        Sheet.Cells[i, 9].Value = "Video Link";
-                        //        Sheet.Cells[i, 9].Style.Font.UnderLine = true;
-                        //        Sheet.Cells[i, 9].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                        //    }
-                        //    catch (Exception)
-                        //    {
-                        //        Sheet.Cells[i, 9].Value = "No Video";
-                        //    }
-                        //}
-                        //else
-                        //{
-                        //    Sheet.Cells[i, 9].Value = "No Video";
-                        //}
+
+                        Sheet.Cells[i, 10].Value = item.IRFName;
+                        Sheet.Cells[i, 11].Value = item.Phone ?? string.Empty;
 
                         i++;
                     }
