@@ -96,66 +96,67 @@
 
                                         <div class="clearfix"></div>
                                         <div class="col-sm-12 nopad">
-                                            <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Name</th>
-                                                        <th>Amount</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tfoot>
-                                                    <tr>
-
-                                                        <th>Name</th>
-                                                        <th>Amount</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </tfoot>
-                                                <tbody id="tblbodyPayment">
-                                                    @if (Model.Count == 0)
-                                                    {
-                                                        <tr><td colspan="3" style="text-align:center">No Result found</td></tr>
-                                                    }
-                                                    @foreach (var item in Model)
-                                                    {
+                                            <div class="table-responsive">
+                                                <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
+                                                    <thead>
                                                         <tr>
-                                                            <td>@item.Comment<input type="hidden" id="hidcomment_@item.id" value="@item.Comment" /></td>
-                                                            <td>@item.Points<input type="hidden" id="hidpoint_@item.id" value="@item.Points" /></td>
-                                                            <td>
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Detailed View">
-                                                                    <span onclick="DetailedView(@item.id)" title="Detailed View" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-                                                                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
-                                                                            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
-                                                                        </svg>
-                                                                    </span>
-                                                                </button>
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
-                                                                    <span onclick="openPointspopup(@item.id)" title="Add Points" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg>
-                                                                    </span>
-                                                                </button>
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Query">
-                                                                    <span onclick="openmyQueryModel('@item.Comment')" title="Ask Query" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
-                                                                    </span>
-                                                                </button>
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Confirm">
-                                                                    <span title="Confirm" onclick="confirmpayment(@item.id)" class="mdc-fab__icon material-icons">
-                                                                        <svg style=" top: 3px; position: relative; left: 3px;" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 24 24">
-                                                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                                                        </svg>
-                                                                    </span>
-                                                                </button>
-                                                            </td>
+                                                            <th>Name</th>
+                                                            <th>Amount</th>
+                                                            <th>Action</th>
                                                         </tr>
-                                                    }
+                                                    </thead>
+                                                    <tfoot>
+                                                        <tr>
 
-                                                </tbody>
-                                            </table>
+                                                            <th>Name</th>
+                                                            <th>Amount</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                    <tbody id="tblbodyPayment">
+                                                        @if (Model.Count == 0)
+                                                        {
+                                                            <tr><td colspan="3" style="text-align:center">No Result found</td></tr>
+                                                        }
+                                                        @foreach (var item in Model)
+                                                        {
+                                                            <tr>
+                                                                <td>@item.Comment<input type="hidden" id="hidcomment_@item.id" value="@item.Comment" /></td>
+                                                                <td>@item.Points<input type="hidden" id="hidpoint_@item.id" value="@item.Points" /></td>
+                                                                <td>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Detailed View">
+                                                                        <span onclick="DetailedView(@item.id)" title="Detailed View" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                                                                                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+                                                                                <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
+                                                                        <span onclick="openPointspopup(@item.id)" title="Add Points" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Query">
+                                                                        <span onclick="openmyQueryModel('@item.Comment')" title="Ask Query" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Confirm">
+                                                                        <span title="Confirm" onclick="confirmpayment(@item.id)" class="mdc-fab__icon material-icons">
+                                                                            <svg style=" top: 3px; position: relative; left: 3px;" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 24 24">
+                                                                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
-
                                         <div class="col-sm-12 col-md-5 pull-left" id="divmeetingentries">
                                             Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
                                         </div>
@@ -548,8 +549,8 @@
         html += '   <th>Type</th>';
         html += '   <th>Payment Status</th>';
         html += '   <th>Rate</th>';
-        html += '   <th>Amount</th>';
-        html += '   <th>Video Duration(mins)</th>';
+        html += '   <th>Amnt</th>';
+        html += '   <th>Video Duration<span class="durtime">(mins)</span></th>';
         html += '   <th>Meeting Status</th>';
         html += '   <th>Interview Status</th>';
         html += '</tr>';
