@@ -449,21 +449,7 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">RFID</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
-
-                                                                        @foreach (var item in Model.Select(x => x.IRFID).Distinct().ToList())
-                                                                        {
-                                                                            @if (!string.IsNullOrEmpty(item))
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
+                                                            
                                                         </div>
                                                         <div class="col-md-6 col-sm-6">
                                                             <div class="form-group">
@@ -499,16 +485,31 @@
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">Skill Channel ID</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+
+                                                                        @foreach (var item in Model.Select(x => x.IRFID).Distinct().ToList())
+                                                                        {
+                                                                            @if (!string.IsNullOrEmpty(item))
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
                                                                 <div>
                                                                     <div class="col-md-12 col-sm-12">
 
 
-                                                                        <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                        <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 10px 0px;float:right;margin-left:5px;">
                                                                             <font style="font-size:12px;"> Reset Filter</font>
                                                                         </button>
 
 
-                                                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 10px;float:right">
                                                                             <font style="font-size:12px;"> Apply Filter</font>
                                                                         </button>
 
