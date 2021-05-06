@@ -14,6 +14,16 @@ CREATE TABLE [dbo].[PaymentHistory](
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Comment')
+      AND Object_ID = Object_ID(N'PaymentHistory'))
+BEGIN
+    ALTER TABLE PaymentHistory
+    Add Comment  varchar(100)
+END
 END
 GO
 

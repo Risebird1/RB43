@@ -55,10 +55,24 @@ namespace Risebird.Business
                     EmailId = interviewerProfile.EmailId.Replace(" ", "")
                 };
                 interviewerProfile.UserPassword = await _passwordHelper.GenerateUserPassword(userDetails);
+                var NickNamesList = GetNickNames(0);
                 if (String.IsNullOrEmpty(interviewerProfile.NickName))
                 {
-                    var NickName = (!String.IsNullOrEmpty(interviewerProfile.FirstName) ? interviewerProfile.FirstName.Substring(0, 2) : "Ri") + "" + (!String.IsNullOrEmpty(interviewerProfile.LastName) ? interviewerProfile.LastName.Substring(0, 2) : "se") + "" + (!String.IsNullOrEmpty(interviewerProfile.MobileNumber) ? interviewerProfile.MobileNumber.Substring(6, 10) : "1234");
+                    var NickName = (!String.IsNullOrEmpty(interviewerProfile.FirstName) ? interviewerProfile.FirstName.Substring(0, 2) : "Ri") + "" + (!String.IsNullOrEmpty(interviewerProfile.LastName) ? interviewerProfile.LastName.Substring(0, 2) : "se") + "" + (!String.IsNullOrEmpty(interviewerProfile.MobileNumber) ? interviewerProfile.MobileNumber.Substring(6, 4) : "1234");
+                    while (1 == 1)
+                    {
+                        if (NickNamesList.Contains(NickName))
+                        {
+                            NickName = NickName + interviewerProfile.MobileNumber[interviewerProfile.MobileNumber.Length - 1];
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    interviewerProfile.NickName = NickName;
                 }
+
                 return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
             }
             catch (Exception e)
