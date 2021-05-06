@@ -773,7 +773,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 7].Value = "Current Status";
                 Sheet.Cells[1, 8].Value = "Current Status Date";
                 Sheet.Cells[1, 9].Value = "Profile Source";
-                Sheet.Cells[1, 10].Value = "IRF Name";
+                Sheet.Cells[1, 10].Value = "Skill Channel ID";
                 Sheet.Cells[1, 11].Value = "Phone";
 
 

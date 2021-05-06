@@ -10,7 +10,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Create PROCEDURE [dbo].[usp_UpdateClientUser](@id INT, @userFirstName varchar(150), @userLastName varchar(150) , @userEmailId varchar(150) , @userMobileNumber nvarchar(200))  
+Create PROCEDURE [dbo].[usp_UpdateClientUser]
+(@id INT, 
+@userFirstName varchar(150), 
+@userLastName varchar(150), 
+@userEmailId varchar(150), 
+@userMobileNumber nvarchar(200),
+@selectedClientRoleId int,
+@UserPassword nvarchar(60))  
 AS  
 Begin Try  
   BEGIN TRAN UpdateUser   
@@ -19,20 +26,32 @@ Begin Try
        Declare @email varchar(150)  
        Declare @phone varchar(150)  
        Declare @cuid int  
+	   Declare @roleId int  
+	   Declare @userId int
+	   Declare @password nvarchar(60)  
+
   
        SET @firstName = @userFirstName  
        SET @lastName = @userLastName  
        SET @email = @userEmailId  
        SET @phone = @userMobileNumber  
        SET @cuid = @id  
+	   set @roleId = @selectedClientRoleId
+	   set @password = @UserPassword
+
   
        IF EXISTS( SELECT 1 FROM UserList ul JOIN [dbo].[ClientUser] cu on ul.id = cu.UserId where cu.id = @cuid )  
        BEGIN  
-             UPDATE ul SET FirstName =  @firstName,   
-                                 LastName =  @lastName,  
-                              EmailID =   @email,  
-         MobileNumber = @phone  
-         FROM UserList ul JOIN [dbo].[ClientUser] cu on ul.id = cu.UserId where cu.id = @cuid  
+	   set @userId= (select userid from ClientUser where id=@cuid)
+             UPDATE UserList SET FirstName =  @firstName,   
+                           LastName =  @lastName,  
+                           EmailID =   @email,  
+						   MobileNumber = @phone, 
+						   UserPassword =@password
+				where id= @userId 
+		 
+			update ClientUser set RoleId=@roleId where id=@cuid
+
        END  
    
  Commit TRAN UpdateUser;  

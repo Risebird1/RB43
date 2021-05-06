@@ -35,6 +35,8 @@ namespace Risebird.Entities.ViewModel
 
         public int ClientId { get; set; }
         public int UserId { get; set; }
+
+        [Display(Name = "Password")]
         public string UserPassword { get; set; }
     }
 }

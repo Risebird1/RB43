@@ -101,5 +101,6 @@ namespace Risebird.Entities.Data
 
         public string HeuristicProfileTypeDesc { get; set; }
         public string CandidateClientHR { get; set; }
+        public int VideoDuration { get; set; }
     }
 }

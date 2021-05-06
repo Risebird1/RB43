@@ -322,8 +322,6 @@ namespace Risebird.Repository
         {
             try
             {
-                clientUser.SelectedClient = null;
-                clientUser.SelectedClientRole = null;
                 DynamicParameters parameters = SetStoredProcedureParameterForClientUser(clientUser);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -350,8 +348,6 @@ namespace Risebird.Repository
 
             if (entity.id > 0)
                 parameters.Add("@id", entity.id);
-            if (entity.SelectedClient.HasValue)
-                parameters.Add("@selectedClientId", entity.SelectedClient);
             if (entity.SelectedClientRole.HasValue)
                 parameters.Add("@selectedClientRoleId", entity.SelectedClientRole);
 
@@ -362,6 +358,8 @@ namespace Risebird.Repository
             parameters.Add("@UserPassword", entity.UserPassword);
             if (isAdd)
             {
+                if (entity.SelectedClient.HasValue)
+                    parameters.Add("@selectedClientId", entity.SelectedClient);
                 parameters.Add("@message", SqlDbType.VarChar, direction: ParameterDirection.Output);
 
             }

@@ -31,7 +31,9 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
 		im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,          
 		IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,    
 		ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId         
-		,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline, im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client, qcfr.QCStatus,ulcu.EmailId as BillingOwner    
+		,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,
+		im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,
+		qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration    
 		from         
 		InterviewMeetings im          
 		inner join IRF on im.IRFId = IRF.IRFId          
@@ -58,7 +60,9 @@ else
 		im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,          
 		IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,    
 		ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId         
-		,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline, im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client, qcfr.QCStatus,ulcu.EmailId as BillingOwner    
+		,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,
+		im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,
+		qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration    
 		from         
 		InterviewMeetings im          
 		inner join IRF on im.IRFId = IRF.IRFId          
@@ -74,19 +78,9 @@ else
 
 		where interviewDate >= @startDate AND interviewDate < @endDate 
 	End
-
-            
-       
-       
-       
+    
            
 End             
-         
-       
-       
-       
-     
-     
    
 GO
 

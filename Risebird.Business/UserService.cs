@@ -154,9 +154,9 @@ namespace Risebird.Business
             {
                 var userDetails = new UserDetails
                 {
-                    FirstName = clientUser.FirstName,
-                    LastName = clientUser.LastName,
-                    EmailId = clientUser.EmailId
+                    FirstName = clientUser.FirstName.Replace(" ", ""),
+                    LastName = clientUser.LastName.Replace(" ", ""),
+                    EmailId = clientUser.EmailId.Replace(" ", "")
                 };
                 //clientUser.UserPassword = GenerateUserPassword(clientUser).Result;
                 clientUser.UserPassword = _passwordHelper.GenerateUserPassword(userDetails).Result;
