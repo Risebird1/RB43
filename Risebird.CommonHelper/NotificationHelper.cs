@@ -1070,7 +1070,6 @@ namespace Risebird.CommonHelper
         {
             try
             {
-
                 var msg = new SendGridMessage();
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
                 msg.Subject = model.Subject;
@@ -1080,13 +1079,11 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
                 var ccMails = model.CC.Split(";");
-                foreach (var mail in toMails)
+                foreach (var mail in ccMails)
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
                 }
-
-
                 object[] parameters = new object[] { query };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RBFNQueryNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -1138,7 +1135,7 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
                 var ccMails = model.CC.Split(";");
-                foreach (var mail in toMails)
+                foreach (var mail in ccMails)
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
@@ -1341,7 +1338,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName,string InterviewDate)
+        public string InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate)
         {
             try
             {
