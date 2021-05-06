@@ -1266,15 +1266,17 @@ namespace Risebird.Repository
                     }
                     else if(reportDetails.MeetingStatus == 4 && reportDetails.VideoDuration != 0)
                     {
-                        if(reportDetails.InterviewStatus==(int)InterviewStatus.Rejected)
+                        float duration = (float)reportDetails.VideoDuration;
+                        if (reportDetails.InterviewStatus==(int)InterviewStatus.Rejected)
                         {
-                            var baseValue = 35;
-                            var pointPercent = reportDetails.VideoDuration >= 35 ? ((baseValue * 100) / 60) : ((reportDetails.VideoDuration * 100) / 60);
+                            float baseValue = 35;
+                            
+                            float pointPercent = duration >= baseValue ? ((baseValue * 100) / 60) : ((duration * 100) / 60);
                             parametersPoints.Add("@Points", pointPercent);
                         }
                         else
                         {
-                            var pointPercent = reportDetails.VideoDuration >= 60 ? 100 : ((reportDetails.VideoDuration * 100) / 60);
+                            float pointPercent = duration >= 60 ? 100 : ((duration * 100) / 60);
                             parametersPoints.Add("@Points", pointPercent);
                         }
                         

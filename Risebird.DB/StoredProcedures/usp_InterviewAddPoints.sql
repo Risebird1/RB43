@@ -15,7 +15,7 @@ GO
 CREATE Procedure usp_InterviewAddPoints     
 @interviewId int,       
 @Type varchar(30),    
-@Points int    
+@Points float    
 AS    
 BEGIN 
 Declare @Userid int    

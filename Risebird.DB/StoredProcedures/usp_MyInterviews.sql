@@ -21,7 +21,7 @@ im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtC
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore, im.HRCoordinatorEmailId,  
 ca.Phone as MobileNumber, ca.ResumeLink as resumeLink ,irf.id as irfIntId,irf.ClientId, irf.JDLink,irf.JobLevel,irf.CompanyDetails,  
 ic.ApprovalComments, ic.IsApproved,ic.InterviewStatus,ic.IsSelected, ic.MeetingStatus,ic.VideoLink, ulh.MobileNumber as HRMobileNumber,  
-cm.id as CandidateMasterId, irf.Heuristicsscore as HeuristicProfileType from InterviewMeetings im     
+cm.id as CandidateMasterId, irf.Heuristicsscore as HeuristicProfileType, ic.VideoDuration from InterviewMeetings im     
 inner join IRF  irf on im.IRFId=irf.IRFId left join InterviewComments ic on im.id = ic.InterviewId      
 left join UserList ul on ul.EmailId = im.candidateEmail  
 join  CandidatesMaster cm on ul.id=cm.UserId  
