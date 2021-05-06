@@ -1559,7 +1559,7 @@ namespace Risebird.Web.Controllers
                             meetingUpdated.candidateEmail = meetingUpdated.candidateEmail.ToLower();
                             if (_meetingService.UpdateMeeting(meetingUpdated))
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Meeting has been updated Successfully";
+                                TempData["SuccessErrorMessageInterview"] = "Meeting has been updated successfully";
                                 return RedirectToAction("Index");
                             }
                             else
@@ -3570,7 +3570,7 @@ namespace Risebird.Web.Controllers
                                 };
                                 var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
                             }
-                            TempData["SuccessErrorMessageInterview"] = "Report saved Successfully";
+                            TempData["SuccessErrorMessageInterview"] = "Report saved successfully";
                             if (profileName == "Admin" || profileName == "HR")
                             {
                                 return RedirectToAction("Index");
@@ -5574,9 +5574,9 @@ namespace Risebird.Web.Controllers
                 Subject = "Risebird: Feedback form"
             };
             var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
-            if (emailsend == "Mail sent successfully.")
+            if (emailsend == "Mail sent Successfully.")
             {
-                return Json("Feedback Form Send successfully");
+                return Json("Feedback Form Send Successfully");
             }
             else
             {

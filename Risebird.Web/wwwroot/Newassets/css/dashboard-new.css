@@ -1733,7 +1733,7 @@ table.interviewertable th, table.interviewertable td {
 }
 
 .rbpay .modal-dialog {
-    max-width: 1000px !important
+    max-width: 1100px !important
 }
 .rbpay .sb-container {
     padding-right: 30px;
@@ -8950,6 +8950,13 @@ button.btn {
         }
     }
 
+@media only screen and (max-width: 1920px) {
+    .rbpay .sb-scrollbar {
+        position: absolute;
+        right: -6px!important;
+    }
+}
+
     @media only screen and (max-width: 1400px) {
         .intEmail {
             width: 90px !important;
@@ -8957,6 +8964,11 @@ button.btn {
 
         .intName {
             width: 58px !important;
+        }
+
+        .rbpay .sb-scrollbar {
+            position: absolute;
+            right: 0px!important;
         }
     }
 
