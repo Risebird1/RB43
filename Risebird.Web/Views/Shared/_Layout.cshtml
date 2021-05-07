@@ -20,6 +20,7 @@
     <link href="~/Newassets/css/chat.css?v=7" rel="stylesheet" />
     <link href="~/Newassets/css/now-ui-dashboard.css?v=123456" rel="stylesheet" />
     <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet"/>
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans|300italic,400italic,600italic,700italic,400,300,500,600,700&subset=latin,latin-ext" rel="stylesheet" />
@@ -154,7 +155,49 @@ border: 1px #fff solid !important;
 
     <script type="text/javascript" src="~/js/settings.js"></script>
 
+    <script>
 
+        $(document).ready(function () {
+
+            var location = window.location.href;
+            $('ul li  a').removeClass("active-menu");
+            var loopvalue = $("ul li a").length;
+            for (var i = 0; i < loopvalue; i++) {
+                if ($("ul li a")[i].getAttribute("href").toUpperCase() == "/" + location.split("/")[3].toUpperCase() + "/" + location.split("/")[4].toUpperCase().split("?")[0]) {
+                    if ($('ul li a')[i].getAttribute("class") == "admin-submenu") {
+                      
+                        $('.dropmenu label.admin-active').addClass("active-menu");
+                        $('.dropmenu label.admin-active').append('<span class="shape1"></span><span class="shape2"></span>');
+                        $('.dropmenu label.interviewer-active').removeClass("active-menu");
+                        $('.drop-wrap ul li a').removeClass("active-menu");
+                        
+                   
+                    }
+
+                    if ($('ul li a')[i].getAttribute("class") == "interviewer-submenu") {
+                    
+                        $('.dropmenu label.interviewer-active').addClass("active-menu");
+                        $('.dropmenu label.interviewer-active').append('<span class="shape1"></span><span class="shape2"></span>');
+                        $('.dropmenu label.admin-active').removeClass("active-menu");
+                        $('.drop-wrap ul li a').removeClass("active-menu");
+                       
+                    }
+                    $("ul li a")[i].setAttribute("class", "active-menu");
+                    $('.drop-wrap ul li  a').removeClass("active-menu");
+                    $('ul li a.active-menu').append('<span class="shape1"></span><span class="shape2"></span>');
+                  
+                    break;
+                }
+
+
+            }
+
+                
+
+
+
+        })
+    </script>
 
     @RenderSection("Scripts", required: false)
 </body>

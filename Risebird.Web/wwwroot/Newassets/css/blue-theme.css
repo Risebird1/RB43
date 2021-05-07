@@ -337,7 +337,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .nav svg {
-    fill: #97d1f9;
+    fill: #fff;
 }
 
 .control-label, .control-labeled {
@@ -607,19 +607,50 @@ input[type="radio"]:checked, input[type="checkbox"]:checked {
 .un-right {
     background: #f3f3f3;
 }
+.sidebar-wrapper > .nav li > a.active-menu .shape1, .sidebar-wrapper > .nav li > a.active-menu .shape2, .active-menu .shape1, .active-menu .shape2 {
+    background: #fff;
+}
+.sidebar-wrapper > .nav li > a.active-menu .sidemenu-icon {
+    background: #295994;
+}
 
-@media only screen and (max-width: 767px) {
-    .razorpay_btn button.form-control {
-        width: 33.3%;
-        float: left;
+.sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .sidemenu-icon, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .sidemenu-icon {
+    background: #295994;
+    position: absolute;
+    z-index: 1000;
+    top: 8px;
+    left: 0px;
+}
+.sidebar-wrapper > .nav li > a.active-menu:before, .sidebar-wrapper > .nav li > a.active-menu:after{
+    border-right: 20px solid #42a5f5;
+}
+
+.sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:before, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:after {
+    border-right: 20px solid #2ca8ff;
+}
+.sidebar-wrapper > .nav li > a.active-menu p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+    color: #173457;
+    font-weight: bolder;
+}
+
+.nav > li > a.active-menu:hover {
+    background-color: #fff !important;
+}
+.sidebar-wrapper > .nav li > a.active-menu, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+    background-color: #fff;
+}
+
+    @media only screen and (max-width: 767px) {
+        .razorpay_btn button.form-control {
+            width: 33.3%;
+            float: left;
+        }
     }
 
-
-}
-@media only screen and (max-width: 480px) {
-    .razorpay_btn button.form-control {
-        height: 50px;
-        font-size: 10px !important;
-        border-right: 1px #cccccc54 solid;
+    @media only screen and (max-width: 480px) {
+        .razorpay_btn button.form-control {
+            height: 50px;
+            font-size: 10px !important;
+            border-right: 1px #cccccc54 solid;
+        }
     }
-}
