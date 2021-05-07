@@ -587,7 +587,8 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 9].Value = "Meeting Status";
                         Sheet.Cells[1, 10].Value = "Interview Status";
                         Sheet.Cells[1, 11].Value = "Video Link";
-                        Sheet.Cells[1, 12].Value = "Amount";
+                        Sheet.Cells[1, 12].Value = "Video Duration";
+                        Sheet.Cells[1, 13].Value = "Amount";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
@@ -616,24 +617,26 @@ namespace Risebird.Web.Controllers
                                             Sheet.Cells[i, 11].Value = "Video";
                                             Sheet.Cells[i, 11].Style.Font.UnderLine = true;
                                             Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                            Sheet.Cells[i, 12].Value = (item.VideoDuration.HasValue && item.VideoDuration.Value > 0) ? item.VideoDuration.Value.ToString() : string.Empty;
                                         }
                                         catch (Exception)
                                         {
                                             Sheet.Cells[i, 11].Value = "No Video";
+                                            Sheet.Cells[i, 12].Value = "NA";
                                         }
                                     }
                                     else
                                     {
                                         Sheet.Cells[i, 11].Value = "No Video";
+                                        Sheet.Cells[i, 12].Value = "NA";
                                     }
-                                    Sheet.Cells[i, 12].Value = item.Points;
+                                    Sheet.Cells[i, 13].Value = item.Points;
                                     i++;
                                 }
 
-                                Sheet.Cells[i, 11].Value = "Total";
-                                Sheet.Cells[i, 12].Value = model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum();
-                                i++;
-                                i++;
+                                Sheet.Cells[i, 12].Value = "Total";
+                                Sheet.Cells[i, 13].Value = model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum();
+                                i = i + 2;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                         }
@@ -714,7 +717,8 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 9].Value = "Meeting Status";
                         Sheet.Cells[1, 10].Value = "Interview Status";
                         Sheet.Cells[1, 11].Value = "Video Link";
-                        Sheet.Cells[1, 12].Value = "Amount";
+                        Sheet.Cells[1, 12].Value = "Video Duration";
+                        Sheet.Cells[1, 13].Value = "Amount";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
@@ -743,24 +747,26 @@ namespace Risebird.Web.Controllers
                                             Sheet.Cells[i, 11].Value = "Video";
                                             Sheet.Cells[i, 11].Style.Font.UnderLine = true;
                                             Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                            Sheet.Cells[i, 12].Value = (item.VideoDuration.HasValue && item.VideoDuration.Value > 0) ? item.VideoDuration.Value.ToString() : string.Empty;
                                         }
                                         catch (Exception)
                                         {
                                             Sheet.Cells[i, 11].Value = "No Video";
+                                            Sheet.Cells[i, 12].Value = "NA";
                                         }
                                     }
                                     else
                                     {
                                         Sheet.Cells[i, 11].Value = "No Video";
+                                        Sheet.Cells[i, 12].Value = "NA";
                                     }
-                                    Sheet.Cells[i, 12].Value = item.Points;
+                                    Sheet.Cells[i, 13].Value = item.Points;
                                     i++;
                                 }
 
-                                Sheet.Cells[i, 11].Value = "Total";
-                                Sheet.Cells[i, 12].Value = model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum();
-                                i++;
-                                i++;
+                                Sheet.Cells[i, 12].Value = "Total";
+                                Sheet.Cells[i, 13].Value = model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum();
+                                i = i + 2;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                         }
