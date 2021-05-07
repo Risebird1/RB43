@@ -1065,6 +1065,10 @@ namespace Risebird.Web.Controllers
                         ViewBag.Actiontype = actiontype;
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
+                            if (actionstatus == "UnAttendedZoomLink")
+                            {
+                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                            }
                             modelList = modelList.Where(x => x.interviewDate >= filter.StartDate && x.interviewDate <= filter.EndDate).ToList();
                         }
                         filter.Client = filter.Client == null ? filter.Client = modelList.Select(x => x.Name).ToArray() : filter.Client = filter.Client;
