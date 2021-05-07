@@ -210,5 +210,6 @@ namespace Risebird.Entities.ViewModel
         public string AssignStatus { get; set; }
         public string AssessmentGroupId { get; set; }
         public int BillingOwner { get; set; }
+        public string RisebirdHREmail { get; set; }
     }
 }

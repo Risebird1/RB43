@@ -384,24 +384,24 @@
                                                                 </div>
                                                             </div>
 
-                                                            if (@item.CompanyDetails != null && @item.CompanyDetails != "None")
-                                                            {
-                                                                <div class="row">
-                                                                    <div class="client-field">
-                                                                        <span>Company Instructions:</span> <span style="color: blue;font-weight:normal"><a id="companyId" target="_blank" title="Company Instructions" href=@item.CompanyDetails>Link</a></span>
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                            else
-                                                            {
-                                                                <div class="row">
-                                                                    <div class="client-field">
-                                                                        <span>Company Instructions:</span> <span></span>
 
-                                                                    </div>
-                                                                </div>
-                                                            }
 
+                                                        }
+                                                        @if(!string.IsNullOrEmpty(item.RisebirdHREmail))
+                                                        {
+                                                            <div class="row clearfix">
+                                                                <div class="client-field">
+                                                                    <span> Channel Owner: </span> <span title="@item.RisebirdHREmail">@item.RisebirdHREmail</span>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="row clearfix">
+                                                                <div class="client-field">
+                                                                    <span> Channel Owner: </span><span ></span>
+                                                                </div>
+                                                            </div>
                                                         }
 
                                                     </div>
