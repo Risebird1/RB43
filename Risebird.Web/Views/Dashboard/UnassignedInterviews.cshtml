@@ -274,12 +274,27 @@
                                                         <th>Who Joined</th>
                                                     }
                                                     <th>Candidate Name</th>
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                    {
+                                                        <th>Candidate Contact</th>
+                                                    }
                                                     <th>Candidate Email</th>
                                                     <th>Interviewer</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
                                                     <th>Client Name</th>
-                                                    <th>Co-ordinating HR</th>
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                    {
+                                                        <th>Client HR</th>
+                                                    }
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                    {
+                                                        <th>Channel Owner</th>
+                                                    }
+                                                    else
+                                                    {
+                                                        <th>Co-ordinating HR</th>
+                                                    }
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -291,12 +306,27 @@
                                                         <th>Who Joined</th>
                                                     }
                                                     <th>Candidate Name</th>
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                    {
+                                                        <th>Candidate Contact</th>
+                                                    }
                                                     <th>Candidate Email</th>
                                                     <th>Interviewer</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
                                                     <th>Client Name</th>
-                                                    <th>Co-ordinating HR</th>
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                    {
+                                                        <th>Client HR</th>
+                                                    }
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                    {
+                                                        <th>Channel Owner</th>
+                                                    }
+                                                    else
+                                                    {
+                                                        <th>Co-ordinating HR</th>
+                                                    }
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -311,6 +341,10 @@
                                                             <td style="color: #0b8c0b;">@item.WhoJoined</td>
                                                         }
                                                         <td>@item.candidateName</td>
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                        {
+                                                            <td>@item.MobileNumber</td>
+                                                        }
                                                         <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
                                                         @if (@item.interviewer != null || @item.interviewer != "")
                                                         {
@@ -333,6 +367,10 @@
                                                         <td> @item.intervieweStatusStatDesc</td>
 
                                                         <td>@item.Name</td>
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                        {
+                                                            <td>@item.ClientHrContact</td>
+                                                        }
                                                         <td>@item.HRCoordinatorEmailId</td>
                                                     </tr>
                                                 }
