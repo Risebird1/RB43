@@ -43,6 +43,18 @@
                 </div>
 
                 <div class="pull-right client-ms">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to generate invoice.">
+                        <span data-toggle="tooltip" data-placement="top" title="1-7 of this month" onclick="Fetchinvoice(1,1)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">1-7</font></span>
+                    </button>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to generate invoice.">
+                        <span data-toggle="tooltip" data-placement="top" title="8-14 of this month" onclick="Fetchinvoice(2,1)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">8-14</font></span>
+                    </button>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to generate invoice.">
+                        <span data-toggle="tooltip" data-placement="top" title="15-21 of this month" onclick="Fetchinvoice(3,1)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">15-21</font></span>
+                    </button>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to generate invoice.">
+                        <span data-toggle="tooltip" data-placement="top" title="22-month end of this month" onclick="Fetchinvoice(4,1)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">22-_</font></span>
+                    </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Payment History">
                         <span class="fa fa-history" data-toggle="tooltip" data-placement="top" title="Payment History" onclick="openPaymentHistory()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Payment History</font></span>
                     </button>
@@ -643,6 +655,8 @@
     var Generateinvoiceflag = 1;
     var St_date;
     var Se_date;
+    var actionbutton;
+    var actiontype = 1;
     $(document).ready(function () {
         document.getElementById('addPointDate').value = new Date().toISOString().slice(0, 10);
         $("#adtxtEmailid").autocomplete({
@@ -694,7 +708,54 @@
         }
     }
     function FinacneChangePage(pagenumber) {
-        SearchInvoice(pagenumber);
+        if (actiontype == 2) {
+            Fetchinvoice(actionbutton, pagenumber);
+        } else {
+            SearchInvoice(pagenumber);
+        }
+    }
+    function Fetchinvoice(index, pagenumber) {
+
+        var today = new Date();
+        var month = today.getMonth() + 1;
+        var year = today.getFullYear();
+        var st = '';
+        var se = '';
+        if (index == 1) {
+            st = '01-' + month + '-' + year;
+            se = '07-' + month + '-' + year;
+        } else if (index == 2) {
+            st = '08-' + month + '-' + year;
+            se = '14-' + month + '-' + year;
+        } else if (index == 3) {
+            st = '15-' + month + '-' + year;
+            se = '21-' + month + '-' + year;
+        } else if (index == 4) {
+            var lastdate = lastday(year, month);
+            st = '22-' + month + '-' + year;
+            se = lastdate + '-' + month + '-' + year;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/finance/FNGenerateInvoiceJson",
+            data: { 'PageSet': pagenumber, 'st': st, 'se': se },
+            success: function (data) {
+                if (data != "failed") {
+                    Generateinvoiceflag = 2;
+                    St_date = st;
+                    Se_date = se;
+                    actionbutton = index;
+                    actiontype = 2;
+                    bindtableData(data.result);
+                    bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry, data.currentpage);
+                    closemyinvoiceModel();
+                }
+            }
+        });
+
+    }
+    var lastday = function (y, m) {
+        return new Date(y, m + 1, 0).getDate();
     }
     function SearchInvoice(pagenumber) {
         var st = $("#instdate").val();

@@ -75,6 +75,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
                     {
+                        ViewBag.Profile = profileName;
                         if (TempData["MessageInterviewer"] != null)
                         {
                             ViewBag.Message = TempData["MessageInterviewer"].ToString();
@@ -216,6 +217,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
                     {
+                        ViewBag.Profile = profileName;
                         if (TempData["MessageInterviewer"] != null)
                         {
                             ViewBag.Message = TempData["MessageInterviewer"].ToString();

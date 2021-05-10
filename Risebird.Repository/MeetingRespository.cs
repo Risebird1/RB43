@@ -3688,6 +3688,7 @@ namespace Risebird.Repository
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@st", st);
                     dynamicParameters.Add("@se", se);
+                    dynamicParameters.Add("@Userid", interviewerid);
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync(query, dynamicParameters);
