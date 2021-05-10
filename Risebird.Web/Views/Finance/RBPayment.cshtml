@@ -43,18 +43,18 @@
 
                 <div class="pull-right">
                     <div>
-                        @if (ViewBag.submit == "true")
-                        {
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Click here to Share with Finance Team.">
-                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Share with Finance Team." onclick="location.href='@Url.Action("ShareWithFN", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Submit for Payment</font></span>
-                            </button>
-                        }
-                        else
-                        {
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Click here to Share with Finance Team." disabled>
-                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Share with Finance Team."  data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Submit for Payment</font></span>
-                            </button>
-                        }
+                        @*@if (ViewBag.submit == "true")
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Click here to Share with Finance Team.">
+                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Share with Finance Team." onclick="location.href='@Url.Action("ShareWithFN", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Submit for Payment</font></span>
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Click here to Share with Finance Team." disabled>
+                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Share with Finance Team."  data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Submit for Payment</font></span>
+                                </button>
+                            }*@
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportRBDetails", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>
                         </button>
@@ -85,6 +85,9 @@
                                                 <th>Date</th>
                                                 <th>Payment For</th>
                                                 <th>Type</th>
+                                                <th>Rate</th>
+                                                <th>VideoLink</th>
+                                                <th>Video Duration</th>
                                                 <th>Amount</th>
                                                 <th>Status</th>
                                             </tr>
@@ -95,6 +98,9 @@
                                                 <th>Date</th>
                                                 <th>Payment For</th>
                                                 <th>Type</th>
+                                                <th>Rate</th>
+                                                <th>VideoLink</th>
+                                                <th>Video Duration</th>
                                                 <th>Amount</th>
                                                 <th>Status</th>
                                             </tr>
@@ -106,6 +112,16 @@
                                                     <td>@item.Date</td>
                                                     <td>@item.Comment</td>
                                                     <td>@item.Type</td>
+                                                    <td>@item.Rate</td>
+                                                    @if (!String.IsNullOrEmpty(item.VideoLink))
+                                                    {
+                                                        <td><a target="_blank" href="@item.VideoLink">Video Link</a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Video</td>
+                                                    }
+                                                    <td>@item.VideoDuration</td>
                                                     <td>@item.Points</td>
                                                     <td>@item.Status</td>
 

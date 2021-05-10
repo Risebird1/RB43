@@ -108,11 +108,15 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 1].Value = "Payment For";
                         Sheet.Cells[1, 2].Value = "Interview Id";
                         Sheet.Cells[1, 3].Value = "Type";
-                        Sheet.Cells[1, 4].Value = "Amount";
-                        Sheet.Cells[1, 5].Value = "Date";
-                        Sheet.Cells[1, 6].Value = "Status";
-                        Sheet.Cells[1, 7].Value = "Location";
-                        Sheet.Cells[1, 8].Value = "Meeting Status";
+                        Sheet.Cells[1, 4].Value = "Rate";
+                        Sheet.Cells[1, 5].Value = "Amount";
+                        Sheet.Cells[1, 6].Value = "Video Link";
+                        Sheet.Cells[1, 7].Value = "Video Duration";
+                        Sheet.Cells[1, 8].Value = "Date";
+                        Sheet.Cells[1, 9].Value = "Status";
+                        Sheet.Cells[1, 10].Value = "Location";
+                        Sheet.Cells[1, 11].Value = "Meeting Status";
+
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
@@ -121,11 +125,33 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 1].Value = item.Comment;
                                 Sheet.Cells[i, 2].Value = item.InterviewId;
                                 Sheet.Cells[i, 3].Value = item.Type;
-                                Sheet.Cells[i, 4].Value = item.Points;
-                                Sheet.Cells[i, 5].Value = item.Date;
-                                Sheet.Cells[i, 6].Value = item.Status;
-                                Sheet.Cells[i, 7].Value = item.PreferredLocation;
-                                Sheet.Cells[i, 8].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                Sheet.Cells[i, 4].Value = item.Rate;
+                                Sheet.Cells[i, 5].Value = item.Points;
+                                Sheet.Cells[i, 8].Value = item.Date;
+                                Sheet.Cells[i, 9].Value = item.Status;
+                                Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                Sheet.Cells[i, 11].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                if (!string.IsNullOrEmpty(item.VideoLink))
+                                {
+                                    try
+                                    {
+                                        Sheet.Cells[i, 6].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                        Sheet.Cells[i, 6].Value = "Video";
+                                        Sheet.Cells[i, 6].Style.Font.UnderLine = true;
+                                        Sheet.Cells[i, 6].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                        Sheet.Cells[i, 7].Value = (item.VideoDuration.HasValue && item.VideoDuration.Value > 0) ? item.VideoDuration.Value.ToString() : string.Empty;
+                                    }
+                                    catch (Exception)
+                                    {
+                                        Sheet.Cells[i, 6].Value = "No Video";
+                                        Sheet.Cells[i, 7].Value = "NA";
+                                    }
+                                }
+                                else
+                                {
+                                    Sheet.Cells[i, 6].Value = "No Video";
+                                    Sheet.Cells[i, 7].Value = "NA";
+                                }
                                 i++;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
