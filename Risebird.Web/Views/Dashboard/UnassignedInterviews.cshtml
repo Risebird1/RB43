@@ -281,7 +281,10 @@
                                                     <th>Candidate Email</th>
                                                     <th>Interviewer</th>
                                                     <th>Meeting Status</th>
-                                                    <th>Interview Status</th>
+                                                    @if (ViewBag.actionstatus != "UnAttendedZoomLink")
+                                                    {
+                                                        <th>Interview Status</th>
+                                                    }
                                                     <th>Client Name</th>
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                     {
@@ -313,7 +316,10 @@
                                                     <th>Candidate Email</th>
                                                     <th>Interviewer</th>
                                                     <th>Meeting Status</th>
-                                                    <th>Interview Status</th>
+                                                    @if (ViewBag.actionstatus != "UnAttendedZoomLink")
+                                                    {
+                                                        <th>Interview Status</th>
+                                                    }
                                                     <th>Client Name</th>
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                     {
@@ -364,8 +370,10 @@
                                                         {
                                                             <td> @item.MeetingStatusStatusDesc</td>
                                                         }
-                                                        <td> @item.intervieweStatusStatDesc</td>
-
+                                                        @if (ViewBag.actionstatus != "UnAttendedZoomLink")
+                                                        {
+                                                            <td> @item.intervieweStatusStatDesc</td>
+                                                        }
                                                         <td>@item.Name</td>
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                         {
