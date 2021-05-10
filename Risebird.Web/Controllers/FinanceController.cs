@@ -354,8 +354,8 @@ namespace Risebird.Web.Controllers
             table.AddCell("Amount");
             foreach (var item in resultset)
             {
-                item.MeetingStatusDetails = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
-                item.InterviewStatusDetails = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
+                //item.MeetingStatusDetails = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                //item.InterviewStatusDetails = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
                 table.AddCell(item.Date.ToString());
                 table.AddCell(item.Comment);
                 table.AddCell(item.Type);

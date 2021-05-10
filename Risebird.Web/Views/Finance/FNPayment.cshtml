@@ -558,7 +558,7 @@
         html += '<tbody>';
         for (var i = 0; i < data.length; i++) {
             html += '                                        <tr>';
-            html += '                               <td>' + data[i].date + '</td>';
+            html += '                               <td>' + data[i].date.toString().replace("T", " ") + '</td>';
             html += '                               <td>' + data[i].comment + '</td>';
             html += '                               <td>' + data[i].type + '</td>';
             html += '                               <td>' + data[i].status + '</td>';
