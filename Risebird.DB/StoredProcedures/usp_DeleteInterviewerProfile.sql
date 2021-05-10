@@ -42,8 +42,10 @@ AS
 
 		  -- Now delete from InterviewerProfile Table
 		  delete from InterviewerProfile where UserId = @UserId
+		  Delete from Interviewer where UserId = @userid  
 		  --delete from Interviewer where UserId = @UserId
 	      -- At last, Delete from User List table
+		  delete from Conversation where Senderid=@UserId or Reciverid=@userid
 		  delete from UserList where Id = @UserId
    
 	   END
