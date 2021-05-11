@@ -335,5 +335,6 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerEmailid { get; set; }
         public string AssessmentGroupId { get; set; }
         public int? VideoDuration { get; set; }
+        public string ChannelOwner { get; set; }
     }
 }
