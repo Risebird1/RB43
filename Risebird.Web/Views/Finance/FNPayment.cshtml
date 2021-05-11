@@ -1,5 +1,6 @@
 @model X.PagedList.IPagedList<Risebird.Entities.ViewModel.RBInterviewDetails>
 @using X.PagedList.Mvc.Core;
+@using System;
 @*@using Risebird.Entities.Enum*@
 @{
     ViewData["Title"] = "RB Payment Details";
@@ -132,9 +133,10 @@
                                                         }
                                                         @foreach (var item in Model)
                                                         {
+
                                                             <tr>
                                                                 <td>@item.Comment<input type="hidden" id="hidcomment_@item.id" value="@item.Comment" /></td>
-                                                                <td>@item.Points<input type="hidden" id="hidpoint_@item.id" value="@item.Points" /></td>
+                                                                <td>@(item.Points-(item.Points*.1))<input type="hidden" id="hidpoint_@item.id" value="@(item.Points-(item.Points*.1))" /></td>
                                                                 <td>
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Detailed View">
                                                                         <span onclick="DetailedView(@item.id)" title="Detailed View" class="mdc-fab__icon material-icons">
@@ -381,9 +383,10 @@
         }
 
         for (var i = 0; i < data.length; i++) {
+            var pointdetails = parseInt(data[i].points) - (parseInt(data[i].points) * .1);
             html += '  <tr>';
             html += '  <td>' + data[i].comment + '</td>';
-            html += ' <td>' + data[i].points + '</td> ';
+            html += ' <td>' + pointdetails + '</td> ';
             html += '  <td>';
             html += ' <button class="mdc-fab app-fab--absolute" aria-label="Detail View">';
             html += '   <span onclick = "DetailedView(' + data[i].id + ')" title = "Detail View" class="mdc-fab__icon material-icons">';
@@ -398,7 +401,7 @@
             html += '  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg>';
             html += '   </span>';
             /**/
-            html += '   </button><input type="hidden" value="' + data[i].comment + '" id="hidcomment_' + data[i].id + '" /><input type="hidden" id="hidpoint_' + data[i].id + '" value="' + data[i].points + '" />';
+            html += '   </button><input type="hidden" value="' + data[i].comment + '" id="hidcomment_' + data[i].id + '" /><input type="hidden" id="hidpoint_' + data[i].id + '" value="' + pointdetails + '" />';
             /**/
             html += ' <button class="mdc-fab app-fab--absolute" aria-label="Query">';
             html += '   <span onclick="openmyQueryModeljson(' + data[i].id + ')" title="Ask Query" class="mdc-fab__icon material-icons">';
