@@ -339,12 +339,46 @@
                                                 @foreach (var item in Model)
                                                 {
 
-                                                    <tr id=@item.imid>
+                                                    <tr id=@item.Interviewid>
                                                         <td title=@item.IRFId> @item.IRFId </td>
                                                         <td> @item.interviewDate </td>
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                         {
-                                                            <td style="color: #0b8c0b;">@item.WhoJoined</td>
+                                                    <td style="color: #0b8c0b;">
+                                                        <div id="section">
+                                                            @if (item.WhoJoined != null && item.WhoJoined != "")
+                                                            {
+                                                                @if (item.WhoJoined.Length > 30)
+                                                                {
+                                                                    <div class="article">
+                                                                        <p style="margin-bottom:0px;">
+                                                                            @item.WhoJoined.Substring(0, 30)
+                                                                        </p>
+                                                                        <p class="moretext_@item.Interviewid moretext">
+                                                                            @item.WhoJoined.Substring(30, @item.WhoJoined.Length - 30)
+                                                                        </p>
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="article">
+
+                                                                        <p>
+                                                                            @item.WhoJoined.Substring(0, @item.WhoJoined.Length)
+                                                                        </p>
+                                                                    </div>
+                                                                }}
+                                                            else
+                                                            { <div></div>}
+
+
+                                                            <a onclick="moreless(@item.Interviewid)" class="moreless-button" value="Readmore" id="read_@item.Interviewid" href="#">Read more</a>
+
+
+                                                        </div>
+
+
+                                                    </td>
                                                         }
                                                         <td>@item.candidateName</td>
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
@@ -569,7 +603,20 @@
 </script>
 
 
+<script>
+    function moreless(id) {
 
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
+
+</script>
 
 
 

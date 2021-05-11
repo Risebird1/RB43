@@ -660,8 +660,11 @@ namespace Risebird.Web.Controllers
                                     i++;
                                 }
 
+                                Sheet.Cells[i, 12].Value = "10% TDS";
+                                Sheet.Cells[i, 13].Value = (model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
+                                i++;
                                 Sheet.Cells[i, 12].Value = "Total";
-                                Sheet.Cells[i, 13].Value = model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum();
+                                Sheet.Cells[i, 13].Value = (model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) - ((model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) * 10 / 100);
                                 i = i + 2;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -790,8 +793,11 @@ namespace Risebird.Web.Controllers
                                     i++;
                                 }
 
+                                Sheet.Cells[i, 12].Value = "10% TDS";
+                                Sheet.Cells[i, 13].Value = (model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
+                                i++;
                                 Sheet.Cells[i, 12].Value = "Total";
-                                Sheet.Cells[i, 13].Value = model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum();
+                                Sheet.Cells[i, 13].Value = (model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) - ((model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) * 10 / 100);
                                 i = i + 2;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
