@@ -11,11 +11,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[usp_GetAllActivities]  
-
+@startDate datetime,
+@endDate datetime
 AS  
 Begin
 
-	select act.*, atos.ActivityName as ActivityTypeDesc from ActivityTracker act join ActivityTypeOptions atos on act.[ActivityType]=atos.id order by PerformedAt desc
+	select act.*, atos.ActivityName as ActivityTypeDesc from ActivityTracker act 
+	join ActivityTypeOptions atos on act.[ActivityType]=atos.id 
+	where cast(PerformedAt as date) <= cast (@endDate as date) and cast(PerformedAt as date) >= cast (@startDate as date)
+	order by PerformedAt desc
 
 End
 GO

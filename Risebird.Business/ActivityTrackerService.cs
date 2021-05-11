@@ -19,11 +19,11 @@ namespace Risebird.Business
             _applicationErrorLogger = applicationErrorLogger;
         }
 
-        public async Task<IEnumerable<ActivityTrackerVM>> GetAllActivities()
+        public async Task<IEnumerable<ActivityTrackerVM>> GetAllActivities(DateTime startDate, DateTime endDate)
         {
             try
             {
-                return await _activityTrackerRepository.GetAllActivities();
+                return await _activityTrackerRepository.GetAllActivities(startDate, endDate);
             }
 
             catch (Exception e)

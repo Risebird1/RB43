@@ -207,7 +207,7 @@
                                             <thead>
                                                 <tr>
                                                     <th id='start'>Activity Type</th>
-                                                    <th>Name</th>
+                                                    <th>Particulars</th>
                                                     <th>Summary</th>
                                                     <th>Performed At</th>
                                                     <th>Performed By</th>
@@ -234,50 +234,66 @@
                                                     <td> @item.ActivityTypeDesc </td>
 
 
-                                                    @if (item.Name.Length > 40)
+                                                    @if (item.Particulars.Length > 40)
                                                     {
+                                                        @if (!string.IsNullOrEmpty(item.ResourceUrl))
+                                                        {
+                                                            <td class="cadName">
+                                                                <a href="@item.ResourceUrl" target="_blank" data-tooltip="@item.Particulars"> @item.Particulars.Substring(0, 40)... </a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td class="cadName">
+                                                                <a onclick="" data-tooltip="@item.Particulars"> @item.Particulars.Substring(0, 40)... </a>
+                                                            </td>
+                                                        }
 
-
-                                                        <td class="cadName">
-                                                            <a onclick="" data-tooltip="@item.Name"> @item.Name.Substring(0, 40)... </a>
-                                                        </td>
                                                     }
 
 
                                                     else
                                                     {
-                                                        <td class="cadName">
-                                                            <a onclick=""> @item.Name </a>
-                                                        </td>
+                                                        @if (!string.IsNullOrEmpty(item.ResourceUrl))
+                                                        {
+                                                            <td class="cadName">
+                                                                <a href="@item.ResourceUrl" target="_blank"> @item.Particulars </a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td class="cadName">
+                                                                <a onclick=""> @item.Particulars </a>
+                                                            </td>
+                                                        }
+
                                                     }
-                                                  @*<td> @item.Summary </td>*@
+                                                    @*<td> @item.Summary </td>*@
 
-                                                   <td class="interview-com">
-                                                       <div id="section">
+                                                    <td class="interview-com">
+                                                        <div id="section">
 
-                                                           @if (item.Summary.Length > 35)
-                                                           {
-                                                               <div class="article">
-                                                                   <p style="margin-bottom:0px;">
-                                                                       @item.Summary.Substring(0, 35)
-                                                                   </p>
-                                                                   <p class="moretext_@item.id moretext">
-                                                                       @item.Summary.Substring(35, @item.Summary.Length - 35)
-                                                                   </p>
-                                                               </div>
-                                                               <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
-                                                           }
-                                                           else
-                                                           {
-                                                               <div class="article">
+                                                            @if (item.Summary.Length > 35)
+                                                            {
+                                                                <div class="article">
+                                                                    <p style="margin-bottom:0px;">
+                                                                        @item.Summary.Substring(0, 35)
+                                                                    </p>
+                                                                    <p class="moretext_@item.id moretext">
+                                                                        @item.Summary.Substring(35, @item.Summary.Length - 35)
+                                                                    </p>
+                                                                </div>
+                                                                <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="article">
 
-                                                                   <p>
-                                                                       @item.Summary.Substring(0, @item.Summary.Length)
-                                                                   </p>
-                                                               </div>
-                                                           }
-
-
+                                                                    <p>
+                                                                        @item.Summary.Substring(0, @item.Summary.Length)
+                                                                    </p>
+                                                                </div>
+                                                            }
 
 
 
@@ -285,7 +301,9 @@
 
 
 
-                                                       </div>
+
+
+                                                        </div>
 
                                                     </td>
 

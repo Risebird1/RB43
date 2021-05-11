@@ -9,6 +9,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 namespace Risebird.Business
 {
@@ -331,21 +332,25 @@ namespace Risebird.Business
             }
         }
 
-        public MeetingVM GetMeeting(int id)
+        public async Task<MeetingVM> GetMeeting(int id)
         {
             try
             {
-                var meeting = _meetingRespository.GetInterviewMeetingById(id);
-                if (meeting == null)
-                    return null;
-                else
-                    return meeting.Result;
-
+                var meeting = await _meetingRespository.GetInterviewMeetingById(id);
+                meeting.OldConfirmationStatus = meeting.confirmationStatus;
+                meeting.OldHRCoordinatorEmailId = meeting.HRCoordinatorEmailId;
+                meeting.OldinterviewDate = meeting.interviewDate;
+                meeting.OldInterviewer = meeting.interviewer;
+                meeting.OldIRFId = meeting.IRFId;
+                meeting.OldQCInterviewer = meeting.QCInterviewer;
+                meeting.OldrisebirdHR = meeting.risebirdHR;
+                meeting.OldzoomLink = meeting.zoomLink;
+                return meeting;
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -438,16 +443,119 @@ namespace Risebird.Business
             return false;
         }
 
-        public bool UpdateMeeting(MeetingVM meetingToUpdate)
+        public async Task<bool> UpdateMeeting(MeetingVM meetingToUpdate)
         {
             try
             {
-                return _meetingRespository.UpdateMeeting(meetingToUpdate).Result;
+                var result = await _meetingRespository.UpdateMeeting(meetingToUpdate);
+                if(result)
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateMeeting;
+                    activityTrackerModel.Particulars = "Meeting with: "+ meetingToUpdate.candidateEmail;
+                    activityTrackerModel.PerformedBy = meetingToUpdate.LoggedInUser;
+
+                    StringBuilder summary = new StringBuilder();
+                    if(meetingToUpdate.OldConfirmationStatus != meetingToUpdate.confirmationStatus)
+                    {
+                        if(meetingToUpdate.confirmationStatus== ReceiveMeetingStatus.Cancelled.ToString())
+                        {
+                            summary.Append("Meeting Cancelled");
+                        }
+                    }
+                    if(meetingToUpdate.OldHRCoordinatorEmailId != meetingToUpdate.HRCoordinatorEmailId)
+                    {
+                        if(summary.Length > 0)
+                        {
+                            summary.Append("; HR Co-ordinator changed");
+                        }
+                        else
+                        {
+                            summary.Append("HR Co-ordinator changed");
+                        }
+                    }
+                    if (meetingToUpdate.OldinterviewDate != meetingToUpdate.interviewDate)
+                    {
+                        if (summary.Length > 0)
+                        {
+                            summary.Append("; Interview Date changed");
+                        }
+                        else
+                        {
+                            summary.Append("Interview Date changed");
+                        }
+                    }
+                    if (meetingToUpdate.OldInterviewer != meetingToUpdate.interviewer)
+                    {
+                        if (summary.Length > 0)
+                        {
+                            summary.Append("; Interviewer changed");
+                        }
+                        else
+                        {
+                            summary.Append("Interviewer changed");
+                        }
+                    }
+                    if (meetingToUpdate.OldIRFId != meetingToUpdate.IRFId)
+                    {
+                        if (summary.Length > 0)
+                        {
+                            summary.Append("; Skill Channel changed");
+                        }
+                        else
+                        {
+                            summary.Append("Skill Channel changed");
+                        }
+                    }
+                    if (meetingToUpdate.OldQCInterviewer != meetingToUpdate.QCInterviewer)
+                    {
+                        if (summary.Length > 0)
+                        {
+                            summary.Append("; QC Interviewer changed");
+                        }
+                        else
+                        {
+                            summary.Append("QC Interviewer changed");
+                        }
+                    }
+
+                    if (meetingToUpdate.OldrisebirdHR != meetingToUpdate.risebirdHR)
+                    {
+                        if (summary.Length > 0)
+                        {
+                            summary.Append("; Zoom Login Details changed");
+                        }
+                        else
+                        {
+                            summary.Append("Zoom Login Details changed");
+                        }
+                    }
+                    if (meetingToUpdate.OldzoomLink != meetingToUpdate.zoomLink)
+                    {
+                        if (summary.Length > 0)
+                        {
+                            summary.Append("; Zoom Link changed");
+                        }
+                        else
+                        {
+                            summary.Append("Zoom Link changed");
+                        }
+                    }
+                    if (summary.Length == 0)
+                    {
+                        summary.Append("Meeting updated");
+                    }
+                    activityTrackerModel.Summary = summary.ToString();
+                    activityTrackerModel.ResourceUrl = meetingToUpdate.ResourceUrl;
+
+                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
+                return result;
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
@@ -1566,7 +1674,7 @@ namespace Risebird.Business
                 var result = await _meetingRespository.SaveHRComment(id, comment, imageFileURL);
                 var activityTrackerModel = new ActivityTrackerVM();
                 activityTrackerModel.ActivityType = (int)ActivityTypes.HRComment;
-                activityTrackerModel.Name = candidateNameEmail;
+                activityTrackerModel.Particulars = candidateNameEmail;
                 activityTrackerModel.PerformedBy = performedBy;
                 activityTrackerModel.FileUrl = imageFileURL;
                 activityTrackerModel.Summary = comment;

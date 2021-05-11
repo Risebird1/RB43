@@ -10,7 +10,8 @@ CREATE TABLE [dbo].[ActivityTracker](
 	[Summary] [varchar](max) NULL,
 	[FileUrl] [varchar](max) NULL,
 	[PerformedAt] [datetime] NOT NULL,
-	[Name] [varchar](150) NULL,
+	[Particulars] [varchar](150) NULL,
+	[ResourceUrl] [varchar](500) NULL,
  CONSTRAINT [PK_ActivityTracker] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -18,6 +19,22 @@ CREATE TABLE [dbo].[ActivityTracker](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 End
+
+
+Else
+
+Begin
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ResourceUrl')
+      AND Object_ID = Object_ID(N'ActivityTracker'))
+BEGIN
+    ALTER TABLE ActivityTracker
+    Add [ResourceUrl] varchar(500)
+END
+End
+
 GO
 
-
+sp_RENAME 'ActivityTracker.[Name]' , 'Particulars', 'COLUMN'

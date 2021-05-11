@@ -6,7 +6,11 @@ namespace Risebird.Entities.Enum
     {
         [Description("Interview Management")]
         HRComment = 1,
+
         [Description("Add Skills Channel")]
-        AddSkillsChannel = 2
+        AddSkillsChannel = 2,
+
+        [Description("Update Meeting")]
+        UpdateMeeting = 3
     }
 }
