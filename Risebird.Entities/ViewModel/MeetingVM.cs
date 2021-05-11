@@ -241,7 +241,7 @@ namespace Risebird.Entities.ViewModel
         public string WhoJoined { get; set; }
         public long ZoomMeetingId { get; set; }
         public int VideoDuration { get; set; }
-
+        public int Interviewid { get; set; }
     }
     public class VedioComments
     {

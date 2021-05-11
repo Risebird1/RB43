@@ -97,7 +97,37 @@
                                         <tr id=@item.id>
                                             <td hidden>@item.id</td>
                                             <td>@item.Name</td>
-                                            <td>@item.Description</td>
+                                            <td><div id="section">
+    @if (item.Description != null && item.Description != "")
+    {
+        @if (item.Description.Length > 24)
+        {
+            <div class="article">
+                <p style="margin-bottom:0px;">
+                    @item.Description.Substring(0, 24)
+                </p>
+                <p class="moretext_@item.id moretext">
+                    @item.Description.Substring(24, @item.Description.Length - 24)
+                </p>
+            </div> <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+        }
+        else
+        {
+            <div class="article">
+
+                <p>
+                    @item.Description.Substring(0, @item.Description.Length)
+                </p>
+            </div>
+        }}
+    else
+    { <div></div>}
+
+
+
+
+
+</div></td>
                                             <td>@item.GST</td>
                                             <td style="white-space:normal;">@item.OfficeAddress</td>
                                             <td>@item.Balance</td>
@@ -505,4 +535,18 @@
         var url = "List";
         window.location.href = url;
     }
+</script>
+<script>
+    function moreless(id) {
+
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
+
 </script>
