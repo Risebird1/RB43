@@ -478,5 +478,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<ZoomMeetingHistoryDetails>> FetchZoomMeetingHistory(string meetingid)
+        {
+            try
+            {
+                return await _dashboardRespository.FetchZoomMeetingHistory(meetingid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

@@ -253,6 +253,8 @@ namespace Risebird.Entities.ViewModel
         public string LoggedInUser { get; set; }
         public string ResourceUrl { get; set; }
 
+        public string InterviewerMobileNumber { get; set; }
+        public string ClientMobileNumber { get; set; }
     }
     public class VedioComments
     {
@@ -319,5 +321,11 @@ namespace Risebird.Entities.ViewModel
         public string sCreatedBy { get; set; }
         public bool IsEditable { get; set; }
 
+    }
+    public class ZoomMeetingHistoryDetails
+    {
+        public string Event { get; set; }
+        public string ParticipantName { get; set; }
+        public DateTime? ActionDate { get; set; }
     }
 }
