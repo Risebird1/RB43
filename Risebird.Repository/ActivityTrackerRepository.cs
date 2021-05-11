@@ -24,13 +24,16 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
 
-        public async Task<IEnumerable<ActivityTrackerVM>> GetAllActivities()
+        public async Task<IEnumerable<ActivityTrackerVM>> GetAllActivities(DateTime startDate, DateTime endDate)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<ActivityTrackerVM>(con, "usp_GetAllActivities",
+                    DynamicParameters parameters = new DynamicParameters();
+                    parameters.Add("@startDate", startDate);
+                    parameters.Add("@endDate", endDate);
+                    return await SqlMapper.QueryAsync<ActivityTrackerVM>(con, "usp_GetAllActivities", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
 
@@ -57,7 +60,8 @@ namespace Risebird.Repository
                 parameters.Add("@Summary", model.Summary);
                 parameters.Add("@FileUrl", model.FileUrl);
                 parameters.Add("@PerformedAt", DateTime.Now);
-                parameters.Add("@Name", model.Name);
+                parameters.Add("@Particulars", model.Particulars);
+                parameters.Add("@ResourceUrl", model.ResourceUrl);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

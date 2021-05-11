@@ -21,3 +21,6 @@ SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] ON
 INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (1, N'HR Comment')
 INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (2, N'Add Skills Channel')
 SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] OFF
+
+
+insert into ActivityTypeOptions values (3,'Update Meeting')

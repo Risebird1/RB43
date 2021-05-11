@@ -40,9 +40,9 @@ namespace Risebird.Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
-        private static List<MeetingVM> _modelDetails;
-        private static List<Meeting> _modelDetail;
-        private static string Searchvalue;
+        //private static List<MeetingVM> _modelDetails;
+        //private static List<Meeting> _modelDetail;
+        //private static string Searchvalue;
 
 
         private readonly HttpClient _httpClient;
@@ -1424,7 +1424,7 @@ namespace Risebird.Web.Controllers
                         {
                             new SelectListItem { Text = "No Clients", Value = "" }
                         };
-                        MeetingVM meetingToUpdate = _meetingService.GetMeeting(id);
+                        MeetingVM meetingToUpdate = await _meetingService.GetMeeting(id);
                         if (meetingToUpdate == null)
                             return RedirectToAction("Index");
                         var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
@@ -1490,6 +1490,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
                         var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
@@ -1557,7 +1559,10 @@ namespace Risebird.Web.Controllers
                             }
 
                             meetingUpdated.candidateEmail = meetingUpdated.candidateEmail.ToLower();
-                            if (_meetingService.UpdateMeeting(meetingUpdated))
+                            meetingUpdated.LoggedInUser = emailId;
+                            meetingUpdated.ResourceUrl = Request.Scheme + "://" +Request.Host.Value +Request.Path ;
+                            
+                            if (await _meetingService.UpdateMeeting(meetingUpdated))
                             {
                                 TempData["SuccessErrorMessageInterview"] = "Meeting has been updated successfully";
                                 return RedirectToAction("Index");

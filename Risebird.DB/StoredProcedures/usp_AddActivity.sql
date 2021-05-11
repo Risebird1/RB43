@@ -18,13 +18,14 @@ CREATE PROCEDURE [dbo].[usp_AddActivity]
 @Summary varchar(max),
 @FileUrl varchar(max),
 @PerformedAt datetime,
-@Name varchar(150)
+@Particulars varchar(150),
+@ResourceUrl varchar(500)
 
     
 AS
 BEGIN
-      INSERT INTO ActivityTracker(ActivityType, PerformedBy, Summary, FileUrl, PerformedAt, [Name])
-      VALUES (@ActivityType, @PerformedBy, @Summary, @FileUrl, @PerformedAt, @Name)
+      INSERT INTO ActivityTracker(ActivityType, PerformedBy, Summary, FileUrl, PerformedAt, Particulars, ResourceUrl)
+      VALUES (@ActivityType, @PerformedBy, @Summary, @FileUrl, @PerformedAt, @Particulars, @ResourceUrl)
 END
 GO
 

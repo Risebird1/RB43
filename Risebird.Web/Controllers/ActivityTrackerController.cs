@@ -7,7 +7,9 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -35,17 +37,20 @@ namespace Risebird.Web.Controllers
 
                     if (profileName == "Admin")
                     {
-                        var model = await _activityTrackerService.GetAllActivities();
+                        var model = new List<ActivityTrackerVM>();
+                        if (HttpContext.Session.GetString("ActivityTrackerFilters") == null)
+                        {
+                            model = (await _activityTrackerService.GetAllActivities(DateTime.Now, DateTime.Now)).ToList();
 
-                        if (HttpContext.Session.GetString("ActivityTrackerFilters") != null)
+                        }
+                        else
                         {
                             var filter = JsonConvert.DeserializeObject<ActivityTrackerFilter>(HttpContext.Session.GetString("ActivityTrackerFilters"));
-                            if (filter.StartDate != null && filter.EndDate != null)
-                            {
-                                model = model.Where(x => x.PerformedAt >= filter.StartDate && x.PerformedAt <= filter.EndDate);
-                            }
 
+                            model = (await _activityTrackerService.
+                                GetAllActivities(filter.StartDate??DateTime.Now, filter.EndDate ?? DateTime.Now)).ToList();
 
+                            
                             filter.PerformedBy = filter.PerformedBy == null ? model.Select(x => x.PerformedBy).ToArray() : filter.PerformedBy;
                             filter.ActivityType = filter.ActivityType == null ? model.Select(x => x.ActivityTypeDesc).ToArray() : filter.ActivityType;
 
@@ -93,13 +98,10 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.SetString("ActivityTrackerFilters", JsonConvert.SerializeObject(filter));
                         }
-                        var model = await _activityTrackerService.GetAllActivities();
+                        var model = (await _activityTrackerService.
+                                GetAllActivities(filter.StartDate ?? DateTime.Now, filter.EndDate ?? DateTime.Now)).ToList();
 
-                        if (filter.StartDate != null && filter.EndDate != null)
-                        {
-                            model = model.Where(x => x.PerformedAt >= filter.StartDate && x.PerformedAt <= filter.EndDate);
-                        }
-
+                        
 
                         filter.PerformedBy = filter.PerformedBy == null ? model.Select(x => x.PerformedBy).ToArray() : filter.PerformedBy;
                         filter.ActivityType = filter.ActivityType == null ? model.Select(x => x.ActivityTypeDesc).ToArray() : filter.ActivityType;
@@ -162,23 +164,26 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                var model = await _activityTrackerService.GetAllActivities();
 
-                if (HttpContext.Session.GetString("ActivityTrackerFilters") != null)
+                var model = new List<ActivityTrackerVM>();
+                if (HttpContext.Session.GetString("ActivityTrackerFilters") == null)
+                {
+                    model = (await _activityTrackerService.GetAllActivities(DateTime.Now, DateTime.Now)).ToList();
+
+                }
+                else
                 {
                     var filter = JsonConvert.DeserializeObject<ActivityTrackerFilter>(HttpContext.Session.GetString("ActivityTrackerFilters"));
-                    if (filter.StartDate != null && filter.EndDate != null)
-                    {
-                        model = model.Where(x => x.PerformedAt >= filter.StartDate && x.PerformedAt <= filter.EndDate);
-                    }
 
+                    model = (await _activityTrackerService.
+                                GetAllActivities(filter.StartDate ?? DateTime.Now, filter.EndDate ?? DateTime.Now)).ToList();
 
+                    
                     filter.PerformedBy = filter.PerformedBy == null ? model.Select(x => x.PerformedBy).ToArray() : filter.PerformedBy;
                     filter.ActivityType = filter.ActivityType == null ? model.Select(x => x.ActivityTypeDesc).ToArray() : filter.ActivityType;
 
                     model = model.Where(c => ((filter.PerformedBy != null && filter.PerformedBy.Count() > 0) ? filter.PerformedBy.Contains(c.PerformedBy) : c.PerformedBy == null)
                     && ((filter.ActivityType != null && filter.ActivityType.Count() > 0) ? filter.ActivityType.Contains(c.ActivityTypeDesc) : c.ActivityTypeDesc == null)).ToList();
-
 
                 }
 
@@ -193,7 +198,7 @@ namespace Risebird.Web.Controllers
                     Sheet.Column(a).Width = 40;
                 }
                 Sheet.Cells[1, 1].Value = "Activity Type";
-                Sheet.Cells[1, 2].Value = "Name";
+                Sheet.Cells[1, 2].Value = "Particulars";
                 Sheet.Cells[1, 3].Value = "Summary";
                 Sheet.Cells[1, 4].Value = "Performed At";
                 Sheet.Cells[1, 5].Value = "Performed By";
@@ -206,7 +211,16 @@ namespace Risebird.Web.Controllers
                     foreach (var item in model)
                     {
                         Sheet.Cells[i, 1].Value = item.ActivityTypeDesc;
-                        Sheet.Cells[i, 2].Value = item.Name;
+                        Sheet.Cells[i, 2].Value = item.Particulars;
+
+                        if (!string.IsNullOrEmpty(item.ResourceUrl))
+                        {
+                            Sheet.Cells[i, 2].Hyperlink = new Uri(item.FileUrl, UriKind.Absolute);
+                            Sheet.Cells[i, 2].Style.Font.UnderLine = true;
+                            Sheet.Cells[i, 2].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+
+                        }
+
                         Sheet.Cells[i, 3].Value = item.Summary;
                         Sheet.Cells[i, 4].Value = item.PerformedAt.ToString("MM/dd/yyyy HH:mm");
                         Sheet.Cells[i, 5].Value = item.PerformedBy;

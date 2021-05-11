@@ -242,6 +242,17 @@ namespace Risebird.Entities.ViewModel
         public long ZoomMeetingId { get; set; }
         public int VideoDuration { get; set; }
         public int Interviewid { get; set; }
+        public string OldInterviewer { get; set; }
+        public string OldQCInterviewer { get; set; }
+        public string OldzoomLink { get; set; }
+        public string OldrisebirdHR { get; set; }
+        public string OldConfirmationStatus { get; set; }
+        public string OldHRCoordinatorEmailId { get; set; }
+        public string OldIRFId { get; set; }
+        public DateTime OldinterviewDate { get; set; }
+        public string LoggedInUser { get; set; }
+        public string ResourceUrl { get; set; }
+
     }
     public class VedioComments
     {
