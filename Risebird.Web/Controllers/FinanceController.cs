@@ -615,6 +615,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 11].Value = "Video Link";
                         Sheet.Cells[1, 12].Value = "Video Duration";
                         Sheet.Cells[1, 13].Value = "Amount";
+                        Sheet.Cells[1, 14].Value = "Channel Owner";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
@@ -657,6 +658,7 @@ namespace Risebird.Web.Controllers
                                         Sheet.Cells[i, 12].Value = "NA";
                                     }
                                     Sheet.Cells[i, 13].Value = item.Points;
+                                    Sheet.Cells[i, 14].Value = item.ChannelOwner;
                                     i++;
                                 }
 
@@ -748,6 +750,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 11].Value = "Video Link";
                         Sheet.Cells[1, 12].Value = "Video Duration";
                         Sheet.Cells[1, 13].Value = "Amount";
+                        Sheet.Cells[1, 14].Value = "Channel Owner";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
@@ -790,6 +793,7 @@ namespace Risebird.Web.Controllers
                                         Sheet.Cells[i, 12].Value = "NA";
                                     }
                                     Sheet.Cells[i, 13].Value = item.Points;
+                                    Sheet.Cells[i, 14].Value = item.ChannelOwner;
                                     i++;
                                 }
 
