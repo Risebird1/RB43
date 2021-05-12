@@ -725,18 +725,18 @@
         var st = '';
         var se = '';
         if (index == 1) {
-            st = '01-' + month + '-' + year;
-            se = '07-' + month + '-' + year;
+            st = year + '-' + month + '-01';
+            se = year + '-' + month + '-07';
         } else if (index == 2) {
-            st = '08-' + month + '-' + year;
-            se = '14-' + month + '-' + year;
+            st = year + '-' + month + '-08';
+            se = year + '-' + month + '-14';
         } else if (index == 3) {
-            st = '15-' + month + '-' + year;
-            se = '21-' + month + '-' + year;
+            st = year + '-' + month + '-15';
+            se = year + '-' + month + '-21';
         } else if (index == 4) {
             var lastdate = lastday(year, month);
-            st = '22-' + month + '-' + year;
-            se = lastdate + '-' + month + '-' + year;
+            st = year + '-' + month + '-22';
+            se = year + '-' + month + '-' + lastdate;
         }
         $.ajax({
             type: "POST",
