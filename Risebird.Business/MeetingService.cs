@@ -448,28 +448,28 @@ namespace Risebird.Business
             try
             {
                 var result = await _meetingRespository.UpdateMeeting(meetingToUpdate);
-                if(result)
+                if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateMeeting;
-                    activityTrackerModel.Particulars = "Meeting with: "+ meetingToUpdate.candidateEmail;
+                    activityTrackerModel.Particulars = "Meeting with: " + meetingToUpdate.candidateEmail;
                     activityTrackerModel.PerformedBy = meetingToUpdate.LoggedInUser;
 
                     StringBuilder summary = new StringBuilder();
-                    if(meetingToUpdate.OldConfirmationStatus != meetingToUpdate.confirmationStatus)
+                    if (meetingToUpdate.OldConfirmationStatus != meetingToUpdate.confirmationStatus)
                     {
-                        if(meetingToUpdate.confirmationStatus== ((int)ReceiveMeetingStatus.Cancelled).ToString())
+                        if (meetingToUpdate.confirmationStatus == ((int)ReceiveMeetingStatus.Cancelled).ToString())
                         {
                             summary.Append("Meeting Cancelled");
                         }
-                        else if(meetingToUpdate.confirmationStatus== ((int)ReceiveMeetingStatus.Confirmed).ToString())
+                        else if (meetingToUpdate.confirmationStatus == ((int)ReceiveMeetingStatus.Confirmed).ToString())
                         {
                             summary.Append("Meeting Confirmed");
                         }
                     }
-                    if(meetingToUpdate.OldHRCoordinatorEmailId != meetingToUpdate.HRCoordinatorEmailId)
+                    if (meetingToUpdate.OldHRCoordinatorEmailId != meetingToUpdate.HRCoordinatorEmailId)
                     {
-                        if(summary.Length > 0)
+                        if (summary.Length > 0)
                         {
                             summary.Append("; HR Co-ordinator changed");
                         }
@@ -2626,11 +2626,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue, string Comment)
+        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment)
         {
             try
             {
-                var result = _meetingRespository.InsertPaymentHistory(Interviewer, Amount, actionvalue, Comment);
+                var result = _meetingRespository.InsertPaymentHistory(Interviewer, Amount, TotalAmount, actionvalue, Comment);
                 return result.Result;
             }
             catch (Exception e)

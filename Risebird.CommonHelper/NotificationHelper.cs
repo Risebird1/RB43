@@ -1122,7 +1122,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string RBFNPaymentConfirmationNotification(Mail model, string amount, string fileName)
+        public string RBFNPaymentConfirmationNotification(Mail model, string amount, StringBuilder sb)
         {
             try
             {
@@ -1141,22 +1141,22 @@ namespace Risebird.CommonHelper
 
                 }
 
-                if (!String.IsNullOrEmpty(fileName))
-                {
-                    byte[] byteData = Encoding.ASCII.GetBytes(File.ReadAllText(fileName));
+                //if (!String.IsNullOrEmpty(fileName))
+                //{
+                //    byte[] byteData = Encoding.ASCII.GetBytes(File.ReadAllText(fileName));
 
-                    var attachment = new SendGrid.Helpers.Mail.Attachment
-                    {
-                        Content = Convert.ToBase64String(byteData),
-                        Filename = fileName,
-                        Type = "txt/plain",
-                        Disposition = "attachment"
-                    };
-                    msg.AddAttachment(attachment);
-                }
+                //    var attachment = new SendGrid.Helpers.Mail.Attachment
+                //    {
+                //        Content = Convert.ToBase64String(byteData),
+                //        Filename = fileName,
+                //        Type = "txt/plain",
+                //        Disposition = "attachment"
+                //    };
+                //    msg.AddAttachment(attachment);
+                //}
 
 
-                object[] parameters = new object[] { amount };
+                object[] parameters = new object[] { amount, sb.ToString() };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RBFNPaymentConfirmationNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
