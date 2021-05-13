@@ -554,6 +554,10 @@ table.journey {
 .theme-settings .ts-body {
     background: #9a9a9a
 }
+.Fnactive-header-button {
+    background-color: #47484acf !important;
+    color: #fff !important;
+}
 #jdlinkId {
     background: #fff;
     color: #929292;

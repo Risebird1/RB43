@@ -6,6 +6,7 @@
     ViewData["Title"] = "RB Payment Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <link href="~/Autocomplete/jquery-ui.min.css" rel="stylesheet" />
 <link href="~/Newassets/css/irf.css?v=54321" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=54321" />
@@ -15,7 +16,7 @@
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
             <div class="navbar-wrapper">
-                <div class="navbar-toggle">
+                <div class="navbar-toggle"> 
                     <button type="button" class="navbar-toggler">
                         <span class="navbar-toggler-bar bar1"></span>
                         <span class="navbar-toggler-bar bar2"></span>
@@ -44,17 +45,17 @@
                 </div>
 
                 <div class="pull-right client-ms">
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to generate invoice.">
-                        <span data-toggle="tooltip" data-placement="top" title="1-7 of this month" onclick="Fetchinvoice(1,1)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">1-7</font></span>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="1-7 of this month" onclick="Fetchinvoice(1,1)">
+                        <span data-toggle="tooltip" data-placement="top" title="1-7 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">1-7</font></span>
                     </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to generate invoice.">
-                        <span data-toggle="tooltip" data-placement="top" title="8-14 of this month" onclick="Fetchinvoice(2,1)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">8-14</font></span>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="8-14 of this month" onclick="Fetchinvoice(2,1)">
+                        <span data-toggle="tooltip" data-placement="top" title="8-14 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">8-14</font></span>
                     </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to generate invoice.">
-                        <span data-toggle="tooltip" data-placement="top" title="15-21 of this month" onclick="Fetchinvoice(3,1)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">15-21</font></span>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="15-21 of this month" onclick="Fetchinvoice(3,1)">
+                        <span data-toggle="tooltip" data-placement="top" title="15-21 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">15-21</font></span>
                     </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to generate invoice.">
-                        <span data-toggle="tooltip" data-placement="top" title="22-month end of this month" onclick="Fetchinvoice(4,1)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">22-_</font></span>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="22-month end of this month" onclick="Fetchinvoice(4,1)">
+                        <span data-toggle="tooltip" data-placement="top" title="22-month end of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">22-_</font></span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Payment History">
                         <span class="fa fa-history" data-toggle="tooltip" data-placement="top" title="Payment History" onclick="openPaymentHistory()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Payment History</font></span>
@@ -108,6 +109,11 @@
                                     <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
 
                                         <div class="clearfix"></div>
+                                        <div>
+                                            <label id="txtAmount">Amount: @ViewBag.totalAmount </label>
+                                            <label id="txtTdsdeducted">Tds deducted: @ViewBag.Tds</label>
+                                            <label id="txtPayableAmount">Payable Amount: @ViewBag.payableAmount</label>
+                                        </div>
                                         <div class="col-sm-12 nopad">
                                             <div class="table-responsive">
                                                 <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
@@ -136,7 +142,7 @@
 
                                                             <tr>
                                                                 <td>@item.Comment<input type="hidden" id="hidcomment_@item.id" value="@item.Comment" /></td>
-                                                                <td>@(item.Points-(item.Points*.1))<input type="hidden" id="hidpoint_@item.id" value="@(item.Points-(item.Points*.1))" /></td>
+                                                                <td>@item.Points<input type="hidden" id="hidpoint_@item.id" value="@item.Points" /></td>
                                                                 <td>
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Detailed View">
                                                                         <span onclick="DetailedView(@item.id)" title="Detailed View" class="mdc-fab__icon material-icons">
@@ -206,7 +212,7 @@
 
                                     </span>
                                 </div>
-                                <h5 class="modal-title pull-left"> Detailed View</h5>
+                                <h5 class="modal-title pull-left"> Detailed View ( <label id="txtInterviewerEmailid"></label> )</h5>
                             </div>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="CloseMyModelPopup()">
                                 <span aria-hidden="true" id="importPopUp" style="cursor:pointer;">&times;</span>
@@ -214,7 +220,13 @@
                             <div class="modal-body">
                                 <div class="col-md-12">
 
-                                    <div class="sb-container scroller-payment"> <div id="divDetailedView"></div></div>
+                                    <div id="divDetailedView" style="max-height:250px;overflow-y:auto"></div>
+                                    <div style="text-align:center">
+                                        <label id="txtAmountD">Amount: @ViewBag.totalAmount </label> |
+                                        <label id="txtTdsdeductedD">Tds deducted: @ViewBag.Tds</label> |
+                                        <label id="txtPayableAmountD">Payable Amount: @ViewBag.payableAmount</label>
+
+                                    </div>
                                 </div>
 
                             </div>
@@ -383,7 +395,7 @@
         }
 
         for (var i = 0; i < data.length; i++) {
-            var pointdetails = parseInt(data[i].points) - (parseInt(data[i].points) * .1);
+            var pointdetails = data[i].points;
             html += '  <tr>';
             html += '  <td>' + data[i].comment + '</td>';
             html += ' <td>' + pointdetails + '</td> ';
@@ -476,7 +488,11 @@
             url: "/Finance/GetInterviewerPaymentDetails",
             data: { 'id': interviewerid, 'flag': Generateinvoiceflag, 'st': St_date, 'se': Se_date },
             success: function (data) {
-                binddata(data);
+                binddata(data.result);
+                $("#txtInterviewerEmailid").text($("#hidcomment_" + interviewerid).val());
+                $("#txtAmountD").text("Amount: " + data.totalAmount);
+                $("#txtPayableAmountD").text("Payable Amount: " + data.payableAmount);
+                $("#txtTdsdeductedD").text("Tds deducted: " + data.tds);
             }
         });
     }
@@ -686,6 +702,15 @@
         });
         document.getElementById("ui-id-1").style.zIndex = "10000";
     });
+    $(document).ready(function () {
+        $(".Fnactive-header").click(function () {
+            $(".Fnactive-header").removeClass("Fnactive-header-button");
+            $(".Fnactive-header").addClass("mdc-button--raised");
+            $(this).removeClass("mdc-button--raised");
+            $(this).addClass("Fnactive-header-button");
+        });
+    });
+
     function PaymentDone() {
         var interviewer = $("#adtxtEmailid").val();
         var amount = $("#adtxtPoints").val();
@@ -718,7 +743,6 @@
         }
     }
     function Fetchinvoice(index, pagenumber) {
-
         var today = new Date();
         var month = today.getMonth() + 1;
         var year = today.getFullYear();
@@ -752,6 +776,9 @@
                     bindtableData(data.result);
                     bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry, data.currentpage);
                     closemyinvoiceModel();
+                    $("#txtAmount").text("Amount: " + data.totalAmount);
+                    $("#txtPayableAmount").text("Payable Amount: " + data.payableAmount);
+                    $("#txtTdsdeducted").text("Tds deducted: " + data.tds);
                 }
             }
         });
@@ -781,6 +808,9 @@
                             bindtableData(data.result);
                             bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry, data.currentpage);
                             closemyinvoiceModel();
+                            $("#txtAmount").text("Amount: " + data.totalAmount);
+                            $("#txtPayableAmount").text("Payable Amount: " + data.payableAmount);
+                            $("#txtTdsdeducted").text("Tds deducted: " + data.tds);
                         }
                     }
                 });

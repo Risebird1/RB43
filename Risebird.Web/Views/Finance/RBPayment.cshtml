@@ -40,7 +40,7 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> RB Pay Details</h4></div>
                 </div>
-
+                <div style="color:green">10 of Tds deducted from every payment</div>
                 <div class="pull-right">
                     <div>
                         @*@if (ViewBag.submit == "true")
@@ -55,9 +55,9 @@
                                     <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Share with Finance Team."  data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Submit for Payment</font></span>
                                 </button>
                             }*@
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportRBDetails", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>
-                        </button>
+                        @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportRBDetails", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>
+                            </button>*@
                     </div>
                 </div>
             </div>

@@ -238,6 +238,16 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "Finance")
                 {
                     var model = await _meetingService.FetchFNDetails(emailid);
+                    var totalAmount = model.Sum(x => x.Points);
+                    foreach (var item in model)
+                    {
+                        item.Points = (item.Points - Convert.ToInt32(Math.Round(item.Points * .1)));
+                    }
+                    var payableAmount = model.Sum(x => x.Points);
+                    var Tds = totalAmount - payableAmount;
+                    ViewBag.totalAmount = totalAmount;
+                    ViewBag.payableAmount = payableAmount;
+                    ViewBag.Tds = Tds;
                     ViewBag.setvalueforfunction = 1;
                     if (String.IsNullOrEmpty(searchValue))
                     {
@@ -304,18 +314,22 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> GetInterviewerPaymentDetails(int id, int flag, DateTime st, DateTime se)
         {
             var model = await _meetingService.RBInterviewerDetails(id, flag);
+            int totalAmount = model.Sum(x => x.Points);
             if (flag == 2)
             {
                 var model1 = model.Where(x => x.Status == "Advance").ToList();
                 model = model.Where(x => x.Date >= st && x.Date <= se).ToList();
+                totalAmount = model.Where(x => x.Status != "Advance").Sum(x => x.Points) - model1.Sum(x => x.Points);
                 model = model.Union(model1).ToList();
             }
+            var payableAmount = (totalAmount - Convert.ToInt32(Math.Round(totalAmount * .1)));
+            var Tds = totalAmount - payableAmount;
             foreach (var item in model)
             {
                 item.MeetingStatusDetails = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
                 item.InterviewStatusDetails = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
             }
-            return Json(model);
+            return Json(new { result = model, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds });
         }
         /// <summary>
         /// Admin or Finance Team may add points in interviewer or QC account
@@ -527,6 +541,13 @@ namespace Risebird.Web.Controllers
                 else
                     Page = Convert.ToInt32(PageSet);
                 var model = await _meetingService.FNGenerateInvoiceDetails(st, se);
+                var totalAmount = model.Sum(x => x.Points);
+                foreach (var item in model)
+                {
+                    item.Points = (item.Points - Convert.ToInt32(Math.Round(item.Points * .1)));
+                }
+                var payableAmount = model.Sum(x => x.Points);
+                var Tds = totalAmount - payableAmount;
                 int totalcount = model.Count;
                 int Pagestart = 0;
                 int Pageend = 0;
@@ -556,7 +577,7 @@ namespace Risebird.Web.Controllers
                     Pageend = 0;
                 }
                 _modelDetails = model;
-                return Json(new { result = model.Skip((Page - 1) * 10).Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count, currentpage = Page });
+                return Json(new { result = model.Skip((Page - 1) * 10).Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count, currentpage = Page, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds });
             }
             catch (Exception ex)
             {
