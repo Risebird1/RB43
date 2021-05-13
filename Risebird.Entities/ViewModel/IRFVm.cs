@@ -128,6 +128,10 @@ namespace Risebird.Entities.ViewModel
         public string AssessmentGroupId { get; set; }
         public SelectList AssessmentGroupList { get; set; }
         public IEnumerable<IRFInterviewerMembers> InterviewerMembers { get; set; }
+        public string OldCalendlyLink { get; set; }
+        public string OldAssessmentGroupId { get; set; }
+        public string OldJDLink { get; set; }
+        public string ResourceUrl { get; set; }
     }
     public class InterviewerIds
     {

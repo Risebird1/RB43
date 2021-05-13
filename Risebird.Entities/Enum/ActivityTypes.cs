@@ -11,6 +11,8 @@ namespace Risebird.Entities.Enum
         AddSkillsChannel = 2,
 
         [Description("Update Meeting")]
-        UpdateMeeting = 3
+        UpdateMeeting = 3,
+        [Description("Update Skills Channel")]
+        UpdateSkillsChannel = 4,
     }
 }
