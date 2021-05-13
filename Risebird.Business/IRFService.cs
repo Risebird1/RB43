@@ -22,23 +22,44 @@ namespace Risebird.Business
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IClientService _clientService;
         private readonly IConfiguration _configuration;
+        private readonly IActivityTrackerRepository _activityTrackerRepository;
 
-        public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration)
+        public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, 
+            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
             _clientService = clientService;
             _configuration = configuration;
+            _activityTrackerRepository = activityTrackerRepository;
         }
 
         #region IRF Functions
-        public async Task<bool> AddIRFDetails(IRFVm irfDetails)
+        public async Task<bool> AddIRFDetails(IRFVm irfDetails, string loggedInUser, string domain)
         {
             try
             {
                 irfDetails.CreatedOn = DateTime.UtcNow;
-                return _irfRepository.AddIRFDetails(irfDetails).Result;
+                int irfId = 0;
+                var result= _irfRepository.AddIRFDetails(irfDetails, out irfId);
+                if (result)
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.AddSkillsChannel;
+                    activityTrackerModel.Particulars = irfDetails.IRFId;
+                    activityTrackerModel.PerformedBy = loggedInUser;
+                    activityTrackerModel.Summary = "Skill channel created";
+
+                    if(irfId != 0)
+                    {
+                        activityTrackerModel.ResourceUrl = domain + $"/IRF/EditIRF?id={irfId}";
+                    }
+                    
+
+                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
+                return result;
             }
 
             catch (Exception e)
@@ -443,6 +464,9 @@ namespace Risebird.Business
                 model.AssessmentGroupId = IRF.AssessmentGroupId;
                 model.BillingOwner = IRF.BillingOwner;
                 var skillCount = transTechSkills.Count();
+                model.OldAssessmentGroupId = model.AssessmentGroupId;
+                model.OldCalendlyLink = model.CalendlyLink;
+                model.OldJDLink = model.JDLink;
                 return model;
 
             }
@@ -454,16 +478,60 @@ namespace Risebird.Business
             }
         }
 
-        public bool UpdateIRF(IRFVm model)
+        public async Task<bool> UpdateIRF(IRFVm model, string loggedInUser)
         {
             try
             {
-                return _irfRepository.UpdateIRFDetails(model).Result;
+                var result =_irfRepository.UpdateIRFDetails(model).Result;
+                if(result)
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateSkillsChannel;
+                    activityTrackerModel.Particulars = model.IRFId;
+                    activityTrackerModel.PerformedBy = loggedInUser;
+
+                    StringBuilder summary = new StringBuilder();
+                    if (model.OldAssessmentGroupId != model.AssessmentGroupId)
+                    {
+                        summary.Append("Assessment Group changed");
+                    }
+                    if (model.OldCalendlyLink != model.CalendlyLink)
+                    {
+                        if (summary.Length > 0)
+                        {
+                            summary.Append("; Calendly Link changed");
+                        }
+                        else
+                        {
+                            summary.Append("Calendly Link changed");
+                        }
+                    }
+                    if (model.OldJDLink != model.JDLink)
+                    {
+                        if (summary.Length > 0)
+                        {
+                            summary.Append("; JD Link changed");
+                        }
+                        else
+                        {
+                            summary.Append("JD Link changed");
+                        }
+                    }
+                    if (summary.Length == 0)
+                    {
+                        summary.Append("Skill Channel updated");
+                    }
+                    activityTrackerModel.Summary = summary.ToString();
+                    activityTrackerModel.ResourceUrl = model.ResourceUrl;
+
+                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
+                return result;
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }

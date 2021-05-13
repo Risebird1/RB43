@@ -10,7 +10,7 @@ namespace Risebird.Business.Interface
 {
     public interface IIRFService
     {
-        Task<bool> AddIRFDetails(IRFVm irfDetails);
+        Task<bool> AddIRFDetails(IRFVm irfDetails, string loggedInUser, string domain);
         IEnumerable<Users> GetRiseBirdHR();
         string GetInterviewerSkills(int id);
         IEnumerable<Skill> GetTechSkills(int id);
@@ -21,7 +21,7 @@ namespace Risebird.Business.Interface
         string GetQCSkills(int id);
         SelectList GetQualityController();
         Task<IRFVm> GetEditIRF(int id);
-        bool UpdateIRF(IRFVm model);
+        Task<bool> UpdateIRF(IRFVm model, string loggedInUser);
         IList<SkillComment> GetTechSkillComments(int id);
         bool CheckUniqueness(string value);
 

@@ -65,8 +65,8 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");//"CuratedUser";
-                var emailid = HttpContext.Session.GetString("email")?.Trim();//"harshitjajoorb@gmail.com"
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance")
                 {
@@ -766,6 +766,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
                         string uploadedFileURL = string.Empty;
@@ -790,8 +792,8 @@ namespace Risebird.Web.Controllers
                             uploadedFileURL = blob.Uri.ToString();
                             irfDetails.CompanyDetails = uploadedFileURL;
                         }
-
-                        if (_irfService.AddIRFDetails(irfDetails).Result)
+                        var domain = Request.Scheme + "://" + Request.Host.Value;
+                        if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
                         {
                             TempData["SuccessErrorMessage"] = "Skills Channel is added Successfully";
                             return RedirectToAction("Index");
@@ -1454,6 +1456,8 @@ namespace Risebird.Web.Controllers
                     {
                         model.InterviewerMembers = new List<IRFInterviewerMembers>();
                     }
+                    model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+
                     return View(model);
                 }
                 else
@@ -1480,6 +1484,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
 
@@ -1530,7 +1536,8 @@ namespace Risebird.Web.Controllers
                                 TempData["SuccessErrorMessage"] = "Sorry! Skills Channel with this name already exists!";
                                 return RedirectToAction("Index");
                             }
-                            if (_irfService.AddIRFDetails(model).Result)
+                            var domain = Request.Scheme + "://" + Request.Host.Value;
+                            if (_irfService.AddIRFDetails(model, emailId, domain).Result)
                             {
                                 TempData["SuccessErrorMessage"] = "Skills Channel saved Successfully!";
                                 return RedirectToAction("Index");
@@ -1544,7 +1551,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            if (_irfService.UpdateIRF(model))
+                            if (await _irfService.UpdateIRF(model, emailId))
                             {
                                 TempData["SuccessErrorMessage"] = "Skills Channel saved Successfully";
                                 return RedirectToAction("Index");

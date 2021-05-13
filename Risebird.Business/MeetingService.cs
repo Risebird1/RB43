@@ -458,9 +458,13 @@ namespace Risebird.Business
                     StringBuilder summary = new StringBuilder();
                     if(meetingToUpdate.OldConfirmationStatus != meetingToUpdate.confirmationStatus)
                     {
-                        if(meetingToUpdate.confirmationStatus== ReceiveMeetingStatus.Cancelled.ToString())
+                        if(meetingToUpdate.confirmationStatus== ((int)ReceiveMeetingStatus.Cancelled).ToString())
                         {
                             summary.Append("Meeting Cancelled");
+                        }
+                        else if(meetingToUpdate.confirmationStatus== ((int)ReceiveMeetingStatus.Confirmed).ToString())
+                        {
+                            summary.Append("Meeting Confirmed");
                         }
                     }
                     if(meetingToUpdate.OldHRCoordinatorEmailId != meetingToUpdate.HRCoordinatorEmailId)

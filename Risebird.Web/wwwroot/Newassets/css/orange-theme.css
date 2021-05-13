@@ -20,7 +20,10 @@ body {
     border-radius: 10px;
     background: #fff url(../../Newassets/img/refresh.png) 1px no-repeat;
 }
-
+.Fnactive-header-button {
+    background-color: #b74709 !important;
+    color: #fff !important;
+}
 td.detail-row {
     background-color: #fff;
 }

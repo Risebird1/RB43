@@ -12,7 +12,10 @@ body {
     .can-details a:focus {
         color: #9a9a9a !important
     }
-
+.Fnactive-header-button {
+    background-color: #ffffff !important;
+    color: #000 !important;
+}
 table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead > th, table.journey th {
     background: transparent !important;
 }

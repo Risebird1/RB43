@@ -637,7 +637,7 @@ namespace Risebird.Repository
         }
 
 
-        public async Task<bool> AddIRFDetails(IRFVm irfDetails)
+        public bool AddIRFDetails(IRFVm irfDetails, out int irfID)
         {
             try
             {
@@ -646,10 +646,10 @@ namespace Risebird.Repository
                 parameters.Add("@CreatedOn", irfDetails.CreatedOn);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync<int>(con, "usp_AddIRFDetails", parameters,
+                    SqlMapper.Query(con, "usp_AddIRFDetails", parameters,
                        commandType: CommandType.StoredProcedure);
 
-                    var irfID = parameters.Get<int>("@idIrf");
+                    irfID = parameters.Get<int>("@idIrf");
 
 
                     DataTable joinabilityDt = new DataTable();
@@ -915,13 +915,15 @@ namespace Risebird.Repository
 
             catch (SqlException e)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                irfID = 0;
                 return false;
             }
 
             catch (Exception e)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                irfID = 0;
                 return false;
             }
         }

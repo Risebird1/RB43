@@ -18,6 +18,10 @@ body {
     .can-details a:focus {
         color: #f96332 !important;
     }
+.Fnactive-header-button {
+    background-color: #204065 !important;
+    color: #fff !important;
+}
 .sharetr {
     background: #e2e2e2;
     padding: 5px;
