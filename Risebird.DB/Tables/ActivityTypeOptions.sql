@@ -25,3 +25,6 @@ SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] OFF
 
 insert into ActivityTypeOptions values (3,'Update Meeting')
 insert into ActivityTypeOptions values (4,'Update Skills Channel')
+
+insert into ActivityTypeOptions values (5,'Create Candidate Feedback')
+insert into ActivityTypeOptions values (6,'Update Candidate Feedback')

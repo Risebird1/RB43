@@ -1,6 +1,6 @@
 ﻿var member = "";
 var modalId = "";
-var headerId = "";
+var labelId = "";
 
 
 /* Callback to let us know Twilio Client is ready */
@@ -18,7 +18,7 @@ function hangUp() {
 
 Twilio.Device.connect(function (connection) {
     var appendText = "In call with " + "<b>" + member + "</b>";
-    document.getElementById(headerId).innerHTML = appendText;
+    document.getElementById(labelId).innerHTML = appendText;
 });
 
 function afterTimeOut() {
@@ -28,21 +28,21 @@ function afterTimeOut() {
 
 Twilio.Device.disconnect(function (connection) {
     var appendText = "Call disconnected! ";
-    document.getElementById(headerId).innerHTML = appendText;
+    document.getElementById(labelId).innerHTML = appendText;
     setTimeout(afterTimeOut, 2000);
 
 });
 
-function CallButtonClick(name, phone, modalElementId, headerElementId) {
+function CallButtonClick(name, phone, modalElementId, labelElementId) {
     member = name;
     modalId = modalElementId;
-    headerId = headerElementId;
+    labelId = labelElementId;
     // Get the modal
     var modal = document.getElementById(modalId);
     // When the user clicks the button, open the modal
     modal.style.display = "block";
     var appendText = "Calling... " + "<b>" + member + "</b>";
-    document.getElementById(headerId).innerHTML = appendText;
+    document.getElementById(labelId).innerHTML = appendText;
     callMember(phone);
 }
 function closeCallPopUp() {

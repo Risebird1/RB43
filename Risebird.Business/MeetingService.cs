@@ -1064,6 +1064,14 @@ namespace Risebird.Business
                 reportModel.joiningTime = interviewDetails.joiningTime;
                 reportModel.ThumbnailTimeSeconds = interviewDetails.ThumbnailTimeSeconds;
                 reportModel.VideoDuration = interviewDetails.VideoDuration;
+
+                if(reportModel.IsEdited)
+                {
+                    reportModel.OldInterviewerComment = reportModel.InterviewerComment;
+                    reportModel.OldInterviewStatus = reportModel.InterviewStatus;
+                    reportModel.OldMeetingStatus = reportModel.MeetingStatus;
+                }
+
                 return reportModel;
             }
 
@@ -1133,6 +1141,7 @@ namespace Risebird.Business
                 var result = await _meetingRespository.AddInterviewReport(reportModel);
                 if (result)
                 {
+                    var activityTrackerModel = new ActivityTrackerVM();
                     if (!reportModel.IsEdited)
                     {
                         if (reportModel.MeetingStatus.HasValue && reportModel.MeetingStatus.Value != (int)MeetingStatus.Scheduled)
@@ -1160,6 +1169,14 @@ namespace Risebird.Business
 
                         }
 
+                        activityTrackerModel.ActivityType = (int)ActivityTypes.CreateCandidateFeedback;
+                        activityTrackerModel.Particulars = "Feedback for: " + reportModel.CandidateEmail;
+                        activityTrackerModel.PerformedBy = emailId;
+
+                        activityTrackerModel.Summary = "Feedback created";
+                        activityTrackerModel.ResourceUrl = reportModel.ResourceUrl;
+
+                        await _activityTrackerRepository.AddActivity(activityTrackerModel);
                     }
                     else
                     {
@@ -1193,6 +1210,47 @@ namespace Risebird.Business
 
                             }
                         }
+
+                        activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateCandidateFeedback;
+                        activityTrackerModel.Particulars = "Feedback for: " + reportModel.CandidateEmail;
+                        activityTrackerModel.PerformedBy = emailId;
+
+                        StringBuilder summary = new StringBuilder();
+                        if (reportModel.OldInterviewerComment != reportModel.InterviewerComment)
+                        {
+                            summary.Append("Interviewer comment changed");
+                        }
+                        if (reportModel.OldInterviewStatus != reportModel.InterviewStatus)
+                        {
+                            if (summary.Length > 0)
+                            {
+                                summary.Append("; Interview Status changed");
+                            }
+                            else
+                            {
+                                summary.Append("Interview Status changed");
+                            }
+                        }
+                        if (reportModel.OldMeetingStatus != reportModel.MeetingStatus)
+                        {
+                            if (summary.Length > 0)
+                            {
+                                summary.Append("; Meeting Status changed");
+                            }
+                            else
+                            {
+                                summary.Append("Meeting Status changed");
+                            }
+                        }
+                        
+                        if (summary.Length == 0)
+                        {
+                            summary.Append("Feedback updated");
+                        }
+                        activityTrackerModel.Summary = summary.ToString();
+                        activityTrackerModel.ResourceUrl = reportModel.ResourceUrl;
+
+                        await _activityTrackerRepository.AddActivity(activityTrackerModel);
                     }
                 }
                 if (reportModel.InterviewStatus.HasValue && !reportModel.IsEdited)

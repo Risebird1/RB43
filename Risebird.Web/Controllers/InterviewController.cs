@@ -3416,6 +3416,7 @@ namespace Risebird.Web.Controllers
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
                 GetStatusList(model, irfId);
+                model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 if (isClient || isClientSelected)
                 {
                     return PartialView("ClientPartialReport", model);

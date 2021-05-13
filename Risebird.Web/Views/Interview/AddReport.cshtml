@@ -107,15 +107,15 @@
 
                                 <div class="row">
                                     @*<div class="col-md-6 col-sm-6">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                    @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                    @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
+                        @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
 
-                </div>
+                    </div>
 
-            </div>*@
+                </div>*@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -133,12 +133,12 @@
                                 </div>
                                 <div class="row">
                                     @*<div class="col-md-6 col-sm-6">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                    @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                </div>
-            </div>*@
+                        @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                    </div>
+                </div>*@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -180,7 +180,7 @@
                                     </div>
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            
+
                                             @Html.HiddenFor(m => m.PreviousMeetingStatus)
                                             @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
@@ -1038,14 +1038,14 @@
                                                     }
                                                 </div>
                                             </div>
-                                           
+
                                         </div><!--end of col-md-12-->
 
                                     </div>
-                                    
+
                                 }
                                 <div>
-                                  <div class="proctor">
+                                    <div class="proctor">
                                         <input class="toggle-box" id="identifier-2" type="checkbox">
                                         <label for="identifier-2">
                                             <div class="multiple_row">
@@ -1322,6 +1322,10 @@
                                 @Html.HiddenFor(x => x.ThumbnailTimeSeconds)
                                 @Html.HiddenFor(x => x.VideoDuration)
                             }
+                            @Html.HiddenFor(x => x.OldInterviewerComment)
+                            @Html.HiddenFor(x => x.IsEdited)
+                            @Html.HiddenFor(x => x.ResourceUrl)
+
                         </form>
                     </div>
 
