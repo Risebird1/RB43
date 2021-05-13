@@ -46,10 +46,6 @@ namespace Risebird.Web.Controllers
             _userService = userService;
             _iRFRepository = iRFRepository;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
         public async Task<IActionResult> CandidateTimeline()
         {
             var profileName = HttpContext.Session.GetString("profileName")?.Trim();
@@ -75,13 +71,13 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
-                            candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
+                            candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
                         }
                     }
                     else
                     {
                         //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
 
                     }
 
@@ -318,7 +314,7 @@ namespace Risebird.Web.Controllers
                     else
                     {
                         //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
                     }
                     var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                     foreach (var candidate in distinctCandidates)
@@ -553,14 +549,14 @@ namespace Risebird.Web.Controllers
                     else
                     {
 
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
                     }
 
                 }
                 else
                 {
                     //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
 
                 }
 

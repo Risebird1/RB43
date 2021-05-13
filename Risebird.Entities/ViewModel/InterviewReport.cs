@@ -310,6 +310,8 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Video Duration(Minutes)")]
         public int VideoDuration { get; set; }
+        public string ResourceUrl { get; set; }
+        public string OldInterviewerComment { get; set; }
     }
     public class RBInterviewDetails
     {
