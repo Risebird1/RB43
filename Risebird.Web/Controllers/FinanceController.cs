@@ -381,14 +381,21 @@ namespace Risebird.Web.Controllers
 
             var resultset = await _meetingService.RBInterviewerDetails(id, index);
             StringBuilder sb = new StringBuilder();
-            sb.Append("<table cellspacing='0' width='100%'><thead><tr><th>Date</th><th>Comment</th><th>Type</th><th>Status</th><th>Total Amount</th><th>Payable Amount</th></tr></thead><tbody>");
+            sb.Append("<table cellspacing='0' width='100%'><thead><tr><th>Date</th><th>Payment for</th><th>Type</th><th>Status</th><th>Total Amount</th><th>Payable Amount</th></tr></thead><tbody>");
             foreach (var item in resultset)
             {
                 sb.Append("<tr>");
                 sb.Append("<td>" + item.Date.ToString() + "</td>");
                 sb.Append("<td>" + item.Comment + "</td>");
                 sb.Append("<td>" + item.Type + "</td>");
-                sb.Append("<td>" + item.Status + "</td>");
+                if (item.Status == "Advance")
+                {
+                    sb.Append("<td>" + item.Status + "</td>");
+                }
+                else
+                {
+                    sb.Append("<td>Paid</td>");
+                }
                 sb.Append("<td>" + item.Points + "</td>");
                 if (item.Status != "Advance")
                 {
