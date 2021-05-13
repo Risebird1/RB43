@@ -775,7 +775,6 @@
                     actiontype = 2;
                     bindtableData(data.result);
                     bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry, data.currentpage);
-                    closemyinvoiceModel();
                     $("#txtAmount").text("Amount: " + data.totalAmount);
                     $("#txtPayableAmount").text("Payable Amount: " + data.payableAmount);
                     $("#txtTdsdeducted").text("Tds deducted: " + data.tds);
@@ -805,9 +804,12 @@
                             Generateinvoiceflag = 2;
                             St_date = st;
                             Se_date = se;
+                            actiontype = 1;
                             bindtableData(data.result);
                             bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry, data.currentpage);
                             closemyinvoiceModel();
+                            $(".Fnactive-header").removeClass("Fnactive-header-button");
+                            $(".Fnactive-header").addClass("mdc-button--raised");
                             $("#txtAmount").text("Amount: " + data.totalAmount);
                             $("#txtPayableAmount").text("Payable Amount: " + data.payableAmount);
                             $("#txtTdsdeducted").text("Tds deducted: " + data.tds);
