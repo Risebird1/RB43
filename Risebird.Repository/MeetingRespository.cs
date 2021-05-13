@@ -4076,7 +4076,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue, string Comment)
+        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment)
         {
             try
             {
@@ -4106,14 +4106,15 @@ namespace Risebird.Repository
                 var PaymentDate = DateTime.Now;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string sqlInsertReport = "Insert Into PaymentHistory (userid, PaymentDate,Amount,Status,Comment) Values (@userid, @PaymentDate, @Amount, @status,@Comment);";
+                    string sqlInsertReport = "Insert Into PaymentHistory (userid, PaymentDate,Amount,Status,Comment,TotalAmount) Values (@userid, @PaymentDate, @Amount, @status,@Comment,@TotalAmount);";
                     var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
                     {
                         userid,
                         PaymentDate,
                         Amount,
                         status,
-                        Comment
+                        Comment,
+                        TotalAmount
                     });
                     return "Success";
                 }

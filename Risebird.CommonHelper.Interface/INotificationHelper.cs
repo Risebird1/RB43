@@ -2,6 +2,7 @@
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Risebird.CommonHelper.Interface
 {
@@ -47,10 +48,10 @@ namespace Risebird.CommonHelper.Interface
         string RBPayNotification(Mail model, string emailid);
         string RBFNQueryNotification(Mail model, string query);
         string ChannelRequestNotification(Mail model, string client, string Skill, string Requester);
-        string RBFNPaymentConfirmationNotification(Mail model, string amount, string fileName);
+        string RBFNPaymentConfirmationNotification(Mail model, string amount, StringBuilder sb);
         string SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill);
         string CandidateShortlistNotification(Mail model, string currenturl, string comment, string email, string[] videoidlist);
-        string InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName,string InterviewDate);
+        string InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate);
         string CandidateWaitingEINotification(Mail model, string zoomlink);
         string AppologyNotificationToCandidate(Mail model, string candidateName);
         string ReScheduleNotificationToCandidate(Mail model, string zoomlink, string candidateName);

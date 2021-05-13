@@ -133,7 +133,7 @@ namespace Risebird.Business.Interface
         IEnumerable<SurveyDetails> FetchSurveyClientName(List<SurveyDetails> _lst);
         IEnumerable<SurveyDetails> FetchSurveyCandidateEmails(List<SurveyDetails> _lst);
 
-        Task<string> InsertPaymentHistory(string Interviewer, int Amount, string actionvalue, string Comment);
+        Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment);
         Task<List<RBInterviewDetails>> FetchFNPaymentHistory();
         Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailId, bool isFilter = false, DateTime? startDate = null, DateTime? endDate = null);
         List<Meeting> FetchOpenMeetingById(string id);

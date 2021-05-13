@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using X.PagedList;
 
@@ -379,35 +380,31 @@ namespace Risebird.Web.Controllers
         {
 
             var resultset = await _meetingService.RBInterviewerDetails(id, index);
-
-            //Start: Create PDF File
-            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_RBpayment.pdf";
-            Document doc = new Document(iTextSharp.text.PageSize.A4, 10, 10, 42, 35);
-            PdfWriter wri = PdfWriter.GetInstance(doc, new FileStream(fileName, FileMode.Create));
-            doc.Open();
-            PdfPTable table = new PdfPTable(5);
-            PdfPCell cell = new PdfPCell();
-            table.AddCell("Date");
-            table.AddCell("Comment");
-            table.AddCell("Type");
-            table.AddCell("Status");
-            table.AddCell("Amount");
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<table cellspacing='0' width='100%'><thead><tr><th>Date</th><th>Comment</th><th>Type</th><th>Status</th><th>Total Amount</th><th>Payable Amount</th></tr></thead><tbody>");
             foreach (var item in resultset)
             {
-                //item.MeetingStatusDetails = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
-                //item.InterviewStatusDetails = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
-                table.AddCell(item.Date.ToString());
-                table.AddCell(item.Comment);
-                table.AddCell(item.Type);
-                table.AddCell(item.Status);
-                table.AddCell(item.Points.ToString());
+                sb.Append("<tr>");
+                sb.Append("<td>" + item.Date.ToString() + "</td>");
+                sb.Append("<td>" + item.Comment + "</td>");
+                sb.Append("<td>" + item.Type + "</td>");
+                sb.Append("<td>" + item.Status + "</td>");
+                sb.Append("<td>" + item.Points + "</td>");
+                if (item.Status != "Advance")
+                {
+                    sb.Append("<td>" + Math.Round(item.Points - item.Points * .1) + "</td>");
+                }
+                else
+                {
+                    sb.Append("<td>" + item.Points + "</td>");
+                }
+                sb.Append("</tr>");
             }
-            doc.Add(table);
-            doc.Close();
-            //End: Create PDF File
+            sb.Append("<tbody></table>");
             var model = await _meetingService.RBConfirmPayment(id, index, st, se);
             var commentvalue = st.ToString() + " to " + se.ToString();
-            var paymenthistory = await _meetingService.InsertPaymentHistory(email, Convert.ToInt32(amount), "Done", commentvalue);
+            var totalAmount = resultset.Where(x => x.Status != "Advance").Sum(x => x.Points) - resultset.Where(x => x.Status == "Advance").Sum(x => x.Points);
+            var paymenthistory = await _meetingService.InsertPaymentHistory(email, Convert.ToInt32(amount), totalAmount, "Done", commentvalue);
             //Start:Send email to Interviewer
             Mail _mail = new Mail
             {
@@ -415,13 +412,12 @@ namespace Risebird.Web.Controllers
                 CC = "finance@risebird.io",
                 Subject = "RiseBird: Finance Team has done payment"
             };
-            var emailsend = _notificationHelper.RBFNPaymentConfirmationNotification(_mail, amount, fileName);
+            var emailsend = _notificationHelper.RBFNPaymentConfirmationNotification(_mail, amount, sb);
             //End:Send email to Interviewer
             if (emailsend == "Mail sent successfully.")
             {
 
             }
-            System.IO.File.Delete(fileName);
             return RedirectToAction("FNPayment");
         }
         /// <summary>
@@ -500,7 +496,8 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> AdvancePayment(string Interviewer, string Comment, int Amount)
         {
             var model = await _meetingService.InsertAdvancePayment(Interviewer, Comment, Amount);
-            var paymenthistory = await _meetingService.InsertPaymentHistory(Interviewer, Amount, "Advance", "");
+            var paymenthistory = await _meetingService.InsertPaymentHistory(Interviewer, Amount, Amount, "Advance", "");
+            StringBuilder sb = new StringBuilder();
             var result = "";
             if (model == "Success")
             {
@@ -511,7 +508,7 @@ namespace Risebird.Web.Controllers
                     CC = "finance@risebird.io",
                     Subject = "RiseBird: Finance Team done advance payment"
                 };
-                var emailsend = _notificationHelper.RBFNPaymentConfirmationNotification(_mail, Amount.ToString(), "");
+                var emailsend = _notificationHelper.RBFNPaymentConfirmationNotification(_mail, Amount.ToString(), sb);
             }
             else if (model == "Failed")
             {

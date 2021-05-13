@@ -9,6 +9,7 @@ CREATE TABLE [dbo].[PaymentHistory](
 	[Amount] [int] NULL,
 	[Status] [varchar](10) NULL,
 	[Comment] [varchar](100) Null,
+	[TotalAmount] [int] NULL
  CONSTRAINT [PK_PaymentHistory] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -23,6 +24,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE PaymentHistory
     Add Comment  varchar(100)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TotalAmount')
+      AND Object_ID = Object_ID(N'PaymentHistory'))
+BEGIN
+    ALTER TABLE PaymentHistory
+    Add TotalAmount  int
 END
 END
 GO
