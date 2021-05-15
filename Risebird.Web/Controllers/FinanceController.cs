@@ -291,7 +291,12 @@ namespace Risebird.Web.Controllers
                         ViewBag.PageEndCount = 0;
                     }
                     _modelDetails = model;
+                    if (TempData["PaymentMessage"] != null)
+                    {
+                        ViewBag.Message = TempData["PaymentMessage"].ToString();
+                        TempData.Remove("PaymentMessage");
 
+                    }
                     return View(model.ToPagedList(Page ?? 1, 10));
 
                 }
@@ -424,6 +429,14 @@ namespace Risebird.Web.Controllers
             if (emailsend == "Mail sent successfully.")
             {
 
+            }
+            if (model == "Success")
+            {
+                TempData["PaymentMessage"] = "Payment paid Successfully";
+            }
+            else
+            {
+                TempData["PaymentMessage"] = "Fail To pay the payment";
             }
             return RedirectToAction("FNPayment");
         }
