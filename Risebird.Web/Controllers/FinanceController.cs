@@ -704,6 +704,7 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 13].Value = item.Points;
                                     if (item.Points == 0)
                                     {
+                                        Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Red);
                                     }
                                     Sheet.Cells[i, 14].Value = item.ChannelOwner;
@@ -844,6 +845,7 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 13].Value = item.Points;
                                     if (item.Points == 0)
                                     {
+                                        Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Red);
                                     }
                                     Sheet.Cells[i, 14].Value = item.ChannelOwner;

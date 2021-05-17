@@ -1284,6 +1284,7 @@ namespace Risebird.Repository
                     
 
 
+
                     parametersPoints.Add("@interviewId", reportDetails.InterviewId);
                     //parametersPoints.Add("@UserEmail", reportDetails.UserDetails);
                     if (reportDetails.IsQC == true)
