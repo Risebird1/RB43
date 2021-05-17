@@ -4009,7 +4009,7 @@ namespace Risebird.Repository
                                          VideoDuration = c.VideoDuration,
                                          ChannelOwner = c.ChannelOwner
                                      }).ToList();
-                    return resultset.Where(x => x.Points > 0).ToList();
+                    return resultset.ToList();
                 }
             }
             catch (SqlException ex)
@@ -4063,7 +4063,7 @@ namespace Risebird.Repository
                                              VideoDuration = c.VideoDuration,
                                              ChannelOwner = c.ChannelOwner
                                          }).ToList();
-                        return resultset.Where(x => x.Points > 0).ToList();
+                        return resultset.ToList();
                     }
                 }
                 else
