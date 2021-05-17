@@ -633,7 +633,7 @@ namespace Risebird.Web.Controllers
                     {
                         //var model = _meetingService.FetchAllFNDetail();
                         var model = _meetingService.FNAllGeneratedInvoiceDetails(st, se.AddDays(1));
-                        var Interviewers = model.Result.Select(x => x.FirstName).Distinct().ToList();
+                        var Interviewers = model.Result.Select(x => x.InterviewerEmailid).Distinct().ToList();
                         string userEmailId = string.Empty;
 
                         Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
@@ -658,17 +658,18 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 10].Value = "Interview Status";
                         Sheet.Cells[1, 11].Value = "Video Link";
                         Sheet.Cells[1, 12].Value = "Video Duration";
-                        Sheet.Cells[1, 13].Value = "Amount";
-                        Sheet.Cells[1, 14].Value = "Channel Owner";
+                        Sheet.Cells[1, 13].Value = "Rate";
+                        Sheet.Cells[1, 14].Value = "Amount";
+                        Sheet.Cells[1, 15].Value = "Channel Owner";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
                             foreach (var interviewer in Interviewers)
                             {
-                                Sheet.Cells[i, 6].Value = interviewer;
+                                Sheet.Cells[i, 6].Value = model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.FirstName).FirstOrDefault();
                                 Sheet.Cells[i, 6].Style.Font.Size = 14;
                                 i++;
-                                foreach (var item in model.Result.Where(x => x.FirstName == interviewer).ToList())
+                                foreach (var item in model.Result.Where(x => x.InterviewerEmailid == interviewer).ToList())
                                 {
                                     Sheet.Cells[i, 1].Value = item.Date.ToString();
                                     Sheet.Cells[i, 2].Value = item.candidateEmail;
@@ -701,21 +702,22 @@ namespace Risebird.Web.Controllers
                                         Sheet.Cells[i, 11].Value = "No Video";
                                         Sheet.Cells[i, 12].Value = "NA";
                                     }
-                                    Sheet.Cells[i, 13].Value = item.Points;
+                                    Sheet.Cells[i, 13].Value = item.Rate;
+                                    Sheet.Cells[i, 14].Value = item.Points;
                                     if (item.Points == 0)
                                     {
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Red);
                                     }
-                                    Sheet.Cells[i, 14].Value = item.ChannelOwner;
+                                    Sheet.Cells[i, 15].Value = item.ChannelOwner;
                                     i++;
                                 }
 
-                                Sheet.Cells[i, 12].Value = "10% TDS";
-                                Sheet.Cells[i, 13].Value = (model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
+                                Sheet.Cells[i, 13].Value = "10% TDS";
+                                Sheet.Cells[i, 14].Value = (model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
                                 i++;
-                                Sheet.Cells[i, 12].Value = "Total";
-                                Sheet.Cells[i, 13].Value = (model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) - ((model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) * 10 / 100);
+                                Sheet.Cells[i, 13].Value = "Total";
+                                Sheet.Cells[i, 14].Value = (model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) - ((model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) * 10 / 100);
                                 i = i + 2;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -773,7 +775,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "Finance")
                     {
                         var model = _meetingService.FetchAllFNDetail();
-                        var Interviewers = model.Result.Select(x => x.FirstName).Distinct().ToList();
+                        var Interviewers = model.Result.Select(x => x.InterviewerEmailid).Distinct().ToList();
                         string userEmailId = string.Empty;
 
                         Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
@@ -799,17 +801,18 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 10].Value = "Interview Status";
                         Sheet.Cells[1, 11].Value = "Video Link";
                         Sheet.Cells[1, 12].Value = "Video Duration";
-                        Sheet.Cells[1, 13].Value = "Amount";
-                        Sheet.Cells[1, 14].Value = "Channel Owner";
+                        Sheet.Cells[1, 13].Value = "Rate";
+                        Sheet.Cells[1, 14].Value = "Amount";
+                        Sheet.Cells[1, 15].Value = "Channel Owner";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
                             foreach (var interviewer in Interviewers)
                             {
-                                Sheet.Cells[i, 6].Value = interviewer;
+                                Sheet.Cells[i, 6].Value = model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.FirstName).FirstOrDefault();
                                 Sheet.Cells[i, 6].Style.Font.Size = 14;
                                 i++;
-                                foreach (var item in model.Result.Where(x => x.FirstName == interviewer).ToList())
+                                foreach (var item in model.Result.Where(x => x.InterviewerEmailid == interviewer).ToList())
                                 {
                                     Sheet.Cells[i, 1].Value = item.Date.ToString();
                                     Sheet.Cells[i, 2].Value = item.candidateEmail;
@@ -842,21 +845,22 @@ namespace Risebird.Web.Controllers
                                         Sheet.Cells[i, 11].Value = "No Video";
                                         Sheet.Cells[i, 12].Value = "NA";
                                     }
-                                    Sheet.Cells[i, 13].Value = item.Points;
+                                    Sheet.Cells[i, 13].Value = item.Rate;
+                                    Sheet.Cells[i, 14].Value = item.Points;
                                     if (item.Points == 0)
                                     {
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Red);
                                     }
-                                    Sheet.Cells[i, 14].Value = item.ChannelOwner;
+                                    Sheet.Cells[i, 15].Value = item.ChannelOwner;
                                     i++;
                                 }
 
-                                Sheet.Cells[i, 12].Value = "10% TDS";
-                                Sheet.Cells[i, 13].Value = (model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
+                                Sheet.Cells[i, 13].Value = "10% TDS";
+                                Sheet.Cells[i, 14].Value = (model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
                                 i++;
-                                Sheet.Cells[i, 12].Value = "Total";
-                                Sheet.Cells[i, 13].Value = (model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) - ((model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) * 10 / 100);
+                                Sheet.Cells[i, 13].Value = "Total";
+                                Sheet.Cells[i, 14].Value = (model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) - ((model.Result.Where(x => x.FirstName == interviewer).Select(x => x.Points).Sum()) * 10 / 100);
                                 i = i + 2;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
