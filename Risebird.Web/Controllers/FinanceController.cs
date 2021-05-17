@@ -702,6 +702,10 @@ namespace Risebird.Web.Controllers
                                         Sheet.Cells[i, 12].Value = "NA";
                                     }
                                     Sheet.Cells[i, 13].Value = item.Points;
+                                    if (item.Points == 0)
+                                    {
+                                        Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Red);
+                                    }
                                     Sheet.Cells[i, 14].Value = item.ChannelOwner;
                                     i++;
                                 }
@@ -774,6 +778,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
                         Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
                         Sheet.Cells["A1:Z1"].Style.WrapText = true;
+
                         //Sheet.Column(1).Width = 30;mmmmm
                         //Sheet.Column(2).Width = 30;
                         int startColumn = 1; int endColumn = 25;
@@ -837,6 +842,10 @@ namespace Risebird.Web.Controllers
                                         Sheet.Cells[i, 12].Value = "NA";
                                     }
                                     Sheet.Cells[i, 13].Value = item.Points;
+                                    if (item.Points == 0)
+                                    {
+                                        Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Red);
+                                    }
                                     Sheet.Cells[i, 14].Value = item.ChannelOwner;
                                     i++;
                                 }
