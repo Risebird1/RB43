@@ -604,7 +604,11 @@
         html += '</thead>';
         html += '<tbody>';
         for (var i = 0; i < data.length; i++) {
-            html += '                                        <tr>';
+            if (parseInt(data[i].points) == 0) {
+                html += '                                        <tr style="background-color:red">';
+            } else {
+                html += '                                        <tr>';
+            }
             html += '                               <td>' + data[i].date.toString().replace("T", " ") + '</td>';
             html += '                               <td>' + data[i].comment + '</td>';
             html += '                               <td>' + data[i].type + '</td>';

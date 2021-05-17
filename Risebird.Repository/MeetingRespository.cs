@@ -1264,7 +1264,7 @@ namespace Risebird.Repository
                         parametersPoints.Add("@Points", 0);
 
                     }
-                    else if (reportDetails.MeetingStatus == 4 && reportDetails.VideoDuration != 0)
+                    else if (reportDetails.MeetingStatus == 4)
                     {
                         float duration = (float)reportDetails.VideoDuration;
                         if (reportDetails.InterviewStatus == (int)InterviewStatus.Rejected)
@@ -1281,6 +1281,7 @@ namespace Risebird.Repository
                         }
 
                     }
+                    
 
                     parametersPoints.Add("@interviewId", reportDetails.InterviewId);
                     //parametersPoints.Add("@UserEmail", reportDetails.UserDetails);

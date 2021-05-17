@@ -324,7 +324,7 @@ namespace Risebird.Web.Controllers
             if (flag == 2)
             {
                 var model1 = model.Where(x => x.Status == "Advance").ToList();
-                model = model.Where(x => x.Date >= st && x.Date <= se).ToList();
+                model = model.Where(x => x.Date >= st && x.Date <= se.AddDays(1)).ToList();
                 totalAmount = model.Where(x => x.Status != "Advance").Sum(x => x.Points) - model1.Sum(x => x.Points);
                 model = model.Union(model1).ToList();
             }
@@ -385,6 +385,12 @@ namespace Risebird.Web.Controllers
         {
 
             var resultset = await _meetingService.RBInterviewerDetails(id, index);
+            if (index == 2)
+            {
+                var model1 = resultset.Where(x => x.Status == "Advance").ToList();
+                resultset = resultset.Where(x => x.Date >= st && x.Date <= se.AddDays(1)).ToList();
+                resultset = resultset.Union(model1).ToList();
+            }
             StringBuilder sb = new StringBuilder();
             sb.Append("<table cellspacing='0' width='100%'><thead><tr><th>Date</th><th>Payment for</th><th>Type</th><th>Status</th><th>Total Amount</th><th>Payable Amount</th></tr></thead><tbody>");
             foreach (var item in resultset)
@@ -413,7 +419,7 @@ namespace Risebird.Web.Controllers
                 sb.Append("</tr>");
             }
             sb.Append("<tbody></table>");
-            var model = await _meetingService.RBConfirmPayment(id, index, st, se);
+            var model = await _meetingService.RBConfirmPayment(id, index, st, se.AddDays(1));
             var commentvalue = st.ToString() + " to " + se.ToString();
             var totalAmount = resultset.Where(x => x.Status != "Advance").Sum(x => x.Points) - resultset.Where(x => x.Status == "Advance").Sum(x => x.Points);
             var paymenthistory = await _meetingService.InsertPaymentHistory(email, Convert.ToInt32(amount), totalAmount, "Done", commentvalue);
@@ -557,7 +563,7 @@ namespace Risebird.Web.Controllers
                     Page = 1;
                 else
                     Page = Convert.ToInt32(PageSet);
-                var model = await _meetingService.FNGenerateInvoiceDetails(st, se);
+                var model = await _meetingService.FNGenerateInvoiceDetails(st, se.AddDays(1));
                 var totalAmount = model.Sum(x => x.Points);
                 foreach (var item in model)
                 {
@@ -626,7 +632,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "Finance")
                     {
                         //var model = _meetingService.FetchAllFNDetail();
-                        var model = _meetingService.FNAllGeneratedInvoiceDetails(st, se);
+                        var model = _meetingService.FNAllGeneratedInvoiceDetails(st, se.AddDays(1));
                         var Interviewers = model.Result.Select(x => x.FirstName).Distinct().ToList();
                         string userEmailId = string.Empty;
 
