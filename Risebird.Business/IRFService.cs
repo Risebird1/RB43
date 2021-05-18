@@ -467,6 +467,8 @@ namespace Risebird.Business
                 model.OldAssessmentGroupId = model.AssessmentGroupId;
                 model.OldCalendlyLink = model.CalendlyLink;
                 model.OldJDLink = model.JDLink;
+                model.OldInterviewerCollection = model.InterviewerCollection;
+                model.OldEmergencyInterviewerCollection = model.EmergencyInterviewerCollection;
                 return model;
 
             }
@@ -482,7 +484,60 @@ namespace Risebird.Business
         {
             try
             {
-                var result =_irfRepository.UpdateIRFDetails(model).Result;
+                var interviewerChangesData = new List<InterviewerSuccessRateChangeData>();
+                if(model.OldInterviewerCollection != null && model.InterviewerCollection != null && model.OldInterviewerCollection != model.InterviewerCollection)
+                {
+                    foreach (var oldInterviewer in model.OldInterviewerCollection)
+                    {
+                        if(model.InterviewerCollection.Where(x=>x.UserId == oldInterviewer.UserId && x.PerSuccessRate!=oldInterviewer.PerSuccessRate).Count()==1)
+                        {
+                            var interviewer = model.InterviewerCollection.FirstOrDefault(x => x.UserId == oldInterviewer.UserId);
+                            float newRate = interviewer.PerSuccessRate;
+                            float oldRate = oldInterviewer.PerSuccessRate;
+                            float percentChanges = (newRate - oldRate) * 100 / oldRate;
+
+                            if(percentChanges != 0)
+                            {
+                                interviewerChangesData.Add(new InterviewerSuccessRateChangeData
+                                {
+                                    Type = "Interviewer",
+                                    IRFId = model.id,
+                                    PercentChange = percentChanges,
+                                    UserId = interviewer.UserId
+                                });
+                            }
+                            
+
+                        }
+                    }
+                }
+                if (model.OldEmergencyInterviewerCollection != null && model.EmergencyInterviewerCollection!=null && model.OldEmergencyInterviewerCollection != model.EmergencyInterviewerCollection)
+                {
+                    foreach (var oldEmergencyInterviewer in model.OldEmergencyInterviewerCollection)
+                    {
+                        if (model.EmergencyInterviewerCollection.Where(x => x.UserId == oldEmergencyInterviewer.UserId && x.PerSuccessRate != oldEmergencyInterviewer.PerSuccessRate).Count() == 1)
+                        {
+                            var emergencyInterviewer = model.EmergencyInterviewerCollection.FirstOrDefault(x => x.UserId == oldEmergencyInterviewer.UserId);
+                            float newRate = emergencyInterviewer.PerSuccessRate;
+                            float oldRate = oldEmergencyInterviewer.PerSuccessRate;
+                            float percentChanges = (newRate - oldRate) * 100 / oldRate;
+
+                            if (percentChanges != 0)
+                            {
+                                interviewerChangesData.Add(new InterviewerSuccessRateChangeData
+                                {
+                                    Type = "EmergencyInterviewer",
+                                    IRFId = model.id,
+                                    PercentChange = percentChanges,
+                                    UserId = emergencyInterviewer.UserId
+                                });
+                            }
+                            
+
+                        }
+                    }
+                }
+                var result =_irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null).Result;
                 if(result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();

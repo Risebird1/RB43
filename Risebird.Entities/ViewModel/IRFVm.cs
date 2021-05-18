@@ -132,6 +132,9 @@ namespace Risebird.Entities.ViewModel
         public string OldAssessmentGroupId { get; set; }
         public string OldJDLink { get; set; }
         public string ResourceUrl { get; set; }
+        public IList<TransInterviewer> OldInterviewerCollection { get; set; }
+        public IList<TransEmergencyInterviewer> OldEmergencyInterviewerCollection { get; set; }
+
     }
     public class InterviewerIds
     {
