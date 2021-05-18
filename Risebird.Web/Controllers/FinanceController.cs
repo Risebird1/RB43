@@ -328,8 +328,13 @@ namespace Risebird.Web.Controllers
                 totalAmount = model.Where(x => x.Status != "Advance").Sum(x => x.Points) - model1.Sum(x => x.Points);
                 model = model.Union(model1).ToList();
             }
-            var payableAmount = (totalAmount - Convert.ToInt32(Math.Round(totalAmount * .1)));
-            var Tds = totalAmount - payableAmount;
+            int payableAmount = 0;
+            int Tds = 0;
+            if (totalAmount > 0)
+            {
+                payableAmount = (totalAmount - Convert.ToInt32(Math.Round(totalAmount * .1)));
+                Tds = totalAmount - payableAmount;
+            }
             foreach (var item in model)
             {
                 item.MeetingStatusDetails = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
@@ -649,75 +654,77 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 1].Value = "Date";
                         Sheet.Cells[1, 2].Value = "Candidate Email";
                         Sheet.Cells[1, 3].Value = "Candidate Name";
-                        Sheet.Cells[1, 4].Value = "Client Name";
-                        Sheet.Cells[1, 5].Value = "Payment For";
-                        Sheet.Cells[1, 6].Value = "Interviewer";
-                        Sheet.Cells[1, 7].Value = "Type";
-                        Sheet.Cells[1, 8].Value = "Country";
-                        Sheet.Cells[1, 9].Value = "Meeting Status";
-                        Sheet.Cells[1, 10].Value = "Interview Status";
-                        Sheet.Cells[1, 11].Value = "Video Link";
-                        Sheet.Cells[1, 12].Value = "Video Duration";
-                        Sheet.Cells[1, 13].Value = "Rate";
-                        Sheet.Cells[1, 14].Value = "Amount";
-                        Sheet.Cells[1, 15].Value = "Channel Owner";
+                        Sheet.Cells[1, 4].Value = "Primary Skill";
+                        Sheet.Cells[1, 5].Value = "Client Name";
+                        Sheet.Cells[1, 6].Value = "Payment For";
+                        Sheet.Cells[1, 7].Value = "Interviewer";
+                        Sheet.Cells[1, 8].Value = "Type";
+                        Sheet.Cells[1, 9].Value = "Country";
+                        Sheet.Cells[1, 10].Value = "Meeting Status";
+                        Sheet.Cells[1, 11].Value = "Interview Status";
+                        Sheet.Cells[1, 12].Value = "Video Link";
+                        Sheet.Cells[1, 13].Value = "Video Duration";
+                        Sheet.Cells[1, 14].Value = "Rate";
+                        Sheet.Cells[1, 15].Value = "Amount";
+                        Sheet.Cells[1, 16].Value = "Channel Owner";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
                             foreach (var interviewer in Interviewers)
                             {
-                                Sheet.Cells[i, 6].Value = model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.FirstName).FirstOrDefault();
-                                Sheet.Cells[i, 6].Style.Font.Size = 14;
+                                Sheet.Cells[i, 7].Value = model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.FirstName).FirstOrDefault();
+                                Sheet.Cells[i, 7].Style.Font.Size = 14;
                                 i++;
                                 foreach (var item in model.Result.Where(x => x.InterviewerEmailid == interviewer).ToList())
                                 {
                                     Sheet.Cells[i, 1].Value = item.Date.ToString();
                                     Sheet.Cells[i, 2].Value = item.candidateEmail;
                                     Sheet.Cells[i, 3].Value = item.candidateName;
-                                    Sheet.Cells[i, 4].Value = item.ClientName;
-                                    Sheet.Cells[i, 5].Value = item.Comment;
-                                    Sheet.Cells[i, 6].Value = item.InterviewerEmailid;
-                                    Sheet.Cells[i, 7].Value = item.Type;
-                                    Sheet.Cells[i, 8].Value = item.PreferredLocation;
-                                    Sheet.Cells[i, 9].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
-                                    Sheet.Cells[i, 10].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
+                                    Sheet.Cells[i, 4].Value = item.PrimarySkillInvite;
+                                    Sheet.Cells[i, 5].Value = item.ClientName;
+                                    Sheet.Cells[i, 6].Value = item.Comment;
+                                    Sheet.Cells[i, 7].Value = item.InterviewerEmailid;
+                                    Sheet.Cells[i, 8].Value = item.Type;
+                                    Sheet.Cells[i, 9].Value = item.PreferredLocation;
+                                    Sheet.Cells[i, 10].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                    Sheet.Cells[i, 11].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
                                     if (!string.IsNullOrEmpty(item.VideoLink))
                                     {
                                         try
                                         {
-                                            Sheet.Cells[i, 11].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                            Sheet.Cells[i, 11].Value = "Video";
-                                            Sheet.Cells[i, 11].Style.Font.UnderLine = true;
-                                            Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                                            Sheet.Cells[i, 12].Value = (item.VideoDuration.HasValue && item.VideoDuration.Value > 0) ? item.VideoDuration.Value.ToString() : string.Empty;
+                                            Sheet.Cells[i, 12].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                            Sheet.Cells[i, 12].Value = "Video";
+                                            Sheet.Cells[i, 12].Style.Font.UnderLine = true;
+                                            Sheet.Cells[i, 12].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                            Sheet.Cells[i, 13].Value = (item.VideoDuration.HasValue && item.VideoDuration.Value > 0) ? item.VideoDuration.Value.ToString() : string.Empty;
                                         }
                                         catch (Exception)
                                         {
-                                            Sheet.Cells[i, 11].Value = "No Video";
-                                            Sheet.Cells[i, 12].Value = "NA";
+                                            Sheet.Cells[i, 12].Value = "No Video";
+                                            Sheet.Cells[i, 13].Value = "NA";
                                         }
                                     }
                                     else
                                     {
-                                        Sheet.Cells[i, 11].Value = "No Video";
-                                        Sheet.Cells[i, 12].Value = "NA";
+                                        Sheet.Cells[i, 12].Value = "No Video";
+                                        Sheet.Cells[i, 13].Value = "NA";
                                     }
-                                    Sheet.Cells[i, 13].Value = item.Rate;
-                                    Sheet.Cells[i, 14].Value = item.Points;
+                                    Sheet.Cells[i, 14].Value = item.Rate;
+                                    Sheet.Cells[i, 15].Value = item.Points;
                                     if (item.Points == 0)
                                     {
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Red);
                                     }
-                                    Sheet.Cells[i, 15].Value = item.ChannelOwner;
+                                    Sheet.Cells[i, 16].Value = item.ChannelOwner;
                                     i++;
                                 }
 
-                                Sheet.Cells[i, 13].Value = "10% TDS";
-                                Sheet.Cells[i, 14].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
+                                Sheet.Cells[i, 14].Value = "10% TDS";
+                                Sheet.Cells[i, 15].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
                                 i++;
-                                Sheet.Cells[i, 13].Value = "Total";
-                                Sheet.Cells[i, 14].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) - ((model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100);
+                                Sheet.Cells[i, 14].Value = "Total";
+                                Sheet.Cells[i, 15].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) - ((model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100);
                                 i = i + 2;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -792,18 +799,19 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 1].Value = "Date";
                         Sheet.Cells[1, 2].Value = "Candidate Email";
                         Sheet.Cells[1, 3].Value = "Candidate Name";
-                        Sheet.Cells[1, 4].Value = "Client Name";
-                        Sheet.Cells[1, 5].Value = "Payment For";
-                        Sheet.Cells[1, 6].Value = "Interviewer";
-                        Sheet.Cells[1, 7].Value = "Type";
-                        Sheet.Cells[1, 8].Value = "Country";
-                        Sheet.Cells[1, 9].Value = "Meeting Status";
-                        Sheet.Cells[1, 10].Value = "Interview Status";
-                        Sheet.Cells[1, 11].Value = "Video Link";
-                        Sheet.Cells[1, 12].Value = "Video Duration";
-                        Sheet.Cells[1, 13].Value = "Rate";
-                        Sheet.Cells[1, 14].Value = "Amount";
-                        Sheet.Cells[1, 15].Value = "Channel Owner";
+                        Sheet.Cells[1, 4].Value = "Primary Skill";
+                        Sheet.Cells[1, 5].Value = "Client Name";
+                        Sheet.Cells[1, 6].Value = "Payment For";
+                        Sheet.Cells[1, 7].Value = "Interviewer";
+                        Sheet.Cells[1, 8].Value = "Type";
+                        Sheet.Cells[1, 9].Value = "Country";
+                        Sheet.Cells[1, 10].Value = "Meeting Status";
+                        Sheet.Cells[1, 11].Value = "Interview Status";
+                        Sheet.Cells[1, 12].Value = "Video Link";
+                        Sheet.Cells[1, 13].Value = "Video Duration";
+                        Sheet.Cells[1, 14].Value = "Rate";
+                        Sheet.Cells[1, 15].Value = "Amount";
+                        Sheet.Cells[1, 16].Value = "Channel Owner";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
@@ -817,50 +825,51 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 1].Value = item.Date.ToString();
                                     Sheet.Cells[i, 2].Value = item.candidateEmail;
                                     Sheet.Cells[i, 3].Value = item.candidateName;
-                                    Sheet.Cells[i, 4].Value = item.ClientName;
-                                    Sheet.Cells[i, 5].Value = item.Comment;
-                                    Sheet.Cells[i, 6].Value = item.InterviewerEmailid;
-                                    Sheet.Cells[i, 7].Value = item.Type;
-                                    Sheet.Cells[i, 8].Value = item.PreferredLocation;
-                                    Sheet.Cells[i, 9].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
-                                    Sheet.Cells[i, 10].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
+                                    Sheet.Cells[i, 4].Value = item.PrimarySkillInvite;
+                                    Sheet.Cells[i, 5].Value = item.ClientName;
+                                    Sheet.Cells[i, 6].Value = item.Comment;
+                                    Sheet.Cells[i, 7].Value = item.InterviewerEmailid;
+                                    Sheet.Cells[i, 8].Value = item.Type;
+                                    Sheet.Cells[i, 9].Value = item.PreferredLocation;
+                                    Sheet.Cells[i, 10].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                    Sheet.Cells[i, 11].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
                                     if (!string.IsNullOrEmpty(item.VideoLink))
                                     {
                                         try
                                         {
-                                            Sheet.Cells[i, 11].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                            Sheet.Cells[i, 11].Value = "Video";
-                                            Sheet.Cells[i, 11].Style.Font.UnderLine = true;
-                                            Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                                            Sheet.Cells[i, 12].Value = (item.VideoDuration.HasValue && item.VideoDuration.Value > 0) ? item.VideoDuration.Value.ToString() : string.Empty;
+                                            Sheet.Cells[i, 12].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                            Sheet.Cells[i, 12].Value = "Video";
+                                            Sheet.Cells[i, 12].Style.Font.UnderLine = true;
+                                            Sheet.Cells[i, 12].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                            Sheet.Cells[i, 13].Value = (item.VideoDuration.HasValue && item.VideoDuration.Value > 0) ? item.VideoDuration.Value.ToString() : string.Empty;
                                         }
                                         catch (Exception)
                                         {
-                                            Sheet.Cells[i, 11].Value = "No Video";
-                                            Sheet.Cells[i, 12].Value = "NA";
+                                            Sheet.Cells[i, 12].Value = "No Video";
+                                            Sheet.Cells[i, 13].Value = "NA";
                                         }
                                     }
                                     else
                                     {
-                                        Sheet.Cells[i, 11].Value = "No Video";
-                                        Sheet.Cells[i, 12].Value = "NA";
+                                        Sheet.Cells[i, 12].Value = "No Video";
+                                        Sheet.Cells[i, 13].Value = "NA";
                                     }
-                                    Sheet.Cells[i, 13].Value = item.Rate;
-                                    Sheet.Cells[i, 14].Value = item.Points;
+                                    Sheet.Cells[i, 14].Value = item.Rate;
+                                    Sheet.Cells[i, 15].Value = item.Points;
                                     if (item.Points == 0)
                                     {
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Red);
                                     }
-                                    Sheet.Cells[i, 15].Value = item.ChannelOwner;
+                                    Sheet.Cells[i, 16].Value = item.ChannelOwner;
                                     i++;
                                 }
 
-                                Sheet.Cells[i, 13].Value = "10% TDS";
-                                Sheet.Cells[i, 14].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
+                                Sheet.Cells[i, 14].Value = "10% TDS";
+                                Sheet.Cells[i, 15].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
                                 i++;
-                                Sheet.Cells[i, 13].Value = "Total";
-                                Sheet.Cells[i, 14].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) - ((model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100);
+                                Sheet.Cells[i, 14].Value = "Total";
+                                Sheet.Cells[i, 15].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) - ((model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100);
                                 i = i + 2;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
