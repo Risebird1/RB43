@@ -928,7 +928,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> UpdateIRFDetails(IRFVm irfDetails)
+        public async Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null)
         {
             try
             {
@@ -1125,7 +1125,21 @@ namespace Risebird.Repository
                         }
                     }
 
-
+                    if(interviewerRateChangesList != null)
+                    {
+                        foreach (var interviewerChangeDetails in interviewerRateChangesList.Where(x => x.Type == "Interviewer"))
+                        {
+                            try
+                            {
+                                UpdateInterviewerAmountBasedOnRateChanges(interviewerChangeDetails);
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                continue;
+                            }
+                        }
+                    }
 
 
                     // update trans emergency interviewers table
@@ -1165,6 +1179,21 @@ namespace Risebird.Repository
                         }
                     }
 
+                    if (interviewerRateChangesList != null)
+                    {
+                        foreach (var interviewerChangeDetails in interviewerRateChangesList.Where(x => x.Type == "EmergencyInterviewer"))
+                        {
+                            try
+                            {
+                                UpdateInterviewerAmountBasedOnRateChanges(interviewerChangeDetails);
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                continue;
+                            }
+                        }
+                    }
 
                     //update trans Client table
 
@@ -1358,7 +1387,19 @@ namespace Risebird.Repository
             }
         }
 
-
+        private async void UpdateInterviewerAmountBasedOnRateChanges(InterviewerSuccessRateChangeData interviewerChangeDetails)
+        {
+            DynamicParameters dynamicParam = new DynamicParameters();
+            dynamicParam.Add("@userId", interviewerChangeDetails.UserId);
+            dynamicParam.Add("@IRFId", interviewerChangeDetails.IRFId);
+            dynamicParam.Add("@percentageChange", interviewerChangeDetails.PercentChange);
+            dynamicParam.Add("@type", interviewerChangeDetails.Type);
+            using (SqlConnection conChange = new SqlConnection(connectionString))
+            {
+                await SqlMapper.QueryAsync(conChange, "usp_UpdateAmountBasedOnPerSuccessRate", dynamicParam,
+                   commandType: CommandType.StoredProcedure);
+            }
+        }
         public IEnumerable<TransSkill> GetSkillsbyIRFid(int id)
         {
             try
