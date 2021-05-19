@@ -940,6 +940,9 @@ input[type="radio"]:checked {
     border: 2px solid #272626;
     color: #adadad;
 }
+table {
+    border: 1px #cccccc85 solid !important;
+}
 .mdc-card .tab-box .form-control, .mdc-card .tab-box .form-control[readonly] {
     background: #0e0a0a;
     color: #9A9A9A !important;

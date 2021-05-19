@@ -176,7 +176,7 @@ namespace Risebird.Entities.ViewModel
         public string UserPassword { get; set; }
         [Display(Name = "Whatsapp Number ")]
         public string WhatsappNumber { get; set; }
-        public string ImageLink { get; set; }
+        public string ImageURL { get; set; }
         [Display(Name = "Image Upload ")]
         public IFormFile ImageUpload { get; set; }
     }

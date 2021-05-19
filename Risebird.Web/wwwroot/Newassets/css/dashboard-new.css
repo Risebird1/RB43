@@ -99,7 +99,7 @@ body {
 .tab-teaser {
     max-width: 1000px;
     width: 100%;
-    margin: 0 auto;
+    margin: 20px auto;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -180,8 +180,20 @@ body {
     margin: 10px 0 30px;
     font-size: 25px;
 }
-
-
+.feedbackbubble .talk-bubble{z-index:0;}
+.nav-open .navbar {
+    left: 260px;
+}
+.rqtext {
+    font-size: 14px;
+    color: #b9b4b4;
+}
+.intrqtext {
+    display: block;
+    line-height: 11px;
+    padding-bottom: 10px;
+    color: #b9b4b4;
+}
 .marquee {
     width: 100%;
     height: 48px;
@@ -7785,11 +7797,14 @@ tbody.collapse.in {
     font-family: sans-serif;
 }
 
-.top-panel {
+body.sidebar-mini .top-panel {
     padding: 0px 60px 0px 100px;
     margin-bottom: 0px !important;
 }
-
+body .top-panel {
+    padding: 0px 60px 0px 275px;
+    margin-bottom: 0px !important;
+}
 .sidebar-wrapper > .nav li > a.active-menu, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
     position: relative;
     z-index: 1;

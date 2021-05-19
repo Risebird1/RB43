@@ -9,12 +9,12 @@
 
 
 <script>
-    var Header = "<a href='/IRF/Index'>My Profile form</a>&nbsp;<a id='myprofile_1'>/ My Profile </a>";
+    var Header = "My Profile";
     $('#txtpageHeader').empty().html(Header);
 </script>
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=12345" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=12345" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=12345" />
 <div class="main-panel" id="main-panel">
     <div class="mt50">
     </div>
@@ -53,10 +53,7 @@
                                 <div class="tab-teaser">
                                     <div class="tab-box" id="tab-1" style="display:block;">
                                         <div class="clearfix">
-                                            <h4 class="info-text"> Let's start with the basic information</h4>
-
-
-                                            <div class="col-sm-4 pull-left">
+                                            <div class="col-sm-3 pull-left">
 
                                                 <div class="avatar-upload">
                                                     <div class="avatar-edit">
@@ -64,8 +61,20 @@
                                                         <label for="actual-btn"></label>
                                                     </div>
                                                     <div class="avatar-preview">
-                                                        <div id="imagePreview" style="background-image: url(../../Newassets/img/default-avatar.png);">
-                                                        </div>
+
+                                                        @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currentUserimage")))
+                                                        {
+                                                            <div id="imagePreview" style="background-image: url(../../Newassets/img/default-avatar.png);">
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+
+                                                    <div id="imagePreview" style="background-image: url(@HttpContextAccessor.HttpContext.Session.GetString("currentUserimage"));">
+                                                    </div>
+                                                           
+                                                        }
+
                                                         <label class="choose-file-profile" for="actual-btn">Choose Picture</label>
 
                                                     </div>
@@ -74,7 +83,7 @@
                                                 </div>
 
                                             </div>
-                                            <div class="col-sm-8 pull-left">
+                                            <div class="col-sm-9 pull-left">
                                                 @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
                                                 {
                                                     var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
@@ -93,13 +102,15 @@
                                                         </div>
                                                         <div class="form-group col-md-6 pull-left">
                                                             @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "" })
+                                                            <span class="intrqtext">( Please enter Mobile no. with country code )</span>
                                                             @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                             @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
-
+                                                            
                                                         </div>
 
                                                         <div class="form-group col-md-6 pull-left">
                                                             @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "" })
+                                                            <span class="intrqtext">( Please enter Whatsapp no. with country code )</span>
                                                             @Html.EditorFor(model => model.WhatsappNumber, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                             @Html.ValidationMessageFor(model => model.WhatsappNumber, "", new { @class = "text-danger" })
                                                         </div>
@@ -109,25 +120,34 @@
                                                     {
                                                         <div class="form-group">
                                                             @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "" })
-                                                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control col-md-10 text-box single-line" } })
                                                             @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
                                                         </div>
                                                         <div class="form-group">
                                                             @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "" })
-                                                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control col-md-10 text-box single-line" } })
                                                             @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
                                                         </div>
                                                         <div class="form-group">
-                                                            @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "" })
-                                                            @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @style = "padding-right:0px;" })
+                                                            <span class="rqtext">( Please enter Mobile no. with country code )</span>
+                                                            @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control col-md-10 text-box single-line" } })
                                                             @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
 
                                                         </div>
 
                                                         <div class="form-group">
-                                                            @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "" })
-                                                            @Html.EditorFor(model => model.WhatsappNumber, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @style = "padding-right:0px;" })
+                                                            <span class="rqtext">( Please enter Whatsapp no. with country code )</span>
+                                                            @Html.EditorFor(model => model.WhatsappNumber, new { htmlAttributes = new { @class = "form-control col-md-10 text-box single-line" } })
                                                             @Html.ValidationMessageFor(model => model.WhatsappNumber, "", new { @class = "text-danger" })
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            @Html.LabelFor(model => model.CurrentRole, htmlAttributes: new { @class = "" })
+                                                            
+                                                            @Html.EditorFor(model => model.CurrentRole, new { htmlAttributes = new { @class = "form-control col-md-10 text-box single-line", @readonly = "readonly" } })
+                                                            @Html.ValidationMessageFor(model => model.CurrentRole, "", new { @class = "text-danger" })
                                                         </div>
 
                                                     }
@@ -162,7 +182,13 @@
                                                             @Html.EditorFor(model => model.AltEmailId, new { htmlAttributes = new { id = "txt_AltEmailId", @class = "form-control text-box single-line", @type = "text" } })
                                                             @Html.ValidationMessageFor(model => model.AltEmailId, "", new { @class = "text-danger" })
                                                         </div>
-                                                       
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                @Html.LabelFor(model => model.CurrentRole, htmlAttributes: new { @class = "" })
+                                                                @Html.EditorFor(model => model.CurrentRole, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+                                                                @Html.ValidationMessageFor(model => model.CurrentRole, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            </div>
                                                             <div class="col-md-12">
                                                                 @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 " })
                                                                 @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
@@ -174,33 +200,21 @@
                                                                 }
                                                             </div>
                                                             @Html.Hidden("ResumeLink", Model.ResumeLink, htmlAttributes: new { id = "hdn_ResumeLink" })
-                                                       
+
+
+                                                            }
+                                                            }
 
 
 
+                                                        </div>
+
+                                                        <div class="col-sm-12 pull-left">
+
+                                                        </div>
 
 
-
-
-
-
-                                                    }
-                                                }
-
-
-
-                                            </div>
-
-                                            <div class="col-sm-12 pull-left">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.CurrentRole, htmlAttributes: new { @class = "" })
-                                                    @Html.EditorFor(model => model.CurrentRole, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
-                                                    @Html.ValidationMessageFor(model => model.CurrentRole, "", new { @class = "text-danger" })
-                                                </div>
-                                            </div>
-
-
-                                        </div>
+                                                    </div>
                                     </div>
                                     <div class="tab-box" id="tab-2">
 

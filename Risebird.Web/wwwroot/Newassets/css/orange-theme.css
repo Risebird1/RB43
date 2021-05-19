@@ -30,6 +30,9 @@ td.detail-row {
 #interviewer.table.dataTable > thead > tr > th.overlay-relative {
     color: #000 !important
 }
+table {
+    border: 1px #ccc solid !important;
+}
 .child-section {
     background: #e5e5e5;
 }
