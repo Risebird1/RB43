@@ -38,21 +38,4 @@ namespace Risebird.Entities.ViewModel
         public string AccountStatus { get; set; }
 
     }
-    public class UserProfile
-    {
-        [Display(Name = "First Name")]
-        public string FirstName { get; set; }
-        [Display(Name = "Last Name")]
-        public string LastName { get; set; }
-        public string Role { get; set; }
-        [Display(Name = "Mobile Number")]
-        public string MobileNumber { get; set; }
-        [Display(Name = "Whatsapp Number")]
-        public string WhatsappNumber { get; set; }
-        [Display(Name = "Image Link")]
-        public string ImageLink { get; set; }
-        [Display(Name = "Image Upload")]
-        public IFormFile ImageUpload { get; set; }
-        public string EmailId { get; set; }
-    }
 }

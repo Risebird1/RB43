@@ -1020,7 +1020,7 @@ namespace Risebird.Web.Controllers
                             var containerRef = _azureStorageHelper.GetCloudBlobContainer("profileimages");
                             var blob = containerRef.GetBlockBlobReference(interviewerProfile.ImageUpload.FileName);
                             uploadedFileURL = blob.Uri.ToString();
-                            interviewerProfile.ImageLink = uploadedFileURL;
+                            interviewerProfile.ImageURL = uploadedFileURL;
                         }
                         if (_interviewerService.AddInterviewerMyProfile(interviewerProfile).Result)
                         {

@@ -121,9 +121,6 @@ table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
 }
 
 
-table {
-    border: 1px #ccc solid !important;
-}
 
     table td {
         color: #504e4e;

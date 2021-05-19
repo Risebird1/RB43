@@ -701,7 +701,9 @@ input[type="radio"]:checked {
     color: #fff;
     text-decoration: none;
 }
-
+table {
+    border: 1px #ccc solid !important;
+}
 .avatar-upload .avatar-preview {
     border: 6px solid #e3e3e3;
 }

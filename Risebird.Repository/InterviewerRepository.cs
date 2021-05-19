@@ -909,7 +909,7 @@ namespace Risebird.Repository
                    commandType: CommandType.StoredProcedure);
 
                 }
-                string queryupdate = "Update Userlist Set FirstName= @FirstName,LastName= @LastName,MobileNumber=@MobileNumber,WhatsappNumber=@WhatsappNumber,ImageLink=IsNull(@ImageLink,ImageLink) where Emailid=@Emailid";
+                string queryupdate = "Update Userlist Set FirstName= @FirstName,LastName= @LastName,MobileNumber=@MobileNumber,WhatsappNumber=@WhatsappNumber,ImageURL=IsNull(@ImageURL,ImageURL) where Emailid=@Emailid";
                 var parametersupdate = new DynamicParameters();
 
                 parametersupdate.Add("@FirstName", interviewerProfile.FirstName);
@@ -917,7 +917,7 @@ namespace Risebird.Repository
                 parametersupdate.Add("@Emailid", interviewerProfile.EmailId);
                 parametersupdate.Add("@MobileNumber", interviewerProfile.MobileNumber);
                 parametersupdate.Add("@WhatsappNumber", interviewerProfile.WhatsappNumber);
-                parametersupdate.Add("@ImageLink", interviewerProfile.ImageLink);
+                parametersupdate.Add("@ImageURL", interviewerProfile.ImageURL);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

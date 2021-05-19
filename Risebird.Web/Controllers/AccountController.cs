@@ -480,7 +480,7 @@ namespace Risebird.Web.Controllers
                 {
                     model = await _interviewerService.GetInterviewerProfileByEmailId(emailid, profileName);
                     model.WhatsappNumber = model1.WhatsappNumber;
-                    model.ImageLink = model1.ImageLink;
+                    model.ImageURL = model1.ImageURL;
                     
                 }
                 else
@@ -517,7 +517,7 @@ namespace Risebird.Web.Controllers
                     var containerRef = _azureStorageHelper.GetCloudBlobContainer("profileimages");
                     var blob = containerRef.GetBlockBlobReference(userProfile.ImageUpload.FileName);
                     uploadedFileURL = blob.Uri.ToString();
-                    userProfile.ImageLink = uploadedFileURL;
+                    userProfile.ImageURL = uploadedFileURL;
                 }
                 if (profileName == "Interviewer")
                 {
@@ -532,9 +532,9 @@ namespace Risebird.Web.Controllers
                     }
                     if (_interviewerService.AddInterviewerMyProfile(userProfile).Result)
                     {
-                        if (!String.IsNullOrEmpty(userProfile.ImageLink))
+                        if (!String.IsNullOrEmpty(userProfile.ImageURL))
                         {
-                            HttpContext.Session.SetString("currentUserimage", userProfile.ImageLink);
+                            HttpContext.Session.SetString("currentUserimage", userProfile.ImageURL);
                         }
                         TempData["MyProfileMessage"] = "Profile updated Successfully";
                         return RedirectToAction("UserProfile");
@@ -549,8 +549,8 @@ namespace Risebird.Web.Controllers
                 {
                     if (_accountService.UpdateUserProfile(userProfile).Result)
                     {
-                        if (!String.IsNullOrEmpty(userProfile.ImageLink)) {
-                            HttpContext.Session.SetString("currentUserimage", userProfile.ImageLink);
+                        if (!String.IsNullOrEmpty(userProfile.ImageURL)) {
+                            HttpContext.Session.SetString("currentUserimage", userProfile.ImageURL);
                         }
                         TempData["MyProfileMessage"] = "Profile updated Successfully";
                         return RedirectToAction("UserProfile");

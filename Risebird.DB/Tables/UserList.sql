@@ -14,8 +14,7 @@ CREATE TABLE [dbo].[UserList](
 			[ImageURL] [nvarchar](1000) NULL,
 			[Isonline] [bit] NULL,	
 			[UserPassword] [nvarchar](60) NULL,
-			[WhatsappNumber] [varchar](15) NULL,
-			[ImageLink] [varchar](2000) NULL
+			[WhatsappNumber] [varchar](15) NULL
 			CONSTRAINT [FK_User_Group] FOREIGN KEY (idProfile) REFERENCES Profile(id),
  CONSTRAINT [PK_UserList] PRIMARY KEY CLUSTERED 					
 (					
@@ -47,21 +46,13 @@ END
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns
-    WHERE Name IN (N'UserPassword')
+    WHERE Name IN (N'WhatsappNumber')
       AND Object_ID = Object_ID(N'UserList'))
 BEGIN
     ALTER TABLE UserList
     Add [WhatsappNumber] [varchar](15) NULL
 END
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'UserPassword')
-      AND Object_ID = Object_ID(N'UserList'))
-BEGIN
-    ALTER TABLE UserList
-    Add [ImageLink] [varchar](2000) NULL
-END
+
 END
 
 GO

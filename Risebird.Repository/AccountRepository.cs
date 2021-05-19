@@ -353,7 +353,7 @@ namespace Risebird.Repository
         {
             try
             {
-                string query = "Select ul.FirstName,Ul.LastName,ul.MobileNumber,ul.WhatsappNumber,up.Name as CurrentRole,ul.ImageLink from Userlist ul join Profile up on ul.idProfile=up.id where Emailid=@Emailid";
+                string query = "Select ul.FirstName,Ul.LastName,ul.MobileNumber,ul.WhatsappNumber,up.Name as CurrentRole,ul.ImageURL from Userlist ul join Profile up on ul.idProfile=up.id where Emailid=@Emailid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", EmailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -376,7 +376,7 @@ namespace Risebird.Repository
 
                 // In this case, Only passing the required parameters to fil in the tables
 
-                string query = "Update Userlist Set FirstName= @FirstName,LastName= @LastName,MobileNumber=@MobileNumber,WhatsappNumber=@WhatsappNumber,ImageLink=IsNull(@ImageLink,ImageLink) where Emailid=@Emailid";
+                string query = "Update Userlist Set FirstName= @FirstName,LastName= @LastName,MobileNumber=@MobileNumber,WhatsappNumber=@WhatsappNumber,ImageURL=IsNull(@ImageURL,ImageURL) where Emailid=@Emailid";
                 var parameters = new DynamicParameters();
 
                 parameters.Add("@FirstName", userProfile.FirstName);
@@ -384,7 +384,7 @@ namespace Risebird.Repository
                 parameters.Add("@Emailid", userProfile.EmailId);
                 parameters.Add("@MobileNumber", userProfile.MobileNumber);
                 parameters.Add("@WhatsappNumber", userProfile.WhatsappNumber);
-                parameters.Add("@ImageLink", userProfile.ImageLink);
+                parameters.Add("@ImageURL", userProfile.ImageURL);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
