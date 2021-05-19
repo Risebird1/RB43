@@ -6,14 +6,14 @@
 @inject IHttpContextAccessor HttpContextAccessor
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-      @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Currenttheme"))) {  <link rel="stylesheet" type="text/css" id="theme" href="~/Newassets/css/dark-theme.css" />
+ @*@if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Currenttheme"))) {  <link rel="stylesheet" type="text/css" id="theme" href="~/Newassets/css/dark-theme.css" />
 }
 else
 {
 
     <link rel="stylesheet" type="text/css" id="theme" href="@HttpContextAccessor.HttpContext.Session.GetString("Currenttheme")" />
 
-}
+}*@
 
 
 <div class="sidebar" data-color="blue">
@@ -48,7 +48,7 @@ else
         </div>
     </div>
     <div class="sidebar-wrapper " id="sidebar-wrapper">
-        <div class="user">
+        @*<div class="user">
             <div class="photo">
                 <img src="~/img/man.png" />
             </div>
@@ -86,7 +86,7 @@ else
 
                 </div>
             </div>
-        </div>
+        </div>*@
 
 
         <ul class="nav multilevel-accordion-menu vertical menu" data-accordion-menu" id="content">

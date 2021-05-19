@@ -23,14 +23,16 @@ namespace Risebird.Web.Controllers
         private IProjectService _projectService;
         private IAccountService _accountService;
         private IConfiguration _configuration;
+        private IInterviewerService _interviewerService;
 
-        public AccountController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IAccountService accountService, IConfiguration configuration)
+        public AccountController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IAccountService accountService, IConfiguration configuration, IInterviewerService interviewerService)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
             _projectService = projectService;
             _accountService = accountService;
             _configuration = configuration;
+            _interviewerService = interviewerService;
         }
 
         [Authorize]
@@ -463,5 +465,115 @@ namespace Risebird.Web.Controllers
 
         }
 
+        public async Task<IActionResult> UserProfile()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var model = new InterviewerProfileVM();
+                var model1 = _accountService.FetchUserProfile(emailid);
+
+                if (profileName == "Interviewer")
+                {
+                    model = await _interviewerService.GetInterviewerProfileByEmailId(emailid, profileName);
+                    model.WhatsappNumber = model1.WhatsappNumber;
+                    model.ImageLink = model1.ImageLink;
+                    
+                }
+                else
+                {
+                    model = model1;
+                }
+                if (TempData["MyProfileMessage"] != null)
+                {
+                    ViewBag.Message = TempData["MyProfileMessage"].ToString();
+                    TempData.Remove("MyProfileMessage");
+                }
+                GetAllSelectList(model);
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> UserProfile(InterviewerProfileVM userProfile)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                string uploadedFileURL = string.Empty;
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                userProfile.EmailId = emailid;
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (userProfile.ImageUpload != null)
+                {
+                    await _azureStorageHelper.InsertBlob(userProfile.ImageUpload.FileName, "profileimages", userProfile.ImageUpload);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("profileimages");
+                    var blob = containerRef.GetBlockBlobReference(userProfile.ImageUpload.FileName);
+                    uploadedFileURL = blob.Uri.ToString();
+                    userProfile.ImageLink = uploadedFileURL;
+                }
+                if (profileName == "Interviewer")
+                {
+                    if (userProfile.ResumeFile != null)
+                    {
+                        await _azureStorageHelper.InsertBlob(userProfile.ResumeFile.FileName, "resumes", userProfile.ResumeFile);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        var blob = containerRef.GetBlockBlobReference(userProfile.ResumeFile.FileName);
+                        uploadedFileURL = blob.Uri.ToString();
+                        userProfile.ResumeLink = uploadedFileURL;
+
+                    }
+                    if (_interviewerService.AddInterviewerMyProfile(userProfile).Result)
+                    {
+                        if (!String.IsNullOrEmpty(userProfile.ImageLink))
+                        {
+                            HttpContext.Session.SetString("currentUserimage", userProfile.ImageLink);
+                        }
+                        TempData["MyProfileMessage"] = "Profile updated Successfully";
+                        return RedirectToAction("UserProfile");
+                    }
+                    else
+                    {
+                        TempData["MyProfileMessage"] = "Profile update failed";
+                        return RedirectToAction("UserProfile");
+                    }
+                }
+                else
+                {
+                    if (_accountService.UpdateUserProfile(userProfile).Result)
+                    {
+                        if (!String.IsNullOrEmpty(userProfile.ImageLink)) {
+                            HttpContext.Session.SetString("currentUserimage", userProfile.ImageLink);
+                        }
+                        TempData["MyProfileMessage"] = "Profile updated Successfully";
+                        return RedirectToAction("UserProfile");
+                    }
+                    else
+                    {
+                        TempData["MyProfileMessage"] = "Profile update failed";
+                        return RedirectToAction("UserProfile");
+                    }
+                }
+            }
+            return View();
+
+        }
+        private void GetAllSelectList(InterviewerProfileVM model)
+        {
+            var Weekday = from Weekday s in Enum.GetValues(typeof(Weekday))
+                          select new { ID = (int)s, Name = s.GetDescription() };
+            model.WeekDayList = new SelectList(Weekday, "ID", "Name");
+
+            var Weekend = from Weekend s in Enum.GetValues(typeof(Weekend))
+                          select new { ID = (int)s, Name = s.GetDescription() };
+            model.WeekEndList = new SelectList(Weekend, "ID", "Name");
+        }
     }
 }

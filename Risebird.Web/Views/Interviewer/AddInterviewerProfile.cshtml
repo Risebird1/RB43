@@ -2,34 +2,21 @@
 
 @{
     ViewData["Title"] = "Add Interviewer Profile";
+    ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<script>
+    var Header = "<a href='/Interviewer/Index'>Interviewers</a>&nbsp;/&nbsp;Add Interviewer";
+    $('#txtpageHeader').empty().html(Header);
+</script>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-                <a class="navbar-brand breadcrumscolor" href="/Interviewer/Index">Interviewers</a>
-                <a class="navbar-brand"> / &nbsp; Add Interviewer</a>
-            </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-            </button>
-        </div>
-    </nav>
+
 
     <div class="mt50">
     </div>

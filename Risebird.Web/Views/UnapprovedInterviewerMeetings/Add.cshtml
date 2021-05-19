@@ -2,14 +2,25 @@
 
 @{
     ViewData["Title"] = "Interview";
+    ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<script>
+    var Header = "<a href='/UnapprovedInterviewerMeetings/Index'>Interview Forms</a>&nbsp;/&nbsp; @if (Model.IsEditable)
+                {
+                    <a class='navbar-brand'> /  &nbsp; Edit Interview</a>
+                }
+                else
+                {
+                    <a class='navbar-brand'> /  &nbsp; Add Interview</a>
+                }";
+    $('#txtpageHeader').empty().html(Header);
+</script>
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+    @*<nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
             <div class="navbar-wrapper">
                 <div class="navbar-toggle">
@@ -36,7 +47,7 @@
             </button>
 
         </div>
-    </nav>
+    </nav>*@
     <!-- End Navbar -->
     <div class="mt50">
     </div>

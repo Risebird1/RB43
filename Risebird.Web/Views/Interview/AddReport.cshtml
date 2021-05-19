@@ -8,12 +8,13 @@
 
 @{
     ViewData["Title"] = "Interview Report";
+    ViewBag.PageHeader = "Interview Report";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var meetingStatusList = new List<SelectListItem>();
     if (ViewBag.Profile == "Admin")
     {
-       meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
+        meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
     }
     else
     {
@@ -37,41 +38,17 @@
 
 <div class="main-panel" id="main-panel">
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-
-            <div class="navbar-wrapper" style="width: 100%;
-        float: left;
-        display: block;">
-
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-
-                <div class="pull-left">
-                    <a class="navbar-brand">
-                        Interview Report
-                    </a>
-                </div>
-
-                <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="create_pdf" style="" value="Generate PDF" onclick="getPDF()"></div>
-            </div>
-
-        </div>
-    </nav>
-    <!-- End Navbar -->
     <div class="loader text-center">
         <img src="~/Newassets/img/lazyload.gif" />
     </div>
     <div class="mt50">
     </div>
     <div class="content dataloading client">
-
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="interviewgenerate_pdf" value="Generate PDF" onclick="getPDF()"></div>
+            </div>
+        </div>
         <div class="row bl-bg">
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">

@@ -5,6 +5,7 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Skills Channel";
+    ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
     string strtDte = String.Empty;
@@ -34,30 +35,15 @@
     PrimarySkill = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
     EndClientName = filter.EndClientName != null ? filter.EndClientName : new string[] { };
 }
+<script>
+    var Header = "<div id='skill_1'>Skills Channel</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
 <link href="~/Newassets/css/irf.css?v=123456" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=123456" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-                <div id="skill_1">
-                    <a class="navbar-brand">
-                        Skills Channel
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
-    <!-- End Navbar -->
+
     <!--  <div class="panel-header panel-header-sm"></div>-->
 
 
@@ -302,7 +288,7 @@
                                                         <button id="skill_19" class="mdc-fab app-fab--absolute" aria-label="Interrview Planner">
                                                             <span onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new { irfId = item.id, irfName = item.IRFId })'" title="Interview Planner" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" /></svg></span>
                                                         </button>
-                                                        <button  id="skill_20" class="mdc-fab app-fab--absolute" aria-label="Interview Invoice">
+                                                        <button id="skill_20" class="mdc-fab app-fab--absolute" aria-label="Interview Invoice">
                                                             <span onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" title="Interview Invoice" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" /></svg></span>
                                                         </button>
                                                         //getIRFMembers
@@ -387,7 +373,7 @@
 
 
                                                         }
-                                                        @if(!string.IsNullOrEmpty(item.RisebirdHREmail))
+                                                        @if (!string.IsNullOrEmpty(item.RisebirdHREmail))
                                                         {
                                                             <div class="row clearfix">
                                                                 <div class="client-field">
@@ -399,7 +385,7 @@
                                                         {
                                                             <div class="row clearfix">
                                                                 <div class="client-field">
-                                                                    <span> Channel Owner: </span><span ></span>
+                                                                    <span> Channel Owner: </span><span></span>
                                                                 </div>
                                                             </div>
                                                         }
@@ -2577,7 +2563,7 @@
                     },
 
 
-                   
+
 
                     {
                         title: "Candidate Curated Score",

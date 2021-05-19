@@ -3,6 +3,7 @@
 @using Risebird.Entities.Enum
 @{
     ViewData["Title"] = "Interviewer Report";
+    ViewBag.PageHeader = "Interview Report";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -20,39 +21,17 @@
 <link href="~/Newassets/css/select2.css?v7" defer rel="stylesheet" />
 <div class="main-panel" id="main-panel">
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-
-            <div class="navbar-wrapper" style="width: 100%; float: left; display: block;">
-
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-
-                <div class="pull-left">
-                    <a class="navbar-brand">
-                        Interviewer Report
-                    </a>
-                </div>
-
-                <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="create_pdf" style="" value="Generate PDF" onclick="getPDF()"></div>
-            </div>
-
-        </div>
-    </nav>
-    <!-- End Navbar -->
     <div class="loader text-center">
         <img src="~/Newassets/img/lazyload.gif" />
     </div>
     <div class="mt50">
     </div>
     <div class="content dataloading client">
-
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="interviewgenerate_pdf" value="Generate PDF" onclick="getPDF()"></div>
+            </div>
+        </div>
         <div class="row bl-bg">
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
@@ -154,7 +133,6 @@
                                             <a class="info" href="#"><span>Select Skill Quality, Multiple tracks at same time </span></a>
 
                                             <!--   @Html.DropDownListFor(x => Model.SkillQuality, Model.SkillQualityList, "Select Skill Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
-
                                             @Html.HiddenFor(m => m.SkillQuality)
 
                                             <div class="star-rating">
@@ -179,8 +157,6 @@
                                             <a class="info" href="#"><span>Relevant, Not Relevant, Not Done </span></a>
 
                                             <!--@Html.DropDownListFor(x => Model.CertificationQuality, Model.CertificationQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
-
-
                                             @Html.HiddenFor(m => m.CertificationQuality)
                                             <div class="star-rating">
                                                 <input type="radio" id="CertificationQuality_5" name="rating2" value="5" onclick="RatingChanged('CertificationQuality','5', 'Profile')" />
@@ -255,7 +231,6 @@
                                             <a class="info" href="#"><span>Stuck in small company for long time, Freelancer, Teacher, Project manager, Delivery manager, People Management, Administrative</span></a>
 
                                             <!---  @Html.DropDownListFor(x => Model.CareerProgression, Model.CareerProgressionList, "Select Career", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })-->
-
                                             @Html.HiddenFor(m => m.CareerProgression)
 
                                             <div class="star-rating">

@@ -2,35 +2,18 @@
 
 @{
     ViewData["Title"] = "Add Interview";
+    ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<script>
+    var Header = "<a href='/Interview/Index'>Interview Forms</a>&nbsp;/&nbsp;Add Interview";
+    $('#txtpageHeader').empty().html(Header);
+</script>
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-                <a class="navbar-brand breadcrumscolor" href="/Interview/Index">Interview Forms</a>
-                <a class="navbar-brand"> /  &nbsp; Add Interview</a>
-            </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-            </button>
-
-        </div>
-    </nav>
-    <!-- End Navbar -->
+    
     <div class="mt50">
     </div>
 
@@ -120,10 +103,10 @@
                                         @Html.ValidationMessageFor(model => model.zoomLink, "", new { @class = "text-danger" })
                                     </div>
                                     @*<div class="form-group">
-                        @Html.LabelFor(model => model.zoomDetails, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                        @Html.EditorFor(model => model.zoomDetails, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.zoomDetails, "", new { @class = "text-danger" })
-                    </div>*@
+                                            @Html.LabelFor(model => model.zoomDetails, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.zoomDetails, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.zoomDetails, "", new { @class = "text-danger" })
+                                        </div>*@
                                     <div class="form-group">
                                         <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Zoom Login Details</label>
 
@@ -405,12 +388,12 @@
     }
 
     function checkValidation() {
-        if (CheckResume && checkDate && $('#confirmationStatus').val()!='') {
+        if (CheckResume && checkDate && $('#confirmationStatus').val() != '') {
             $("#btnUpload").attr("disabled", "disabled");
             return true;
         }
-        else { return false;}
-       
+        else { return false; }
+
     }
 </script>
 

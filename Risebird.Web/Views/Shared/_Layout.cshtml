@@ -19,7 +19,7 @@
     <link href="~/Newassets/css/bootstrap.min.css?v=9" rel="stylesheet" />
     <link href="~/Newassets/css/chat.css?v=7" rel="stylesheet" />
     <link href="~/Newassets/css/now-ui-dashboard.css?v=123456" rel="stylesheet" />
-    <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet"/>
+    <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
@@ -31,7 +31,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css?v=6" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
 
     <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=10" />
-
+    @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Currenttheme")))
+    {
+        <link rel="stylesheet" type="text/css" id="theme" href="~/Newassets/css/dark-theme.css" />
+    }
+    else
+    {
+        <link rel="stylesheet" type="text/css" id="theme" href="@HttpContextAccessor.HttpContext.Session.GetString("Currenttheme")" />
+    }
     <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 
     <script src="~/Newassets/js/core/jquery.min.js?v=7"></script>
@@ -57,17 +64,22 @@
     <script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js?v=7"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js?v=7" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
     <style>
-        .swal2-popup .swal2-styled{box-shadow:none!important}
-        .swal2-popup .swal2-actions:not(.swal2-loading) .swal2-styled:active, .swal2-popup .swal2-styled.swal2-confirm {
-            font-size: 14px !important;
-            min-width: 105px;
-            height: 40px;
-            padding: 0px 20px !important;
-            border: 0px !important;
+        .swal2-popup .swal2-styled {
+            box-shadow: none !important
         }
-            .sweet-alert h2 {
-            margin-bottom: 10px!important;
+
+            .swal2-popup .swal2-actions:not(.swal2-loading) .swal2-styled:active, .swal2-popup .swal2-styled.swal2-confirm {
+                font-size: 14px !important;
+                min-width: 105px;
+                height: 40px;
+                padding: 0px 20px !important;
+                border: 0px !important;
+            }
+
+        .sweet-alert h2 {
+            margin-bottom: 10px !important;
         }
+
         .swal2-popup .swal2-content {
             font-size: 1.1em;
         }
@@ -79,26 +91,26 @@
         }
 
         .swal2-icon {
-            margin: 0em auto 1em!important;
+            margin: 0em auto 1em !important;
         }
 
-.swal2-popup .swal2-styled {
- padding: .425em 1em !important;
-}
+        .swal2-popup .swal2-styled {
+            padding: .425em 1em !important;
+        }
 
-.swal2-popup .swal2-styled.swal2-cancel {
- background-color: rgb(221, 51, 51) !important;
-}
+            .swal2-popup .swal2-styled.swal2-cancel {
+                background-color: rgb(221, 51, 51) !important;
+            }
 
-[data-tooltip]:before {
- background: #908f8f !important;
- color: #fff !important;
-border: 1px #fff solid !important;
-}
+        [data-tooltip]:before {
+            background: #908f8f !important;
+            color: #fff !important;
+            border: 1px #fff solid !important;
+        }
 
-.confirm.btn, .multiselect.btn {
- line-height: normal !important
- }
+        .confirm.btn, .multiselect.btn {
+            line-height: normal !important
+        }
     </style>
 </head>
 <body class="sidebar-mini">
@@ -107,10 +119,211 @@ border: 1px #fff solid !important;
         <source src="~/audio/done-for-you.ogg" type="audio/ogg" />
     </audio>
 
-
-
-    <div class="wrapper ">
+    <div class="wrapper">
         @Html.AntiForgeryToken()
+
+
+        <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute top-panel" style="height:53px;">
+            <div class="container-fluid">
+                <div class="navbar-wrapper w-full">
+                    <div class="navbar-toggle">
+                        <button type="button" class="navbar-toggler">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
+                    </div>
+                    <div id="txtpageHeader" class="navbar-brand" style=" line-height:50px!important;">@ViewBag.PageHeader</div>
+                </div>
+
+            </div>
+
+            <div class="pull-right">
+                <div>
+                    @*<a href="/Account/UserProfile">profile</a>*@
+                    @*<div class="dropdown main-header-notification">
+                            <a class="nav-link icon" href="">
+                                <i class="fe fe-bell header-icons"></i>
+                                <span class="badge badge-danger nav-link-badge">4</span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <div class="header-navheading">
+                                    <p class="main-notification-text">You have 1 unread notification<span class="badge badge-pill badge-primary ml-3">View all</span></p>
+                                </div>
+                                <div class="main-notification-list">
+                                    <div class="media new">
+                                        <div class="main-img-user online"><img alt="avatar" src="https://codeigniter.spruko.com/spruha/spruha-ltr/public/assets/img/users/5.jpg"></div>
+                                        <div class="media-body">
+                                            <p>Congratulate <strong>Olivia James</strong> for New template start</p><span>Oct 15 12:32pm</span>
+                                        </div>
+                                    </div>
+                                    <div class="media">
+                                        <div class="main-img-user"><img alt="avatar" src="https://codeigniter.spruko.com/spruha/spruha-ltr/public/assets/img/users/2.jpg"></div>
+                                        <div class="media-body">
+                                            <p><strong>Joshua Gray</strong> New Message Received</p><span>Oct 13 02:56am</span>
+                                        </div>
+                                    </div>
+                                    <div class="media">
+                                        <div class="main-img-user online"><img alt="avatar" src="https://codeigniter.spruko.com/spruha/spruha-ltr/public/assets/img/users/3.jpg"></div>
+                                        <div class="media-body">
+                                            <p><strong>Elizabeth Lewis</strong> added new schedule realease</p><span>Oct 12 10:40pm</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="dropdown-footer">
+                                    <a href="#">View All Notifications</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dropdown main-header-notification">
+                            <a class="nav-link icon" href="">
+                                <i class="fe fe-message-square header-icons"></i>
+                                <span class="badge badge-success nav-link-badge">3</span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <div class="header-navheading">
+                                    <p class="main-notification-text tx-medium text-left"> 3 New messages </p>
+                                </div>
+                                <div class="main-notification-list">
+                                    <div class="media new">
+                                        <div class="main-img-user online"><img alt="avatar" src="https://codeigniter.spruko.com/spruha/spruha-ltr/public/assets/img/users/10.jpg"></div>
+                                        <div class="media-body">
+                                            <p>
+                                                Paul Molive <span>I'm sorry but i'm not sure how...</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="media">
+                                        <div class="main-img-user online"><img alt="avatar" src="https://codeigniter.spruko.com/spruha/spruha-ltr/public/assets/img/users/8.jpg"></div>
+                                        <div class="media-body">
+                                            <p>
+                                                Sahar DaryAll<span> set ! Now, time to get to you now......</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="media">
+                                        <div class="main-img-user online"><img alt="avatar" src="https://codeigniter.spruko.com/spruha/spruha-ltr/public/assets/img/users/11.jpg"></div>
+                                        <div class="media-body">
+                                            <p>Barney Cull</p><span>Here are some products ...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="dropdown-footer">
+                                    <a href="#">View All</a>
+                                </div>
+                            </div>
+                        </div>*@
+
+
+                    <div class="user">
+                        <h6 class="main-notification-title">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
+                                {
+                                    var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
+                                    var email = emailid.Trim('"');
+                                    <span>
+                                        @email
+
+                                    </span>
+
+                                }
+                                else
+                                {
+                                    <span>
+                                        "Logged In User";
+
+                                    </span>
+                                }
+                            }
+                        </h6>
+                        <div class="main-img-user">
+                            @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currentUserimage")))
+                            {
+                                <a class="mini-photo-wrapper"> <img src="~/img/man.png" /></a>
+                            }
+                            else
+                            {
+                                <a class="mini-photo-wrapper"> <img src="@HttpContextAccessor.HttpContext.Session.GetString("currentUserimage")" /></a>
+                            }
+                        </div>
+
+                        <div class="menu-container">
+
+                            <ul class="user-menu">
+
+                                <li class="user-menu__item">
+                                    <span class="user-menu-link">
+                                        @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
+                                        {
+                                            var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+                                            profileName = profileName.Trim('"');
+                                            @if (profileName == "Interviewer")
+                                            {
+                                                <a style="width: 100%; border: 0px!important;" href="/Account/UserProfile">
+
+                                                    <i class="fa fa-user-circle-o pull-left" aria-hidden="true"></i>
+                                                    <span class="pull-left">My Profile</span>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a style="width: 100%; border: 0px!important;" href="/Account/UserProfile">
+                                                    <i class="fa fa-user-circle-o pull-left" aria-hidden="true"></i>
+                                                    <span class="pull-left">My Profile</span>
+                                                </a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <a style="width: 100%; border: 0px!important;" href="/Account/UserProfile">
+                                                <i class="fa fa-user-circle-o pull-left" aria-hidden="true"></i>
+                                                <span class="pull-left">My Profile</span>
+                                            </a>
+                                        }
+
+
+                                    </span>
+                                </li>
+
+                                <li class="user-menu__item"><a class="user-menu-link" asp-area="" asp-controller="Session" asp-action="SignOut"><i class="fa fa-sign-out" aria-hidden="true"></i> <div>Sign out</div></a></li>
+                                <li class="user-menu__item">
+                                    <section class="user-menu-link" href="#" style="border-top: 1px solid #f0f2f8 !important;">
+                                        <span class="w-full">
+                                            <i class="fa fa-cog pull-left"></i>
+                                            <span class="pull-left">
+                                                Color Theme
+
+                                            </span><br />
+                                            <p class="ts-themes" style="margin-top:10px;">
+                                                <a href="#" data-theme="../../Newassets/css/blue-theme.css?v=546787"><img src="../../Newassets/img/default.jpg" /></a>
+                                                <a href="#" data-theme="../../Newassets/css/grey-theme.css?v=546787"><img src="../../Newassets/img/grey.png" /></a>
+                                                <a href="#" data-theme="../../Newassets/css/orange-theme.css?v=546787"><img src="../../Newassets/img/orange.png" /></a>
+                                                <a href="#" data-theme="../../Newassets/css/dark-theme.css?v=546787"><img src="../../Newassets/img/dark.png" /></a>
+                                            </p>
+                                        </span>
+
+
+
+                                    </section>
+
+
+                                </li>
+
+
+                            </ul>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+        </nav>
+
         <!-- Navigation -->
         @Html.Partial("_Navigation")
         <!-- Navigation end -->
@@ -154,7 +367,6 @@ border: 1px #fff solid !important;
     <script src="~/Newassets/js/now-ui-dashboard.min.js?v=1.4.1" type="text/javascript"></script>
 
     <script type="text/javascript" src="~/js/settings.js"></script>
-
     <script>
 
         $(document).ready(function () {
@@ -165,48 +377,76 @@ border: 1px #fff solid !important;
             for (var i = 0; i < loopvalue; i++) {
                 if ($("ul li a")[i].getAttribute("href").toUpperCase() == "/" + location.split("/")[3].toUpperCase() + "/" + location.split("/")[4].toUpperCase().split("?")[0]) {
                     if ($('ul li a')[i].getAttribute("class") == "admin-submenu") {
-                      
+
                         $('.dropmenu label.admin-active').addClass("active-menu");
                         $('.dropmenu label.admin-active').append('<span class="shape1"></span><span class="shape2"></span>');
                         $('.dropmenu label.interviewer-active').removeClass("active-menu");
                         $('.drop-wrap ul li a').removeClass("active-menu");
-                        
-                   
+
+
                     }
 
                     if ($('ul li a')[i].getAttribute("class") == "interviewer-submenu") {
-                    
+
                         $('.dropmenu label.interviewer-active').addClass("active-menu");
                         $('.dropmenu label.interviewer-active').append('<span class="shape1"></span><span class="shape2"></span>');
                         $('.dropmenu label.admin-active').removeClass("active-menu");
                         $('.drop-wrap ul li a').removeClass("active-menu");
-                       
+
                     }
                     $("ul li a")[i].setAttribute("class", "active-menu");
                     $('.drop-wrap ul li  a').removeClass("active-menu");
                     $('ul li a.active-menu').append('<span class="shape1"></span><span class="shape2"></span>');
-                  
+
                     break;
                 }
 
 
             }
 
-                
+
 
 
 
         })
     </script>
 
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>
 
 
+<script>
+    document.querySelector('.mini-photo-wrapper').addEventListener('click', function () {
+        document.querySelector('.menu-container').classList.toggle('active');
+    });
+</script>
 
 
+@*<script>
+        $(document).ready(function () {
+
+            /* Change Theme */
+            $(".ts-themes a").click(function () {
+                $(".ts-themes a").removeClass("active");
+                //  $(this).addClass("active");
+                $("#theme").attr("href", $(this).data("theme"));
+                /*implement the ajax call*/
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Chat/Savetheme",
+                    data: { theme: $(this).data("theme"), },
+                    success: function (data) {
 
 
+                    }
+                });
+
+                return false;
+            });
+        })
+    </script>*@
 
 

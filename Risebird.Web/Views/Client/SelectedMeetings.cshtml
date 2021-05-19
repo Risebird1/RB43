@@ -7,6 +7,7 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Selected Candidates";
+    ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
     string strtDte = String.Empty;
@@ -37,33 +38,14 @@
     JoiningStatus = filter.JoiningStatus != null ? filter.JoiningStatus : new string[] { };
     OfferStatus = filter.OfferStatus != null ? filter.OfferStatus : new string[] { };
 }
-
+<script>
+    var Header = "<div id='selectedcandidate_1'>Selected Candidates</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=345678" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=234567" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-                <div id="selectedcandidate_1">
-                    <a class="navbar-brand">
-                        Selected Candidates
-                    </a>
-                </div>
-            </div>
-
-        </div>
-    </nav>
-    <!-- End Navbar -->
-
 
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
@@ -936,7 +918,7 @@
     </div>
 
 </div>
-
+        </div></div>
 
 
 @if (ViewBag.Message != null)

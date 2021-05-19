@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -36,5 +37,22 @@ namespace Risebird.Entities.ViewModel
         public SelectList ClientList { get; set; }
         public string AccountStatus { get; set; }
 
+    }
+    public class UserProfile
+    {
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+        public string Role { get; set; }
+        [Display(Name = "Mobile Number")]
+        public string MobileNumber { get; set; }
+        [Display(Name = "Whatsapp Number")]
+        public string WhatsappNumber { get; set; }
+        [Display(Name = "Image Link")]
+        public string ImageLink { get; set; }
+        [Display(Name = "Image Upload")]
+        public IFormFile ImageUpload { get; set; }
+        public string EmailId { get; set; }
     }
 }

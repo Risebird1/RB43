@@ -909,6 +909,20 @@ namespace Risebird.Repository
                    commandType: CommandType.StoredProcedure);
 
                 }
+                string queryupdate = "Update Userlist Set FirstName= @FirstName,LastName= @LastName,MobileNumber=@MobileNumber,WhatsappNumber=@WhatsappNumber,ImageLink=IsNull(@ImageLink,ImageLink) where Emailid=@Emailid";
+                var parametersupdate = new DynamicParameters();
+
+                parametersupdate.Add("@FirstName", interviewerProfile.FirstName);
+                parametersupdate.Add("@LastName", interviewerProfile.LastName);
+                parametersupdate.Add("@Emailid", interviewerProfile.EmailId);
+                parametersupdate.Add("@MobileNumber", interviewerProfile.MobileNumber);
+                parametersupdate.Add("@WhatsappNumber", interviewerProfile.WhatsappNumber);
+                parametersupdate.Add("@ImageLink", interviewerProfile.ImageLink);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(queryupdate, parametersupdate);
+                }
                 return true;
             }
 

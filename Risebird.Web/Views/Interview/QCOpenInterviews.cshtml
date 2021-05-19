@@ -8,46 +8,26 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = " QC Open Interviews";
+    ViewBag.PageHeader = "QC Open Interviews";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<script>
+    var Header = "<div id='openqcinterview_1'>QC Open Interviews</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
 <!-- Keep the Page Content Here.-->
 
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-                <div id="openqcinterview_1">
-                    <a class="navbar-brand">
-                        QC Open Interviews
-                    </a>
-                </div>
-            </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-            </button>
-        </div>
-    </nav>
-    <!-- End Navbar -->
+
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
-                    <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title">  QC Open Interviews</h4></div>
+                   <h4 class="card-title"></h4>
+                    <div class="mobile-view"><h4 class="card-title">QC Open Interviews</h4></div>
                 </div>
 
 

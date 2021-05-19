@@ -3,6 +3,7 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Proctor Interviews";
+    ViewBag.PageHeader = " Proctor Interviews";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
@@ -12,30 +13,7 @@
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 
 <div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-                <div id="procinterview_1">
-                    <a class="navbar-brand">
-                        Proctor Interviews
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
-    <!-- End Navbar -->
     <!--  <div class="panel-header panel-header-sm"></div>-->
-
-
-
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">

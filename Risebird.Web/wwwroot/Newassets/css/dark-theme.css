@@ -935,6 +935,34 @@ input[type="radio"]:checked {
         top: 8px;
         left: 0px;
     }
+.tab-menu ul li a {
+    background: #464444;
+    border: 2px solid #272626;
+    color: #adadad;
+}
+.mdc-card .tab-box .form-control, .mdc-card .tab-box .form-control[readonly] {
+    background: #0e0a0a;
+    color: #9A9A9A !important;
+    border-bottom: 0px !important;
+}
+.tab-main-box {
+    background: #1b1a1a;
+}
+.tab-menu ul li a.active {
+    background: #0e0a0a;
+    color: #fff;
+    text-decoration: none;
+}
+.tab-menu ul li a:hover {
+    background: #0e0a0a;
+    color: #fff;
+    text-decoration: none;
+}
+.info-text{color:#fff}
+.avatar-upload .avatar-preview {
+    border: 6px solid #c5c5c542;
+}
+.tab-box label.choose-file-profile{color:#fff!important;}
 @media screen and (max-width: 768px) {
     .d_active {
         background-color: #1a1a1a !important;
@@ -1806,7 +1834,16 @@ div.dataTables_wrapper div.dataTables_info {
 .theme-settings .ts-body {
     background: #1a1a1a;
 }
-
+.image-upload label {
+    background-color: #fff;
+    color: #54a5f5;
+    padding: 0.3rem !important;
+    font-family: sans-serif;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    margin: 5px 5px;
+    border: 1px #000 solid;
+}
 .chat {
     background: #000000 !important;
 }

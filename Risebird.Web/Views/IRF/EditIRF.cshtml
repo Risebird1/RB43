@@ -2,9 +2,13 @@
 
 @{
     ViewData["Title"] = "Edit Skills Channel";
+    ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<script>
+    var Header = "<a href='/IRF/Index'>Skills Channel</a>&nbsp;/&nbsp;Edit Skill Channel";
+    $('#txtpageHeader').empty().html(Header);
+</script>
 
 <link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 
@@ -13,7 +17,7 @@
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+    @*<nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
             <div class="navbar-wrapper">
                 <div class="navbar-toggle">
@@ -29,7 +33,7 @@
 
 
         </div>
-    </nav>
+    </nav>*@
     <!-- End Navbar -->
 
     <div class="content client">
