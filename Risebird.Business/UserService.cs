@@ -634,7 +634,7 @@ namespace Risebird.Business
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
-        }
+        }  
         public List<AssignmentVM> GetInterviewerEntitle()
         {
             try
@@ -652,6 +652,18 @@ namespace Risebird.Business
             try
             {
                 return _userRepository.InterviewerEntitleDetails(id).ToList();
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public string GetCurrentuserImage(string emailId)
+        {
+            try
+            {
+                return _userRepository.GetCurrentuserImage(emailId);
             }
             catch (Exception e)
             {

@@ -4,6 +4,7 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "RB Matches";
+    ViewBag.PageHeader = "RB Matches";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interviewer.css?v=8" />
@@ -32,22 +33,7 @@
 </script>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-                <div id="rbmatches_1">
-                    <a  class="navbar-brand">RB Matches</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+    
     <!-- End Navbar -->
 
     <div class="pt30">
@@ -196,15 +182,16 @@
                                                                 <a style="text-decoration: none;
         cursor: pointer;
 " data-tooltip="@item.JDTitle"><h6 class="jd-name assessment-grp">@item.JDTitle</h6> </a>
-                                                            }
-                                                            else
-                                                            {
-                                                    <h6 class="assessment-grp">
-                                                        @item.JDTitle
-                                                    </h6>
-                                                            }
+}
+else
+{
+<h6 class="assessment-grp">
+    @item.JDTitle
+</h6>
+}
                                                         }
-                                                        else { <h6></h6>}
+                                                        else
+                                                        { <h6></h6>}
 
 
                                                     </div>
@@ -236,49 +223,49 @@
                                                 <div class="statusInfo">
                                                     <div class="group inner list-group-item-text">
                                                         <div id="rbmatches_3" class="second clearfix">
-                                                            <div  class="client-field"><span> Start Date:</span><span style="font-weight:normal">@item.StartDate</span></div>
+                                                            <div class="client-field"><span> Start Date:</span><span style="font-weight:normal">@item.StartDate</span></div>
                                                         </div>
                                                         <div id="rbmatches_4" class="three clearfix">
                                                             <div class="client-field">
                                                                 <span><b>End Date:</b></span><span style="font-weight:normal">@@item.EndDate</span>
-</div>
-                                                        </div>
-                                                            @if (!Model._clientjddetails.isClientUser)
-                                                            {
-                                                                <div>
-                                                                    <span><b>Client:</b></span> @item.Name
-                                                                </div>
-                                                            }
-                                                            <div id="rbmatches_5" class="clearfix">
-                                                                <div class="client-field">
-                                                                    <span><b>Assessment Group:</b></span><span style="font-weight:normal"> @item.AssessmentGroupName</span>
-</div>
-                                                            </div>
-                                                            <div id="rbmatches_6" class="clearfix">
-                                                                <div class="client-field">
-                                                                    <span><b>JD Link:</b></span>
-                                                                    @if (!String.IsNullOrEmpty(item.Filelink))
-                                                                    {
-                                                                        <a href="@item.Filelink" target="_blank">Click Here</a>
-                                                                    }
-                                                                </div>
-                                                            </div>
-                                                            <div id="rbmatches_7" class="clearfix">
-                                                                <div class="client-field">
-                                                                    <span><b>Role:</b></span><span style="font-weight:normal"> @item.JobRole</span>
-</div>
-                                                            </div>
-                                                            <div id="rbmatches_8" class="clearfix">
-                                                                <div class="client-field">
-                                                                    <span><b>Salary Range:</b></span><span style="font-weight:normal"> @item.JDBudget</span>
-</div>
-                                                            </div>
-                                                            <div id="rbmatches_9" class="clearfix">
-                                                                <div class="client-field">
-                                                                    <span><b>Location:</b></span><span style="font-weight:normal"> @item.Location</span>
-</div>
                                                             </div>
                                                         </div>
+                                                        @if (!Model._clientjddetails.isClientUser)
+                                                        {
+                                                            <div>
+                                                                <span><b>Client:</b></span> @item.Name
+                                                            </div>
+                                                        }
+                                                        <div id="rbmatches_5" class="clearfix">
+                                                            <div class="client-field">
+                                                                <span><b>Assessment Group:</b></span><span style="font-weight:normal"> @item.AssessmentGroupName</span>
+                                                            </div>
+                                                        </div>
+                                                        <div id="rbmatches_6" class="clearfix">
+                                                            <div class="client-field">
+                                                                <span><b>JD Link:</b></span>
+                                                                @if (!String.IsNullOrEmpty(item.Filelink))
+                                                                {
+                                                                    <a href="@item.Filelink" target="_blank">Click Here</a>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                        <div id="rbmatches_7" class="clearfix">
+                                                            <div class="client-field">
+                                                                <span><b>Role:</b></span><span style="font-weight:normal"> @item.JobRole</span>
+                                                            </div>
+                                                        </div>
+                                                        <div id="rbmatches_8" class="clearfix">
+                                                            <div class="client-field">
+                                                                <span><b>Salary Range:</b></span><span style="font-weight:normal"> @item.JDBudget</span>
+                                                            </div>
+                                                        </div>
+                                                        <div id="rbmatches_9" class="clearfix">
+                                                            <div class="client-field">
+                                                                <span><b>Location:</b></span><span style="font-weight:normal"> @item.Location</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
 
@@ -618,370 +605,370 @@
 </script>
 
 @*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
-{
+    {
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
 
-    <script type="text/javascript">
+        <script type="text/javascript">
 
-        hopscotch.registerHelper('addOverlay', function () {
-            $('body').append('<div class="overlay"></div>');
-        });
-
-        hopscotch.registerHelper('removeOverlay', function () {
-            $('.overlay').fadeOut(function () {
-                $(this).remove();
-                $('.helper').remove();
+            hopscotch.registerHelper('addOverlay', function () {
+                $('body').append('<div class="overlay"></div>');
             });
-        });
 
-        hopscotch.listen('show', function () {
-            var elementObject = $(hopscotch.getCurrTarget(tour));
-            var element = $('#' + elementObject[0].id);
+            hopscotch.registerHelper('removeOverlay', function () {
+                $('.overlay').fadeOut(function () {
+                    $(this).remove();
+                    $('.helper').remove();
+                });
+            });
 
-            element.prev().removeClass('overlay-relative');
-            element.addClass('overlay-relative');
+            hopscotch.listen('show', function () {
+                var elementObject = $(hopscotch.getCurrTarget(tour));
+                var element = $('#' + elementObject[0].id);
 
-            if ($('.helper').length !== 0) {
+                element.prev().removeClass('overlay-relative');
+                element.addClass('overlay-relative');
+
+                if ($('.helper').length !== 0) {
 
 
-                // Use Helper Layer for hilight target element.
-                var helper = $('.helper');
-                var padding = 5;
-                var helperPosX = element.position().left - padding;
-                var helperPosY = element.position().top - padding;
-                var targetWidth = element.outerWidth();
-                var targetHeight = element.outerHeight();
+                    // Use Helper Layer for hilight target element.
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
 
-                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-                helper.css('width', targetWidth);
-                helper.css('height', targetHeight);
-                helper.offset({ left: helperPosX, top: helperPosY });
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
 
-            } else {
+                } else {
 
-                // Add Helper Layer for highlight target element.
-                var newHelper = '<div class="helper"></div>';
-                $('body').append(newHelper);
+                    // Add Helper Layer for highlight target element.
+                    var newHelper = '<div class="helper"></div>';
+                    $('body').append(newHelper);
 
-                var helper = $('.helper');
-                var padding = 5;
-                var helperPosX = element.position().left - padding;
-                var helperPosY = element.position().top - padding;
-                var targetWidth = element.outerWidth();
-                var targetHeight = element.outerHeight();
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
 
-                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-                helper.css('width', targetWidth);
-                helper.css('height', targetHeight);
-                helper.offset({ left: helperPosX, top: helperPosY });
-            }
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
+                }
 
-        });
+            });
 
-        var tour = {
-            id: "hello-hopscotch",
-            showCloseButton: false,
-            steps: [
-                {
-                    title: "RB Matches",
-                    content: "View the job description of upcoming requirements",
-                    target: "rbmatches_1",
-                    placement: "bottom",
-                    showPrevButton: true,
+            var tour = {
+                id: "hello-hopscotch",
+                showCloseButton: false,
+                steps: [
+                    {
+                        title: "RB Matches",
+                        content: "View the job description of upcoming requirements",
+                        target: "rbmatches_1",
+                        placement: "bottom",
+                        showPrevButton: true,
 
-                    highlight: true,
-                    zindex: 999999,
-                   yOffset: -10,
-                   xOffset: 0,
-                    onCTA: function () {
-                        hopscotch.showStep(2);
-                        $('#rbmatches_1').removeClass('overlay-relative');
-                        $('.helper').remove();
+                        highlight: true,
+                        zindex: 999999,
+                       yOffset: -10,
+                       xOffset: 0,
+                        onCTA: function () {
+                            hopscotch.showStep(2);
+                            $('#rbmatches_1').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onNext: function () {
+                            $('#rbmatches_1').removeClass('overlay-relative');
+                            $('.helper').remove();
+
+                        }
                     },
-                    onNext: function () {
-                        $('#rbmatches_1').removeClass('overlay-relative');
-                        $('.helper').remove();
+                    {
+                        title: "Job Tilte",
+                        content: "Here showing the job title ",
+                        target: "rbmatches_2",
+                        placement: "bottom",
+                        showPrevButton: true,
 
-                    }
-                },
-                {
-                    title: "Job Tilte",
-                    content: "Here showing the job title ",
-                    target: "rbmatches_2",
-                    placement: "bottom",
-                    showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: -10,
+                        xOffset: 0,
+                        onPrev: function () {
 
-                    zindex: 999999,
-                    yOffset: -10,
-                    xOffset: 0,
-                    onPrev: function () {
+                            $('#rbmatches_2').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
 
-                        $('#rbmatches_2').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
+                        onNext: function () {
 
-                    onNext: function () {
-
-                        $('#rbmatches_2').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
+                            $('#rbmatches_2').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
 
 
-                },
-
-
-                {
-                    title: "Start Date",
-                    content: "Here showing the start date when the job is created",
-                    target: "rbmatches_3",
-                    placement: "right",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    xOffset: -140,
-                    yOffset: -20,
-                    onPrev: function () {
-
-                        $('#rbmatches_3').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-
-                    onNext: function () {
-
-                        $('#rbmatches_3').removeClass('overlay-relative');
-                        $('.helper').remove();
                     },
 
 
-                },
-                {
-                    title: "End Date",
-                    content: "Here showing the end date till the job is vaild",
-                    target: "rbmatches_4",
-                    showPrevButton: true,
-                    placement: "right",
-                    zindex: 999999,
-                    xOffset: -140,
-                    yOffset: -20,
-                    onPrev: function () {
+                    {
+                        title: "Start Date",
+                        content: "Here showing the start date when the job is created",
+                        target: "rbmatches_3",
+                        placement: "right",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        xOffset: -140,
+                        yOffset: -20,
+                        onPrev: function () {
 
-                        $('#rbmatches_4').removeClass('overlay-relative');
-                        $('.helper').remove();
+                            $('#rbmatches_3').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+
+                        onNext: function () {
+
+                            $('#rbmatches_3').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+
+
                     },
-                    onNext: function () {
+                    {
+                        title: "End Date",
+                        content: "Here showing the end date till the job is vaild",
+                        target: "rbmatches_4",
+                        showPrevButton: true,
+                        placement: "right",
+                        zindex: 999999,
+                        xOffset: -140,
+                        yOffset: -20,
+                        onPrev: function () {
 
-                        $('#rbmatches_4').removeClass('overlay-relative');
-                        $('.helper').remove();
+                            $('#rbmatches_4').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onNext: function () {
+
+                            $('#rbmatches_4').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+
+                    },
+                    {
+                        title: "Assessment Group",
+                        content: "Here showing the name of Assesment Group",
+                        target: "rbmatches_5",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "right",
+                        zindex: 999999,
+                        xOffset: -180,
+                        yOffset: -20,
+                        onNext: function () {
+                            $('#rbmatches_5').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#rbmatches_5').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
 
-                },
-                {
-                    title: "Assessment Group",
-                    content: "Here showing the name of Assesment Group",
-                    target: "rbmatches_5",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "right",
-                    zindex: 999999,
-                    xOffset: -180,
-                    yOffset: -20,
-                    onNext: function () {
-                        $('#rbmatches_5').removeClass('overlay-relative');
-                        $('.helper').remove();
+                    {
+                        title: "JD Link",
+                        content: "Click here to view the job description",
+                        target: "rbmatches_6",
+                        placement: "right",
+                        xOffset: -200,
+                        yOffset: -20,
+                        showPrevButton: true,
+                        zindex: 999999,
+
+                        onNext: function () {
+                            $('#rbmatches_6').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#rbmatches_6').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
-                    onPrev: function () {
-                        $('#rbmatches_5').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
 
-                {
-                    title: "JD Link",
-                    content: "Click here to view the job description",
-                    target: "rbmatches_6",
-                    placement: "right",
-                    xOffset: -200,
-                    yOffset: -20,
-                    showPrevButton: true,
-                    zindex: 999999,
-                   
-                    onNext: function () {
-                        $('#rbmatches_6').removeClass('overlay-relative');
-                        $('.helper').remove();
+                    {
+                        title: "Role",
+                        content: "Describes the role of the job",
+                        target: "rbmatches_7",
+                        placement: "right",
+                        xOffset: -250,
+                        yOffset: -20,
+                        showPrevButton: true,
+                        zindex: 999999,
+
+                        onNext: function () {
+                            $('#rbmatches_7').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#rbmatches_7').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
-                    onPrev: function () {
-                        $('#rbmatches_6').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
 
-                {
-                    title: "Role",
-                    content: "Describes the role of the job",
-                    target: "rbmatches_7",
-                    placement: "right",
-                    xOffset: -250,
-                    yOffset: -20,
-                    showPrevButton: true,
-                    zindex: 999999,
-                    
-                    onNext: function () {
-                        $('#rbmatches_7').removeClass('overlay-relative');
-                        $('.helper').remove();
+                    {
+                        title: "Salary Range",
+                        content: "Here showing the salary range of the available job",
+                        target: "rbmatches_8",
+                        placement: "right",
+                        xOffset: -200,
+                        yOffset: -20,
+                        showPrevButton: true,
+                        zindex: 999999,
+
+                        onNext: function () {
+                            $('#rbmatches_8').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#rbmatches_8').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
-                    onPrev: function () {
-                        $('#rbmatches_7').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
+                    {
+                        title: "Location",
+                        content: "Name of the location where jobs are available",
+                        target: "rbmatches_9",
+                        placement: "right",
+                        xOffset: -200,
+                        yOffset: -20,
+                        showPrevButton: true,
+                        zindex: 999999,
 
-                {
-                    title: "Salary Range",
-                    content: "Here showing the salary range of the available job",
-                    target: "rbmatches_8",
-                    placement: "right",
-                    xOffset: -200,
-                    yOffset: -20,
-                    showPrevButton: true,
-                    zindex: 999999,
-                
-                    onNext: function () {
-                        $('#rbmatches_8').removeClass('overlay-relative');
-                        $('.helper').remove();
+                        onNext: function () {
+                            $('#rbmatches_9').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#rbmatches_9').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
-                    onPrev: function () {
-                        $('#rbmatches_8').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-                {
-                    title: "Location",
-                    content: "Name of the location where jobs are available",
-                    target: "rbmatches_9",
-                    placement: "right",
-                    xOffset: -200,
-                    yOffset: -20,
-                    showPrevButton: true,
-                    zindex: 999999,
-                
-                    onNext: function () {
-                        $('#rbmatches_9').removeClass('overlay-relative');
-                        $('.helper').remove();
+
+                    {
+                        title: "All Candidates",
+                        content: "Click here to see all the candidates applicable for the job ",
+                        target: "rbmatches_10",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: -20,
+                        xOffset: 10,
+                        onNext: function () {
+                            $('#rbmatches_10').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#rbmatches_10').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
-                    onPrev: function () {
-                        $('#rbmatches_9').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
 
-                {
-                    title: "All Candidates",
-                    content: "Click here to see all the candidates applicable for the job ",
-                    target: "rbmatches_10",
-                    placement: "bottom",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    yOffset: -20,
-                    xOffset: 10,
-                    onNext: function () {
-                        $('#rbmatches_10').removeClass('overlay-relative');
-                        $('.helper').remove();
+                    {
+                        title: "Shortlisted Candidates",
+                        content: "Click here to see all the candidates selected for the job",
+                        target: "rbmatches_11",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: -20,
+                        xOffset: 10,
+                        onNext: function () {
+                            $('#rbmatches_11').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#rbmatches_11').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
-                    onPrev: function () {
-                        $('#rbmatches_10').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
 
-                {
-                    title: "Shortlisted Candidates",
-                    content: "Click here to see all the candidates selected for the job",
-                    target: "rbmatches_11",
-                    placement: "bottom",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    yOffset: -20,
-                    xOffset: 10,
-                    onNext: function () {
-                        $('#rbmatches_11').removeClass('overlay-relative');
-                        $('.helper').remove();
+                    {
+                        title: "Interest Sent Candidates",
+                        content: "Click here to see the candidate to whom interest is sent",
+                        target: "rbmatches_12",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: -20,
+                        xOffset: 10,
+                        onNext: function () {
+                            $('#rbmatches_12').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#rbmatches_12').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
-                    onPrev: function () {
-                        $('#rbmatches_11').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
 
-                {
-                    title: "Interest Sent Candidates",
-                    content: "Click here to see the candidate to whom interest is sent",
-                    target: "rbmatches_12",
-                    placement: "bottom",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    yOffset: -20,
-                    xOffset: 10,
-                    onNext: function () {
-                        $('#rbmatches_12').removeClass('overlay-relative');
-                        $('.helper').remove();
+                    {
+                        title: "Interest Accepted Candidates",
+                        content: "Click here to see the candidates who accepted the interest",
+                        target: "rbmatches_13",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: -20,
+                        xOffset: 10,
+                        onNext: function () {
+                            $('#rbmatches_13').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#rbmatches_13').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
-                    onPrev: function () {
-                        $('#rbmatches_12').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
 
-                {
-                    title: "Interest Accepted Candidates",
-                    content: "Click here to see the candidates who accepted the interest",
-                    target: "rbmatches_13",
-                    placement: "bottom",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    yOffset: -20,
-                    xOffset: 10,
-                    onNext: function () {
-                        $('#rbmatches_13').removeClass('overlay-relative');
-                        $('.helper').remove();
+                    {
+                        title: "RB Pay Menu",
+                        content: "Click on RB Pay menu to see its features",
+                        target: "rbpay_menu",
+                        placement: "top",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 0,
+                        xOffset: 10,
+                        onNext: function () {
+                            $('#rbpay_menu').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#rbpay_menu').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
-                    onPrev: function () {
-                        $('#rbmatches_13').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
 
-                {
-                    title: "RB Pay Menu",
-                    content: "Click on RB Pay menu to see its features",
-                    target: "rbpay_menu",
-                    placement: "top",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    yOffset: 0,
-                    xOffset: 10,
-                    onNext: function () {
-                        $('#rbpay_menu').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#rbpay_menu').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
+                ],
+                onStart: ["addOverlay"],
+                onEnd: ["removeOverlay"],
+            };
 
-            ],
-            onStart: ["addOverlay"],
-            onEnd: ["removeOverlay"],
-        };
+            hopscotch.startTour(tour);
 
-        hopscotch.startTour(tour);
+        </script>
 
-    </script>
-
-}*@
+    }*@
 

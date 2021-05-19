@@ -54,6 +54,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<AssignmentVM> GetInterviewerEntitle();
         IEnumerable<AssignmentVM> InterviewerEntitleDetails(int id);
         Task<bool> ResetNavigation(int userId);
+        string GetCurrentuserImage(string emailId);
 
     }
 }

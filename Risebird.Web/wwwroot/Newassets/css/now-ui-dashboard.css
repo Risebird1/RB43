@@ -2548,7 +2548,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
     .navbar.navbar-absolute {
         /*  position: absolute;*/
         width: 100%;
-        padding-top: 10px;
+        padding-top: 0px;
         z-index: 1;
     }
 
@@ -15033,7 +15033,7 @@ be a descendant of the grid when it is being dragged.
     }
 
     .navbar.bg-white:not(.navbar-transparent) .navbar-toggler-bar {
-        background-color: #888;
+        background-color: #fff;
     }
 
     .wrapper {

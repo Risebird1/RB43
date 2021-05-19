@@ -82,7 +82,7 @@ table.dataTable thead .sorting:after {
 }
 
 .navbar.navbar-transparent.btn-primary:hover, .navbar.navbar-transparent.btn-primary:focus {
-    background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
+    background: linear-gradient(to right, #f7792e 0%, #fb8a44ed 60%, #ea7933 100%) !important;
 }
 
 .navbar.navbar.bg-white, .navbar.navbar-transparent {
@@ -97,6 +97,16 @@ textarea::-webkit-scrollbar {
 
 .table-bordered {
     border: 1px solid #dee2e6 !important;
+}
+.image-upload label {
+    background-color: #fff;
+    color: #54a5f5;
+    padding: 0.3rem !important;
+    font-family: sans-serif;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    margin: 5px 5px;
+    border: 1px #eb7022 solid;
 }
 .expiry [type="date"] {
     background: #dddddf url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
@@ -753,6 +763,33 @@ input[type="radio"]:checked {
         top: 8px;
         left: 0px;
     }
+
+.tab-menu ul li a {
+    background: #ffbc89;
+    border: 2px solid #f7924d;
+    color: #000;
+}
+.tab-main-box {
+    background: #fff;
+}
+.tab-menu ul li a.active {
+    background: #f7924d;
+    color: #fff;
+    text-decoration: none;
+}
+
+.tab-menu ul li a:hover {
+    background: #f7924d;
+    color: #fff;
+    text-decoration: none;
+}
+
+.avatar-upload .avatar-preview {
+    border: 6px solid #f2bb89;
+}
+.tab-box label.choose-file-profile {
+    color: rgb(51, 51, 51)!important;
+}
 @media only screen and (max-width: 767px) {
 
     .razorpay_btn button.form-control {

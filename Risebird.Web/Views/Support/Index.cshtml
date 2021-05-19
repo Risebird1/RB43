@@ -4,11 +4,15 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Support";
+    ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <!-- Keep the Page Content Here.-->
-
+<script>
+    var Header = "<div id='support_1'>Support</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
 <link href="~/Newassets/css/support.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
@@ -20,31 +24,7 @@
     }
 </style>
 <div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-                <div id="support_1">
-                    <a class="navbar-brand">
-                        Support
-                    </a>
-                </div>
-            </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-            </button>
-        </div>
-    </nav>
-    <!-- End Navbar -->
+  
     <!--  <div class="panel-header panel-header-sm"> </div>-->
 
 

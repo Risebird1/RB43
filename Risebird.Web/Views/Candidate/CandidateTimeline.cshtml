@@ -11,6 +11,7 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Candidates Status";
+    ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
     string strtDte = String.Empty;
@@ -45,29 +46,12 @@
         right: -.3rem;
     }
 </style>
-<div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-                <a id="status_1" class="navbar-brand">Candidates Status</a>
-            </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-            </button>
-        </div>
-    </nav>
-    <!-- End Navbar -->
 
+<script>
+    var Header = "<a id='status_1'>Candidates Status</a>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<div class="main-panel" id="main-panel">
     <div class="pt30 videocon">
         <div class="col-md-12 nopad">
             <div class="card-header bg-w clearfix">

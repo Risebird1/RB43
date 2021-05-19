@@ -1014,7 +1014,14 @@ namespace Risebird.Web.Controllers
                             interviewerProfile.ResumeLink = uploadedFileURL;
 
                         }
-
+                        if (interviewerProfile.ImageUpload != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(interviewerProfile.ImageUpload.FileName, "profileimages", interviewerProfile.ImageUpload);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("profileimages");
+                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.ImageUpload.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            interviewerProfile.ImageLink = uploadedFileURL;
+                        }
                         if (_interviewerService.AddInterviewerMyProfile(interviewerProfile).Result)
                         {
                             TempData["MyProfileMessage"] = "Profile updated Successfully";

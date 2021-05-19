@@ -32,6 +32,155 @@ body {
     .clearfix:after {
         clear: both;
     }
+.tab-box label.choose-file-profile {
+    font-size: 14px !important;
+    font-weight: bold !important;
+    text-transform: uppercase;
+    display: block;
+    margin-top: 17PX;
+    WIDTH: 190PX;
+    margin-left: -8PX;
+}
+
+.tab-box label {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px !important;
+    line-height: 1.42857;
+    color: rgb(115 114 114) !important;
+    font-weight: 500 !important;
+}
+
+.tab-menu ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+    .tab-menu ul li {
+        -ms-flex-preferred-size: 0;
+        flex-basis: 0;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        max-width: 100%;
+        text-align: center;
+        margin: 0px 0px 0px 5px;
+    }
+        .tab-menu ul li:first-child {
+            margin: 0px 0px 0px 0px;
+        }
+
+        .tab-menu ul li a {
+            
+            text-transform: uppercase;
+            letter-spacing: 0.44px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: bold;
+            display: inline-block;
+            padding: 18px 26px;
+            display: block;
+            text-decoration: none;
+            transition: 0.5s all;
+            border-bottom: 0;
+            font-size: 18px;
+        }
+
+             
+
+             
+
+.tab-box {
+    display: none;
+}
+
+.tab-teaser {
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.tab-main-box {
+    padding: 10px 30px;
+    margin-top: 0px;
+    box-shadow: 0 0 15px rgb(0 0 0 / 15%), 0 0 1px 1px rgb(0 0 0 / 10%);
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
+    border-bottom-right-radius: 7px;
+    border-bottom-left-radius: 7px;
+}
+
+.avatar-upload {
+    position: relative;
+    max-width: 205px;
+    margin:10px auto;
+}
+
+    .avatar-upload .avatar-edit {
+        position: absolute;
+        right: 50px;
+        z-index: 1;
+        top: 10px;
+    }
+
+    .avatar-upload .avatar-preview {
+        width: 150px;
+        height: 150px;
+        position: relative;
+        border-radius: 100%;
+        box-shadow: 0px 2px 4px 0px rgb(0 0 0 / 10%);
+    }
+
+        .avatar-upload .avatar-preview > div {
+            width: 100%;
+            height: 100%;
+            border-radius: 100%;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+    .avatar-upload .avatar-edit input {
+        display: none;
+    }
+
+        .avatar-upload .avatar-edit input + label {
+            display: inline-block;
+            width: 33px !important;
+            height: 33px;
+            margin-bottom: 0;
+            padding: 0px;
+            border-radius: 100%;
+            background: #ffffff;
+            border: 1px solid transparent;
+            box-shadow: 0px 2px 4px 0px rgb(0 0 0 / 12%);
+            cursor: pointer;
+            font-weight: normal;
+            transition: all 0.2s ease-in-out;
+        }
+
+            .avatar-upload .avatar-edit input + label:after {
+                content: "\f040";
+                font-family: "FontAwesome";
+                color: #757575;
+                position: absolute;
+                top: 6px;
+                left: 2px;
+                right: 0;
+                text-align: center;
+                margin: auto;
+            }
+
+.info-text {
+    text-align: center;
+    font-weight: 500;
+    margin: 10px 0 30px;
+    font-size: 25px;
+}
+
 
 .marquee {
     width: 100%;
@@ -46,6 +195,10 @@ body {
     display: inline-block;
     margin-top: 0px;
     animation: marquee 20s linear infinite;
+}
+
+.user-menu__item span {
+    color: #333333 !important;
 }
 
 .proctor .toggle-box:checked + label:before {
@@ -137,6 +290,10 @@ body {
     --marquee-elements-displayed: 5;
     --marquee-element-width: calc(var(--marquee-width) / var(--marquee-elements-displayed));
     --marquee-animation-duration: calc(var(--marquee-elements) * 6s);
+}
+
+.navbar-brand a {
+    text-decoration: none;
 }
 
 .marquees {
@@ -619,9 +776,9 @@ table.journey td.cadSkill {
 
 .label-num {
     background: #ccc;
-    width: 20px;
+    width: 22px;
+    height: 22px;
     border-radius: 100%;
-    padding: 6px;
     display: inline-table;
     font-size: 12px;
     line-height: 20px;
@@ -1525,7 +1682,12 @@ table.journey td.cadSkill {
     vertical-align: baseline;
     border-radius: .25em;
 }
-
+.upload-text {
+    line-height: 95px;
+    color: #756f6f;
+    font-weight: 300;
+    text-transform: capitalize;
+}
 .talk-bubble [data-tooltip], .video-info [data-tooltip], .video-title [data-tooltip], .jd-title [data-tooltip], .cadName [data-tooltip], .cadName [data-tooltip], .cadSkill [data-tooltip], .cadSkill[data-tooltip], .cadEmail [data-tooltip], .cadEmail [data-tooltip], [data-tooltip] {
     position: relative;
     z-index: 1;
@@ -1631,13 +1793,207 @@ table.journey td.cadSkill {
 .filtercon [data-tooltip]:before {
     width: 335px !important;
     left: 0% !important;
+    top: 2px;
+    height: 33px;
     margin-bottom: 7px;
-    margin-left: -240px !important;
+    margin-left: -340px !important;
 }
 
 .filtercon [data-tooltip]:after {
-    margin-left: 60px;
+    margin-left: -9px;
+    top: 15px;
+    -webkit-transform: rotate( -92deg );
+    -moz-transform: rotate(92deg);
+    -o-transform: rotate(-92deg);
+    -ms-transform: rotate(-92deg);
+    transform: rotate( -92deg );
 }
+
+ .submit-profile {
+    width: 100%;
+    height: auto;
+    border: none;
+    background: #f5f5f5;
+    outline: none;
+    margin: 0 auto;
+    padding: 20px;
+    display: block;
+    color: #666;
+    text-transform: uppercase;
+    text-align: center;
+    box-sizing: border-box;
+    font-size: 0.8em;
+}
+
+    .submit-profile input[type="submit"] {
+        width: 120px;
+        height: 40px;
+        float: right;
+    }
+
+#box h1 {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 0.6em;
+    font-weight: 500;
+}
+
+#box > button {
+    width: 260px;
+    height: 50px;
+    background: #015b7e;
+    border: none;
+    outline: none;
+    margin: 0 auto;
+    display: block;
+    color: #fff;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 20px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.7em;
+    transition: all 0.2s ease;
+}
+
+.form-field {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 0.5em;
+}
+
+    .form-field > section {
+        border: 1px solid #aaa;
+        border-radius: 3px;
+        display: flex;
+        flex: 1;
+        background: #fff;
+    }
+
+    .form-field svg, .form-field .fa {
+        align-self: center;
+        fill: #2980b9;
+        width: 50px;
+        color: #2980b9;
+        font-size: 20px;
+    }
+
+#wrapper {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+}
+
+.form-field label {
+    text-align: left;
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 40px;
+    color: #545252;
+    width: 120px;
+    padding: 0px 5px 0px 0px;
+}
+
+.form-field input[type="text"] {
+    background: #f9f7f7;
+    border-left: 1px #cccccc8f solid;
+    padding: 0px;
+    width: 100%;
+    padding-left: 10px;
+    border-radius: 0px;
+}
+
+    .form-field input[type="text"]:focus {
+        border-bottom: 0px;
+        outline: 0px;
+    }
+
+.image-upload  label{
+    height: 38px;
+}
+
+#box {
+    width: 39em;
+    margin: 3em auto;
+    background-color: #f3efe7;
+    padding: 2em;
+}
+
+    #box h2 {
+        text-align: center;
+        font-size: 1.23077em;
+    }
+
+    #box > form {
+        width: 100%;
+        height: auto;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+        #box > form > input {
+            width: 100%;
+            margin-bottom: 1em;
+            font-size: .9em;
+            color: #cfcece;
+            font-weight: 300;
+            padding: .5em 1em;
+            border: none;
+            color: #555555;
+            font-weight: 300;
+        }
+
+            #box > form > input:focus {
+                border: thin solid #015b7e;
+                outline: none
+            }
+
+::-webkit-input-placeholder {
+    color: #eee;
+    font-weight: 700;
+    font-size: .9em;
+}
+
+
+#box > a {
+    display: block;
+    margin: 0;
+    padding: 5px 0 15px 0;
+    width: 260px;
+    height: 20px;
+    margin: 0 auto;
+    text-align: right;
+    text-transform: uppercase;
+    font-size: .7em;
+    color: #eee;
+    font-weight: 400;
+}
+
+#box > input {
+    width: 260px;
+    height: 50px;
+    background: #015b7e;
+    border: none;
+    outline: none;
+    margin: 0 auto;
+    display: block;
+    color: #fff;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 20px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: .7em;
+    transition: all .2s ease;
+}
+
+    #box > input:hover {
+        background: #014965;
+    }
+
 
 #activityTable .cadName [data-tooltip]:before {
     width: 270px !important;
@@ -1840,12 +2196,25 @@ table.interviewertable th, table.interviewertable td {
 }
 
 #resumeId, .callatag {
-    padding: 2px 10px;
+    padding: 5px 10px;
     border-radius: 10px;
+}
+
+#interviewgenerate_pdf {
+    margin-right: 15px;
+    /* margin-bottom: 15px; */
+    margin-top: 15px;
 }
 
 #create_pdf {
     margin-right: 5px;
+    margin-bottom: 15px;
+}
+
+#generate_pdf {
+    margin-right: 5px;
+    margin-bottom: 15px;
+    margin-top: 15px;
 }
 
 .card-blue .card-body .client-field {
@@ -3585,7 +3954,9 @@ textarea {
         }
 
 
-
+#CandidateFeedbackModel {
+    z-index: 1000;
+}
 
 .interviewer .multiselect .multiselect-selected-text {
     color: #807e7e !important;
@@ -3596,7 +3967,7 @@ textarea {
 .note-filter {
     width: 100%;
     float: left;
-    color: #161b16;
+    color: #2a9e2a;
     padding-top: 4px;
 }
 
@@ -3754,6 +4125,10 @@ button.btn {
         max-width: 200px;
     }
 
+    .nav-open .navbar {
+        left: 260px;
+    }
+
     .candidate table.journey td.cadEmail {
         max-width: 160px;
     }
@@ -3782,6 +4157,34 @@ button.btn {
 @media (max-width: 767px) {
     .myinterview_modal .btn-group {
         width: 100% !important;
+    }
+
+    #txtpageHeader {
+        display: none;
+    }
+
+    .note-meeting {
+        width: auto;
+        left: 30px;
+        position: absolute;
+        z-index: 1000;
+        top: 72px !important;
+        font-size: 15px;
+    }
+
+    .nav-open .navbar {
+        left: 260px;
+    }
+
+    .top-panel {
+        padding: 0px 5px !important
+    }
+
+    .main-notification-title {
+        padding-top: 0px !important;
+        position: relative;
+        right: -116px;
+        top: 2px;
     }
 
     .timer {
@@ -3827,6 +4230,17 @@ button.btn {
     }
 }
 
+@media (max-width: 480px) {
+    .note-meeting {
+        width: auto;
+        left: 20px !important;
+        position: absolute;
+        z-index: 1000;
+        top: 63px !important;
+        font-size: 15px;
+    }
+}
+
 @media (max-width: 415px) {
 
     h1, h2 {
@@ -3839,6 +4253,43 @@ button.btn {
 
     .f1-buttons button {
         margin-bottom: 5px;
+    }
+}
+
+@media (max-width: 360px) {
+    .note-meeting {
+        top: 85px !important;
+        font-size: 13px !important;
+    }
+
+    .main-img-user {
+        display: block;
+        position: relative;
+        width: 26px !important;
+        height: 26px !important;
+        margin: 0px 0px 0px 30px;
+        top: -43px !important;
+        border-radius: 100%;
+        left: -145px !important;
+        float: right;
+    }
+
+    .main-notification-title {
+        padding-top: 0px !important;
+        position: relative;
+        right: 0px;
+        top: -4px !important;
+        width: 100%;
+        text-align: center !important;
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .user {
+        position: absolute;
+        right: 6px !important;
+        top: 32px !important;
+        width: 100%;
     }
 }
 
@@ -4000,7 +4451,7 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     left: 0;
     height: 100%;
     width: 100%;
-    background: rgba(0,0,0,.8);
+    background: rgba(0,0,0,.75);
     z-index: 2;
 }
 
@@ -6674,6 +7125,7 @@ blockquote {
         line-height: 34px;
         text-align: center;
         cursor: pointer;
+        display: none;
     }
 
     .theme-settings .ts-body {
@@ -6816,6 +7268,7 @@ button.close {
 .close:hover {
     color: #fff !important
 }
+
 /* END SETTIGS */
 /* TEMPLATE PLUGINS */
 /* To top */
@@ -6974,7 +7427,7 @@ button.close {
 
 .ref-btn {
     position: absolute;
-    top: 7px;
+    top: 8px;
     right: 10px;
 }
 
@@ -7008,7 +7461,7 @@ h4.card-title {
     border: 0px !important;
 }
 
-.dataTables_filter input[type=search], #meeting_filter input[type=search], #interviewersTbl_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
+#dupmeeting_filter input[type=search], .dataTables_filter input[type=search], #meeting_filter input[type=search], #interviewersTbl_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
     border: 0px !important;
     padding: 9px 10px 9px 10px;
     width: 190px;
@@ -7028,11 +7481,11 @@ h4.card-title {
     padding: 5px 0px
 }
 
-#candidateTable_filter input[type=search], #supportList_filter input[type=search], #txtmeeting_filter input[type=search], #interviewersTbl_filter input[type=search], #dupmeeting_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #MyInterviewList_filter input[type=search], #interviewer_filter input[type=search], #OpeninterviewList_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
+#questionsTable_filter input[type=search], #statusTable_filter input[type=search], #candidateTable_filter input[type=search], #supportList_filter input[type=search], #txtmeeting_filter input[type=search], #interviewersTbl_filter input[type=search], #dupmeeting_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #MyInterviewList_filter input[type=search], #interviewer_filter input[type=search], #OpeninterviewList_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
     border: 1px #ccc solid !important
 }
 
-#meeting input[type=search], #MyInterviewList_filter input[type=search], #txtmeeting_filter input[type=search], #interviewersTbl_filter input[type=search], #supportList_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #dupmeeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
+#questionsTable_filter input[type=search], #interviewer_filter input[type=search], #statusTable_filter input[type=search], #meeting input[type=search], #MyInterviewList_filter input[type=search], #txtmeeting_filter input[type=search], #interviewersTbl_filter input[type=search], #supportList_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #dupmeeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
     background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 78% 9px;
 }
 
@@ -7104,22 +7557,25 @@ h4.card-title {
 
 
     .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1:checked + label.active-menu:before, .toggle-box:checked + label.active-menu:before, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1:checked + label.active-menu:before {
-      /*  content: "\203A";*/
+        /*  content: "\203A";*/
         transform: rotate( 0deg );
     }
 
 
-  /*  .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1:checked + label:before, .toggle-box:checked + label:before, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1:checked + label:before {
+/*  .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1:checked + label:before, .toggle-box:checked + label:before, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1:checked + label:before {
         content: "\203A";
         transform: rotate( 0deg );
     }*/
-.dropmenu .drop-wrap li{
-    width:100%;display:grid;
+.dropmenu .drop-wrap li {
+    width: 100%;
+    display: grid;
 }
-.dropmenu .drop-wrap li i {
-    line-height: 14px;
-}
-    .collapse {
+
+    .dropmenu .drop-wrap li i {
+        line-height: 14px;
+    }
+
+.collapse {
     display: none;
 }
 
@@ -7144,12 +7600,15 @@ tbody.collapse.in {
 .nav > li > a p {
     padding-left: 35px;
 }
+
 .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu p {
     padding-left: 60px;
 }
-.nav > li > a:hover p, .nav > li > a.active-menu:hover p{
+
+.nav > li > a:hover p, .nav > li > a.active-menu:hover p {
     padding-left: 45px !important;
 }
+
 .nav > li > a.active-menu:hover p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:hover p {
     padding-left: 70px !important;
 }
@@ -7159,6 +7618,177 @@ tbody.collapse.in {
 }
 
 
+.user-menu {
+    padding-top: 0px;
+    position: absolute;
+    top: 53px;
+    left: auto;
+    right: 35px;
+    bottom: auto;
+    width: 200px;
+    border: 0;
+    border-width: 1px;
+    background-color: #ffffff;
+    box-shadow: -8px 12px 18px 0 rgb(21 21 62 / 30%);
+}
+
+    .user-menu:before {
+        content: '';
+        width: 13px;
+        height: 13px;
+        background: #ffffff;
+        position: absolute;
+        top: -6px;
+        right: 28px;
+        transform: rotate( 45deg );
+        border-top: 1px solid #f0f2f8;
+        border-left: 1px solid #f0f2f8;
+    }
+
+    .user-menu .profile-highlight {
+        display: flex;
+        border-bottom: 1px solid #E0E0E0;
+        padding: 12px 16px;
+        margin-bottom: 6px;
+    }
+
+    .user-menu .user-menu-link {
+        display: flex;
+        text-decoration: none;
+        color: #333333;
+        font-weight: 400;
+        font-size: 14px;
+        padding: 12px 16px;
+        color: #4e4a4a !important;
+    }
+
+    .user-menu .fa-user-circle-o:before {
+        font-size: 16px;
+        color: #86898e;
+        top: 2px;
+        position: relative;
+    }
+
+    .user-menu .fa-sign-out:before {
+        font-size: 17px;
+        top: 2px;
+        color: #86898e;
+        position: relative;
+    }
+
+    .user-menu .fa-cog:before {
+        content: "\f013";
+        font-size: 17px;
+        color: #86898e;
+    }
+
+    .user-menu .user-menu-link:hover {
+        background-color: #F5F5F5;
+        color: #333333;
+    }
+
+.user-menu-link .fa {
+    margin-right: 5px;
+}
+
+.user-menu .footer .user-menu-link {
+    font-size: 13px;
+}
+
+.user-menu-link:hover, .user-menu-link:focus {
+    background-color: #f1f2f9;
+}
+
+.user-menu a {
+    border-top: 1px solid #f0f2f8 !important;
+}
+
+.menu-container {
+    visibility: hidden;
+    opacity: 0;
+}
+
+.user-menu .footer {
+    border-top: 1px solid #E0E0E0;
+    padding-top: 0px;
+    margin-top: 0px;
+    padding-bottom: 0px;
+    border: 0px;
+}
+
+.menu-container.active {
+    visibility: visible;
+    opacity: 1;
+    animation-name: fadein;
+    animation-duration: .2s;
+    animation-fill-mode: both;
+    transition: all 0.2s ease-in-out;
+}
+
+.menu-container ul {
+    margin: 10px 0px 0px 0px;
+    padding: 4px 3px;
+    list-style: none;
+}
+
+.main-img-user {
+    display: block;
+    position: relative;
+    width: 36px;
+    height: 36px;
+    margin: 0px 0px 0px 0px;
+    top: -33px;
+    border-radius: 100%;
+    left: 10px;
+    float: right;
+    cursor: pointer;
+}
+
+    .main-img-user img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 100%;
+    }
+
+.header-navheading {
+    padding: 10px 15px 10px 15px;
+    text-align: center;
+}
+
+.main-notification-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 5px;
+    line-height: 1;
+    text-transform: none;
+    float: left;
+    padding-right: 30px;
+    padding-top: 25px;
+}
+
+    .main-notification-title span {
+        position: relative;
+        top: 6.5px;
+        line-height: 30px !important;
+        font-weight: normal;
+    }
+
+.image-upload {
+    background: #ececee;
+    width: 100%;
+}
+
+#file-chosen {
+    margin-left: 0.3rem;
+    font-family: sans-serif;
+}
+
+.top-panel {
+    padding: 0px 60px 0px 100px;
+    margin-bottom: 0px !important;
+}
 
 .sidebar-wrapper > .nav li > a.active-menu, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
     position: relative;
@@ -7171,6 +7801,7 @@ tbody.collapse.in {
     border-right: 0px;
     width: inherit;
 }
+
 .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
     padding: 9px 0px;
 }
@@ -7188,12 +7819,15 @@ tbody.collapse.in {
         border-bottom: transparent;
         border-radius: 0px 48px 0px 0px;
     }
+
 .sidebar-wrapper > .nav li > a.active-menu:before {
     right: 0px;
 }
+
 .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:before {
     right: -17px;
 }
+
 .sidebar-wrapper > .nav li > a.active-menu:before, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:before {
     content: "";
     position: absolute;
@@ -7207,42 +7841,42 @@ tbody.collapse.in {
     border-radius: 0px 0px 48px 0px;
 }
 
-    .sidebar-wrapper > .nav li > a.active-menu .shape1, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .shape1 {
-        position: absolute;
-        top: -30px;
-        width: 20px;
-        height: 60px;
-        right: 0px;
-    }
+.sidebar-wrapper > .nav li > a.active-menu .shape1, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .shape1 {
+    position: absolute;
+    top: -30px;
+    width: 20px;
+    height: 60px;
+    right: 0px;
+}
 
-    .sidebar-wrapper > .nav li > a.active-menu .shape2, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .shape2 {
-        position: absolute;
-        top: 35px;
-        width: 20px;
-        height: 30px;
-        right: 0px;
-    }
+.sidebar-wrapper > .nav li > a.active-menu .shape2, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .shape2 {
+    position: absolute;
+    top: 30px;
+    width: 20px;
+    height: 30px;
+    right: 0px;
+}
 
-    .sidebar-wrapper > .nav li > a.active-menu svg, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu svg {
-        margin: 5px;
-    }
+.sidebar-wrapper > .nav li > a.active-menu svg, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu svg {
+    margin: 7px;
+}
 
-    .sidebar-wrapper > .nav li > a.active-menu .sidemenu-icon, .sidemenu-icon {
-        font-size: 18px;
-        line-height: 0;
-        margin: -2px 7px;
-        width: 35px;
-        height: 35px;
-        line-height: 35px;
-        text-align: center;
-        border-radius: 50%;
-        -webkit-box-shadow: 0 5px 10px rgb(0 0 0 / 0%);
-        box-shadow: 0 5px 10px rgb(0 0 0 / 0%);
-        color: #ffffff;
-        float: left;
-    }
+.sidebar-wrapper > .nav li > a.active-menu .sidemenu-icon, .sidemenu-icon {
+    font-size: 18px;
+    line-height: 0;
+    margin: -2px 7px;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    border-radius: 50%;
+    -webkit-box-shadow: 0 5px 10px rgb(0 0 0 / 0%);
+    box-shadow: 0 5px 10px rgb(0 0 0 / 0%);
+    color: #ffffff;
+    float: left;
+}
 
-  
+
 
 .side-menu .nav-link:hover .sidemenu-label {
     margin-left: 5px;
@@ -7254,8 +7888,9 @@ tbody.collapse.in {
     position: relative;
     border: solid 1px #ccc !important;
     border-radius: 20px;
-}
 
+}
+.searchbox .searchCon{z-index:-1!important}
 .dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
     width: 200px;
     background-color: #fff;
@@ -9050,28 +9685,61 @@ div.tagsinput {
 @media only screen and (max-width: 1920px) {
     .rbpay .sb-scrollbar {
         position: absolute;
-        right: -6px!important;
+        right: -6px !important;
     }
 }
 
-    @media only screen and (max-width: 1400px) {
-        .intEmail {
-            width: 90px !important;
-        }
-
-        .intName {
-            width: 58px !important;
-        }
-
-        .rbpay .sb-scrollbar {
-            position: absolute;
-            right: 0px!important;
-        }
+@media only screen and (max-width: 1400px) {
+    .intEmail {
+        width: 90px !important;
     }
+
+    .intName {
+        width: 58px !important;
+    }
+
+    .rbpay .sb-scrollbar {
+        position: absolute;
+        right: 0px !important;
+    }
+}
 
 @media only screen and (max-width: 1024px) {
     .razorpay_details {
         width: 60% !important;
+    }
+
+    .user {
+        position: absolute;
+        right: 74px;
+    }
+
+    .main-img-user {
+        display: block;
+        position: relative;
+        width: 36px;
+        height: 36px;
+        margin: 0px 0px 0px 30px;
+        top: -18px;
+        border-radius: 100%;
+        left: 10px;
+        float: right;
+    }
+
+    .main-notification-title {
+        padding-top: 0px !important;
+        position: relative;
+        right: -50px;
+        top: -21px;
+        margin-top: 0px !important;
+    }
+
+    .nav-open .navbar {
+        left: 260px;
+    }
+
+    .top-panel {
+        padding: 0px 0px 0px 0px !important;
     }
 
     .page-container .page-sidebar {

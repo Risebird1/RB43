@@ -1,30 +1,17 @@
 ﻿@model Risebird.Entities.Data.GeneralSkillMatrix
 @{
     ViewData["Title"] = "GeneralSkillAdd";
+    ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<script>
+    var Header = "<a href='/GeneralSkill/Index'>GeneralSkill</a>&nbsp;/&nbsp;Update GeneralSkill";
+    $('#txtpageHeader').empty().html(Header);
+</script>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-                <a class="navbar-brand breadcrumscolor" href="/GeneralSkill/Index">GeneralSkill</a>
-                <a class="navbar-brand">/ &nbsp; Update GeneralSkill</a>
-            </div>
-
-        </div>
-    </nav>
-    <!-- End Navbar -->
+   
     <div class="mt50">
     </div>
     <div class="content client">

@@ -6,30 +6,18 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Multiple Candidate Invites";
+    ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<script>
+    var Header = "<a href='/IRF/Index'>Skills Channel</a>&nbsp;/&nbsp;<a id='intmulmeet_1'>Multiple Candidate Invites</a>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=9" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Skill Channel</a>
-                <a id="intmulmeet_1" class="navbar-brand"> /  &nbsp; Multiple Candidate Invites</a>
-            </div>
 
-        </div>
-    </nav>
-    <!-- End Navbar -->
     <!-- <div class="panel-header panel-header-sm">
     </div>-->
 

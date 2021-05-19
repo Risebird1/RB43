@@ -347,5 +347,63 @@ namespace Risebird.Repository
                 return "";
             }
         }
+
+
+        public InterviewerProfileVM FetchUserProfile(string EmailId)
+        {
+            try
+            {
+                string query = "Select ul.FirstName,Ul.LastName,ul.MobileNumber,ul.WhatsappNumber,up.Name as CurrentRole,ul.ImageLink from Userlist ul join Profile up on ul.idProfile=up.id where Emailid=@Emailid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", EmailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<InterviewerProfileVM>(query, dynamicParameters);
+                    return (InterviewerProfileVM)results.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> UpdateUserProfile(InterviewerProfileVM userProfile)
+        {
+            try
+            {
+
+                // In this case, Only passing the required parameters to fil in the tables
+
+                string query = "Update Userlist Set FirstName= @FirstName,LastName= @LastName,MobileNumber=@MobileNumber,WhatsappNumber=@WhatsappNumber,ImageLink=IsNull(@ImageLink,ImageLink) where Emailid=@Emailid";
+                var parameters = new DynamicParameters();
+
+                parameters.Add("@FirstName", userProfile.FirstName);
+                parameters.Add("@LastName", userProfile.LastName);
+                parameters.Add("@Emailid", userProfile.EmailId);
+                parameters.Add("@MobileNumber", userProfile.MobileNumber);
+                parameters.Add("@WhatsappNumber", userProfile.WhatsappNumber);
+                parameters.Add("@ImageLink", userProfile.ImageLink);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, parameters);
+                }
+                return true;
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

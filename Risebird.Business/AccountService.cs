@@ -219,6 +219,30 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public InterviewerProfileVM FetchUserProfile(string EmailId)
+        {
+            try
+            {
+                return _accountRepository.FetchUserProfile(EmailId);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> UpdateUserProfile(InterviewerProfileVM userProfile)
+        {
+            try
+            {
+                return _accountRepository.UpdateUserProfile(userProfile).Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
 
 
 

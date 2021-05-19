@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Interview Video Upload";
+    ViewBag.PageHeader = "Questions";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
@@ -12,28 +13,7 @@
 
 <script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js"></script>
 <div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-                <a class="navbar-brand">Questions</a>
-            </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-            </button>
 
-        </div>
-    </nav>
-    <!-- End Navbar -->
     <div class="mt50">
     </div>
     <div class="content curated-group client">
@@ -178,26 +158,66 @@
 
 
 <script>
+
+
+        function RefreshSearch() {
+        $('#questionsTable').DataTable().destroy();
+
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
     $(document).ready(function () {
 
+        applyDataTable();
+
+    });
+
+
+
+    function applyDataTable() {
         $('#questionsTable').DataTable({
             "pagingType": "full_numbers",
             "lengthMenu": [
-                //[10, 25, 50, -1],
-                //[10, 25, 50, "All"]
-                [-1],
-                ["All"]
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
             ],
+
             order: [],
-            responsive: false,
+            responsive: true,
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+
+                    }
+                    else { $("#x").show(); }
+                });
             }
 
         });
-        var table = $('#questionsTable').DataTable();
+
+    }
+
+
+
+    $(document).ready(function () {
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
     });
+
+
+
 </script>
 <script src="~/Newassets/js/scrollBar.js"></script>
 <script type="text/javascript">
