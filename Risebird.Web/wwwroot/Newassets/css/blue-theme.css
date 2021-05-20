@@ -598,7 +598,9 @@ textarea::-webkit-scrollbar-thumb {
 .msger-send-btn {
     background-image: url(../../img/send.png) !important;
 }
-
+.alert.alert-info {
+    background-color: #46b3ff;
+}
 .dropdown-toggle {
     background: #fff !important;
 }

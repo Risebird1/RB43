@@ -112,11 +112,15 @@ body {
     border-bottom-right-radius: 7px;
     border-bottom-left-radius: 7px;
 }
-
+#WhatsappNumber-error {
+    color: #E04B4A !important;
+    font-weight: normal;
+    font-size: 12px !important;
+}
 .avatar-upload {
     position: relative;
     max-width: 205px;
-    margin:10px auto;
+    margin: 60px auto;
 }
 
     .avatar-upload .avatar-edit {
@@ -4169,8 +4173,19 @@ button.btn {
 @media (max-width: 767px) {
     .myinterview_modal .btn-group {
         width: 100% !important;
+    }                        
+    .main-notification-title {
+        right: -9px!important;
+        padding-top: 0px!important;
+        position: relative;
+        top: 2px;
     }
-
+    .user {
+        position: relative !important;
+        top: 52px;
+        right: 0px !important;
+        left: 0px !important;
+    }
     #txtpageHeader {
         display: none;
     }
@@ -4190,13 +4205,6 @@ button.btn {
 
     .top-panel {
         padding: 0px 5px !important
-    }
-
-    .main-notification-title {
-        padding-top: 0px !important;
-        position: relative;
-        right: -116px;
-        top: 2px;
     }
 
     .timer {
@@ -4251,6 +4259,12 @@ button.btn {
         top: 63px !important;
         font-size: 15px;
     }
+    .main-notification-title {
+        right: -9px !important;
+        padding-top: 0px !important;
+        position: relative;
+        top: 2px;
+    }
 }
 
 @media (max-width: 415px) {
@@ -4273,12 +4287,17 @@ button.btn {
         top: 85px !important;
         font-size: 13px !important;
     }
-
+    .support {
+        position: absolute;
+        left: auto;
+        right: 27px;
+        top: 2px!important;
+    }
     .main-img-user {
         display: block;
         position: relative;
-        width: 26px !important;
-        height: 26px !important;
+        width: 20px !important;
+        height: 20px !important;
         margin: 0px 0px 0px 30px;
         top: -43px !important;
         border-radius: 100%;
@@ -4289,8 +4308,8 @@ button.btn {
     .main-notification-title {
         padding-top: 0px !important;
         position: relative;
-        right: 0px;
-        top: -4px !important;
+        right: -9px!important;
+        top: -19px !important;
         width: 100%;
         text-align: center !important;
         margin: 0px;
@@ -4298,12 +4317,12 @@ button.btn {
     }
 
     .user {
-        position: absolute;
-        right: 6px !important;
-        top: 32px !important;
+        left: -110px !important;
+        top: 14px !important;
         width: 100%;
     }
-}
+    }
+
 
 
 
@@ -7218,7 +7237,7 @@ blockquote {
     left: 0;
     top: 35%;
 }
-
+.interviewer_2 .searchCon{z-index:0}
 .table-h {
     padding: 12px 5px !important;
 }
@@ -7629,13 +7648,13 @@ tbody.collapse.in {
     background: none !important;
 }
 
-
+.dash-widget-btn{display:none;}
 .user-menu {
     padding-top: 0px;
     position: absolute;
     top: 53px;
     left: auto;
-    right: 35px;
+    right: -50px;
     bottom: auto;
     width: 200px;
     border: 0;
@@ -7714,7 +7733,21 @@ tbody.collapse.in {
 .user-menu a {
     border-top: 1px solid #f0f2f8 !important;
 }
-
+.user {
+    position: relative;
+    left: auto;
+    right: 100px;
+}
+.no-mlr {
+    margin-left: 0px!important;
+    margin-right: 0px!important;
+}
+.support {
+    position: absolute;
+    left: auto;
+    right: 27px;
+    top: 12px;
+}
 .menu-container {
     visibility: hidden;
     opacity: 0;
@@ -7749,9 +7782,10 @@ tbody.collapse.in {
     width: 36px;
     height: 36px;
     margin: 0px 0px 0px 0px;
-    top: -33px;
+    top: -32px;
     border-radius: 100%;
-    left: 10px;
+    left: auto;
+    right: -35px;
     float: right;
     cursor: pointer;
 }
@@ -7762,7 +7796,12 @@ tbody.collapse.in {
         object-fit: cover;
         border-radius: 100%;
     }
-
+.user .main-notification-title {
+    margin-top: 0px !important;
+    width: 95%;
+    text-align: right;
+    padding-right: 0px !important;
+}
 .header-navheading {
     padding: 10px 15px 10px 15px;
     text-align: center;
@@ -7777,7 +7816,7 @@ tbody.collapse.in {
     text-transform: none;
     float: left;
     padding-right: 30px;
-    padding-top: 25px;
+    padding-top: 27px;
 }
 
     .main-notification-title span {
@@ -9568,6 +9607,40 @@ div.tagsinput {
 }
 /* END Animations */
 @media only screen and (max-width: 767px) {
+    .support {
+        position: absolute;
+        left: auto;
+        right: 27px;
+        top: 2px !important;
+    }
+
+    .main-img-user {
+        display: block;
+        position: relative;
+        width: 20px !important;
+        height: 20px !important;
+        margin: 0px 0px 0px 30px;
+        top: -43px !important;
+        border-radius: 100%;
+        left: -145px !important;
+        float: right;
+    }
+
+    .main-notification-title {
+        padding-top: 0px !important;
+        position: relative;
+        top: -19px !important;
+        width: 100%;
+        text-align: center !important;
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .user {
+        left: -110px !important;
+        top: 14px !important;
+        width: 100%;
+    }
     .videopad {
         padding-left: 0px;
         padding-right: 0px;
@@ -9642,314 +9715,339 @@ div.tagsinput {
 }
 
 
-@media only screen and (max-width: 768px) {
-    [class^='col-xs-'],
-    [class^='col-sm-'],
-    [class^='col-md-'],
-    [class^='col-lg-'] {
-        margin-bottom: 10px;
-    }
-    /* LOGIN */
-    .login-container {
-        padding: 0px 10px;
-    }
-
-        .login-container .login-box {
-            padding-top: 10px;
-            width: 100%;
-        }
-    /* END LOGIN */
-    /* TOCIFY */
-    .tocify {
-        display: none;
-    }
-    /* END TOCIFY */
-    /* TIMELINE */
-    .timeline.timeline-right:before {
-        left: 60px;
-    }
-
-    .timeline.timeline-right .timeline-item {
-        padding-left: 110px;
-    }
-
-        .timeline.timeline-right .timeline-item.timeline-main {
-            width: 60px;
-        }
-
-        .timeline.timeline-right .timeline-item .timeline-item-icon {
-            left: 40px;
-        }
-
-        .timeline.timeline-right .timeline-item .timeline-item-info {
-            top: 45px;
-            width: 70px;
-            left: 25px;
-            padding: 7px 0px;
-        }
-    /* END TIMELINE */
-    .post-image {
-        width: 100%;
-    }
-
-    .razorpay_details {
-        width: 41% !important;
-    }
-}
-
-@media only screen and (max-width: 1920px) {
-    .rbpay .sb-scrollbar {
-        position: absolute;
-        right: -6px !important;
-    }
-}
-
-@media only screen and (max-width: 1400px) {
-    .intEmail {
-        width: 90px !important;
-    }
-
-    .intName {
-        width: 58px !important;
-    }
-
-    .rbpay .sb-scrollbar {
-        position: absolute;
-        right: 0px !important;
-    }
-}
-
-@media only screen and (max-width: 1024px) {
-    .razorpay_details {
-        width: 60% !important;
-    }
-
-    .user {
-        position: absolute;
-        right: 74px;
-    }
-
-    .main-img-user {
-        display: block;
-        position: relative;
-        width: 36px;
-        height: 36px;
-        margin: 0px 0px 0px 30px;
-        top: -18px;
-        border-radius: 100%;
-        left: 10px;
-        float: right;
-    }
-
+@media only screen and (max-width:980px) {
     .main-notification-title {
         padding-top: 0px !important;
         position: relative;
-        right: -50px;
-        top: -21px;
-        margin-top: 0px !important;
+        right: 27px;
+        top: -49px!important;
     }
-
-    .nav-open .navbar {
-        left: 260px;
+    .user {
+        position: absolute;
+        right: 121px!important;
     }
-
-    .top-panel {
-        padding: 0px 0px 0px 0px !important;
-    }
-
-    .page-container .page-sidebar {
+    .main-img-user {
+        display: block;
         position: relative;
-        float: left;
-        width: 100%;
+        width: 20px;
+        height: 20px;
+        margin: 0px 0px 0px 30px;
+        top: -73px!important;
+        border-radius: 100%;
+        left: -10px;
+        float: right;
+    }
     }
 
-        .page-container .page-sidebar.scroll {
-            position: relative;
+
+    @media only screen and (max-width: 768px) {
+        [class^='col-xs-'],
+        [class^='col-sm-'],
+        [class^='col-md-'],
+        [class^='col-lg-'] {
+            margin-bottom: 10px;
+        }
+        /* LOGIN */
+        .login-container {
+            padding: 0px 10px;
         }
 
-    .page-container .page-content {
-        margin-left: 0px;
-    }
-
-        .page-container .page-content .content-frame .content-frame-left,
-        .page-container .page-content .content-frame .content-frame-right {
-            width: 100%;
+            .login-container .login-box {
+                padding-top: 10px;
+                width: 100%;
+            }
+        /* END LOGIN */
+        /* TOCIFY */
+        .tocify {
             display: none;
         }
-
-        .page-container .page-content .content-frame .content-frame-body {
-            margin-left: 0px;
-            margin-right: 0px;
+        /* END TOCIFY */
+        /* TIMELINE */
+        .timeline.timeline-right:before {
+            left: 60px;
         }
 
-            .page-container .page-content .content-frame .content-frame-body.content-frame-body-left {
+        .timeline.timeline-right .timeline-item {
+            padding-left: 110px;
+        }
+
+            .timeline.timeline-right .timeline-item.timeline-main {
+                width: 60px;
+            }
+
+            .timeline.timeline-right .timeline-item .timeline-item-icon {
+                left: 40px;
+            }
+
+            .timeline.timeline-right .timeline-item .timeline-item-info {
+                top: 45px;
+                width: 70px;
+                left: 25px;
+                padding: 7px 0px;
+            }
+        /* END TIMELINE */
+        .post-image {
+            width: 100%;
+        }
+
+        .razorpay_details {
+            width: 41% !important;
+        }
+    }
+
+    @media only screen and (max-width: 1920px) {
+        .rbpay .sb-scrollbar {
+            position: absolute;
+            right: -6px !important;
+        }
+    }
+
+    @media only screen and (max-width: 1400px) {
+        .intEmail {
+            width: 90px !important;
+        }
+
+        .intName {
+            width: 58px !important;
+        }
+
+        .rbpay .sb-scrollbar {
+            position: absolute;
+            right: 0px !important;
+        }
+    }
+
+    @media only screen and (max-width: 1024px) {
+        .razorpay_details {
+            width: 60% !important;
+        }
+
+        .main-notification-title {
+            padding-top: 0px !important;
+            position: relative;
+            right: 27px;
+            top: -49px !important;
+        }
+
+        .user {
+            position: absolute;
+            top: 52px;
+            right: 121px !important;
+        }
+
+        .main-img-user {
+            display: block;
+            position: relative;
+            width: 20px;
+            height: 20px;
+            margin: 0px 0px 0px 30px;
+            top: -73px !important;
+            border-radius: 100%;
+            left: -10px;
+            float: right;
+        }
+
+        .nav-open .navbar {
+            left: 260px;
+        }
+
+        .top-panel {
+            padding: 0px 0px 0px 0px !important;
+        }
+
+        .page-container .page-sidebar {
+            position: relative;
+            float: left;
+            width: 100%;
+        }
+
+            .page-container .page-sidebar.scroll {
+                position: relative;
+            }
+
+        .page-container .page-content {
+            margin-left: 0px;
+        }
+
+            .page-container .page-content .content-frame .content-frame-left,
+            .page-container .page-content .content-frame .content-frame-right {
+                width: 100%;
+                display: none;
+            }
+
+            .page-container .page-content .content-frame .content-frame-body {
+                margin-left: 0px;
                 margin-right: 0px;
             }
 
-        .page-container .page-content .content-frame .content-frame-left-toggle,
-        .page-container .page-content .content-frame .content-frame-right-toggle {
-            display: inline-block;
-        }
+                .page-container .page-content .content-frame .content-frame-body.content-frame-body-left {
+                    margin-right: 0px;
+                }
 
-    .page-container.page-navigation-toggled .page-content {
-        margin-left: 0px;
-    }
-
-    .page-container.page-mode-rtl .page-content {
-        margin-right: 0px;
-    }
-
-    .page-container.page-navigation-top-fixed .x-navigation.x-navigation-horizontal {
-        padding-right: 0px;
-        position: relative;
-    }
-
-    .page-container.page-navigation-top-fixed .page-content {
-        padding-top: 0px;
-    }
-
-    table.journey td.cadName, table.journey td.cadEmail {
-        max-width: 200px;
-    }
-
-    .candidate table.journey td.cadEmail {
-        max-width: 160px;
-    }
-
-    table.journey td.cadSkill {
-        max-width: 150px;
-    }
-
-    .selected-priority table.journey td.cadName {
-        max-width: 250px;
-    }
-
-    .selected-priority table.journey td.cadSkill {
-        max-width: 235px;
-    }
-
-    .selected-priority .journey td.interview-com {
-        max-width: 300px;
-    }
-
-    .selected-priority table.journey td.interviewdate {
-        max-width: 160px;
-    }
-
-    .x-navigation {
-        max-height: 50px;
-        overflow: hidden;
-        background: #1b1e24;
-    }
-
-        .x-navigation.x-navigation-panel {
-            height: 50px;
-            max-height: auto;
-            overflow: visible;
-        }
-
-            .x-navigation.x-navigation-panel li.xn-icon-button {
-                width: 50px;
+            .page-container .page-content .content-frame .content-frame-left-toggle,
+            .page-container .page-content .content-frame .content-frame-right-toggle {
+                display: inline-block;
             }
 
-            .x-navigation.x-navigation-panel li.xn-search {
-                width: auto;
+        .page-container.page-navigation-toggled .page-content {
+            margin-left: 0px;
+        }
+
+        .page-container.page-mode-rtl .page-content {
+            margin-right: 0px;
+        }
+
+        .page-container.page-navigation-top-fixed .x-navigation.x-navigation-horizontal {
+            padding-right: 0px;
+            position: relative;
+        }
+
+        .page-container.page-navigation-top-fixed .page-content {
+            padding-top: 0px;
+        }
+
+        table.journey td.cadName, table.journey td.cadEmail {
+            max-width: 200px;
+        }
+
+        .candidate table.journey td.cadEmail {
+            max-width: 160px;
+        }
+
+        table.journey td.cadSkill {
+            max-width: 150px;
+        }
+
+        .selected-priority table.journey td.cadName {
+            max-width: 250px;
+        }
+
+        .selected-priority table.journey td.cadSkill {
+            max-width: 235px;
+        }
+
+        .selected-priority .journey td.interview-com {
+            max-width: 300px;
+        }
+
+        .selected-priority table.journey td.interviewdate {
+            max-width: 160px;
+        }
+
+        .x-navigation {
+            max-height: 50px;
+            overflow: hidden;
+            background: #1b1e24;
+        }
+
+            .x-navigation.x-navigation-panel {
+                height: 50px;
+                max-height: auto;
+                overflow: visible;
             }
 
-        .x-navigation .xn-search input {
+                .x-navigation.x-navigation-panel li.xn-icon-button {
+                    width: 50px;
+                }
+
+                .x-navigation.x-navigation-panel li.xn-search {
+                    width: auto;
+                }
+
+            .x-navigation .xn-search input {
+                width: 100%;
+            }
+
+            .x-navigation.x-navigation-open {
+                max-height: 1200px;
+                overflow: visible;
+            }
+
+            .x-navigation .x-navigation-control {
+                display: block;
+            }
+
+        .x-navigation-minimize {
+            display: none !important;
+        }
+
+        .x-navigation-horizontal > li > ul ul,
+        .x-navigation-horizontal > li > ul.xn-drop-left ul {
+            position: relative;
+            left: auto;
+            right: auto;
+            margin-left: 0px;
+            margin-right: 0px;
+            -moz-box-shadow: none;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+
+            .x-navigation-horizontal > li > ul ul:after {
+                display: none;
+            }
+        /* XNAV PANEL */
+        .x-navigation li > .panel {
+            width: 250px;
+        }
+        /* END XNAV PANEL */
+        /* list icons */
+        .icons-list li {
             width: 100%;
         }
-
-        .x-navigation.x-navigation-open {
-            max-height: 1200px;
-            overflow: visible;
+        /* END list icons */
+        /* Gallery */
+        .gallery .gallery-item {
+            width: 50%;
+        }
+        /* End Gallery */
+        /* Timeline */
+        .timeline .timeline-item .timeline-item-content {
+            width: 90%;
         }
 
-        .x-navigation .x-navigation-control {
-            display: block;
+            .timeline .timeline-item .timeline-item-content:before,
+            .timeline .timeline-item .timeline-item-content:after {
+                left: 90%;
+            }
+
+        .timeline .timeline-item.timeline-item-right .timeline-item-content:before,
+        .timeline .timeline-item.timeline-item-right .timeline-item-content:after {
+            right: 90%;
         }
-
-    .x-navigation-minimize {
-        display: none !important;
-    }
-
-    .x-navigation-horizontal > li > ul ul,
-    .x-navigation-horizontal > li > ul.xn-drop-left ul {
-        position: relative;
-        left: auto;
-        right: auto;
-        margin-left: 0px;
-        margin-right: 0px;
-        -moz-box-shadow: none;
-        -webkit-box-shadow: none;
-        box-shadow: none;
-    }
-
-        .x-navigation-horizontal > li > ul ul:after {
+        /* END Timeline */
+        /* Error */
+        .error-container {
+            width: 100%;
+        }
+        /* End Error */
+        /* Settings */
+        .theme-settings {
             display: none;
         }
-    /* XNAV PANEL */
-    .x-navigation li > .panel {
-        width: 250px;
-    }
-    /* END XNAV PANEL */
-    /* list icons */
-    .icons-list li {
-        width: 100%;
-    }
-    /* END list icons */
-    /* Gallery */
-    .gallery .gallery-item {
-        width: 50%;
-    }
-    /* End Gallery */
-    /* Timeline */
-    .timeline .timeline-item .timeline-item-content {
-        width: 90%;
+        /* End Settings */
+        .post-image {
+            width: 300px;
+        }
     }
 
-        .timeline .timeline-item .timeline-item-content:before,
-        .timeline .timeline-item .timeline-item-content:after {
-            left: 90%;
+
+
+
+    @media only screen and (max-width: 1400px) {
+        table.journey td.cadName, table.journey td.cadEmail {
+            max-width: 120px;
         }
 
-    .timeline .timeline-item.timeline-item-right .timeline-item-content:before,
-    .timeline .timeline-item.timeline-item-right .timeline-item-content:after {
-        right: 90%;
+        table.journey td.cadSkill {
+            max-width: 150px;
+        }
+
+        .candidate table.journey td.cadEmail {
+            max-width: 133px;
+        }
     }
-    /* END Timeline */
-    /* Error */
-    .error-container {
-        width: 100%;
-    }
-    /* End Error */
-    /* Settings */
-    .theme-settings {
+
+    .x-navigation-minimized .xn-logo {
         display: none;
     }
-    /* End Settings */
-    .post-image {
-        width: 300px;
-    }
-}
-
-
-
-
-@media only screen and (max-width: 1400px) {
-    table.journey td.cadName, table.journey td.cadEmail {
-        max-width: 120px;
-    }
-
-    table.journey td.cadSkill {
-        max-width: 150px;
-    }
-
-    .candidate table.journey td.cadEmail {
-        max-width: 133px;
-    }
-}
-
-.x-navigation-minimized .xn-logo {
-    display: none;
-}

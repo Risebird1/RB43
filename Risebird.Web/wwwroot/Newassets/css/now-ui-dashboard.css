@@ -3124,9 +3124,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
         background-color: #ffbc50;
     }
 
-    .alert.alert-info {
-        background-color: #46b3ff;
-    }
+  
 
     .alert.alert-primary {
         background-color: #fa764b;
