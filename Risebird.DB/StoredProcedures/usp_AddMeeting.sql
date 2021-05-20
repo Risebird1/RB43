@@ -42,6 +42,20 @@ Begin
 declare @InterviewId int; 
 
 
+declare 
+	   @userId int, 
+	   @interviewerId int,
+	   @irfIntId int
+   
+   set @userId = (select id from UserList where EmailId=@interviewer and idProfile=3)
+   set @interviewId =(select min(id) from InterviewerProfile where UserId=@userId)
+   set @irfIntId =(select id from IRF where IRFId=@IRFId)
+
+	IF NOT EXISTS(select 1 from TransInterviewer where UserId=@userId and IRFId=@irfIntId)
+	Begin
+		insert into TransInterviewer (IRFId, UserId, InterviewerId, PerSuccessRate) values (@irfIntId, @userId,@interviewerId, 1000)
+	End
+
 IF NOT EXISTS (SELECT 1   FROM   InterviewMeetings    WHERE  candidateEmail = @candidateEmail and interviewDate=@interviewDate)
 
 Begin
@@ -166,7 +180,7 @@ Begin
 
 	declare
 	@candidateMasterId int = (select id from CandidatesMaster where UserId=@candidateUserId)
-	declare @irfintid int = (select id from IRF where IRFId=@IRFId)
+	--declare @irfintid int = (select id from IRF where IRFId=@IRFId)
 	IF NOT EXISTS (SELECT 1  FROM  Candidate  WHERE  CandidateMasterId = @candidateMasterId and IRFID= @irfintid)
 		Begin
 			Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId, ClientHRAttemptContact) 

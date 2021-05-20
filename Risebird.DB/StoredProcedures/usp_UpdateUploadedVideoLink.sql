@@ -40,7 +40,7 @@ declare
 	set @candidateEmail= (select candidateEmail from InterviewMeetings where id = @interviewId)
 
 
-if(@meetingStatus is not null)
+if(@meetingStatus is not null and @meetingStatus!=2)
 Begin
 	IF EXISTS(select 1 from TransInterviewer where IRFId=@irfId and UserId=@interviewerUserId)
 		BEGIN

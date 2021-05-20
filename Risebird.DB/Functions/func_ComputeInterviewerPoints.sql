@@ -29,11 +29,11 @@ BEGIN
 			begin
 			 set @updatedPoints = @perSuccessRate/4
 			end
-		Else if(@meetingStatus=5)
+	   Else if(@meetingStatus=5)
 			begin
 			 set @updatedPoints = 0
 			end
-		Else if(@interviewStatus=3)
+	   Else if(@meetingStatus=4 and @interviewStatus=3)
 			Begin
 				if(@videoDuration>=35)
 					Begin
@@ -44,7 +44,7 @@ BEGIN
 						set @updatedPoints=(@videoDuration*@perSuccessRate)/60
 					End
 			End
-		Else
+		Else if(@meetingStatus=4)
 			Begin
 				if(@videoDuration>=60)
 					begin

@@ -20,6 +20,9 @@ body {
     border-radius: 10px;
     background: #fff url(../../Newassets/img/refresh.png) 1px no-repeat;
 }
+.alert.alert-info {
+    background-color: #eb833c;
+}
 .Fnactive-header-button {
     background-color: #b74709 !important;
     color: #fff !important;
