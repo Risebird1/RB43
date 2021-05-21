@@ -33,7 +33,7 @@ BEGIN
 			begin
 			 set @updatedPoints = 0
 			end
-	   Else if(@meetingStatus=4 and @interviewStatus=3)
+	   Else if(@meetingStatus=4 and (@interviewStatus=3 or @interviewStatus=1))
 			Begin
 				if(@videoDuration>=35)
 					Begin
