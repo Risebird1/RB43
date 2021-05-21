@@ -48,7 +48,7 @@ declare
 	   @irfIntId int
    
    set @userId = (select id from UserList where EmailId=@interviewer and idProfile=3)
-   set @interviewId =(select min(id) from InterviewerProfile where UserId=@userId)
+   set @interviewerId =(select min(id) from InterviewerProfile where UserId=@userId)
    set @irfIntId =(select id from IRF where IRFId=@IRFId)
 
 	IF NOT EXISTS(select 1 from TransInterviewer where UserId=@userId and IRFId=@irfIntId)

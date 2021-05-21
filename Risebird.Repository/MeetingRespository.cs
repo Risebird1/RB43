@@ -1267,7 +1267,7 @@ namespace Risebird.Repository
                     else if (reportDetails.MeetingStatus == 4)
                     {
                         float duration = (float)reportDetails.VideoDuration;
-                        if (reportDetails.InterviewStatus == (int)InterviewStatus.Rejected)
+                        if (reportDetails.InterviewStatus == (int)InterviewStatus.Rejected || reportDetails.InterviewStatus == (int)InterviewStatus.Proxy)
                         {
                             float baseValue = 35;
 
