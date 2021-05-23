@@ -485,6 +485,7 @@ namespace Risebird.Business
             try
             {
                 var interviewerChangesData = new List<InterviewerSuccessRateChangeData>();
+                var removedInterviewers = new List<RemovedInterviewersFromSkillsChannelData>();
                 if(model.OldInterviewerCollection != null && model.InterviewerCollection != null && model.OldInterviewerCollection != model.InterviewerCollection)
                 {
                     foreach (var oldInterviewer in model.OldInterviewerCollection)
@@ -508,6 +509,16 @@ namespace Risebird.Business
                             }
                             
 
+                        }
+
+                        if(!model.InterviewerCollection.Any(x=>x.UserId==oldInterviewer.UserId))
+                        {
+                            removedInterviewers.Add(new RemovedInterviewersFromSkillsChannelData
+                            {
+                                IRFId=model.id,
+                                UserId=oldInterviewer.UserId,
+                                Type="Interviewer"
+                            });
                         }
                     }
                 }
@@ -535,9 +546,18 @@ namespace Risebird.Business
                             
 
                         }
+                        if (!model.EmergencyInterviewerCollection.Any(x => x.UserId == oldEmergencyInterviewer.UserId))
+                        {
+                            removedInterviewers.Add(new RemovedInterviewersFromSkillsChannelData
+                            {
+                                IRFId = model.id,
+                                UserId = oldEmergencyInterviewer.UserId,
+                                Type = "EmergencyInterviewer"
+                            });
+                        }
                     }
                 }
-                var result =_irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null).Result;
+                var result =_irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null).Result;
                 if(result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
