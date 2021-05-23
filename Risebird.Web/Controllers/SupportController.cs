@@ -84,6 +84,22 @@ namespace Risebird.Web.Controllers
             }
         }
 
+
+        public async Task<IActionResult> SuportIndex()
+        {
+            try
+            {
+                var model = new SupportList();
+                model.Supports = _supportService.GetAllSupportHR();
+                return PartialView("SupportIndex", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> AddSupport()

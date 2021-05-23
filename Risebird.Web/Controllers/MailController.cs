@@ -64,6 +64,38 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> SuportMail(string To, string Subject, string Body)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    Mail mail = new Mail();
+                    mail.TO = To;
+                    mail.Subject = Subject;
+                    mail.Body = Body;
+                    var result = _notificationHelper.SendHelpsupportMail(mail);
+                    if (result == "Mail sent successfully.")
+                    {
+                        return Json("Success");
+                    }
+                    else
+                    {
+                        return Json("Failed");
+                    }
+                }
+                else
+                {
+                    return Json("Failed");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
+            }
+        }
 
     }
 }

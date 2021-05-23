@@ -82,9 +82,9 @@
                         <div class="pull-left">  <div id="myinterview_2">  <i type="submit" class="fa fa-file-excel-o excel-file card-title-space" style="margin-right:10px;float:right;margin-left:3px;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i></div></div>
 
                         <div class="pull-left">
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                 <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="MyInterview" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
-                            </button>
+                            </button>*@
                         </div>
                         <div class="pull-left filtercon">
                             <div id="myinterview_3">
@@ -104,8 +104,9 @@
 
                 </div>
             </div>
-            <div class="note-meeting text-left"> <b style="color:green">Note: To join the meeting click on Meeting Link and always use your Coded Name </b><b style="color:red">(@ViewBag.CodedName)</b></div>
+
         </div>
+
     </div>
     <div class="content client ">
         <div class="row bl-bg">
@@ -282,6 +283,7 @@
 
                             </div>
                             <div>
+                                <div class="note-meeting text-left"> <b style="color:green">Note: To join the meeting click on Meeting Link and always use your Coded Name </b><b style="color:red">(@ViewBag.CodedName)</b></div>
                                 <div id="tableID" class="second">
                                     <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
 
@@ -369,8 +371,8 @@
                                                                     <td>
                                                                         <a style="color: #4242bf;
         font-weight: bold"> @item.interviewSlot</a>
-                                            </td>
-                                        }
+                            </td>
+                        }
 
                                                                 <td class="callcandidatebtn" style="text-align:center">
                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
@@ -384,7 +386,7 @@
                                                                     }
 
                                                                 </td>
-                                                               
+
 
                                                                 @if (item.candidateName != null && item.candidateName != "")
                                                                 {
@@ -431,14 +433,14 @@
 
                                                                 @if (item.zoomLink != null && item.zoomLink != "")
                                                                 {
-                                                                   
-                                                                        <td class="cadName">
-                                                                            <a target="_blank" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>  
-                                                                        </td>
 
-                                                                    }
+                                                                    <td class="cadName">
+                                                                        <a target="_blank" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>
+                                                                    </td>
 
-                                                             
+                                                                }
+
+
                                                                 else
                                                                 {
                                                                     <td></td>

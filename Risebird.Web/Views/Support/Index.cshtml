@@ -40,7 +40,9 @@
                     <div>
                         @if (ViewBag.Profile == "Admin")
                         {
-
+                            <button type="button" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  card-title-space">
+                                <span class="fa fa-envelope" data-toggle="tooltip" data-placement="top" title="Mail" onclick="location.href='@Url.Action("Mail", "Mail")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Mail</font></span>
+                            </button>
 
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                 <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Support" onclick="location.href='@Url.Action("AddSupport", "Support")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Add Support</font></span>
