@@ -339,5 +339,7 @@ namespace Risebird.Entities.ViewModel
         public int? VideoDuration { get; set; }
         public string ChannelOwner { get; set; }
         public string PrimarySkillInvite { get; set; }
+        public string IRFId { get; set; }
+        public bool IsEmergency { get; set; }
     }
 }
