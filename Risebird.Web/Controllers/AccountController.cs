@@ -481,7 +481,6 @@ namespace Risebird.Web.Controllers
                     model = await _interviewerService.GetInterviewerProfileByEmailId(emailid, profileName);
                     model.WhatsappNumber = model1.WhatsappNumber;
                     model.ImageURL = model1.ImageURL;
-                    
                 }
                 else
                 {

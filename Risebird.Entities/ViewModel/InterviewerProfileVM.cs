@@ -55,7 +55,6 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Current City")]
         public string City { get; set; }
         [Display(Name = "Mobile Number")]
-        
         public string MobileNumber { get; set; }
 
         [Display(Name = "Alternate Mobile Number")]
@@ -174,11 +173,10 @@ namespace Risebird.Entities.ViewModel
         public string Domain { get; set; }
         public string DomainName { get; set; }
         public string UserPassword { get; set; }
-        [Display(Name = "Whatsapp Number ")]
-       
+        [Display(Name = "Whatsapp Number")]
         public string WhatsappNumber { get; set; }
         public string ImageURL { get; set; }
-        [Display(Name = "Image Upload ")]
+        [Display(Name = "Image Upload")]
         public IFormFile ImageUpload { get; set; }
     }
 }
