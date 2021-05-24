@@ -27,7 +27,7 @@ BEGIN
        DECLARE @updatedPoints int  
        if(@meetingStatus = 1 or @meetingStatus=3)
 			begin
-			 set @updatedPoints = @perSuccessRate/4
+			 set @updatedPoints = Round(@perSuccessRate/4, 0)
 			end
 	   Else if(@meetingStatus=5)
 			begin
@@ -37,11 +37,11 @@ BEGIN
 			Begin
 				if(@videoDuration>=35)
 					Begin
-						set @updatedPoints=(35*@perSuccessRate)/60
+						set @updatedPoints=Round((35*@perSuccessRate)/60,0)
 					End
 				else
 					Begin
-						set @updatedPoints=(@videoDuration*@perSuccessRate)/60
+						set @updatedPoints=Round((@videoDuration*@perSuccessRate)/60, 0)
 					End
 			End
 		Else if(@meetingStatus=4 and (@interviewStatus=2 or @interviewStatus=4))
@@ -52,7 +52,7 @@ BEGIN
 					end
 				Else
 					BEGIN
-						set @updatedPoints = (@perSuccessRate * @videoDuration/60)
+						set @updatedPoints = Round((@perSuccessRate * @videoDuration/60), 0)
 					END
 			End 
        -- Return the result of the function  
