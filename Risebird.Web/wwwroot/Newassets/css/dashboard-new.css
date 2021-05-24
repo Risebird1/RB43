@@ -80,7 +80,7 @@ body {
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-weight: bold;
             display: inline-block;
-            padding: 18px 26px;
+            padding: 10px 26px;
             display: block;
             text-decoration: none;
             transition: 0.5s all;
@@ -140,9 +140,10 @@ body {
 
     .avatar-upload .avatar-edit {
         position: absolute;
-        right: 50px;
-        z-index: 1;
+        left: 130px;
+        z-index: 0;
         top: 10px;
+        width: 33px;
     }
 
     .avatar-upload .avatar-preview {
@@ -199,7 +200,28 @@ body {
     margin: 10px 0 30px;
     font-size: 25px;
 }
-.feedbackbubble .talk-bubble{z-index:0;}
+
+#mobileStatus_Error {
+    position: absolute;
+    color: #E04B4A !important;
+    font-size: 12px !important;
+    margin-top: 15px !important;
+    margin-left: 0px !important;
+    padding: 0px !important;
+}
+
+
+.whatsapp input[type="text"] {
+    background: #e6e6e6ad;
+    color: #888 !important;
+    border: 0px !important;
+}
+.tab-box .form-group {
+    margin-bottom: 27px;
+}
+.feedbackbubble .talk-bubble {
+    z-index: 0;
+}
 .nav-open .navbar {
     left: 260px;
 }
@@ -209,7 +231,7 @@ body {
 }
 .intrqtext {
     display: block;
-    line-height: 11px;
+    line-height: 20px;
     padding-bottom: 10px;
     color: #b9b4b4;
 }
