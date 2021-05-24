@@ -594,7 +594,25 @@ textarea::-webkit-scrollbar-thumb {
 .select-css, .select-css:disabled, .select-css[aria-disabled=true] {
     background-image: url('../../img/drop.png') !important;
 }
-
+.user-menu .fa-user-circle-o:before, .user-menu .fa-sign-out:before, .user-menu .fa-cog:before {
+    color: #417abb;
+}
+.user-menu__item span {
+    color: #1f3e63 !important;
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: 600;
+}
+.menu-container ul {
+    border-bottom: 2px #86c3ff solid;
+}
+.user-menu:before {
+    border-top: 1px solid #54a5f5b5;
+    border-left: 1px solid #54a5f5b5;
+}
+.user-menu {
+    border: 2px #dae6f3 solid;
+}
 .msger-send-btn {
     background-image: url(../../img/send.png) !important;
 }

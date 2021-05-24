@@ -44,7 +44,7 @@ BEGIN
 						set @updatedPoints=(@videoDuration*@perSuccessRate)/60
 					End
 			End
-		Else if(@meetingStatus=4)
+		Else if(@meetingStatus=4 and (@interviewStatus=2 or @interviewStatus=4))
 			Begin
 				if(@videoDuration>=60)
 					begin

@@ -112,6 +112,21 @@ body {
     border-bottom-right-radius: 7px;
     border-bottom-left-radius: 7px;
 }
+.divider-lm {
+    position: relative;
+    left: 12px;
+    top: -1px;
+}
+
+.divider-rm {
+    position: relative;
+    left: -28px;
+    top: 2px;
+}
+.support svg {
+    position: relative;
+    left: 10px;
+}
 #WhatsappNumber-error {
     color: #E04B4A !important;
     font-weight: normal;
@@ -213,9 +228,7 @@ body {
     animation: marquee 20s linear infinite;
 }
 
-.user-menu__item span {
-    color: #333333 !important;
-}
+
 
 .proctor .toggle-box:checked + label:before {
     border-style: solid;
@@ -4175,7 +4188,7 @@ button.btn {
         width: 100% !important;
     }                        
     .main-notification-title {
-        right: -9px!important;
+        right: 9px!important;
         padding-top: 0px!important;
         position: relative;
         top: 2px;
@@ -4191,11 +4204,11 @@ button.btn {
     }
 
     .note-meeting {
-        width: auto;
+        width: 54%;
         left: 30px;
         position: absolute;
         z-index: 1000;
-        top: 72px !important;
+        top: 12px !important;
         font-size: 15px;
     }
 
@@ -4252,15 +4265,16 @@ button.btn {
 
 @media (max-width: 480px) {
     .note-meeting {
-        width: auto;
-        left: 20px !important;
+      
+        left: 7px !important;
         position: absolute;
         z-index: 1000;
-        top: 63px !important;
+        top: -5px !important;
         font-size: 15px;
+        width: 100% !important;
     }
     .main-notification-title {
-        right: -9px !important;
+        right: 9px !important;
         padding-top: 0px !important;
         position: relative;
         top: 2px;
@@ -4284,7 +4298,8 @@ button.btn {
 
 @media (max-width: 360px) {
     .note-meeting {
-        top: 85px !important;
+        width: 100% !important;
+        top: -11px !important;
         font-size: 13px !important;
     }
     .support {
@@ -4308,7 +4323,7 @@ button.btn {
     .main-notification-title {
         padding-top: 0px !important;
         position: relative;
-        right: -9px!important;
+        right: 9px!important;
         top: -19px !important;
         width: 100%;
         text-align: center !important;
@@ -7257,6 +7272,7 @@ blockquote {
     padding: 10px 10px 0px 10px;
     font-size: 1.5em !important;
     text-transform: uppercase;
+    color:#000;
 }
 
 #progressTable_wrapper .dataTables_filter input[type=search] {
@@ -7533,11 +7549,9 @@ h4.card-title {
 }
 
 .note-meeting {
-    width: auto;
-    left: 30px;
-    position: absolute;
-    z-index: 1000;
-    top: 85px;
+    width: 70%;
+    float: left;
+    margin-top: 8px;
     font-size: 15px;
 }
 
@@ -7631,34 +7645,29 @@ tbody.collapse.in {
 .nav > li > a p {
     padding-left: 35px;
 }
-
 .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu p {
     padding-left: 60px;
 }
-
 .nav > li > a:hover p, .nav > li > a.active-menu:hover p {
     padding-left: 45px !important;
 }
-
 .nav > li > a.active-menu:hover p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:hover p {
     padding-left: 70px !important;
 }
-
 .nav > li > a:hover {
     background: none !important;
 }
-
 .dash-widget-btn{display:none;}
 .user-menu {
     padding-top: 0px;
     position: absolute;
-    top: 53px;
+    top: 70px;
     left: auto;
-    right: -50px;
+    right: -55px;
     bottom: auto;
-    width: 200px;
-    border: 0;
-    border-width: 1px;
+    width: 180px;
+    border-radius: 8px;
+   /* border-width: 1px;*/
     background-color: #ffffff;
     box-shadow: -8px 12px 18px 0 rgb(21 21 62 / 30%);
 }
@@ -7672,8 +7681,8 @@ tbody.collapse.in {
         top: -6px;
         right: 28px;
         transform: rotate( 45deg );
-        border-top: 1px solid #f0f2f8;
-        border-left: 1px solid #f0f2f8;
+       /* border-top: 1px solid #f0f2f8;
+        border-left: 1px solid #f0f2f8;*/
     }
 
     .user-menu .profile-highlight {
@@ -7695,7 +7704,7 @@ tbody.collapse.in {
 
     .user-menu .fa-user-circle-o:before {
         font-size: 16px;
-        color: #86898e;
+       
         top: 2px;
         position: relative;
     }
@@ -7703,14 +7712,14 @@ tbody.collapse.in {
     .user-menu .fa-sign-out:before {
         font-size: 17px;
         top: 2px;
-        color: #86898e;
+       
         position: relative;
     }
 
     .user-menu .fa-cog:before {
         content: "\f013";
         font-size: 17px;
-        color: #86898e;
+       
     }
 
     .user-menu .user-menu-link:hover {
@@ -7721,17 +7730,15 @@ tbody.collapse.in {
 .user-menu-link .fa {
     margin-right: 5px;
 }
-
 .user-menu .footer .user-menu-link {
     font-size: 13px;
 }
-
 .user-menu-link:hover, .user-menu-link:focus {
     background-color: #f1f2f9;
 }
 
 .user-menu a {
-    border-top: 1px solid #f0f2f8 !important;
+    border-top: 1px dotted #e0e3ea !important;
 }
 .user {
     position: relative;
@@ -7772,7 +7779,7 @@ tbody.collapse.in {
 
 .menu-container ul {
     margin: 10px 0px 0px 0px;
-    padding: 4px 3px;
+    padding: 0px 0px;
     list-style: none;
 }
 
@@ -7835,7 +7842,33 @@ tbody.collapse.in {
     margin-left: 0.3rem;
     font-family: sans-serif;
 }
+.mbtop-10{
+    margin:10px 0px;
+}
+#supportModal .modal-lg {
+    max-width: 800px !important;
+}
+#supportmailModal .modal-content .modal-body {
+    padding: 10px 10px;
+}
+#supportmailModal label {
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: #9A9A9A;
+    padding: 0px 20px;
+}
 
+#supportmailModal .mdc-card{
+    border-radius:0;
+    box-shadow:none;
+}
+
+
+#supportModal .modal-content .modal-body {
+    padding: 0px 0px;
+    margin: 0px 10px 10px 10px;
+    background: #edf4f9b5;
+}
 body.sidebar-mini .top-panel {
     padding: 0px 60px 0px 100px;
     margin-bottom: 0px !important;
@@ -7944,7 +7977,7 @@ body .top-panel {
     border-radius: 20px;
 
 }
-.searchbox .searchCon{z-index:-1!important}
+.searchbox .searchCon{z-index:0!important}
 .dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
     width: 200px;
     background-color: #fff;
@@ -7971,7 +8004,10 @@ body .top-panel {
 .filheader {
     padding: 10px;
 }
-
+.filavatar svg {
+    top: 10px;
+    position: relative;
+}
 .filavatar {
     width: 45px;
     float: left;
@@ -9615,7 +9651,7 @@ div.tagsinput {
     }
 
     .main-img-user {
-        display: block;
+        display: none!important;
         position: relative;
         width: 20px !important;
         height: 20px !important;

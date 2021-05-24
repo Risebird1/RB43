@@ -928,7 +928,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null)
+        public async Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null)
         {
             try
             {
@@ -1141,7 +1141,21 @@ namespace Risebird.Repository
                         }
                     }
 
-
+                    if (removedInterviewers != null)
+                    {
+                        foreach (var removedInterviewer in removedInterviewers.Where(x => x.Type == "Interviewer"))
+                        {
+                            try
+                            {
+                                UpdateInterviewerAmountForRemovedInterviewers(removedInterviewer);
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                continue;
+                            }
+                        }
+                    }
                     // update trans emergency interviewers table
                     //if (irfDetails.EmergencyInterviewerCollection != null)
                     //{
@@ -1195,6 +1209,21 @@ namespace Risebird.Repository
                         }
                     }
 
+                    if (removedInterviewers != null)
+                    {
+                        foreach (var removedEmergencyInterviewer in removedInterviewers.Where(x => x.Type == "EmergencyInterviewer"))
+                        {
+                            try
+                            {
+                                UpdateInterviewerAmountForRemovedInterviewers(removedEmergencyInterviewer);
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                continue;
+                            }
+                        }
+                    }
                     //update trans Client table
 
                     //if (irfDetails.ClientCollection != null)
@@ -1397,6 +1426,19 @@ namespace Risebird.Repository
             using (SqlConnection conChange = new SqlConnection(connectionString))
             {
                 await SqlMapper.QueryAsync(conChange, "usp_UpdateAmountBasedOnPerSuccessRate", dynamicParam,
+                   commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        private async void UpdateInterviewerAmountForRemovedInterviewers(RemovedInterviewersFromSkillsChannelData removedInterviewer)
+        {
+            DynamicParameters dynamicParam = new DynamicParameters();
+            dynamicParam.Add("@userId", removedInterviewer.UserId);
+            dynamicParam.Add("@IRFId", removedInterviewer.IRFId);
+            dynamicParam.Add("@type", removedInterviewer.Type);
+            using (SqlConnection conChange = new SqlConnection(connectionString))
+            {
+                await SqlMapper.QueryAsync(conChange, "usp_UpdateAmountToZeroForRemovedInterviewers", dynamicParam,
                    commandType: CommandType.StoredProcedure);
             }
         }

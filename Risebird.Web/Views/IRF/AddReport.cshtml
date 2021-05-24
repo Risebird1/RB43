@@ -58,15 +58,15 @@
 
                                         <div class="row">
                                             @*<div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                <div class="form-group">
+                    @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                    @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                    @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
+                    @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                    @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
 
-                                                </div>
+                </div>
 
-                                            </div>*@
+            </div>*@
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -84,12 +84,12 @@
                                         </div>
                                         <div class="row">
                                             @*<div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                <div class="form-group">
+                    @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                    @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                </div>
-                                            </div>*@
+                    @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                </div>
+            </div>*@
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -240,26 +240,26 @@
                                                     @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                                     {
                                                         @*if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
-                                                        {
-                                                            <video width="320" height="320" style="width:100%" controls class="vjs-tech" controlsList="nodownload">
-                                                                <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                                                <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+                        {
+                            <video width="320" height="320" style="width:100%" controls class="vjs-tech" controlsList="nodownload">
+                                <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                                <source src=@Url.Content(Model.VideoLink) type="video/ogg">
 
-                                                                Your browser does not support the video tag.
-                                                            </video>
-                                                        }
-                                                        else if (Url.Content(Model.VideoLink).Contains("manifest"))
-                                                        {
-                                                            <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
-                                                                <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+                                Your browser does not support the video tag.
+                            </video>
+                        }
+                        else if (Url.Content(Model.VideoLink).Contains("manifest"))
+                        {
+                            <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
+                                <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
 
-                                                            </video>
-                                                        }
-                                                        else
-                                                        {
-                                                            <iframe width="420" class="vjs-tech" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
+                            </video>
+                        }
+                        else
+                        {
+                            <iframe width="420" class="vjs-tech" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
 
-                                                        }*@
+                        }*@
                                                         string appendTime;
                                                         if (Model.ThumbnailTimeSeconds == 0)
                                                         {
@@ -277,7 +277,7 @@
                                                 </p>
                                                 @*<div class="col-md-6 col-sm-6">
 
-                                                </div>*@
+                </div>*@
 
                                             </div><!--end of col-md-12-->
 
@@ -926,6 +926,8 @@
                                         @Html.HiddenFor(m => m.IRFId)
                                         @Html.HiddenFor(m => m.InterviewId)
                                         @Html.HiddenFor(m => m.IsEdited)
+                                        @Html.HiddenFor(x => x.ThumbnailTimeSeconds)
+                                        @Html.HiddenFor(x => x.VideoDuration)
                                         <div class="card-footer ">
                                             <div class="row">
 
