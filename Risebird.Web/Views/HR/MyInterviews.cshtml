@@ -278,11 +278,7 @@
                                         </div>
 
                                     </div>
-                                    <div class="pull-left">
-                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded four" style="float: left;">
-                                            <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "HR", actMethod ="MyInterviews" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
-                                        </button>
-                                    </div>
+                                
 
                                     <div class="pull-left">
                                         <div class="hrmyinterview_9"><i type="submit" class="fa fa-file-excel-o excel-file export five pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("HRInterviewsExporttoExcel", "HR")'"></i></div>
@@ -307,7 +303,7 @@
 
                                 </div>
                             </div>
-                            <div class="note-filter text-right"> <b style="color:red">Note: Always join the meeting using your Risebird ID</b></div>
+                            @*<div class="note-filter text-right"> <b style="color:red">Note: Always join the meeting using your Risebird ID</b></div>*@
                         </div>
                     </div>
                 </div>
@@ -524,8 +520,8 @@
                                                             <th class="hrmyinterview_11">Interviewer</th>
                                                             <th class="hrmyinterview_12">Candidate Email</th>
                                                             <th class="hrmyinterview_13">Client</th>
-                                                            <th class="hrmyinterview_14">Zoom Link</th>
-                                                            <th class="hrmyinterview_15">Zoom Id</th>
+                                                            <th class="hrmyinterview_14">Meeting Link</th>
+                                                           
                                                             <th>Emergency</th>
                                                             <th class="disabled-sorting text-center">Actions</th>
 
@@ -543,8 +539,7 @@
                                                             <th>Interviewer</th>
                                                             <th>Candidate Email</th>
                                                             <th>Client</th>
-                                                            <th>Zoom Link</th>
-                                                            <th>Zoom Id</th>
+                                                            <th>Meeting Link</th>
                                                             <th>Emergency </th>
                                                             <th class="disabled-sorting text-center">Actions</th>
 
@@ -714,31 +709,15 @@
 
 
 
-                                                                    <td> <a id="zoomlinkId" target="_blank" title="Zoom Link" href=@item.zoomLink>Zoom Link</a></td>
+                                                                    <td> <a id="zoomlinkId" target="_blank" title="Meeting Link" href=@item.zoomLink>Meeting Link</a></td>
                                                                 }
                                                                 else
                                                                 {
 
-                                                                    <td>No Zoom Link</td>
+                                                                    <td>No Meeting Link</td>
 
                                                                 }
-                                                                @if (!string.IsNullOrEmpty(item.risebirdHR))
-                                                                {
-                                                                    @if (item.risebirdHR.Length > 8)
-                                                                    {
-                                                                        <td><a onclick="" data-tooltip="@item.risebirdHR">@item.risebirdHR.Substring(0, 8)...</a></td>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <td>@item.risebirdHR</td>
-}
-                                                                }
-                                                                else
-                                                                {
-
-                                                                <td>No Zoom Id</td>
-
-                                                            }
+                                                               
                                                             @if (item.IsEmergency)
                                                             {
                                                                 <td>Yes</td>
@@ -1403,29 +1382,16 @@
 
             if (data[i].zoomLink != null && data[i].zoomLink != "") {
 
-                html += '   <td> <a id="zoomlinkId" target="_blank" title="Zoom Link" href=' + data[i].zoomLink + '>Zoom Link</a></td>';
+                html += '   <td> <a id="zoomlinkId" target="_blank" title="Meeting Link" href=' + data[i].zoomLink + '>Meeting Link</a></td>';
 
             }
             else {
 
-                html += '  <td>No Zoom Link</td>';
+                html += '  <td>No Meeting Link</td>';
 
             }
 
-            if (data[i].risebirdHR != null && data[i].risebirdHR != "") {
-                if (data[i].risebirdHR.length > 8) {
-                    html += '  <td> ' + data[i].risebirdHR.substring(0, 8) + '... </td>';
-                }
-                else {
-                    html += '<td>' + data[i].risebirdHR + ' </td>';
-                }
-
-            }
-            else {
-
-                html += '  <td>No Zoom Id</td>';
-
-            }
+          
             if (data[i].isEmergency == true) {
                 html += '<td>Yes</td>';
 
