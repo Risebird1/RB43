@@ -139,5 +139,8 @@ namespace Risebird.Business.Interface
         List<Meeting> FetchOpenMeetingById(string id);
         string ReassignMeeting(string id, string meetingid, string Emailid);
         string FetchInterviewerCodedName(string emailID);
+        Task<SelectList> GetIRFInterviewingMembersEmails(string irfId);
+        Task<SelectList> GetIRFQualityControllersEmails(string irfId);
+        Task<List<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string irfId);
     }
 }

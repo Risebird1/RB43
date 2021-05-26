@@ -37,18 +37,11 @@ Create PROCEDURE [dbo].[usp_UpdateMeeting]
 AS
 Begin
    declare 
-	   @userId int, 
-	   @interviewerId int,
 	   @irfIntId int
    
-   set @userId = (select id from UserList where EmailId=@interviewer and idProfile=3)
-   set @interviewerId =(select min(id) from InterviewerProfile where UserId=@userId)
    set @irfIntId =(select id from IRF where IRFId=@IRFId)
 
-	IF NOT EXISTS(select 1 from TransInterviewer where UserId=@userId and IRFId=@irfIntId)
-	Begin
-		insert into TransInterviewer (IRFId, UserId, InterviewerId, PerSuccessRate) values (@irfIntId, @userId,@interviewerId, 1000)
-	End
+	
 
 	IF EXISTS (SELECT 1   FROM   InterviewMeetings  WHERE  id=@interviewId)
 		Begin

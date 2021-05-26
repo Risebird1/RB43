@@ -52,7 +52,8 @@ SELECT [InterviewMeetings].id as imid
 	 ,HRCoordinatorEmailId
 	 ,QCInterviewer
 	 ,InterviewComments.ThumbnailTimeSeconds
-	 , InterviewComments.VideoDuration
+	 ,InterviewComments.VideoDuration
+	 ,ulh.EmailId as ChannelOwner
 FROM [dbo].[InterviewMeetings]
 inner join 
 IRF on [InterviewMeetings].IRFId = IRF.IRFId
@@ -60,6 +61,7 @@ left join InterviewComments on InterviewMeetings.id=InterviewComments.InterviewI
 left join UserList ul on ul.EmailId = InterviewMeetings.candidateEmail
 join CandidatesMaster cm on cm.UserId = ul.id
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id
+join UserList ulh on irf.RisebirdHr = ulh.id
 WHERE
       [InterviewMeetings].id = @interviewId
 

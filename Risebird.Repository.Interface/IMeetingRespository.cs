@@ -168,5 +168,8 @@ namespace Risebird.Repository.Interface
         string CheckMeetingAssignationValidation(string Emailid);
         string ReAssignMeeting(int id, string interviewerMail);
         Task<string> FetchInterviewerCodedName(string emailId);
+        Task<IEnumerable<string>> GetIRFInterviewingMembersEmails(string irfId);
+        Task<IEnumerable<string>> GetIRFQualityControllerEmails(string irfId);
+        Task<IEnumerable<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string irfId);
     }
 }
