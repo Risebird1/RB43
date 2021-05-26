@@ -1434,6 +1434,8 @@ namespace Risebird.Web.Controllers
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         meetingToUpdate.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
                         meetingToUpdate.IRFList = _meetingService.GetIRFList();
+                        meetingToUpdate.InterviewingMembersList = await _meetingService.GetIRFInterviewingMembersEmails(meetingToUpdate.IRFId);
+                        meetingToUpdate.QualityControllersList = await _meetingService.GetIRFQualityControllersEmails(meetingToUpdate.IRFId);
                         var clients = _meetingService.GetClientsByRoles(meetingToUpdate.IRFId);
                         if ((clients.Where(x => x.ClientRoleId == 1) == null) || (clients.Where(x => x.ClientRoleId == 1)).Count() == 0)
                         {
@@ -1595,6 +1597,34 @@ namespace Risebird.Web.Controllers
                 return View("Index");
             }
         }
+
+        public async Task<List<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string IRFId)
+        {
+            try
+            {
+                return await _meetingService.GetIRFMembersEmailsForInterviewDetails(IRFId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new List<ChannelMembersForInterviewData>(); 
+            }
+        }
+
+        //public async Task<SelectList> GetIRFQualityControllersEmails(string IRFId)
+        //{
+        //    try
+        //    {
+        //        return await _meetingService.GetIRFQualityControllersEmails(IRFId);
+        //    }
+
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return new SelectList(new List<string>() { string.Empty }); ;
+        //    }
+        //}
 
         [Authorize]
         [HttpGet]

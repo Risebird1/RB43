@@ -1332,7 +1332,7 @@
         });
         function my_code() {
             var msg = '@ViewBag.Message';
-            if (msg.includes("success")) {
+            if (msg.toLowerCase().includes("success")) {
                 swal.fire("successful",'@ViewBag.Message', "success");
             }
             else {
@@ -1406,20 +1406,20 @@
     });
 
 
-    (function () {
-        var searchForm = document.getElementById('meeting'),
+    //(function () {
+    //    var searchForm = document.getElementById('meeting'),
 
-            clearBtn = textInput.nextSibling;
-        textInput.onkeyup = function () {
-            // Show the clear button if text input value is not empty
-            clearBtn.style.visibility = (this.value.length) ? "visible" : "hidden";
-        };
-        // Hide the clear button on click, and reset the input value
-        clearBtn.onclick = function () {
-            this.style.visibility = "hidden";
-            textInput.value = "";
-        };
-    })();
+    //        clearBtn = textInput.nextSibling;
+    //    textInput.onkeyup = function () {
+    //        // Show the clear button if text input value is not empty
+    //        clearBtn.style.visibility = (this.value.length) ? "visible" : "hidden";
+    //    };
+    //    // Hide the clear button on click, and reset the input value
+    //    clearBtn.onclick = function () {
+    //        this.style.visibility = "hidden";
+    //        textInput.value = "";
+    //    };
+    //})();
 
 </script>
 

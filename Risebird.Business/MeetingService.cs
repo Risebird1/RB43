@@ -369,6 +369,50 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<SelectList> GetIRFInterviewingMembersEmails(string irfId)
+        {
+            try
+            {
+                var list = await _meetingRespository.GetIRFInterviewingMembersEmails(irfId);
+                return new SelectList(list ?? new List<string>() { string.Empty});
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<SelectList> GetIRFQualityControllersEmails(string irfId)
+        {
+            try
+            {
+                var list = await _meetingRespository.GetIRFQualityControllerEmails(irfId);
+                return new SelectList(list ?? new List<string>() { string.Empty });
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<List<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string irfId)
+        {
+            try
+            {
+                var list = await _meetingRespository.GetIRFMembersEmailsForInterviewDetails(irfId);
+                return (list != null) ? list.ToList() : new List<ChannelMembersForInterviewData>();
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public IEnumerable<TransClientUser> GetClientsByRoles(string IRF)
         {
             try

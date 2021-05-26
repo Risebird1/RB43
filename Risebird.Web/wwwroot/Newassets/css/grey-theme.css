@@ -713,7 +713,10 @@ table {
 .tab-box label.choose-file-profile {
     color: rgb(51, 51, 51) !important;
 }
-
+.d_active {
+    background-color: #9c9c9c !important;
+    color: #fff !important;
+}
 
 .user-menu .fa-user-circle-o:before, .user-menu .fa-sign-out:before, .user-menu .fa-cog:before {
     color: #919192;

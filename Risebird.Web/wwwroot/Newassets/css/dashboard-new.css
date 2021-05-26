@@ -35,6 +35,14 @@ body {
 .mdc-button--outlined {
     padding: 0 10px 0 10px;
 }
+.tab_content, .tab-box {
+    display: none;
+}
+
+
+.tab_drawer_heading {
+    display: none;
+}
 .tab-box label.choose-file-profile {
     font-size: 14px !important;
     font-weight: bold !important;
@@ -112,10 +120,32 @@ body {
     box-shadow: 0 0 15px rgb(0 0 0 / 15%), 0 0 1px 1px rgb(0 0 0 / 10%);
     border-top-right-radius: 0px;
     border-top-left-radius: 0px;
-    border-bottom-right-radius: 7px;
-    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
 }
-.divider-lm {
+.tabCon .tab-menu ul li {
+    height: 58px;
+    display: table;
+}
+    .tabCon .tab-menu ul li a {
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        height: 100%;
+        display: table-cell;
+        vertical-align: middle;
+        font-size: 12.3px;
+        padding: 10px 5px;
+        text-transform:capitalize;
+    }
+.tabCon .tab-box {
+    padding: 0px;
+    margin:0px;
+}
+
+.tabCon .tab-main-box {
+    padding: 30px 30px;
+}
+    .divider-lm {
     position: relative;
     left: 12px;
     top: -1px;
@@ -3968,7 +3998,7 @@ textarea.form-control {
     border-bottom: 0px solid #dee2e6 !important;
 }
 
-    #SkillTable.table-bordered td:nth-of-type(5), #SkillTable.table-bordered td:nth-of-type(10) {
+    #SkillTable.table-bordered td:nth-of-type(4), #SkillTable.table-bordered td:nth-of-type(10) {
         border-right: 0px !important;
     }
 
@@ -4214,7 +4244,10 @@ button.btn {
     .razorpay_details {
         width: 60% !important;
     }
-
+    .tabCon .tab-menu ul li a {
+        font-size: 11px;
+        padding: 10px 0px;
+    }
     .user.user-r .main-notification-title {
         padding-top: 0px !important;
         position: relative;
@@ -4440,8 +4473,15 @@ button.btn {
     }
 }
 
-@media only screen and (max-width:980px) {
+@media only screen and (max-width:991px) {
+    .tabCon .tab-main-box {
+        padding: 20px 10px;
+        margin-bottom: 10px;
+    }
 
+    .tabCon .tabs {
+        display: none;
+    }
     .user {
         top:-2px !important;
         right: 160px !important;
@@ -4459,8 +4499,8 @@ button.btn {
     }
 
     .user.user-r {
-        top: 4px;
-        right: 28px !important;
+        top: 4px!important;
+      
     }
 
  
@@ -4479,6 +4519,24 @@ button.btn {
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
+    
+   .tabCon .tab_drawer_heading {
+        background-color: #ececec;
+        color: #5a5757cc;
+        border-bottom: 1px solid #ccc;
+        margin: 0 0 5px 0;
+        padding: 5px 20px;
+        display: block;
+        font-size: 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
     table.journey td.cadName, table.journey td.cadEmail {
         max-width: 200px;
     }
@@ -4539,6 +4597,26 @@ button.btn {
         display: none;
     }
     /* END TOCIFY */
+
+  
+
+    .tab_drawer_heading {
+        background-color: #ececec;
+        color: #5a5757cc;
+        border-bottom: 1px solid #ccc;
+        margin: 0 0 5px 0;
+        padding: 5px 20px;
+        display: block;
+        font-size: 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
     /* TIMELINE */
     .timeline.timeline-right:before {
         left: 60px;
@@ -4580,7 +4658,10 @@ button.btn {
 @media (max-width: 767px) {
     .myinterview_modal .btn-group {
         width: 100% !important;
-    }                        
+    }
+    .tabCon .tabs {
+        display: none;
+    }
     .main-notification-title {
         right: 9px!important;
         padding-top: 0px!important;
@@ -4855,6 +4936,8 @@ input[type='radio'] {
 .mt-20 {
     margin-top: 20px;
 }
+
+
 
 
 .mdc-radio .mdc-radio__native-control:enabled:not(:checked) + .mdc-radio__background .mdc-radio__outer-circle {
@@ -8166,7 +8249,7 @@ tbody.collapse.in {
     top: 12px;
 }
 .menu-container {
-    visibility: hidden;
+   visibility: hidden;
     opacity: 0;
 }
 
@@ -8286,6 +8369,9 @@ body.sidebar-mini .top-panel {
 body .top-panel {
     padding: 0px 60px 0px 275px;
     margin-bottom: 0px !important;
+}
+.dash-h {
+    padding: 0px 60px 0px 20px;
 }
 .sidebar-wrapper > .nav li > a.active-menu, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
     position: relative;
@@ -10059,7 +10145,9 @@ div.tagsinput {
         right: 27px;
         top: 11px !important;
     }
-
+    .dash-h {
+        padding: 0px 0px 0px 0px;
+    }
     .main-img-user {
         display: none!important;
         position: relative;

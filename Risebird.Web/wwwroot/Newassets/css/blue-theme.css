@@ -594,6 +594,10 @@ textarea::-webkit-scrollbar-thumb {
 .select-css, .select-css:disabled, .select-css[aria-disabled=true] {
     background-image: url('../../img/drop.png') !important;
 }
+.d_active {
+    background-color: #53a5f5 !important;
+    color: #fff !important;
+}
 .user-menu .fa-user-circle-o:before, .user-menu .fa-sign-out:before, .user-menu .fa-cog:before {
     color: #417abb;
 }

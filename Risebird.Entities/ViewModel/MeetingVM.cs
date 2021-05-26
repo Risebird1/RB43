@@ -255,6 +255,11 @@ namespace Risebird.Entities.ViewModel
 
         public string InterviewerMobileNumber { get; set; }
         public string ClientMobileNumber { get; set; }
+        public SelectList InterviewingMembersList { get; set; }
+        public SelectList QualityControllersList { get; set; }
+
+        [Display(Name = "Channel Owner")]
+        public string ChannelOwner { get; set; }
     }
     public class VedioComments
     {

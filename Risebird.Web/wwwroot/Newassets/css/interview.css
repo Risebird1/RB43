@@ -1622,7 +1622,7 @@ ul.panel-controls > li > button {
 .upload a {
     text-decoration: none;
     width: 160px;
-    margin: 10px auto;
+    margin: 10px 0px;
     display: block;
     padding: 8px 0px;
     font-size: 13px;
