@@ -970,7 +970,10 @@ table {
     border: 6px solid #c5c5c542;
 }
 .tab-box label.choose-file-profile{color:#fff!important;}
-
+.d_active {
+    background-color: #969595!important;
+    color: #fff!important;
+}
 .user-menu .fa-user-circle-o:before, .user-menu .fa-sign-out:before, .user-menu .fa-cog:before {
     color: #655959;
 }
