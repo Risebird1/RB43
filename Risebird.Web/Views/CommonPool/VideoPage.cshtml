@@ -917,7 +917,8 @@
                                                                                                         {
                                                                                                             <tr>
                                                                                                                 <td>
-                                                                                                                    @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                                                                    @*@Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line" })*@
+                                                                                                                    @Html.TextBox("QuestionsCollection[0].Comment", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                                                                                 </td>
 
@@ -947,7 +948,8 @@
                                                                                                                 {
                                                                                                                     <tr onclick="switchtoquestionVideo(@Model.IreportModel.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                                                                         <td>
-                                                                                                                            @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                                            @*@Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line" onmouseover = "dropDwnToolTips(this)" })*@
+                                                                                                                            @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].Comment, new { @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
 
 
                                                                                                                         </td>
@@ -980,7 +982,8 @@
                                                                                                                 {
                                                                                                                     <tr onclick="changeVideo(@Model.IreportModel.QuestionsCollection[i].Priority)" style="cursor:pointer">
                                                                                                                         <td>
-                                                                                                                            @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                                            @*@Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", onmouseover = "dropDwnToolTips(this)" })*@
+                                                                                                                            @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].Comment, new { @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
 
 
                                                                                                                         </td>
@@ -2527,7 +2530,8 @@
                                                                 {
                                                                     <tr>
                                                                         <td>
-                                                                            @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                            @*@Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line" })*@
+                                                                            @Html.TextBox("QuestionsCollection[0].Comment", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                                         </td>
 
@@ -2553,7 +2557,9 @@
                                                                     {
                                                                         <tr id="quetxt_@i" style="cursor:pointer">
                                                                             <td>
-                                                                                @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                                @*@Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })*@
+                                                                                @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].Comment, new {@class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+
                                                                             </td>
                                                                             <td>
                                                                                 @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })

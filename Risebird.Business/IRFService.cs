@@ -486,6 +486,7 @@ namespace Risebird.Business
             {
                 var interviewerChangesData = new List<InterviewerSuccessRateChangeData>();
                 var removedInterviewers = new List<RemovedInterviewersFromSkillsChannelData>();
+                var addedNewInterviewers = new List<AddedNewInterviewersInSkillsChannelData>();
                 if(model.OldInterviewerCollection != null && model.InterviewerCollection != null && model.OldInterviewerCollection != model.InterviewerCollection)
                 {
                     foreach (var oldInterviewer in model.OldInterviewerCollection)
@@ -520,6 +521,21 @@ namespace Risebird.Business
                                 Type="Interviewer"
                             });
                         }
+                    }
+
+                    foreach (var newInterviewer in model.InterviewerCollection)
+                    {
+                        if (!model.OldInterviewerCollection.Any(x => x.UserId == newInterviewer.UserId))
+                        {
+                            addedNewInterviewers.Add(new AddedNewInterviewersInSkillsChannelData
+                            {
+                                Type = "Interviewer",
+                                IRFId = model.id,
+                                PerSuccessRate = newInterviewer.PerSuccessRate,
+                                UserId = newInterviewer.UserId
+                            });
+                        }
+
                     }
                 }
                 if (model.OldEmergencyInterviewerCollection != null && model.EmergencyInterviewerCollection!=null && model.OldEmergencyInterviewerCollection != model.EmergencyInterviewerCollection)
@@ -556,8 +572,23 @@ namespace Risebird.Business
                             });
                         }
                     }
+
+                    foreach (var newEmergencyInterviewer in model.EmergencyInterviewerCollection)
+                    {
+                        if (!model.OldEmergencyInterviewerCollection.Any(x => x.UserId == newEmergencyInterviewer.UserId))
+                        {
+                            addedNewInterviewers.Add(new AddedNewInterviewersInSkillsChannelData
+                            {
+                                Type = "EmergencyInterviewer",
+                                IRFId = model.id,
+                                PerSuccessRate = newEmergencyInterviewer.PerSuccessRate,
+                                UserId = newEmergencyInterviewer.UserId
+                            });
+                        }
+
+                    }
                 }
-                var result =_irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null).Result;
+                var result =_irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null, addedNewInterviewers ?? null).Result;
                 if(result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();

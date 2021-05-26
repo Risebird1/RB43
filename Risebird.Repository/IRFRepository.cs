@@ -928,7 +928,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null)
+        public async Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null)
         {
             try
             {
@@ -1156,6 +1156,22 @@ namespace Risebird.Repository
                             }
                         }
                     }
+
+                    if (addedNewInterviewers != null)
+                    {
+                        foreach (var addedNewInterviewer in addedNewInterviewers.Where(x => x.Type == "Interviewer"))
+                        {
+                            try
+                            {
+                                UpdateAmountForNewlyAddedInterviewers(addedNewInterviewer);
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                continue;
+                            }
+                        }
+                    }
                     // update trans emergency interviewers table
                     //if (irfDetails.EmergencyInterviewerCollection != null)
                     //{
@@ -1216,6 +1232,21 @@ namespace Risebird.Repository
                             try
                             {
                                 UpdateInterviewerAmountForRemovedInterviewers(removedEmergencyInterviewer);
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                continue;
+                            }
+                        }
+                    }
+                    if (addedNewInterviewers != null)
+                    {
+                        foreach (var addedNewInterviewer in addedNewInterviewers.Where(x => x.Type == "EmergencyInterviewer"))
+                        {
+                            try
+                            {
+                                UpdateAmountForNewlyAddedInterviewers(addedNewInterviewer);
                             }
                             catch (Exception ex)
                             {
@@ -1439,6 +1470,19 @@ namespace Risebird.Repository
             using (SqlConnection conChange = new SqlConnection(connectionString))
             {
                 await SqlMapper.QueryAsync(conChange, "usp_UpdateAmountToZeroForRemovedInterviewers", dynamicParam,
+                   commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        private async void UpdateAmountForNewlyAddedInterviewers(AddedNewInterviewersInSkillsChannelData addedNewInterviewer)
+        {
+            DynamicParameters dynamicParam = new DynamicParameters();
+            dynamicParam.Add("@userId", addedNewInterviewer.UserId);
+            dynamicParam.Add("@IRFId", addedNewInterviewer.IRFId);
+            dynamicParam.Add("@PerSuccessRate", addedNewInterviewer.PerSuccessRate);
+            using (SqlConnection conChange = new SqlConnection(connectionString))
+            {
+                await SqlMapper.QueryAsync(conChange, "usp_UpdateAmountForNewlyAddedInterviewers", dynamicParam,
                    commandType: CommandType.StoredProcedure);
             }
         }
