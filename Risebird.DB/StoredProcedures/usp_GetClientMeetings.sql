@@ -16,10 +16,13 @@ CREATE PROCEDURE [dbo].[usp_GetClientMeetings]
 @timeNow datetime
 AS      
 BEGIN      
-	declare @profileId int, @roleId int, @userId int;
+	declare @profileId int, @roleId int, @userId int, @EmailIdParam varchar(300), @timeNowParam datetime;
+		set @EmailIdParam = @EmailId
+		set @timeNowParam=@timeNow
 		set @profileId = (select id from [Profile] where [Name]='Client')
-		set @userId  = (select id from UserList where EmailId=@EmailId and idProfile=@profileId)
+		set @userId  = (select id from UserList where EmailId=@EmailIdParam and idProfile=@profileId)
 		set @roleId  = (select RoleId from ClientUser where UserId=@userId)
+		
 
 if(@roleId=1)
 
@@ -43,9 +46,9 @@ if(@roleId=1)
 		inner join TransClientUser tcu on IRF.id=tcu.IRFId
 		left join UserList ul on tcu.ClientUserId= ul.id
 
-		where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and im.ClientHrContact=@EmailId
+		where ul.EmailId LIKE @EmailIdParam AND ul.IsActive=1 and im.ClientHrContact=@EmailIdParam
 		and irf.IsDeleted=0
-		--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)   
+		--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNowParam) as date)) or IRF.IsDeleted=0)   
 
 
 	End
@@ -71,9 +74,9 @@ else if(@roleId=4)
 		inner join TransClientUser tcu on IRF.id=tcu.IRFId
 		left join UserList ul on tcu.ClientUserId= ul.id
 
-		where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and im.staffingAgency=@EmailId
+		where ul.EmailId LIKE @EmailIdParam AND ul.IsActive=1 and im.staffingAgency=@EmailIdParam
 		and irf.IsDeleted=0
-		--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)   
+		--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNowParam) as date)) or IRF.IsDeleted=0)   
 
 	End
 
@@ -98,9 +101,9 @@ else
 		inner join TransClientUser tcu on IRF.id=tcu.IRFId
 		left join UserList ul on tcu.ClientUserId= ul.id
 
-		where ul.EmailId LIKE @EmailId AND ul.IsActive=1
+		where ul.EmailId LIKE @EmailIdParam AND ul.IsActive=1
 		and irf.IsDeleted=0
-		--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)   
+		--and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNowParam) as date)) or IRF.IsDeleted=0)   
 
 	End
        
