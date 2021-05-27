@@ -27,7 +27,7 @@ Select @Count=count(*) from InterviewPoints where Interviewerid=@interviewId and
 if(@Count=0)      
 Begin      
 Select @AddPoint=PerSuccessRate from TransInterviewerSkillsLeadInterviewer where Userid=@Userid and InterviewerSkillId=@Irfid      
-set @AddPoint=(ISNULL(@AddPoint,0)*ISNULL(@Points,0)/100)      
+set @AddPoint=Round((ISNULL(@AddPoint,0)*ISNULL(@Points,0)/100), 0)      
 Select @Candidate=candidateEmail from UnapprovedInterviewerMeetings where id=@interviewId      
 Insert into InterviewPoints values(0,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),@interviewId)    
 End      

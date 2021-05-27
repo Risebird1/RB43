@@ -413,6 +413,32 @@
                 $("#ChannelOwner").val('');
 
                 if (data != null && data.length > 0) {
+                    if (data.some(d => d.type === 'I')) {
+                        var option = $("<option />");
+
+                        //Set Text part.
+                        option.html("Select Interviewer");
+
+                        //Set Value part.
+                        option.val('');
+
+                        //Add the Option element to DropDownList.
+
+                        $("#interviewer").append(option);
+                    }
+                    if (data.some(d => d.type === 'Q')) {
+                        var option = $("<option />");
+
+                        //Set Text part.
+                        option.html("Select Quality Controller");
+
+                        //Set Value part.
+                        option.val('');
+
+                        //Add the Option element to DropDownList.
+
+                        $("#QCInterviewer").append(option);
+                    }
                     $(data).each(function () {
                         if (this.type.toUpperCase() == 'I') {
                             var option = $("<option />");

@@ -116,14 +116,14 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.interviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(x => Model.interviewer, Model.InterviewingMembersList, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                        @Html.DropDownListFor(x => Model.interviewer, Model.InterviewingMembersList, "Select Interviewer", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                         @Html.ValidationMessageFor(model => model.interviewer, "", new { @class = "text-danger" })
 
                                     </div>
 
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.QCInterviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(x => Model.QCInterviewer, Model.QualityControllersList, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                        @Html.DropDownListFor(x => Model.QCInterviewer, Model.QualityControllersList, "Select Quality Controller", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                         @Html.ValidationMessageFor(model => model.QCInterviewer, "", new { @class = "text-danger" })
 
                                     </div>
@@ -371,7 +371,34 @@
                 $("#ChannelOwner").val('');
 
                 if (data != null && data.length > 0) {
+                    if (data.some(d => d.type === 'I')) {
+                        var option = $("<option />");
+
+                        //Set Text part.
+                        option.html("Select Interviewer");
+
+                        //Set Value part.
+                        option.val('');
+
+                        //Add the Option element to DropDownList.
+
+                        $("#interviewer").append(option);
+                    }
+                    if (data.some(d => d.type === 'Q')) {
+                        var option = $("<option />");
+
+                        //Set Text part.
+                        option.html("Select Quality Controller");
+
+                        //Set Value part.
+                        option.val('');
+
+                        //Add the Option element to DropDownList.
+
+                        $("#QCInterviewer").append(option);
+                    }
                     $(data).each(function () {
+
                         if (this.type.toUpperCase() == 'I') {
                             var option = $("<option />");
 
