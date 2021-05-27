@@ -29,7 +29,7 @@ Begin
 	join InterviewMeetings im on im.id=ipnt.Interviewid 
 	join IRF on im.IRFId = irf.IRFId
 	join TransInterviewer ti on ti.IRFId = IRF.id
-	where irf.id=@IRFId and ti.UserId = @userId and ipnt.[Status]='Pending' and ipnt.[Type] ='Interview')
+	where irf.id=@IRFId and ipnt.UserId = @userId and (ipnt.[Status]='Pending'or ipnt.[Status]='Submitted') and ipnt.[Type] ='Interview')
 End
 
 Else
@@ -39,7 +39,7 @@ Begin
 	join InterviewMeetings im on im.id=ipnt.Interviewid 
 	join IRF on im.IRFId = irf.IRFId
 	join TransEmergencyInterviewer tei on tei.IRFId = IRF.id
-	where irf.id=@IRFId and tei.UserId = @userId and ipnt.[Status]='Pending' and ipnt.[Type] ='Interview' and im.IsEmergency=1)
+	where irf.id=@IRFId and ipnt.UserId = @userId and (ipnt.[Status]='Pending'or ipnt.[Status]='Submitted') and ipnt.[Type] ='Interview' and im.IsEmergency=1)
 	
 End
 
