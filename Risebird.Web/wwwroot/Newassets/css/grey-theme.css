@@ -689,9 +689,11 @@ input[type="radio"]:checked {
 .tab-main-box {
     background: #fff;
 }
+.tabCon .tab-menu ul li a {
+    border-bottom: 2px #858586 solid;
+}
 .tab-menu ul li a {
     background: #ccc;
-    border: 2px solid #858586;
     color: #000;
 }
 .tab-menu ul li a.active {
