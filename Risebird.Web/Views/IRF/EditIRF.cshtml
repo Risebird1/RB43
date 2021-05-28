@@ -54,26 +54,26 @@
                                 <div class="tabCon">
                                     <div class="tab-menu">
                                         <ul class="tabs">
-                                            <li><a href="#" class="active" rel="tab-1">Event Details</a></li>
-                                            <li><a href="#" rel="tab-2" class="">Job Details</a></li>
-                                            <li><a href="#" rel="tab-3" class="">Tech Skill Metric</a></li>
-                                            <li><a href="#" rel="tab-4" class="">Joinability Metric</a></li>
-                                            <li><a href="#" rel="tab-5" class="">Selectability Metric</a></li>
-                                            <li><a href="#" rel="tab-6" class="">General Skill Metric</a></li>
-                                            <li><a href="#" rel="tab-7" class="">Client Information</a></li>
-                                            <li><a href="#" rel="tab-8" class="">Interviewer</a></li>
-                                            <li><a href="#" rel="tab-9" class="">Quality Controller</a></li>
-                                            <li><a href="#" rel="tab-10" class="">Emergency Interviewer</a></li>
-                                            <li><a href="#" rel="tab-11" class="">Resume Evaluator</a></li>
-                                            <li><a href="#" rel="tab-12" class="">Risebird Coordinator</a></li>
-                                            <li><a href="#" rel="tab-13" class="">Recruiter</a></li>
+                                            <li><a href="#" class="active" rel="tab-1" id="rtab-1">Event Details</a></li>
+                                            <li><a href="#" rel="tab-2" id="rtab-2" class="">Job Details</a></li>
+                                            <li><a href="#" rel="tab-3" id="rtab-3" class="">Tech Skill Metric</a></li>
+                                            <li><a href="#" rel="tab-4" id="rtab-4" class="">Joinability Metric</a></li>
+                                            <li><a href="#" rel="tab-5" id="rtab-5" class="">Selectability Metric</a></li>
+                                            <li><a href="#" rel="tab-6" id="rtab-6" class="">General Skill Metric</a></li>
+                                            <li><a href="#" rel="tab-7" id="rtab-7" class="">Client Information</a></li>
+                                            <li><a href="#" rel="tab-8" id="rtab-8" class="">Interviewer</a></li>
+                                            <li><a href="#" rel="tab-9" id="rtab-9" class="">Quality Controller</a></li>
+                                            <li><a href="#" rel="tab-10" id="rtab-10" class="">Emergency Interviewer</a></li>
+                                            <li><a href="#" rel="tab-11" id="rtab-11" class="">Resume Evaluator</a></li>
+                                            <li><a href="#" rel="tab-12" id="rtab-12" class="">Risebird Coordinator</a></li>
+                                            <li><a href="#" rel="tab-13" id="rtab-13" class="">Recruiter</a></li>
 
                                         </ul>
                                     </div>
 
                                    
                                     <div>
-                                        <h3 class="d_active tab_drawer_heading" rel="tab-1">Event Details</h3>
+                                        <h3 class="tab_drawer_heading" rel="tab-1">Event Details</h3>
                                         <div class="tab-box" id="tab-1" style="display:block;">
                                             <div class="tab-main-box">
                                                 <div class="col-md-4 col-sm-4 pull-left">
@@ -129,18 +129,24 @@
                                                 </div>
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group">
-                                                        @Html.LabelFor(model => model.BillingOwner, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.BillingOwner, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                        </div>
                                                         @Html.DropDownListFor(model => model.BillingOwner, (SelectList)ViewBag.ClientUser, "Select Billing Owner", new { @class = "form-control select-css" })
-
+                                                       @Html.ValidationMessageFor(model => model.BillingOwner, "", new { @id="error_BillingOwner", @class = "text-danger" })
+                                                     
                                                     </div>
-                                                </div>
+                                                    </div>
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group">
-                                                        @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                        </div>
                                                         @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "form-control select-css", @onchange = "TechSkillChanged()" })
-                                                        @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new { @class = "text-danger" })
+                                                       @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new {@id="error_AssessmentGroupId", @class = "text-danger" })
+                                                      
                                                     </div>
-                                                </div>
+                                                    </div>
                                                 <div style="clear: both;height:0px;">&nbsp;</div>
 
                                                 <div class="col-md-4 col-sm-4">
@@ -177,250 +183,271 @@
                                                 <div class="row">
                                                     <div class="col-md-4 col-sm-4 pr-1">
                                                         <div class="form-group">
-                                                            @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                            @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @class = "text-danger" })
-                                                        </div>
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                                @Html.ValidationMessageFor(model => model.JDTiltle, "", new {@id= "error_JDTiltle", @class = "text-danger" })
+                                                            </div>
+                                                            <div class="form-group">
+                                                                @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                            @Html.DropDownListFor(m => m.CompanyType, (SelectList)Model.CompanyTypeList, new { @class = "form-control select-css " })
+                                                                @Html.DropDownListFor(m => m.CompanyType, (SelectList)Model.CompanyTypeList, new { @class = "form-control select-css " })
 
-                                                            @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
-                                                        </div>
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                            @Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.ClientName, "", new { @class = "text-danger" })
+                                                                @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
+                                                                    </div>
+                                                                    @Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                                    @Html.ValidationMessageFor(model => model.ClientName, "", new { @id = "error_ClientName", @class = "text-danger" })
 
-                                                        </div>
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                            @Html.EditorFor(model => model.JobCountry, new { htmlAttributes = new { @class = "form-control  text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.JobCountry, "", new { @class = "text-danger" })
-                                                        </div>
-                                                        <div class="form-group">
-
-
-                                                            @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
-                                                            @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
-
-
-
-                                                        </div>
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                            @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css " })
-
-                                                            @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            <div class="form-group">
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
+                                                                    </div>
+                                                                    @Html.EditorFor(model => model.JobCountry, new { htmlAttributes = new { @class = "form-control  text-box single-line" } })
+                                                                    @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "error_JobCountry", @class = "text-danger" })
+                                                                </div>
+                                                                <div class="form-group">
 
 
-                                                        </div>
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(model => model.PrimarySkillInvite, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                    @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
+                                                                    @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
 
-                                                            @Html.EditorFor(model => model.PrimarySkillInvite, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.PrimarySkillInvite, "", new { @class = "text-danger" })
 
-                                                        </div>
-                                                    </div>
+
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <div class="mandate">
+                                                                        @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                        </div>
+
+                                                                        @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css " })
+
+                                                                        @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @id = "error_Heuristicsscore", @class = "text-danger" })
+
+
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        @Html.LabelFor(model => model.PrimarySkillInvite, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                                        @Html.EditorFor(model => model.PrimarySkillInvite, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                                        @Html.ValidationMessageFor(model => model.PrimarySkillInvite, "", new { @class = "text-danger" })
+
+                                                                    </div>
+                                                                </div>
                                                     <div class="col-md-4 col-sm-4 px-1">
                                                         <div class="form-group">
-                                                            @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                            @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
-                                                            <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></span>
-                                                            @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
-                                                        </div>
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span></div>
+                                                                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
+                                                                <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></span>
+                                                                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                                                            </div>
                                                         <div class="form-group">
-                                                            @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
                                                             @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
                                                             <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></span>
                                                             @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
                                                         </div>
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                            @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @class = "text-danger" })
-                                                            <div class="spinner">
-                                                                <button type="button" class="up button">&rsaquo;</button>
-                                                                <button type="button" class="down button">&lsaquo;</button>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group  mb-0">
-                                                            @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                            @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @class = "text-danger" })
-                                                            <div class="spinner">
-                                                                <button type="button" class="up-1 button">&rsaquo;</button>
-                                                                <button type="button" class="down-1 button">&lsaquo;</button>
-                                                            </div>
-
-                                                        </div>
-
-                                                        <div class="form-group">
-                                                            Upload Company Details
-
-                                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                                <div class="mdc-radio mdc-radio--touch">
-                                                                    <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="Upload" onclick="RadioCompanyChanged(this.value)">
-                                                                    <div class="mdc-radio__background">
-                                                                        <div class="mdc-radio__outer-circle"></div>
-                                                                        <div class="mdc-radio__inner-circle"></div>
-                                                                    </div>
-                                                                    <div class="mdc-radio__ripple"></div>
+                                                            <div class="form-group">
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
+                                                                @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @id="error_NoOfPosition", @class = "text-danger" })
+                                                               
+                                                                
+                                                                <div class="spinner">
+                                                                    <button type="button" class="up button">&rsaquo;</button>
+                                                                    <button type="button" class="down button">&lsaquo;</button>
                                                                 </div>
                                                             </div>
-
-                                                            Provide Company Details
-
-                                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                                <div class="mdc-radio mdc-radio--touch">
-                                                                    <input class="mdc-radio__native-control" type="radio" id="JcompanydetailsD" name="companydetails" value="Link" onclick="RadioCompanyChanged(this.value)">
-                                                                    <div class="mdc-radio__background">
-                                                                        <div class="mdc-radio__outer-circle"></div>
-                                                                        <div class="mdc-radio__inner-circle"></div>
-                                                                    </div>
-                                                                    <div class="mdc-radio__ripple"></div>
+                                                            <div class="form-group  mb-0">
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                                 </div>
+                                                                @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
+                                                                @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @id="error_NoOfIntterview", @class = "text-danger" })
+                                                                <div class="spinner">
+                                                                    <button type="button" class="up-1 button">&rsaquo;</button>
+                                                                    <button type="button" class="down-1 button">&lsaquo;</button>
+                                                                </div>
+
                                                             </div>
 
+                                                            <div class="form-group">
+                                                                Upload Company Details
 
-                                                            None
-
-                                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                                <div class="mdc-radio mdc-radio--touch">
-                                                                    <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="None" checked="checked" onclick="RadioCompanyChanged(this.value)">
-                                                                    <div class="mdc-radio__background">
-                                                                        <div class="mdc-radio__outer-circle"></div>
-                                                                        <div class="mdc-radio__inner-circle"></div>
+                                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                                    <div class="mdc-radio mdc-radio--touch">
+                                                                        <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="Upload" onclick="RadioCompanyChanged(this.value)">
+                                                                        <div class="mdc-radio__background">
+                                                                            <div class="mdc-radio__outer-circle"></div>
+                                                                            <div class="mdc-radio__inner-circle"></div>
+                                                                        </div>
+                                                                        <div class="mdc-radio__ripple"></div>
                                                                     </div>
-                                                                    <div class="mdc-radio__ripple"></div>
                                                                 </div>
+
+                                                                Provide Company Details
+
+                                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                                    <div class="mdc-radio mdc-radio--touch">
+                                                                        <input class="mdc-radio__native-control" type="radio" id="JcompanydetailsD" name="companydetails" value="Link" onclick="RadioCompanyChanged(this.value)">
+                                                                        <div class="mdc-radio__background">
+                                                                            <div class="mdc-radio__outer-circle"></div>
+                                                                            <div class="mdc-radio__inner-circle"></div>
+                                                                        </div>
+                                                                        <div class="mdc-radio__ripple"></div>
+                                                                    </div>
+                                                                </div>
+
+
+                                                                None
+
+                                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                                    <div class="mdc-radio mdc-radio--touch">
+                                                                        <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="None" checked="checked" onclick="RadioCompanyChanged(this.value)">
+                                                                        <div class="mdc-radio__background">
+                                                                            <div class="mdc-radio__outer-circle"></div>
+                                                                            <div class="mdc-radio__inner-circle"></div>
+                                                                        </div>
+                                                                        <div class="mdc-radio__ripple"></div>
+                                                                    </div>
+                                                                </div>
+
+
+
                                                             </div>
+                                                            <div class="form-group" style="display:none" id="linkcdDiv">
+                                                                @Html.LabelFor(model => model.CompanyDetails, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                                @Html.EditorFor(model => model.CompanyDetails, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                                @Html.ValidationMessageFor(model => model.CompanyDetails, "", new { @class = "text-danger" })
 
+                                                            </div>
+                                                            <div class="" style="display:none" id="uploadcdDiv">
+                                                                @Html.LabelFor(model => model.CompanyDetailFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
+                                                                @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
 
-                                                        </div>
-                                                        <div class="form-group" style="display:none" id="linkcdDiv">
-                                                            @Html.LabelFor(model => model.CompanyDetails, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                            @Html.EditorFor(model => model.CompanyDetails, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.CompanyDetails, "", new { @class = "text-danger" })
-
-                                                        </div>
-                                                        <div class="" style="display:none" id="uploadcdDiv">
-                                                            @Html.LabelFor(model => model.CompanyDetailFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                            @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
-
-                                                        </div>
-                                                        <div class="">
-                                                            @{
-                                                                if (!String.IsNullOrEmpty(Model.CompanyDetails))
-                                                                {
-                                                                    <a id="companydetailsId" target="_blank" rel="tooltip" class="btn btn-warning btn-sm  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.CompanyDetails.ToString().Replace(" ","%20")>Uploaded Company Details</a>
+                                                            </div>
+                                                            <div class="">
+                                                                @{
+                                                                    if (!String.IsNullOrEmpty(Model.CompanyDetails))
+                                                                    {
+                                                                        <a id="companydetailsId" target="_blank" rel="tooltip" class="btn btn-warning btn-sm  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.CompanyDetails.ToString().Replace(" ","%20")>Uploaded Company Details</a>
+                                                                    }
                                                                 }
-                                                            }
-                                                        </div>
+                                                            </div>
 
-                                                    </div>
+                                                        </div>
                                                     <div class="col-md-4 col-sm-4 pl-1">
                                                         <div class="form-group">
-                                                            @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                            @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1" } })
-                                                            @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @class = "text-danger" })
-                                                            <div class="spinner">
-                                                                <button type="button" class="up-2 button">&rsaquo;</button>
-                                                                <button type="button" class="down-2 button">&lsaquo;</button>
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1" } })
+                                                                @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @id = "error_PerMintuteRate", @class = "text-danger" })
+                                                                <div class="spinner">
+                                                                    <button type="button" class="up-2 button">&rsaquo;</button>
+                                                                    <button type="button" class="down-2 button">&lsaquo;</button>
+                                                                </div>
                                                             </div>
-                                                        </div>
                                                         <div class="form-group">
-                                                            @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                            @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
-                                                            @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @class = "text-danger" })
-                                                            <div class="spinner">
-                                                                <button type="button" class="up-3 button">&rsaquo;</button>
-                                                                <button type="button" class="down-3 button">&lsaquo;</button>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            @Html.Label("Channel Owner", "Channel Owner", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                            @Html.DropDownListFor(m => m.RisebirdHr, (SelectList)ViewBag.RiseBirdHR, new { @class = "form-control select-css " })
-                                                            @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
-                                                        </div>
-
-                                                        <div class="form-group mb-0">
-                                                            @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                            @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, "Select", new { @class = "form-control select-css " })
-                                                            @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
-
-                                                        </div>
-                                                        <div class="form-group mb-0">
-
-                                                            Upload JD
-
-                                                            <div class="mdc-touch-target-wrapper" style="top: 4px;  position: relative;">
-                                                                <div class="mdc-radio mdc-radio--touch">
-                                                                    <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
-                                                                    <div class="mdc-radio__background">
-                                                                        <div class="mdc-radio__outer-circle"></div>
-                                                                        <div class="mdc-radio__inner-circle"></div>
-                                                                    </div>
-                                                                    <div class="mdc-radio__ripple"></div>
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
+                                                                @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @id="error_TotalBudget", @class = "text-danger" })
+                                                                <div class="spinner">
+                                                                    <button type="button" class="up-3 button">&rsaquo;</button>
+                                                                    <button type="button" class="down-3 button">&lsaquo;</button>
                                                                 </div>
                                                             </div>
-
-
-
-                                                            Provide JD link
-
-                                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                                <div class="mdc-radio mdc-radio--touch">
-                                                                    <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
-                                                                    <div class="mdc-radio__background">
-                                                                        <div class="mdc-radio__outer-circle"></div>
-                                                                        <div class="mdc-radio__inner-circle"></div>
-                                                                    </div>
-                                                                    <div class="mdc-radio__ripple"></div>
-                                                                </div>
+                                                            <div class="form-group">
+                                                                @Html.Label("Channel Owner", "Channel Owner", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                                @Html.DropDownListFor(m => m.RisebirdHr, (SelectList)ViewBag.RiseBirdHR, new { @class = "form-control select-css " })
+                                                                @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
                                                             </div>
 
-                                                            None
+                                                            <div class="form-group mb-0">
+                                                                @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, "Select", new { @class = "form-control select-css " })
+                                                                @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
 
-                                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                                <div class="mdc-radio mdc-radio--touch">
-                                                                    <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="None" checked="checked" onclick="RadioChanged(this.value)">
-                                                                    <div class="mdc-radio__background">
-                                                                        <div class="mdc-radio__outer-circle"></div>
-                                                                        <div class="mdc-radio__inner-circle"></div>
-                                                                    </div>
-                                                                    <div class="mdc-radio__ripple"></div>
-                                                                </div>
                                                             </div>
+                                                            <div class="form-group mb-0">
 
-                                                        </div>
-                                                        <div class="form-group mb-0" style="display:none" id="linkDiv">
-                                                            @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                            @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
+                                                                Upload JD
 
-                                                        </div>
-                                                        <div class="" style="display:none" id="uploadDiv">
-                                                            @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                <div class="mdc-touch-target-wrapper" style="top: 4px;  position: relative;">
+                                                                    <div class="mdc-radio mdc-radio--touch">
+                                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
+                                                                        <div class="mdc-radio__background">
+                                                                            <div class="mdc-radio__outer-circle"></div>
+                                                                            <div class="mdc-radio__inner-circle"></div>
+                                                                        </div>
+                                                                        <div class="mdc-radio__ripple"></div>
+                                                                    </div>
+                                                                </div>
 
-                                                            @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
 
-                                                        </div>
-                                                        <div class="upload">
-                                                            @{
-                                                                if (!String.IsNullOrEmpty(Model.JDLink))
-                                                                {
-                                                                    <a style="text-decoration:none;" id="audioId" target="_blank" rel="tooltip" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.JDLink.ToString().Replace(" ","%20")>Uploaded JD</a>
+
+                                                                Provide JD link
+
+                                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                                    <div class="mdc-radio mdc-radio--touch">
+                                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
+                                                                        <div class="mdc-radio__background">
+                                                                            <div class="mdc-radio__outer-circle"></div>
+                                                                            <div class="mdc-radio__inner-circle"></div>
+                                                                        </div>
+                                                                        <div class="mdc-radio__ripple"></div>
+                                                                    </div>
+                                                                </div>
+
+                                                                None
+
+                                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                                    <div class="mdc-radio mdc-radio--touch">
+                                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="None" checked="checked" onclick="RadioChanged(this.value)">
+                                                                        <div class="mdc-radio__background">
+                                                                            <div class="mdc-radio__outer-circle"></div>
+                                                                            <div class="mdc-radio__inner-circle"></div>
+                                                                        </div>
+                                                                        <div class="mdc-radio__ripple"></div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="form-group mb-0" style="display:none" id="linkDiv">
+                                                                @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                                @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                                @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
+
+                                                            </div>
+                                                            <div class="" style="display:none" id="uploadDiv">
+                                                                @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                                @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+
+                                                            </div>
+                                                            <div class="upload">
+                                                                @{
+                                                                    if (!String.IsNullOrEmpty(Model.JDLink))
+                                                                    {
+                                                                        <a style="text-decoration:none;" id="audioId" target="_blank" rel="tooltip" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.JDLink.ToString().Replace(" ","%20")>Uploaded JD</a>
+                                                                    }
                                                                 }
-                                                            }
-                                                        </div>
+                                                            </div>
 
-                                                    </div>
+                                                        </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -437,7 +464,7 @@
 
                                                                         <th width="15%" class="table_heading">Level</th>
                                                                         <th width="65%" class="table_heading">Skill Name</th>
-                                                                        <th width="10%" class="table_heading">Weightage</th>
+                                                                        <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
                                                                 </thead>
@@ -481,7 +508,7 @@
                                                                                 </td>
 
                                                                                 <td>
-                                                                                    @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+                                                                                    @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
 
                                                                                 </td>
 
@@ -521,7 +548,7 @@
                                                                         <th width="15%" class="table_heading">Level</th>
                                                                         <th width="25%" class="table_heading">Type</th>
                                                                         <th width="40%" class="table_heading">Value</th>
-                                                                        <th width="10%" class="table_heading">Weightage</th>
+                                                                        <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
                                                                 </thead>
@@ -615,7 +642,7 @@
                                                                         <th width="15%" class="table_heading">Level</th>
                                                                         <th width="25%" class="table_heading">Type</th>
                                                                         <th width="40%" class="table_heading">Value</th>
-                                                                        <th width="10%" class="table_heading">Weightage</th>
+                                                                        <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
                                                                 </thead>
@@ -705,7 +732,7 @@
                                                                         <th width="15%" class="table_heading">Level</th>
                                                                         <th width="25%" class="table_heading">Type</th>
                                                                         <th width="40%" class="table_heading">Value</th>
-                                                                        <th width="10%" class="table_heading">Weightage</th>
+                                                                        <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
                                                                 </thead>
@@ -895,7 +922,7 @@
 
                                                                     </tbody>
                                                                 </table>
-                                                                <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
+                                                                @*<label class="text-danger" id="noInterviewer" style="color:red!important;font-size:12px!important; margin-left:913px"></label>*@
                                                             </div>
                                                         </div><!--end of col-md-12-->
                                                     </div>
@@ -983,7 +1010,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
+                                                            <label class="text-danger" id="noInterviewer" style="color:red!important;font-size:12px!important; margin-left:913px"></label>
 
                                                         </div>
                                                     </div><!--end of col-md-12-->
@@ -1060,6 +1087,7 @@
 
                                                                 </tbody>
                                                             </table>
+                                                            <label class="text-danger" id="qcInterviewer" style="color:red!important;font-size:12px!important; margin-left:913px"></label>
                                                         </div>
                                                     </div><!--end of col-md-12-->
                                                 </div>
@@ -1140,7 +1168,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
+                                                            <label class="text-danger" id="emInterviewer" style="color:red!important;font-size:12px!important; margin-left:865px"></label>
                                                         </div>
                                                     </div><!--end of col-md-12-->
                                                 </div>
@@ -1201,7 +1229,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
+                                                            @*<label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>*@
                                                         </div>
                                                     </div><!--end of col-md-12-->
                                                 </div>
@@ -1263,7 +1291,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
+                                                            @*<label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>*@
                                                         </div>
                                                     </div><!--end of col-md-12-->
                                                 </div>
@@ -1337,7 +1365,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
+                                                            @*<label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>*@
                                                         </div>
                                                     </div><!--end of col-md-12-->
                                                 </div>
@@ -1353,22 +1381,32 @@
                            
                           
                            
-                            
-                            
+                            <div class="card-footer mt-20 clearfix">
+                                <div class="row  mc-button-area pull-right">
+                                    <div class="col-md-12">
+                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new {@id="back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
+                                        <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" id="btnPrev" value="Prev" style="display:none;">
 
-                            <div class="card-footer mt-20">
-                                <div class="row">
-
-                                    <div class="col-md-12 mc-button-area">
-                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnNext" value="Next">
                                         @if (ViewBag.IsClientUser == false)
                                         {
-                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>
+                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-left" id="btnUpload" value="Save" style="display:none">Save</button>
 
                                         }
                                     </div>
                                 </div>
-                            </div>
+                            </div>  
+                            
+
+                          @*<div class="card-footer mt-20">
+                                <div class="row">
+
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                       
+                                    </div>
+                                </div>
+                            </div>*@
                             @Html.HiddenFor(m => m.id)
                             @Html.HiddenFor(m => m.ClientId)
                             @Html.HiddenFor(m => m.OldAssessmentGroupId)
@@ -1416,9 +1454,355 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $(".selectpicker").select2();
-          
-    });
 
+        $("#btnPrev").click(function () {
+            var activeTab = $(".active").text();
+            if (activeTab.trim() == "Job Details") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-1").addClass("active");
+                document.getElementById("tab-1").style.display = "block";
+                document.getElementById("tab-2").style.display = "none";
+                document.getElementById("btnPrev").style.display = "none";
+   
+            }
+            else if (activeTab.trim() == "Tech Skill Metric") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-2").addClass("active");
+                document.getElementById("tab-2").style.display = "block";
+                document.getElementById("tab-3").style.display = "none";
+            }
+            else if (activeTab.trim() == "Joinability Metric") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-3").addClass("active");
+                document.getElementById("tab-3").style.display = "block";
+                document.getElementById("tab-4").style.display = "none";
+            }
+
+            else if (activeTab.trim() == "Selectability Metric") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-4").addClass("active");
+                document.getElementById("tab-4").style.display = "block";
+                document.getElementById("tab-5").style.display = "none";
+            }
+
+            else if (activeTab.trim() == "General Skill Metric") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-5").addClass("active");
+                document.getElementById("tab-5").style.display = "block";
+                document.getElementById("tab-6").style.display = "none";
+            }
+            else if (activeTab.trim() == "Client Information") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-6").addClass("active");
+                document.getElementById("tab-6").style.display = "block";
+                document.getElementById("tab-7").style.display = "none";
+            }
+            else if (activeTab.trim() == "Interviewer") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-7").addClass("active");
+                document.getElementById("tab-7").style.display = "block";
+                document.getElementById("tab-8").style.display = "none";
+            }
+            else if (activeTab.trim() == "Quality Controller") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-8").addClass("active");
+                document.getElementById("tab-8").style.display = "block";
+                document.getElementById("tab-9").style.display = "none";
+            }
+
+            else if (activeTab.trim() == "Emergency Interviewer") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-9").addClass("active");
+                document.getElementById("tab-9").style.display = "block";
+                document.getElementById("tab-10").style.display = "none";
+            }
+
+            else if (activeTab.trim() == "Resume Evaluator") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-10").addClass("active");
+                document.getElementById("tab-10").style.display = "block";
+                document.getElementById("tab-11").style.display = "none";
+            }
+            else if (activeTab.trim() == "Risebird Coordinator") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-11").addClass("active");
+                document.getElementById("tab-11").style.display = "block";
+                document.getElementById("tab-12").style.display = "none";
+            }
+            else if (activeTab.trim() == "Recruiter") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-12").addClass("active");
+                document.getElementById("tab-12").style.display = "block";
+                document.getElementById("tab-13").style.display = "none";
+                document.getElementById("btnNext").style.display = "block";
+                document.getElementById("btnUpload").style.display = "none";
+            }
+
+        });
+        $("#btnNext").click(function () {
+            var flag = false;
+            var activeTab = $(".active").text();
+            if (activeTab.trim() == "Event Details") {
+                if ($('#BillingOwner').val() == "") {
+                    $('#error_BillingOwner').text("Billing owner is required");
+                    flag = true;
+                    alert("activeTab");
+                }
+                else {
+                    $('#error_BillingOwner').text("");
+                }
+                if ($('#AssessmentGroupId').val() == "") {
+                    $('#error_AssessmentGroupId').text("The Assessment Group Id field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_AssessmentGroupId').text("");
+                }
+                if (!flag) {
+                    document.getElementById("btnPrev").style.display = "block";
+                    $(".tab-menu li a").removeClass("active");
+                    $("#rtab-2").addClass("active");
+                    document.getElementById("tab-2").style.display = "block";
+                    document.getElementById("tab-1").style.display = "none";
+                }
+            }
+            else if (activeTab.trim() == "Job Details") {
+                if ($('#JDTiltle').val() == "") {
+                    $('#error_JDTiltle').text("The JD Title field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_JDTiltle').text("");
+                }
+                if ($('#ClientName').val() == "") {
+                    $('#error_ClientName').text("The End Client Name field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_ClientName').text("");
+                }
+                if ($('#JobCountry').val() == "") {
+                    $('#error_JobCountry').text("The Job Country field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_JobCountry').text("");
+                }
+
+                if ($('#Heuristicsscore').val() == "") {
+                    $('#error_Heuristicsscore').text("The Client Profile Type field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_Heuristicsscore').text("");
+                }
+                if ($('#NoOfPosition').val() == "") {
+                    $('#error_NoOfPosition').text("The No of Positions field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_NoOfPosition').text("");
+                }
+
+                if ($('#NoOfIntterview').val() == "") {
+                    $('#error_NoOfIntterview').text("The No of Intterview field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_NoOfIntterview').text("");
+                }
+
+                if ($('#PerMintuteRate').val() == "") {
+                    $('#error_PerMintuteRate').text("The Per Interview Rate field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_PerMintuteRate').text("");
+                }
+                if ($('#TotalBudget').val() == "") {
+                    $('#error_TotalBudget').text("The Total Budget field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_TotalBudget').text("");
+                }
+                if (!flag) {
+
+                    $(".tab-menu li a").removeClass("active");
+                    $("#rtab-3").addClass("active");
+                    document.getElementById("tab-3").style.display = "block";
+                    document.getElementById("tab-2").style.display = "none";
+                }
+            }
+            else if (activeTab.trim() == "Tech Skill Metric") {
+               flag = checkWeightageTab("SkillCollection");
+                if (!flag) {
+
+                    $(".tab-menu li a").removeClass("active");
+                    $("#rtab-4").addClass("active");
+                    document.getElementById("tab-4").style.display = "block";
+                    document.getElementById("tab-3").style.display = "none";
+                }
+            }
+            else if (activeTab.trim() == "Joinability Metric") {
+                flag = checkWeightageTab("Joinability");
+                if (!flag) {
+                    $(".tab-menu li a").removeClass("active");
+                    $("#rtab-5").addClass("active");
+                    document.getElementById("tab-5").style.display = "block";
+                    document.getElementById("tab-4").style.display = "none";
+                }
+            }
+            else if (activeTab.trim() == "Selectability Metric") {
+                flag =checkWeightageTab("Selectability");
+                if (!flag) {
+
+                    $(".tab-menu li a").removeClass("active");
+                    $("#rtab-6").addClass("active");
+                    document.getElementById("tab-6").style.display = "block";
+                    document.getElementById("tab-5").style.display = "none";
+                }
+            }
+            else if (activeTab.trim() == "General Skill Metric") {
+                flag = checkWeightageTab("SkillGeneral");
+                if (!flag) {
+
+                    $(".tab-menu li a").removeClass("active");
+                    $("#rtab-7").addClass("active");
+                    document.getElementById("tab-7").style.display = "block";
+                    document.getElementById("tab-6").style.display = "none";
+                }
+            }
+            else if (activeTab.trim() == "Client Information") {
+
+                if (!flag) {
+                    $(".tab-menu li a").removeClass("active");
+                    $("#rtab-8").addClass("active");
+                    document.getElementById("tab-8").style.display = "block";
+                    document.getElementById("tab-7").style.display = "none";
+                }
+            }
+            else if (activeTab.trim() == "Interviewer") {
+                flag = checkInterviewerDetails();
+                if (!flag) {
+                    $(".tab-menu li a").removeClass("active");
+                    $("#rtab-9").addClass("active");
+                    document.getElementById("tab-9").style.display = "block";
+                    document.getElementById("tab-8").style.display = "none";
+                }
+            }
+            else if (activeTab.trim() == "Quality Controller") {
+                flag = checkQcDetails();
+                if (!flag) {
+                    $(".tab-menu li a").removeClass("active");
+                    $("#rtab-10").addClass("active");
+                    document.getElementById("tab-10").style.display = "block";
+                    document.getElementById("tab-9").style.display = "none";
+                }
+            }
+            else if (activeTab.trim() == "Emergency Interviewer") {
+                flag = checkEmergencyDetails();
+                if (!flag) {
+                    $(".tab-menu li a").removeClass("active");
+                    $("#rtab-11").addClass("active");
+                    document.getElementById("tab-11").style.display = "block";
+                    document.getElementById("tab-10").style.display = "none";
+                }
+            }
+            else if (activeTab.trim() == "Resume Evaluator") {
+                if (!flag) {
+                    $(".tab-menu li a").removeClass("active");
+                    $("#rtab-12").addClass("active");
+                    document.getElementById("tab-12").style.display = "block";
+                    document.getElementById("tab-11").style.display = "none";
+                }
+            }
+            else if (activeTab.trim() == "Risebird Coordinator") {
+                if (!flag) {
+                    $(".tab-menu li a").removeClass("active");
+                    $("#rtab-13").addClass("active");
+                    document.getElementById("tab-13").style.display = "block";
+                    document.getElementById("tab-12").style.display = "none";
+                    document.getElementById("btnNext").style.display = "none";
+                    document.getElementById("btnUpload").style.display = "block";
+                }
+            }
+        });
+    });
+    function checkWeightageTab(tab_skill) {
+        var inCorrectCount = 0;
+        var items = $('[id^=' + tab_skill + '][id$="Weightage"]');
+        var total = 0;
+        for (j = 0; j < items.length; j++) {
+            var total = total + parseInt($("#" + items[j].id).val());
+        }
+        if (total != 100) {
+            inCorrectCount = inCorrectCount + 1;
+            // Label should be populated here
+            document.getElementById(tab_skill + "_WeightageError").innerHTML = "Weightage total should be equal to 100.";
+            if (tab_skill == "SkillCollection") {
+                var labelName = "Tech Skills";
+            }
+            else if (tab_skill == "SkillGeneral") {
+                var labelName = "General Skills";
+            }
+            else {
+                var labelName = tab_skill;
+            }
+            document.getElementById(tab_skill + "_WeightageErrorDown").innerHTML = "Weightage total for " + labelName + " should be equal to 100.";
+            return true;
+        }
+        else {
+            document.getElementById(tab_skill + "_WeightageError").innerHTML = "";
+            document.getElementById(tab_skill + "_WeightageErrorDown").innerHTML = "";
+             return false;
+        }
+
+    }
+    function checkInterviewerDetails() {
+      
+        var table = document.getElementById("InterviewerTable");
+        var rowCount = table.rows.length;
+        for (var i = 0; i < rowCount; i++) {
+            if ($("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "" || $("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "0") {
+                document.getElementById("noInterviewer").innerHTML = "Per Interviewer Rate should not be blank";              
+                return true;
+            }
+            else {
+                document.getElementById("noInterviewer").innerHTML = "";   
+                
+            }
+        }
+        return false;
+    }
+
+    function checkQcDetails() {
+        var qctable = document.getElementById("QualityControllerTable");
+        var qcrowCount = qctable.rows.length;
+        for (var i = 0; i < qcrowCount; i++) {
+            if ($("#QualityController_" + i + "__PerSuccessRate").val() == "" || $("#QualityController_" + i + "__PerSuccessRate").val() == "0") {
+                document.getElementById("qcInterviewer").innerHTML = "Per QC Rate should not be blank";
+                return true;
+            }
+            else {
+                document.getElementById("qcInterviewer").innerHTML = "";
+            }
+        }
+        return false;
+    }
+    function checkEmergencyDetails() {
+        var emetable = document.getElementById("EmergencyInterviewerTable");
+        var emerowCount = emetable.rows.length;
+        for (var i = 0; i < emerowCount; i++) {
+            if ($("#EmergencyInterviewerCollection_" + i + "__PerSuccessRate").val() == "" || $("#EmergencyInterviewerCollection_" + i + "__PerSuccessRate").val() == "0") {
+                document.getElementById("emInterviewer").innerHTML = "Per Emergency Interviewer Rate should not be blank";
+                return true;
+            } else {
+                document.getElementById("emInterviewer").innerHTML = "";
+            }
+        }
+        return false;
+    }
 
 </script>
 
@@ -2623,7 +3007,7 @@
     }
 
 </script>
-<script>
+@*<script>
     jQuery(document).ready(function ($) {
 
         $(".tab-box").hide();
@@ -2666,8 +3050,11 @@
 
 
    
-</script>
+</script>*@
+
+
 <script>
+ 
     document.body.className += "js";
 
     var spinner = document.querySelector('.input');

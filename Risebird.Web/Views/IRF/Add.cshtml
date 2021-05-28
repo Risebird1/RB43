@@ -48,19 +48,19 @@
                             <div class="tabCon">
                                 <div class="tab-menu">
                                     <ul class="tabs">
-                                        <li><a href="#" class="active" data-rel="tab-1">Event Details</a></li>
-                                        <li><a href="#" data-rel="tab-2" class="">Job Details</a></li>
-                                        <li><a href="#" data-rel="tab-3" class="">Tech Skill Metric</a></li>
-                                        <li><a href="#" data-rel="tab-4" class="">Joinability Metric</a></li>
-                                        <li><a href="#" data-rel="tab-5" class="">Selectability Metric</a></li>
-                                        <li><a href="#" data-rel="tab-6" class="">General Skill Metric</a></li>
-                                        <li><a href="#" data-rel="tab-7" class="">Client Information</a></li>
-                                        <li><a href="#" data-rel="tab-8" class="">Interviewer</a></li>
-                                        <li><a href="#" data-rel="tab-9" class="">Quality Controller</a></li>
-                                        <li><a href="#" data-rel="tab-10" class="">Emergency Interviewer</a></li>
-                                        <li><a href="#" data-rel="tab-11" class="">Resume Evaluator</a></li>
-                                        <li><a href="#" data-rel="tab-12" class="">Risebird Coordinator</a></li>
-                                        <li><a href="#" data-rel="tab-13" class="">Recruiter</a></li>
+                                        <li><a href="#" class="active" rel="tab-1">Event Details</a></li>
+                                        <li><a href="#" rel="tab-2" class="">Job Details</a></li>
+                                        <li><a href="#" rel="tab-3" class="">Tech Skill Metric</a></li>
+                                        <li><a href="#" rel="tab-4" class="">Joinability Metric</a></li>
+                                        <li><a href="#" rel="tab-5" class="">Selectability Metric</a></li>
+                                        <li><a href="#" rel="tab-6" class="">General Skill Metric</a></li>
+                                        <li><a href="#" rel="tab-7" class="">Client Information</a></li>
+                                        <li><a href="#" rel="tab-8" class="">Interviewer</a></li>
+                                        <li><a href="#" rel="tab-9" class="">Quality Controller</a></li>
+                                        <li><a href="#" rel="tab-10" class="">Emergency Interviewer</a></li>
+                                        <li><a href="#" rel="tab-11" class="">Resume Evaluator</a></li>
+                                        <li><a href="#" rel="tab-12" class="">Risebird Coordinator</a></li>
+                                        <li><a href="#" rel="tab-13" class="">Recruiter</a></li>
 
                                     </ul>
                                 </div>
@@ -109,18 +109,22 @@
                                                 </div>
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:0px;">
-                                                        @Html.LabelFor(model => model.BillingOwner, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.BillingOwner, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                        </div>
                                                         @Html.DropDownListFor(model => model.BillingOwner, (SelectList)ViewBag.ClientUser, "Select Billing Owner", new { @class = "select-css form-control", @required = "required" })
-
+                                                        @Html.ValidationMessageFor(model => model.BillingOwner, "", new { @class = "text-danger" })
                                                     </div>
-                                                </div>
+                                                    </div>
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:0px;">
-                                                        @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                        @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "select-css form-control", @onchange = "TechSkillChanged()" })
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "select-css form-control", @onchange = "TechSkillChanged()" })
 
+                                                        </div>
                                                     </div>
-                                                </div>
                                                 <div style="clear: both;height:0px;">&nbsp;</div>
                                                 <div class="col-md-4 col-sm-4">
 

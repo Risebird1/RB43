@@ -126,16 +126,19 @@ body {
 .tabCon .tab-menu ul li {
     height: 58px;
     display: table;
+    margin: 0px 1px 0px 1px;
 }
     .tabCon .tab-menu ul li a {
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
+        border-top-left-radius: 0px;
+        border-top-right-radius: 0px;
         height: 100%;
         display: table-cell;
         vertical-align: middle;
         font-size: 12.3px;
         padding: 10px 5px;
-        text-transform:capitalize;
+        text-transform: inherit;
+        text-transform: capitalize;
+        
     }
 .tabCon .tab-box {
     padding: 0px;
@@ -145,7 +148,8 @@ body {
 .tabCon .tab-main-box {
     padding: 30px 30px;
 }
-    .divider-lm {
+#back,#btnPrev{margin:0px 5px 0px 0px;}
+.divider-lm {
     position: relative;
     left: 12px;
     top: -1px;
@@ -4656,6 +4660,7 @@ button.btn {
 }
 
 @media (max-width: 767px) {
+ 
     .myinterview_modal .btn-group {
         width: 100% !important;
     }
@@ -8025,7 +8030,7 @@ h4.card-title {
 }
 
 #questionsTable_filter input[type=search], #interviewer_filter input[type=search], #statusTable_filter input[type=search], #meeting input[type=search], #MyInterviewList_filter input[type=search], #txtmeeting_filter input[type=search], #interviewersTbl_filter input[type=search], #supportList_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #dupmeeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
-    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 78% 9px;
+    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 75% 9px;
 }
 
 .intEmail, .intName {
@@ -8249,8 +8254,10 @@ tbody.collapse.in {
     top: 12px;
 }
 .menu-container {
-   visibility: hidden;
-    opacity: 0;
+/*   visibility: hidden;
+    opacity: 0;*/
+display:none;
+
 }
 
 .user-menu .footer {

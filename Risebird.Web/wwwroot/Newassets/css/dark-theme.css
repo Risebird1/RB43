@@ -938,11 +938,18 @@ input[type="radio"]:checked {
 .alert.alert-info {
     background-color: #504c4c;
 }
-.tab-menu ul li a {
-    background: #464444;
-    border: 2px solid #272626;
-    color: #adadad;
+.tabCon .tab-menu ul li a {
+    border-bottom: 1px #0e0a0a solid;
 }
+.tab-menu ul li a {
+    background: #1a1a1a;
+    color: #716f6f;
+}
+    .tab-menu ul li a.active {
+        background: #0e0a0a;
+        color: #adadad;
+        text-decoration: none;
+    }
 table {
     border: 1px #cccccc85 solid !important;
 }
@@ -955,14 +962,10 @@ table {
 .tab-main-box {
     background: #1b1a1a;
 }
-.tab-menu ul li a.active {
-    background: #0e0a0a;
-    color: #fff;
-    text-decoration: none;
-}
+
 .tab-menu ul li a:hover {
-    background: #0e0a0a;
-    color: #fff;
+    background: #1a1a1a;
+    color: #adadad;
     text-decoration: none;
 }
 .info-text{color:#fff}
@@ -1505,7 +1508,9 @@ border-bottom: 2px #121212 solid !important;
     background: #181818;
     color: #9A9A9A !important;
 }
-
+.tabCon .form-group .select-css.form-control {
+    background: #0e0a0a!important;
+}
 .card-blue .card-header h6 {
     color: #a9a5a5 !important;
     font-weight: normal !important;
