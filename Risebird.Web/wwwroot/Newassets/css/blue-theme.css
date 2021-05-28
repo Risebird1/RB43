@@ -758,11 +758,7 @@ table {
     color: #fff;
     text-decoration: none;
 }
-.tab-menu ul li a:hover {
-    background: #54a5f5;
-    color: #fff;
-    text-decoration: none;
-}
+
 .avatar-upload .avatar-preview {
     border: 6px solid #54a5f524;
 }
