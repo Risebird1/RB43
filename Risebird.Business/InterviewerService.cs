@@ -59,7 +59,8 @@ namespace Risebird.Business
                 if (String.IsNullOrEmpty(interviewerProfile.NickName))
                 {
                     var NickName = (!String.IsNullOrEmpty(interviewerProfile.FirstName) ? interviewerProfile.FirstName.Substring(0, 2).Trim() : "Ri") + "" + (!String.IsNullOrEmpty(interviewerProfile.LastName) ? interviewerProfile.LastName.Substring(0, 2).Trim().Replace(".", "") : "se") + "" + (!String.IsNullOrEmpty(interviewerProfile.MobileNumber) ? interviewerProfile.MobileNumber.Substring(6, 4) : "1145");
-                    while (1 == 1)
+                    int i = 0;
+                    while (i <= 4)
                     {
                         if (NickNamesList.Contains(NickName))
                         {
@@ -69,6 +70,7 @@ namespace Risebird.Business
                         {
                             break;
                         }
+                        i++;
                     }
                     interviewerProfile.NickName = NickName;
                 }

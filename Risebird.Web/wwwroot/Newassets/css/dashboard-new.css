@@ -138,11 +138,13 @@ body {
         padding: 10px 5px;
         text-transform: inherit;
         text-transform: capitalize;
+        cursor:default;
         
     }
+.tab-menu ul li a.active{cursor:pointer!important}
 .tabCon .tab-box {
     padding: 0px;
-    margin:0px;
+    margin: 0px;
 }
 
 .tabCon .tab-main-box {

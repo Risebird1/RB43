@@ -963,11 +963,7 @@ table {
     background: #1b1a1a;
 }
 
-.tab-menu ul li a:hover {
-    background: #1a1a1a;
-    color: #adadad;
-    text-decoration: none;
-}
+
 .info-text{color:#fff}
 .avatar-upload .avatar-preview {
     border: 6px solid #c5c5c542;

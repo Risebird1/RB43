@@ -113,20 +113,23 @@
                                                 </div>
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group">
-                                                        @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                        </div>
                                                         @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                        @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @class = "text-danger" })
+                                                        @Html.ValidationMessageFor(model => model.CalendlyLink, "", new {@id= "error_CalendlyLink", @class = "text-danger" })
 
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group">
-                                                        @Html.LabelFor(model => model.PriorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                        @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, new { @class = "form-control select-css" })
-
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.PriorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                        </div>
+                                                        @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, "Select", new { @class = "form-control select-css" })
+                                                        @Html.ValidationMessageFor(model => model.PriorityLevelList, "", new { @id = "error_PriorityLevel", @class = "text-danger" })
                                                     </div>
-                                                </div>
+                                                    </div>
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group">
                                                         <div class="mandate">
@@ -185,104 +188,47 @@
                                                         <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
-                                                                </div>
-                                                                @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                                @Html.ValidationMessageFor(model => model.JDTiltle, "", new {@id= "error_JDTiltle", @class = "text-danger" })
                                                             </div>
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                                @Html.DropDownListFor(m => m.CompanyType, (SelectList)Model.CompanyTypeList, new { @class = "form-control select-css " })
-
-                                                                @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
-                                                                    </div>
-                                                                    @Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                                    @Html.ValidationMessageFor(model => model.ClientName, "", new { @id = "error_ClientName", @class = "text-danger" })
-
-                                                                </div>
-                                                            <div class="form-group">
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
-                                                                    </div>
-                                                                    @Html.EditorFor(model => model.JobCountry, new { htmlAttributes = new { @class = "form-control  text-box single-line" } })
-                                                                    @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "error_JobCountry", @class = "text-danger" })
-                                                                </div>
-                                                                <div class="form-group">
-
-
-                                                                    @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
-                                                                    @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
-
-
-
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <div class="mandate">
-                                                                        @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                                        </div>
-
-                                                                        @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css " })
-
-                                                                        @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @id = "error_Heuristicsscore", @class = "text-danger" })
-
-
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        @Html.LabelFor(model => model.PrimarySkillInvite, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                                        @Html.EditorFor(model => model.PrimarySkillInvite, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                                        @Html.ValidationMessageFor(model => model.PrimarySkillInvite, "", new { @class = "text-danger" })
-
-                                                                    </div>
-                                                                </div>
-                                                    <div class="col-md-4 col-sm-4 px-1">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span></div>
-                                                                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
-                                                                <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></span>
-                                                                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
-                                                            </div>
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
-                                                            <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></span>
-                                                            @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                                                            @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @id = "error_JDTiltle", @class = "text-danger" })
                                                         </div>
-                                                            <div class="form-group">
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
-                                                                </div>
-                                                                @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
-                                                                @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @id="error_NoOfPosition", @class = "text-danger" })
-                                                               
-                                                                
-                                                                <div class="spinner">
-                                                                    <button type="button" class="up button">&rsaquo;</button>
-                                                                    <button type="button" class="down button">&lsaquo;</button>
-                                                                </div>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            <div class="form-group  mb-0">
+                                                            @Html.DropDownListFor(m => m.CompanyType, (SelectList)Model.CompanyTypeList, new { @class = "form-control select-css " })
+
+                                                            @Html.ValidationMessageFor(model => model.CompanyType, "", new { @id = "error_CompanyType", @class = "text-danger" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @Html.ValidationMessageFor(model => model.ClientName, "", new { @id = "error_ClientName", @class = "text-danger" })
+
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.JobCountry, new { htmlAttributes = new { @class = "form-control  text-box single-line" } })
+                                                            @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "error_JobCountry", @class = "text-danger" })
+                                                        </div>
+                                                        <div class="form-group mb-0">
                                                                 <div class="mandate">
-                                                                    @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                                </div>
-                                                                @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
-                                                                @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @id="error_NoOfIntterview", @class = "text-danger" })
-                                                                <div class="spinner">
-                                                                    <button type="button" class="up-1 button">&rsaquo;</button>
-                                                                    <button type="button" class="down-1 button">&lsaquo;</button>
+                                                                    @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                                 </div>
 
-                                                            </div>
+                                                            @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css " })
 
-                                                            <div class="form-group">
-                                                                Upload Company Details
+                                                                @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @id = "error_Heuristicsscore", @class = "text-danger" })
+
+
+                                                            </div>
+                                            
+                                                        <div class="form-group">
+                                                            Upload Company Details
 
                                                                 <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
                                                                     <div class="mdc-radio mdc-radio--touch">
@@ -336,53 +282,69 @@
 
                                                                 @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
 
-                                                            </div>
-                                                            <div class="">
-                                                                @{
-                                                                    if (!String.IsNullOrEmpty(Model.CompanyDetails))
-                                                                    {
-                                                                        <a id="companydetailsId" target="_blank" rel="tooltip" class="btn btn-warning btn-sm  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.CompanyDetails.ToString().Replace(" ","%20")>Uploaded Company Details</a>
-                                                                    }
+                                                        </div>
+                                                        <div class="">
+                                                            @{
+                                                                if (!String.IsNullOrEmpty(Model.CompanyDetails))
+                                                                {
+                                                                    <a id="companydetailsId" target="_blank" rel="tooltip" class="btn btn-warning btn-sm  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.CompanyDetails.ToString().Replace(" ","%20")>Uploaded Company Details</a>
                                                                 }
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 col-sm-4 px-1">
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
+                                                            <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></span>
+                                                            @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
+                                                            <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></span>
+                                                            @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
+                                                            @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @id = "error_NoOfPosition", @class = "text-danger" })
+
+
+                                                            <div class="spinner">
+                                                                <button type="button" class="up button">&rsaquo;</button>
+                                                                <button type="button" class="down button">&lsaquo;</button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
+                                                            @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @id = "error_NoOfIntterview", @class = "text-danger" })
+                                                            <div class="spinner">
+                                                                <button type="button" class="up-1 button">&rsaquo;</button>
+                                                                <button type="button" class="down-1 button">&lsaquo;</button>
                                                             </div>
 
                                                         </div>
-                                                    <div class="col-md-4 col-sm-4 pl-1">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
-                                                                </div>
-                                                                @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1" } })
-                                                                @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @id = "error_PerMintuteRate", @class = "text-danger" })
-                                                                <div class="spinner">
-                                                                    <button type="button" class="up-2 button">&rsaquo;</button>
-                                                                    <button type="button" class="down-2 button">&lsaquo;</button>
-                                                                </div>
-                                                            </div>
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                                </div>
-                                                                @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
-                                                                @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @id="error_TotalBudget", @class = "text-danger" })
-                                                                <div class="spinner">
-                                                                    <button type="button" class="up-3 button">&rsaquo;</button>
-                                                                    <button type="button" class="down-3 button">&lsaquo;</button>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                @Html.Label("Channel Owner", "Channel Owner", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                                @Html.DropDownListFor(m => m.RisebirdHr, (SelectList)ViewBag.RiseBirdHR, new { @class = "form-control select-css " })
-                                                                @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
-                                                            </div>
 
-                                                            <div class="form-group mb-0">
-                                                                @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, "Select", new { @class = "form-control select-css " })
-                                                                @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
-
+                                                        <div class="form-group mb-0">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.PrimarySkillInvite, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            <div class="form-group mb-0">
+                                                            @Html.EditorFor(model => model.PrimarySkillInvite, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @Html.ValidationMessageFor(model => model.PrimarySkillInvite, "", new { @id = "error_PrimarySkillInvite", @class = "text-danger" })
+
+                                                        </div>
+
+                                                        <div class="form-group mb-0">
 
                                                                 Upload JD
 
@@ -437,17 +399,69 @@
 
                                                                 @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
 
-                                                            </div>
-                                                            <div class="upload">
-                                                                @{
-                                                                    if (!String.IsNullOrEmpty(Model.JDLink))
-                                                                    {
-                                                                        <a style="text-decoration:none;" id="audioId" target="_blank" rel="tooltip" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.JDLink.ToString().Replace(" ","%20")>Uploaded JD</a>
-                                                                    }
+                                                        </div>
+                                                        <div class="upload">
+                                                            @{
+                                                                if (!String.IsNullOrEmpty(Model.JDLink))
+                                                                {
+                                                                    <a style="text-decoration:none;" id="audioId" target="_blank" rel="tooltip" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.JDLink.ToString().Replace(" ","%20")>Uploaded JD</a>
                                                                 }
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 col-sm-4 pl-1">
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
                                                             </div>
+                                                            @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1" } })
+                                                            @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @id = "error_PerMintuteRate", @class = "text-danger" })
+                                                            <div class="spinner">
+                                                                <button type="button" class="up-2 button">&rsaquo;</button>
+                                                                <button type="button" class="down-2 button">&lsaquo;</button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
+                                                            @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @id = "error_TotalBudget", @class = "text-danger" })
+                                                            <div class="spinner">
+                                                                <button type="button" class="up-3 button">&rsaquo;</button>
+                                                                <button type="button" class="down-3 button">&lsaquo;</button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.Label("Channel Owner", "Channel Owner", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.DropDownListFor(m => m.RisebirdHr, (SelectList)ViewBag.RiseBirdHR, "Select", new { @class = "form-control select-css " })
+                                                            @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @id = "error_RisebirdHr", @class = "text-danger" })
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, "Select", new { @class = "form-control select-css " })
+                                                            @Html.ValidationMessageFor(model => model.JobLevelList, "", new { @id = "error_JobLevelList", @class = "text-danger" })
 
                                                         </div>
+
+
+                                                        <div class="form-group">
+
+
+                                                            @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
+                                                            @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
+
+
+
+                                                        </div>
+
+
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -461,7 +475,6 @@
                                                             <table class="table table-bordered mbn" id="SkillTable">
                                                                 <thead>
                                                                     <tr>
-
                                                                         <th width="15%" class="table_heading">Level</th>
                                                                         <th width="65%" class="table_heading">Skill Name</th>
                                                                         <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
@@ -820,7 +833,7 @@
                                                             <table class="table table-bordered mbn" id="ClientTable">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th class="table_heading">User</th>
+                                                                        <th class="table_heading">User <span class="red">*</span></th>
                                                                         <th class="table_heading">Role</th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
@@ -1543,10 +1556,24 @@
             var flag = false;
             var activeTab = $(".active").text();
             if (activeTab.trim() == "Event Details") {
+                if ($('#CalendlyLink').val() == "") {
+                    $('#error_CalendlyLink').text("The CalendlyLink field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_CalendlyLink').text("");
+                }
+                if ($('#PriorityLevel').val() == "") {
+                    $('#error_PriorityLevel').text("The PriorityLevel field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_PriorityLevel').text("");
+                }
                 if ($('#BillingOwner').val() == "") {
                     $('#error_BillingOwner').text("Billing owner is required");
                     flag = true;
-                    alert("activeTab");
+              
                 }
                 else {
                     $('#error_BillingOwner').text("");
@@ -1580,6 +1607,14 @@
                 }
                 else {
                     $('#error_ClientName').text("");
+                }
+
+                if ($('#PrimarySkillInvite').val() == "") {
+                    $('#error_PrimarySkillInvite').text("Primary skill field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_PrimarySkillInvite').text("");
                 }
                 if ($('#JobCountry').val() == "") {
                     $('#error_JobCountry').text("The Job Country field is required.");
@@ -1674,7 +1709,7 @@
                 }
             }
             else if (activeTab.trim() == "Client Information") {
-
+                flag = checkClientDetails();
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
                     $("#rtab-8").addClass("active");
@@ -1729,6 +1764,20 @@
             }
         });
     });
+    function checkClientDetails() {
+        var table = document.getElementById("ClientTable");
+        var rowCount = table.rows.length;
+        for (var i = 0; i < rowCount; i++) {
+            if ($("#ClientCollection_" + i + "__ClientUserId").val() == "") {
+                document.getElementById("error_client").innerHTML = "Client User should not be blank";
+                return true;
+            }
+            else {
+                document.getElementById("error_client").innerHTML = "";
+            }
+        }
+        return false;
+    }
     function checkWeightageTab(tab_skill) {
         var inCorrectCount = 0;
         var items = $('[id^=' + tab_skill + '][id$="Weightage"]');
@@ -1752,12 +1801,25 @@
             document.getElementById(tab_skill + "_WeightageErrorDown").innerHTML = "Weightage total for " + labelName + " should be equal to 100.";
             return true;
         }
-        else {
-            document.getElementById(tab_skill + "_WeightageError").innerHTML = "";
-            document.getElementById(tab_skill + "_WeightageErrorDown").innerHTML = "";
-             return false;
+        var drpdowns = $('[id^=' + tab_skill + '][id$="LevelId"]');
+        for (i = 0; i < drpdowns.length; i++) {
+            var interviewId = $("#" + drpdowns[i].id).val();
+            if (interviewId == '' || interviewId == null) {
+                document.getElementById(tab_skill + "_WeightageError").innerHTML = "Level field should not be blank.";
+                return true;
+            }
         }
-
+        if (tab_skill == "SkillCollection") {
+            var drpdowns1 = $('[id^=' + tab_skill + '][id$="SkillId"]');
+            for (i = 0; i < drpdowns1.length; i++) {
+                var interviewId = $("#" + drpdowns1[i].id).val();
+                if (interviewId == '' || interviewId == null) {
+                    document.getElementById(tab_skill + "_WeightageError").innerHTML = "Skill field should not be blank.";
+                    return true;
+                }
+            }}
+        document.getElementById(tab_skill + "_WeightageError").innerHTML = "";
+        return false;
     }
     function checkInterviewerDetails() {
       
@@ -1773,9 +1835,18 @@
                 
             }
         }
+       
+        var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
+        for (i = 0; i < drpdowns.length; i++) {
+            var interviewId = $("#" + drpdowns[i].id).val();
+            if (interviewId == '' || interviewId == null) {
+                document.getElementById("noInterviewer").innerHTML = "There should be atleast one Interviewer.";
+                return true;
+            }
+        }
+        document.getElementById("noInterviewer").innerHTML = "";
         return false;
     }
-
     function checkQcDetails() {
         var qctable = document.getElementById("QualityControllerTable");
         var qcrowCount = qctable.rows.length;
@@ -1787,7 +1858,17 @@
             else {
                 document.getElementById("qcInterviewer").innerHTML = "";
             }
+
         }
+        var drpdowns = $('[id^="QualityController"][id$="UserId"]');
+        for (i = 0; i < drpdowns.length; i++) {
+            var interviewId = $("#" + drpdowns[i].id).val();
+            if (interviewId == '' || interviewId == null) {
+                document.getElementById("qcInterviewer").innerHTML = "There should be atleast one QC.";
+                return true;
+            }
+        }
+        document.getElementById("qcInterviewer").innerHTML = "";
         return false;
     }
     function checkEmergencyDetails() {
@@ -1801,6 +1882,15 @@
                 document.getElementById("emInterviewer").innerHTML = "";
             }
         }
+        var drpdowns = $('[id^="EmergencyInterviewerCollection"][id$="UserId"]');
+        for (i = 0; i < drpdowns.length; i++) {
+            var interviewId = $("#" + drpdowns[i].id).val();
+            if (interviewId == '' || interviewId == null) {
+                document.getElementById("emInterviewer").innerHTML = "There should be atleast one Emergency Interviewer.";
+                return true;
+            }
+        }
+        document.getElementById("emInterviewer").innerHTML = "";
         return false;
     }
 
