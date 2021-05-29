@@ -1709,7 +1709,6 @@
                 }
             }
             else if (activeTab.trim() == "Client Information") {
-                flag = checkClientDetails();
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
                     $("#rtab-8").addClass("active");
@@ -1764,20 +1763,7 @@
             }
         });
     });
-    function checkClientDetails() {
-        var table = document.getElementById("ClientTable");
-        var rowCount = table.rows.length;
-        for (var i = 0; i < rowCount; i++) {
-            if ($("#ClientCollection_" + i + "__ClientUserId").val() == "") {
-                document.getElementById("error_client").innerHTML = "Client User should not be blank";
-                return true;
-            }
-            else {
-                document.getElementById("error_client").innerHTML = "";
-            }
-        }
-        return false;
-    }
+   
     function checkWeightageTab(tab_skill) {
         var inCorrectCount = 0;
         var items = $('[id^=' + tab_skill + '][id$="Weightage"]');
