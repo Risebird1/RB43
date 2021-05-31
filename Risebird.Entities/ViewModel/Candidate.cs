@@ -112,6 +112,8 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Profile Source")]
         [Required]
         public string ProfileSource { get; set; }
+        [Display(Name = "WhatsApp Number")]
+        public string WhatsappNumber { get; set; }
 
     }
 }

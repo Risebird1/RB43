@@ -10,17 +10,17 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Create PROCEDURE [dbo].[usp_GetClientUserById] (@id int)
-AS
-Begin
-	Declare @cid int
-	SET @cid = @id
-			SELECT [FirstName], [LastName], [EmailId], [MobileNumber] , cr.Name as Role , 
-			cl.Name as ClientName, cl.id as SelectedClient, cr.id as SelectedClientRole, UserPassword
-			FROM [dbo].[UserList] ul JOIN [dbo].[ClientUser] cu on ul.id = cu.UserId
-			JOIN [ClientRole] cr on cu.RoleId= cr.id
-			JOIN [dbo].[Client] cl on cu.ClientId= cl.id WHERE cu.id = @cid
-End
+Create PROCEDURE [dbo].[usp_GetClientUserById] (@id int)  
+AS  
+Begin  
+ Declare @cid int  
+ SET @cid = @id  
+   SELECT [FirstName], [LastName], [EmailId], [MobileNumber] , cr.Name as Role ,   
+   cl.Name as ClientName, cl.id as SelectedClient, cr.id as SelectedClientRole, UserPassword,ul.WhatsappNumber  
+   FROM [dbo].[UserList] ul JOIN [dbo].[ClientUser] cu on ul.id = cu.UserId  
+   JOIN [ClientRole] cr on cu.RoleId= cr.id  
+   JOIN [dbo].[Client] cl on cu.ClientId= cl.id WHERE cu.id = @cid  
+End  
 
 
 

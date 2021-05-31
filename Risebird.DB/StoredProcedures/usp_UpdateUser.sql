@@ -11,41 +11,46 @@ SET QUOTED_IDENTIFIER ON
 GO
 
   
-Create PROCEDURE [dbo].[usp_UpdateUser]
-@id INT,
-@selectedProfileId int,
-@userFirstName varchar(150),   
-@userLastName varchar(150),
-@userEmailId varchar(150),
-@userMobileNumber nvarchar(200)   
-AS 
-Begin
-
-IF EXISTS( SELECT 1 FROM UserList WHERE id = @id )  
-       BEGIN  
-            UPDATE UserList SET idProfile = @selectedProfileId,  
-            FirstName =  @userFirstName,   
-            LastName =  @userLastName,  
-            EmailID =   @userEmailId,  
-            MobileNumber = @userMobileNumber  
-            WHERE id = @id  
-                      
-       END
-if(@selectedProfileId=2)
-	Begin
-		IF NOT Exists( select 1 from HR where UserId=@id)
-		Begin
-			insert into HR values (@id)
-		End
-
-	End
-else if(@selectedProfileId != 2 and ((select id from HR where UserId=@id) is not null) )
-	Begin
-		delete from TransHR where HRId = (select id from HR where UserId=@id)
-		delete from HR where id = (select id from HR where UserId=@id)
-	End
-
-End
+  
+    
+Create PROCEDURE [dbo].[usp_UpdateUser]  
+@id INT,  
+@selectedProfileId int,  
+@userFirstName varchar(150),     
+@userLastName varchar(150),  
+@userEmailId varchar(150),  
+@userMobileNumber nvarchar(200),
+@WhatsappNumber varchar(15)
+AS   
+Begin  
+  
+IF EXISTS( SELECT 1 FROM UserList WHERE id = @id )    
+       BEGIN    
+            UPDATE UserList SET idProfile = @selectedProfileId,    
+            FirstName =  @userFirstName,     
+            LastName =  @userLastName,    
+            EmailID =   @userEmailId,    
+            MobileNumber = @userMobileNumber,
+			WhatsappNumber=@WhatsappNumber
+            WHERE id = @id    
+                        
+       END  
+if(@selectedProfileId=2)  
+ Begin  
+  IF NOT Exists( select 1 from HR where UserId=@id)  
+  Begin  
+   insert into HR values (@id)  
+  End  
+  
+ End  
+else if(@selectedProfileId != 2 and ((select id from HR where UserId=@id) is not null) )  
+ Begin  
+  delete from TransHR where HRId = (select id from HR where UserId=@id)  
+  delete from HR where id = (select id from HR where UserId=@id)  
+ End  
+  
+End  
+    
   
 GO
 

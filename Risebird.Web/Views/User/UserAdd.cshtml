@@ -43,11 +43,11 @@
                                                 <span class="red">*</span>
                                             </div>
 
-                                                @Html.DropDownListFor(x => Model.IdProfile, Model.UserProfiles, "Select Profile", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                @Html.ValidationMessageFor(model => model.IdProfile, "", new { @class = "text-danger" })
+                                            @Html.DropDownListFor(x => Model.IdProfile, Model.UserProfiles, "Select Profile", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                            @Html.ValidationMessageFor(model => model.IdProfile, "", new { @class = "text-danger" })
 
-                                            </div>
                                         </div>
+                                    </div>
 
 
                                     <div class="col-md-4 col-sm-4 px-1 pull-left">
@@ -57,10 +57,10 @@
                                                 <span class="red">*</span>
                                             </div>
 
-                                                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
-                                                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
 
-                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="col-md-4 col-sm-4 pl-1 pull-left">
@@ -69,10 +69,10 @@
                                                 @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })   <span class="red">*</span>
                                             </div>
 
-                                                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
-                                                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
 
-                                            </div>
+                                        </div>
                                     </div>
 
 
@@ -88,29 +88,25 @@
 
                                         </div>
 
-                                        </div>
+                                    </div>
+
 
                                     <div class="col-md-4 col-sm-4 pl-1 pull-left">
-
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
                                             @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
                                             @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
 
                                         </div>
                                     </div>
-
+                                    <div class="col-md-4 col-sm-4 pl-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control text-box single-line", @type = "number", @maxlength = "10", @minlength = "10", @placeholder = "Please enter Whatsapp no. without country code.Ex: 999999999" })
+                                            @Html.ValidationMessageFor(model => model.WhatsappNumber, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
                                 </div>
-
-
-
-
-
-
-
-
-
                             </div>
 
                             <div class="card-footer ">

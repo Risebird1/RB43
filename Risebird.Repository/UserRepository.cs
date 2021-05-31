@@ -175,6 +175,7 @@ namespace Risebird.Repository
             parameters.Add("@userLastName", entity.LastName);
             parameters.Add("@userEmailId", entity.EmailId);
             parameters.Add("@userMobileNumber", entity.MobileNumber);
+            parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
 
             return parameters;
         }
@@ -356,6 +357,7 @@ namespace Risebird.Repository
             parameters.Add("@userEmailId", entity.EmailId);
             parameters.Add("@userMobileNumber", entity.MobileNumber);
             parameters.Add("@UserPassword", entity.UserPassword);
+            parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
             if (isAdd)
             {
                 if (entity.SelectedClient.HasValue)

@@ -1125,7 +1125,7 @@ namespace Risebird.Repository
                         }
                     }
 
-                    if(interviewerRateChangesList != null)
+                    if (interviewerRateChangesList != null)
                     {
                         foreach (var interviewerChangeDetails in interviewerRateChangesList.Where(x => x.Type == "Interviewer"))
                         {
@@ -2380,6 +2380,7 @@ namespace Risebird.Repository
                 parameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
                 parameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
                 parameters.Add("@ProfileSource", obj.ProfileSource);
+                parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
@@ -2540,6 +2541,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
                 dynamicParameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
                 dynamicParameters.Add("@ProfileSource", obj.ProfileSource);
+                dynamicParameters.Add("@WhatsappNumber", obj.WhatsappNumber);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<int>(
@@ -4107,6 +4109,7 @@ namespace Risebird.Repository
                             parameters.Add("@date", DateTime.Now);
                             parameters.Add("@ClientHREmail", obj.ClientHREmail);
                             parameters.Add("@ProfileSource", obj.ProfileSource);
+                            parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
                             parameters.Add("@operationStatus", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
 
 

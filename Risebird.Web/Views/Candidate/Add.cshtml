@@ -10,7 +10,7 @@
 
 
 <div class="main-panel" id="main-panel">
-   
+
     <div class="pt30">
         <div class="col-md-12 nopad">
             <div class="card-header bg-w clearfix">
@@ -32,7 +32,7 @@
                 <div class="mdc-card card bg-w">
                     <div class="mdc-card-wrapper__text-section">
 
-                        @using (Html.BeginForm("Add", "Candidate", FormMethod.Post, new {@id="form", enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
+                        @using (Html.BeginForm("Add", "Candidate", FormMethod.Post, new { @id = "form", enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
                         {
 
                             <div class="row">
@@ -42,15 +42,20 @@
                                 <div class="col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control text-box single-line", @required="required" } })
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control text-box single-line", @required = "required" } })
                                         @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
 
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line",@required = "required" } })
+                                        @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line", @required = "required" } })
                                         @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
 
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control text-box single-line", @type = "number", @maxlength = "10", @minlength = "10", @placeholder = "Please enter Whatsapp no. without country code.Ex: 999999999" })
+                                        @Html.ValidationMessageFor(model => model.WhatsappNumber, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -80,15 +85,15 @@
                                         @Html.LabelFor(model => model.AvailableFreeLancing, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.CheckBoxFor(m => m.AvailableFreeLancing, new { @style = "position:relative;top:-24px;" })
                                         @*<div class="mdc-checkbox__background">
-                                            <svg class="mdc-checkbox__checkmark"
-                                                 viewBox="0 0 24 24">
-                                                <path class="mdc-checkbox__checkmark-path"
-                                                      fill="none"
-                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                            </svg>
-                                            <div class="mdc-checkbox__mixedmark"></div>
-                                        </div>
-                                        <div class="mdc-checkbox__ripple"></div>*@
+                                                <svg class="mdc-checkbox__checkmark"
+                                                     viewBox="0 0 24 24">
+                                                    <path class="mdc-checkbox__checkmark-path"
+                                                          fill="none"
+                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                </svg>
+                                                <div class="mdc-checkbox__mixedmark"></div>
+                                            </div>
+                                            <div class="mdc-checkbox__ripple"></div>*@
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 px-1">
@@ -132,15 +137,15 @@
                                         @Html.LabelFor(model => model.AvailableFullTime, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.CheckBoxFor(m => m.AvailableFullTime, new { @style = "position:relative;top:-24px;" })
                                         @*<div class="mdc-checkbox__background">
-            <svg class="mdc-checkbox__checkmark"
-                 viewBox="0 0 24 24">
-                <path class="mdc-checkbox__checkmark-path"
-                      fill="none"
-                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-            </svg>
-            <div class="mdc-checkbox__mixedmark"></div>
-        </div>
-        <div class="mdc-checkbox__ripple"></div>*@
+                                                <svg class="mdc-checkbox__checkmark"
+                                                     viewBox="0 0 24 24">
+                                                    <path class="mdc-checkbox__checkmark-path"
+                                                          fill="none"
+                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                </svg>
+                                                <div class="mdc-checkbox__mixedmark"></div>
+                                            </div>
+                                            <div class="mdc-checkbox__ripple"></div>*@
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 pl-1">

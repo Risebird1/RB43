@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Edit Interviewer Profile";
     ViewBag.PageHeader = "";
-  
+
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <script>
@@ -161,7 +161,10 @@
                                                           new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
                                         @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
                                     </div>
-
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control text-box single-line", @type = "number", @maxlength = "10", @minlength = "10", @placeholder = "Ex: 999999999" })
+                                    </div>
                                 </div>
                                 <div class="col-lg-4  col-md-4 col-sm-4 pl-1">
                                     <div class="form-group">
@@ -300,7 +303,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerSkill[0].SkillId", (SelectList)Model.SkillTypeList,"Select", new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerSkill[0].SkillId", (SelectList)Model.SkillTypeList, "Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
                                                         <td>
                                                             @Html.DropDownList("InterviewerSkill[0].Category", (SelectList)Model.SkillCategoryList, "Select", new { @class = "select-css form-control text-box single-line" })
@@ -472,7 +475,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerEducationDetails[0].EducationType", (SelectList)Model.GraduationTypeList,"Select", new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerEducationDetails[0].EducationType", (SelectList)Model.GraduationTypeList, "Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
                                                         <td>
                                                             @Html.DropDownList("InterviewerEducationDetails[0].Degree", (SelectList)Model.DegreeList, "Select", new { @class = "select-css form-control text-box single-line" })
@@ -712,7 +715,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerProjectsDetails[0].NatureOfProject", (SelectList)Model.NatureOfProjectList,"Select", new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerProjectsDetails[0].NatureOfProject", (SelectList)Model.NatureOfProjectList, "Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="addProjectTableRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>

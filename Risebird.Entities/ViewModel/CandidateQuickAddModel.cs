@@ -22,6 +22,7 @@ namespace Risebird.Entities.ViewModel
         public int AddedByUserId { get; set; }
         public string ClientHREmail { get; set; }
         public string ProfileSource { get; set; }
+        public string WhatsappNumber { get; set; }
 
     }
 }

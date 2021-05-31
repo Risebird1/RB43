@@ -2070,7 +2070,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName=="HR")
+                    if (profileName == "Admin" || profileName == "HR")
                     {
                         var result = await _irfService.DeleteCandidateStatus(id);
                         return Json(result);
@@ -2575,8 +2575,9 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 2].Value = "EmailId";
                 Sheet.Cells[1, 3].Value = "Resume Link";
                 Sheet.Cells[1, 4].Value = "Phone(With Country code)";
-                Sheet.Cells[1, 5].Value = "Client HR Email ID";
-                Sheet.Cells[1, 6].Value = "Profile Source";
+                Sheet.Cells[1, 5].Value = "WhatsApp Number(Without Country code)";
+                Sheet.Cells[1, 6].Value = "Client HR Email ID";
+                Sheet.Cells[1, 7].Value = "Profile Source";
 
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
 
@@ -2638,10 +2639,13 @@ namespace Risebird.Web.Controllers
                                             Phone = (workSheet.Cells[rowIterator, 4].Value != null)
                                                 ? ("+" + workSheet.Cells[rowIterator, 4].Value)
                                                 : string.Empty,
-                                            ClientHREmail = workSheet.Cells[rowIterator, 5].Value != null
-                                                ? workSheet.Cells[rowIterator, 5].Value.ToString()
+                                            WhatsappNumber = (workSheet.Cells[rowIterator, 5].Value != null)
+                                                ? ("+" + workSheet.Cells[rowIterator, 5].Value)
                                                 : string.Empty,
-                                            ProfileSource = workSheet.Cells[rowIterator, 6].Value != null ? workSheet.Cells[rowIterator, 6].Value.ToString() : string.Empty,
+                                            ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
+                                                ? workSheet.Cells[rowIterator, 6].Value.ToString()
+                                                : string.Empty,
+                                            ProfileSource = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty,
                                             IRFId = IRFId
                                         };
 
