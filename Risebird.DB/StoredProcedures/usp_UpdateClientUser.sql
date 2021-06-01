@@ -10,60 +10,69 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Create PROCEDURE [dbo].[usp_UpdateClientUser]
-(@id INT, 
-@userFirstName varchar(150), 
-@userLastName varchar(150), 
-@userEmailId varchar(150), 
-@userMobileNumber nvarchar(200),
-@selectedClientRoleId int,
-@UserPassword nvarchar(60))  
-AS  
-Begin Try  
-  BEGIN TRAN UpdateUser   
-       Declare @firstName varchar(150)  
-       Declare @lastName varchar(150)  
-       Declare @email varchar(150)  
-       Declare @phone varchar(150)  
-       Declare @cuid int  
-	   Declare @roleId int  
-	   Declare @userId int
-	   Declare @password nvarchar(60)  
-
   
-       SET @firstName = @userFirstName  
-       SET @lastName = @userLastName  
-       SET @email = @userEmailId  
-       SET @phone = @userMobileNumber  
-       SET @cuid = @id  
-	   set @roleId = @selectedClientRoleId
-	   set @password = @UserPassword
-
+Create PROCEDURE [dbo].[usp_UpdateClientUser]  
+(@id INT,   
+@userFirstName varchar(150),   
+@userLastName varchar(150),   
+@userEmailId varchar(150),   
+@userMobileNumber nvarchar(200),  
+@selectedClientRoleId int,  
+@UserPassword nvarchar(60),
+@WhatsappNumber varchar(15))    
+AS    
+Begin Try    
+  BEGIN TRAN UpdateUser     
+       Declare @firstName varchar(150)    
+       Declare @lastName varchar(150)    
+       Declare @email varchar(150)    
+       Declare @phone varchar(150)    
+       Declare @cuid int    
+    Declare @roleId int    
+    Declare @userId int  
+    Declare @password nvarchar(60)    
   
-       IF EXISTS( SELECT 1 FROM UserList ul JOIN [dbo].[ClientUser] cu on ul.id = cu.UserId where cu.id = @cuid )  
-       BEGIN  
-	   set @userId= (select userid from ClientUser where id=@cuid)
-             UPDATE UserList SET FirstName =  @firstName,   
-                           LastName =  @lastName,  
-                           EmailID =   @email,  
-						   MobileNumber = @phone, 
-						   UserPassword =@password
-				where id= @userId 
-		 
-			update ClientUser set RoleId=@roleId where id=@cuid
-
-       END  
-   
- Commit TRAN UpdateUser;  
-End Try   
-Begin Catch  
- RAISERROR ('Error While Updating Client User Details', -- Message text.  
-   16, -- Severity.  
-   1 -- State.  
-   );  
+    
+       SET @firstName = @userFirstName    
+       SET @lastName = @userLastName    
+       SET @email = @userEmailId    
+       SET @phone = @userMobileNumber    
+       SET @cuid = @id    
+    set @roleId = @selectedClientRoleId  
+    set @password = @UserPassword  
   
- Rollback;  
-End Catch  
+    
+       IF EXISTS( SELECT 1 FROM UserList ul JOIN [dbo].[ClientUser] cu on ul.id = cu.UserId where cu.id = @cuid )    
+       BEGIN    
+    set @userId= (select userid from ClientUser where id=@cuid)  
+             UPDATE UserList SET FirstName =  @firstName,     
+                           LastName =  @lastName,    
+                           EmailID =   @email,    
+         MobileNumber = @phone,   
+         UserPassword =@password,
+		 WhatsappNumber=@WhatsappNumber
+    where id= @userId   
+     
+   update ClientUser set RoleId=@roleId where id=@cuid  
+  
+       END    
+     
+ Commit TRAN UpdateUser;    
+End Try     
+Begin Catch    
+ RAISERROR ('Error While Updating Client User Details', -- Message text.    
+   16, -- Severity.    
+   1 -- State.    
+   );    
+    
+ Rollback;    
+End Catch    
+    
+    
+    
+    
+    
+    
   
   
   

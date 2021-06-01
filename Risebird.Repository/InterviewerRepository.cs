@@ -258,6 +258,7 @@ namespace Risebird.Repository
             }
             parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
             parameters.Add("@UserPassword", entity.UserPassword);
+            parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
             parameters.Add("@InterviewerProfileId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             return parameters;

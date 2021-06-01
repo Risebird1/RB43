@@ -713,11 +713,6 @@ namespace Risebird.Web.Controllers
                                     }
                                     Sheet.Cells[i, 15].Value = item.Rate;
                                     Sheet.Cells[i, 16].Value = item.Points;
-                                    if (item.IsEmergency)
-                                    {
-                                        Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                        Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Orange);
-                                    }
                                     if (item.Points == 0)
                                     {
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
@@ -865,11 +860,6 @@ namespace Risebird.Web.Controllers
                                     }
                                     Sheet.Cells[i, 15].Value = item.Rate;
                                     Sheet.Cells[i, 16].Value = item.Points;
-                                    if (item.IsEmergency)
-                                    {
-                                        Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                        Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Orange);
-                                    }
                                     if (item.Points == 0)
                                     {
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;

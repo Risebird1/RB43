@@ -35,5 +35,7 @@ namespace Risebird.Entities.Data
         public string Name { get; set; }
         public string ProfileName { get; set; }
         public string UserPassword { get; set; }
+        [Display(Name = "Whatsapp Number")]
+        public string WhatsappNumber { get; set; }
     }
 }

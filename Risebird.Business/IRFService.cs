@@ -24,7 +24,7 @@ namespace Risebird.Business
         private readonly IConfiguration _configuration;
         private readonly IActivityTrackerRepository _activityTrackerRepository;
 
-        public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, 
+        public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,
             INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository)
         {
             _irfRepository = irfRepository;
@@ -42,7 +42,7 @@ namespace Risebird.Business
             {
                 irfDetails.CreatedOn = DateTime.UtcNow;
                 int irfId = 0;
-                var result= _irfRepository.AddIRFDetails(irfDetails, out irfId);
+                var result = _irfRepository.AddIRFDetails(irfDetails, out irfId);
                 if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
@@ -51,11 +51,11 @@ namespace Risebird.Business
                     activityTrackerModel.PerformedBy = loggedInUser;
                     activityTrackerModel.Summary = "Skill channel created";
 
-                    if(irfId != 0)
+                    if (irfId != 0)
                     {
                         activityTrackerModel.ResourceUrl = domain + $"/IRF/EditIRF?id={irfId}";
                     }
-                    
+
 
                     await _activityTrackerRepository.AddActivity(activityTrackerModel);
                 }
@@ -491,14 +491,14 @@ namespace Risebird.Business
                 {
                     foreach (var oldInterviewer in model.OldInterviewerCollection)
                     {
-                        if(model.InterviewerCollection.Where(x=>x.UserId == oldInterviewer.UserId && x.PerSuccessRate!=oldInterviewer.PerSuccessRate).Count()==1)
+                        if (model.InterviewerCollection.Where(x => x.UserId == oldInterviewer.UserId && x.PerSuccessRate != oldInterviewer.PerSuccessRate).Count() == 1)
                         {
                             var interviewer = model.InterviewerCollection.FirstOrDefault(x => x.UserId == oldInterviewer.UserId);
                             float newRate = interviewer.PerSuccessRate;
                             float oldRate = oldInterviewer.PerSuccessRate;
                             float percentChanges = (newRate - oldRate) * 100 / oldRate;
 
-                            if(percentChanges != 0)
+                            if (percentChanges != 0)
                             {
                                 interviewerChangesData.Add(new InterviewerSuccessRateChangeData
                                 {
@@ -508,17 +508,17 @@ namespace Risebird.Business
                                     UserId = interviewer.UserId
                                 });
                             }
-                            
+
 
                         }
 
-                        if(!model.InterviewerCollection.Any(x=>x.UserId==oldInterviewer.UserId))
+                        if (!model.InterviewerCollection.Any(x => x.UserId == oldInterviewer.UserId))
                         {
                             removedInterviewers.Add(new RemovedInterviewersFromSkillsChannelData
                             {
-                                IRFId=model.id,
-                                UserId=oldInterviewer.UserId,
-                                Type="Interviewer"
+                                IRFId = model.id,
+                                UserId = oldInterviewer.UserId,
+                                Type = "Interviewer"
                             });
                         }
                     }
@@ -559,7 +559,7 @@ namespace Risebird.Business
                                     UserId = emergencyInterviewer.UserId
                                 });
                             }
-                            
+
 
                         }
                         if (!model.EmergencyInterviewerCollection.Any(x => x.UserId == oldEmergencyInterviewer.UserId))
@@ -959,12 +959,6 @@ namespace Risebird.Business
         {
             try
             {
-                var result = _irfRepository.UpdateCandidate(obj);
-                //if (result)
-                //{
-                //    await AddCandidateStatus(emailId, obj.CandidateMasterId, obj.IRFId, "Candidate updated", (int)CandidateStatusOptions.Updated);
-
-                //}
                 return _irfRepository.UpdateCandidate(obj);
             }
 
