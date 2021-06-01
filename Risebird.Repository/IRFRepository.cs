@@ -850,24 +850,24 @@ namespace Risebird.Repository
                     }
 
 
-                    DataTable resumeEvaluatorDt = new DataTable();
-                    resumeEvaluatorDt.Columns.Add("IRFId", typeof(int));
-                    resumeEvaluatorDt.Columns.Add("UserId", typeof(int));
+                    //DataTable resumeEvaluatorDt = new DataTable();
+                    //resumeEvaluatorDt.Columns.Add("IRFId", typeof(int));
+                    //resumeEvaluatorDt.Columns.Add("UserId", typeof(int));
 
-                    foreach (var item in irfDetails.ResumeEvaluatorCollection)
-                    {
-                        resumeEvaluatorDt.Rows.Add(irfID, item.UserId);
-                    }
+                    //foreach (var item in irfDetails.ResumeEvaluatorCollection)
+                    //{
+                    //    resumeEvaluatorDt.Rows.Add(irfID, item.UserId);
+                    //}
 
-                    SqlCommand cmdResumeEvaluator = new SqlCommand("usp_ResumeEvaluatorBulkInsert", con);
-                    cmdResumeEvaluator.CommandType = CommandType.StoredProcedure;
-                    cmdResumeEvaluator.Parameters.Add(new SqlParameter("@ResumeEvaluatorBulkData", SqlDbType.Structured));
-                    cmdResumeEvaluator.Parameters["@ResumeEvaluatorBulkData"].Value = resumeEvaluatorDt;
-                    con.Open();
-                    if (cmdResumeEvaluator.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
-                    }
+                    //SqlCommand cmdResumeEvaluator = new SqlCommand("usp_ResumeEvaluatorBulkInsert", con);
+                    //cmdResumeEvaluator.CommandType = CommandType.StoredProcedure;
+                    //cmdResumeEvaluator.Parameters.Add(new SqlParameter("@ResumeEvaluatorBulkData", SqlDbType.Structured));
+                    //cmdResumeEvaluator.Parameters["@ResumeEvaluatorBulkData"].Value = resumeEvaluatorDt;
+                    //con.Open();
+                    //if (cmdResumeEvaluator.ExecuteNonQuery() != 0)
+                    //{
+                    //    con.Close();
+                    //}
 
 
                     DataTable hRDt = new DataTable();
@@ -889,24 +889,24 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
-                    DataTable recruiterDt = new DataTable();
-                    recruiterDt.Columns.Add("IRFId", typeof(int));
-                    recruiterDt.Columns.Add("UserId", typeof(int));
+                    //DataTable recruiterDt = new DataTable();
+                    //recruiterDt.Columns.Add("IRFId", typeof(int));
+                    //recruiterDt.Columns.Add("UserId", typeof(int));
 
-                    foreach (var item in irfDetails.RecruiterCollection)
-                    {
-                        recruiterDt.Rows.Add(irfID, item.UserId);
-                    }
+                    //foreach (var item in irfDetails.RecruiterCollection)
+                    //{
+                    //    recruiterDt.Rows.Add(irfID, item.UserId);
+                    //}
 
-                    SqlCommand cmdRecruiter = new SqlCommand("usp_RecruiterBulkInsert", con);
-                    cmdRecruiter.CommandType = CommandType.StoredProcedure;
-                    cmdRecruiter.Parameters.Add(new SqlParameter("@RecruiterBulkData", SqlDbType.Structured));
-                    cmdRecruiter.Parameters["@RecruiterBulkData"].Value = recruiterDt;
-                    con.Open();
-                    if (cmdRecruiter.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
-                    }
+                    //SqlCommand cmdRecruiter = new SqlCommand("usp_RecruiterBulkInsert", con);
+                    //cmdRecruiter.CommandType = CommandType.StoredProcedure;
+                    //cmdRecruiter.Parameters.Add(new SqlParameter("@RecruiterBulkData", SqlDbType.Structured));
+                    //cmdRecruiter.Parameters["@RecruiterBulkData"].Value = recruiterDt;
+                    //con.Open();
+                    //if (cmdRecruiter.ExecuteNonQuery() != 0)
+                    //{
+                    //    con.Close();
+                    //}
 
                     return true;
                 }
@@ -1346,24 +1346,24 @@ namespace Risebird.Repository
                     //    }
                     //}
 
-                    DataTable resumeEvaluatorDt = new DataTable();
-                    resumeEvaluatorDt.Columns.Add("IRFId", typeof(int));
-                    resumeEvaluatorDt.Columns.Add("UserId", typeof(int));
+                    //DataTable resumeEvaluatorDt = new DataTable();
+                    //resumeEvaluatorDt.Columns.Add("IRFId", typeof(int));
+                    //resumeEvaluatorDt.Columns.Add("UserId", typeof(int));
 
-                    foreach (var item in irfDetails.ResumeEvaluatorCollection)
-                    {
-                        resumeEvaluatorDt.Rows.Add(irfDetails.id, item.UserId);
-                    }
+                    //foreach (var item in irfDetails.ResumeEvaluatorCollection)
+                    //{
+                    //    resumeEvaluatorDt.Rows.Add(irfDetails.id, item.UserId);
+                    //}
 
-                    SqlCommand cmdResumeEvaluator = new SqlCommand("usp_ResumeEvaluatorBulkInsert", con);
-                    cmdResumeEvaluator.CommandType = CommandType.StoredProcedure;
-                    cmdResumeEvaluator.Parameters.Add(new SqlParameter("@ResumeEvaluatorBulkData", SqlDbType.Structured));
-                    cmdResumeEvaluator.Parameters["@ResumeEvaluatorBulkData"].Value = resumeEvaluatorDt;
-                    con.Open();
-                    if (cmdResumeEvaluator.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
-                    }
+                    //SqlCommand cmdResumeEvaluator = new SqlCommand("usp_ResumeEvaluatorBulkInsert", con);
+                    //cmdResumeEvaluator.CommandType = CommandType.StoredProcedure;
+                    //cmdResumeEvaluator.Parameters.Add(new SqlParameter("@ResumeEvaluatorBulkData", SqlDbType.Structured));
+                    //cmdResumeEvaluator.Parameters["@ResumeEvaluatorBulkData"].Value = resumeEvaluatorDt;
+                    //con.Open();
+                    //if (cmdResumeEvaluator.ExecuteNonQuery() != 0)
+                    //{
+                    //    con.Close();
+                    //}
 
                     //if (irfDetails.HRCollection != null)
                     //{
@@ -1397,37 +1397,7 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
-                    //if (irfDetails.RecruiterCollection != null)
-                    //{
-                    //    foreach (var item in irfDetails.RecruiterCollection)
-                    //    {
-                    //        DynamicParameters param2 = new DynamicParameters();
-                    //        param2.Add("@IRFId", irfDetails.id);
-                    //        param2.Add("@UserId", item.UserId);
-                    //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransRecruiter", param2,
-                    //                commandType: CommandType.StoredProcedure);
-
-                    //    }
-                    //}
-
-                    DataTable recruiterDt = new DataTable();
-                    recruiterDt.Columns.Add("IRFId", typeof(int));
-                    recruiterDt.Columns.Add("UserId", typeof(int));
-
-                    foreach (var item in irfDetails.RecruiterCollection)
-                    {
-                        recruiterDt.Rows.Add(irfDetails.id, item.UserId);
-                    }
-
-                    SqlCommand cmdRecruiter = new SqlCommand("usp_RecruiterBulkInsert", con);
-                    cmdRecruiter.CommandType = CommandType.StoredProcedure;
-                    cmdRecruiter.Parameters.Add(new SqlParameter("@RecruiterBulkData", SqlDbType.Structured));
-                    cmdRecruiter.Parameters["@RecruiterBulkData"].Value = recruiterDt;
-                    con.Open();
-                    if (cmdRecruiter.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
-                    }
+                    
 
                     return true;
                 }
