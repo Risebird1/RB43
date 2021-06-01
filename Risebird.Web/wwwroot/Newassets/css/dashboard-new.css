@@ -129,8 +129,8 @@ body {
     margin: 0px 1px 0px 1px;
 }
     .tabCon .tab-menu ul li a {
-        border-top-left-radius: 0px;
-        border-top-right-radius: 0px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
         height: 100%;
         display: table-cell;
         vertical-align: middle;

@@ -57,9 +57,9 @@
                                             <li><a href="#" rel="tab-8" class="" id="rtab-8">Interviewer</a></li>
                                             <li><a href="#" rel="tab-9" class="" id="rtab-9">Quality Controller</a></li>
                                             <li><a href="#" rel="tab-10" class="" id="rtab-10">Emergency Interviewer</a></li>
-                                            <li><a href="#" rel="tab-11" class="" id="rtab-11">Resume Evaluator</a></li>
-                                            <li><a href="#" rel="tab-12" class="" id="rtab-12">Risebird Coordinator</a></li>
-                                            <li><a href="#" rel="tab-13" class="" id="rtab-13">Recruiter</a></li>
+                                            @*<li><a href="#" rel="tab-11" class="" id="rtab-11">Resume Evaluator</a></li>*@
+                                            <li><a href="#" rel="tab-11" class="" id="rtab-11">Risebird Coordinator</a></li>
+                                            @*<li><a href="#" rel="tab-13" class="" id="rtab-13">Recruiter</a></li>*@
 
                                         </ul>
                                     </div>
@@ -288,7 +288,7 @@
 
                                                         </div>
                                                         <div class="form-group">
-                                                            Upload JD
+                                                            Upload JD <span class="red">*</span>
 
 
                                                             <div class="mdc-touch-target-wrapper" style="top: 4px;
@@ -302,7 +302,7 @@
                                                                     <div class="mdc-radio__ripple"></div>
                                                                 </div>
                                                             </div>
-                                                            Provide JD Link
+                                                            Provide JD Link <span class="red">*</span>
 
                                                             <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
                                                                 <div class="mdc-radio mdc-radio--touch">
@@ -317,20 +317,23 @@
 
 
                                                         </div>
-                                                        <div class="form-group" style="display:none" id="linkDiv">
-                                                            @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
+                                                        <div class="form-group" style="display:none" id="linkDiv">
+
+                                                            @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                             @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
+
 
                                                         </div>
-                                                        <div class="" style="display:none" id="uploadDiv">
-                                                            @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
+
+                                                        <div class="" style="display:none" id="uploadDiv">
+
+                                                            @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                             @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
 
                                                         </div>
-
+                                                        @Html.ValidationMessageFor(model => model.JDLink, "", new { @id = "error_JDLink", @class = "text-danger" })
 
                                                     </div>
                                                     <div class="col-md-4 col-sm-4 pl-1">
@@ -365,8 +368,8 @@
                                                             <div class="mandate">
                                                                 @Html.Label("Channel Owner", "Channel Owner", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            @Html.DropDownList("RisebirdHr", (SelectList)ViewBag.RiseBirdHR, new { @class = "select-css form-control" })
-                                                            @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @id = "error_RiseBirdHr", @class = "text-danger" })
+                                                            @Html.DropDownList("RisebirdHr", (SelectList)ViewBag.RiseBirdHR, "Select", new { @class = "select-css form-control" })
+                                                            @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @id = "error_RisebirdHr", @class = "text-danger" })
 
                                                         </div>
 
@@ -401,8 +404,8 @@
                                                                 <thead>
                                                                     <tr>
 
-                                                                        <th width="15%" class="table_heading">Level</th>
-                                                                        <th width="65%" class="table_heading">Skill Name</th>
+                                                                        <th width="15%" class="table_heading">Level<span class="red">*</span></th>
+                                                                        <th width="65%" class="table_heading">Skill Name<span class="red">*</span></th>
                                                                         <th width="10%" class="table_heading">Weightage<span class="red">*</span></th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
@@ -449,9 +452,9 @@
                                                                 <thead>
                                                                     <tr>
 
-                                                                        <th width="15%" class="table_heading">Level</th>
-                                                                        <th width="25%" class="table_heading">Type</th>
-                                                                        <th width="40%" class="table_heading">Value</th>
+                                                                        <th width="15%" class="table_heading">Level<span class="red">*</span></th>
+                                                                        <th width="25%" class="table_heading">Type<span class="red">*</span></th>
+                                                                        <th width="40%" class="table_heading">Value<span class="red">*</span></th>
                                                                         <th width="10%" class="table_heading">Weightage<span class="red">*</span></th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
@@ -504,10 +507,10 @@
                                                                 <thead>
                                                                     <tr>
 
-                                                                        <th width="15%" class="table_heading">Level</th>
-                                                                        <th width="25%" class="table_heading">Type</th>
-                                                                        <th width="40%" class="table_heading">Value</th>
-                                                                        <th width="10%" class="table_heading">Weightage</th>
+                                                                        <th width="15%" class="table_heading">Level<span class="red">*</span></th>
+                                                                        <th width="25%" class="table_heading">Type<span class="red">*</span></th>
+                                                                        <th width="40%" class="table_heading">Value<span class="red">*</span></th>
+                                                                        <th width="10%" class="table_heading">Weightage<span class="red">*</span></th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
                                                                 </thead>
@@ -557,9 +560,9 @@
                                                             <table class="table table-bordered mbn" id="SkillGeneralTable">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th width="15%" class="table_heading">Level</th>
-                                                                        <th width="25%" class="table_heading">Type</th>
-                                                                        <th width="40%" class="table_heading">Value</th>
+                                                                        <th width="15%" class="table_heading">Level<span class="red">*</span></th>
+                                                                        <th width="25%" class="table_heading">Type<span class="red">*</span></th>
+                                                                        <th width="40%" class="table_heading">Value<span class="red">*</span></th>
                                                                         <th width="10%" class="table_heading">Weightage<span class="red">*</span></th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
@@ -787,7 +790,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <h3 class="tab_drawer_heading" rel="tab-11">Resume Evaluator</h3>
+                                        <!--<h3 class="tab_drawer_heading" rel="tab-11">Resume Evaluator</h3>
                                         <div class="tab-box" id="tab-11">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -816,16 +819,16 @@
                                                                         </td>
                                                                     </tr>
                                                                 </tbody>
-                                                            </table>
+                                                            </table>-->
                                                             @*<label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>*@
 
-                                                        </div>
+                                                        <!--</div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <h3 class="tab_drawer_heading" rel="tab-12">Risebird Coordinator</h3>
-                                        <div class="tab-box" id="tab-12">
+                                        </div>-->
+                                        <h3 class="tab_drawer_heading" rel="tab-11">Risebird Coordinator</h3>
+                                        <div class="tab-box" id="tab-11">
                                             <div class="tab-main-box">
                                                 <div class="row">
 
@@ -2469,26 +2472,15 @@
                 document.getElementById("tab-10").style.display = "none";
             }
 
-            else if (activeTab.trim() == "Resume Evaluator") {
+            else if (activeTab.trim() == "Risebird Coordinator") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-10").addClass("active");
                 document.getElementById("tab-10").style.display = "block";
                 document.getElementById("tab-11").style.display = "none";
-            }
-            else if (activeTab.trim() == "Risebird Coordinator") {
-                $(".tab-menu li a").removeClass("active");
-                $("#rtab-11").addClass("active");
-                document.getElementById("tab-11").style.display = "block";
-                document.getElementById("tab-12").style.display = "none";
-            }
-            else if (activeTab.trim() == "Recruiter") {
-                $(".tab-menu li a").removeClass("active");
-                $("#rtab-12").addClass("active");
-                document.getElementById("tab-12").style.display = "block";
-                document.getElementById("tab-13").style.display = "none";
                 document.getElementById("btnNext").style.display = "block";
                 document.getElementById("btnUpload").style.display = "none";
             }
+
 
         });
         $("#btnNext").click(function () {
@@ -2556,6 +2548,14 @@
                     $('#error_PrimarySkillInvite').text("");
                 }
 
+                if ($('#JDLink').val() == "" && $('#JDFile').val() == "") {
+                    $('#error_JDLink').text("JD field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_JDLink').text("");
+                }
+
                 if ($('#RisebirdHr').val() == "") {
                     $('#error_RisebirdHr').text("Channel owner field is required.");
                     flag = true;
@@ -2616,7 +2616,6 @@
                     $('#error_TotalBudget').text("");
                 }
                 if (!flag) {
-
                     $(".tab-menu li a").removeClass("active");
                     $("#rtab-3").addClass("active");
                     document.getElementById("tab-3").style.display = "block";
@@ -2696,28 +2695,17 @@
                     $("#rtab-11").addClass("active");
                     document.getElementById("tab-11").style.display = "block";
                     document.getElementById("tab-10").style.display = "none";
-                }
-            }
-            else if (activeTab.trim() == "Resume Evaluator") {
-                if (!flag) {
-                    $(".tab-menu li a").removeClass("active");
-                    $("#rtab-12").addClass("active");
-                    document.getElementById("tab-12").style.display = "block";
-                    document.getElementById("tab-11").style.display = "none";
-                }
-            }
-            else if (activeTab.trim() == "Risebird Coordinator") {
-                if (!flag) {
-                    $(".tab-menu li a").removeClass("active");
-                    $("#rtab-13").addClass("active");
-                    document.getElementById("tab-13").style.display = "block";
-                    document.getElementById("tab-12").style.display = "none";
                     document.getElementById("btnNext").style.display = "none";
                     document.getElementById("btnUpload").style.display = "block";
+          
                 }
             }
+
+
         });
     });
+
+
     function checkClientDetails() {
         var table = document.getElementById("ClientTable");
         var rowCount = table.rows.length;
@@ -2774,6 +2762,75 @@
                 }
             }
         }
+
+        if (tab_skill == "Joinability") {
+            var drpdowns2 = $('[id^=' + tab_skill + '][id$="Type"]');
+            for (i = 0; i < drpdowns2.length; i++) {
+                var interviewId = $("#" + drpdowns2[i].id).val();
+                if (interviewId == '' || interviewId == null) {
+                    document.getElementById(tab_skill + "_WeightageError").innerHTML = "Type field should not be blank.";
+                    return true;
+                }
+            }
+        }
+
+        if (tab_skill == "Joinability") {
+            var drpdowns3 = $('[id^=' + tab_skill + '][id$="Value"]');
+            for (i = 0; i < drpdowns3.length; i++) {
+                var interviewId = $("#" + drpdowns3[i].id).val();
+                if (interviewId == '' || interviewId == null) {
+                    document.getElementById(tab_skill + "_WeightageError").innerHTML = "Value field should not be blank.";
+                    return true;
+                }
+            }
+        }
+
+
+        if (tab_skill == "Selectability") {
+            var drpdowns4 = $('[id^=' + tab_skill + '][id$="Type"]');
+            for (i = 0; i < drpdowns4.length; i++) {
+                var interviewId = $("#" + drpdowns4[i].id).val();
+                if (interviewId == '' || interviewId == null) {
+                    document.getElementById(tab_skill + "_WeightageError").innerHTML = "Type field should not be blank.";
+                    return true;
+                }
+            }
+        }
+
+        if (tab_skill == "Selectability") {
+            var drpdowns5 = $('[id^=' + tab_skill + '][id$="Value"]');
+            for (i = 0; i < drpdowns5.length; i++) {
+                var interviewId = $("#" + drpdowns5[i].id).val();
+                if (interviewId == '' || interviewId == null) {
+                    document.getElementById(tab_skill + "_WeightageError").innerHTML = "Value field should not be blank.";
+                    return true;
+                }
+            }
+        }
+
+
+        if (tab_skill == "SkillGeneral") {
+            var drpdowns6 = $('[id^=' + tab_skill + '][id$="Type"]');
+            for (i = 0; i < drpdowns6.length; i++) {
+                var interviewId = $("#" + drpdowns6[i].id).val();
+                if (interviewId == '' || interviewId == null) {
+                    document.getElementById(tab_skill + "_WeightageError").innerHTML = "Type field should not be blank.";
+                    return true;
+                }
+            }
+        }
+
+        if (tab_skill == "SkillGeneral") {
+            var drpdowns7 = $('[id^=' + tab_skill + '][id$="Value"]');
+            for (i = 0; i < drpdowns7.length; i++) {
+                var interviewId = $("#" + drpdowns7[i].id).val();
+                if (interviewId == '' || interviewId == null) {
+                    document.getElementById(tab_skill + "_WeightageError").innerHTML = "Value field should not be blank.";
+                    return true;
+                }
+            }
+        }
+
         document.getElementById(tab_skill + "_WeightageError").innerHTML = "";
         return false;
     }
