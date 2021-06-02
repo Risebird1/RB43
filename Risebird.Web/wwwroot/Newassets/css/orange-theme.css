@@ -796,19 +796,19 @@ input[type="radio"]:checked {
         top: 8px;
         left: 0px;
     }
-.tabCon .tab-menu ul li a {
+/*.tabCon .tab-menu ul li a {
     border-bottom: 2px #f7924d solid;
-}
+}*/
 .tab-menu ul li a {
-    background: #ffbc89;
-    color: #000;
+    background: none;
+    color:#000;
 }
 .tab-main-box {
     background: #fff;
 }
 .tab-menu ul li a.active {
-    background: #f7924d;
-    color: #fff;
+    background: #f7d2b9;
+    color: #8c4028;
     text-decoration: none;
 }
 

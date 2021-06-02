@@ -49,16 +49,16 @@
                                         <ul class="tabs">
                                             <li><a href="#" class="active" rel="tab-1" id="rtab-1">Event Details</a></li>
                                             <li><a href="#" rel="tab-2" class="" id="rtab-2">Job Details</a></li>
-                                            <li><a href="#" rel="tab-3" class="" id="rtab-3">Tech Skill Metric</a></li>
-                                            <li><a href="#" rel="tab-4" class="" id="rtab-4">Joinability Metric</a></li>
-                                            <li><a href="#" rel="tab-5" class="" id="rtab-5">Selectability Metric</a></li>
-                                            <li><a href="#" rel="tab-6" class="" id="rtab-6">General Skill Metric</a></li>
-                                            <li><a href="#" rel="tab-7" class="" id="rtab-7">Client Information</a></li>
+                                            <li><a href="#" rel="tab-3" class="" id="rtab-3">Tech Skill</a></li>
+                                            <li><a href="#" rel="tab-4" class="" id="rtab-4">Joinability</a></li>
+                                            <li><a href="#" rel="tab-5" class="" id="rtab-5">Selectability</a></li>
+                                            <li><a href="#" rel="tab-6" class="" id="rtab-6">General Skill</a></li>
+                                            <li><a href="#" rel="tab-7" class="" id="rtab-7">Client</a></li>
                                             <li><a href="#" rel="tab-8" class="" id="rtab-8">Interviewer</a></li>
-                                            <li><a href="#" rel="tab-9" class="" id="rtab-9">Quality Controller</a></li>
-                                            <li><a href="#" rel="tab-10" class="" id="rtab-10">Emergency Interviewer</a></li>
+                                            <li><a href="#" rel="tab-9" class="" id="rtab-9">QC</a></li>
+                                            <li><a href="#" rel="tab-10" class="" id="rtab-10">E.Interviewer</a></li>
                                             @*<li><a href="#" rel="tab-11" class="" id="rtab-11">Resume Evaluator</a></li>*@
-                                            <li><a href="#" rel="tab-11" class="" id="rtab-11">Risebird Coordinator</a></li>
+                                            <li><a href="#" rel="tab-11" class="" id="rtab-11">Coordinator</a></li>
                                             @*<li><a href="#" rel="tab-13" class="" id="rtab-13">Recruiter</a></li>*@
 
                                         </ul>
@@ -196,10 +196,10 @@
                                                                 @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
 
-                                                            @Html.EditorFor(model => model.JobCountry, new { htmlAttributes = new { @id = "error_JobCountry", @class = "form-control text-box single-line" } })
+                                                            @Html.EditorFor(model => model.JobCountry, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
 
 
-                                                            @Html.ValidationMessageFor(model => model.JobCountry, "", new { @class = "text-danger" })
+                                                            @Html.ValidationMessageFor(model => model.JobCountry, "", new {@id= "#error_JobCountry", @class = "text -danger" })
 
                                                         </div>
                                                         <div class="form-group">
@@ -391,7 +391,7 @@
                                             </div>
                                         </div>
 
-                                        <h3 class="tab_drawer_heading" rel="tab-3">Tech Skill Metric</h3>
+                                        <h3 class="tab_drawer_heading" rel="tab-3">Tech Skill</h3>
                                         <div class="tab-box" id="tab-3">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -442,7 +442,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <h3 class="tab_drawer_heading" rel="tab-4">Joinability Metric</h3>
+                                        <h3 class="tab_drawer_heading" rel="tab-4">Joinability</h3>
                                         <div class="tab-box" id="tab-4">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -497,7 +497,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <h3 class="tab_drawer_heading" rel="tab-5">Selectability Metric</h3>
+                                        <h3 class="tab_drawer_heading" rel="tab-5">Selectability</h3>
                                         <div class="tab-box" id="tab-5">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -550,7 +550,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <h3 class="tab_drawer_heading" rel="tab-6">General Skill Metric</h3>
+                                        <h3 class="tab_drawer_heading" rel="tab-6">General Skill</h3>
                                         <div class="tab-box" id="tab-6">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -602,7 +602,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <h3 class="tab_drawer_heading" rel="tab-7">Client Information</h3>
+                                        <h3 class="tab_drawer_heading" rel="tab-7">Client</h3>
                                         <div class="tab-box" id="tab-7">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -695,7 +695,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <h3 class="tab_drawer_heading" rel="tab-9">Quality Controller</h3>
+                                        <h3 class="tab_drawer_heading" rel="tab-9">QC</h3>
                                         <div class="tab-box" id="tab-9">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -741,7 +741,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <h3 class="tab_drawer_heading" rel="tab-10">Emergency Interviewer</h3>
+                                        <h3 class="tab_drawer_heading" rel="tab-10">E.Interviewer</h3>
                                         <div class="tab-box" id="tab-10">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -827,7 +827,7 @@
                                                 </div>
                                             </div>
                                         </div>-->
-                                        <h3 class="tab_drawer_heading" rel="tab-11">Risebird Coordinator</h3>
+                                        <h3 class="tab_drawer_heading" rel="tab-11">Coordinator</h3>
                                         <div class="tab-box" id="tab-11">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -863,51 +863,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <h3 class="tab_drawer_heading" rel="tab-13">Recruiter</h3>
-                                        <div class="tab-box" id="tab-13">
-                                            <div class="tab-main-box">
-                                                <div class="row">
-
-                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                        <div class="table-responsive-sm">
-                                                            <table class="table table-bordered mbn" id="recruiterTable">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th class="table_heading">User</th>
-                                                                        <th class="table_heading">Domain</th>
-                                                                        <th width="10%" class="table_heading text-center">Action</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-
-                                                                    <tr>
-                                                                        <td>
-                                                                            @Html.DropDownList("RecruiterCollection[0].UserId", (SelectList)ViewBag.Recruiters, new { @class = "select-css form-control ", @onchange = "RecruiterChanged(this.value, this.id)" })
-                                                                        </td>
-
-                                                                        <td>
-                                                                            @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
-                                                                            @Html.TextBox("RecruiterCollection[0].Domain", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                                        </td>
-
-                                                                        <td class="action text-center">
-
-                                                                            <span id="btnPlus" onclick="AddRowRecruiter()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                            @*<label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>*@
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        
                                     </div>
 
 
@@ -2420,33 +2376,33 @@
                 document.getElementById("btnPrev").style.display = "none";
 
             }
-            else if (activeTab.trim() == "Tech Skill Metric") {
+            else if (activeTab.trim() == "Tech Skill") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-2").addClass("active");
                 document.getElementById("tab-2").style.display = "block";
                 document.getElementById("tab-3").style.display = "none";
             }
-            else if (activeTab.trim() == "Joinability Metric") {
+            else if (activeTab.trim() == "Joinability") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-3").addClass("active");
                 document.getElementById("tab-3").style.display = "block";
                 document.getElementById("tab-4").style.display = "none";
             }
 
-            else if (activeTab.trim() == "Selectability Metric") {
+            else if (activeTab.trim() == "Selectability") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-4").addClass("active");
                 document.getElementById("tab-4").style.display = "block";
                 document.getElementById("tab-5").style.display = "none";
             }
 
-            else if (activeTab.trim() == "General Skill Metric") {
+            else if (activeTab.trim() == "General Skill") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-5").addClass("active");
                 document.getElementById("tab-5").style.display = "block";
                 document.getElementById("tab-6").style.display = "none";
             }
-            else if (activeTab.trim() == "Client Information") {
+            else if (activeTab.trim() == "Client") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-6").addClass("active");
                 document.getElementById("tab-6").style.display = "block";
@@ -2458,21 +2414,21 @@
                 document.getElementById("tab-7").style.display = "block";
                 document.getElementById("tab-8").style.display = "none";
             }
-            else if (activeTab.trim() == "Quality Controller") {
+            else if (activeTab.trim() == "QC") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-8").addClass("active");
                 document.getElementById("tab-8").style.display = "block";
                 document.getElementById("tab-9").style.display = "none";
             }
 
-            else if (activeTab.trim() == "Emergency Interviewer") {
+            else if (activeTab.trim() == "E.Interviewer") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-9").addClass("active");
                 document.getElementById("tab-9").style.display = "block";
                 document.getElementById("tab-10").style.display = "none";
             }
 
-            else if (activeTab.trim() == "Risebird Coordinator") {
+            else if (activeTab.trim() == "Coordinator") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-10").addClass("active");
                 document.getElementById("tab-10").style.display = "block";
@@ -2622,7 +2578,7 @@
                     document.getElementById("tab-2").style.display = "none";
                 }
             }
-            else if (activeTab.trim() == "Tech Skill Metric") {
+            else if (activeTab.trim() == "Tech Skill") {
                 flag = checkWeightageTab("SkillCollection");
                 if (!flag) {
 
@@ -2632,7 +2588,7 @@
                     document.getElementById("tab-3").style.display = "none";
                 }
             }
-            else if (activeTab.trim() == "Joinability Metric") {
+            else if (activeTab.trim() == "Joinability") {
                 flag = checkWeightageTab("Joinability");
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
@@ -2641,7 +2597,7 @@
                     document.getElementById("tab-4").style.display = "none";
                 }
             }
-            else if (activeTab.trim() == "Selectability Metric") {
+            else if (activeTab.trim() == "Selectability") {
                 flag = checkWeightageTab("Selectability");
                 if (!flag) {
 
@@ -2651,7 +2607,7 @@
                     document.getElementById("tab-5").style.display = "none";
                 }
             }
-            else if (activeTab.trim() == "General Skill Metric") {
+            else if (activeTab.trim() == "General Skill") {
                 flag = checkWeightageTab("SkillGeneral");
                 if (!flag) {
 
@@ -2661,7 +2617,7 @@
                     document.getElementById("tab-6").style.display = "none";
                 }
             }
-            else if (activeTab.trim() == "Client Information") {
+            else if (activeTab.trim() == "Client") {
                 flag = checkClientDetails();
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
@@ -2679,7 +2635,7 @@
                     document.getElementById("tab-8").style.display = "none";
                 }
             }
-            else if (activeTab.trim() == "Quality Controller") {
+            else if (activeTab.trim() == "QC") {
                 flag = checkQcDetails();
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
@@ -2688,7 +2644,7 @@
                     document.getElementById("tab-9").style.display = "none";
                 }
             }
-            else if (activeTab.trim() == "Emergency Interviewer") {
+            else if (activeTab.trim() == "E.Interviewer") {
                 flag = checkEmergencyDetails();
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");

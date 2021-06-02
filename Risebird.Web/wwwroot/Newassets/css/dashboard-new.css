@@ -124,22 +124,21 @@ body {
     border-bottom-left-radius: 3px;
 }
 .tabCon .tab-menu ul li {
-    height: 58px;
+    height: 36px;
     display: table;
-    margin: 0px 1px 0px 1px;
+    margin: 0px 0px 15px 0px;
 }
     .tabCon .tab-menu ul li a {
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
+        border-radius: 22px;
         height: 100%;
         display: table-cell;
         vertical-align: middle;
-        font-size: 12.3px;
-        padding: 10px 5px;
+        font-size: 12.2px;
+        line-height: 14px;
+        padding: 10px 3px;
         text-transform: inherit;
         text-transform: capitalize;
-        cursor:default;
-        
+        cursor: default;
     }
 .tab-menu ul li a.active{cursor:pointer!important}
 .tabCon .tab-box {

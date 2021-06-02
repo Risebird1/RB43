@@ -3,35 +3,17 @@
 @using X.PagedList.Mvc.Core;
 @{
     ViewData["Title"] = "Project Selected Candidate";
+    ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<script>
+    var Header = "<a href='/Project/Index'>Projects</a>&nbsp; / &nbsp; Interview Selected Meetings";
+    $('#txtpageHeader').empty().html(Header);
+</script>
 <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=6" />
 <input type="hidden" value="@ViewBag.IRFId" id="hidirfid" />
 <div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-                <a class="navbar-brand breadcrumscolor" href="/Project/Index">Projects</a>
-                <a class="navbar-brand">
-                    /  &nbsp; Interview Selected Meetings
-                </a>
-            </div>
-
-        </div>
-    </nav>
-    <!-- End Navbar -->
-
-
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -50,7 +32,7 @@
 
                             <div class="searchCon">
 
-                                <button onclick="searchResult()" type="button" id="search">&nbsp</button>
+                                @*<button onclick="searchResult()" type="button" id="search">&nbsp</button>*@
                                 <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.searchValue">
 
 
