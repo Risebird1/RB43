@@ -689,18 +689,18 @@ input[type="radio"]:checked {
 .tab-main-box {
     background: #fff;
 }
-.tabCon .tab-menu ul li a {
+/*.tabCon .tab-menu ul li a {
     border-bottom: 2px #858586 solid;
-}
+}*/
 .tab-menu ul li a {
-    background: #ccc;
+    background: none;
     color: #000;
 }
-.tab-menu ul li a.active {
-    background: #858586;
-    color: #fff;
-    text-decoration: none;
-}
+    .tab-menu ul li a.active {
+        background: #c2c2c58a;
+        color: #656262;
+        text-decoration: none;
+    }
 
 table {
     border: 1px #ccc solid !important;

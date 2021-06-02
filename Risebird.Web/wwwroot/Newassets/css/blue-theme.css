@@ -751,11 +751,12 @@ table {
     color:#000;
 }
 .tabCon .tab-menu ul li a {
-  border-bottom: 2px #54a5f5 solid;
+    background: none;
+    color: #000;
 }
 .tab-menu ul li a.active {
-    background: #54a5f5;
-    color: #fff;
+    background: #dbecff;
+    color: #54a5f5;
     text-decoration: none;
 }
 

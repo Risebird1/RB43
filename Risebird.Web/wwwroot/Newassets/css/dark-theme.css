@@ -938,16 +938,16 @@ input[type="radio"]:checked {
 .alert.alert-info {
     background-color: #504c4c;
 }
-.tabCon .tab-menu ul li a {
+/*.tabCon .tab-menu ul li a {
     border-bottom: 1px #0e0a0a solid;
-}
+}*/
 .tab-menu ul li a {
-    background: #1a1a1a;
+    background: none;
     color: #716f6f;
 }
     .tab-menu ul li a.active {
-        background: #0e0a0a;
-        color: #adadad;
+        background: #1a1a1a;
+        color: #fff;
         text-decoration: none;
     }
 table {

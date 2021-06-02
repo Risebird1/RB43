@@ -80,26 +80,31 @@
                                     </div>
                                     <div class="col-md-6 col-sm-6 pr-1 pull-left">
                                         <div class="form-group">
-                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Upload Company Logo">Upload Company Logo</label>
-                                            <input name="companydetails" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)" style="top: -25px; position: relative;">
-                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" Provide Logo URL">
-                                                Provide Logo URL</label>
+                                            <div class="pull-left">
+                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Upload Company Logo" style="padding:0px 20px;">Upload Company Logo</label>
+                                                <input name="companydetails" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)" style="top: -25px; position: relative;">
+                                            </div>
+                                            <div class="pull-left">
+                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" Provide Logo URL" style="padding:0px 20px;">
+                                                    Provide Logo URL
+                                                </label>
                                                 <input name="companydetails" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)" style="top: -25px; position: relative;">
+                                            </div>
                                         </div>
-                                        <div class="form-group" style="display:none" id="linkDiv">
-                                            @Html.LabelFor(model => model.LogoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            <div class="form-group" style="display:none" id="linkDiv">
+                                                @Html.LabelFor(model => model.LogoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                            @Html.EditorFor(model => model.LogoLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                            @Html.ValidationMessageFor(model => model.LogoLink, "", new { @class = "text-danger" })
+                                                @Html.EditorFor(model => model.LogoLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.ValidationMessageFor(model => model.LogoLink, "", new { @class = "text-danger" })
 
+                                            </div>
+                                            <div class="" style="display:none" id="uploadDiv">
+                                                @Html.LabelFor(model => model.LogoFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.TextBoxFor(model => model.LogoFile, new { type = "file", @class = "form-control", @accept = ".png, .jpg, .jpeg" })
+
+                                            </div>
                                         </div>
-                                        <div class="" style="display:none" id="uploadDiv">
-                                            @Html.LabelFor(model => model.LogoFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                            @Html.TextBoxFor(model => model.LogoFile, new { type = "file", @class = "form-control", @accept = ".png, .jpg, .jpeg" })
-
-                                        </div>
-                                    </div>
 
 
 
