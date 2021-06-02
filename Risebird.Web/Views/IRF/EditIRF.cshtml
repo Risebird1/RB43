@@ -84,7 +84,7 @@
                                                             @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                             @Html.EditorFor(m => m.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
                                                             <label class="text-danger" id="uniqueMsg" style="color:red; position:absolute;"></label>
-                                                            @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
+                                                            @Html.ValidationMessageFor(model => model.IRFId, "", new { @id = "error_IRFName", @class = "text-danger" })
 
                                                         </div>
 
@@ -95,8 +95,7 @@
                                                             @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                             @Html.EditorFor(m => m.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                             <label class="text-danger" id="uniqueMsg" style="color:red; position:absolute;"></label>
-                                                            @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
-
+                                                            @Html.ValidationMessageFor(model => model.IRFId, "", new { @id = "error_IRFName", @class = "text-danger" })
 
                                                         </div>
 
@@ -1511,14 +1510,14 @@
         var flag = false;
         if (activeTab.trim() == "Event Details") {
             if ($('#CalendlyLink').val() == "") {
-                $('#error_CalendlyLink').text("The CalendlyLink field is required.");
+                $('#error_CalendlyLink').text("The Calendly Link field is required.");
                 flag = true;
             }
             else {
                 $('#error_CalendlyLink').text("");
             }
             if ($('#PriorityLevel').val() == "") {
-                $('#error_PriorityLevel').text("The PriorityLevel field is required.");
+                $('#error_PriorityLevel').text("The Priority Level field is required.");
                 flag = true;
             }
             else {
@@ -1538,6 +1537,14 @@
             }
             else {
                 $('#error_AssessmentGroupId').text("");
+            }
+
+            if ($('#IRFId').val() == "") {
+                $('#error_IRFName').text("The Skill Channel Name is required");
+                flag = true;
+            }
+            else {
+                $('#error_IRFName').text("");
             }
             return flag;
         }
@@ -1580,7 +1587,7 @@
                 $('#error_Heuristicsscore').text("");
             }
             if ($('#NoOfPosition').val() == "") {
-                $('#error_NoOfPosition').text("The No of Positions field is required.");
+                $('#error_NoOfPosition').text("The No. of Positions field is required.");
                 flag = true;
             }
             else {
@@ -1588,7 +1595,7 @@
             }
 
             if ($('#NoOfIntterview').val() == "") {
-                $('#error_NoOfIntterview').text("The No of Intterview field is required.");
+                $('#error_NoOfIntterview').text("The No. of Intterview field is required.");
                 flag = true;
             }
             else {

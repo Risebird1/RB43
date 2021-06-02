@@ -27,6 +27,9 @@
     string[] IsIntrested = new string[] { };
     string[] CandidateAvailable = new string[] { };
 
+
+    string appendTime = configuration["ThumbnailTimeDefault"];
+
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("VideoPagefilters") != null)
 {
@@ -673,7 +676,7 @@
                                                                                 <div class="relatedvideo">
                                                                                     @foreach (var videolist in Model.MeetingPatch)
                                                                                     {
-                                                                                        var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+                                                                                        //var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
                                                                                         @if (Model.MeetingPatch.FirstOrDefault().Priority == videolist.Priority)
                                                                                         {
                                                                                             <div id="risetubevideo_19" class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
@@ -1481,7 +1484,7 @@
                                                                     <div class="relatedvideo">
                                                                         @foreach (var videolist in Model.MeetingPatch)
                                                                         {
-                                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+                                                                            //var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
                                                                             @if (Model.MeetingPatch.FirstOrDefault().Priority == videolist.Priority)
                                                                             {
                                                                                 <div id="risetubevideo_19" class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
@@ -1577,7 +1580,7 @@
 
                                                                             @foreach (var videolist in Model.SubVideo_List)
                                                                             {
-                                                                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+                                                                                //var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
                                                                                 <div id="risetubevideo_19" class="video-card video-card-list videosidelist">
                                                                                     <div class="video-card-image">
                                                                                         @if (videolist.MeetingPatchCount > 0)
@@ -1622,16 +1625,15 @@
                                                                                             }*@
 
                                                                                         @{
-                                                                                            string appendTime;
+                                                                                            string src;
                                                                                             if (videolist.ThumbnailTimeSeconds == 0)
                                                                                             {
-                                                                                                appendTime = configuration["ThumbnailTimeDefault"];
+                                                                                                src= videolist.VideoLink + "#t=" + appendTime;
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                                appendTime = videolist.ThumbnailTimeSeconds.ToString();
+                                                                                                src= videolist.VideoLink + "#t=" + videolist.ThumbnailTimeSeconds.ToString();
                                                                                             }
-                                                                                            var src = videolist.VideoLink + "#t=" + appendTime;
                                                                                             <video style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
@@ -1767,7 +1769,7 @@
                                                             <tr>
                                                                 @foreach (var videolist in Model.SubVideo_List)
                                                                 {
-                                                                    var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+                                                                    //var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
 
                                                                     <td class="relatedvideo rvdio" style="width:33.3%">
                                                                         <div id="risetubevideo_19" class="video-card video-card-list  videosidelist">
@@ -1815,16 +1817,15 @@
                                                                                     }*@
 
                                                                                 @{
-                                                                                    string appendTime;
+                                                                                    string src;
                                                                                     if (videolist.ThumbnailTimeSeconds == 0)
                                                                                     {
-                                                                                        appendTime = configuration["ThumbnailTimeDefault"];
+                                                                                        src = videolist.VideoLink + "#t=" + appendTime;
                                                                                     }
                                                                                     else
                                                                                     {
-                                                                                        appendTime = videolist.ThumbnailTimeSeconds.ToString();
+                                                                                        src = videolist.VideoLink + "#t=" + videolist.ThumbnailTimeSeconds.ToString();
                                                                                     }
-                                                                                    var src = videolist.VideoLink + "#t=" + appendTime;
                                                                                     <video style=" background:black!important;width:100%; height:100% " controlsList="nodownload ">
                                                                                         <source src="@src" type="video/mp4">
                                                                                     </video>
@@ -1944,7 +1945,7 @@
 
                                                         @foreach (var videolist in Model.SubVideo_List)
                                                         {
-                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+                                                            //var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
 
 
                                                             <div id="risetubevideo_19" class="video-card video-card-list  videosidelist">
@@ -1989,17 +1990,15 @@
                                                                             <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
                                                                         }*@
                                                                     @{
-                                                                        string appendTime;
+                                                                        string src;
                                                                         if (videolist.ThumbnailTimeSeconds == 0)
                                                                         {
-                                                                            appendTime = configuration["ThumbnailTimeDefault"];
+                                                                            src = videolist.VideoLink + "#t=" + appendTime;
                                                                         }
                                                                         else
                                                                         {
-                                                                            appendTime = videolist.ThumbnailTimeSeconds.ToString();
+                                                                            src = videolist.VideoLink + "#t=" + videolist.ThumbnailTimeSeconds.ToString();
                                                                         }
-                                                                        var src = videolist.VideoLink + "#t=" + appendTime;
-
 
                                                                         <video style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
                                                                             <source src="@src" type="video/mp4">
