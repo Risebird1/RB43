@@ -812,7 +812,11 @@ input[type="radio"]:checked {
     text-decoration: none;
 }
 
-
+    .tab-menu ul li a.active ~ .skillcount {
+        right: -9px !important;
+        background: #ec8c4b;
+        color: #fff;
+    }
 
 .avatar-upload .avatar-preview {
     border: 6px solid #f2bb89;

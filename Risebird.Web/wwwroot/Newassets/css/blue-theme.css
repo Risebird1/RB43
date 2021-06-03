@@ -760,6 +760,11 @@ table {
     text-decoration: none;
 }
 
+    .tab-menu ul li a.active ~ .skillcount {
+        right: -9px!important;
+        background: #5bc9f3;
+        color: #fff;
+    }
 .avatar-upload .avatar-preview {
     border: 6px solid #54a5f524;
 }
