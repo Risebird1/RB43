@@ -230,7 +230,7 @@ namespace Risebird.Repository
         }
 
 
-        public async Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern, string profileName = null)
+        public async Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern, DateTime startDate, DateTime endDate, string profileName = null)
         {
             try
             {
@@ -241,6 +241,8 @@ namespace Risebird.Repository
                         var parameters = new DynamicParameters();
                         parameters.Add("@Emailid", Emailid);
                         parameters.Add("@JDpattern", JDpattern);
+                        parameters.Add("@startDate", startDate);
+                        parameters.Add("@endDate", endDate);
                         return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsByJDforCuratedUser", parameters,
                             commandType: CommandType.StoredProcedure);
                     }
@@ -253,6 +255,8 @@ namespace Risebird.Repository
                         parameters.Add("@clientid", clientId);
                         parameters.Add("@Emailid", Emailid);
                         parameters.Add("@JDpattern", JDpattern);
+                        parameters.Add("@startDate", startDate);
+                        parameters.Add("@endDate", endDate);
                         return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsByJD", parameters,
                             commandType: CommandType.StoredProcedure);
                     }
@@ -1257,7 +1261,14 @@ namespace Risebird.Repository
 
                     if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)
                     {
-                        parametersPoints.Add("@Points", 25);
+                        if(reportDetails.VideoDuration == 0)
+                        {
+                            parametersPoints.Add("@Points", 0);
+                        }
+                        else
+                        {
+                            parametersPoints.Add("@Points", 25);
+                        }
                     }
                     else if (reportDetails.MeetingStatus == 5)
                     {

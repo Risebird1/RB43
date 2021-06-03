@@ -118,11 +118,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<List<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern, string profileName = null)
+        public async Task<List<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern, DateTime startDate, DateTime endDate, string profileName = null)
         {
             try
             {
-                var result = await _meetingRespository.GetRiseTubeMeetingsByJD(clientId, Emailid, JDpattern, profileName);
+                var result = await _meetingRespository.GetRiseTubeMeetingsByJD(clientId, Emailid, JDpattern,startDate, endDate, profileName);
                 return result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)

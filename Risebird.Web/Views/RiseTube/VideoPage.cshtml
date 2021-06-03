@@ -58,11 +58,11 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" defer />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
-<script>
+@*<script>
     amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
     amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
     amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
-</script>
+</script>*@
 
 <!-- Custom styles for this template-->
 <link href="~/RiseTube/css/osahan.css" rel="stylesheet">
@@ -140,6 +140,17 @@
 
                     </div>
                 </div>
+                @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+                    profileName = profileName.Trim('"');
+                    @if (profileName == "Admin" || profileName == "Client" || profileName == "HR")
+                    {
+                        <div class="note-filter" style="text-align: right;"> Note: To visualize data older than 15 days, please apply filter</div>
+                    }
+                }
+
+
             </div>
         </div>
     </div>
@@ -2817,7 +2828,7 @@
             id.title = "";
         }
         else {
-            id.title = output
+            id.title = output;
         }
 
 
@@ -3044,7 +3055,7 @@
     })
 
 </script>
-<script>
+@*<script>
 
     jQuery(document).ready(function ($) {
 
@@ -3070,8 +3081,8 @@
             });
         }
         $('.btn').addClass('disabled');
-        $(document).ready(main)
-</script>
+        //$(document).ready(main)
+</script>*@
 <script>
             $('form').submit(function () {
                 if ($(this).valid()) {
@@ -3378,9 +3389,9 @@
 
         });
 
-        if (isTheaterMode === true) {
-            getThMode();
-        }
+        //if (isTheaterMode === true) {
+        //    getThMode();
+        //}
         checkAnotherMode();
         checktheatre();
         getThMode();
@@ -4174,23 +4185,25 @@
             input = document.getElementById("txtintrestecomment,txtComment,txtsharetext,comment,txtsharetext1,interviewercomment"),
             timeout, xhr;
 
-        input.addEventListener("keyup", function (e) {
+        if (input != null) {
+             input.addEventListener("keyup", function (e) {
 
-            if (timeout) clearTimeout(timeout);
+                    if (timeout) clearTimeout(timeout);
 
-            if (!this.value.trim()) words.innerHTML = '';
+                    if (!this.value.trim()) words.innerHTML = '';
 
-            timeout = setTimeout(function () {
+                    timeout = setTimeout(function () {
 
-                var test_phrase = shuffle_words(input.value);
+                        var test_phrase = shuffle_words(input.value);
 
-                spell_check(test_phrase);
+                        spell_check(test_phrase);
 
-                timeout = null;
+                        timeout = null;
 
-            }, 500);
+                    }, 500);
 
-        });
+            });
+        }
 
         function shuffle_words(inp) {
 

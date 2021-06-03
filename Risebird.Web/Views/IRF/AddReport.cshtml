@@ -970,7 +970,7 @@
             </div>
 
         </div>
-        <script>
+<script>
     function dropDwnToolTips(id) {
         if (id.value == 0) {
             id.title = "";
@@ -980,8 +980,8 @@
         }
     }
 
-        </script>
-        <script type="text/javascript">
+</script>
+<script type="text/javascript">
 
     $(document).ready(function () {
         $('.dropques option').wrap('<span>');
@@ -1000,11 +1000,11 @@
 
     })
 
-        </script>
-        <script src="https://www.amcharts.com/lib/4/core.js"></script>
-        <script src="https://www.amcharts.com/lib/4/charts.js"></script>
-        <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-        <script>
+</script>
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<script>
 
     function RadioChanged(val) {
         if (val == 'Upload') {
@@ -1035,11 +1035,10 @@
         var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
 
 
-        html2canvas($(".canvas_div_pdf")[0], { allowTaint: true }).then(function (canvas) {
+        html2canvas($(".canvas_div_pdf")[0], { allowTaint: false }).then(function (canvas) {
             canvas.getContext('2d');
 
-
-            var imgData = canvas.toDataURL("image/jpeg", 1.0);
+            var imgData = canvas.toDataURL("image/png", 1.0);
             var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
             pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
 
@@ -1052,11 +1051,13 @@
 
             var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear();
             pdf.save(filename + ".pdf")
-        });
-    };
-        </script>
 
-        <script>
+        });
+
+    }
+</script>
+
+<script>
 
     function CountProctoring(value) {
 
@@ -1845,9 +1846,9 @@
 
     });
 
-        </script>
+</script>
 
-        <script>
+<script>
 
     window.onload = function () {
 
@@ -2018,8 +2019,8 @@
 
 
     }
-        </script>
-        <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/modules/data.js"></script>
-        <script src="https://code.highcharts.com/modules/drilldown.js"></script>
-        <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>

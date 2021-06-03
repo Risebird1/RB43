@@ -17,24 +17,28 @@ GO
 CREATE PROCEDURE [dbo].[usp_UpdateAmountForNewlyAddedInterviewers]  
 @userId int,
 @IRFId int,
-@PerSuccessRate int
+@PerSuccessRate int,
+@Type varchar(30)
 
 AS  
 Begin 
 
+
+if(@Type = 'Interviewer')
+Begin
 	update InterviewPoints set Points = Round(@PerSuccessRate/4,0) from InterviewPoints ipnt 
 	join InterviewMeetings im on im.id=ipnt.Interviewid 
 	join IRF on im.IRFId = irf.IRFId
 	join InterviewComments ic on ic.InterviewId=im.id
 	where irf.id=@IRFId and ipnt.userid=@userId and (ipnt.[Status]='Pending'or ipnt.[Status]='Submitted') and ipnt.[Type] ='Interview'
-	and ic.MeetingStatus in (1,3)
+	and ic.MeetingStatus in (1,3) and im.IsEmergency=0
 
 	update InterviewPoints set Points = 0 from InterviewPoints ipnt 
 	join InterviewMeetings im on im.id=ipnt.Interviewid 
 	join IRF on im.IRFId = irf.IRFId
 	join InterviewComments ic on ic.InterviewId=im.id
 	where irf.id=@IRFId and ipnt.userid=@userId and (ipnt.[Status]='Pending'or ipnt.[Status]='Submitted') and ipnt.[Type] ='Interview'
-	and ic.MeetingStatus in (5)
+	and ic.MeetingStatus in (5) and im.IsEmergency=0
 
 	update InterviewPoints set Points = Round(@PerSuccessRate,0) from InterviewPoints ipnt 
 	join InterviewMeetings im on im.id=ipnt.Interviewid 
@@ -42,7 +46,7 @@ Begin
 	join InterviewComments ic on ic.InterviewId=im.id
 	where irf.id=@IRFId and ipnt.userid=@userId and (ipnt.[Status]='Pending'or ipnt.[Status]='Submitted') and ipnt.[Type] ='Interview' 
 	and VideoDuration>=60
-	and ic.MeetingStatus in (4) and ic.InterviewStatus in (2,4)
+	and ic.MeetingStatus in (4) and ic.InterviewStatus in (2,4) and im.IsEmergency=0
 
 	update InterviewPoints set Points = Round(@PerSuccessRate*VideoDuration/60,0) from InterviewPoints ipnt 
 	join InterviewMeetings im on im.id=ipnt.Interviewid 
@@ -50,7 +54,7 @@ Begin
 	join InterviewComments ic on ic.InterviewId=im.id
 	where irf.id=@IRFId and ipnt.userid=@userId and (ipnt.[Status]='Pending'or ipnt.[Status]='Submitted') and ipnt.[Type] ='Interview' 
 	and VideoDuration<60
-	and ic.MeetingStatus in (4) and ic.InterviewStatus in (2,4)
+	and ic.MeetingStatus in (4) and ic.InterviewStatus in (2,4) and im.IsEmergency=0
 
 	update InterviewPoints set Points = Round(@PerSuccessRate*35/60,0) from InterviewPoints ipnt 
 	join InterviewMeetings im on im.id=ipnt.Interviewid 
@@ -58,7 +62,7 @@ Begin
 	join InterviewComments ic on ic.InterviewId=im.id
 	where irf.id=@IRFId and ipnt.userid=@userId and (ipnt.[Status]='Pending'or ipnt.[Status]='Submitted') and ipnt.[Type] ='Interview' 
 	and VideoDuration>=35
-	and ic.MeetingStatus in (4) and ic.InterviewStatus in (1,3)
+	and ic.MeetingStatus in (4) and ic.InterviewStatus in (1,3) and im.IsEmergency=0
 
 	update InterviewPoints set Points = Round(@PerSuccessRate*VideoDuration/60,0) from InterviewPoints ipnt 
 	join InterviewMeetings im on im.id=ipnt.Interviewid 
@@ -66,7 +70,58 @@ Begin
 	join InterviewComments ic on ic.InterviewId=im.id
 	where irf.id=@IRFId and ipnt.userid=@userId and (ipnt.[Status]='Pending'or ipnt.[Status]='Submitted') and ipnt.[Type] ='Interview' 
 	and VideoDuration<35
-	and ic.MeetingStatus in (4) and ic.InterviewStatus in (1,3)
+	and ic.MeetingStatus in (4) and ic.InterviewStatus in (1,3) and im.IsEmergency=0
+End
+
+else
+Begin
+	update InterviewPoints set Points = Round(@PerSuccessRate/4,0) from InterviewPoints ipnt 
+	join InterviewMeetings im on im.id=ipnt.Interviewid 
+	join IRF on im.IRFId = irf.IRFId
+	join InterviewComments ic on ic.InterviewId=im.id
+	where irf.id=@IRFId and ipnt.userid=@userId and (ipnt.[Status]='Pending'or ipnt.[Status]='Submitted') and ipnt.[Type] ='Interview'
+	and ic.MeetingStatus in (1,3) and im.IsEmergency=1
+
+	update InterviewPoints set Points = 0 from InterviewPoints ipnt 
+	join InterviewMeetings im on im.id=ipnt.Interviewid 
+	join IRF on im.IRFId = irf.IRFId
+	join InterviewComments ic on ic.InterviewId=im.id
+	where irf.id=@IRFId and ipnt.userid=@userId and (ipnt.[Status]='Pending'or ipnt.[Status]='Submitted') and ipnt.[Type] ='Interview'
+	and ic.MeetingStatus in (5) and im.IsEmergency=1
+
+	update InterviewPoints set Points = Round(@PerSuccessRate,0) from InterviewPoints ipnt 
+	join InterviewMeetings im on im.id=ipnt.Interviewid 
+	join IRF on im.IRFId = irf.IRFId
+	join InterviewComments ic on ic.InterviewId=im.id
+	where irf.id=@IRFId and ipnt.userid=@userId and (ipnt.[Status]='Pending'or ipnt.[Status]='Submitted') and ipnt.[Type] ='Interview' 
+	and VideoDuration>=60
+	and ic.MeetingStatus in (4) and ic.InterviewStatus in (2,4) and im.IsEmergency=1
+
+	update InterviewPoints set Points = Round(@PerSuccessRate*VideoDuration/60,0) from InterviewPoints ipnt 
+	join InterviewMeetings im on im.id=ipnt.Interviewid 
+	join IRF on im.IRFId = irf.IRFId
+	join InterviewComments ic on ic.InterviewId=im.id
+	where irf.id=@IRFId and ipnt.userid=@userId and (ipnt.[Status]='Pending'or ipnt.[Status]='Submitted') and ipnt.[Type] ='Interview' 
+	and VideoDuration<60
+	and ic.MeetingStatus in (4) and ic.InterviewStatus in (2,4) and im.IsEmergency=1
+
+	update InterviewPoints set Points = Round(@PerSuccessRate*35/60,0) from InterviewPoints ipnt 
+	join InterviewMeetings im on im.id=ipnt.Interviewid 
+	join IRF on im.IRFId = irf.IRFId
+	join InterviewComments ic on ic.InterviewId=im.id
+	where irf.id=@IRFId and ipnt.userid=@userId and (ipnt.[Status]='Pending'or ipnt.[Status]='Submitted') and ipnt.[Type] ='Interview' 
+	and VideoDuration>=35
+	and ic.MeetingStatus in (4) and ic.InterviewStatus in (1,3) and im.IsEmergency=1
+
+	update InterviewPoints set Points = Round(@PerSuccessRate*VideoDuration/60,0) from InterviewPoints ipnt 
+	join InterviewMeetings im on im.id=ipnt.Interviewid 
+	join IRF on im.IRFId = irf.IRFId
+	join InterviewComments ic on ic.InterviewId=im.id
+	where irf.id=@IRFId and ipnt.userid=@userId and (ipnt.[Status]='Pending'or ipnt.[Status]='Submitted') and ipnt.[Type] ='Interview' 
+	and VideoDuration<35
+	and ic.MeetingStatus in (4) and ic.InterviewStatus in (1,3) and im.IsEmergency=1
+End
+	
 
 
 End
