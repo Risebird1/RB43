@@ -71,7 +71,6 @@ namespace Risebird.Business
                 return null;
             }
         }
-
         public IEnumerable<IrfProgress> GetProgressOptions()
         {
             try
@@ -490,5 +489,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<InterviewManagementVM>> GetInterviewManagement()
+        {
+            try
+            {
+                return await _dashboardRespository.GetInterviewManagement();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }

@@ -27,6 +27,13 @@ namespace Risebird.Entities.ViewModel
         public SelectList AssassinationList { get; set; }
         public IList<ChannelManagementVM> ChannelRequest { get; set; }
         public NotUpdatedMeetings NotUpdatedMeetingsObj { get; set; }
-
+        public IList<InterviewManagementVM> InterviewManagement { get; set; }
+    }
+    public class InterviewManagementVM
+    {
+        public int id { get; set; }
+        public DateTime interviewDate { get; set; }
+        public int MeetingStatus { get; set; }
+        public int TotalCount { get; set; }
     }
 }
