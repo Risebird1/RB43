@@ -28,29 +28,34 @@
         display: block !important;
         width: auto;
         top: 15px;
-        right:235px;
+        right: 235px;
         position: absolute;
         text-align: right;
     }
+
     .user {
-    position: relative;
-    left: auto;
-    right: 80px;
-}
-    @@media (max-width: 1024px) {
-        .dash-widget-btn{right:210px;}
+        position: relative;
+        left: auto;
+        right: 80px;
     }
-        @@media (max-width: 767px) {
-            .dash-widget-btn {
-                display: block !important;
-                width: 300px;
-                top: 15px;
-                position: absolute;
-                text-align: right;
-                right: 29px;
-                left:auto;
-            }
+
+    @@media (max-width: 1024px) {
+        .dash-widget-btn {
+            right: 210px;
         }
+    }
+
+    @@media (max-width: 767px) {
+        .dash-widget-btn {
+            display: block !important;
+            width: 300px;
+            top: 15px;
+            position: absolute;
+            text-align: right;
+            right: 29px;
+            left: auto;
+        }
+    }
 </style>
 
 
@@ -593,8 +598,54 @@
                 <!--End Channel Management-->
 
                 <div class="row" style="padding-bottom:5px">
-
-                    <div class="col-md-12">
+                    <div class="col-md-4">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="panel-title-box">
+                                    <h3>Interview Management</h3>
+                                </div>
+                            </div>
+                            <div id="interviewmanagementId">
+                                <div class="panel-body panel-body-table">
+                                    @if (Model.InterviewManagement != null && Model.InterviewManagement.Count() != 0)
+                                    {
+                                        <div class="scrollbox">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="40%">Interview Date</th>
+                                                            <th width="60%">Interview</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var item in Model.InterviewManagement.Select(x => x.interviewDate).Distinct())
+                                                        {
+                                                            <tr>
+                                                                <td><strong>@item</strong></td>
+                                                                <td>
+                                                                    <strong>
+                                                                        @Model.InterviewManagement.Where(x => x.interviewDate == item).Count() /
+                                                                        <span style="color:green"> @Model.InterviewManagement.Where(x => x.interviewDate == item && x.TotalCount >= 2).Count()</span> /
+                                                                        <span style="color:red">@Model.InterviewManagement.Where(x => x.interviewDate == item && x.TotalCount == 1).Count()</span>
+                                                                    </strong>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div>No Interview found</div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
 
                         <!-- START INTERVIEW BLOCK -->
                         <div class="panel panel-default">
@@ -761,6 +812,7 @@
 
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-md-12 nopad">
                         <div class="col-lg-4 col-md-4 col-sm-4">
@@ -1146,11 +1198,8 @@
             url: '/Dashboard/GetDateWiseIRFProgress',
             data: { 'date': date },
             success: function (data) {
-
                 $('#progressTableId').html('');
                 $('#progressTableId').html(data);
-
-
             }
         });
     }

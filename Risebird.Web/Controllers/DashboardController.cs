@@ -82,6 +82,12 @@ namespace Risebird.Web.Controllers
                         model.AssassinationList = new SelectList(Assassination, "ID", "Name");
                         var channelrequest = await _dashboardService.FetchChannelRequests();
                         model.ChannelRequest = channelrequest;
+                        var interviewmanagement = (IList<InterviewManagementVM>)await _dashboardService.GetInterviewManagement();
+                        foreach (var item in interviewmanagement)
+                        {
+                            item.interviewDate = item.interviewDate.Date;
+                        }
+                        model.InterviewManagement = interviewmanagement;
                         return View(model);
                     }
                     else
@@ -921,13 +927,13 @@ namespace Risebird.Web.Controllers
                         ViewBag.PageHeader = "";
                         ViewBag.Actiontype = actiontype;
                         ViewBag.actionstatus = actionstatus;
-                        if(actionstatus == "InterviewCount")
-                        { 
+                        if (actionstatus == "InterviewCount")
+                        {
                             ViewBag.PageHeader = "911 Dashboard / Unassigned Interviews";
                         }
-                        else if(actionstatus == "MeetingStatus")
+                        else if (actionstatus == "MeetingStatus")
                         {
-                          ViewBag.PageHeader = "911 Dashboard / Status Pending";
+                            ViewBag.PageHeader = "911 Dashboard / Status Pending";
                         }
 
                         else if (actionstatus == "QcPending")

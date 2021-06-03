@@ -1148,5 +1148,28 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<IEnumerable<InterviewManagementVM>> GetInterviewManagement()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var date = DateTime.Now.AddDays(1);
+                    var startdate = date.AddDays(-7);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startdate", startdate.ToString("yyyy-MM-dd"));
+                    parameters.Add("@enddate", date.ToString("yyyy-MM-dd"));
+                    var result = await SqlMapper.QueryAsync<InterviewManagementVM>(con, "[usp_GetInterviewManagement]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
