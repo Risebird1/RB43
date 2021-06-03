@@ -1046,5 +1046,11 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        public IActionResult PaymentDescription()
+        {
+            return View();
+
+        }
     }
 }

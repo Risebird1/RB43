@@ -123,19 +123,85 @@ body {
     border-bottom-right-radius: 3px;
     border-bottom-left-radius: 3px;
 }
+.skillcount {
+    position: absolute;
+    top: 9px;
+    right: 0px;
+    background: #dadcdea1;
+    border-radius: 100px;
+    width: 20px;
+    font-size: 11px;
+    color: #8c8787;
+}
 .tabCon .tab-menu ul li {
     height: 36px;
     display: table;
-    margin: 0px 0px 15px 0px;
+    margin: 0px 0px 15px 5px;
+    position: relative;
+    padding-left: 6px;
 }
+.tab-menu ul li:nth-child(3) a.active ~ .skillcount {
+    right:7px!important;
+}
+
+.tab-menu ul li:nth-child(3) .skillcount {
+    right: 10px !important;
+}
+.tab-menu ul li:nth-child(4) .skillcount {
+    right: 10px !important;
+}
+.tab-menu ul li:nth-child(4) a.active ~ .skillcount {
+    right: 5px !important;
+}
+.tab-menu ul li:nth-child(5) a.active ~ .skillcount {
+    right: -1px !important;
+}
+.tab-menu ul li:nth-child(6) a.active ~ .skillcount {
+    right: -4px !important;
+}
+
+.tab-menu ul li:nth-child(6) .skillcount {
+    right: -9px !important;
+}
+
+.tab-menu ul li:nth-child(7) a.active ~ .skillcount {
+    right: 5px !important;
+}
+.tab-menu ul li:nth-child(8) a.active ~ .skillcount {
+    right: 5px !important;
+}
+.tab-menu ul li:nth-child(9) a.active ~ .skillcount {
+    right: 5px !important;
+}
+.tab-menu ul li:nth-child(10) .skillcount {
+    right: -10px !important;
+}
+.tab-menu ul li:nth-child(10) a.active ~ .skillcount {
+    right: -5px !important;
+}
+.tab-menu ul li:nth-child(11) a.active ~ .skillcount {
+    right: 0px !important;
+}
+.tabCon .tab-menu ul li:first-child {
+    margin-left: 0px;
+}
+    .tabCon .tab-menu ul li .fa {
+        position: absolute;
+        top: 10px;
+    }
+    .tabCon .tab-menu ul li svg {
+        position: absolute;
+        left: 0px;
+        top: 8px;
+    }
     .tabCon .tab-menu ul li a {
         border-radius: 22px;
         height: 100%;
         display: table-cell;
-        vertical-align: middle;
-        font-size: 12.2px;
+        text-align: left;
+        font-size: 12px;
         line-height: 14px;
-        padding: 10px 3px;
+        padding: 10px 5px;
         text-transform: inherit;
         text-transform: capitalize;
         cursor: default;

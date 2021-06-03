@@ -950,6 +950,15 @@ input[type="radio"]:checked {
         color: #fff;
         text-decoration: none;
     }
+
+.tab-menu ul li .skillcount {
+    background: #dadcde1f
+}
+        .tab-menu ul li a.active ~ .skillcount {
+            right: -9px !important;
+            background: #0e0e0d;
+            color: #fff;
+        }
 table {
     border: 1px #cccccc85 solid !important;
 }

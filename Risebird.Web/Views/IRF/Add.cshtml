@@ -47,21 +47,26 @@
                                 <div class="tabCon">
                                     <div class="tab-menu">
                                         <ul class="tabs">
-                                            <li><a href="#" class="active" rel="tab-1" id="rtab-1">Event Details</a></li>
-                                            <li><a href="#" rel="tab-2" class="" id="rtab-2">Job Details</a></li>
-                                            <li><a href="#" rel="tab-3" class="" id="rtab-3">Tech Skill</a></li>
-                                            <li><a href="#" rel="tab-4" class="" id="rtab-4">Joinability</a></li>
-                                            <li><a href="#" rel="tab-5" class="" id="rtab-5">Selectability</a></li>
-                                            <li><a href="#" rel="tab-6" class="" id="rtab-6">General Skill</a></li>
-                                            <li><a href="#" rel="tab-7" class="" id="rtab-7">Client</a></li>
-                                            <li><a href="#" rel="tab-8" class="" id="rtab-8">Interviewer</a></li>
-                                            <li><a href="#" rel="tab-9" class="" id="rtab-9">QC</a></li>
-                                            <li><a href="#" rel="tab-10" class="" id="rtab-10">E.Interviewer</a></li>
+                                            <li><a href="#" class="active text-center" rel="tab-1" id="rtab-1">Event Details</a></li>
+                                            <li><a href="#" rel="tab-2" class="text-center" id="rtab-2">Job Details</a></li>
+                                            <li><a href="#" rel="tab-3" class="" id="rtab-3">Tech Skill</a><span id="count_SkillCollection" class="skillcount">0</span></li>
+                                            <li><a href="#" rel="tab-4" class="" id="rtab-4">Joinability</a><span id="count_Joinability" class="skillcount">0</span></li>
+                                            <li><a href="#" rel="tab-5" class="" id="rtab-5">Selectability</a><span id="count_Selectability" class="skillcount">0</span></li>
+                                            <li><a href="#" rel="tab-6" class="" id="rtab-6">General Skill</a><span id="count_SkillGeneral" class="skillcount">0</span></li>
+                                            <li><a href="#" rel="tab-7" class="text-center" id="rtab-7">Client</a><span id="count_ClientTable" class="skillcount">0</span></li>
+                                            <li><a href="#" rel="tab-8" class="" id="rtab-8">Interviewer</a><span id="count_Interviewer" class="skillcount">0</span></li>
+                                            <li><a href="#" rel="tab-9" class="text-center" id="rtab-9">QC</a><span id="count_qc" class="skillcount">0</span></li>
+                                            <li><a href="#" rel="tab-10" class="" id="rtab-10">E.Interviewer</a><span id="count_Em" class="skillcount">0</span></li>
                                             @*<li><a href="#" rel="tab-11" class="" id="rtab-11">Resume Evaluator</a></li>*@
-                                            <li><a href="#" rel="tab-11" class="" id="rtab-11">Coordinator</a></li>
+                                            <li><a href="#" rel="tab-11" class="" id="rtab-11">Coordinator</a><span id="count_Hr" class="skillcount">0</span></li>
                                             @*<li><a href="#" rel="tab-13" class="" id="rtab-13">Recruiter</a></li>*@
 
                                         </ul>
+
+
+
+
+
                                     </div>
 
 
@@ -2665,6 +2670,7 @@
     function checkClientDetails() {
         var table = document.getElementById("ClientTable");
         var rowCount = table.rows.length;
+        $("#count_ClientTable").text(rowCount - 1);
         for (var i = 0; i < rowCount; i++) {
             if ($("#ClientCollection_" + i + "__ClientUserId").val() == "") {
                 document.getElementById("error_client").innerHTML = "Client User should not be blank";
@@ -2681,6 +2687,8 @@
         var inCorrectCount = 0;
         var items = $('[id^=' + tab_skill + '][id$="Weightage"]');
         var total = 0;
+        $("#count_" + tab_skill).text(items.length);
+        $("#count_" + tab_skill).text(items.length);
         for (j = 0; j < items.length; j++) {
             var total = total + parseInt($("#" + items[j].id).val());
         }
@@ -2794,6 +2802,7 @@
 
         var table = document.getElementById("InterviewerTable");
         var rowCount = table.rows.length;
+        $("#count_Interviewer").text(rowCount - 1);
         for (var i = 0; i < rowCount; i++) {
             if ($("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "" || $("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "0") {
                 document.getElementById("noInterviewer").innerHTML = "Per Interviewer Rate should not be blank";
@@ -2819,6 +2828,7 @@
     function checkQcDetails() {
         var qctable = document.getElementById("QualityControllerTable");
         var qcrowCount = qctable.rows.length;
+        $("#count_qc").text(qcrowCount - 1);
         for (var i = 0; i < qcrowCount; i++) {
             if ($("#QualityController_" + i + "__PerSuccessRate").val() == "" || $("#QualityController_" + i + "__PerSuccessRate").val() == "0") {
                 document.getElementById("qcInterviewer").innerHTML = "Per QC Rate should not be blank";
@@ -2843,6 +2853,7 @@
     function checkEmergencyDetails() {
         var emetable = document.getElementById("EmergencyInterviewerTable");
         var emerowCount = emetable.rows.length;
+        $("#count_Em").text(emerowCount - 1);
         for (var i = 0; i < emerowCount; i++) {
             if ($("#EmergencyInterviewerCollection_" + i + "__PerSuccessRate").val() == "" || $("#EmergencyInterviewerCollection_" + i + "__PerSuccessRate").val() == "0") {
                 document.getElementById("emInterviewer").innerHTML = "Per Emergency Interviewer Rate should not be blank";
