@@ -622,7 +622,7 @@
                                                         @foreach (var item in Model.InterviewManagement.Select(x => x.interviewDate).Distinct())
                                                         {
                                                             <tr>
-                                                                <td><strong>@item</strong></td>
+                                                                <td><strong>@item.ToString().Substring(0, 11)</strong></td>
                                                                 <td>
                                                                     <strong>
                                                                         @Model.InterviewManagement.Where(x => x.interviewDate == item).Count() /

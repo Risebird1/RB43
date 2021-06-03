@@ -871,7 +871,7 @@ namespace Risebird.Repository
                     }
                     else
                     {
-                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<1 and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID";
+                        query = "select distinct im.*,irf.*,cl.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<1 and ul.EmailId=@emailID";
                     }
                 }
                 else if (actionstatus == "MeetingStatus")
@@ -883,7 +883,7 @@ namespace Risebird.Repository
                     }
                     else
                     {
-                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7 and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID";
+                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7 and ul.Emailid =@emailID";
                     }
                 }
                 else if (actionstatus == "QcPending")
@@ -895,7 +895,7 @@ namespace Risebird.Repository
                     }
                     else
                     {
-                        query = "select distinct im.*,irf.*,ic.*, cl.[Name] from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on cl.id=irf.ClientId inner join InterviewComments ic on ic.InterviewId= im.id left join QCFeedbackReport qc on qc.InterviewId = im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null or qc.QCStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7 and HRCoordinatorEmailId =@emailID  and ul.EmailId=@emailID";
+                        query = "select distinct im.*,irf.*,ic.*, cl.[Name] from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on cl.id=irf.ClientId inner join InterviewComments ic on ic.InterviewId= im.id left join QCFeedbackReport qc on qc.InterviewId = im.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null or qc.QCStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7 and ul.EmailId=@emailID";
                     }
                 }
                 else if (actionstatus == "UnAssignedCoordianter")
@@ -911,7 +911,7 @@ namespace Risebird.Repository
                     }
                     else
                     {
-                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where confirmationStatus=1 and (zoomLink is null or zoomLink='') and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID";
+                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and (zoomLink is null or zoomLink='') and ul.EmailId=@emailID";
                     }
                 }
                 else if (actionstatus == "UnAttendedZoomLink")
@@ -933,7 +933,7 @@ namespace Risebird.Repository
                     }
                     else
                     {
-                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID and DATEDIFF(DAY, im.interviewDate, GETDATE())<7";
+                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and ul.EmailId=@emailID and DATEDIFF(DAY, im.interviewDate, GETDATE())<7";
                     }
                 }
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -984,7 +984,7 @@ namespace Risebird.Repository
                     }
                     else
                     {
-                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where confirmationStatus=1 and interviewer is null and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID";
+                        query = "select distinct im.*,irf.*,cl.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and interviewer is null and ul.EmailId=@emailID";
                     }
                 }
                 else if (actionstatus == "MeetingStatus")
@@ -995,7 +995,7 @@ namespace Risebird.Repository
                     }
                     else
                     {
-                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID";
+                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and ul.EmailId=@emailID";
                     }
                 }
                 else if (actionstatus == "QcPending")
@@ -1006,7 +1006,7 @@ namespace Risebird.Repository
                     }
                     else
                     {
-                        query = "select distinct im.*,irf.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId inner join InterviewComments ic on ic.InterviewId= im.id left join QCFeedbackReport qc on qc.InterviewId = im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null) and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID";
+                        query = "select distinct im.*,irf.*,ic.*, cl.[Name] from InterviewMeetings im join IRF on im.IRFId=irf.IRFId inner join InterviewComments ic on ic.InterviewId= im.id left join QCFeedbackReport qc on qc.InterviewId = im.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null or qc.QCStatus=2) and ul.EmailId=@emailID";
                     }
                 }
                 else if (actionstatus == "UnAssignedCoordianter")
@@ -1022,7 +1022,7 @@ namespace Risebird.Repository
                     }
                     else
                     {
-                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where confirmationStatus=1 and (zoomLink is null or zoomLink='') and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID";
+                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and (zoomLink is null or zoomLink='') and ul.EmailId=@emailID";
                     }
                 }
                 else if (actionstatus == "UnAttendedZoomLink")
@@ -1045,7 +1045,7 @@ namespace Risebird.Repository
                     }
                     else
                     {
-                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and HRCoordinatorEmailId =@emailID and ul.EmailId=@emailID";
+                        query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and ul.EmailId=@emailID";
                     }
                 }
                 using (SqlConnection con = new SqlConnection(connectionString))
