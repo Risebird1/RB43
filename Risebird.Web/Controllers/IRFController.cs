@@ -716,7 +716,9 @@ namespace Risebird.Web.Controllers
                 ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
                 ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
                 ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
-                ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
+                //ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
+                ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
+
                 model.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
                 var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                  select new { ID = (int)s, Name = s.GetDescription() };
@@ -1414,7 +1416,8 @@ namespace Risebird.Web.Controllers
                     ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
                     ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
                     //ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
-                    ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
+                    //ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
+                    ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
                     ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
                     ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
                     var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))

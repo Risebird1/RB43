@@ -131,7 +131,7 @@
                                                         </div>
                                                         <div class="form-group">
                                                             @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @style = "padding-right:0px;" })
-                                                            <span class="rqtext">( Please enter Mobile no. with country code. Ex: ++91999999999 )</span>
+                                                            <span class="rqtext">( Please enter Mobile no. with country code. Ex: +91999999999 )</span>
                                                             @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control col-md-10 text-box single-line", @maxlength = "13", @minlength = "13", @placeholder = "+91XXXXXXXXXX" } })
                                                             @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger", @style = "position:absolute" })
                                                             <label class="text-danger" id="mobileStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
