@@ -1287,14 +1287,15 @@ namespace Risebird.Repository
 
                     parametersPoints.Add("@interviewId", reportDetails.InterviewId);
                     //parametersPoints.Add("@UserEmail", reportDetails.UserDetails);
-                    if (reportDetails.IsQC == true)
-                    {
-                        parametersPoints.Add("@Type", "Quality Controller");
-                    }
-                    else
-                    {
-                        parametersPoints.Add("@Type", "Interview");
-                    }
+                    parametersPoints.Add("@Type", "Interview");
+                    //if (reportDetails.IsQC == true)
+                    //{
+                    //    parametersPoints.Add("@Type", "Quality Controller");
+                    //}
+                    //else
+                    //{
+                    //    parametersPoints.Add("@Type", "Interview");
+                    //}
                     //if (reportDetails.IsEdited)
                     //{
                     //    var result = SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,
@@ -4091,7 +4092,7 @@ namespace Risebird.Repository
                                          Rate = c.Rate,
                                          PrimarySkillInvite = c.PrimarySkillInvite,
                                          IRFId = c.IRFId,
-                                         IsEmergency=c.IsEmergency
+                                         IsEmergency = c.IsEmergency
                                      }).ToList();
                     return resultset.ToList();
                 }
