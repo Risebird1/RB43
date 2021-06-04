@@ -148,10 +148,13 @@ body {
     right: 10px !important;
 }
 .tab-menu ul li:nth-child(4) .skillcount {
-    right: 10px !important;
+    right: 6px !important;
 }
 .tab-menu ul li:nth-child(4) a.active ~ .skillcount {
     right: 5px !important;
+}
+.tab-menu ul li:nth-child(5) .skillcount {
+    right: -5px !important;
 }
 .tab-menu ul li:nth-child(5) a.active ~ .skillcount {
     right: -1px !important;
@@ -163,15 +166,23 @@ body {
 .tab-menu ul li:nth-child(6) .skillcount {
     right: -9px !important;
 }
-
+.tab-menu ul li:nth-child(7) .skillcount {
+    right: 7px !important;
+}
 .tab-menu ul li:nth-child(7) a.active ~ .skillcount {
     right: 5px !important;
+}
+.tab-menu ul li:nth-child(8) .skillcount {
+    right: 2px !important;
 }
 .tab-menu ul li:nth-child(8) a.active ~ .skillcount {
     right: 5px !important;
 }
+.tab-menu ul li:nth-child(9) .skillcount {
+    right: 15px !important;
+}
 .tab-menu ul li:nth-child(9) a.active ~ .skillcount {
-    right: 5px !important;
+    right: 10px !important;
 }
 .tab-menu ul li:nth-child(10) .skillcount {
     right: -10px !important;
@@ -199,7 +210,7 @@ body {
         height: 100%;
         display: table-cell;
         text-align: left;
-        font-size: 12px;
+        font-size: 12px!important;
         line-height: 14px;
         padding: 10px 5px;
         text-transform: inherit;
@@ -4237,50 +4248,77 @@ button.btn {
 
 /***** Media queries *****/
 
-@media (min-width: 992px) and (max-width: 1199px) {
-    table.journey td.cadName, table.journey td.cadEmail {
-        max-width: 200px;
-    }
-
-    table.journey td.cadSkill {
-        max-width: 150px;
-    }
-
-    .candidate table.journey td.cadEmail {
-        max-width: 160px;
-    }
-
-    .selected-priority table.journey td.cadName {
-        max-width: 250px;
-    }
-
-    .selected-priority table.journey td.cadSkill {
-        max-width: 235px;
-    }
-}
-
-.selected-priority table.journey td.interviewdate {
-    max-width: 160px;
-}
 
 
-.selected-priority .journey td.interview-com, .journey td.interview-com {
-    max-width: 300px;
-}
-
-.selected-priority table.journey td.cadName {
-    max-width: 250px;
-}
-
-.selected-priority table.journey td.cadSkill {
-    max-width: 235px;
-}
-
-}
-@media only screen and (max-width: 1920px) {
+@media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
         position: absolute;
         right: -6px !important;
+    }
+    .tabCon .tab-menu ul li a {
+        font-size: 17px !important;
+        padding: 10px 12px;
+    }
+    .tab-menu ul li:nth-child(3) a.active ~ .skillcount {
+        right: 16px !important;
+    }
+
+    .tab-menu ul li:nth-child(3) .skillcount {
+        right: 25px!important;
+    }
+
+    .tab-menu ul li:nth-child(4) .skillcount {
+        right: 22px !important;
+    }
+
+    .tab-menu ul li:nth-child(4) a.active ~ .skillcount {
+        right: 25px !important;
+    }
+    .tab-menu ul li:nth-child(5) .skillcount {
+        right: 4px !important;
+    }
+    .tab-menu ul li:nth-child(5) a.active ~ .skillcount {
+        right: 6px !important;
+    }
+
+    .tab-menu ul li:nth-child(6) a.active ~ .skillcount {
+        right: 4px !important;
+    }
+
+    .tab-menu ul li:nth-child(6) .skillcount {
+        right: 0px !important;
+    }
+    .tab-menu ul li:nth-child(7) .skillcount {
+        right: 22px !important;
+    }
+    .tab-menu ul li:nth-child(7) a.active ~ .skillcount {
+        right: 12px !important;
+    }
+    .tab-menu ul li:nth-child(8) .skillcount {
+        right: 18px !important;
+    }
+    .tab-menu ul li:nth-child(8) a.active ~ .skillcount {
+        right: 5px !important;
+    }
+    .tab-menu ul li:nth-child(9) .skillcount {
+        right: 32px !important;
+    }
+    .tab-menu ul li:nth-child(9) a.active ~ .skillcount {
+        right: 16px !important;
+    }
+
+    .tab-menu ul li:nth-child(10) .skillcount {
+        right: 0px !important;
+    }
+
+    .tab-menu ul li:nth-child(10) a.active ~ .skillcount {
+        right: 8px !important;
+    }
+    .tab-menu ul li:nth-child(11) .skillcount {
+        right: 11px !important;
+    }
+    .tab-menu ul li:nth-child(11) a.active ~ .skillcount {
+        right: 10px !important;
     }
 }
 
@@ -4543,7 +4581,36 @@ button.btn {
         width: 300px;
     }
 }
+@media (min-width: 992px) and (max-width: 1199px) {
+    table.journey td.cadName, table.journey td.cadEmail {
+        max-width: 200px;
+    }
 
+    table.journey td.cadSkill {
+        max-width: 150px;
+    }
+
+    .candidate table.journey td.cadEmail {
+        max-width: 160px;
+    }
+
+    .selected-priority table.journey td.cadName {
+        max-width: 250px;
+    }
+
+    .selected-priority table.journey td.cadSkill {
+        max-width: 235px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        max-width: 160px;
+    }
+
+
+    .selected-priority .journey td.interview-com, .journey td.interview-com {
+        max-width: 300px;
+    }
+}
 @media only screen and (max-width:991px) {
     .tabCon .tab-main-box {
         padding: 20px 10px;
@@ -4996,7 +5063,11 @@ input[type='radio'] {
     padding: 0px 10px 0px;
     clear: both;
 }
-
+.content.paymentdes {
+    margin-top: 30px;
+    padding: 30px 30px 30px;
+    clear: both;
+}
 /*.pt30 {
     padding-top: 30px;
 }*/

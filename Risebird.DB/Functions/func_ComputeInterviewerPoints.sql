@@ -35,7 +35,11 @@ BEGIN
 			end
 	   Else if(@meetingStatus=4 and (@interviewStatus=3 or @interviewStatus=1))
 			Begin
-				if(@videoDuration>=35)
+				if(@videoDuration=0)
+					Begin
+						set @updatedPoints=0
+					End
+				Else if(@videoDuration>=35)
 					Begin
 						set @updatedPoints=Round((35*@perSuccessRate)/60,0)
 					End
