@@ -373,7 +373,8 @@
                                                             <div class="mandate">
                                                                 @Html.Label("Channel Owner", "Channel Owner", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            @Html.DropDownList("RisebirdHr", (SelectList)ViewBag.RiseBirdHR, "Select", new { @class = "select-css form-control" })
+                                                            @*@Html.DropDownList("RisebirdHr", (SelectList)ViewBag.RiseBirdHR, "Select", new { @class = "select-css form-control" })*@
+                                                            @Html.DropDownList("RisebirdHr", (SelectList)ViewBag.ChannelOwnerOptions, "Select", new { @class = "select-css form-control" })
                                                             @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @id = "error_RisebirdHr", @class = "text-danger" })
 
                                                         </div>
@@ -2518,7 +2519,7 @@
                 }
 
                 if ($('#RisebirdHr').val() == "") {
-                    $('#error_RisebirdHr').text("Channel owner field is required.");
+                    $('#error_RisebirdHr').text("The Channel Owner field is required.");
                     flag = true;
                 }
                 else {

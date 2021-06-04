@@ -435,7 +435,8 @@
                                                             <div class="mandate">
                                                                 @Html.Label("Channel Owner", "Channel Owner", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            @Html.DropDownListFor(m => m.RisebirdHr, (SelectList)ViewBag.RiseBirdHR, "Select", new { @class = "form-control select-css " })
+                                                            @*@Html.DropDownListFor(m => m.RisebirdHr, (SelectList)ViewBag.RiseBirdHR, "Select", new { @class = "form-control select-css " })*@
+                                                            @Html.DropDownListFor(m => m.RisebirdHr, (SelectList)ViewBag.ChannelOwnerOptions, "Select", new { @class = "form-control select-css " })
                                                             @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @id = "error_RisebirdHr", @class = "text-danger" })
                                                         </div>
 
@@ -1618,6 +1619,15 @@
             else {
                 $('#error_TotalBudget').text("");
             }
+
+            if ($('#RisebirdHr').val() == "") {
+                $('#error_RisebirdHr').text("The Channel Owner field is required.");
+                flag = true;
+            }
+            else {
+                $('#error_RisebirdHr').text("");
+            }
+
             return flag;
         }
         else if (activeTab.trim() == "Tech Skill") {
