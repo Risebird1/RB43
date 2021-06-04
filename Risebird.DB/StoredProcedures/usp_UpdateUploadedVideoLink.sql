@@ -42,6 +42,37 @@ declare
 
 if(@meetingStatus is not null and @meetingStatus!=2)
 Begin
+	declare @IsEmergency bit
+	select @IsEmergency = IsEmergency from InterviewMeetings where id=@interviewId
+
+	If(@IsEmergency=1)
+	Begin
+	IF EXISTS(select 1 from TransEmergencyInterviewer where IRFId=@irfId and UserId=@interviewerUserId)
+		BEGIN
+		set @perSuccessRate = (select PerSuccessRate from TransEmergencyInterviewer where IRFId=@irfId and UserId=@interviewerUserId)
+		
+		set @updatedPoints= dbo.func_ComputeInterviewerPoints(@perSuccessRate, @videoDuration, @meetingStatus, @interviewStatus)
+
+		
+		IF NOT EXISTS(select 1 from InterviewPoints where Interviewid = @interviewId and userid=@interviewerUserId and [Type]='Interview')
+			BEGIN
+	 
+
+			 insert into InterviewPoints(Interviewid, userid, Points, [Type], Comment, [Status], [Date])
+			 values (@interviewId, @interviewerUserId, @updatedPoints, 'Interview', @candidateEmail, 'Pending', getdate())
+
+			END
+
+		ELSE
+			BEGIN
+				update InterviewPoints set Points = @updatedPoints, [Date]=getdate()
+				where Interviewid = @interviewId and userid=@interviewerUserId and [Type]='Interview'
+			END
+		END
+
+	End
+	Else
+	Begin
 	IF EXISTS(select 1 from TransInterviewer where IRFId=@irfId and UserId=@interviewerUserId)
 		BEGIN
 			set @perSuccessRate = (select PerSuccessRate from TransInterviewer where IRFId=@irfId and UserId=@interviewerUserId)
@@ -105,6 +136,12 @@ Begin
 					where Interviewid = @interviewId and userid=@interviewerUserId and [Type]='Interview'
 				END
 		END
+	End
+
+
+
+
+	
 		
 End
 
