@@ -92,14 +92,17 @@ namespace Risebird.Web.Controllers
                                 var Assessmentgroups = String.Empty;
                                 foreach (var groups in item.AssessmentGroupId.Split(","))
                                 {
-                                    int assesmsnetid = Convert.ToInt32(groups);
-                                    if (String.IsNullOrEmpty(Assessmentgroups))
+                                    if (!string.IsNullOrEmpty(groups) && !string.IsNullOrWhiteSpace(groups))
                                     {
-                                        Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
-                                    }
-                                    else
-                                    {
-                                        Assessmentgroups = Assessmentgroups + " , " + AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                                        int assesmsnetid = Convert.ToInt32(groups);
+                                        if (String.IsNullOrEmpty(Assessmentgroups))
+                                        {
+                                            Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                                        }
+                                        else
+                                        {
+                                            Assessmentgroups = Assessmentgroups + " , " + AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                                        }
                                     }
                                 }
                                 item.AssessmentGroupId = Assessmentgroups;
