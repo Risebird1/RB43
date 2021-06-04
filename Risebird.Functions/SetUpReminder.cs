@@ -45,29 +45,29 @@ namespace Risebird.Functions
 
                         SendMail(item.candidateEmail, item.InteviewerEmailId, item.interviewDate.ToString("dd MMMM yyyy hh:mm:ss tt"));
 
-                        var phoneNumbers = new List<string>
-                        {
-                            item.CandidatePhone,
-                            item.InteviewerPhone
-                        };
+                        //var phoneNumbers = new List<string>
+                        //{
+                        //    item.CandidatePhone,
+                        //    item.InteviewerPhone
+                        //};
 
-                        var msg = "You have received this communication as a reminder to set up your system prior to your meeting scheduled at " + item.interviewDate.ToString("dd MMMM yyyy hh:mm:ss tt") + " to avoid any last minute hassles.";
-                        if (phoneNumbers != null && phoneNumbers.Count() > 0)
-                        {
-                            //send an sms to all the interviewers with the message
-                            var _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
-                            Parallel.ForEach(phoneNumbers, phoneNumber =>
-                            {
-                                if (!string.IsNullOrEmpty(phoneNumber))
-                                {
-                                    if (!string.IsNullOrEmpty(phoneNumber))
-                                        MessageResource.CreateAsync(to: new PhoneNumber(phoneNumber), from: new PhoneNumber(twilioSMSNumber), body: msg, client: _twilioClient);
-                                    log.Info($"SMS Timer trigger function executed for: {phoneNumber}");
-                                }
+                        //var msg = "You have received this communication as a reminder to set up your system prior to your meeting scheduled at " + item.interviewDate.ToString("dd MMMM yyyy hh:mm:ss tt") + " to avoid any last minute hassles.";
+                        //if (phoneNumbers != null && phoneNumbers.Count() > 0)
+                        //{
+                        //    //send an sms to all the interviewers with the message
+                        //    var _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
+                        //    Parallel.ForEach(phoneNumbers, phoneNumber =>
+                        //    {
+                        //        if (!string.IsNullOrEmpty(phoneNumber))
+                        //        {
+                        //            if (!string.IsNullOrEmpty(phoneNumber))
+                        //                MessageResource.CreateAsync(to: new PhoneNumber(phoneNumber), from: new PhoneNumber(twilioSMSNumber), body: msg, client: _twilioClient);
+                        //            log.Info($"SMS Timer trigger function executed for: {phoneNumber}");
+                        //        }
 
-                            }
-                            );
-                        }
+                        //    }
+                        //    );
+                        //}
 
                         log.Info($"SetUpReminder Timer trigger function executed for meeting with date: {item.interviewDate}");
 

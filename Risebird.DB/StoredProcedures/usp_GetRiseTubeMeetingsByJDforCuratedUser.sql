@@ -15,11 +15,27 @@ GO
 
 Create PROCEDURE [dbo].[usp_GetRiseTubeMeetingsByJDforCuratedUser]    
 	 @Emailid varchar(100),
-	 @JDpattern varchar(100)
+	 @JDpattern varchar(100),
+	 @startDate datetime,
+	 @endDate datetime
 AS    
-Begin         
-DECLARE @id int        
- Select @id=id from UserList where EmailId=@Emailid        
+Begin   
+
+DECLARE 
+	@id int,
+	@EmailIdParam varchar(100), 
+	@JDPatternParam varchar(100),
+	@startDateParam datetime,
+	@endDateParam datetime 
+	
+	set @EmailIdParam=@Emailid
+	set @JDPatternParam =@JDpattern
+	set @startDateParam =@startDate
+	set @endDateParam=@endDate
+
+ Select @id=id from UserList where EmailId=@EmailIdParam  
+ 
+
 select distinct im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,    
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,    
@@ -49,7 +65,8 @@ outer apply (Select top 1 status from SuitableCandidate where InterviewId= ic.In
 outer apply (Select top 1 status from RiseTubeVedioShortList where InterviewId= ic.InterviewId and Userid=@id  order by ShortListedOn desc)rtvsl
 outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount
 outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore
-where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and cgs.UserId=@id  and ccs.CuratedEmailId=@Emailid and ccs.Score>=30 and IRF.JDTiltle LIKE ('%' +@JDpattern+'%')
+where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and cgs.UserId=@id  and ccs.CuratedEmailId=@EmailIdParam and ccs.Score>=30 and IRF.JDTiltle LIKE ('%' +@JDPatternParam+'%')
+and cast(im.interviewDate as date)>=cast(@startDateParam as date) and cast(im.interviewDate as date)<=cast(@endDateParam as date)
 group by im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,    
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,    

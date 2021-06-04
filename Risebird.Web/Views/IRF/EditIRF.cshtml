@@ -54,18 +54,18 @@
                                 <div class="tabCon">
                                     <div class="tab-menu">
                                         <ul class="tabs">
-                                            <li><a href="#" class="active"  id="rtab-1" onclick="headerClickchange('tab-1')">Event Details</a></li>
-                                            <li><a href="#"  id="rtab-2" class="" onclick="headerClickchange('tab-2')">Job Details</a></li>
-                                            <li><a href="#"  id="rtab-3" class="" onclick="headerClickchange('tab-3')">Tech Skill</a></li>
-                                            <li><a href="#"  id="rtab-4" class="" onclick="headerClickchange('tab-4')">Joinability</a></li>
-                                            <li><a href="#"  id="rtab-5" class="" onclick="headerClickchange('tab-5')">Selectability</a></li>
-                                            <li><a href="#" id="rtab-6" class="" onclick="headerClickchange('tab-6')">General Skill</a></li>
-                                            <li><a href="#"  id="rtab-7" class="" onclick="headerClickchange('tab-7')">Client</a></li>
-                                            <li><a href="#"  id="rtab-8" class="" onclick="headerClickchange('tab-8')">Interviewer</a></li>
-                                            <li><a href="#"  id="rtab-9" class="" onclick="headerClickchange('tab-9')">QC</a></li>
-                                            <li><a href="#"  id="rtab-10" class="" onclick="headerClickchange('tab-10')">E.Interviewer</a></li>
+                                            <li><a href="#" class="active text-center"  id="rtab-1" onclick="headerClickchange('tab-1')">Event Details</a></li>
+                                            <li><a href="#"  id="rtab-2" class="text-center" onclick="headerClickchange('tab-2')">Job Details</a></li>
+                                            <li><a href="#" id="rtab-3" class="" onclick="headerClickchange('tab-3')">Tech Skill </a><span id="count_SkillCollection" class="skillcount">@Model.SkillCollection.Count()</span></li>
+                                            <li><a href="#"  id="rtab-4" class="" onclick="headerClickchange('tab-4')">Joinability</a><span id="count_Joinability" class="skillcount">@Model.Joinability.Count()</span></li>
+                                            <li><a href="#" id="rtab-5" class="" onclick="headerClickchange('tab-5')">Selectability</a><span id="count_Selectability" class="skillcount">@Model.Selectability.Count()</span></li>
+                                            <li><a href="#" id="rtab-6" class="" onclick="headerClickchange('tab-6')">General Skill</a><span id="count_SkillGeneral" class="skillcount">@Model.SkillGeneral.Count()</span></li>
+                                            <li><a href="#" id="rtab-7" class="text-center" onclick="headerClickchange('tab-7')">Client</a><span id ="count_ClientTable" class="skillcount">@Model.ClientCollection.Count()</span></li>
+                                            <li><a href="#"  id="rtab-8" class="" onclick="headerClickchange('tab-8')">Interviewer</a><span id="count_Interviewer" class="skillcount">@Model.InterviewerCollection.Count()</span></li>
+                                            <li><a href="#"  id="rtab-9" class="text-center" onclick="headerClickchange('tab-9')">QC</a><span id="count_qc" class="skillcount">@Model.QualityController.Count()</span></li>
+                                            <li><a href="#"  id="rtab-10" class="" onclick="headerClickchange('tab-10')">E.Interviewer</a><span id="count_Em" class="skillcount">@Model.EmergencyInterviewerCollection.Count()</span></li>
                                             @*<li><a href="#" rel="tab-11" id="rtab-11" class="">Resume Evaluator</a></li>*@
-                                            <li><a href="#"  id="rtab-11" class="" onclick="headerClickchange('tab-11')">Coordinator</a></li>
+                                            <li><a href="#"  id="rtab-11" class="" onclick="headerClickchange('tab-11')">Coordinator</a><span id="count_Hr" class="skillcount">@Model.HRCollection.Count()</span></li>
                                             @*<li><a href="#" rel="tab-13" id="rtab-13" class="">Recruiter</a></li>*@
 
                                         </ul>
@@ -435,7 +435,8 @@
                                                             <div class="mandate">
                                                                 @Html.Label("Channel Owner", "Channel Owner", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            @Html.DropDownListFor(m => m.RisebirdHr, (SelectList)ViewBag.RiseBirdHR, "Select", new { @class = "form-control select-css " })
+                                                            @*@Html.DropDownListFor(m => m.RisebirdHr, (SelectList)ViewBag.RiseBirdHR, "Select", new { @class = "form-control select-css " })*@
+                                                            @Html.DropDownListFor(m => m.RisebirdHr, (SelectList)ViewBag.ChannelOwnerOptions, "Select", new { @class = "form-control select-css " })
                                                             @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @id = "error_RisebirdHr", @class = "text-danger" })
                                                         </div>
 
@@ -1326,7 +1327,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $(".selectpicker").select2();
-
+        $(".active").next("span").addClass("active-c");
         $("#btnPrev").click(function () {
             var activeTab = $(".active").text();
             if (activeTab.trim() == "Job Details") {
@@ -1335,7 +1336,7 @@
                 document.getElementById("tab-1").style.display = "block";
                 document.getElementById("tab-2").style.display = "none";
                 document.getElementById("btnPrev").style.display = "none";
-   
+
             }
             else if (activeTab.trim() == "Tech Skill") {
                 $(".tab-menu li a").removeClass("active");
@@ -1387,7 +1388,7 @@
                 $("#rtab-9").addClass("active");
                 document.getElementById("tab-9").style.display = "block";
                 document.getElementById("tab-10").style.display = "none";
-            
+
             }
 
             else if (activeTab.trim() == "Coordinator") {
@@ -1464,6 +1465,8 @@
                 }
             }
             else if (activeTab.trim() == "Client") {
+                
+                flag = checkTabValidation(activeTab);
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
                     $("#rtab-8").addClass("active");
@@ -1498,11 +1501,11 @@
                     document.getElementById("tab-10").style.display = "none";
                     document.getElementById("btnNext").style.display = "none";
                     document.getElementById("btnUpload").style.display = "block";
-              
+
                 }
             }
-          
- 
+
+
         });
     });
 
@@ -1616,6 +1619,15 @@
             else {
                 $('#error_TotalBudget').text("");
             }
+
+            if ($('#RisebirdHr').val() == "") {
+                $('#error_RisebirdHr').text("The Channel Owner field is required.");
+                flag = true;
+            }
+            else {
+                $('#error_RisebirdHr').text("");
+            }
+
             return flag;
         }
         else if (activeTab.trim() == "Tech Skill") {
@@ -1635,6 +1647,7 @@
             return flag;
         }
         else if (activeTab.trim() == "Client") {
+            flag = checkClientDetails();
             return flag;
         }
         else if (activeTab.trim() == "Interviewer") {
@@ -1746,7 +1759,7 @@
                 $("#r" + newHeader).addClass("active");
                 document.getElementById(newHeader).style.display = "block";
                 document.getElementById("tab-10").style.display = "none";
-                
+
             }
         }
         else if (activeTab.trim() == "Coordinator") {
@@ -1777,10 +1790,14 @@
 
         }
     }
-   
+
+
+
+
     function checkWeightageTab(tab_skill) {
         var inCorrectCount = 0;
         var items = $('[id^=' + tab_skill + '][id$="Weightage"]');
+        $("#count_" + tab_skill).text(items.length);
         var total = 0;
         for (j = 0; j < items.length; j++) {
             var total = total + parseInt($("#" + items[j].id).val());
@@ -1884,20 +1901,21 @@
         return false;
     }
     function checkInterviewerDetails() {
-      
+
         var table = document.getElementById("InterviewerTable");
         var rowCount = table.rows.length;
+        $("#count_Interviewer").text(rowCount-1);
         for (var i = 0; i < rowCount; i++) {
             if ($("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "" || $("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "0") {
-                document.getElementById("noInterviewer").innerHTML = "Per Interviewer Rate should not be blank";              
+                document.getElementById("noInterviewer").innerHTML = "Per Interviewer Rate should not be blank";
                 return true;
             }
             else {
-                document.getElementById("noInterviewer").innerHTML = "";   
-                
+                document.getElementById("noInterviewer").innerHTML = "";
+
             }
         }
-       
+
         var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
         for (i = 0; i < drpdowns.length; i++) {
             var interviewId = $("#" + drpdowns[i].id).val();
@@ -1912,6 +1930,7 @@
     function checkQcDetails() {
         var qctable = document.getElementById("QualityControllerTable");
         var qcrowCount = qctable.rows.length;
+        $("#count_qc").text(qcrowCount-1);
         for (var i = 0; i < qcrowCount; i++) {
             if ($("#QualityController_" + i + "__PerSuccessRate").val() == "" || $("#QualityController_" + i + "__PerSuccessRate").val() == "0") {
                 document.getElementById("qcInterviewer").innerHTML = "Per QC Rate should not be blank";
@@ -1936,6 +1955,7 @@
     function checkEmergencyDetails() {
         var emetable = document.getElementById("EmergencyInterviewerTable");
         var emerowCount = emetable.rows.length;
+        $("#count_Em").text(emerowCount-1);
         for (var i = 0; i < emerowCount; i++) {
             if ($("#EmergencyInterviewerCollection_" + i + "__PerSuccessRate").val() == "" || $("#EmergencyInterviewerCollection_" + i + "__PerSuccessRate").val() == "0") {
                 document.getElementById("emInterviewer").innerHTML = "Per Emergency Interviewer Rate should not be blank";
@@ -1953,6 +1973,21 @@
             }
         }
         document.getElementById("emInterviewer").innerHTML = "";
+        return false;
+    }
+    function checkClientDetails() {
+        var table = document.getElementById("ClientTable");
+        var rowCount = table.rows.length;
+        $("#count_ClientTable").text(rowCount-1);
+        for (var i = 0; i < rowCount; i++) {
+            if ($("#ClientCollection_" + i + "__ClientUserId").val() == "") {
+                document.getElementById("error_client").innerHTML = "Client User should not be blank";
+                return true;
+            }
+            else {
+                document.getElementById("error_client").innerHTML = "";
+            }
+        }
         return false;
     }
 

@@ -109,6 +109,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<Users> GetEligibleChannelOwners()
+        {
+            try
+            {
+                return _irfRepository.GetEligibleChannelOwners();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
         public SelectList GetQualityController()
         {

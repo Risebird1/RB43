@@ -696,12 +696,19 @@ input[type="radio"]:checked {
     background: none;
     color: #000;
 }
+.tab-menu ul li .skillcount {
+    background: #cfd0d2cc;
+}
     .tab-menu ul li a.active {
         background: #c2c2c58a;
         color: #656262;
         text-decoration: none;
     }
-
+        .tab-menu ul li a.active ~ .skillcount {
+            right: -9px !important;
+            background: #868483;
+            color: #fff;
+        }
 table {
     border: 1px #ccc solid !important;
 }
