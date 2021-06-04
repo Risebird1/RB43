@@ -35,5 +35,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime interviewDate { get; set; }
         public int MeetingStatus { get; set; }
         public int TotalCount { get; set; }
+        public int IsMeetingNotificationSent { get; set; }
+        public int IsRescheduleNotificationSent { get; set; }
     }
 }

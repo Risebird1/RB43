@@ -614,8 +614,8 @@
                                                 <table class="table table-bordered table-striped">
                                                     <thead>
                                                         <tr>
-                                                            <th width="40%">Interview Date</th>
-                                                            <th width="60%">Interview</th>
+                                                            <th width="30%">Date</th>
+                                                            <th width="70%">Interview/Resolved/Unresolved</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -626,8 +626,8 @@
                                                                 <td>
                                                                     <strong>
                                                                         @Model.InterviewManagement.Where(x => x.interviewDate == item).Count() /
-                                                                        <span style="color:green"> @Model.InterviewManagement.Where(x => x.interviewDate == item && x.TotalCount >= 2).Count()</span> /
-                                                                        <span style="color:red">@Model.InterviewManagement.Where(x => x.interviewDate == item && x.TotalCount == 1).Count()</span>
+                                                                        <span style="color:green"> @Model.InterviewManagement.Where(x => x.interviewDate == item && x.TotalCount >= 2 && x.IsMeetingNotificationSent == 1 && x.IsRescheduleNotificationSent == 0).Count()</span> /
+                                                                        <span style="color:red">@Model.InterviewManagement.Where(x => x.interviewDate == item && ((x.TotalCount == 1 && x.IsMeetingNotificationSent == 1) || (x.TotalCount >= 2 && x.IsMeetingNotificationSent == 1 && x.IsRescheduleNotificationSent == 1))).Count()</span>
                                                                     </strong>
                                                                 </td>
                                                             </tr>

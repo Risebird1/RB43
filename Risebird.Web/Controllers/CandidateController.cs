@@ -2639,8 +2639,8 @@ namespace Risebird.Web.Controllers
                                             Phone = (workSheet.Cells[rowIterator, 4].Value != null)
                                                 ? ("+" + workSheet.Cells[rowIterator, 4].Value)
                                                 : string.Empty,
-                                            WhatsappNumber = (workSheet.Cells[rowIterator, 5].Value != null)
-                                                ? ("+" + workSheet.Cells[rowIterator, 5].Value)
+                                            WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
+                                                ? workSheet.Cells[rowIterator, 5].Value.ToString()
                                                 : string.Empty,
                                             ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
                                                 ? workSheet.Cells[rowIterator, 6].Value.ToString()
