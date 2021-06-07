@@ -1940,7 +1940,11 @@ namespace Risebird.Repository
                 {
                     var result = await SqlMapper.QueryAsync<int>(con, "usp_DeleteIRF", parameters,
                         commandType: CommandType.StoredProcedure);
-                    return true;
+                    if (result != null && result.FirstOrDefault() == 0)
+                    {
+                        return true;
+                    }
+                    return false;
 
                 }
 
@@ -1963,14 +1967,18 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "update IRF set IsDeleted=0 where id = @IRFId;";
+                var query = "update IRF set IsDeleted=0 where id = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", IRFId);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.QueryAsync<int>(query, dynamicParameters);
-                    return true;
+                    var result = await con.QueryAsync<int>(query, dynamicParameters);
+                    if(result != null && result.FirstOrDefault()==0)
+                    {
+                        return true;
+                    }
+                    return false;
                 }
 
             }

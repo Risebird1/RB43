@@ -306,13 +306,13 @@
                                                     {
                                                         if (!item.IsDeleted)
                                                         {
-                                                            <button id="skill_22" class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
+                                                            <button  id="btnArchive_@item.id" @*id="skill_22"*@ class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
                                                                 <span onclick="javascript:ArchiveIRF('@item.id', '@item.IRFId');" title="Archive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
                                                             </button>
                                                         }
                                                         else
                                                         {
-                                                            <button class="mdc-fab app-fab--absolute unarchive-btn" aria-label="UnArchive">
+                                                            <button id="btnUnArchive_@item.id" class="mdc-fab app-fab--absolute unarchive-btn" aria-label="UnArchive">
                                                                 <span onclick="javascript:UnArchiveIRF('@item.id', '@item.IRFId');" title="UnArchive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
                                                             </button>
                                                         }
@@ -335,7 +335,7 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="statusImg">
-                                                    <img id="statusImage" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
+                                                    <img id="statusImage_@item.id" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
                                                 </div>
                                                 <div class="statusInfo">
                                                     <div class="group inner list-group-item-text">
@@ -1003,6 +1003,9 @@
                         url: '/IRF/ArchiveIRF?id=' + irfId,
                         success: function (result) {
                             if (result == true) {
+                                //document.getElementById('statusImage_' + irfId).src = '/img/Cards_Png/01_Black-White.png';
+                                //document.getElementById('btnArchive_' + irfId).style.display = 'none';
+                                //document.getElementById('btnUnArchive_' + irfId).style.display = 'block';
                                 resolve(result)
 
                             }
@@ -1049,7 +1052,6 @@
     }
 
     function UnArchiveIRF(irfId, irfName) {
-
         swal.fire({
             title: 'Are you sure?',
             text: "The Skill Channel(" + irfName + ") will be Unarchived!",
@@ -1064,18 +1066,21 @@
                         url: '/IRF/UnArchiveIRF?id=' + irfId,
                         success: function (result) {
                             if (result == true) {
+                                //document.getElementById('statusImage_' + irfId).src = '/img/Cards_Png/01_Green-White.png';
+                                //document.getElementById('btnArchive_' + irfId).style.display = 'block';
+                                //document.getElementById('btnUnArchive_' + irfId).style.display = 'none';
                                 resolve(result)
 
                             }
                             else {
-                                swal.fire("Error!", "Please try again", "error");
+                                swal.fire("Error Unarchiving!", "Please try again", "error");
 
                             }
 
                         },
                         error: function () {
 
-                            swal.fire("Error!", "Please try again", "error");
+                            swal.fire("Error Unarchiving!", "Please try again", "error");
                         }
                     })
                 })
@@ -1294,11 +1299,7 @@
         });
 
     }
-    function UnArchiveIRF(id) {
-        var url = '/IRF/UnArchiveIRF?id=' + id;
-        window.location.href = url;
-    };
-
+    
     function PauseIRF(irfId, irfName) {
 
         swal.fire({
