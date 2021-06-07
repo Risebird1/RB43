@@ -1765,7 +1765,11 @@
 
     </script>
     <script>
-
+        function AutoCallCandidatejson(irfId, candidateMasterId) {
+            var phone = $('#hidphone' + irfId).val();
+            var candidatename = $('#hiditem' + irfId).val();
+            AutoCallCandidate(phone, irfId, candidateMasterId, candidatename);
+        }
         function AutoCallCandidate(phoneNumber, irfId, candidateId, candidateName) {
 
             swal.fire({
