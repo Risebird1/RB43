@@ -928,13 +928,13 @@ namespace Risebird.Web.Controllers
                         ViewBag.PageHeader = "";
                         ViewBag.Actiontype = actiontype;
                         ViewBag.actionstatus = actionstatus;
-                        if(actionstatus == "InterviewCount")
-                        { 
+                        if (actionstatus == "InterviewCount")
+                        {
                             ViewBag.PageHeader = "911 Dashboard / Unassigned Interviews";
                         }
-                        else if(actionstatus == "MeetingStatus")
+                        else if (actionstatus == "MeetingStatus")
                         {
-                          ViewBag.PageHeader = "911 Dashboard / Status Pending";
+                            ViewBag.PageHeader = "911 Dashboard / Status Pending";
                         }
 
                         else if (actionstatus == "QcPending")
@@ -1022,6 +1022,11 @@ namespace Risebird.Web.Controllers
                                 x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription();
                                 return x;
                             }).ToList();
+                            modelList = modelList.Select(x =>
+                            {
+                                x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription();
+                                return x;
+                            }).ToList();
                         }
                         else
                         {
@@ -1061,10 +1066,44 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-
                         if (filter != null)
                         {
                             HttpContext.Session.SetString("UnassignedInterviewsFilters", JsonConvert.SerializeObject(filter));
+                        }
+                        ViewBag.PageHeader = "";
+                        ViewBag.Actiontype = actiontype;
+                        ViewBag.actionstatus = actionstatus;
+                        if (actionstatus == "InterviewCount")
+                        {
+                            ViewBag.PageHeader = "911 Dashboard / Unassigned Interviews";
+                        }
+                        else if (actionstatus == "MeetingStatus")
+                        {
+                            ViewBag.PageHeader = "911 Dashboard / Status Pending";
+                        }
+                        else if (actionstatus == "QcPending")
+                        {
+                            ViewBag.PageHeader = "911 Dashboard / Qc Pending";
+                        }
+                        else if (actionstatus == "UnAssignedCoordianter" && actiontype == 0)
+                        {
+                            ViewBag.PageHeader = "911 Dashboard / Unassigned RB Coordinator";
+                        }
+                        else if (actionstatus == "UnAssignedCoordianter" && actiontype == 1)
+                        {
+                            ViewBag.PageHeader = "911 Dashboard / PENDING CANDIDATE FEEDBACK";
+                        }
+                        else if (actionstatus == "ZoomLink")
+                        {
+                            ViewBag.PageHeader = "911 Dashboard / Missing Zoom Link";
+                        }
+                        else if (actionstatus == "UnAttendedZoomLink")
+                        {
+                            ViewBag.PageHeader = "911 Dashboard / Participant Waiting";
+                        }
+                        else if (actionstatus == "VideoLink")
+                        {
+                            ViewBag.PageHeader = "911 Dashboard / Missing Video Link";
                         }
                         var modelList = new List<MeetingVM>();
                         if (actiontype == 1 && actionstatus == "UnAssignedCoordianter")
@@ -1133,6 +1172,11 @@ namespace Risebird.Web.Controllers
                         modelList = modelList.Select(x =>
                         {
                             x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription();
+                            return x;
+                        }).ToList();
+                        modelList = modelList.Select(x =>
+                        {
+                            x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription();
                             return x;
                         }).ToList();
                         modelList = modelList.OrderBy(x => x.interviewDate).ToList();
