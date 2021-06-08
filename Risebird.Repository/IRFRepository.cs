@@ -1860,12 +1860,13 @@ namespace Risebird.Repository
                     foreach (var item in obj.SkillCollection)
                     {
 
-                        string sqlJoinability = "INSERT INTO TechSkillComments (IRFId, Skill, Comment) Values (@IRFId, @Skill, @Comment);";
-                        var affectedRows = con.Execute(sqlJoinability, new
+                        string questionRow = "INSERT INTO TechSkillComments (IRFId, Skill, Comment, UserId) Values (@IRFId, @Skill, @Comment, @UserId);";
+                        var affectedRows = con.Execute(questionRow, new
                         {
                             obj.IRFId,
                             Skill = Convert.ToInt16(item.Skill),
-                            item.Comment
+                            item.Comment,
+                            item.UserId
 
                         });
                     }
@@ -2707,7 +2708,7 @@ namespace Risebird.Repository
             }
         }
 
-        public int GetUserId(string emailId, string profile)
+        public int GetUserId(string emailId, string profile=null)
         {
             int result = 0;
             try
@@ -2735,6 +2736,8 @@ namespace Risebird.Repository
                 return result;
             }
         }
+
+        
 
         public IEnumerable<Recruiter> GetRecruiters()
         {

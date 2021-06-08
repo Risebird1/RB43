@@ -12,14 +12,25 @@ GO
 
 CREATE PROCEDURE [dbo].[usp_GetUserId]
 @EmailId varchar(200),
-@Profile varchar(200)
+@Profile varchar(200) = null
 
 AS
 Begin
-declare
-@ProfileId int = (select id from [Profile] where [Name] = @Profile)
 
-select id from UserList where EmailId=@EmailId and idProfile=@ProfileId
+if(@Profile is null)
+begin
+	select id from UserList where EmailId=@EmailId 
+end
+
+else
+begin
+	declare
+	@ProfileId int = (select id from [Profile] where [Name] = @Profile)
+
+	select id from UserList where EmailId=@EmailId and idProfile=@ProfileId
+end
+
+
 
 END
 

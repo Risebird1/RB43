@@ -1160,7 +1160,7 @@ namespace Risebird.Business
 
         }
 
-        public int GetUserId(string emailId, string profile)
+        public int GetUserId(string emailId, string profile=null)
         {
             int result = 0;
             try

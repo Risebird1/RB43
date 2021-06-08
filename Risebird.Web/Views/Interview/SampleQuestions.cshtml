@@ -4,6 +4,7 @@
     ViewData["Title"] = "Sample Questions";
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    bool isDeletetable = false;
 }
 <script>
     var Header = "<a href='/IRF/Index'>Skills Channel</a>&nbsp;/&nbsp;Sample Questions";
@@ -22,13 +23,14 @@
                 <div class="mdc-card card">
                     <div class="mdc-card-wrapper__text-section">
                         <form action="/Interview/SampleQuestions" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
-                            @Html.AntiForgeryToken();
+                            @Html.AntiForgeryToken()
                             <div class="row">
                                 <div class="card-header">
-                                 <h4 class="card-title">Sample Questions</h4>
+                                    <h4 class="card-title">Sample Questions</h4>
                                 </div>
                                 <div style="width:100%; float:left;height:10px;"></div>
-                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div>
                                         <table class="table table-bordered mbn" id="SkillTable">
@@ -64,8 +66,10 @@
                                                         <td class="text-center action-area">
 
                                                             <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnMinus_0" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment', 'UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
+                                                        </td>
+                                                        <td class="HiddenUserIdElement">
                                                         </td>
                                                     </tr>
 
@@ -76,15 +80,35 @@
                                                     {
                                                         <tr>
                                                             <td>
+                                                                @if (Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId)
+                                                                {
+                                                                    @Html.DropDownListFor(m => m.SkillCollection[i].Skill, (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
 
-                                                                @Html.DropDownListFor(m => m.SkillCollection[i].Skill, (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
+                                                                }
+                                                                else
+                                                                {
+                                                                    var newList = new List<SelectListItem>();
+                                                                    newList.Add(new SelectListItem(){ Value = Model.SkillCollection[i].Skill, Text = ((SelectList)ViewBag.Skills).Where(x=>x.Value == Model.SkillCollection[i].Skill).FirstOrDefault().Text });
+
+                                                                    @Html.DropDownListFor(m => m.SkillCollection[i].Skill, newList, new { @class = "select-css form-control" })
+
+                                                                }
+
                                                             </td>
 
                                                             <td>
                                                                 <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                     <div class="talktext">
+                                                                        @if (Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId)
+                                                                        {
+                                                                            @Html.TextAreaFor(m => m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
 
-                                                                        @Html.TextAreaFor(m => m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @Html.TextAreaFor(m => m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line"}, @style = "width:100%", @readonly = "readonly" })
+
+                                                                        }
 
                                                                     </div>
                                                                 </div>
@@ -94,13 +118,20 @@
 
                                                             <td class="text-center">
                                                                 <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                
+                                                                @if (((Model.Profile == "Interviewer" || Model.Profile == "HR") && Model.SkillCollection[i].UserId == Model.UserId) || (Model.Profile == "Admin"))
+                                                                {
+                                                                    isDeletetable = true;
 
-                                                                <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-
+                                                                }
+                                                                @{
+                                                                    string displayStatus = isDeletetable ? "block" : "none";
+                                                                }
+                                                                <span id="btnMinus_@i" style="display:@displayStatus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment','UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
 
                                                             </td>
+                                                            @Html.HiddenFor(m => m.SkillCollection[i].UserId)
                                                         </tr>
                                                     }
                                                 }
@@ -124,6 +155,7 @@
 
 
                             @Html.HiddenFor(m => m.IRFId)
+                            @Html.HiddenFor(m => m.UserId)
                         </form>
 
                     </div>
@@ -139,13 +171,31 @@
 </div>
 
 <script>
-    $('form').submit(function () {
-        if ($(this).valid()) {
-            $(':submit', this).attr('disabled', 'disabled');
+
+    $(document).ready(function () {
+        if ('@Model.SkillCollection.Count()' == '0') {
+            var x = document.createElement("INPUT");
+            x.setAttribute("type", "hidden");
+            x.setAttribute("id", 'SkillCollection_0__UserId');
+            document.getElementsByClassName("HiddenUserIdElement")[0].appendChild(x);
+            $("#SkillCollection_0__UserId").val(@Model.UserId);
+            $("#SkillCollection_0__UserId").prop('name', 'SkillCollection[0].UserId');;
+            if (document.getElementById('btnMinus_0').style.display == 'none') {
+                document.getElementById('btnMinus_0').style.display = "block";
+
+            }
+
         }
     });
-    function AddRowComments() {
 
+    //$('form').submit(function () {
+    //    if ($(this).valid()) {
+    //        $(':submit', this).attr('disabled', 'disabled');
+    //    }
+    //});
+
+
+    function AddRowComments() {
         var table = document.getElementById("SkillTable");
 
         var $ttc = $("#SkillTable").find("tbody tr:last");
@@ -163,22 +213,33 @@
             var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
         })
-
-
+        
 
         // reset fields in the new row
         $tr.find("select").val("");
         $tr.find("textarea[type=text]").val("");
-        $tr.find("input[type=hidden]").val("");
+        $tr.find("input[type=hidden]").val(@Model.UserId);
 
-        $tr.find("a").val("");
+        var rowCount = $('#SkillTable tr').length;
+
+        var finalIndex = rowCount-1;
+        
+        $tr.find("input[type=hidden]").prop('id', 'SkillCollection_' + finalIndex + '__UserId');
+        $tr.find("input[type=hidden]").prop('name', 'SkillCollection[' + finalIndex + '].UserId');
+        //$tr.find("select").prop('disabled', false);
+        $tr.find('span:last').prop('style', 'display:block');
+        //$tr.find('span:last').prop('id', 'btnMinus_'+ (parseInt(index) +1));
+
+
+
+
 
         // add cloned row as last row
         $("#SkillTable").find("tbody tr:last").after($tr);
 
         var $ttlast = $("#SkillTable").find("tbody tr:last");
         $ttlast.find("textarea").val("");
-
+        
         // Find the affected form
         var $form = $tr.closest("FORM");
 
@@ -186,14 +247,32 @@
         $form.unbind();
         $form.data("validator", null);
 
+        var options = '@Model.SkillsOptionsData';
+        optionsData = JSON.parse(options.replace(/&quot;/g, '"'));
+        console.log(optionsData);
+
+        $("#SkillCollection_" + finalIndex + "__Skill" + " option").remove();
+
+        $(optionsData).each(function () {
+            var option = $("<option />");
+
+            //Set Text part.
+            option.html(this.Name);
+
+            //Set Value part.
+            option.val(this.id);
+
+            //Add the Option element to DropDownList.
+
+            $("#SkillCollection_" + finalIndex + "__Skill").append(option);
+        });
         //// Check document for changes
         //$.validator.unobtrusive.parse(document);
 
     }
 
 
-    function DeleteRow(element, collectionName, tdOne, tdTwo) {
-
+    function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree) {
         if ($(element).parents('tbody').find('tr').length === 1) {
 
             alert('Must have atleast one Row');
@@ -223,6 +302,10 @@
                     elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
                     elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
                     elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                    elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
 
                 }
 
