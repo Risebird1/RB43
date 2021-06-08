@@ -20,10 +20,12 @@ body {
     .can-details a:focus {
         color: #f96332 !important;
     }
+
 .Fnactive-header-button {
     background-color: #204065 !important;
     color: #fff !important;
 }
+
 .sharetr {
     background: #e2e2e2;
     padding: 5px;
@@ -376,6 +378,7 @@ textarea::-webkit-scrollbar-thumb {
     color: #5f5c5c !important;
 }
 
+
 .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
     border-color: #53a5f5 !important;
     background-color: #53a5f5 !important;
@@ -507,7 +510,7 @@ textarea::-webkit-scrollbar-thumb {
 .mdc-card .tab-box .form-control, .mdc-card .tab-box .form-control[disabled], .mdc-card .tab-box .form-control[readonly], .mdc-card .tab-box .form-control:focus {
     background: #e6e6e6ad;
     color: #888 !important;
-    border-bottom:0px!important;
+    border-bottom: 0px !important;
 }
 
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
@@ -594,35 +597,44 @@ textarea::-webkit-scrollbar-thumb {
 .select-css, .select-css:disabled, .select-css[aria-disabled=true] {
     background-image: url('../../img/drop.png') !important;
 }
+
 .d_active {
     background-color: #53a5f5 !important;
     color: #fff !important;
 }
+
 .user-menu .fa-user-circle-o:before, .user-menu .fa-sign-out:before, .user-menu .fa-cog:before {
     color: #417abb;
 }
+
 .user-menu__item span {
     color: #1f3e63 !important;
     text-transform: uppercase;
     font-size: 13px;
     font-weight: 600;
 }
+
 .menu-container ul {
     border-bottom: 2px #86c3ff solid;
 }
+
 .user-menu:before {
     border-top: 1px solid #54a5f5b5;
     border-left: 1px solid #54a5f5b5;
 }
+
 .user-menu {
     border: 2px #dae6f3 solid;
 }
+
 .msger-send-btn {
     background-image: url(../../img/send.png) !important;
 }
+
 .alert.alert-info {
     background-color: #46b3ff;
 }
+
 .dropdown-toggle {
     background: #fff !important;
 }
@@ -695,6 +707,7 @@ input[type="radio"]:checked, input[type="checkbox"]:checked {
     border-right: 5px solid white !important;
     border-left: 5px solid white !important;
 }
+
 table {
     border: 1px #ccc solid !important;
 }
@@ -743,17 +756,21 @@ table {
 .sidebar-wrapper > .nav li > a.active-menu, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
     background-color: #fff;
 }
+
 .tab-main-box {
     background: #fff;
 }
-    .tab-menu ul li a {
+
+.tab-menu ul li a {
     background: #54a5f557;
-    color:#000;
+    color: #000;
 }
+
 .tabCon .tab-menu ul li a {
     background: none;
     color: #000;
 }
+
 .tab-menu ul li a.active {
     background: #dbecff;
     color: #54a5f5;
@@ -761,27 +778,30 @@ table {
 }
 
     .tab-menu ul li a.active ~ .skillcount {
-        right: -9px!important;
+        right: -9px !important;
         background: #5bc9f3;
         color: #fff;
     }
+
 .avatar-upload .avatar-preview {
     border: 6px solid #54a5f524;
 }
+
 .tab-box label.choose-file-profile {
     color: rgb(51, 51, 51) !important;
 }
-    @media only screen and (max-width: 767px) {
-        .razorpay_btn button.form-control {
-            width: 33.3%;
-            float: left;
-        }
-    }
 
-    @media only screen and (max-width: 480px) {
-        .razorpay_btn button.form-control {
-            height: 50px;
-            font-size: 10px !important;
-            border-right: 1px #cccccc54 solid;
-        }
+@media only screen and (max-width: 767px) {
+    .razorpay_btn button.form-control {
+        width: 33.3%;
+        float: left;
     }
+}
+
+@media only screen and (max-width: 480px) {
+    .razorpay_btn button.form-control {
+        height: 50px;
+        font-size: 10px !important;
+        border-right: 1px #cccccc54 solid;
+    }
+}

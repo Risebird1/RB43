@@ -3733,68 +3733,99 @@ namespace Risebird.Web.Controllers
             model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
         }
 
-        [Authorize]
-        [HttpGet]
-        public IActionResult SampleQuestions(string id)
-        {
-            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-            {
-                TechSkillComments model = new TechSkillComments();
-                var result = _iRFService.GetTechSkillComments(Convert.ToInt16(id));
-                //if (result.Count() > 0)
-                model.SkillCollection = result;
-                ViewBag.Skills = new SelectList(_iRFService.GetTechSkills(Convert.ToInt16(id)), "id", "Name");
-                model.IRFId = Convert.ToInt16(id);
-                return View(model);
-            }
-            else
-            {
-                return RedirectToAction("SignOut", "Session");
-            }
-        }
+        //[Authorize]
+        //[HttpGet]
+        //public IActionResult SampleQuestions(int id)
+        //{
+        //    if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //    {
+        //        var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //        profileName = profileName.Replace("\"", "");
+        //        var emailid = HttpContext.Session.GetString("email")?.Trim();
+        //        emailid = emailid.Replace("\"", "");
+        //        if (profileName == "Admin" || profileName == "HR" || profileName=="Interviewer" || profileName == "Quality Controller")
+        //        {
+        //            TechSkillComments model = new TechSkillComments();
+        //            var result = _iRFService.GetTechSkillComments(id);
+        //            //if (result.Count() > 0)
+        //            model.SkillCollection = result;
+        //            var skills = _iRFService.GetTechSkills(id);
+        //            ViewBag.Skills = new SelectList(skills, "id", "Name");
+        //            model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
+        //            model.IRFId = id;
+        //            model.Profile = profileName;
+        //            model.UserId = _iRFService.GetUserId(emailid);
+        //            return View(model);
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
 
-        [Authorize]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult SampleQuestions(TechSkillComments model)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "Quality Controller")
-                    {
-                        if (_iRFService.AddSkillComments(model))
-                        {
-                            TempData["SuccessErrorMessage"] = "Questions saved Successfully";
-                            return RedirectToAction("MyInterview");
-                        }
-                        else
-                        {
-                            TempData["SuccessErrorMessage"] = "Questions were not saved.";
-                            return RedirectToAction("MyInterview");
-                        }
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
+        //    }
+        //    else
+        //    {
+        //        return RedirectToAction("SignOut", "Session");
+        //    }
+        //}
 
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Questions were not saved";
-                return RedirectToAction("MyInterview");
-            }
-        }
+        //[Authorize]
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult SampleQuestions(TechSkillComments model)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
+        //            if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "Quality Controller")
+        //            {
+        //                if (ModelState.IsValid)
+        //                {
+        //                    if (_iRFService.AddSkillComments(model))
+        //                    {
+        //                        TempData["SuccessErrorMessage"] = "Questions saved Successfully";
+        //                        return RedirectToAction("MyInterview");
+        //                    }
+        //                    else
+        //                    {
+        //                        TempData["SuccessErrorMessage"] = "Questions were not saved.";
+        //                        return RedirectToAction("MyInterview");
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    var skills = _iRFService.GetTechSkills(model.IRFId);
+        //                    ViewBag.Skills = new SelectList(skills, "id", "Name");
+        //                    model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
+
+        //                    model.Profile = profileName;
+        //                    //ModelState.AddModelError
+        //                    return View(model);
+        //                }
+
+
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("SignOut", "Session");
+        //            }
+
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        TempData["SuccessErrorMessage"] = "Questions were not saved";
+        //        return RedirectToAction("MyInterview");
+        //    }
+        //}
 
         //GetClientsByRoles
         public SelectList GetClientsByRoles(string val)

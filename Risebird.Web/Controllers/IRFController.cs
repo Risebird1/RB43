@@ -886,18 +886,122 @@ namespace Risebird.Web.Controllers
             return _irfService.CheckUniqueness(value);
         }
 
+        //[Authorize]
+        //public IActionResult SampleQuestions(int id)
+        //{
+        //    if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //    {
+        //        var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //        profileName = profileName.Replace("\"", "");
+        //        if (profileName == "Admin" || profileName == "HR")
+        //        {
+        //            TechSkillComments model = new TechSkillComments();
+        //            var result = _irfService.GetTechSkillComments(id);
+        //            //if (result.Count() > 0)
+        //            model.SkillCollection = result;
+        //            model.Skills = new SelectList(_irfService.GetTechSkills(id), "id", "Name");
+        //            model.IRFId = id;
+        //            model.Profile = profileName;
+        //            return View(model);
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+
+        //    }
+        //    else
+        //    {
+        //        return RedirectToAction("SignOut", "Session");
+        //    }
+        //}
+
+        //[Authorize]
+        //[HttpPost]
+        //public IActionResult SampleQuestions(TechSkillComments model)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
+        //            if (profileName == "Admin" || profileName == "HR")
+        //            {
+        //                if (_irfService.AddSkillComments(model))
+        //                {
+        //                    //TempData["SuccessErrorMessage"] = "Questions saved successfully";
+        //                    model.Message = "Questions saved successfully";
+        //                    model.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(model.IRFId)), "id", "Name");
+        //                    return View(model);
+        //                    //return RedirectToAction("Index");
+
+        //                }
+        //                else
+        //                {
+        //                    //TempData["SuccessErrorMessage"] = "Questions were not saved.";
+        //                    model.Message = "Questions were not saved.";
+        //                    model.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(model.IRFId)), "id", "Name");
+        //                    return View(model);
+        //                    //return RedirectToAction("Index");
+
+        //                }
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("SignOut", "Session");
+        //            }
+
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        TempData["SuccessErrorMessage"] = "Questions were not saved";
+        //        return RedirectToAction("Index");
+        //    }
+        //}
+
+
         [Authorize]
-        public IActionResult SampleQuestions(string id)
+        [HttpGet]
+        public IActionResult SampleQuestions(int id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                TechSkillComments model = new TechSkillComments();
-                var result = _irfService.GetTechSkillComments(Convert.ToInt16(id));
-                //if (result.Count() > 0)
-                model.SkillCollection = result;
-                model.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(id)), "id", "Name");
-                model.IRFId = Convert.ToInt16(id);
-                return View(model);
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" /*|| profileName == "Quality Controller"*/)
+                {
+                    TechSkillComments model = new TechSkillComments();
+                    var result = _irfService.GetTechSkillComments(id);
+                    //if (result.Count() > 0)
+                    model.SkillCollection = result;
+                    var skills = _irfService.GetTechSkills(id);
+                    ViewBag.Skills = new SelectList(skills, "id", "Name");
+                    model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
+                    model.IRFId = id;
+                    model.Profile = profileName;
+                    model.UserId = _irfService.GetUserId(emailid);
+                    if (TempData["SuccessErrorMessageQuestions"] != null)
+                    {
+                        model.Message = TempData["SuccessErrorMessageQuestions"].ToString();
+                        TempData.Remove("SuccessErrorMessageQuestions");
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
             }
             else
             {
@@ -907,6 +1011,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult SampleQuestions(TechSkillComments model)
         {
             try
@@ -915,26 +1020,33 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" /*|| profileName == "Quality Controller"*/)
                     {
-                        if (_irfService.AddSkillComments(model))
+                        if (ModelState.IsValid)
                         {
-                            //TempData["SuccessErrorMessage"] = "Questions saved successfully";
-                            model.Message = "Questions saved successfully";
-                            model.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(model.IRFId)), "id", "Name");
-                            return View(model);
-                            //return RedirectToAction("Index");
-
+                            if (_irfService.AddSkillComments(model))
+                            {
+                                TempData["SuccessErrorMessageQuestions"] = "Questions saved Successfully";
+                                return RedirectToAction("SampleQuestions", new { id = model.IRFId});
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessageQuestions"] = "Questions were not saved.";
+                                return RedirectToAction("SampleQuestions", new { id = model.IRFId });
+                            }
                         }
                         else
                         {
-                            //TempData["SuccessErrorMessage"] = "Questions were not saved.";
-                            model.Message = "Questions were not saved.";
-                            model.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(model.IRFId)), "id", "Name");
-                            return View(model);
-                            //return RedirectToAction("Index");
+                            var skills = _irfService.GetTechSkills(model.IRFId);
+                            ViewBag.Skills = new SelectList(skills, "id", "Name");
+                            model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
 
+                            model.Profile = profileName;
+                            //ModelState.AddModelError
+                            return View(model);
                         }
+
+
                     }
                     else
                     {
@@ -946,15 +1058,15 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
-
             }
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Questions were not saved";
-                return RedirectToAction("Index");
+                TempData["SuccessErrorMessageQuestions"] = "Questions were not saved";
+                return RedirectToAction("SampleQuestions", new { id = model.IRFId });
             }
         }
+
 
         [Authorize]
         public async Task<IActionResult> ArchiveIRF(int id)
