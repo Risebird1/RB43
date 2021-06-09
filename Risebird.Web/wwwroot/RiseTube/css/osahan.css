@@ -37,6 +37,7 @@ Version: 1.0
     border-radius: 0px;
     border-color: none;
 }
+
 #wrapper {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -854,7 +855,6 @@ a:hover, h1, h2, h3, h4, h5, h6 {
 }
 
 .video-title .video-title .video-title a, .video-title .candidate {
-  
     font-size: 13px;
     font-weight: 600;
     text-decoration: none;
@@ -891,15 +891,15 @@ a:hover, h1, h2, h3, h4, h5, h6 {
 
 .video-card {
     border-radius: 2px;
-
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
 }
+
 .interviewerSkill .video-card-body {
     padding: 4px 6px 8px 6px;
-
 }
+
 .video-card-body {
     padding: 4px 3px 8px 3px;
     height: 110px;
@@ -938,7 +938,7 @@ a:hover, h1, h2, h3, h4, h5, h6 {
     .video-card-list .video-card-body .video-title {
         line-height: 17px;
         font-size: 13px;
-        font-weight:bold
+        font-weight: bold
     }
 
     .video-card-list .video-card-body .right-action {
@@ -1419,6 +1419,14 @@ a:hover, h1, h2, h3, h4, h5, h6 {
         float: none;
         text-align: center;
         width: 100px;
+        display: block;
+    }
+
+    .video .mc-button-area .mdc-button.mdc-button--raised {
+        margin: 2px;
+        float: right;
+        text-align: center;
+        width: auto;
         display: block;
     }
 }

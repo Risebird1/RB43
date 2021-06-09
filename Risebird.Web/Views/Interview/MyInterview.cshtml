@@ -332,10 +332,10 @@
                                                     <tfoot>
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
-                                                            <th style="border-left: 0px !important;">Date</th>
+                                                            <th style="border-left: 0px !important;width:12%">Date</th>
                                                             <th style="text-align:center">Slot</th>
                                                             <th style="text-align:center">Call Candidate</th>
-                                                            <th>Candidate Name</th>
+                                                            <th style="width:18%;">Candidate Name</th>
                                                             <th>Interview level</th>
                                                             <th>JD Link</th>
                                                             <th>Skill Channel</th>
@@ -390,11 +390,11 @@
 
                                                                 @if (item.candidateName != null && item.candidateName != "")
                                                                 {
-                                                                    @if (item.candidateName.Length > 13)
+                                                                    @if (item.candidateName.Length > 26)
                                                                     {
 
                                                                         <td class="cadName">
-                                                                            <a onclick="" data-tooltip="@item.candidateName"> @item.candidateName.Substring(0, 13)... </a>
+                                                                            <a onclick="" data-tooltip="@item.candidateName"> @item.candidateName.Substring(0, 26)... </a>
                                                                         </td>
 
                                                                     }
@@ -415,7 +415,7 @@
                                                                 <td> @item.HeuristicProfileTypeDesc </td>
                                                                 @if (item.JDLink != null && item.JDLink != "")
                                                                 {
-                                                                    <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                                    <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JD Title</a></td>
                                                                 }
                                                                 else
                                                                 {
@@ -1161,9 +1161,9 @@
 
 
             if (data[i].candidateName != null && data[i].candidateName != "") {
-                if (data[i].candidateName.length > 13) {
+                if (data[i].candidateName.length > 26) {
 
-                    html += ' <td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '">' + data[i].candidateName.substring(0, 13) + '... </a></td>';
+                    html += ' <td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '">' + data[i].candidateName.substring(0, 26) + '... </a></td>';
 
                 }
 

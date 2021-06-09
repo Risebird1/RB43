@@ -36,7 +36,13 @@ body {
 .mdc-button--outlined {
     padding: 0 10px 0 10px;
 }
+.mob_h {
+    height: 50px;
+}
 
+.user.user-r .main-notification-title, .user .main-notification-title {
+    padding-top: 4px !important;
+}
 .tab_content, .tab-box {
     display: none;
 }
@@ -4920,6 +4926,10 @@ button.btn {
 }
 
 @media (max-width: 767px) {
+    .mob_h {
+        height: 2px;
+    }
+
 
     .myinterview_modal .btn-group {
         width: 100% !important;
