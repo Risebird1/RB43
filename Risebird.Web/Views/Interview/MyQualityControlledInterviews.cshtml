@@ -84,7 +84,7 @@
                                                 @*<th>Candidate Email</th>
                                                     <th>Candidate Contact</th>*@
                                                 <th id="qcinterview_3">Resume</th>
-                                                <th>Meeting Status</th>
+                                                @*<th>Meeting Status</th>*@
                                                 <th id="qcinterview_5">Interview Status</th>
                                                 <th id="qcinterview_6">JD Link</th>
                                                 @*<th id="qcinterview_7">Risebird HR</th>*@
@@ -100,7 +100,7 @@
                                                 @* <th>Candidate Email</th>
                                                     <th>Candidate Contact</th>*@
                                                 <th>Resume</th>
-                                                <th>Meeting Status</th>
+                                                @*<th>Meeting Status</th>*@
                                                 <th>Interview Status</th>
                                                 <th>JD Link</th>
                                                 @*<th>Risebird HR</th>*@
@@ -141,12 +141,12 @@
                                                     {
                                                         <td>No Resume</td>
                                                     }
-                                                    <td>@item.MeetingStatusDesc</td>
+                                                    @*<td>@item.MeetingStatusDesc</td>*@
                                                     <td>@item.InterviewStatusDesc</td>
 
                                                     @if (item.JDLink != null && item.JDLink != "")
                                                     {
-                                                        <td class="three repeat">  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                        <td class="three repeat">  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDTitle</a></td>
                                                     }
                                                     else
                                                     {
@@ -755,122 +755,7 @@
                 });
     }
 </script>
-@*<script>
-        function Checktrim(str) {
-            str = str.replace(/^\s+/, '');
-            for (var i = str.length - 1; i >= 0; i--) {
-                if (/\S/.test(str.charAt(i))) {
-                    str = str.substring(0, i + 1);
-                    break;
-                }
-            }
-            return str;
-        }
-        function stringMonth(month) {
 
-            if (month == "jan" || month == "Jan") { month = 01; }
-            else if (month == "feb" || month == "Feb") { month = 02; }
-            else if (month == "mar" || month == "Mar") { month = 03; }
-            else if (month == "apr" || month == "Apr") { month = 04; }
-            else if (month == "may" || month == "May") { month = 05; }
-            else if (month == "jun" || month == "Jun") { month = 06; }
-            else if (month == "jul" || month == "Jul") { month = 07; }
-            else if (month == "aug" || month == "Aug") { month = 08; }
-            else if (month == "sep" || month == "Sep") { month = 09; }
-            else if (month == "oct" || month == "Oct") { month = 10; }
-            else if (month == "nov" || month == "Nov") { month = 11; }
-            else { month = 12; }
-
-
-            return month;
-        }
-
-        function dateHeight(dateStr) {
-
-
-            if (Checktrim(dateStr) != '' && Checktrim(dateStr) != '(none)' && (Checktrim(dateStr)).indexOf(',') > -1) {
-
-                var frDateParts = Checktrim(dateStr).split(',');
-
-                var day = frDateParts[0].substring(3) * 60 * 24;
-                var strMonth = frDateParts[0].substring(0, 3);
-                var month = stringMonth(strMonth) * 60 * 24 * 31;
-                var year = (frDateParts[1].trim()).substring(0, 4) * 60 * 24 * 366;
-
-                var x = day + month + year;
-
-
-            } else {
-                var x = 0; //highest value posible
-            }
-
-            return x;
-        }
-
-        jQuery.fn.dataTableExt.oSort['data-date-asc'] = function (a, b) {
-            var x = dateHeight(a) === 0 ? dateHeight(b) + 1 : dateHeight(a);
-            var y = dateHeight(b) === 0 ? dateHeight(a) + 1 : dateHeight(b);
-            var z = ((x < y) ? -1 : ((x > y) ? 1 : 0));
-            return z;
-        };
-
-        jQuery.fn.dataTableExt.oSort['data-date-desc'] = function (a, b) {
-            var x = dateHeight(a);
-            var y = dateHeight(b);
-            var z = ((x < y) ? 1 : ((x > y) ? -1 : 0));
-            return z;
-        };
-
-
-
-
-        var aoColumns = [];
-
-        var $tableTh = $(".data-table th , .dataTable th");
-        if ($tableTh.length) {
-            $tableTh.each(function (index, elem) {
-                if ($(elem).hasClass('sortable-false')) {
-                    aoColumns.push({ "bSortable": false });
-                } else if ($(elem).attr('data-date') !== undefined) {
-                    aoColumns.push({ "sType": "data-date" });
-                } else {
-                    aoColumns.push(null);
-                }
-            });
-
-
-        };
-
-
-
-        if (aoColumns.length > 0) {
-
-            var indexProperty = 0;
-            var valueProperty = 'asc';
-            $('.data-table').find('th').each(function (index) {
-
-
-                if ($(this).attr('data-order') !== undefined) {
-                    indexProperty = index;
-                    valueProperty = $(this).attr('data-order') !== undefined ? $(this).attr('data-order') : valueProperty;
-                }
-            });
-
-
-
-            $('#MyInterviewList').dataTable({
-                "aoColumns": aoColumns,
-                "order": [[indexProperty, valueProperty]],
-                "oLanguage": {
-                    "sSearch": "Keyword Search"
-                },
-                "dom": '<"top"<"row"<"component-4"<"dataTableAction">><"component-4"<"dataTableLength"l<"clear">>> <"component-4"<"dataTableFilter"f<"clear">>>>>rt<"bottom"ip<"clear">>',
-                "fnDrawCallback": function () { DataTableTruncate.initTrigger(); }
-            });
-        }
-
-
-    </script>*@
 <script type="text/javascript">
     //// script for loader starts here
     $(".dataloading").hide();
