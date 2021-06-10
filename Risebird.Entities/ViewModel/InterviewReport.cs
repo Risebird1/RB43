@@ -198,6 +198,7 @@ namespace Risebird.Entities.ViewModel
         public string Creativity { get; set; }
         [Display(Name = "Company Size")]
         public string CompanySize { get; set; }
+        public string[] CompanySizeArray { get; set; }
         [Display(Name = "Job Function")]
         public string JobFunction { get; set; }
         public string Industry { get; set; }
@@ -208,7 +209,8 @@ namespace Risebird.Entities.ViewModel
         public SelectList CompanyTypelist { get; set; }
         [Display(Name = "Company Stage")]
         public string CompanyStage { get; set; }
-        public SelectList CompanyStageList { get; set; }
+        public string[] CompanyStageArray { get; set; }
+        public List<SelectListItem> CompanyStageList { get; set; }
 
         [Display(Name = "Skill Category")]
         public string SkillCategory { get; set; }
@@ -217,11 +219,13 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Years of Experience")]
         public string Yearsofexperience { get; set; }
-        public SelectList YearsofexperienceList { get; set; }
+        public string[] YearsofexperienceArray { get; set; }
+        public List<SelectListItem> YearsofexperienceList { get; set; }
 
         [Display(Name = "Seniority Level")]
         public string Senioritylevel { get; set; }
-        public SelectList SenioritylevelList { get; set; }
+        public string[] SenioritylevelArray { get; set; }
+        public List<SelectListItem> SenioritylevelList { get; set; }
 
         [Display(Name = "Skill Nature")]
         public string SkillNature { get; set; }
@@ -288,7 +292,7 @@ namespace Risebird.Entities.ViewModel
         public string ISCId { get; set; }
         public string BackUrl { get; set; }
         //public string PerHourRateOutside { get; set; }
-        public SelectList CompanySizeList { get; set; }
+        public List<SelectListItem> CompanySizeList { get; set; }
         public SelectList CountryList { get; set; }
         public SelectList IndianPrice { get; set; }
         public SelectList OutSideIndiaPrice { get; set; }
@@ -312,6 +316,14 @@ namespace Risebird.Entities.ViewModel
         public int VideoDuration { get; set; }
         public string ResourceUrl { get; set; }
         public string OldInterviewerComment { get; set; }
+        [Display(Name = "Assessment Group Id")]
+        public string AssessmentGroupId { get; set; }
+        public string[] AssessmentGroupIdArray { get; set; }
+        [Display(Name = "Coded Resume Link")]
+        public string CodedResumeLink { get; set; }
+        [Display(Name = "Coded Resume File")]
+        public IFormFile CodedResumeFile { get; set; }
+        public List<SelectListItem> AssessmentGroupList { get; set; }
     }
     public class RBInterviewDetails
     {
