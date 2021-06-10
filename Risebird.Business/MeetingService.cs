@@ -872,12 +872,7 @@ namespace Risebird.Business
 
             try
             {
-                var comments = _meetingRespository.GetInterviewComments(interviewId);
-
-                if (comments == null)
-                    return null;
-                else
-                    return comments.Result;
+                return _meetingRespository.GetInterviewComments(interviewId).Result;
             }
 
             catch (Exception e)
@@ -887,22 +882,17 @@ namespace Risebird.Business
             }
         }
 
-        public IEnumerable<SkillComment> GetTechSkillComments(int IRFid)
+        public async Task<IEnumerable<SkillComment>> GetTechSkillComments(int irfId, int userId=0)
         {
 
             try
             {
-                var comments = _meetingRespository.GetTechSkillComments(IRFid);
-
-                if (comments == null)
-                    return null;
-                else
-                    return comments;
+                return await _meetingRespository.GetTechSkillComments(irfId, userId);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

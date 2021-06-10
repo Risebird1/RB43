@@ -880,6 +880,13 @@ namespace Risebird.Web.Controllers
             return _irfService.GetQuestionSkills(id);
         }
 
+
+        [Authorize]
+        public async Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId)
+        {
+            return await _irfService.GetTechSkillofSkillChannelByQuestion(question, irfId);
+        }
+
         [Authorize]
         public bool CheckUniqueness(string value)
         {
@@ -1024,6 +1031,19 @@ namespace Risebird.Web.Controllers
                     {
                         if (ModelState.IsValid)
                         {
+
+                            var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.Skill, x.UserId));
+                            if(questionsCollection.Count() != questionsCollection.Distinct().Count())
+                            {
+                                //duplicates exist
+                                ModelState.AddModelError("", "The skill,question combination added by you should contain unique entries.");
+                                var skills = _irfService.GetTechSkills(model.IRFId);
+                                ViewBag.Skills = new SelectList(skills, "id", "Name");
+                                model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
+                                model.Profile = profileName;
+                                return View(model);
+                            }
+
                             if (_irfService.AddSkillComments(model))
                             {
                                 TempData["SuccessErrorMessageQuestions"] = "Questions saved Successfully";
@@ -1725,7 +1745,7 @@ namespace Risebird.Web.Controllers
                 {
                     prof = prof.Replace("\"", "");
                 }
-
+               
                 var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
 
                 if (model == null)
@@ -1752,7 +1772,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("MyInterview");
+                return RedirectToAction("SignOut", "Session");
             }
 
         }
@@ -1874,7 +1894,7 @@ namespace Risebird.Web.Controllers
             var confirmationTypes = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
             model.ConfirmationTypeList = new SelectList(confirmationTypes, "ID", "Name");
-            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
+            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId).Result, "Comment", "Comment");
 
         }
 

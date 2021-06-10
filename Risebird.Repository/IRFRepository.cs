@@ -502,7 +502,33 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Question", question);
+                parameters.Add("@IRFId", irfId);
 
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await  SqlMapper.QueryAsync<string>(con, "usp_GetTechSkillofSkillChannelByQuestion", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public string GetQuestionSkills(string id)
         {
             try

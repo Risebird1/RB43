@@ -26,7 +26,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<TransJoinability>> GetTransJoinability(int id);
         Task<IEnumerable<TransSkill>> GetSkillsbyIRFid(int id);
         Task<IEnumerable<TransSkillGeneral>> GetSkillsGeneralbyIRFid(int id);
-        IEnumerable<SkillComment> GetTechSkillComments(int id);
+        Task<IEnumerable<SkillComment>> GetTechSkillComments(int id, int userId);
         Task<IEnumerable<Level>> GetLevels();
         Task<IEnumerable<Skill>> GetSkills();
         Task<bool> AddInterviewReport(InterviewReport reportDetails);
