@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -50,6 +51,7 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Interviewer" || profileName == "Quality Controller")
                 {
                     var model = await _meetingService.RBDetails(emailid);
+                    model = model.Select(x => { x.InterviewStatusDetails = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.MeetingStatusDetails = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
                     var sum = model.Where(x => x.Status == "Submitted" || x.Status == "Pending").Sum(x => x.Points) - model.Where(x => x.Status == "Advance").Sum(x => x.Points);
                     if (sum > 0)
                     {
@@ -1050,6 +1052,121 @@ namespace Risebird.Web.Controllers
         public IActionResult PaymentDescription()
         {
             return View();
+
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<FileContentResult> ExportPaymentHistory()
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Payable Details");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_PaymentHistory.xlsx";
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "Finance")
+                    {
+                        var model = await _meetingService.FetchFNPaymentHistory();
+                        var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                        foreach (var item in model)
+                        {
+                            if (!String.IsNullOrEmpty(item.AssessmentGroupId))
+                            {
+                                var AssessmentGroup = item.AssessmentGroupId.Split(",");
+                                string groupdetail = "";
+                                foreach (var group in AssessmentGroup)
+                                {
+                                    int groupid = Convert.ToInt32(group);
+                                    if (String.IsNullOrEmpty(groupdetail))
+                                    {
+                                        groupdetail = AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
+                                    }
+                                    else
+                                    {
+                                        groupdetail = groupdetail + ", " + AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
+                                    }
+                                }
+                                item.AssessmentGroupId = groupdetail;
+                            }
+                        }
+                        if (HttpContext.Session.GetString("PaymentHistoryfilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PaymentHistoryfilters"));
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                model = model.Where(t => t.Date >= filter.StartDate && t.Date <= filter.EndDate).ToList();
+                            }
+                            filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.InterviewerEmailid).ToArray() : filter.HREmail = filter.HREmail;
+                            model = model.Where(x => filter.HREmail.Contains(x.InterviewerEmailid)).ToList();
+                        }
+
+                        int startColumn = 1; int endColumn = 15;
+                        for (int a = startColumn; a <= endColumn; a++)
+                        {
+                            Sheet.Column(a).Width = 15;
+                        }
+                        Sheet.Cells[1, 1].Value = "Interviewer";
+                        Sheet.Cells[1, 2].Value = "Email-Id";
+                        Sheet.Cells[1, 3].Value = "Amount";
+                        Sheet.Cells[1, 4].Value = "Total Amount";
+                        Sheet.Cells[1, 5].Value = "TDS deduction";
+                        Sheet.Cells[1, 6].Value = "Payment Status";
+                        Sheet.Cells[1, 7].Value = "Payment Date";
+                        int i = 2;
+                        if (model.Count() > 0)
+                        {
+                            foreach (var item in model)
+                            {
+                                Sheet.Cells[i, 1].Value = item.FirstName;
+                                Sheet.Cells[i, 2].Value = item.InterviewerEmailid;
+                                Sheet.Cells[i, 3].Value = item.Points;
+                                if (item.Status == "Advance")
+                                {
+                                    Sheet.Cells[i, 4].Value = item.Points;
+                                    Sheet.Cells[i, 5].Value = 0;
+                                }
+                                else
+                                {
+                                    Sheet.Cells[i, 4].Value = item.TotalAmount;
+                                    Sheet.Cells[i, 5].Value = item.TotalAmount - item.Points;
+                                }
+                                Sheet.Cells[i, 6].Value = item.Status;
+                                Sheet.Cells[i, 7].Value = item.Date.ToString();
+                                i++;
+                            }
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                        else
+                        {
+                            ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                            Rng.Value = "No data available in table !!!";
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                    }
+                    else
+                    {
+                        ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                        Rng.Value = "No data available in table !!!";
+                        return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                    }
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "Data export failed !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
 
         }
     }

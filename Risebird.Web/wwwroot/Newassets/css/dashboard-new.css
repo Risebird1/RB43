@@ -43,6 +43,13 @@ body {
 .user.user-r .main-notification-title, .user .main-notification-title {
     padding-top: 4px !important;
 }
+.recommendation .dropdown-toggle::after {
+    border-top: .4em solid;
+    border-right: .21em solid transparent;
+    border-bottom: 0;
+    border-left: .21em solid transparent;
+}
+
 .tab_content, .tab-box {
     display: none;
 }
@@ -107,7 +114,28 @@ body {
             border-bottom: 0;
             font-size: 18px;
         }
-
+.interviewer .recommendation .multiselect .multiselect-selected-text {
+    width: 98%;
+    text-align: left;
+}
+.recommendation .assesmentgrp .multiselect.dropdown-toggle:after {
+    left: 1%;
+}
+.recommendation .experience .multiselect.dropdown-toggle:after {
+    left:1%;
+}
+.recommendation .companysize .multiselect.dropdown-toggle:after {
+    left: 1%;
+}
+.recommendation .companystage .multiselect.dropdown-toggle:after {
+    left: 1%;
+}
+.recommendation .skillcategory .multiselect.dropdown-toggle:after {
+    left: 1%;
+}
+.recommendation .senioritylevel .multiselect.dropdown-toggle:after {
+    left: 1%;
+}
 .popup-text {
     text-transform: capitalize;
     text-align: right;
@@ -297,8 +325,11 @@ body {
 .user-r {
     right: 20px !important;
 }
-
-#WhatsappNumber-error {
+.codedresume_file.form-group input[type=file] {
+    opacity: 1;
+    position: relative;
+}
+    #WhatsappNumber-error {
     color: #E04B4A !important;
     font-weight: normal;
     font-size: 12px !important;
@@ -4213,7 +4244,9 @@ textarea {
 #CandidateFeedbackModel {
     z-index: 1000;
 }
-
+.recommendation .multiselect.dropdown-toggle:after {
+    left: 43%;
+}
 .interviewer .multiselect .multiselect-selected-text {
     color: #807e7e !important;
     font-size: 13px !important;
@@ -4477,7 +4510,7 @@ button.btn {
     .razorpay_details {
         width: 60% !important;
     }
-
+   
     .tabCon .tab-menu ul li a {
         font-size: 11px;
         padding: 10px 0px;
@@ -4737,6 +4770,7 @@ button.btn {
     .selected-priority .journey td.interview-com, .journey td.interview-com {
         max-width: 300px;
     }
+
 }
 
 @media only screen and (max-width:991px) {
@@ -4761,7 +4795,12 @@ button.btn {
         .user.user-r .main-notification-title {
             top: -54px !important;
         }
-
+    .recommendation .dropdown-toggle::after {
+        border-top: .3em solid;
+        border-right: .3em solid transparent;
+        border-bottom: 0;
+        border-left: .3em solid transparent;
+    }
     .navbar .container-fluid {
         height: 100%;
     }
@@ -4783,10 +4822,14 @@ button.btn {
         left: -10px;
         float: right;
     }
+    .recommendation .multiselect.dropdown-toggle:after {
+        left: 1% !important;
+    }
+
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
-
+   
     .tabCon .tab_drawer_heading {
         background-color: #ececec;
         color: #5a5757cc;
@@ -4842,6 +4885,9 @@ button.btn {
     .selected-priority table.journey td.interviewdate {
         max-width: 270px;
     }
+
+  
+
 }
 
 
@@ -4868,8 +4914,11 @@ button.btn {
     }
     /* END TOCIFY */
 
+    .recommendation .multiselect.dropdown-toggle:after {
+        left: 1% !important;
+    }
 
-
+    
     .tab_drawer_heading {
         background-color: #ececec;
         color: #5a5757cc;
@@ -4926,6 +4975,10 @@ button.btn {
 }
 
 @media (max-width: 767px) {
+    .recommendation .multiselect.dropdown-toggle:after {
+        left: 1%!important;
+    }
+    
     .mob_h {
         height: 2px;
     }
