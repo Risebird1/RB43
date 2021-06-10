@@ -79,9 +79,9 @@
                                             <table id="OpeninterviewList" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                                 <thead>
                                                     <tr>
-                                                        @*<th>Date</th>
-                                                        <th>Slot</th>*@
-                                                        <th>Duration</th>
+                                                        <th>Date</th>
+                                                        @*<th>Slot</th>*@
+                                                        @*<th>Duration</th>*@
                                                         <th id="openqcinterview_2">Candidate Name</th>
                                                         <th id="openqcinterview_3">Resume</th>
                                                         <th id="openqcinterview_4">JD Link</th>
@@ -132,7 +132,7 @@
                                                             }
                                                             @if (item.JDLink != null && item.JDLink != "")
                                                             {
-                                                                <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JD Title</a></td>
+                                                                <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
                                                             }
                                                             else
                                                             {

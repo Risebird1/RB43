@@ -341,5 +341,6 @@ namespace Risebird.Entities.ViewModel
         public string PrimarySkillInvite { get; set; }
         public string IRFId { get; set; }
         public bool IsEmergency { get; set; }
+        public int TotalAmount { get; set; }
     }
 }
