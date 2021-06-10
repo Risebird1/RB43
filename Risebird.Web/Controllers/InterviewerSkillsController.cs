@@ -1556,7 +1556,7 @@ namespace Risebird.Web.Controllers
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
 
-            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
+            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId).Result, "Comment", "Comment");
         }
         public async Task<IActionResult> ISCInterviewMeetings(string id, string irfId, int? Page, string searchValue)
         {

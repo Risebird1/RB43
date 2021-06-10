@@ -1060,27 +1060,34 @@ namespace Risebird.Repository
             return null;
         }
 
-        public IEnumerable<SkillComment> GetTechSkillComments(int id)
+        public async Task<IEnumerable<SkillComment>> GetTechSkillComments(int id, int userId)
         {
+
             try
             {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@IRFId", id);
+                parameters.Add("@UserId", userId);
 
-
-                var query = "Select * from TechSkillComments where IRFId = @IRFId";
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<SkillComment>(query, dynamicParameters);
-                    return results;
+                    var result = await SqlMapper.QueryAsync<SkillComment>(con, "usp_GetTechSkillQuestionsByUserId", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
                 }
+            }
 
-            }
-            catch (SqlException ex)
+            catch (SqlException e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
-            return null;
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            
         }
         public async Task<IEnumerable<Level>> GetLevels()
         {

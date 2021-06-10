@@ -3389,6 +3389,8 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("Index", "Home", new { url = "AddReport/Interview/" + interviewId + "/" + irfId + "/" + isClient + "/" + isClientSelected });
                 }
+                var email = HttpContext.Session.GetString("email");
+                email = email.Replace("\"", "");
                 bool isAdminHR = false;
                 bool isInterviewer = false;
                 ViewBag.actiontype = actiontype;
@@ -3445,7 +3447,15 @@ namespace Risebird.Web.Controllers
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
-                GetStatusList(model, irfId);
+                model.Userid = _iRFService.GetUserId(email, profileName);
+                if(model.Userid != 0)
+                {
+                    GetStatusList(model, irfId, model.Userid);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 if (isClient || isClientSelected)
                 {
@@ -3713,7 +3723,7 @@ namespace Risebird.Web.Controllers
             model.PreparationStatusList = new SelectList(preparationStatuses, "ID", "Name");
         }
 
-        private void GetStatusList(InterviewReport model, int irfId = 0)
+        private void GetStatusList(InterviewReport model, int irfId = 0, int userId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
@@ -3730,7 +3740,7 @@ namespace Risebird.Web.Controllers
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
 
-            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
+            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId, userId).Result, "Comment", "Comment");
         }
 
         //[Authorize]

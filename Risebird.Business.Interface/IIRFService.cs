@@ -88,5 +88,7 @@ namespace Risebird.Business.Interface
         Task<StringBuilder> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite);
         Task<IRF> GetIRFForCall(int irfId);
         IEnumerable<Users> GetEligibleChannelOwners();
+        Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId);
+        
     }
 }

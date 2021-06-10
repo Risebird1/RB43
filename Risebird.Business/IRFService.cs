@@ -274,6 +274,20 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId)
+        {
+            try
+            {
+                return await _irfRepository.GetTechSkillofSkillChannelByQuestion(question, irfId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
 
         public IEnumerable<Skill> GetTechSkills(int id)
         {

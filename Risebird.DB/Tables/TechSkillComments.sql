@@ -25,8 +25,16 @@ End
 
 Else
 Begin
-	Alter table TechSkillComments
-	Add UserId int
+
+	IF NOT EXISTS(
+		SELECT *
+		FROM sys.columns
+		WHERE Name IN (N'UserId')
+		  AND Object_ID = Object_ID(N'TechSkillComments'))
+	BEGIN
+		Alter table TechSkillComments
+		Add UserId int
+	END
 End
 
 GO
