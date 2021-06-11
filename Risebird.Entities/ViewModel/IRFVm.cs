@@ -134,6 +134,8 @@ namespace Risebird.Entities.ViewModel
         public string ResourceUrl { get; set; }
         public IList<TransInterviewer> OldInterviewerCollection { get; set; }
         public IList<TransEmergencyInterviewer> OldEmergencyInterviewerCollection { get; set; }
+        public IList<TransSkill> OldSkillCollection { get; set; }
+
 
     }
     public class InterviewerIds

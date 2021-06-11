@@ -9,6 +9,7 @@ namespace Risebird.Entities.ViewModel
 
         [Required]
         public string Skill { get; set; }
+        public string SkillName { get; set; }
 
         [Required]
         public string Comment { get; set; }

@@ -496,6 +496,7 @@ namespace Risebird.Business
                 model.OldJDLink = model.JDLink;
                 model.OldInterviewerCollection = model.InterviewerCollection;
                 model.OldEmergencyInterviewerCollection = model.EmergencyInterviewerCollection;
+                model.OldSkillCollection = model.SkillCollection;
                 return model;
 
             }
@@ -514,6 +515,7 @@ namespace Risebird.Business
                 var interviewerChangesData = new List<InterviewerSuccessRateChangeData>();
                 var removedInterviewers = new List<RemovedInterviewersFromSkillsChannelData>();
                 var addedNewInterviewers = new List<AddedNewInterviewersInSkillsChannelData>();
+                var removedTechSkills = new List<RemovedTechSkillsFromIRF>();
                 if(model.OldInterviewerCollection != null && model.InterviewerCollection != null && model.OldInterviewerCollection != model.InterviewerCollection)
                 {
                     foreach (var oldInterviewer in model.OldInterviewerCollection)
@@ -615,7 +617,22 @@ namespace Risebird.Business
 
                     }
                 }
-                var result =_irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null, addedNewInterviewers ?? null).Result;
+
+                if(model.OldSkillCollection!=null && model.SkillCollection!=null && model.SkillCollection!=model.OldSkillCollection)
+                {
+                    foreach (var oldSkill in model.OldSkillCollection)
+                    {
+                        if (!model.SkillCollection.Select(s=>s.SkillId).Any(x => x ==oldSkill.SkillId))
+                        {
+                            removedTechSkills.Add(new RemovedTechSkillsFromIRF
+                            {
+                                IRFId = model.id,
+                                SkillId = oldSkill.SkillId
+                            });
+                        }
+                    }
+                }
+                var result =_irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null, addedNewInterviewers ?? null, removedTechSkills?? null).Result;
                 if(result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();

@@ -641,8 +641,11 @@ namespace Risebird.Repository
         {
             var parameters = new DynamicParameters();
             if (entity.imid > 0)
+            {
                 parameters.Add("@interviewId", entity.imid);
+                parameters.Add("@IsEmergency", entity.IsEmergency);
 
+            }
             parameters.Add("@IRFId", entity.IRFId); // Normal parametersmeters           
             parameters.Add("@interviewDate", entity.interviewDate);
             parameters.Add("@interviewSlot", entity.interviewSlot);

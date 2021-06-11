@@ -54,6 +54,7 @@ SELECT [InterviewMeetings].id as imid
 	 ,InterviewComments.ThumbnailTimeSeconds
 	 ,InterviewComments.VideoDuration
 	 ,ulh.EmailId as ChannelOwner
+	 ,IsEmergency
 FROM [dbo].[InterviewMeetings]
 inner join 
 IRF on [InterviewMeetings].IRFId = IRF.IRFId

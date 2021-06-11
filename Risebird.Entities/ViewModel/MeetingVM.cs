@@ -153,6 +153,9 @@ namespace Risebird.Entities.ViewModel
         public int InviteCount { get; set; }
         public int PerMintuteRate { get; set; }
         public int TotalBudget { get; set; }
+
+        [Display(Name = "Emergency")]
+
         public bool IsEmergency { get; set; }
         public bool IsBiometricEnabled { get; set; }
         public int CandidateId { get; set; }

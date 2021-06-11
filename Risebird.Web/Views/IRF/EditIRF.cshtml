@@ -1309,6 +1309,14 @@
                                 }
                             }
 
+                            @if (Model.OldSkillCollection != null)
+                            {
+                                for (int i = 0; i < Model.OldSkillCollection.Count(); i++)
+                                {
+                                    @Html.HiddenFor(m => m.OldSkillCollection[i].SkillId);
+                                }
+                            }
+
 
                         </form>
 
