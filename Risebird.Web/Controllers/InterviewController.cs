@@ -3739,8 +3739,9 @@ namespace Risebird.Web.Controllers
             var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
-
-            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId, userId).Result, "Comment", "Comment");
+            var questions = _meetingService.GetTechSkillComments(irfId, userId).Result;
+            model.QuestionsList = new SelectList( questions, "Comment", "Comment");
+            model.QuestionsListData = JsonConvert.SerializeObject(questions.Select(x=>(x.Comment.Replace("\r", "").Replace("\n",""), x.SkillName)));
         }
 
         //[Authorize]

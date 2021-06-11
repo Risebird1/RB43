@@ -486,8 +486,18 @@
                                                         {
                                                             <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
 
+                                                                    @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsCollection[i].Comment))
+                                                                    {
+                                                                        @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        var newList = new List<SelectListItem>();
+                                                                        newList.Add(new SelectListItem() { Value = Model.QuestionsCollection[i].Comment, Text = Model.QuestionsCollection[i].Comment });
+                                                                        @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, newList, new { @class = "select-css form-control text-box single-line", onmouseover = "dropDwnToolTips(this)" })
+
+                                                                    }
 
                                                                 </td>
                                                                 <td>
@@ -1767,7 +1777,9 @@
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
         })
 
+        var rowCount = $('#QuestionsTable tr').length;
 
+        var finalIndex = rowCount - 1;
 
         // reset fields in the new row
         $tr.find("select").val("");
@@ -1786,8 +1798,27 @@
         $form.unbind();
         $form.data("validator", null);
 
+        var options = '@Model.QuestionsListData';
+        optionsData = JSON.parse(options.replace(/&quot;/g, '"'));
+        $("#QuestionsCollection_" + finalIndex + "__Comment" + " option").remove();
+
+        $(optionsData).each(function () {
+            var option = $("<option />");
+
+            //Set Text part.
+            option.html(this.Item1);
+
+            //Set Value part.
+            option.val(this.Item1);
+
+            //Add the Option element to DropDownList.
+
+            $("#QuestionsCollection_" + finalIndex + "__Comment").append(option);
+        });
+        $("#QuestionsCollection_" + finalIndex + "__SkillName").val(optionsData[0].Item2);
+        //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
         // Check document for changes
-        $.validator.unobtrusive.parse(document);
+        //$.validator.unobtrusive.parse(document);
 
     }
 

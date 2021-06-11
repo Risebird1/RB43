@@ -954,7 +954,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null)
+        public async Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null)
         {
             try
             {
@@ -1141,6 +1141,22 @@ namespace Risebird.Repository
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     }
 
+
+                    if (removedTechSkills != null)
+                    {
+                        foreach (var removedTechSkill in removedTechSkills)
+                        {
+                            try
+                            {
+                                UpdateTechSkillQuestionsForRemovedSkills(removedTechSkill);
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                continue;
+                            }
+                        }
+                    }
 
                     //update trans interviewer table
 
@@ -1517,6 +1533,18 @@ namespace Risebird.Repository
             using (SqlConnection conChange = new SqlConnection(connectionString))
             {
                 await SqlMapper.QueryAsync(conChange, "usp_UpdateAmountBasedOnPerSuccessRate", dynamicParam,
+                   commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        private async void UpdateTechSkillQuestionsForRemovedSkills(RemovedTechSkillsFromIRF removedTechSkill)
+        {
+            DynamicParameters dynamicParam = new DynamicParameters();
+            dynamicParam.Add("@IRFId", removedTechSkill.IRFId);
+            dynamicParam.Add("@SkillId", removedTechSkill.SkillId);
+            using (SqlConnection conChange = new SqlConnection(connectionString))
+            {
+                await SqlMapper.QueryAsync(conChange, "usp_UpdateTechSkillQuestionsForRemovedTechSkill", dynamicParam,
                    commandType: CommandType.StoredProcedure);
             }
         }

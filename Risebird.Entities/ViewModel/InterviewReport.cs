@@ -324,6 +324,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Coded Resume File")]
         public IFormFile CodedResumeFile { get; set; }
         public List<SelectListItem> AssessmentGroupList { get; set; }
+        public string QuestionsListData { get; set; }
     }
     public class RBInterviewDetails
     {
