@@ -634,7 +634,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="Joinability_WeightageError" style="color:red!important; margin-left:900px;font-size:12px!important"></label>
+                                                            <label class="text-danger" id="Joinability_WeightageError"></label>
                                                             <label class="text-danger" id="Joinability_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
 
                                                         </div>
@@ -725,7 +725,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="Selectability_WeightageError" style="color:red!important; margin-left:900px;font-size:12px!important"></label>
+                                                            <label class="text-danger" id="Selectability_WeightageError"></label>
                                                             <label class="text-danger" id="Selectability_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
                                                         </div>
                                                     </div><!--end of col-md-12-->
@@ -816,7 +816,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="SkillGeneral_WeightageError" style="color:red!important; margin-left:900px;font-size:12px!important"></label>
+                                                            <label class="text-danger" id="SkillGeneral_WeightageError"></label>
                                                             <label class="text-danger" id="SkillGeneral_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
                                                         </div>
                                                     </div><!--end of col-md-12-->
@@ -891,7 +891,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="error_client" style="color:red!important;font-size:12px!important; margin-left:913px"></label>
+                                                            <label class="text-danger" id="error_client" ></label>
 
                                                         </div>
                                                     </div><!--end of col-md-12-->
@@ -1025,7 +1025,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="noInterviewer" style="color:red!important;font-size:12px!important; margin-left:913px"></label>
+                                                            <label class="text-danger" id="noInterviewer"></label>
 
                                                         </div>
                                                     </div><!--end of col-md-12-->
@@ -1102,7 +1102,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="qcInterviewer" style="color:red!important;font-size:12px!important; margin-left:913px"></label>
+                                                            <label class="text-danger" id="qcInterviewer"></label>
                                                         </div>
                                                     </div><!--end of col-md-12-->
                                                 </div>
@@ -2947,8 +2947,9 @@
     }
 
     function InterviewerChanged(val, id) {
-
-        var index = id.charAt(22);
+       
+       var index = id.split('_')[1];
+        //var index = id.charAt(22);
         var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
         $.ajax({
             type: "GET",
@@ -2964,7 +2965,8 @@
 
     function EmergencyInterviewerChanged(val, id) {
 
-        var index = id.charAt(31);
+        //var index = id.charAt(31);
+        var index = id.split('_')[1];
         var skillElementid = 'EmergencyInterviewerCollection_' + index + '__PrimarySkill';
         $.ajax({
             type: "GET",
@@ -2979,8 +2981,8 @@
     }
 
     function RecruiterChanged(val, id) {
-
-        var index = id.charAt(20);
+        var index = id.split('_')[1];
+       
         var skillElementid = 'RecruiterCollection_' + index + '__Domain';
         $.ajax({
             type: "GET",
@@ -2995,8 +2997,8 @@
 
 
     function ClientUserChanged(val, id) {
-
-        var index = id.charAt(17);
+        var index = id.split('_')[1];
+        //var index = id.charAt(17);
         var roleElementid = 'ClientCollection_' + index + '__Role';
         $.ajax({
             type: "GET",
@@ -3011,8 +3013,8 @@
     }
 
     function QCChanged(val, id) {
-
-        var index = id.charAt(18);
+        var index = id.split('_')[1];
+        //var index = id.charAt(18);
         var skillElementid = 'QualityController_' + index + '__PrimarySkill';
         $.ajax({
             type: "GET",

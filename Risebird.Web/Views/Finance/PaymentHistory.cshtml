@@ -149,8 +149,9 @@
                                                     <tr>
                                                         <th>Interviewer</th>
                                                         <th>Email-Id</th>
-                                                        <th>Amount</th>
+                                                        <th>Total Amount</th>
                                                         <th>TDS deduction</th>
+                                                        <th>Paid Amount</th>
                                                         <th>Payment Status</th>
                                                         <th>Payment Date</th>
                                                     </tr>
@@ -159,8 +160,9 @@
                                                     <tr>
                                                         <th>Interviewer</th>
                                                         <th>Email-Id</th>
-                                                        <th>Amount</th>
+                                                        <th>Total Amount</th>
                                                         <th>TDS deduction</th>
+                                                        <th>Paid Amount</th>
                                                         <th>Payment Status</th>
                                                         <th>Payment Date</th>
                                                     </tr>
@@ -172,21 +174,22 @@
                                                     }
                                                     @foreach (var item in Model)
                                                     {
-                                                        <tr>
-                                                            <td>@item.FirstName</td>
-                                                            <td>@item.InterviewerEmailid</td>
-                                                            <td>@item.Points</td>
-                                                            @if (item.Status == "Advance")
-                                                            {
-                                                                <td>0</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>@(item.TotalAmount - item.Points)</td>
-                                                            }
-                                                            <td>@item.Status</td>
-                                                            <td>@item.Date</td>
-                                                        </tr>
+                                                <tr>
+                                                    <td>@item.FirstName</td>
+                                                    <td>@item.InterviewerEmailid</td>
+                                                    <td>@item.TotalAmount</td>
+                                                    <td>@item.Points</td>
+                                                    @if (item.Status == "Advance")
+                                                    {
+                                                        <td>0</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>@(item.TotalAmount - item.Points)</td>
+                                                    }
+                                                    <td>@item.Status</td>
+                                                    <td>@item.Date</td>
+                                                </tr>
                                                     }
 
                                                 </tbody>
