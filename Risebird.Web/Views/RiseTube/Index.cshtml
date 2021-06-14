@@ -49,7 +49,49 @@
     CandidateAvailable = filter.CandidateAvailable != null ? filter.CandidateAvailable : new string[] { };
 
 }
+<style>
+    .star-rating {
+        /*border: solid 1px #ccc;*/
+        border: solid 1px white;
+        display: flex;
+        flex-direction: row-reverse;
+        font-size: 2.0em;
+        justify-content: space-around;
+        padding: 0 .2em;
+        text-align: center;
+        width: 100%;
+        margin-bottom: 10px;
+        background-color: lightgray;
+    }
 
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            /*color: #ccc;*/
+            color: white;
+            cursor: pointer;
+        }
+
+        .star-rating :checked ~ label {
+            color: #f90;
+        }
+
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #fc0;
+        }
+
+    .card-title-space {
+        margin: 20px 0px;
+        float: right
+    }
+
+    .mb10 {
+        margin-bottom: 10px
+    }
+</style>
 <script>
     var Header = "<a id='risetube_1'>Risetube</a>";
     $('#txtpageHeader').empty().html(Header);
@@ -59,7 +101,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <div class="main-panel" id="main-panel">
- 
+
     <!--  <div class="panel-header panel-header-sm"> </div>-->
 
     <div class="pt30 videocon">
@@ -205,51 +247,6 @@
                                                     {
                                                         <div class="count-bg"><span>@item.MeetingPatchCount</span></div>
                                                     }
-                                                    @*@if (item.VideoLink.Contains(".mp4"))
-                                                    {
-                                                        @if (item.ThumbnailImage != null)
-                                                        {
-                                                            <img src="@item.ThumbnailImage" class="thumbnailImage" />
-                                                        }
-                                                        <video controls class="video-thumb" controlsList="nodownload">
-                                                            <source src="@item.VideoLink" type="video/mp4">
-                                                        </video>
-
-                                                        @if (item.VideoLink != null && Url.Content(item.VideoLink) != null)
-                                                        {
-                                                            string appendTime;
-                                                            if (item.ThumbnailTimeSeconds == 0)
-                                                            {
-                                                                appendTime = configuration["ThumbnailTimeDefault"];
-                                                            }
-                                                            else
-                                                            {
-                                                                appendTime = item.ThumbnailTimeSeconds.ToString();
-                                                            }
-                                                            var src = item.VideoLink + "#t=" + appendTime;
-                                                           
-                                                            <video class="video-thumb" controlsList="nodownload">
-                                                                <source src="@src" type="video/mp4">
-                                                            </video>
-                                                        }
-
-
-
-
-                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
-                                                    }
-                                                    else
-                                                    {
-                                                        @if (item.ThumbnailImage != null)
-                                                        {
-                                                            <img src="@item.ThumbnailImage" class="thumb-height" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <img src="~/RiseTube/img/video-icon.png" class="thumb-height" />
-                                                        }
-                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
-                                                    }*@
 
                                                     @if (item.VideoLink != null && Url.Content(item.VideoLink) != null)
                                                     {
@@ -263,7 +260,7 @@
                                                             appendTime = item.ThumbnailTimeSeconds.ToString();
                                                         }
                                                         var src = item.VideoLink + "#t=" + appendTime;
-                                                        
+
                                                         <video class="video-thumb" controlsList="nodownload">
                                                             <source src="@src" type="video/mp4">
                                                         </video>
@@ -312,7 +309,7 @@
                                                         {
                                                             <span>
                                                                 <button class="call-btn" aria-label="Call">
-                                                                    <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                    <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
                                                                 </button>
                                                             </span>
                                                         }
@@ -330,8 +327,16 @@
                                                                 }
                                                             </div>
                                                         }
-
-
+                                                        @if (ViewBag.ProfileName == "Client")
+                                                        {
+                                                            <span>
+                                                                <button class="rating-btn" aria-label="Feedback">
+                                                                    <span onclick="openpopUpRating('@item.candidateName','@item.imid')" title="Feedback">
+                                                                        <i class="fas fa-comment-dots"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </span>
+                                                        }
 
                                                     </div>
 
@@ -593,7 +598,53 @@
 
 </div>
 
-
+<div id="myRaitingPopup" class="modal modal-wrap modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left"> Rate Interviewer</h5>
+                <div class="rating-box"><i class="fa fa-star"></i> Low &nbsp; &nbsp;<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i> High</div>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closemyRaitingPopup()">
+                <span aria-hidden="true">×</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12 clearfix">
+                    <div class="pull-left">
+                        <label class="interviewer_name" id="txtratingCandidate"></label>
+                        <input type="hidden" id="txtratinginterviewid" />
+                        <input type="hidden" id="txtratingvalue" />
+                    </div>
+                    <div class="star-rating pull-right">
+                        <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeRating(5)" />
+                        <label for="Q1_5" class="star">&#9733;</label>
+                        <input type="radio" id="Q1_4" name="rating1" value="4" onclick="ChangeRating(4)" />
+                        <label for="Q1_4" class="star">&#9733;</label>
+                        <input type="radio" id="Q1_3" name="rating1" value="3" onclick="ChangeRating(3)" />
+                        <label for="Q1_3" class="star">&#9733;</label>
+                        <input type="radio" id="Q1_2" name="rating1" value="2" onclick="ChangeRating(2)" />
+                        <label for="Q1_2" class="star">&#9733;</label>
+                        <input type="radio" id="Q1_1" name="rating1" value="1" onclick="ChangeRating(1)" />
+                        <label for="Q1_1" class="star">&#9733;</label>
+                    </div>
+                </div>
+                <div class="col-md-12 clearfix">
+                    <input class="txtratingComment" type="text" id="txtratingComment" placeholder="Please comment here.." />
+                </div>
+                <div class="col-md-12 text-right clearfix">
+                    <input type="button" onclick="closemyRaitingPopup()" style="" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
+                    <input type="button" onclick="SaveRating()" style="" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Save">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <!-- Custom styles for this template-->
@@ -1350,8 +1401,58 @@
         var modal = document.getElementById("myCallModal");
         modal.style.display = "none";
     }
+    function closemyRaitingPopup() {
+        var modal = document.getElementById("myRaitingPopup");
+        modal.style.display = "none";
+    }
+    function openpopUpRating(candidate, interviewid) {
+        $("#txtratingCandidate").text(candidate);
+        $("#txtratinginterviewid").val(interviewid);
+        $.ajax({
+            url: '/RiseTube/FetchRaitingDetails',
+            type: "POST",
+            data: { 'imid': interviewid },
+            success: function (data) {
+                $("#txtratingvalue").val(data.starRating);
+                $("#txtratingComment").val(data.Comment);
+                var modal = document.getElementById("myRaitingPopup");
+                modal.style.display = "block";
+                setRating(data.starRating);
+            }
+        });
 
-
+    }
+    function ChangeRating(value) {
+        $("#txtratingvalue").val(value);
+    }
+    function SaveRating() {
+        var interviewid = $("#txtratinginterviewid").val();
+        var ratingvalue = $("#txtratingvalue").val();
+        var comments = $("#txtratingComment").val();
+        if (parseInt(ratingvalue) > 0) {
+            $.ajax({
+                url: '/RiseTube/SaveRaitingDetails',
+                type: "POST",
+                data: { 'imid': interviewid, 'rating': ratingvalue, 'comment': comments },
+                success: function (data) {
+                    swal.fire(data);
+                    var modal = document.getElementById("myRaitingPopup");
+                    modal.style.display = "none";
+                }
+            });
+        } else {
+            swal.fire("Rating is required.");
+        }
+    }
+    function setRating(starRating) {
+        if (starRating != '' && parseInt(starRating) > 0) {
+            document.getElementById("Q1_" + starRating).checked = true;
+        } else {
+            for (i = 1; i <= 5; i++) {
+                document.getElementById("Q1_" + i).checked = false;
+            }
+        }
+    }
 </script>
 
 

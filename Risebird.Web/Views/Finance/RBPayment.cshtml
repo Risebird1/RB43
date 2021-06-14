@@ -94,8 +94,23 @@
                                                     <td>@item.Comment</td>
                                                     <td>@item.Type</td>
                                                     <td>@item.Rate</td>
-                                                    <td>@item.MeetingStatusDetails</td>
-                                                    <td>@item.InterviewStatusDetails</td>
+                                                    @if (item.MeetingStatusDetails == "0")
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>@item.MeetingStatusDetails</td>
+                                                    }
+
+                                                    @if (item.InterviewStatusDetails == "0")
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>@item.InterviewStatusDetails</td>
+                                                    }
                                                     @*@if (!String.IsNullOrEmpty(item.VideoLink))
                                                         {
                                                             <td><a target="_blank" href="@item.VideoLink">Video Link</a></td>

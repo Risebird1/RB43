@@ -1110,9 +1110,9 @@ namespace Risebird.Web.Controllers
                         }
                         Sheet.Cells[1, 1].Value = "Interviewer";
                         Sheet.Cells[1, 2].Value = "Email-Id";
-                        Sheet.Cells[1, 3].Value = "Amount";
-                        Sheet.Cells[1, 4].Value = "Total Amount";
-                        Sheet.Cells[1, 5].Value = "TDS deduction";
+                        Sheet.Cells[1, 3].Value = "Total Amount";
+                        Sheet.Cells[1, 4].Value = "TDS deduction";
+                        Sheet.Cells[1, 5].Value = "Amount";
                         Sheet.Cells[1, 6].Value = "Payment Status";
                         Sheet.Cells[1, 7].Value = "Payment Date";
                         int i = 2;
@@ -1122,16 +1122,16 @@ namespace Risebird.Web.Controllers
                             {
                                 Sheet.Cells[i, 1].Value = item.FirstName;
                                 Sheet.Cells[i, 2].Value = item.InterviewerEmailid;
-                                Sheet.Cells[i, 3].Value = item.Points;
+                                Sheet.Cells[i, 5].Value = item.Points;
                                 if (item.Status == "Advance")
                                 {
-                                    Sheet.Cells[i, 4].Value = item.Points;
-                                    Sheet.Cells[i, 5].Value = 0;
+                                    Sheet.Cells[i, 3].Value = item.Points;
+                                    Sheet.Cells[i, 4].Value = 0;
                                 }
                                 else
                                 {
-                                    Sheet.Cells[i, 4].Value = item.TotalAmount;
-                                    Sheet.Cells[i, 5].Value = item.TotalAmount - item.Points;
+                                    Sheet.Cells[i, 3].Value = item.TotalAmount;
+                                    Sheet.Cells[i, 4].Value = item.TotalAmount - item.Points;
                                 }
                                 Sheet.Cells[i, 6].Value = item.Status;
                                 Sheet.Cells[i, 7].Value = item.Date.ToString();

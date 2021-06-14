@@ -1090,7 +1090,7 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
-            
+
         }
         public async Task<IEnumerable<Level>> GetLevels()
         {
@@ -1271,7 +1271,7 @@ namespace Risebird.Repository
 
                     if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)
                     {
-                        if(reportDetails.VideoDuration == 0)
+                        if (reportDetails.VideoDuration == 0)
                         {
                             parametersPoints.Add("@Points", 0);
                         }
@@ -4524,6 +4524,64 @@ namespace Risebird.Repository
             return null;
 
         }
-
+        public async Task<InterviewerRating> FetchRatingDetails(int interviewId, string emailid)
+        {
+            try
+            {
+                int userid = 0;
+                var query = "Select id from Userlist where EmailId=@Emailid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters dp = new DynamicParameters();
+                    dp.Add("@Emailid", emailid);
+                    var result = await con.QueryAsync<int>(query, dp);
+                    userid = result.FirstOrDefault();
+                }
+                var queryfinal = "Select * From InterviewRatings where Userid=@Userid and Interviewid=@Interviewid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters dpfinal = new DynamicParameters();
+                    dpfinal.Add("@Userid", userid);
+                    dpfinal.Add("@Interviewid", interviewId);
+                    var result = await con.QueryAsync<InterviewerRating>(queryfinal, dpfinal);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<string> SaveRatingDetails(InterviewerRating model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Emailid", model.Emailid);
+                    parameters.Add("@Interviewid", model.Interviewid);
+                    parameters.Add("@StarRating", model.StarRating);
+                    parameters.Add("@Comment", model.Comment);
+                    await SqlMapper.QueryAsync(con, "usp_SaveInterviewRating", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return "Save Successfully";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "Fail to save rating.";
+        }
     }
 }
