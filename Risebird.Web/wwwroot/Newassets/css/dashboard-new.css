@@ -36,6 +36,46 @@ body {
 .mdc-button--outlined {
     padding: 0 10px 0 10px;
 }
+#SkillCollection_WeightageError {
+    color: red;
+    margin-left: 807px;
+    font-size: 12px;
+}
+#Joinability_WeightageError {
+    color: red!important;
+    margin-left: 900px;
+    font-size: 12px!important;
+}
+#Selectability_WeightageError {
+    color: red!important;
+    margin-left: 900px;
+    font-size: 12px!important
+}
+#SkillGeneral_WeightageError {
+    color: red !important;
+    margin-left: 900px;
+    font-size: 12px !important
+}
+#error_client {
+    color: red !important;
+    font-size: 12px !important;
+    margin-left: 913px
+}
+#noInterviewer {
+    color: red !important;
+    font-size: 12px !important;
+    margin-left: 913px;
+}
+#qcInterviewer {
+    color: red !important;
+    font-size: 12px !important;
+    margin-left: 913px;
+}
+#emInterviewer {
+    color: red!important;
+    font-size: 12px!important;
+    margin-left: 865px;
+}
 .mob_h {
     height: 50px;
 }
@@ -4510,7 +4550,15 @@ button.btn {
     .razorpay_details {
         width: 60% !important;
     }
-   
+    #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
+        color: red !important;
+        margin-left: 0 !important;
+        font-size: 12px !important;
+        width: 100%;
+        position: relative;
+        text-align: right;
+    }
+    
     .tabCon .tab-menu ul li a {
         font-size: 11px;
         padding: 10px 0px;
@@ -4782,7 +4830,15 @@ button.btn {
     .tabCon .tabs {
         display: none;
     }
-
+    #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
+        color: red !important;
+        margin-left: 0 !important;
+        font-size: 12px !important;
+        width: 100%;
+        position: relative;
+        text-align: right;
+    }
+   
     .user {
         top: -2px !important;
         right: 160px !important;
@@ -4977,6 +5033,14 @@ button.btn {
 @media (max-width: 767px) {
     .recommendation .multiselect.dropdown-toggle:after {
         left: 1%!important;
+    }
+    #Selectability_WeightageError, #SkillCollection_WeightageError, #Joinability_WeightageError, #SkillGeneral_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
+        color: red !important;
+        margin-left: 0 !important;
+        font-size: 12px !important;
+        width: 100%;
+        position: relative;
+        text-align: right;
     }
     
     .mob_h {
