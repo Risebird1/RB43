@@ -27,7 +27,7 @@ namespace Risebird.Business.Interface
         Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
         Task<bool> AddInterviewReport(InterviewReport reportModel, string emailId);
         //IEnumerable<SkillComment> GetTechSkillComments(int IRFid);
-        Task<IEnumerable<SkillComment>> GetTechSkillComments(int irfId, int userId=0);
+        Task<IEnumerable<SkillComment>> GetTechSkillComments(int irfId, int userId = 0);
         SelectList GetIRFList();
         IEnumerable<TransClientUser> GetClientsByRoles(string IRF);
         List<MeetingVM> GetClientMeetingList(string emailId);
@@ -144,5 +144,7 @@ namespace Risebird.Business.Interface
         Task<SelectList> GetIRFInterviewingMembersEmails(string irfId);
         Task<SelectList> GetIRFQualityControllersEmails(string irfId);
         Task<List<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string irfId);
+        Task<InterviewerRating> FetchRatingDetails(int interviewId, string emailid);
+        Task<string> SaveRatingDetails(InterviewerRating model);
     }
 }

@@ -2190,14 +2190,14 @@ table {
     border: 0px;
     position: relative;
     top: 0px;
-    right: 8px;
-    width: 21px;
-    height: 21px;
+    right:3px;
+    width:18px;
+    height:18px;
 }
 
     .call-btn svg {
         position: relative;
-        top: -2px;
+        top: -3px;
     }
 
 .splitvideo-desktop video::-webkit-media-controls-enclosure {

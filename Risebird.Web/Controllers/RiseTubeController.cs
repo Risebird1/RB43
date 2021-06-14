@@ -3046,5 +3046,45 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> FetchRaitingDetails(int imid)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var model = await _meetingService.FetchRatingDetails(imid, emailid);
+                if (model == null)
+                {
+                    model = new InterviewerRating();
+                }
+                return Json(model);
+            }
+            else
+            {
+                var model = new InterviewerRating();
+                return Json(model);
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> SaveRaitingDetails(int imid, int rating, string comment)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var model = new InterviewerRating();
+                model.StarRating = rating;
+                model.Comment = comment;
+                model.Emailid = emailid;
+                model.Interviewid = imid;
+                var result = await _meetingService.SaveRatingDetails(model);
+                return Json(result);
+            }
+            else
+            {
+                return Json("Fail to save the rating.");
+            }
+        }
     }
 }

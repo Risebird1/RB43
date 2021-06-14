@@ -170,5 +170,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<string>> GetIRFInterviewingMembersEmails(string irfId);
         Task<IEnumerable<string>> GetIRFQualityControllerEmails(string irfId);
         Task<IEnumerable<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string irfId);
+        Task<InterviewerRating> FetchRatingDetails(int interviewId, string emailid);
+        Task<string> SaveRatingDetails(InterviewerRating model);
     }
 }

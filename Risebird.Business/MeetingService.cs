@@ -122,7 +122,7 @@ namespace Risebird.Business
         {
             try
             {
-                var result = await _meetingRespository.GetRiseTubeMeetingsByJD(clientId, Emailid, JDpattern,startDate, endDate, profileName);
+                var result = await _meetingRespository.GetRiseTubeMeetingsByJD(clientId, Emailid, JDpattern, startDate, endDate, profileName);
                 return result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
@@ -374,7 +374,7 @@ namespace Risebird.Business
             try
             {
                 var list = await _meetingRespository.GetIRFInterviewingMembersEmails(irfId);
-                return new SelectList(list ?? new List<string>() { string.Empty});
+                return new SelectList(list ?? new List<string>() { string.Empty });
             }
 
             catch (Exception e)
@@ -882,7 +882,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<SkillComment>> GetTechSkillComments(int irfId, int userId=0)
+        public async Task<IEnumerable<SkillComment>> GetTechSkillComments(int irfId, int userId = 0)
         {
 
             try
@@ -1099,7 +1099,7 @@ namespace Risebird.Business
                 reportModel.ThumbnailTimeSeconds = interviewDetails.ThumbnailTimeSeconds;
                 reportModel.VideoDuration = interviewDetails.VideoDuration;
 
-                if(reportModel.IsEdited)
+                if (reportModel.IsEdited)
                 {
                     reportModel.OldInterviewerComment = reportModel.InterviewerComment;
                     reportModel.OldInterviewStatus = reportModel.InterviewStatus;
@@ -1276,7 +1276,7 @@ namespace Risebird.Business
                                 summary.Append("Meeting Status changed");
                             }
                         }
-                        
+
                         if (summary.Length == 0)
                         {
                             summary.Append("Feedback updated");
@@ -2732,6 +2732,32 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "";
+            }
+        }
+        public async Task<InterviewerRating> FetchRatingDetails(int interviewId, string emailid)
+        {
+            try
+            {
+                var ratingdetails = await _meetingRespository.FetchRatingDetails(interviewId, emailid);
+                return ratingdetails;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<string> SaveRatingDetails(InterviewerRating model)
+        {
+            try
+            {
+                var ratingdetails = await _meetingRespository.SaveRatingDetails(model);
+                return ratingdetails;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }
