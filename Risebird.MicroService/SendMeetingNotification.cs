@@ -15,12 +15,14 @@ namespace Risebird.MicroService
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
         private readonly IDashboardService _dashboardService;
-        public SendMeetingNotification(IConfiguration configuration, IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
+        private readonly IWhatsAppHelper _whatsAppHelper;
+        public SendMeetingNotification(IConfiguration configuration, IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
             _dashboardService = dashboardService;
+            _whatsAppHelper = whatsAppHelper;
         }
         [FunctionName("SendMeetingNotification")]
         public async void Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
@@ -67,6 +69,12 @@ namespace Risebird.MicroService
                                 Subject = item.ClientName + " " + item.PrimarySkill + " Interview-  Interviewer is waiting for you. Please join immediately."
                             };
                             var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer", item.candidateName, item.interviewDate.ToString());
+                            WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                            _whatsAppVM.Emailid = item.candidateEmail;
+                            _whatsAppVM.InterviewDate = item.interviewDate.ToString();
+                            _whatsAppVM.buttonlink = !String.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";
+                            _whatsAppVM.Event = "Interviewer Waiting";
+                            _whatsAppHelper.WhatsAppSendInterviewWaiting(_whatsAppVM);
                         }
                         else
                         {
@@ -77,6 +85,13 @@ namespace Risebird.MicroService
                                 Subject = "Risebird Interview: Are you late? Candidate (" + item.candidateName + " ) joined the meeting and waiting. Please join immediately."
                             };
                             var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate", item.candidateName, "");
+                            WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                            _whatsAppVM.Emailid = item.interviewer;
+                            _whatsAppVM.buttonlink = !String.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";
+                            _whatsAppVM.InterviewDate = item.interviewDate.ToString();
+                            _whatsAppVM.UserName = item.candidateName;
+                            _whatsAppVM.Event = "Candidate Waiting";
+                            _whatsAppHelper.WhatsAppSendInterviewWaiting(_whatsAppVM);
                         }
                     }
                     else if (item.EmailType == "EI")
@@ -90,6 +105,13 @@ namespace Risebird.MicroService
                             Subject = "Risebird Emergency Interview-Candidate(" + item.candidateName + ") is waiting for the interviewer."
                         };
                         var resultset = _notificationHelper.CandidateWaitingEINotification(_mail, linkurl);
+                        WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                        _whatsAppVM.Emailid = item.emergencyinterviewer;
+                        _whatsAppVM.buttonlink = !String.IsNullOrEmpty(linkurl) ? linkurl.Replace("https://portal.risebird.io/", "") : "";
+                        _whatsAppVM.UserName = item.candidateName;
+                        _whatsAppVM.Event = "Emergency Notification";
+                        _whatsAppHelper.WhatsAppSendEInterviewer(_whatsAppVM);
+
                         Mail _mail1 = new Mail
                         {
                             TO = item.candidateEmail,
@@ -97,6 +119,12 @@ namespace Risebird.MicroService
                             Subject = $"Risebird: Apology for the delay in the interview"
                         };
                         var resultset1 = _notificationHelper.AppologyNotificationToCandidate(_mail1, item.candidateName);
+
+                        WhatsAppVM _whatsAppVMC = new WhatsAppVM();
+                        _whatsAppVMC.Emailid = item.candidateEmail;
+                        _whatsAppVMC.UserName = item.candidateName;
+                        _whatsAppVMC.Event = "Apology Notification";
+                        _whatsAppHelper.WhatsAppSendApology(_whatsAppVM);
                     }
                     else if (item.EmailType == "CApology")
                     {
@@ -117,6 +145,11 @@ namespace Risebird.MicroService
                             Subject = $"Risebird: Due to some emergency, the interviewer is unable to join the interview. Apology for inconvenience, please reschedule."
                         };
                         var resultset = _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.CalendlyLink, item.candidateName);
+                        WhatsAppVM _whatsapp = new WhatsAppVM();
+                        _whatsapp.Emailid = item.candidateEmail;
+                        _whatsapp.Event = "Interview Reschedule";
+                        _whatsapp.buttonlink = !String.IsNullOrEmpty(item.CalendlyLink) ? item.CalendlyLink.Replace("https://calendly.com/", "") : "";
+                        _whatsAppHelper.WhatsAppSendReScheduling(_whatsapp);
                     }
                 }
             }

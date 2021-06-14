@@ -634,7 +634,7 @@ namespace Risebird.Business
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
-        }  
+        }
         public List<AssignmentVM> GetInterviewerEntitle()
         {
             try
@@ -669,6 +669,30 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public string FetchWhatsAppNumberByEmail(string Emailid)
+        {
+            try
+            {
+                return _userRepository.FetchWhatsAppNumberByEmail(Emailid);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
+        public string FetchNameByEmail(string Emailid)
+        {
+            try
+            {
+                return _userRepository.FetchNameByEmail(Emailid);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
             }
         }
     }

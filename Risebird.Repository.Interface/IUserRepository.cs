@@ -56,5 +56,7 @@ namespace Risebird.Repository.Interface
         Task<bool> ResetNavigation(int userId);
         string GetCurrentuserImage(string emailId);
 
+        string FetchWhatsAppNumberByEmail(string Emailid);
+        string FetchNameByEmail(string Emailid);
     }
 }

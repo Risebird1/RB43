@@ -1,4 +1,5 @@
 ﻿using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,5 +11,7 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null);
         Task<IEnumerable<CandidateTimelineData>> GetCandidateTimelinebyDate(DateTime startDate, DateTime endDate, string emailId = null);
         Task<bool> AutoCallCandidate(string phoneNumber, int irfId, int candidateId, string loggedInEmail);
+        Task<CandidateDetailsForWhatsApp> FetchInterviewDetails(int interviewid);
+        Task<string> CancelInterviewDetails(int interviewid, string CandidateEmail);
     }
 }

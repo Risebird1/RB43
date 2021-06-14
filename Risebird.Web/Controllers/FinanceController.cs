@@ -28,13 +28,15 @@ namespace Risebird.Web.Controllers
         private readonly INotificationHelper _notificationHelper;
         private static string SearchValue;
         private IInterviewerService _interviewerService;
+        private readonly IWhatsAppHelper _whatsAppHelper;
 
-        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService)
+        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
             _interviewerService = interviewerService;
+            _whatsAppHelper = whatsAppHelper;
         }
         /// <summary>
         /// Interviewer or QC check payment status and request for payment with details
@@ -439,6 +441,11 @@ namespace Risebird.Web.Controllers
             };
             var emailsend = _notificationHelper.RBFNPaymentConfirmationNotification(_mail, amount, sb);
             //End:Send email to Interviewer
+            WhatsAppVM _whatsApp = new WhatsAppVM();
+            _whatsApp.Emailid = email;
+            _whatsApp.InterviewDate = amount;
+            _whatsApp.Event = "Payment Notification";
+            var result = _whatsAppHelper.WhatsAppSendOnAssignation(_whatsApp);
             if (emailsend == "Mail sent successfully.")
             {
 
@@ -542,6 +549,11 @@ namespace Risebird.Web.Controllers
                     Subject = "RiseBird: Finance Team done advance payment"
                 };
                 var emailsend = _notificationHelper.RBFNPaymentConfirmationNotification(_mail, Amount.ToString(), sb);
+                WhatsAppVM _whatsApp = new WhatsAppVM();
+                _whatsApp.Emailid = Interviewer;
+                _whatsApp.InterviewDate = Amount.ToString();
+                _whatsApp.Event = "Payment Notification";
+                _whatsAppHelper.WhatsAppSendOnAssignation(_whatsApp);
             }
             else if (model == "Failed")
             {
