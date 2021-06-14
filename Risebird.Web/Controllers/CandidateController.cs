@@ -2681,9 +2681,6 @@ namespace Risebird.Web.Controllers
             return null;
         }
 
-
-
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetCandidateStatusList(int irfId, int candidateId, string irfName, string candidateName)
@@ -2742,7 +2739,24 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
-
-
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> CancelInterviewProcess(int id)
+        {
+            var model = await _candidateService.FetchInterviewDetails(id);
+            var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+            if (menus != null)
+            {
+                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+            }
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<JsonResult> CancelInterviewProcess(int id, string CandidateEmail)
+        {
+            var model = await _candidateService.CancelInterviewDetails(id, CandidateEmail);
+            return Json(model);
+        }
     }
 }

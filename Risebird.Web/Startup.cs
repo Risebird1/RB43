@@ -214,7 +214,7 @@ namespace Risebird.Web
             services.AddScoped<IUnapprovedInterviewerMeetingsRepository, UnapprovedInterviewerMeetingsRepository>();
             services.AddScoped<IB2CClientService, B2CClientService>();
             services.AddScoped<IPasswordHelper, PasswordHelper>();
-
+            services.AddScoped<IWhatsAppHelper, WhatsAppHelper>();
         }
     }
     //Global level antiforgery token security to stop malicious scripts

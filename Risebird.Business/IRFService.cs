@@ -23,9 +23,10 @@ namespace Risebird.Business
         private readonly IClientService _clientService;
         private readonly IConfiguration _configuration;
         private readonly IActivityTrackerRepository _activityTrackerRepository;
+        private readonly IWhatsAppHelper _whatsAppHelper;
 
         public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,
-            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository)
+            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -33,6 +34,7 @@ namespace Risebird.Business
             _clientService = clientService;
             _configuration = configuration;
             _activityTrackerRepository = activityTrackerRepository;
+            _whatsAppHelper = whatsAppHelper;
         }
 
         #region IRF Functions
@@ -567,7 +569,7 @@ namespace Risebird.Business
 
                     }
                 }
-                if (model.OldEmergencyInterviewerCollection != null && model.EmergencyInterviewerCollection!=null && model.OldEmergencyInterviewerCollection != model.EmergencyInterviewerCollection)
+                if (model.OldEmergencyInterviewerCollection != null && model.EmergencyInterviewerCollection != null && model.OldEmergencyInterviewerCollection != model.EmergencyInterviewerCollection)
                 {
                     foreach (var oldEmergencyInterviewer in model.OldEmergencyInterviewerCollection)
                     {
@@ -1041,6 +1043,13 @@ namespace Risebird.Business
                         _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact);
 
                     }
+                    WhatsAppVM _whatsapp = new WhatsAppVM();
+                    _whatsapp.Emailid = email;
+                    _whatsapp.InterviewDate = primarySkill;
+                    _whatsapp.Header = client.Name;
+                    _whatsapp.Event = "Interview Schedule";
+                    _whatsapp.buttonlink = !String.IsNullOrEmpty(calendlyLink) ? calendlyLink.Replace("https://calendly.com/", "") : "";
+                    _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
                     if (candidate.TotalInvites == 0)
                     {
                         _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));

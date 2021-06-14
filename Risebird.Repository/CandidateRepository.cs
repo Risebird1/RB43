@@ -3,11 +3,13 @@ using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
@@ -97,6 +99,70 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<CandidateDetailsForWhatsApp> FetchInterviewDetails(int interviewid)
+        {
+            try
+            {
+                var query = "select id,candidateEmail,interviewDate,CandidateName from InterviewMeetings where id=@interviewid and interviewdate>dateadd(minute,330,getdate()) and confirmationStatus=1";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = (List<CandidateDetailsForWhatsApp>)await con.QueryAsync<CandidateDetailsForWhatsApp>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<string> CancelInterviewDetails(int interviewid, string CandidateEmail)
+        {
+            try
+            {
+                int isvalidintervierid = 0;
+                var query = "select id from InterviewMeetings where id=@interviewid and CandidateEmail=@CandidateEmail and confirmationStatus=1";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", interviewid);
+                dynamicParameters.Add("@CandidateEmail", CandidateEmail);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<int>(query, dynamicParameters);
+                    isvalidintervierid = result.FirstOrDefault();
+                }
+                if (isvalidintervierid > 0)
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@interviewid", interviewid);
+                        parameters.Add("@CandidateEmail", CandidateEmail);
+                        var result = SqlMapper.Query<CandidateLastStatus>(con, "usp_CancelInterviewUpdate", parameters,
+                            commandType: CommandType.StoredProcedure);
+                        return "Interview Cancelled Successfully.";
+                    }
+                }
+                else
+                {
+                    return "Email Address is not correct, Please enter correct Email Address.";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "Fail to Cancel the interview, Please try again.";
         }
     }
 }

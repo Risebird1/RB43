@@ -25,7 +25,8 @@ namespace Risebird.Business
         private readonly IVoiceItRepository _voiceItRepository;
         private readonly ISupportRepository _supportRespository;
         private readonly IActivityTrackerRepository _activityTrackerRepository;
-        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository)
+        private readonly IWhatsAppHelper _whatsAppHelper;
+        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -37,6 +38,7 @@ namespace Risebird.Business
             _voiceItRepository = voiceItRepository;
             _supportRespository = supportRespository;
             _activityTrackerRepository = activityTrackerRepository;
+            _whatsAppHelper = whatsAppHelper;
         }
 
         public List<MeetingVM> GetMeetingList()
