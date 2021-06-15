@@ -29,6 +29,7 @@
                                 <div class="card-header">
                                     <h4 class="card-title">Sample Questions</h4>
                                 </div>
+                                
                                 <div style="width:100%; float:left;height:10px;"></div>
                                 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
@@ -45,7 +46,7 @@
                                             <tbody>
                                                 @if (Model.SkillCollection.Count() == 0)
                                                 {
-                                                    <tr>
+                                                    <tr >
                                                         <td>
 
                                                             @Html.DropDownList("SkillCollection[0].Skill", (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
@@ -66,7 +67,7 @@
 
                                                         <td class="text-center action-area">
                                                             <div class="sample-btn">
-                                                                <span id="btnPlus_0" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                @*<span id="btnPlus_0" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>*@
                                                                 <span style="float:right;" id="btnMinus_0" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment', 'UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                                             </div>
                                                         </td>
@@ -90,7 +91,7 @@
                                                             isDisplayable = false;
                                                         }
                                                         string rowDisplayStatus = isDisplayable ? "visible" : "collapse";
-                                                        <tr style="visibility: @rowDisplayStatus;">
+                                                        <tr style="visibility: @rowDisplayStatus;" >
                                                                 
                                                                 <td>
                                                                     @if ((Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId) @*|| Model.Profile=="Admin"*@)
@@ -131,7 +132,7 @@
 
                                                                 <td  class="text-center">
                                                                     <div class="sample-btn">
-                                                                        <span id="btnPlus_@i" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                        @*<span id="btnPlus_@i" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>*@
 
                                                                         @if (((Model.Profile == "Interviewer" || Model.Profile == "HR") && Model.SkillCollection[i].UserId == Model.UserId) || (Model.Profile == "Admin"))
                                                                         {
@@ -165,8 +166,13 @@
 
                             <div class="card-footer ">
                                 <div class="row">
-
+                                    
                                     <div class="col-md-12 mc-button-area">
+                                        <div class="pull-left">
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add a Question" onclick="AddRow()" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Question</font></span>
+                                            </button>
+                                        </div>
                                         @if (Model.Profile == "Interviewer")
                                         {
 
@@ -252,11 +258,12 @@
     //});
 
 
-    function AddRowComments() {
-        var table = document.getElementById("SkillTable");
+    function AddRow() {
 
         var $ttc = $("#SkillTable").find("tbody tr:last");
         var $tr = $ttc.clone();
+        
+        //var $tr = $ttc.clone();
         var trIndexReplaced = $("#SkillTable tr").length - 1;
 
         $tr.find("textarea,select,hidden").attr("name", function () { // find name in the cloned row
@@ -285,7 +292,9 @@
         $tr.find("input[type=hidden]").prop('name', 'SkillCollection[' + finalIndex + '].UserId');
         $tr.find('span:last').prop('style', 'display:block');
         $tr.find('span:last').prop('id', 'btnMinus_' + finalIndex);
-        $tr.find('td:last').find('span:first').prop('id', 'btnPlus_' + finalIndex);
+        //$tr.prop('id', 'tr_' + finalIndex);
+        $tr.prop('style', 'visibility : visible');
+        //$tr.find('td:last').find('span:first').prop('id', 'btnPlus_' + finalIndex);
 
 
 
