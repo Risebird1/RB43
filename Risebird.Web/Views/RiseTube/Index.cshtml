@@ -51,10 +51,9 @@
 }
 <style>
     .star-rating {
-        /*border: solid 1px #ccc;*/
         border: solid 1px white;
         display: flex;
-        flex-direction: row-reverse;
+        direction: rtl;
         font-size: 2.0em;
         justify-content: space-around;
         padding: 0 .2em;
@@ -70,7 +69,7 @@
 
         .star-rating label {
             /*color: #ccc;*/
-            color: white;
+            color: #e4e4e4;
             cursor: pointer;
         }
 
@@ -330,9 +329,9 @@
                                                         @if (ViewBag.ProfileName == "Client")
                                                         {
                                                             <span>
-                                                                <button class="rating-btn" aria-label="Feedback">
-                                                                    <span onclick="openpopUpRating('@item.candidateName','@item.imid')" title="Feedback">
-                                                                        <i class="fas fa-comment-dots"></i>
+                                                                <button class="rating-btn" aria-label="Rate Interviewer">
+                                                                    <span onclick="openpopUpRating('@item.candidateName','@item.imid')" title="Rate Interviewer">
+                                                                        <i class="fas fa-rss-square"></i>
                                                                     </span>
                                                                 </button>
                                                             </span>
@@ -1414,7 +1413,7 @@
             data: { 'imid': interviewid },
             success: function (data) {
                 $("#txtratingvalue").val(data.starRating);
-                $("#txtratingComment").val(data.Comment);
+                $("#txtratingComment").val(data.comment);
                 var modal = document.getElementById("myRaitingPopup");
                 modal.style.display = "block";
                 setRating(data.starRating);

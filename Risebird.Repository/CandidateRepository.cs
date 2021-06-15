@@ -164,5 +164,28 @@ namespace Risebird.Repository
             }
             return "Fail to Cancel the interview, Please try again.";
         }
+        public async Task<InterviewUsersDetails> FetchChannelOwnerandInterviewer(int interviewid)
+        {
+            try
+            {
+                var query = "Select im.interviewer,ul.EmailId,im.interviewDate from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Userlist ul on ul.id=irf.RisebirdHr where im.id=@interviewid and confirmationStatus=2";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<InterviewUsersDetails>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
