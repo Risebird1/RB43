@@ -41,7 +41,7 @@
                                                 </div>
                                                 @*@Html.DropDownListFor(m => m.CompanySize, Model.CompanySizeList, "Select Company Size", htmlAttributes: new { @class = "select-css form-control webkitEnabled multiselect", @multiple = "multiple" })*@
                                                 <select id="CompanySizeArray" name="CompanySizeArray" class="form-control multiselect" multiple="multiple">
-                                                    <option value="">Select Company Size</option>
+                                                    
                                                     @foreach (var item in Model.CompanySizeList.ToList())
                                                     {
                                                         @if (item != null)
@@ -78,7 +78,7 @@
                                     <div class="row">
 
                                         <div class="col-md-6 col-sm-6">
-                                            <label class="control-label col-md-12 col-sm-12 desp-label"> CompanyType</label>
+                                            <label class="control-label col-md-12 col-sm-12 desp-label"> CompanyType<span class="red">*</span></label>
                                             <div class="form-group radiobox" style="margin-top:0px;">
                                                 <div class="choose-file ">
 
@@ -87,7 +87,9 @@
                                                             @Html.RadioButtonFor(m => m.CompanyType, "Product")<span class="radio-field">Product</span>
                                                             @Html.RadioButtonFor(m => m.CompanyType, "Service")<span class="radio-field">Service</span>
                                                             @Html.RadioButtonFor(m => m.CompanyType, "Both")<span class="radio-field">Product and Services both</span>
+
                                                         </div>
+                                                        @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger",@required="required",@style="position:absolute;top:30px;" })
                                                     </div>
                                                 </div>
                                             </div>
@@ -96,12 +98,11 @@
                                         <div class="col-md-6 col-sm-6">
                                             <div class="form-group companystage">
                                                 <div class="mandate">
-                                                    @Html.LabelFor(model => model.CompanyStage, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                                    @Html.LabelFor(model => model.CompanyStage, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                                 </div>
 
                                                 @*@Html.DropDownListFor(x => Model.CompanyStage, Model.CompanyStageList, "Select Company Stage", htmlAttributes: new { @class = "select-css form-control webkitEnabled multiselect", @required = "required", @multiple = "multiple" })*@
                                                 <select id="CompanyStageArray" name="CompanyStageArray" class="form-control multiselect" multiple="multiple">
-                                                    <option value="">Select Company Stage</option>
                                                     @foreach (var item in Model.CompanyStageList.ToList())
                                                     {
                                                         @if (item != null)
@@ -117,7 +118,7 @@
                                                         }
                                                     }
                                                 </select>
-                                                @Html.ValidationMessageFor(model => model.CompanyStage, "", new { @class = "text-danger" })
+                                                @*@Html.ValidationMessageFor(model => model.CompanyStage, "", new { @class = "text-danger" })*@
                                             </div>
 
                                         </div>
@@ -162,7 +163,7 @@
                                                 </div>
                                                 @*@Html.DropDownListFor(x => Model.Yearsofexperience, Model.YearsofexperienceList, "Select Experience", htmlAttributes: new { @class = "select-css form-control webkitEnabled multiselect", @required = "required", @multiple = "multiple" })*@
                                                 <select id="YearsofexperienceArray" name="YearsofexperienceArray" class="form-control multiselect" multiple="multiple">
-                                                    <option value="">Select Experience</option>
+                                                    
                                                     @foreach (var item in Model.YearsofexperienceList.ToList())
                                                     {
                                                         @if (item != null)
@@ -178,7 +179,7 @@
                                                         }
                                                     }
                                                 </select>
-                                                @Html.ValidationMessageFor(model => model.Yearsofexperience, "", new { @class = "text-danger" })
+                                                @Html.ValidationMessageFor(model => model.Yearsofexperience, "", new {@id="err_YearsofexperienceArray", @class = "text-danger"})
                                             </div>
 
                                         </div>
@@ -208,8 +209,8 @@
                                                         }
                                                     }
                                                 </select>
-                                                @Html.ValidationMessageFor(model => model.Senioritylevel, "", new { @class = "text-danger" })
 
+                                                @Html.ValidationMessageFor(model => model.Senioritylevel, "", new {@id= "err_SenioritylevelArray", @class = "text-danger" })
                                             </div>
 
                                         </div>
@@ -261,11 +262,10 @@
                                         <div class="col-md-6 col-sm-6">
                                             <div class="form-group">
                                                 <div class="mandate">
-                                                    @Html.LabelFor(model => model.CompentencyLevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                                    @Html.LabelFor(model => model.CompentencyLevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                                 </div>
                                                 @Html.DropDownListFor(x => Model.CompentencyLevel, Model.CompentencyLevelList, "Select Competency Level", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
                                             </div>
-                                            @Html.ValidationMessageFor(model => model.CompentencyLevel, "", new { @class = "text-danger" })
 
                                         </div>
 
@@ -294,7 +294,7 @@
                                                     @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
                                                 </div>
                                                 <select id="AssessmentGroupIdArray" name="AssessmentGroupIdArray" class="form-control multiselect" multiple="multiple">
-                                                    <option value="">Select Assessment Group</option>
+                                                   
                                                     @foreach (var item in Model.AssessmentGroupList.ToList())
                                                     {
                                                         @if (item != null)
@@ -310,13 +310,15 @@
                                                         }
                                                     }
                                                 </select>
-                                                @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new { @class = "text-danger" })
+                                                @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new {@id= "err_AssessmentGroupIdArray", @class = "text-danger" })
                                             </div>
 
                                         </div>
                                         <div class="col-md-6 col-sm-6">
                                             <div class="form-group codedresume_file">
-                                                @Html.LabelFor(model => model.CodedResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <div class="mandate">
+                                                    @Html.LabelFor(model => model.CodedResumeFile, htmlAttributes: new { @class = "control-label  desp-label" })<span class="red">*</span>
+                                                </div>
                                                 @Html.TextBoxFor(model => model.CodedResumeFile, new { id = "txt_CodedResumeFile", type = "file", @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12", @accept = ".doc, .docx, .pdf, .txt" })
                                                 <div>
                                                     @if (Model.CodedResumeLink != null)
@@ -326,13 +328,37 @@
                                                         </div>
                                                     }
                                                 </div>
+                                                @Html.ValidationMessageFor(model => model.CodedResumeFile, "", new { @class = "text-danger", @required = "required" })
                                             </div>
                                         </div>
+
+
+                                        <div class="col-md-6 col-sm-6">
+                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Trained<span class="red">*</span></label>
+                                            <div class="form-group radiobox" style="margin-top:0px;">
+                                                <div class="choose-file ">
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group" style="margin-bottom:0px;">
+                                                            @Html.RadioButtonFor(m => m.Trained, 1)<span class="radio-field">Yes</span>
+                                                            @Html.RadioButtonFor(m => m.Trained, 0)<span class="radio-field">No</span>
+                                                          
+
+                                                        </div>
+                                                        @Html.ValidationMessageFor(model => model.Trained, "", new { @class = "text-danger", @required = "required", @style = "position:absolute;top:30px;" })
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+
+
                                     </div>
 
                                 </div>
                             </div>
-                            <div class="card-footer ">
+                            <div class="card-footer">
                                 <div class="row">
 
                                     <div class="col-md-12 mc-button-area">
@@ -415,6 +441,27 @@
                 $("#err_DomainName").text("This field is required.");
                 elementId = 'DomainName';
             }
+        }
+
+        if ($("#AssessmentGroupIdArray").val() == null) {
+           
+                $("#err_AssessmentGroupIdArray").text("This field is required.");
+                elementId = 'AssessmentGroupIdArray';
+           
+        }
+
+        if ($("#YearsofexperienceArray").val() == null) {
+            
+                $("#err_YearsofexperienceArray").text("This field is required.");
+                elementId = 'YearsofexperienceArray';
+            
+        }
+
+        if ($("#SenioritylevelArray").val() == null) {
+           
+                $("#err_SenioritylevelArray").text("This field is required.");
+                elementId = 'SenioritylevelArray';
+           
         }
         if (elementId != '') {
             document.getElementById(elementId).focus();

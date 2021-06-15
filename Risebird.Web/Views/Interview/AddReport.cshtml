@@ -168,20 +168,16 @@
                                             <label class="text-danger" id="meetingStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
                                         </div>
                                     </div>
-
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
+                                    @*<div class="col-md-6 col-sm-6">
+                                           <div class="form-group">
                                             @Html.LabelFor(model => model.Rating, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
                                             @Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "select-css form-control" })
                                             @Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" })
-
-                                        </div>
-
-                                    </div>
+                                           </div>
+                                    </div>*@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
