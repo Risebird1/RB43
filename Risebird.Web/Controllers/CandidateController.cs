@@ -33,9 +33,11 @@ namespace Risebird.Web.Controllers
         private readonly IMeetingService _meetingService;
         private readonly IUserService _userService;
         private readonly IIRFRepository _iRFRepository;
+        private readonly INotificationHelper _notificationHelper;
+
         //private static string Searchvalue;
 
-        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository)
+        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -45,6 +47,7 @@ namespace Risebird.Web.Controllers
             _meetingService = meetingService;
             _userService = userService;
             _iRFRepository = iRFRepository;
+            _notificationHelper = notificationHelper;
         }
         public async Task<IActionResult> CandidateTimeline()
         {
@@ -2756,6 +2759,17 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> CancelInterviewProcess(int id, string CandidateEmail)
         {
             var model = await _candidateService.CancelInterviewDetails(id, CandidateEmail);
+            var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
+            List<string> interviewers = new List<string>();
+            if (String.IsNullOrEmpty(result.interviewer))
+            {
+                interviewers.Add(result.interviewer);
+            }
+            if (String.IsNullOrEmpty(result.EmailId))
+            {
+                interviewers.Add(result.EmailId);
+            }
+            _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString());
             return Json(model);
         }
     }

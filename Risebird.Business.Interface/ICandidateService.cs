@@ -13,5 +13,6 @@ namespace Risebird.Business.Interface
         Task<bool> AutoCallCandidate(string phoneNumber, int irfId, int candidateId, string loggedInEmail);
         Task<CandidateDetailsForWhatsApp> FetchInterviewDetails(int interviewid);
         Task<string> CancelInterviewDetails(int interviewid, string CandidateEmail);
+        Task<InterviewUsersDetails> FetchChannelOwnerandInterviewer(int interviewid);
     }
 }

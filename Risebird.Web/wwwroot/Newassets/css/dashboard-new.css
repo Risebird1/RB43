@@ -395,10 +395,15 @@ body {
     height: 82px;
     margin-bottom:15px;
 }
-.rating-btn .fa-comment-dots {
+.rating-btn .fa-rss {
     font-size: 20px;
     color: #6b69699e;
     padding-right: 2px
+}
+.rating-btn .fa-rss-square {
+    font-size: 18px;
+    color: #312c2c5c;
+    padding-right: 2px;
 }
 #back, #btnPrev {
     margin: 0px 5px 0px 0px;
