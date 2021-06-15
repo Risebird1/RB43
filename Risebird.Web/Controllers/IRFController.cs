@@ -1033,7 +1033,7 @@ namespace Risebird.Web.Controllers
                         {
 
                             var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.Skill, x.UserId));
-                            if(questionsCollection.Count() != questionsCollection.Distinct().Count())
+                            if (questionsCollection.Count() != questionsCollection.Distinct().Count())
                             {
                                 //duplicates exist
                                 ModelState.AddModelError("", "The skill,question combination added by you should contain unique entries.");
@@ -1047,7 +1047,7 @@ namespace Risebird.Web.Controllers
                             if (_irfService.AddSkillComments(model))
                             {
                                 TempData["SuccessErrorMessageQuestions"] = "Questions saved Successfully";
-                                return RedirectToAction("SampleQuestions", new { id = model.IRFId});
+                                return RedirectToAction("SampleQuestions", new { id = model.IRFId });
                             }
                             else
                             {
@@ -1745,7 +1745,7 @@ namespace Risebird.Web.Controllers
                 {
                     prof = prof.Replace("\"", "");
                 }
-               
+
                 var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
 
                 if (model == null)

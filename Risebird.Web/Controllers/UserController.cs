@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Newtonsoft.Json;
 using OfficeOpenXml;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -242,7 +241,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" )
+                    if (profileName == "Admin")
                     {
                         var result = _userService.DeleteUser(id);
                         return Json(result);
@@ -251,7 +250,7 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-                    
+
 
                 }
                 else
@@ -1459,7 +1458,7 @@ namespace Risebird.Web.Controllers
                     else
                     {
                         return RedirectToAction("SignOut", "Session");
-                    }    
+                    }
 
                 }
                 else
@@ -1693,7 +1692,7 @@ namespace Risebird.Web.Controllers
         }
 
         #endregion
-        
+
 
 
         [HttpPost]

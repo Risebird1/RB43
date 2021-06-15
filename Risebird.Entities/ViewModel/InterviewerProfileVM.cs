@@ -61,7 +61,7 @@ namespace Risebird.Entities.ViewModel
         public string AltMobileNumber { get; set; }
 
         [Display(Name = "Current Role")]
-      
+
         public string CurrentRole { get; set; }
 
         [Display(Name = "Years of Experience")]
