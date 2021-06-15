@@ -1840,7 +1840,9 @@ namespace Risebird.Repository
                     parametersRecomm.Add("@Userid", reportDetails.Userid);
                     parametersRecomm.Add("@AssessmentGroupId", reportDetails.AssessmentGroupId);
                     parametersRecomm.Add("@CodedResumeLink", reportDetails.CodedResumeLink);
+                    parametersRecomm.Add("@Trained", reportDetails.Trained);
                     parametersRecomm.Add("@DomainName", "");
+
                     if (reportDetails.Domain == "Other")
                     {
                         parametersRecomm.Add("@DomainName", reportDetails.DomainName);
