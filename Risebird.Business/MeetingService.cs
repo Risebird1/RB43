@@ -334,11 +334,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<MeetingVM> GetMeeting(int id)
+        public async Task<UpdateMeetingVM> GetMeeting(int id)
         {
             try
             {
-                var meeting = await _meetingRespository.GetInterviewMeetingById(id);
+                var meeting = await _meetingRespository.GetInterviewToUpdateMeetingById(id);
                 meeting.OldConfirmationStatus = meeting.confirmationStatus;
                 meeting.OldHRCoordinatorEmailId = meeting.HRCoordinatorEmailId;
                 meeting.OldinterviewDate = meeting.interviewDate;
@@ -489,7 +489,7 @@ namespace Risebird.Business
             return false;
         }
 
-        public async Task<bool> UpdateMeeting(MeetingVM meetingToUpdate)
+        public async Task<bool> UpdateMeeting(UpdateMeetingVM meetingToUpdate)
         {
             try
             {
