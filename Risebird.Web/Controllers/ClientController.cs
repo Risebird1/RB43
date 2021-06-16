@@ -3332,5 +3332,103 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        [Authorize]
+        [HttpGet]
+        public FileContentResult RejectedPriorityExporttoExcel()
+        {
+            string userEmailId = string.Empty;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Rejected Candidate Report");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Rejected_Candidate_Status_Report" + ".xlsx";
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var meetings = _meetingService.GetClientMeetingList(emailid);
+                meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                if (HttpContext.Session.GetString("RejectClientMeetingsfilters") == null)
+                {
+                    meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                }
+                SetMeetingsProperties(meetings);
+                meetings = meetings.Where(x => x.intervieweStatusStatDesc == "Rejected").ToList();
+                if (HttpContext.Session.GetString("RejectClientMeetingsfilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("RejectClientMeetingsfilters"));
+                    meetings = ApplyAllMeetingsFilter(filter, meetings);
+                }
+
+                Sheet.Cells["A1:P1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:P1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:P1"].Style.WrapText = true;
+                int startColumn = 1; int endColumn = 11;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 30;
+                }
+                Sheet.Cells[1, 1].Value = "Interview Date";
+                Sheet.Cells[1, 2].Value = "Candidate Name";
+                Sheet.Cells[1, 3].Value = "Candidate Email";
+                Sheet.Cells[1, 4].Value = "Client HR";
+                Sheet.Cells[1, 5].Value = "End Client Name";
+                Sheet.Cells[1, 6].Value = "Primary Skill";
+                Sheet.Cells[1, 7].Value = "Video";
+                Sheet.Cells[1, 8].Value = "Interviewer Comment";
+                Sheet.Cells[1, 9].Value = "Approval Status";
+                Sheet.Cells[1, 10].Value = "Approval Comments ";
+                Sheet.Cells[1, 11].Value = "Final Selection Status";
+                Sheet.Cells[1, 12].Value = "Final Selection Comments";
+                int i = 2;
+                if (meetings.Count() > 0)
+                {
+                    foreach (var item in meetings)
+                    {
+                        Sheet.Cells[i, 1].Value = item.interviewDate.ToString("MM/dd/yyyy HH:mm");
+                        Sheet.Cells[i, 2].Value = item.candidateName;
+                        Sheet.Cells[i, 3].Value = item.candidateEmail;
+                        Sheet.Cells[i, 4].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 5].Value = item.ClientName;
+                        Sheet.Cells[i, 6].Value = item.JDTiltle.Split("|")[0];
+                        if (!string.IsNullOrEmpty(item.VideoLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 7].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                Sheet.Cells[i, 7].Value = "Video Link";
+                                Sheet.Cells[i, 7].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 7].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 7].Value = "No Video";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 7].Value = "No Video";
+                        }
+                        Sheet.Cells[i, 8].Value = item.InterviewerComment;
+                        Sheet.Cells[i, 9].Value = item.NextLevelApprovalStat;
+                        Sheet.Cells[i, 10].Value = item.ApprovalComments;
+                        Sheet.Cells[i, 11].Value = item.FinalSelectionStat;
+                        Sheet.Cells[i, 12].Value = item.FinalComments;
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
     }
 }
