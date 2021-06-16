@@ -9,7 +9,7 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "All Interviews";
-     ViewBag.PageHeader = "";
+    ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
     string strtDte = String.Empty;
@@ -82,7 +82,9 @@
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="modal" data-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                 <div class="mdc-button__ripple"></div>
                             </button>
-
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                <span data-toggle="tooltip" data-placement="top" title="Rejected Interviews" onclick="location.href='@Url.Action("RejectedMeetings", "Client")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Rejected Interviews</font></span>
+                            </button>
                         </div>
                     </div>
                     <div style="float:left">
