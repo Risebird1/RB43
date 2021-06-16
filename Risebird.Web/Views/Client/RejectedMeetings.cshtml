@@ -97,14 +97,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=9" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 
-
-
 <div class="main-panel" id="main-panel">
-
-    <!--  <div class="panel-header panel-header-sm"> </div>-->
-
-
-
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -112,46 +105,28 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title">Rejected Interviews</h4></div>
                 </div>
-
                 <div class="pull-right client-ms">
-                    <a href="/Client/AllMeetings" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-left:5px;">Back to List</a>
                     <div style="float:left">
-
                         <div id="allinterview_2">
-
                             <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three  pull-left" data-toggle="modal" data-target="#filterModal">
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="modal" data-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                 <div class="mdc-button__ripple"></div>
                             </button>
-
                         </div>
                     </div>
                     <div style="float:left">
-
-
-                        <span id="allinterview_3"><i type="submit" class="fa fa-file-excel-o excel-file export five   pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("AllPriorityExporttoExcel", "Client")'"></i></span>
-
-
-
-
-
+                        <span>
+                            <i type="submit" class="fa fa-file-excel-o excel-file export five  pull-left" data-toggle="tooltip" data-placement="top" title="Export Selected Candidate" onclick="location.href='@Url.Action("RejectedPriorityExporttoExcel", "Client" )'" data-original-title="Tooltip on top"></i>
+                        </span>
 
                         <div id="meeting_filter" class="dataTables_filter pull-right">
-
                             <div id="allinterview_4" class="searchCon">
-
                                 <button onclick="searchResult()" type="button" id="search">&nbsp</button>
                                 <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.Searchvalue">
-
                                 <span class="ref-btn" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
-
                                 @*<button style="display:none;" type="button" id="x">x</button>*@
-
                             </div>
                         </div>
-
-
-
                     </div>
                 </div>
                 <div class="note-filter" style="text-align: right;"> Note: To visualize data older than 30 days, please apply filter</div>
@@ -163,21 +138,17 @@
         <div class="row bl-bg">
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
-
                     <div class="mdc-card-wrapper__text-section">
-
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
                             <div class="toolbar">
 
-
                             </div>
                             <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
-
                                         <div class="filheader">
                                             <div class="filavatar">
                                                 <span class="fa fa-filter"></span>
@@ -187,9 +158,7 @@
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-
                                         <form action="@Url.Action("RejectedMeetings","Client")" method="post" id="form">
-
                                             <div class="modal-body">
                                                 <div class="row">
                                                     <div class="col-md-6 col-sm-6 border-rv">
@@ -480,12 +449,11 @@
                                                             <th style="border-left: 0px !important;" id='start'>Interview Date</th>
                                                             <th>Candidate Name</th>
                                                             <th>Candidate Email</th>
-                                                            <th id="allinterview_5">JD Title</th>
-                                                            <th id="allinterview_6">Confirmation Status</th>
-                                                            <th id="allinterview_7">Meeting Status</th>
-                                                            <th id="allinterview_8">Interview Status</th>
-                                                            <th id="allinterview_9">Report</th>
-                                                            <th id="allinterview_10">Action</th>
+                                                            <th>JD Title</th>
+                                                            <th>Report</th>
+                                                            <th>Video</th>
+                                                            <th>Action</th>
+                                                            <th>Call</th>
                                                         </tr>
                                                     </thead>
                                                     <tfoot>
@@ -495,11 +463,10 @@
                                                             <th>Candidate Name</th>
                                                             <th>Candidate Email</th>
                                                             <th>JD Title</th>
-                                                            <th>Confirmation Status</th>
-                                                            <th>Meeting Status</th>
-                                                            <th>Interview Status</th>
                                                             <th>Report</th>
+                                                            <th>Video</th>
                                                             <th>Action</th>
+                                                            <th>Call</th>
                                                         </tr>
                                                     </tfoot>
                                                     <tbody id="tblbodyPriority">
@@ -583,25 +550,6 @@
                                                                 {
                                                                     <td></td>
                                                                 }
-                                                                @if (item.confirmationStatus.Trim() == "Cancelled")
-                                                                {
-                                                                    <td class="text-center">
-                                                                        <a><span class="status-cancel"> @item.confirmationStatus</span></a>
-                                                                    </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td class="text-center"> @item.confirmationStatus</td>
-                                                                }
-                                                                @if (item.MeetingStatusStatusDesc == "Status Pending")
-                                                                {
-                                                                    <td><a style="color:hotpink; font-weight: bold">@item.MeetingStatusStatusDesc</a></td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>@item.MeetingStatusStatusDesc</td>
-                                                                }
-                                                                <td>@item.intervieweStatusStatDesc</td>
                                                                 @if ((item.MeetingStatus == 4) && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                                                                 {
                                                                     <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
@@ -610,12 +558,26 @@
                                                                 {
                                                                     <td>No Report</td>
                                                                 }
-                                                                <td class="text-center">
-                                                                    <button class="rating-btn" aria-label="Rate Interviewer" style="float:none;">
+                                                                @if ((item.MeetingStatus == 4) && item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                                {
+                                                                    <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No Video</td>
+                                                                }
+                                                                <td>
+                                                                    <button class="rating-btn" aria-label="Rate Interviewer">
                                                                         <span onclick="openpopUpRating('@item.candidateName','@item.imid')" title="Rate Interviewer">
                                                                             <i class="fas fa-rss-square"></i>
                                                                         </span>
                                                                     </button>
+                                                                </td>
+                                                                <td>
+                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                    {
+                                                                        <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
+                                                                    }
                                                                 </td>
                                                             </tr>
                                                             <tr class="collapse @item.imid">
@@ -626,7 +588,6 @@
                                                                             <th class="itemInterviewLink">Interview Link</th>
                                                                             <th>End Client Name</th>
                                                                             <th>Aadhar Link</th>
-                                                                            <th>Video</th>
                                                                             <th>Approval Status</th>
                                                                             <th>Final Selection Status</th>
                                                                             <th>Offer Status</th>
@@ -664,14 +625,7 @@
                                                                             {
                                                                                 <td>No document</td>
                                                                             }
-                                                                            @if ((item.MeetingStatus == 4) && item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                                                                            {
-                                                                                <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td>No Video</td>
-                                                                            }
+
                                                                             @if (item.NextLevelApprovalStat != null && item.NextLevelApprovalStat != "")
                                                                             {
                                                                                 <td>
@@ -784,6 +738,29 @@
                     <input type="button" onclick="closemyRaitingPopup()" style="" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
                     <input type="button" onclick="SaveRating()" style="" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Save">
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myCallModal" class="modal  modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content ">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Call Candidate !</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body">
+                <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
+                <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
             </div>
         </div>
     </div>
@@ -967,38 +944,28 @@
             else {
                 html += '<td></td>';
             }
-            if (data[i].confirmationStatus.trim() == "Cancelled") {
-                html += '<td class="text-center"><a><span class="status-cancel"> ' + data[i].confirmationStatus + '</span></a></td>';
-            }
-            else {
-                html += '<td class="text-center">'+data[i].confirmationStatus+'</td>';
-            }
-            if (data[i].meetingStatusStatusDesc != null && data[i].meetingStatusStatusDesc != "") {
-                if (data[i].meetingStatusStatusDesc == "Status Pending") {
-                    html += '<td><span style="color:hotpink; font-weight: bold">' + data[i].meetingStatusStatusDesc + '</span></td>';
-                }
-                else {
-                    html += '<td>' + data[i].meetingStatusStatusDesc + '</td>';
-                }
-            }
-            else {
-                html += '<td></td>';
-            }
-            if (data[i].intervieweStatusStatDesc != null && data[i].intervieweStatusStatDesc != "") {
-                html += ' <td>' + data[i].intervieweStatusStatDesc + '</td>';
-            }
-            else {
-                html += '<td></td>';
-            }
+            
             if ((data[i].meetingStatus == 4) && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
                 html += '<td> <a id="reportId" target="_blank" title="Report Link" href="/Client/Report?interviewId='+data[i].imid +'&irfId='+ data[i].irfIntId+'&isClient = true">Report</a></td>';
             } else {
                 html += '<td>No Report</td>';
             }
+            if (data[i].videoLink != null && data[i].videoLink != "" && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
+                html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>';
+            }
+            else {
+                html += '<td>No Video</td>';
+            }
             html += '<td><button class="rating-btn" aria-label="Rate Interviewer">';
             html += '<span onclick="openpopUpRating('+"'" + data[i].candidateName + "'"+','+data[i].imid+')" title="Rate Interviewer">';
             html += '<i class="fas fa-rss-square"></i>';
             html += '</span></button></td> ';
+            html += ' <td>';
+            if (data[i].mobileNumber != null && data[i].mobileNumber != "")
+            {
+                html += ' <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick(' + "'" + data[i].candidateName + "'" + ',' + "'" + data[i].mobileNumber + "'"+')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>';
+            }
+            html += ' </td>';
             html += '</tr>';
             html += '<tr class="collapse '+data[i].imid+'">';
             html += '<td colspan="999" class="child-section">';
@@ -1007,7 +974,6 @@
             html += '<th class="itemInterviewLink">Interview Link</th>';
             html += '<th>End Client Name</th>';
             html += '<th>Aadhar Link</th>';
-            html += '<th>Video</th>';
             html += '<th>Approval Status</th>';
             html += '<th>Final Selection Status</th>';
             html += '<th>Offer Status</th>';
@@ -1028,12 +994,6 @@
                 html += '<td><a id="aadharLinkId" target="_blank" title="Aadhar" href=' + data[i].aadharFileLink.toString().replace(" ", "%20") + '>Aadhar</a></td>';
             } else {
                 html += ' <td>No document</td>';
-            }
-            if (data[i].videoLink != null && data[i].videoLink != "" && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
-                html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>';
-            }
-            else {
-                html += '<td>No Video</td>';
             }
             if (data[i].nextLevelApprovalStat != null && data[i].nextLevelApprovalStat != "") {
                 html += ' <td>' + data[i].nextLevelApprovalStat + ' </td>';
@@ -1338,313 +1298,75 @@
             }
         }
     }
+
 </script>
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
-{
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
-
-    <script type="text/javascript">
-        hopscotch.registerHelper('addOverlay', function () {
-            $('body').append('<div class="overlay"></div>');
+<script>
+    var candidate = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
         });
+    });
 
-        hopscotch.registerHelper('removeOverlay', function () {
-            $('.overlay').fadeOut(function () {
-                $(this).remove();
-                $('.helper').remove();
-            });
-        });
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
 
-        hopscotch.listen('show', function () {
-            var elementObject = $(hopscotch.getCurrTarget(tour));
-            var element = $('#' + elementObject[0].id);
+    });
 
-            element.prev().removeClass('overlay-relative');
-            element.addClass('overlay-relative');
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
 
-            if ($('.helper').length !== 0) {
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+    });
 
-                // Use Helper Layer for hilight target element.
-                var helper = $('.helper');
-                var padding = 5;
-                var helperPosX = element.position().left - padding;
-                var helperPosY = element.position().top - padding;
-                var targetWidth = element.outerWidth();
-                var targetHeight = element.outerHeight();
+    function afterTimeOut() {
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
 
-                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
 
-                helper.css('width', targetWidth);
-                helper.css('height', targetHeight);
-                helper.offset({ left: helperPosX, top: helperPosY });
+    });
 
-            } else {
-
-                // Add Helper Layer for highlight target element.
-                var newHelper = '<div class="helper"></div>';
-                $('body').append(newHelper);
-
-                var helper = $('.helper');
-                var padding = 5;
-                var helperPosX = element.position().left - padding;
-                var helperPosY = element.position().top - padding;
-                var targetWidth = element.outerWidth();
-                var targetHeight = element.outerHeight();
-
-                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
-
-                helper.css('width', targetWidth);
-                helper.css('height', targetHeight);
-                helper.offset({ left: helperPosX, top: helperPosY });
-            }
-
-        });
-
-        var tour = {
-            id: "hello-hopscotch",
-            showCloseButton: false,
-            steps: [
-                {
-                    title: "All Interviews",
-                    content: "View all Interviews detail here and click on next button to know its features",
-                    target: "allinterview_1",
-                    placement: "bottom",
-                    showPrevButton: true,
-
-                    highlight: true,
-                    zindex: 999999,
-                    yOffset: 10,
-
-                    onCTA: function () {
-                        hopscotch.showStep(2);
-                        $('#allinterview_1').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onNext: function () {
-                        $('#allinterview_1').removeClass('overlay-relative');
-                        $('.helper').remove();
-
-                    }
-                },
-                {
-                    title: "Filter",
-                    content: "Filter based on available attributes or reset filter if applied earlier",
-                    target: "allinterview_2",
-                    placement: "left",
-                    showPrevButton: true,
-
-                    zindex: 999999,
-                    xOffset: 0,
-                    yOffset: -10,
-                    onPrev: function () {
-
-                        $('#allinterview_2').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-
-                    onNext: function () {
-
-                        $('#allinterview_2').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-
-
-                },
-
-
-                {
-                    title: "Export",
-                    content: "Click here to export the Interview data in excel sheet",
-                    target: "allinterview_3",
-                    showPrevButton: true,
-                    placement: "left",
-                    zindex: 999999,
-                    xOffset: -40,
-                    yOffset: -10,
-                    onPrev: function () {
-
-                        $('#allinterview_3').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onNext: function () {
-
-                        $('#allinterview_3').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-
-                },
-
-
-                {
-                    title: "Search",
-                    content: "Search the records here based on available details",
-                    target: "allinterview_4",
-                    showPrevButton: true,
-                    placement: "left",
-                    zindex: 999999,
-                    xOffset: 10,
-                    onPrev: function () {
-
-                        $('#allinterview_4').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onNext: function () {
-
-                        $('#allinterview_4').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-
-                },
-                {
-                    title: "JD Title",
-                    content: "Showing the JD title here",
-                    target: "allinterview_5",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#allinterview_5').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#allinterview_5').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-
-                {
-                    title: "Confirmartion Status",
-                    content: "After the interview is confirmed / cancelled the status will be shown here",
-                    target: "allinterview_6",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#allinterview_6').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#allinterview_6').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-
-                {
-                    title: "Meeting Status",
-                    content: "Meeting status will be shown here",
-                    target: "allinterview_7",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#allinterview_7').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#allinterview_7').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-
-                {
-                    title: "Interview Status",
-                    content: "Interview status will be shown here",
-                    target: "allinterview_8",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#allinterview_8').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#allinterview_8').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-                {
-                    title: "Report",
-                    content: "Open the candidate report if available & generate pdf ",
-                    target: "allinterview_9",
-                    placement: "left",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    xOffset: 10,
-                    onNext: function () {
-                        $('#allinterview_9').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#allinterview_9').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-
-                {
-                    title: "Video",
-                    content: "Click here to see the video",
-                    target: "allinterview_10",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "left",
-                    xOffset: 10,
-                    onNext: function () {
-                        $('#allinterview_10').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#allinterview_10').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-                {
-                    title: "Selected Candidate Menu",
-                    content: "Click on Selected Candidate menu to see its features",
-                    target: "selectedcandidate_menu",
-                    placement: "bottom",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    yOffset: -20,
-                    xOffset: 10,
-                    onNext: function () {
-                        $('#selectedcandidate_menu').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#selectedcandidate_menu').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-            ],
-            onStart: ["addOverlay"],
-            onEnd: ["removeOverlay"],
-        };
-
-        hopscotch.startTour(tour);
-
-    </script>
-
-}
-
-
+    function CallButtonClick(candidateName, mobileNumber) {
+        candidate = candidateName;
+        // Get the modal
+        var modal = document.getElementById("myCallModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(mobileNumber);
+    }
+    function CallButtonClickjson(imid) {
+        var candidate = $("#hidcandidate_" + imid).val();
+        var mobile = $("#hidmobile" + imid).val();
+        CallButtonClick(candidate, mobile);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+</script>
 <loading></loading>
 
 

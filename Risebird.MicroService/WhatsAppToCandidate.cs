@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
 using Dapper;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
@@ -6,10 +10,6 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
 
 namespace Risebird.MicroService
 {
@@ -32,7 +32,7 @@ namespace Risebird.MicroService
             _connection = _configuration["ConnectionString:DBConnectionString"];
         }
         [FunctionName("WhatsAppToCandidate")]
-        public async void Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log)
+        public async void Run([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try
@@ -41,7 +41,7 @@ namespace Risebird.MicroService
                 var str = _connection;
                 var query = "select id,candidateEmail,interviewDate from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@timeL", DateTime.Now);
+                dynamicParameters.Add("@timeL", DateTime.Now.AddMinutes(115));
                 dynamicParameters.Add("@timeH", DateTime.Now.AddMinutes(125));
                 using (SqlConnection con = new SqlConnection(str))
                 {
