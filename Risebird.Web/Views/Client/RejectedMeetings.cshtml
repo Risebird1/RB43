@@ -114,15 +114,16 @@
                 </div>
 
                 <div class="pull-right client-ms">
-
+                    <a href="/Client/AllMeetings" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-left:5px;">Back to List</a>
                     <div style="float:left">
+
                         <div id="allinterview_2">
 
                             <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three  pull-left" data-toggle="modal" data-target="#filterModal">
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="modal" data-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                 <div class="mdc-button__ripple"></div>
                             </button>
-                            <a href="/Client/AllMeetings" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back to List</a>
+
                         </div>
                     </div>
                     <div style="float:left">
@@ -609,8 +610,8 @@
                                                                 {
                                                                     <td>No Report</td>
                                                                 }
-                                                                <td>
-                                                                    <button class="rating-btn" aria-label="Rate Interviewer">
+                                                                <td class="text-center">
+                                                                    <button class="rating-btn" aria-label="Rate Interviewer" style="float:none;">
                                                                         <span onclick="openpopUpRating('@item.candidateName','@item.imid')" title="Rate Interviewer">
                                                                             <i class="fas fa-rss-square"></i>
                                                                         </span>
