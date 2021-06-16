@@ -221,7 +221,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="form-group">
+                                                        @*<div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
                                                                 Meeting Status
                                                             </label>
@@ -236,10 +236,10 @@
                                                                     }
                                                                 </select>
                                                             </div>
-                                                        </div>
+                                                        </div>*@
 
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">RFID</label>
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">Skill Channel Id</label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
                                                                     @if (HttpContextAccessor.HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
@@ -266,7 +266,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group">
+                                                        @*<div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="ConfirmationStatus">
                                                                 Confirmation Status
                                                             </label>
@@ -281,7 +281,7 @@
                                                                     }
                                                                 </select>
                                                             </div>
-                                                        </div>
+                                                        </div>*@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">End Client Name</label>
                                                             <div class="col-md-12 col-sm-12">
@@ -328,14 +328,30 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ApprovalStatus">
+                                                        @*<div class="form-group">
+            <label class="control-label col-md-12 col-sm-12 desp-label" for="ApprovalStatus">
 
-                                                                Approval Status
+                Approval Status
+            </label>
+            <div class="col-md-12 col-sm-12">
+                <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
+                    @foreach (var item in Model.Select(x => x.NextLevelApprovalStat).Distinct().ToList())
+                    {
+                        @if (item != null && item != "")
+                        {
+                            <option value="@item">@item</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>*@
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
+                                                                Meeting Status
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.NextLevelApprovalStat).Distinct().ToList())
+                                                                <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.MeetingStatusStatusDesc).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -346,12 +362,12 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SelectionStatus">
-                                                                Selection Status
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ConfirmationStatus">
+                                                                Confirmation Status
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="SelectionStatus" name="SelectionStatus" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.FinalSelectionStat).Distinct().ToList())
+                                                                <select id="ConfirmationStatus" name="ConfirmationStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.confirmationStatus).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -361,6 +377,22 @@
                                                                 </select>
                                                             </div>
                                                         </div>
+                                                        @*<div class="form-group">
+            <label class="control-label col-md-12 col-sm-12 desp-label" for="SelectionStatus">
+                Selection Status
+            </label>
+            <div class="col-md-12 col-sm-12">
+                <select id="SelectionStatus" name="SelectionStatus" class="form-control multiselect" multiple="multiple">
+                    @foreach (var item in Model.Select(x => x.FinalSelectionStat).Distinct().ToList())
+                    {
+                        @if (item != null && item != "")
+                        {
+                            <option value="@item">@item</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus">
                                                                 Joining Status
@@ -392,7 +424,7 @@
                                                                     }
                                                                 </select>
                                                             </div>
-                                                        </div>
+                                                        </div>*@
                                                         <div class="form-group">
 
 
@@ -480,21 +512,21 @@
                                                                 @if (item.candidateName != null && item.candidateName != "")
                                                                 {
 
-                                                                    @if (item.IsOnline == 1 && item.candidateName.Length > 15)
+                                                                    @if (item.IsOnline == 1 && item.candidateName.Length > 13)
                                                                     {
                                                                         <td>
-                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>  @item.candidateName.Substring(0, 10)... </a>
+                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>  @item.candidateName.Substring(0, 13)... </a>
                                                                         </td>
                                                                     }
                                                                     else
                                                                     {
 
-                                                                        @if (item.candidateName.Length > 15)
+                                                                        @if (item.candidateName.Length > 13)
                                                                         {
 
 
                                                                             <td class="cadName">
-                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 10)...  </a>
+                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 13)...  </a>
                                                                             </td>
                                                                         }
 
@@ -938,14 +970,14 @@
             html += ' <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
             html += ' <td> ' + new Date(data[i].interviewDate).toLocaleString()+ ' </td>';
             if (data[i].candidateName != null && data[i].candidateName != "") {
-                if (data[i].IsOnline == 1 && data[i].candidateName.length > 15) {
-                    html += ' <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>    ' + data[i].candidateName.substring(0, 15) + '...</a> </td>';
+                if (data[i].IsOnline == 1 && data[i].candidateName.length > 13) {
+                    html += ' <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName.substring(0, 13) + '...</a> </td>';
                 }
                 else {
 
 
-                    if (data[i].candidateName.length > 15) {
-                        html += ' <td><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 15) + '...  </a> </td>';
+                    if (data[i].candidateName.length > 13) {
+                        html += ' <td><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 13) + '...  </a> </td>';
                     }
                     else {
                         html += ' <td>' + data[i].candidateName + ' </td>';
