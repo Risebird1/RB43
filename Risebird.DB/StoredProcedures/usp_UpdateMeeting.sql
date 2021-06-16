@@ -32,7 +32,8 @@ Create PROCEDURE [dbo].[usp_UpdateMeeting]
 @MobileNumber nvarchar(200),
 @HRCoordinatorEmailId varchar(100),
 @QCInterviewer varchar(200),
-@zoomMeetingId bigint
+@zoomMeetingId bigint,
+@IsEmergency bit
 
 AS
 Begin
@@ -69,6 +70,7 @@ Begin
 					   ,[HRCoordinatorEmailId] =@HRCoordinatorEmailId
 					   ,[QCInterviewer]=@QCInterviewer
 					   ,[ZoomMeetingId]=@zoomMeetingId
+					   ,[IsEmergency]=@IsEmergency
 			WHERE id = @interviewId        
     
 		End

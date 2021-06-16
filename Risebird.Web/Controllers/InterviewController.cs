@@ -1420,43 +1420,21 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        var list = new List<SelectListItem>
-                        {
-                            new SelectListItem { Text = "No Clients", Value = "" }
-                        };
-                        MeetingVM meetingToUpdate = await _meetingService.GetMeeting(id);
+                        UpdateMeetingVM meetingToUpdate = await _meetingService.GetMeeting(id);
                         if (meetingToUpdate == null)
                             return RedirectToAction("Index");
-                        var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
-                                                   select new { ID = (int)s, Name = s.GetDescription() };
-                        meetingToUpdate.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
-                        var interviewslotList = from InterviewSlots s in Enum.GetValues(typeof(InterviewSlots))
-                                                select new { ID = (int)s, Name = s.GetDescription() };
-                        meetingToUpdate.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
-                        meetingToUpdate.IRFList = _meetingService.GetIRFList();
-                        meetingToUpdate.InterviewingMembersList = await _meetingService.GetIRFInterviewingMembersEmails(meetingToUpdate.IRFId);
-                        meetingToUpdate.QualityControllersList = await _meetingService.GetIRFQualityControllersEmails(meetingToUpdate.IRFId);
-                        var clients = _meetingService.GetClientsByRoles(meetingToUpdate.IRFId);
-                        if ((clients.Where(x => x.ClientRoleId == 1) == null) || (clients.Where(x => x.ClientRoleId == 1)).Count() == 0)
-                        {
-                            meetingToUpdate.ClientHrContactList = new SelectList(list, "Value", "Text");
-                        }
-                        else
-                        {
-                            meetingToUpdate.ClientHrContactList = new SelectList(clients.Where(x => x.ClientRoleId == 1), "EmailId", "EmailId");
 
-                        }
-                        if ((clients.Where(x => x.ClientRoleId == 4) == null) || (clients.Where(x => x.ClientRoleId == 4)).Count() == 0)
-                        {
-                            meetingToUpdate.StaffingAgencyList = new SelectList(list, "Value", "Text");
-                        }
-                        else
-                        {
-                            meetingToUpdate.StaffingAgencyList = new SelectList(clients.Where(x => x.ClientRoleId == 4), "EmailId", "EmailId");
-
-                        }
+                        SetUpdateMeetingParameters(meetingToUpdate);
+                        
                         if (meetingToUpdate != null)
                         {
+
+                            if (TempData["SuccessErrorMessageUpdatedInterview"] != null)
+                            {
+                                meetingToUpdate.Message = TempData["SuccessErrorMessageUpdatedInterview"].ToString();
+                                TempData.Remove("SuccessErrorMessageUpdatedInterview");
+                            }
+
                             TempData["ResumeLink"] = meetingToUpdate.resumeLink;
                             return View("Edit", meetingToUpdate);
                         }
@@ -1484,7 +1462,7 @@ namespace Risebird.Web.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(MeetingVM meetingUpdated)
+        public async Task<IActionResult> Edit(UpdateMeetingVM meetingUpdated)
         {
             try
             {
@@ -1496,12 +1474,6 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
-                                                   select new { ID = (int)s, Name = s.GetDescription() };
-                        meetingUpdated.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
-                        var interviewslotList = from InterviewSlots s in Enum.GetValues(typeof(InterviewSlots))
-                                                select new { ID = (int)s, Name = s.GetDescription() };
-                        meetingUpdated.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
                         if (!string.IsNullOrEmpty(meetingUpdated.interviewer))
                         {
                             meetingUpdated.interviewer = meetingUpdated.interviewer.Trim();
@@ -1545,10 +1517,10 @@ namespace Risebird.Web.Controllers
                                 string uploadedFileURL = blob.Uri.ToString();
                                 if (uploadedFileURL == null)
                                 {
-                                    ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
-                                    var model = new MeetingVM();
-
-                                    return View("Edit");
+                                    var model = new UpdateMeetingVM();
+                                    ModelState.AddModelError(String.Empty, "Resume Upload has failed.");
+                                    SetUpdateMeetingParameters(model);
+                                    return View("Edit", model);
 
                                 }
 
@@ -1566,17 +1538,19 @@ namespace Risebird.Web.Controllers
 
                             if (await _meetingService.UpdateMeeting(meetingUpdated))
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Meeting has been updated successfully";
-                                return RedirectToAction("Index");
+                                TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting has been updated successfully";
+                                return RedirectToAction("Edit", new { id = meetingUpdated.imid});
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Meeting update has Failed";
-                                return RedirectToAction("Index");
+                                TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting update has Failed";
+                                return RedirectToAction("Edit", new { id = meetingUpdated.imid });
+
                             }
                         }
                         else
                         {
+                            SetUpdateMeetingParameters(meetingUpdated);
                             return View("Edit", meetingUpdated);
                         }
                     }
@@ -1593,11 +1567,48 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterview"] = "Updating meeting Level is Failed";
-                return View("Index");
+                TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting update has Failed";
+                return RedirectToAction("Edit", new { id = meetingUpdated.imid });
             }
         }
 
+
+        private void SetUpdateMeetingParameters(UpdateMeetingVM meetingToUpdate)
+        {
+            var list = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "No Clients", Value = "" }
+            };
+            var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
+                                       select new { ID = (int)s, Name = s.GetDescription() };
+            meetingToUpdate.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
+            var interviewslotList = from InterviewSlots s in Enum.GetValues(typeof(InterviewSlots))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            meetingToUpdate.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
+            meetingToUpdate.IRFList = _meetingService.GetIRFList();
+            meetingToUpdate.InterviewingMembersList = _meetingService.GetIRFInterviewingMembersEmails(meetingToUpdate.IRFId).Result;
+            meetingToUpdate.QualityControllersList = _meetingService.GetIRFQualityControllersEmails(meetingToUpdate.IRFId).Result;
+            var clients = _meetingService.GetClientsByRoles(meetingToUpdate.IRFId);
+            if ((clients.Where(x => x.ClientRoleId == 1) == null) || (clients.Where(x => x.ClientRoleId == 1)).Count() == 0)
+            {
+                meetingToUpdate.ClientHrContactList = new SelectList(list, "Value", "Text");
+            }
+            else
+            {
+                meetingToUpdate.ClientHrContactList = new SelectList(clients.Where(x => x.ClientRoleId == 1), "EmailId", "EmailId");
+
+            }
+            if ((clients.Where(x => x.ClientRoleId == 4) == null) || (clients.Where(x => x.ClientRoleId == 4)).Count() == 0)
+            {
+                meetingToUpdate.StaffingAgencyList = new SelectList(list, "Value", "Text");
+            }
+            else
+            {
+                meetingToUpdate.StaffingAgencyList = new SelectList(clients.Where(x => x.ClientRoleId == 4), "EmailId", "EmailId");
+
+            }
+            return;
+        }
         public async Task<List<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string IRFId)
         {
             try

@@ -12,9 +12,9 @@ namespace Risebird.Business.Interface
         List<MeetingVM> GetMeetingList();
         bool AddMeeting(MeetingVM meeting);
         List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate, string emailId = null);
-        Task<bool> UpdateMeeting(MeetingVM meetingToUpdate);
+        Task<bool> UpdateMeeting(UpdateMeetingVM meetingToUpdate);
         List<MeetingVM> MultipleCandidateInvites();
-        Task<MeetingVM> GetMeeting(int id);
+        Task<UpdateMeetingVM> GetMeeting(int id);
         List<Meeting> GetAllOpenInterviews(string emailID);
         List<Meeting> GetAllQCInterviews(string emailID);
         List<MeetingVM> GetAllClientInterviews(string emailID);

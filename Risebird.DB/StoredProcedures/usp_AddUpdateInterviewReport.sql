@@ -22,7 +22,6 @@ CREATE PROCEDURE [dbo].[usp_AddUpdateInterviewReport]
 @SkillGeneralComments nvarchar(300),
 @SelectabilityComments nvarchar(300),
 @JoinabilityComments nvarchar(300),
-@Rating int,
 @ProctoringCount int
 
 AS
@@ -34,7 +33,6 @@ BEGIN
 	set
 	[confirmationStatus]=@confirmationStatus
 	,[OverallScore]=@OverallScore
-	,[Rating]=@Rating
 	,[TechSkillComments]=@TechSkillComments
 	,[SkillGeneralComments]=@SkillGeneralComments
 	,[SelectabilityComments]=@SelectabilityComments
@@ -55,12 +53,12 @@ BEGIN
 
  Insert into InterviewReport 
 
- (IRFId, InterviewId, CandidateName, confirmationStatus, OverallScore, Rating, TechSkillComments, SkillGeneralComments, 
+ (IRFId, InterviewId, CandidateName, confirmationStatus, OverallScore, TechSkillComments, SkillGeneralComments, 
   SelectabilityComments, JoinabilityComments, ProctoringCount)
 
   values
 
-  (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @Rating, @TechSkillComments, @SkillGeneralComments,
+  (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @TechSkillComments, @SkillGeneralComments,
   @SelectabilityComments, @JoinabilityComments, @ProctoringCount)
 
 END

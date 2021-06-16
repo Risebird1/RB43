@@ -12,7 +12,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings(DateTime startDate, DateTime endDate, string emailId = null);
         Task<bool> AddMeeting(MeetingVM meeting);
         Task<MeetingVM> GetInterviewMeetingById(int id);
-        Task<bool> UpdateMeeting(MeetingVM meeting);
+        Task<bool> UpdateMeeting(UpdateMeetingVM meeting);
         Task<IEnumerable<MeetingVM>> MultipleCandidateInvites();
         Task<IEnumerable<Meeting>> GetAllOpenInterviews(string emailId);
         Task<IEnumerable<Meeting>> GetAllQCInterviews(string emailId);
@@ -172,5 +172,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string irfId);
         Task<InterviewerRating> FetchRatingDetails(int interviewId, string emailid);
         Task<string> SaveRatingDetails(InterviewerRating model);
+        Task<UpdateMeetingVM> GetInterviewToUpdateMeetingById(int id);
     }
 }
