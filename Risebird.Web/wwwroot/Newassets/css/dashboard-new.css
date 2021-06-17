@@ -32,9 +32,64 @@ body {
     .clearfix:after {
         clear: both;
     }
+
 .mdc-button--outlined {
     padding: 0 10px 0 10px;
 }
+#SkillCollection_WeightageError {
+    color: red;
+    margin-left: 807px;
+    font-size: 12px;
+}
+#Joinability_WeightageError {
+    color: red!important;
+    margin-left: 900px;
+    font-size: 12px!important;
+}
+#Selectability_WeightageError {
+    color: red!important;
+    margin-left: 900px;
+    font-size: 12px!important
+}
+#SkillGeneral_WeightageError {
+    color: red !important;
+    margin-left: 900px;
+    font-size: 12px !important
+}
+#error_client {
+    color: red !important;
+    font-size: 12px !important;
+    margin-left: 913px
+}
+#noInterviewer {
+    color: red !important;
+    font-size: 12px !important;
+    margin-left: 913px;
+}
+#qcInterviewer {
+    color: red !important;
+    font-size: 12px !important;
+    margin-left: 913px;
+}
+#emInterviewer {
+    color: red!important;
+    font-size: 12px!important;
+    margin-left: 865px;
+}
+.mob_h {
+    height: 50px;
+}
+
+.user.user-r .main-notification-title, .user .main-notification-title {
+    padding-top: 4px !important;
+}
+.recommendation .dropdown-toggle::after {
+    border-top: .4em solid;
+    border-right: .21em solid transparent;
+    border-bottom: 0;
+    border-left: .21em solid transparent;
+}
+
 .tab_content, .tab-box {
     display: none;
 }
@@ -43,6 +98,7 @@ body {
 .tab_drawer_heading {
     display: none;
 }
+
 .tab-box label.choose-file-profile {
     font-size: 14px !important;
     font-weight: bold !important;
@@ -80,12 +136,12 @@ body {
         text-align: center;
         margin: 0px 0px 0px 5px;
     }
+
         .tab-menu ul li:first-child {
             margin: 0px 0px 0px 0px;
         }
 
         .tab-menu ul li a {
-            
             text-transform: uppercase;
             letter-spacing: 0.44px;
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -98,13 +154,46 @@ body {
             border-bottom: 0;
             font-size: 18px;
         }
+.interviewer .recommendation .multiselect .multiselect-selected-text {
+    width: 98%;
+    text-align: left;
+}
+.recommendation .assesmentgrp .multiselect.dropdown-toggle:after {
+    left: 1%;
+}
+.recommendation .experience .multiselect.dropdown-toggle:after {
+    left:1%;
+}
+.recommendation .companysize .multiselect.dropdown-toggle:after {
+    left: 1%;
+}
+.recommendation .companystage .multiselect.dropdown-toggle:after {
+    left: 1%;
+}
+.recommendation .skillcategory .multiselect.dropdown-toggle:after {
+    left: 1%;
+}
+.recommendation .senioritylevel .multiselect.dropdown-toggle:after {
+    left: 1%;
+}
+.popup-text {
+    text-transform: capitalize;
+    text-align: right;
+    color: #159241;
+    position: absolute;
+    right: 75px;
+}
 
-             
-
-             
+#qualityControlComments textarea {
+    background: #fff !important
+}
 
 .tab-box {
     display: none;
+}
+
+.tab-menu ul li a.active ~ .tab-box {
+    display: block;
 }
 
 .tab-teaser {
@@ -123,6 +212,7 @@ body {
     border-bottom-right-radius: 3px;
     border-bottom-left-radius: 3px;
 }
+
 .skillcount {
     position: absolute;
     top: 9px;
@@ -133,6 +223,7 @@ body {
     font-size: 11px;
     color: #8c8787;
 }
+
 .tabCon .tab-menu ul li {
     height: 36px;
     display: table;
@@ -140,25 +231,31 @@ body {
     position: relative;
     padding-left: 6px;
 }
+
 .tab-menu ul li:nth-child(3) a.active ~ .skillcount {
-    right:7px!important;
+    right: 7px !important;
 }
 
 .tab-menu ul li:nth-child(3) .skillcount {
     right: 10px !important;
 }
+
 .tab-menu ul li:nth-child(4) .skillcount {
     right: 6px !important;
 }
+
 .tab-menu ul li:nth-child(4) a.active ~ .skillcount {
     right: 5px !important;
 }
+
 .tab-menu ul li:nth-child(5) .skillcount {
     right: -5px !important;
 }
+
 .tab-menu ul li:nth-child(5) a.active ~ .skillcount {
     right: -1px !important;
 }
+
 .tab-menu ul li:nth-child(6) a.active ~ .skillcount {
     right: -4px !important;
 }
@@ -166,58 +263,75 @@ body {
 .tab-menu ul li:nth-child(6) .skillcount {
     right: -9px !important;
 }
+
 .tab-menu ul li:nth-child(7) .skillcount {
     right: 7px !important;
 }
+
 .tab-menu ul li:nth-child(7) a.active ~ .skillcount {
     right: 5px !important;
 }
+
 .tab-menu ul li:nth-child(8) .skillcount {
     right: 2px !important;
 }
+
 .tab-menu ul li:nth-child(8) a.active ~ .skillcount {
     right: 5px !important;
 }
+
 .tab-menu ul li:nth-child(9) .skillcount {
     right: 15px !important;
 }
+
 .tab-menu ul li:nth-child(9) a.active ~ .skillcount {
     right: 10px !important;
 }
+
 .tab-menu ul li:nth-child(10) .skillcount {
     right: -10px !important;
 }
+
 .tab-menu ul li:nth-child(10) a.active ~ .skillcount {
     right: -5px !important;
 }
+
 .tab-menu ul li:nth-child(11) a.active ~ .skillcount {
     right: 0px !important;
 }
+
 .tabCon .tab-menu ul li:first-child {
     margin-left: 0px;
 }
-    .tabCon .tab-menu ul li .fa {
-        position: absolute;
-        top: 10px;
-    }
-    .tabCon .tab-menu ul li svg {
-        position: absolute;
-        left: 0px;
-        top: 8px;
-    }
-    .tabCon .tab-menu ul li a {
-        border-radius: 22px;
-        height: 100%;
-        display: table-cell;
-        text-align: left;
-        font-size: 12px!important;
-        line-height: 14px;
-        padding: 10px 5px;
-        text-transform: inherit;
-        text-transform: capitalize;
-        cursor: default;
-    }
-.tab-menu ul li a.active{cursor:pointer!important}
+
+.tabCon .tab-menu ul li .fa {
+    position: absolute;
+    top: 10px;
+}
+
+.tabCon .tab-menu ul li svg {
+    position: absolute;
+    left: 0px;
+    top: 8px;
+}
+
+.tabCon .tab-menu ul li a {
+    border-radius: 22px;
+    height: 100%;
+    display: table-cell;
+    text-align: left;
+    font-size: 12px !important;
+    line-height: 14px;
+    padding: 10px 5px;
+    text-transform: inherit;
+    text-transform: capitalize;
+    cursor: default;
+}
+
+.tab-menu ul li a.active {
+    cursor: pointer !important
+}
+
 .tabCon .tab-box {
     padding: 0px;
     margin: 0px;
@@ -226,30 +340,112 @@ body {
 .tabCon .tab-main-box {
     padding: 30px 30px;
 }
-#back,#btnPrev{margin:0px 5px 0px 0px;}
+.rejected .btn-call {
+    width: 24px !important;
+    height: 24px;
+}
+    .rejected .btn-call .fa {
+        top: 6px;
+    }
+.rating-btn {
+    background: none;
+    border: 0px;
+    float: right;
+    margin: -2px 0px;
+    padding: 0px 5px;
+}
+.rating-box {
+    position: relative;
+    top: 12px;
+    right:80px;
+    float: right;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+    .rating-box .fa-star {
+        font-size: 19px;
+        color: #ed9720;
+        padding: 3px;
+    }
+#myRaitingPopup .modal-lg {
+    max-width: 670px;
+}
+
+#myRaitingPopup .interviewer_name {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0 0 5px;
+    line-height: 40px;
+    padding-top: 5px;
+}
+
+#myRaitingPopup .star-rating {
+    border: 0px;
+    display: table-caption;
+    flex-direction: row-reverse;
+    font-size: 2.0em;
+    justify-content: space-around;
+    padding: 0 .2em;
+    text-align: center;
+    width: auto;
+    margin-bottom: 10px;
+    background-color: transparent;
+}
+    #myRaitingPopup .star-rating label {
+        font-size: 37px;
+        padding: 0px 6px;
+        line-height: 30px;
+    }
+
+#myRaitingPopup .txtratingComment {
+    width: 100%;
+    height: 82px;
+    margin-bottom:15px;
+}
+.rating-btn .fa-rss {
+    font-size: 20px;
+    color: #6b69699e;
+    padding-right: 2px
+}
+.rating-btn .fa-rss-square {
+    font-size: 18px;
+    color: #312c2c5c;
+    padding-right: 2px;
+}
+#back, #btnPrev {
+    margin: 0px 5px 0px 0px;
+}
+
 .divider-lm {
     position: relative;
     left: 12px;
     top: -1px;
 }
-
+.table-row{display:table-row;}
 .divider-rm {
     position: relative;
     left: -28px;
     top: 2px;
 }
+
 .support svg {
     position: relative;
     left: 10px;
 }
+
 .user-r {
-  right: 20px!important;
+    right: 20px !important;
 }
-#WhatsappNumber-error {
+.codedresume_file.form-group input[type=file] {
+    opacity: 1;
+    position: relative;
+}
+    #WhatsappNumber-error {
     color: #E04B4A !important;
     font-weight: normal;
     font-size: 12px !important;
 }
+
 .avatar-upload {
     position: relative;
     max-width: 205px;
@@ -334,26 +530,32 @@ body {
     color: #888 !important;
     border: 0px !important;
 }
+
 .tab-box .form-group {
     margin-bottom: 27px;
 }
+
 .feedbackbubble .talk-bubble {
     z-index: 0;
 }
+
 .nav-open .navbar {
     left: 260px;
 }
+
 .rqtext {
     font-size: 14px;
     color: #b9b4b4;
 }
+
 .intrqtext {
     display: block;
     line-height: 20px;
     padding-bottom: 10px;
     color: #b9b4b4;
-    font-size:12.3px;
+    font-size: 12.3px;
 }
+
 .marquee {
     width: 100%;
     height: 48px;
@@ -1852,12 +2054,14 @@ table.journey td.cadSkill {
     vertical-align: baseline;
     border-radius: .25em;
 }
+
 .upload-text {
     line-height: 95px;
     color: #756f6f;
     font-weight: 300;
     text-transform: capitalize;
 }
+
 .talk-bubble [data-tooltip], .video-info [data-tooltip], .video-title [data-tooltip], .jd-title [data-tooltip], .cadName [data-tooltip], .cadName [data-tooltip], .cadSkill [data-tooltip], .cadSkill[data-tooltip], .cadEmail [data-tooltip], .cadEmail [data-tooltip], [data-tooltip] {
     position: relative;
     z-index: 1;
@@ -1979,7 +2183,7 @@ table.journey td.cadSkill {
     transform: rotate( -92deg );
 }
 
- .submit-profile {
+.submit-profile {
     width: 100%;
     height: auto;
     border: none;
@@ -2080,7 +2284,7 @@ table.journey td.cadSkill {
         outline: 0px;
     }
 
-.image-upload  label{
+.image-upload label {
     height: 38px;
 }
 
@@ -4080,10 +4284,34 @@ textarea.form-control {
     border-bottom: 0px solid #dee2e6 !important;
 }
 
-    #SkillTable.table-bordered td:nth-of-type(4), #SkillTable.table-bordered td:nth-of-type(10) {
+#SkillTable.table-bordered > tbody > tr:last-child {
+    border-bottom: 1px red solid !important;
+}
+
+#SkillTable .interviewer .star-rating {
+    width: 320px;
+}
+.sample-btn .fa-trash:before {
+    line-height: 29px;
+}
+.sample-btn .trash-btn{
+    float:right;
+}
+
+.sample-btn {
+    width: 100px;
+    margin: 0px auto;
+}
+.sample-qs #SkillTable.table-bordered td.action-area {
+    border-right: 0px !important;
+}
+  #SkillTable.table-bordered td:nth-of-type(5), #SkillTable.table-bordered td:nth-of-type(10) {
         border-right: 0px !important;
     }
 
+#SkillGeneralTable.table-bordered td:nth-of-type(6), #JoinabilityTable.table-bordered td:nth-of-type(6) {
+    border-right: 0px !important;
+}
 textarea {
     font-size: 14px;
 }
@@ -4127,7 +4355,9 @@ textarea {
 #CandidateFeedbackModel {
     z-index: 1000;
 }
-
+.recommendation .multiselect.dropdown-toggle:after {
+    left: 43%;
+}
 .interviewer .multiselect .multiselect-selected-text {
     color: #807e7e !important;
     font-size: 13px !important;
@@ -4154,6 +4384,32 @@ textarea {
     .mandate span.red, span.red {
         color: red
     }
+
+.interviewer [data-title]:hover::before {
+    content: attr(data-title);
+    position: absolute;
+    bottom: -22px;
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: #9e9999;
+    color: #fff;
+    font-size: 11px;
+    font-family: sans-serif;
+    white-space: nowrap;
+    left: -8px;
+}
+
+.interviewer [data-title]:hover::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 5px;
+    display: inline-block;
+    color: #fff;
+    border: 8px solid transparent;
+    border-bottom: 8px solid #9e9999;
+}
 
 .interviewer a.info {
     background: url(../../Newassets/img/info.png) no-repeat !important;
@@ -4255,16 +4511,18 @@ button.btn {
         position: absolute;
         right: -6px !important;
     }
+
     .tabCon .tab-menu ul li a {
         font-size: 17px !important;
         padding: 10px 12px;
     }
+
     .tab-menu ul li:nth-child(3) a.active ~ .skillcount {
         right: 16px !important;
     }
 
     .tab-menu ul li:nth-child(3) .skillcount {
-        right: 25px!important;
+        right: 25px !important;
     }
 
     .tab-menu ul li:nth-child(4) .skillcount {
@@ -4274,9 +4532,11 @@ button.btn {
     .tab-menu ul li:nth-child(4) a.active ~ .skillcount {
         right: 25px !important;
     }
+
     .tab-menu ul li:nth-child(5) .skillcount {
         right: 4px !important;
     }
+
     .tab-menu ul li:nth-child(5) a.active ~ .skillcount {
         right: 6px !important;
     }
@@ -4288,21 +4548,27 @@ button.btn {
     .tab-menu ul li:nth-child(6) .skillcount {
         right: 0px !important;
     }
+
     .tab-menu ul li:nth-child(7) .skillcount {
         right: 22px !important;
     }
+
     .tab-menu ul li:nth-child(7) a.active ~ .skillcount {
         right: 12px !important;
     }
+
     .tab-menu ul li:nth-child(8) .skillcount {
         right: 18px !important;
     }
+
     .tab-menu ul li:nth-child(8) a.active ~ .skillcount {
         right: 5px !important;
     }
+
     .tab-menu ul li:nth-child(9) .skillcount {
         right: 32px !important;
     }
+
     .tab-menu ul li:nth-child(9) a.active ~ .skillcount {
         right: 16px !important;
     }
@@ -4314,9 +4580,11 @@ button.btn {
     .tab-menu ul li:nth-child(10) a.active ~ .skillcount {
         right: 8px !important;
     }
+
     .tab-menu ul li:nth-child(11) .skillcount {
         right: 11px !important;
     }
+
     .tab-menu ul li:nth-child(11) a.active ~ .skillcount {
         right: 10px !important;
     }
@@ -4353,10 +4621,20 @@ button.btn {
     .razorpay_details {
         width: 60% !important;
     }
+    #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
+        color: red !important;
+        margin-left: 0 !important;
+        font-size: 12px !important;
+        width: 100%;
+        position: relative;
+        text-align: right;
+    }
+    
     .tabCon .tab-menu ul li a {
         font-size: 11px;
         padding: 10px 0px;
     }
+
     .user.user-r .main-notification-title {
         padding-top: 0px !important;
         position: relative;
@@ -4389,8 +4667,8 @@ button.btn {
     .main-img-user {
         display: block;
         position: relative;
-        width: 25px!important;
-        height: 25px!important;
+        width: 25px !important;
+        height: 25px !important;
         margin: 0px 0px 0px 30px;
         top: -73px !important;
         border-radius: 100%;
@@ -4581,6 +4859,7 @@ button.btn {
         width: 300px;
     }
 }
+
 @media (min-width: 992px) and (max-width: 1199px) {
     table.journey td.cadName, table.journey td.cadEmail {
         max-width: 200px;
@@ -4610,7 +4889,9 @@ button.btn {
     .selected-priority .journey td.interview-com, .journey td.interview-com {
         max-width: 300px;
     }
+
 }
+
 @media only screen and (max-width:991px) {
     .tabCon .tab-main-box {
         padding: 20px 10px;
@@ -4620,28 +4901,42 @@ button.btn {
     .tabCon .tabs {
         display: none;
     }
+    #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
+        color: red !important;
+        margin-left: 0 !important;
+        font-size: 12px !important;
+        width: 100%;
+        position: relative;
+        text-align: right;
+    }
+   
     .user {
-        top:-2px !important;
+        top: -2px !important;
         right: 160px !important;
     }
-    .user.user-r .main-img-user {
-        top: -78px !important;
-    }
 
-    .user.user-r .main-notification-title {
-        top: -54px !important;
-    }
+        .user.user-r .main-img-user {
+            top: -78px !important;
+        }
 
+        .user.user-r .main-notification-title {
+            top: -54px !important;
+        }
+    .recommendation .dropdown-toggle::after {
+        border-top: .3em solid;
+        border-right: .3em solid transparent;
+        border-bottom: 0;
+        border-left: .3em solid transparent;
+    }
     .navbar .container-fluid {
         height: 100%;
     }
 
     .user.user-r {
-        top: 4px!important;
-      
+        top: 4px !important;
     }
 
- 
+
 
     .main-img-user {
         display: block;
@@ -4654,11 +4949,15 @@ button.btn {
         left: -10px;
         float: right;
     }
+    .recommendation .multiselect.dropdown-toggle:after {
+        left: 1% !important;
+    }
+
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
-    
-   .tabCon .tab_drawer_heading {
+   
+    .tabCon .tab_drawer_heading {
         background-color: #ececec;
         color: #5a5757cc;
         border-bottom: 1px solid #ccc;
@@ -4675,14 +4974,17 @@ button.btn {
         -ms-user-select: none;
         user-select: none;
     }
+
     table.journey td.cadName, table.journey td.cadEmail {
         max-width: 200px;
     }
+
     .user-r .user {
         position: absolute;
-        top: 4px!important;
+        top: 4px !important;
         right: 71px !important;
     }
+
     .nav-open .navbar {
         left: 260px;
     }
@@ -4710,6 +5012,9 @@ button.btn {
     .selected-priority table.journey td.interviewdate {
         max-width: 270px;
     }
+
+  
+
 }
 
 
@@ -4736,8 +5041,11 @@ button.btn {
     }
     /* END TOCIFY */
 
-  
+    .recommendation .multiselect.dropdown-toggle:after {
+        left: 1% !important;
+    }
 
+    
     .tab_drawer_heading {
         background-color: #ececec;
         color: #5a5757cc;
@@ -4794,31 +5102,53 @@ button.btn {
 }
 
 @media (max-width: 767px) {
- 
+    .recommendation .multiselect.dropdown-toggle:after {
+        left: 1%!important;
+    }
+    #Selectability_WeightageError, #SkillCollection_WeightageError, #Joinability_WeightageError, #SkillGeneral_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
+        color: red !important;
+        margin-left: 0 !important;
+        font-size: 12px !important;
+        width: 100%;
+        position: relative;
+        text-align: right;
+    }
+    
+    .mob_h {
+        height: 2px;
+    }
+
+
     .myinterview_modal .btn-group {
         width: 100% !important;
     }
+
     .tabCon .tabs {
         display: none;
     }
+
     .main-notification-title {
-        right: 9px!important;
-        padding-top: 0px!important;
+        right: 9px !important;
+        padding-top: 0px !important;
         position: relative;
         top: 2px;
     }
+
     .user.user-r .main-notification-title {
         top: -71px !important;
     }
+
     .user.user-r {
-        top: 17px!important;
+        top: 17px !important;
     }
+
     .user {
         position: relative !important;
         top: 52px;
         right: 0px !important;
         left: 0px !important;
     }
+
     #txtpageHeader {
         display: none;
     }
@@ -4880,6 +5210,7 @@ button.btn {
     .top-content {
         padding: 40px 0 110px 0;
     }
+
     .user-r .user-menu {
         top: -15px;
         left: auto;
@@ -4889,19 +5220,20 @@ button.btn {
 
 @media (max-width: 480px) {
     .note-meeting {
-      
         left: 7px !important;
         position: absolute;
         top: -5px !important;
         font-size: 15px;
         width: 100% !important;
     }
+
     .main-notification-title {
         right: 9px !important;
         padding-top: 0px !important;
         position: relative;
         top: 2px;
     }
+
     .user-r .user-menu {
         top: -15px;
         left: auto;
@@ -4930,13 +5262,14 @@ button.btn {
         top: -11px !important;
         font-size: 13px !important;
     }
-  
+
     .support {
         position: absolute;
         left: auto;
         right: 27px;
         top: 2px !important;
     }
+
     .main-img-user {
         display: block;
         position: relative;
@@ -4952,7 +5285,7 @@ button.btn {
     .main-notification-title {
         padding-top: 0px !important;
         position: relative;
-        right: 9px!important;
+        right: 9px !important;
         top: -19px !important;
         width: 100%;
         text-align: center !important;
@@ -4965,7 +5298,7 @@ button.btn {
         top: 14px !important;
         width: 100%;
     }
-    }
+}
 
 
 
@@ -5063,6 +5396,7 @@ input[type='radio'] {
     padding: 0px 10px 0px;
     clear: both;
 }
+
 .content.paymentdes {
     margin-top: 30px;
     padding: 30px 30px 30px;
@@ -5798,6 +6132,7 @@ blockquote {
     .popover.bottom > .arrow:after {
         margin-left: -5px;
     }
+
 
 .popover.left > .arrow {
     right: -6px;
@@ -7887,7 +8222,11 @@ blockquote {
     left: 0;
     top: 35%;
 }
-.interviewer_2 .searchCon{z-index:0}
+
+.interviewer_2 .searchCon {
+    z-index: 0
+}
+
 .table-h {
     padding: 12px 5px !important;
 }
@@ -7907,7 +8246,7 @@ blockquote {
     padding: 10px 10px 0px 10px;
     font-size: 1.5em !important;
     text-transform: uppercase;
-    color:#000;
+    color: #000;
 }
 
 #progressTable_wrapper .dataTables_filter input[type=search] {
@@ -8280,30 +8619,41 @@ tbody.collapse.in {
 .nav > li > a p {
     padding-left: 35px;
 }
+
 .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu p {
     padding-left: 60px;
 }
+
 .nav > li > a:hover p, .nav > li > a.active-menu:hover p {
     padding-left: 45px !important;
 }
+
 .nav > li > a.active-menu:hover p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:hover p {
     padding-left: 70px !important;
 }
+
 .nav > li > a:hover {
     background: none !important;
 }
-.dash-widget-btn{display:none;}
-.user{cursor:pointer;}
+
+.dash-widget-btn {
+    display: none;
+}
+
+.user {
+    cursor: pointer;
+}
+
 .user-menu {
     padding-top: 0px;
     position: absolute;
-    top: 70px;
+    top: 50px;
     left: auto;
     right: -55px;
     bottom: auto;
     width: 180px;
     border-radius: 8px;
-   /* border-width: 1px;*/
+    /* border-width: 1px;*/
     background-color: #ffffff;
     box-shadow: -8px 12px 18px 0 rgb(21 21 62 / 30%);
 }
@@ -8317,7 +8667,7 @@ tbody.collapse.in {
         top: -6px;
         right: 28px;
         transform: rotate( 45deg );
-       /* border-top: 1px solid #f0f2f8;
+        /* border-top: 1px solid #f0f2f8;
         border-left: 1px solid #f0f2f8;*/
     }
 
@@ -8340,7 +8690,6 @@ tbody.collapse.in {
 
     .user-menu .fa-user-circle-o:before {
         font-size: 16px;
-       
         top: 2px;
         position: relative;
     }
@@ -8348,14 +8697,12 @@ tbody.collapse.in {
     .user-menu .fa-sign-out:before {
         font-size: 17px;
         top: 2px;
-       
         position: relative;
     }
 
     .user-menu .fa-cog:before {
         content: "\f013";
         font-size: 17px;
-       
     }
 
     .user-menu .user-menu-link:hover {
@@ -8366,9 +8713,11 @@ tbody.collapse.in {
 .user-menu-link .fa {
     margin-right: 5px;
 }
+
 .user-menu .footer .user-menu-link {
     font-size: 13px;
 }
+
 .user-menu-link:hover, .user-menu-link:focus {
     background-color: #f1f2f9;
 }
@@ -8376,26 +8725,29 @@ tbody.collapse.in {
 .user-menu a {
     border-top: 1px dotted #e0e3ea !important;
 }
+
 .user {
     position: relative;
     left: auto;
     right: 100px;
 }
+
 .no-mlr {
-    margin-left: 0px!important;
-    margin-right: 0px!important;
+    margin-left: 0px !important;
+    margin-right: 0px !important;
 }
+
 .support {
     position: absolute;
     left: auto;
     right: 27px;
     top: 12px;
 }
-.menu-container {
-/*   visibility: hidden;
-    opacity: 0;*/
-display:none;
 
+.menu-container {
+    /*   visibility: hidden;
+    opacity: 0;*/
+    display: none;
 }
 
 .user-menu .footer {
@@ -8441,12 +8793,14 @@ display:none;
         object-fit: cover;
         border-radius: 100%;
     }
+
 .user .main-notification-title {
     margin-top: 0px !important;
     width: 95%;
     text-align: right;
     padding-right: 0px !important;
 }
+
 .header-navheading {
     padding: 10px 15px 10px 15px;
     text-align: center;
@@ -8480,15 +8834,19 @@ display:none;
     margin-left: 0.3rem;
     font-family: sans-serif;
 }
-.mbtop-10{
-    margin:10px 0px;
+
+.mbtop-10 {
+    margin: 10px 0px;
 }
+
 #supportModal .modal-lg {
     max-width: 800px !important;
 }
+
 #supportmailModal .modal-content .modal-body {
     padding: 10px 10px;
 }
+
 #supportmailModal label {
     font-size: 12px;
     margin-bottom: 5px;
@@ -8496,9 +8854,9 @@ display:none;
     padding: 0px 20px;
 }
 
-#supportmailModal .mdc-card{
-    border-radius:0;
-    box-shadow:none;
+#supportmailModal .mdc-card {
+    border-radius: 0;
+    box-shadow: none;
 }
 
 
@@ -8507,17 +8865,21 @@ display:none;
     margin: 0px 10px 10px 10px;
     background: #edf4f9b5;
 }
+
 body.sidebar-mini .top-panel {
     padding: 0px 60px 0px 100px;
     margin-bottom: 0px !important;
 }
+
 body .top-panel {
     padding: 0px 60px 0px 275px;
     margin-bottom: 0px !important;
 }
+
 .dash-h {
     padding: 0px 60px 0px 20px;
 }
+
 .sidebar-wrapper > .nav li > a.active-menu, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
     position: relative;
     z-index: 1;
@@ -8616,9 +8978,12 @@ body .top-panel {
     position: relative;
     border: solid 1px #ccc !important;
     border-radius: 20px;
-
 }
-.searchbox .searchCon{z-index:0!important}
+
+.searchbox .searchCon {
+    z-index: 0 !important
+}
+
 .dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
     width: 200px;
     background-color: #fff;
@@ -8645,10 +9010,12 @@ body .top-panel {
 .filheader {
     padding: 10px;
 }
+
 .filavatar svg {
     top: 10px;
     position: relative;
 }
+
 .filavatar {
     width: 45px;
     float: left;
@@ -10290,11 +10657,13 @@ div.tagsinput {
         right: 27px;
         top: 11px !important;
     }
+
     .dash-h {
         padding: 0px 0px 0px 0px;
     }
+
     .main-img-user {
-        display: none!important;
+        display: none !important;
         position: relative;
         width: 20px !important;
         height: 20px !important;
@@ -10320,6 +10689,7 @@ div.tagsinput {
         top: -4px !important;
         width: 100%;
     }
+
     .videopad {
         padding-left: 0px;
         padding-right: 0px;
@@ -10401,8 +10771,8 @@ div.tagsinput {
 
 
 
- 
 
-    .x-navigation-minimized .xn-logo {
-        display: none;
-    }
+
+.x-navigation-minimized .xn-logo {
+    display: none;
+}

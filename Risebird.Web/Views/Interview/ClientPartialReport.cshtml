@@ -183,7 +183,7 @@
 
                                 <div class="row">
 
-                                    <div class="col-md-6 col-sm-6 pull-left">
+                                    @*<div class="col-md-6 col-sm-6 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.Rating, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
@@ -193,7 +193,7 @@
 
                                         </div>
 
-                                    </div>
+                                    </div>*@
                                     <div class="col-md-6 col-sm-6 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -512,7 +512,7 @@
 
                                                                 <td>
                                                                     @*<input class="form-control" id="@("TechSkillReportCollection_"+i+"__ActualLevelId")" name="TechSkillReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.LevelTech.Where(x=> x.Value == Model.TechSkillReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">*@
-                                                                    @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
+                                                                    @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @disabled = "disabled" })
 
                                                                 </td>
                                                                 <td>
@@ -600,7 +600,7 @@
 
 
 
-                                                                    @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
+                                                                    @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @disabled = "disabled" })
 
                                                                 </td>
                                                                 <td>
@@ -681,7 +681,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @readonly = "readonly" })
+                                                                    @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control" @*, @readonly = "readonly"*@, @disabled = "disabled" })
 
                                                                 </td>
                                                                 <td>
@@ -763,7 +763,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @readonly = "readonly" })
+                                                                    @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @*, @readonly = "readonly"*@ @disabled = "disabled" })
 
                                                                 </td>
                                                                 <td>
@@ -1644,7 +1644,9 @@
                 $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
             }
             else {
-                $("#" + skillName + digit + "__WeightageActual").val("0");
+                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+                var adjustedReqWeightage = Math.pow(0.5, (reqLevel - actLevel)) * (reqWeight);
+                $("#" + skillName + digit + "__WeightageActual").val(adjustedReqWeightage);
                 $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
 
             }

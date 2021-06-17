@@ -33,9 +33,11 @@ namespace Risebird.Web.Controllers
         private readonly IMeetingService _meetingService;
         private readonly IUserService _userService;
         private readonly IIRFRepository _iRFRepository;
+        private readonly INotificationHelper _notificationHelper;
+
         //private static string Searchvalue;
 
-        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository)
+        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -45,6 +47,7 @@ namespace Risebird.Web.Controllers
             _meetingService = meetingService;
             _userService = userService;
             _iRFRepository = iRFRepository;
+            _notificationHelper = notificationHelper;
         }
         public async Task<IActionResult> CandidateTimeline()
         {
@@ -2479,7 +2482,7 @@ namespace Risebird.Web.Controllers
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
 
-            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
+            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId).Result, "Comment", "Comment");
         }
 
         public JsonResult ChangeCandidateStatus(int videoid, string Status)
@@ -2681,9 +2684,6 @@ namespace Risebird.Web.Controllers
             return null;
         }
 
-
-
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetCandidateStatusList(int irfId, int candidateId, string irfName, string candidateName)
@@ -2742,7 +2742,35 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
-
-
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> CancelInterviewProcess(int id)
+        {
+            var model = await _candidateService.FetchInterviewDetails(id);
+            var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+            if (menus != null)
+            {
+                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+            }
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<JsonResult> CancelInterviewProcess(int id, string CandidateEmail)
+        {
+            var model = await _candidateService.CancelInterviewDetails(id, CandidateEmail);
+            var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
+            List<string> interviewers = new List<string>();
+            if (String.IsNullOrEmpty(result.interviewer))
+            {
+                interviewers.Add(result.interviewer);
+            }
+            if (String.IsNullOrEmpty(result.EmailId))
+            {
+                interviewers.Add(result.EmailId);
+            }
+            _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString());
+            return Json(model);
+        }
     }
 }

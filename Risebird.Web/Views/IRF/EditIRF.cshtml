@@ -18,22 +18,22 @@
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     @*<nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
+            <div class="container-fluid">
+                <div class="navbar-wrapper">
+                    <div class="navbar-toggle">
+                        <button type="button" class="navbar-toggler">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
+                    </div>
+                    <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Skills Channel</a>
+                    <a class="navbar-brand"> /  &nbsp; Edit Skill Channel</a>
                 </div>
-                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Skills Channel</a>
-                <a class="navbar-brand"> /  &nbsp; Edit Skill Channel</a>
+
+
             </div>
-
-
-        </div>
-    </nav>*@
+        </nav>*@
     <!-- End Navbar -->
 
     <div class="content client">
@@ -47,31 +47,31 @@
 
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                            <div >
+                            <div>
                                 <div class="col-md-12">
                                     <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Edit Skill Channel</h4></div>
                                 </div>
                                 <div class="tabCon">
                                     <div class="tab-menu">
                                         <ul class="tabs">
-                                            <li><a href="#" class="active text-center"  id="rtab-1" onclick="headerClickchange('tab-1')">Event Details</a></li>
-                                            <li><a href="#"  id="rtab-2" class="text-center" onclick="headerClickchange('tab-2')">Job Details</a></li>
+                                            <li><a href="#" class="active text-center" id="rtab-1" onclick="headerClickchange('tab-1')">Event Details</a></li>
+                                            <li><a href="#" id="rtab-2" class="text-center" onclick="headerClickchange('tab-2')">Job Details</a></li>
                                             <li><a href="#" id="rtab-3" class="" onclick="headerClickchange('tab-3')">Tech Skill </a><span id="count_SkillCollection" class="skillcount">@Model.SkillCollection.Count()</span></li>
-                                            <li><a href="#"  id="rtab-4" class="" onclick="headerClickchange('tab-4')">Joinability</a><span id="count_Joinability" class="skillcount">@Model.Joinability.Count()</span></li>
+                                            <li><a href="#" id="rtab-4" class="" onclick="headerClickchange('tab-4')">Joinability</a><span id="count_Joinability" class="skillcount">@Model.Joinability.Count()</span></li>
                                             <li><a href="#" id="rtab-5" class="" onclick="headerClickchange('tab-5')">Selectability</a><span id="count_Selectability" class="skillcount">@Model.Selectability.Count()</span></li>
                                             <li><a href="#" id="rtab-6" class="" onclick="headerClickchange('tab-6')">General Skill</a><span id="count_SkillGeneral" class="skillcount">@Model.SkillGeneral.Count()</span></li>
-                                            <li><a href="#" id="rtab-7" class="text-center" onclick="headerClickchange('tab-7')">Client</a><span id ="count_ClientTable" class="skillcount">@Model.ClientCollection.Count()</span></li>
-                                            <li><a href="#"  id="rtab-8" class="" onclick="headerClickchange('tab-8')">Interviewer</a><span id="count_Interviewer" class="skillcount">@Model.InterviewerCollection.Count()</span></li>
-                                            <li><a href="#"  id="rtab-9" class="text-center" onclick="headerClickchange('tab-9')">QC</a><span id="count_qc" class="skillcount">@Model.QualityController.Count()</span></li>
-                                            <li><a href="#"  id="rtab-10" class="" onclick="headerClickchange('tab-10')">E.Interviewer</a><span id="count_Em" class="skillcount">@Model.EmergencyInterviewerCollection.Count()</span></li>
+                                            <li><a href="#" id="rtab-7" class="text-center" onclick="headerClickchange('tab-7')">Client</a><span id="count_ClientTable" class="skillcount">@Model.ClientCollection.Count()</span></li>
+                                            <li><a href="#" id="rtab-8" class="" onclick="headerClickchange('tab-8')">Interviewer</a><span id="count_Interviewer" class="skillcount">@Model.InterviewerCollection.Count()</span></li>
+                                            <li><a href="#" id="rtab-9" class="text-center" onclick="headerClickchange('tab-9')">QC</a><span id="count_qc" class="skillcount">@Model.QualityController.Count()</span></li>
+                                            <li><a href="#" id="rtab-10" class="" onclick="headerClickchange('tab-10')">E.Interviewer</a><span id="count_Em" class="skillcount">@Model.EmergencyInterviewerCollection.Count()</span></li>
                                             @*<li><a href="#" rel="tab-11" id="rtab-11" class="">Resume Evaluator</a></li>*@
-                                            <li><a href="#"  id="rtab-11" class="" onclick="headerClickchange('tab-11')">Coordinator</a><span id="count_Hr" class="skillcount">@Model.HRCollection.Count()</span></li>
+                                            <li><a href="#" id="rtab-11" class="" onclick="headerClickchange('tab-11')">Coordinator</a><span id="count_Hr" class="skillcount">@Model.HRCollection.Count()</span></li>
                                             @*<li><a href="#" rel="tab-13" id="rtab-13" class="">Recruiter</a></li>*@
 
                                         </ul>
                                     </div>
 
-                                   
+
                                     <div>
                                         <h3 class="tab_drawer_heading" rel="tab-1">Event Details</h3>
                                         <div class="tab-box" id="tab-1" style="display:block;">
@@ -116,7 +116,7 @@
                                                             @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                         </div>
                                                         @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                        @Html.ValidationMessageFor(model => model.CalendlyLink, "", new {@id= "error_CalendlyLink", @class = "text-danger" })
+                                                        @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @id = "error_CalendlyLink", @class = "text-danger" })
 
                                                     </div>
                                                 </div>
@@ -128,27 +128,27 @@
                                                         @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, "Select", new { @class = "form-control select-css" })
                                                         @Html.ValidationMessageFor(model => model.PriorityLevelList, "", new { @id = "error_PriorityLevel", @class = "text-danger" })
                                                     </div>
-                                                    </div>
+                                                </div>
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group">
                                                         <div class="mandate">
                                                             @Html.LabelFor(model => model.BillingOwner, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                         </div>
                                                         @Html.DropDownListFor(model => model.BillingOwner, (SelectList)ViewBag.ClientUser, "Select Billing Owner", new { @class = "form-control select-css" })
-                                                       @Html.ValidationMessageFor(model => model.BillingOwner, "", new { @id="error_BillingOwner", @class = "text-danger" })
-                                                     
+                                                        @Html.ValidationMessageFor(model => model.BillingOwner, "", new { @id = "error_BillingOwner", @class = "text-danger" })
+
                                                     </div>
-                                                    </div>
+                                                </div>
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group">
                                                         <div class="mandate">
                                                             @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                         </div>
                                                         @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "form-control select-css", @onchange = "TechSkillChanged()" })
-                                                       @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new {@id="error_AssessmentGroupId", @class = "text-danger" })
-                                                      
+                                                        @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new { @id = "error_AssessmentGroupId", @class = "text-danger" })
+
                                                     </div>
-                                                    </div>
+                                                </div>
                                                 <div style="clear: both;height:0px;">&nbsp;</div>
 
                                                 <div class="col-md-4 col-sm-4">
@@ -215,71 +215,71 @@
                                                             @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "error_JobCountry", @class = "text-danger" })
                                                         </div>
                                                         <div class="form-group mb-0">
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                                </div>
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
 
                                                             @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css " })
 
-                                                                @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @id = "error_Heuristicsscore", @class = "text-danger" })
+                                                            @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @id = "error_Heuristicsscore", @class = "text-danger" })
 
 
-                                                            </div>
-                                            
+                                                        </div>
+
                                                         <div class="form-group">
                                                             Upload Company Details
 
-                                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                                    <div class="mdc-radio mdc-radio--touch">
-                                                                        <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="Upload" onclick="RadioCompanyChanged(this.value)">
-                                                                        <div class="mdc-radio__background">
-                                                                            <div class="mdc-radio__outer-circle"></div>
-                                                                            <div class="mdc-radio__inner-circle"></div>
-                                                                        </div>
-                                                                        <div class="mdc-radio__ripple"></div>
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="Upload" onclick="RadioCompanyChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
                                                                     </div>
+                                                                    <div class="mdc-radio__ripple"></div>
                                                                 </div>
-
-                                                                Provide Company Details
-
-                                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                                    <div class="mdc-radio mdc-radio--touch">
-                                                                        <input class="mdc-radio__native-control" type="radio" id="JcompanydetailsD" name="companydetails" value="Link" onclick="RadioCompanyChanged(this.value)">
-                                                                        <div class="mdc-radio__background">
-                                                                            <div class="mdc-radio__outer-circle"></div>
-                                                                            <div class="mdc-radio__inner-circle"></div>
-                                                                        </div>
-                                                                        <div class="mdc-radio__ripple"></div>
-                                                                    </div>
-                                                                </div>
-
-
-                                                                None
-
-                                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                                    <div class="mdc-radio mdc-radio--touch">
-                                                                        <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="None" checked="checked" onclick="RadioCompanyChanged(this.value)">
-                                                                        <div class="mdc-radio__background">
-                                                                            <div class="mdc-radio__outer-circle"></div>
-                                                                            <div class="mdc-radio__inner-circle"></div>
-                                                                        </div>
-                                                                        <div class="mdc-radio__ripple"></div>
-                                                                    </div>
-                                                                </div>
-
-
-
                                                             </div>
-                                                            <div class="form-group" style="display:none" id="linkcdDiv">
-                                                                @Html.LabelFor(model => model.CompanyDetails, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                                @Html.EditorFor(model => model.CompanyDetails, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                                @Html.ValidationMessageFor(model => model.CompanyDetails, "", new { @class = "text-danger" })
 
+                                                            Provide Company Details
+
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" type="radio" id="JcompanydetailsD" name="companydetails" value="Link" onclick="RadioCompanyChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
+                                                                    </div>
+                                                                    <div class="mdc-radio__ripple"></div>
+                                                                </div>
                                                             </div>
-                                                            <div class="" style="display:none" id="uploadcdDiv">
-                                                                @Html.LabelFor(model => model.CompanyDetailFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                                @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
+
+                                                            None
+
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="None" checked="checked" onclick="RadioCompanyChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
+                                                                    </div>
+                                                                    <div class="mdc-radio__ripple"></div>
+                                                                </div>
+                                                            </div>
+
+
+
+                                                        </div>
+                                                        <div class="form-group" style="display:none" id="linkcdDiv">
+                                                            @Html.LabelFor(model => model.CompanyDetails, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                            @Html.EditorFor(model => model.CompanyDetails, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @Html.ValidationMessageFor(model => model.CompanyDetails, "", new { @class = "text-danger" })
+
+                                                        </div>
+                                                        <div class="" style="display:none" id="uploadcdDiv">
+                                                            @Html.LabelFor(model => model.CompanyDetailFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                            @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
 
                                                         </div>
                                                         <div class="">
@@ -345,58 +345,58 @@
 
                                                         <div class="form-group mb-0">
 
-                                                                Upload JD
+                                                            Upload JD
 
-                                                                <div class="mdc-touch-target-wrapper" style="top: 4px;  position: relative;">
-                                                                    <div class="mdc-radio mdc-radio--touch">
-                                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
-                                                                        <div class="mdc-radio__background">
-                                                                            <div class="mdc-radio__outer-circle"></div>
-                                                                            <div class="mdc-radio__inner-circle"></div>
-                                                                        </div>
-                                                                        <div class="mdc-radio__ripple"></div>
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px;  position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
                                                                     </div>
+                                                                    <div class="mdc-radio__ripple"></div>
                                                                 </div>
-
-
-
-                                                                Provide JD link
-
-                                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                                    <div class="mdc-radio mdc-radio--touch">
-                                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
-                                                                        <div class="mdc-radio__background">
-                                                                            <div class="mdc-radio__outer-circle"></div>
-                                                                            <div class="mdc-radio__inner-circle"></div>
-                                                                        </div>
-                                                                        <div class="mdc-radio__ripple"></div>
-                                                                    </div>
-                                                                </div>
-
-                                                                None
-
-                                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                                    <div class="mdc-radio mdc-radio--touch">
-                                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="None" checked="checked" onclick="RadioChanged(this.value)">
-                                                                        <div class="mdc-radio__background">
-                                                                            <div class="mdc-radio__outer-circle"></div>
-                                                                            <div class="mdc-radio__inner-circle"></div>
-                                                                        </div>
-                                                                        <div class="mdc-radio__ripple"></div>
-                                                                    </div>
-                                                                </div>
-
                                                             </div>
-                                                            <div class="form-group mb-0" style="display:none" id="linkDiv">
-                                                                @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                                @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                                @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
 
+
+
+                                                            Provide JD link
+
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
+                                                                    </div>
+                                                                    <div class="mdc-radio__ripple"></div>
+                                                                </div>
                                                             </div>
-                                                            <div class="" style="display:none" id="uploadDiv">
-                                                                @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                                @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                                            None
+
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="None" checked="checked" onclick="RadioChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
+                                                                    </div>
+                                                                    <div class="mdc-radio__ripple"></div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="form-group mb-0" style="display:none" id="linkDiv">
+                                                            @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                            @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
+
+                                                        </div>
+                                                        <div class="" style="display:none" id="uploadDiv">
+                                                            @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                            @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
 
                                                         </div>
                                                         <div class="upload">
@@ -634,7 +634,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="Joinability_WeightageError" style="color:red!important; margin-left:900px;font-size:12px!important"></label>
+                                                            <label class="text-danger" id="Joinability_WeightageError"></label>
                                                             <label class="text-danger" id="Joinability_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
 
                                                         </div>
@@ -725,7 +725,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="Selectability_WeightageError" style="color:red!important; margin-left:900px;font-size:12px!important"></label>
+                                                            <label class="text-danger" id="Selectability_WeightageError"></label>
                                                             <label class="text-danger" id="Selectability_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
                                                         </div>
                                                     </div><!--end of col-md-12-->
@@ -816,7 +816,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="SkillGeneral_WeightageError" style="color:red!important; margin-left:900px;font-size:12px!important"></label>
+                                                            <label class="text-danger" id="SkillGeneral_WeightageError"></label>
                                                             <label class="text-danger" id="SkillGeneral_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
                                                         </div>
                                                     </div><!--end of col-md-12-->
@@ -891,7 +891,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="error_client" style="color:red!important;font-size:12px!important; margin-left:913px"></label>
+                                                            <label class="text-danger" id="error_client" ></label>
 
                                                         </div>
                                                     </div><!--end of col-md-12-->
@@ -1025,7 +1025,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="noInterviewer" style="color:red!important;font-size:12px!important; margin-left:913px"></label>
+                                                            <label class="text-danger" id="noInterviewer"></label>
 
                                                         </div>
                                                     </div><!--end of col-md-12-->
@@ -1102,7 +1102,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="qcInterviewer" style="color:red!important;font-size:12px!important; margin-left:913px"></label>
+                                                            <label class="text-danger" id="qcInterviewer"></label>
                                                         </div>
                                                     </div><!--end of col-md-12-->
                                                 </div>
@@ -1189,7 +1189,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <h3 class="tab_drawer_heading" rel="tab-11">Coordinator</h3>
                                         <div class="tab-box" id="tab-11">
                                             <div class="tab-main-box">
@@ -1252,17 +1252,17 @@
                                                 </div>
                                             </div>
                                         </div>
-                                       
+
                                     </div>
 
-                                
+
                                 </div>
 
-                              
+
                             </div>
-                           
-                          
-                           
+
+
+
                             <div class="card-footer mt-20 clearfix">
                                 <div class="row  mc-button-area pull-right">
                                     <div class="col-md-12">
@@ -1278,10 +1278,10 @@
                                         <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnNext" value="Next" style="margin-right:5px;">
                                     </div>
                                 </div>
-                            </div>  
-                            
+                            </div>
 
-                       
+
+
                             @Html.HiddenFor(m => m.id)
                             @Html.HiddenFor(m => m.ClientId)
                             @Html.HiddenFor(m => m.OldAssessmentGroupId)
@@ -1309,6 +1309,14 @@
                                 }
                             }
 
+                            @if (Model.OldSkillCollection != null)
+                            {
+                                for (int i = 0; i < Model.OldSkillCollection.Count(); i++)
+                                {
+                                    @Html.HiddenFor(m => m.OldSkillCollection[i].SkillId);
+                                }
+                            }
+
 
                         </form>
 
@@ -1329,7 +1337,6 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $(".selectpicker").select2();
-        $(".active").next("span").addClass("active-c");
         $("#btnPrev").click(function () {
             var activeTab = $(".active").text();
             if (activeTab.trim() == "Job Details") {
@@ -1467,7 +1474,7 @@
                 }
             }
             else if (activeTab.trim() == "Client") {
-                
+
                 flag = checkTabValidation(activeTab);
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
@@ -1675,8 +1682,9 @@
             if (!flag) {
                 $(".tab-menu li a").removeClass("active");
                 $("#r" + newHeader).addClass("active");
-                document.getElementById(newHeader).style.display = "block";
+
                 document.getElementById("tab-1").style.display = "none";
+                document.getElementById(newHeader).style.display = "block";
             }
         }
         else if (activeTab.trim() == "Job Details") {
@@ -1685,8 +1693,8 @@
 
                 $(".tab-menu li a").removeClass("active");
                 $("#r" + newHeader).addClass("active");
-                document.getElementById(newHeader).style.display = "block";
                 document.getElementById("tab-2").style.display = "none";
+                document.getElementById(newHeader).style.display = "block";
             }
         }
         else if (activeTab.trim() == "Tech Skill") {
@@ -1695,8 +1703,8 @@
 
                 $(".tab-menu li a").removeClass("active");
                 $("#r" + newHeader).addClass("active");
-                document.getElementById(newHeader).style.display = "block";
                 document.getElementById("tab-3").style.display = "none";
+                document.getElementById(newHeader).style.display = "block";
             }
         }
         else if (activeTab.trim() == "Joinability") {
@@ -1704,8 +1712,8 @@
             if (!flag) {
                 $(".tab-menu li a").removeClass("active");
                 $("#r" + newHeader).addClass("active");
-                document.getElementById(newHeader).style.display = "block";
                 document.getElementById("tab-4").style.display = "none";
+                document.getElementById(newHeader).style.display = "block";
             }
         }
         else if (activeTab.trim() == "Selectability") {
@@ -1714,8 +1722,8 @@
 
                 $(".tab-menu li a").removeClass("active");
                 $("#r" + newHeader).addClass("active");
-                document.getElementById(newHeader).style.display = "block";
                 document.getElementById("tab-5").style.display = "none";
+                document.getElementById(newHeader).style.display = "block";
             }
         }
         else if (activeTab.trim() == "General Skill") {
@@ -1724,16 +1732,16 @@
 
                 $(".tab-menu li a").removeClass("active");
                 $("#r" + newHeader).addClass("active");
-                document.getElementById(newHeader).style.display = "block";
                 document.getElementById("tab-6").style.display = "none";
+                document.getElementById(newHeader).style.display = "block";
             }
         }
         else if (activeTab.trim() == "Client") {
             if (!flag) {
                 $(".tab-menu li a").removeClass("active");
                 $("#r" + newHeader).addClass("active");
-                document.getElementById(newHeader).style.display = "block";
                 document.getElementById("tab-7").style.display = "none";
+                document.getElementById(newHeader).style.display = "block";
             }
         }
         else if (activeTab.trim() == "Interviewer") {
@@ -1741,8 +1749,8 @@
             if (!flag) {
                 $(".tab-menu li a").removeClass("active");
                 $("#r" + newHeader).addClass("active");
-                document.getElementById(newHeader).style.display = "block";
                 document.getElementById("tab-8").style.display = "none";
+                document.getElementById(newHeader).style.display = "block";
             }
         }
         else if (activeTab.trim() == "QC") {
@@ -1750,8 +1758,8 @@
             if (!flag) {
                 $(".tab-menu li a").removeClass("active");
                 $("#r" + newHeader).addClass("active");
-                document.getElementById(newHeader).style.display = "block";
                 document.getElementById("tab-9").style.display = "none";
+                document.getElementById(newHeader).style.display = "block";
             }
         }
         else if (activeTab.trim() == "E.Interviewer") {
@@ -1759,36 +1767,35 @@
             if (!flag) {
                 $(".tab-menu li a").removeClass("active");
                 $("#r" + newHeader).addClass("active");
-                document.getElementById(newHeader).style.display = "block";
                 document.getElementById("tab-10").style.display = "none";
-
+                document.getElementById(newHeader).style.display = "block";
             }
         }
         else if (activeTab.trim() == "Coordinator") {
             $(".tab-menu li a").removeClass("active");
             $("#r" + newHeader).addClass("active");
-            document.getElementById(newHeader).style.display = "block";
-            document.getElementById("tab-11").style.display = "none";
 
+            document.getElementById("tab-11").style.display = "none";
+            document.getElementById(newHeader).style.display = "block";
         }
 
 
 
         if (!flag) {
-        if (newHeader == "tab-1") {
-            document.getElementById("btnPrev").style.display = "none";
-        }
-        else {
-            document.getElementById("btnPrev").style.display = "block";
-        }
-        if (newHeader == "tab-11") {
-            document.getElementById("btnNext").style.display = "none";
-            document.getElementById("btnUpload").style.display = "block";
-        }
-        else {
-            document.getElementById("btnNext").style.display = "block";
-            document.getElementById("btnUpload").style.display = "none";
-        }
+            if (newHeader == "tab-1") {
+                document.getElementById("btnPrev").style.display = "none";
+            }
+            else {
+                document.getElementById("btnPrev").style.display = "block";
+            }
+            if (newHeader == "tab-11") {
+                document.getElementById("btnNext").style.display = "none";
+                document.getElementById("btnUpload").style.display = "block";
+            }
+            else {
+                document.getElementById("btnNext").style.display = "block";
+                document.getElementById("btnUpload").style.display = "none";
+            }
 
         }
     }
@@ -1836,8 +1843,9 @@
                     document.getElementById(tab_skill + "_WeightageError").innerHTML = "Skill field should not be blank.";
                     return true;
                 }
-            }}
-     if (tab_skill == "Joinability") {
+            }
+        }
+        if (tab_skill == "Joinability") {
             var drpdowns2 = $('[id^=' + tab_skill + '][id$="Type"]');
             for (i = 0; i < drpdowns2.length; i++) {
                 var interviewId = $("#" + drpdowns2[i].id).val();
@@ -1906,7 +1914,7 @@
 
         var table = document.getElementById("InterviewerTable");
         var rowCount = table.rows.length;
-        $("#count_Interviewer").text(rowCount-1);
+        $("#count_Interviewer").text(rowCount - 1);
         for (var i = 0; i < rowCount; i++) {
             if ($("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "" || $("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "0") {
                 document.getElementById("noInterviewer").innerHTML = "Per Interviewer Rate should not be blank";
@@ -1932,7 +1940,7 @@
     function checkQcDetails() {
         var qctable = document.getElementById("QualityControllerTable");
         var qcrowCount = qctable.rows.length;
-        $("#count_qc").text(qcrowCount-1);
+        $("#count_qc").text(qcrowCount - 1);
         for (var i = 0; i < qcrowCount; i++) {
             if ($("#QualityController_" + i + "__PerSuccessRate").val() == "" || $("#QualityController_" + i + "__PerSuccessRate").val() == "0") {
                 document.getElementById("qcInterviewer").innerHTML = "Per QC Rate should not be blank";
@@ -1957,7 +1965,7 @@
     function checkEmergencyDetails() {
         var emetable = document.getElementById("EmergencyInterviewerTable");
         var emerowCount = emetable.rows.length;
-        $("#count_Em").text(emerowCount-1);
+        $("#count_Em").text(emerowCount - 1);
         for (var i = 0; i < emerowCount; i++) {
             if ($("#EmergencyInterviewerCollection_" + i + "__PerSuccessRate").val() == "" || $("#EmergencyInterviewerCollection_" + i + "__PerSuccessRate").val() == "0") {
                 document.getElementById("emInterviewer").innerHTML = "Per Emergency Interviewer Rate should not be blank";
@@ -1980,7 +1988,7 @@
     function checkClientDetails() {
         var table = document.getElementById("ClientTable");
         var rowCount = table.rows.length;
-        $("#count_ClientTable").text(rowCount-1);
+        $("#count_ClientTable").text(rowCount - 1);
         for (var i = 0; i < rowCount; i++) {
             if ($("#ClientCollection_" + i + "__ClientUserId").val() == "") {
                 document.getElementById("error_client").innerHTML = "Client User should not be blank";
@@ -2939,8 +2947,9 @@
     }
 
     function InterviewerChanged(val, id) {
-
-        var index = id.charAt(22);
+       
+       var index = id.split('_')[1];
+        //var index = id.charAt(22);
         var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
         $.ajax({
             type: "GET",
@@ -2956,7 +2965,8 @@
 
     function EmergencyInterviewerChanged(val, id) {
 
-        var index = id.charAt(31);
+        //var index = id.charAt(31);
+        var index = id.split('_')[1];
         var skillElementid = 'EmergencyInterviewerCollection_' + index + '__PrimarySkill';
         $.ajax({
             type: "GET",
@@ -2971,8 +2981,8 @@
     }
 
     function RecruiterChanged(val, id) {
-
-        var index = id.charAt(20);
+        var index = id.split('_')[1];
+       
         var skillElementid = 'RecruiterCollection_' + index + '__Domain';
         $.ajax({
             type: "GET",
@@ -2987,8 +2997,8 @@
 
 
     function ClientUserChanged(val, id) {
-
-        var index = id.charAt(17);
+        var index = id.split('_')[1];
+        //var index = id.charAt(17);
         var roleElementid = 'ClientCollection_' + index + '__Role';
         $.ajax({
             type: "GET",
@@ -3003,8 +3013,8 @@
     }
 
     function QCChanged(val, id) {
-
-        var index = id.charAt(18);
+        var index = id.split('_')[1];
+        //var index = id.charAt(18);
         var skillElementid = 'QualityController_' + index + '__PrimarySkill';
         $.ajax({
             type: "GET",
@@ -3198,54 +3208,54 @@
 </script>
 
 @*<script>
-    jQuery(document).ready(function ($) {
-
-        $(".tab-box").hide();
-        $(".tab-box:first").show();
-
-        /* if in tab mode */
-        $(".tab-menu li a").click(function () {
+        jQuery(document).ready(function ($) {
 
             $(".tab-box").hide();
-            var activeTab = $(this).attr("rel");
-            $("#" + activeTab).fadeIn();
+            $(".tab-box:first").show();
 
-            $(".tab-menu li a").removeClass("active");
-            $(this).addClass("active");
-           
+            /* if in tab mode */
+            $(".tab-menu li a").click(function () {
 
-            $(".tab_drawer_heading").removeClass("d_active");
-            $(".tab_drawer_heading[rel^='" + activeTab + "']").addClass("d_active");
+                $(".tab-box").hide();
+                var activeTab = $(this).attr("rel");
+                $("#" + activeTab).fadeIn();
 
-        });
-        /* if in drawer mode */
-        $(".tab_drawer_heading").click(function () {
-
-            $(".tab-box").hide();
-            var d_activeTab = $(this).attr("rel");
-            $("#" + d_activeTab).fadeIn();
-
-            $(".tab_drawer_heading").removeClass("d_active");
-            $(this).addClass("d_active");
-
-            $(".tab-menu li a").removeClass("active");
-            $(".tab-menu li a[rel^='" + d_activeTab + "']").addClass("active");
-        });
+                $(".tab-menu li a").removeClass("active");
+                $(this).addClass("active");
 
 
-        /* Extra class "tab_last"
-           to add border to right side
-           of last tab */
-        $('tab-menu li a').last().addClass("tab_last");
-    })
+                $(".tab_drawer_heading").removeClass("d_active");
+                $(".tab_drawer_heading[rel^='" + activeTab + "']").addClass("d_active");
+
+            });
+            /* if in drawer mode */
+            $(".tab_drawer_heading").click(function () {
+
+                $(".tab-box").hide();
+                var d_activeTab = $(this).attr("rel");
+                $("#" + d_activeTab).fadeIn();
+
+                $(".tab_drawer_heading").removeClass("d_active");
+                $(this).addClass("d_active");
+
+                $(".tab-menu li a").removeClass("active");
+                $(".tab-menu li a[rel^='" + d_activeTab + "']").addClass("active");
+            });
 
 
-   
-</script>*@
+            /* Extra class "tab_last"
+               to add border to right side
+               of last tab */
+            $('tab-menu li a').last().addClass("tab_last");
+        })
+
+
+
+    </script>*@
 
 
 <script>
- 
+
     document.body.className += "js";
 
     var spinner = document.querySelector('.input');

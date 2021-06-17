@@ -57,4 +57,11 @@ namespace Risebird.Entities.ViewModel
         public int interviewid { get; set; }
         public string ClientName { get; set; }
     }
+    public class InterviewerRating
+    {
+        public int StarRating { get; set; }
+        public string Comment { get; set; }
+        public string Emailid { get; set; }
+        public int Interviewid { get; set; }
+    }
 }

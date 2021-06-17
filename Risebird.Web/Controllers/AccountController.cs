@@ -548,7 +548,8 @@ namespace Risebird.Web.Controllers
                 {
                     if (_accountService.UpdateUserProfile(userProfile).Result)
                     {
-                        if (!String.IsNullOrEmpty(userProfile.ImageURL)) {
+                        if (!String.IsNullOrEmpty(userProfile.ImageURL))
+                        {
                             HttpContext.Session.SetString("currentUserimage", userProfile.ImageURL);
                         }
                         TempData["MyProfileMessage"] = "Profile updated Successfully";

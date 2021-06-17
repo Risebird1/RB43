@@ -54,5 +54,7 @@ namespace Risebird.Business.Interface
         List<AssignmentVM> InterviewerEntitleDetails(int id);
         Task<bool> ResetNavigation(int userId);
         string GetCurrentuserImage(string emailId);
+        string FetchWhatsAppNumberByEmail(string Emailid);
+        string FetchNameByEmail(string Emailid);
     }
 }

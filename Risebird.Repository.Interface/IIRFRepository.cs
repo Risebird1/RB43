@@ -31,7 +31,7 @@ namespace Risebird.Repository.Interface
         Task<bool> ArchiveIRF(int IRFId);
         Task<IEnumerable<MeetingVM>> GetIRFInterviewMeetings(int id);
         string GetQCSkills(int userId);
-        Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null);
+        Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null);
         IEnumerable<SkillComment> GetTechSkillComments(int id);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
         IEnumerable<LevelTech> GetLevelTech();
@@ -70,7 +70,7 @@ namespace Risebird.Repository.Interface
         int InterviewMeetings(string irfName, string candidateEmail);
         IEnumerable<InterviewComments> GetInterviewComments(string idList);
         IEnumerable<string> GetIRFCandidatesEmail(string irfName);
-        int GetUserId(string emailId, string profile);
+        int GetUserId(string emailId, string profile = null);
         IEnumerable<Recruiter> GetRecruiters();
         string GetRecruiterDomain(int userId);
         IEnumerable<TransRecruiter> GetTransRecruiter(int id);
@@ -144,5 +144,6 @@ namespace Risebird.Repository.Interface
         Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId);
         Task<IRF> GetIRFForCall(int irfId);
         IEnumerable<Users> GetEligibleChannelOwners();
+        Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId);
     }
 }

@@ -40,6 +40,9 @@
                             <div class="mdc-button__ripple"></div>
                         </button>
                         @Html.ActionLink("Back to List", "FNPayment", "Finance", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="ExportFNDetails()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -109,7 +112,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        
+
                                                     </div>
 
                                                     <div class="col-md-6 col-sm-6">
@@ -146,7 +149,9 @@
                                                     <tr>
                                                         <th>Interviewer</th>
                                                         <th>Email-Id</th>
-                                                        <th>Amount</th>
+                                                        <th>Total Amount</th>
+                                                        <th>Paid Amount</th>
+                                                        <th>TDS deduction</th>
                                                         <th>Payment Status</th>
                                                         <th>Payment Date</th>
                                                     </tr>
@@ -155,7 +160,9 @@
                                                     <tr>
                                                         <th>Interviewer</th>
                                                         <th>Email-Id</th>
-                                                        <th>Amount</th>
+                                                        <th>Total Amount</th>
+                                                        <th>Paid Amount</th>
+                                                        <th>TDS deduction</th>
                                                         <th>Payment Status</th>
                                                         <th>Payment Date</th>
                                                     </tr>
@@ -167,13 +174,22 @@
                                                     }
                                                     @foreach (var item in Model)
                                                     {
-                                                        <tr>
-                                                            <td>@item.FirstName</td>
-                                                            <td>@item.InterviewerEmailid</td>
-                                                            <td>@item.Points</td>
-                                                            <td>@item.Status</td>
-                                                            <td>@item.Date</td>
-                                                        </tr>
+                                                <tr>
+                                                    <td>@item.FirstName</td>
+                                                    <td>@item.InterviewerEmailid</td>
+                                                    <td>@item.TotalAmount</td>
+                                                    <td>@item.Points</td>
+                                                    @if (item.Status == "Advance")
+                                                    {
+                                                        <td>0</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>@(item.TotalAmount - item.Points)</td>
+                                                    }
+                                                    <td>@item.Status</td>
+                                                    <td>@item.Date</td>
+                                                </tr>
                                                     }
 
                                                 </tbody>
@@ -283,5 +299,7 @@
         var form = $("#form").serialize();
 
     }
-
+    function ExportFNDetails() {
+        window.location.href = "/Finance/ExportPaymentHistory";
+    }
 </script>

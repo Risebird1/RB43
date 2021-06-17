@@ -637,12 +637,15 @@ namespace Risebird.Repository
 
 
 
-        private DynamicParameters SetStoredProcedureParameterForMeeting(MeetingVM entity)
+        private DynamicParameters SetStoredProcedureParameterForMeeting(AddUpdateMeetingVM entity)
         {
             var parameters = new DynamicParameters();
             if (entity.imid > 0)
+            {
                 parameters.Add("@interviewId", entity.imid);
+                parameters.Add("@IsEmergency", entity.IsEmergency);
 
+            }
             parameters.Add("@IRFId", entity.IRFId); // Normal parametersmeters           
             parameters.Add("@interviewDate", entity.interviewDate);
             parameters.Add("@interviewSlot", entity.interviewSlot);
@@ -667,7 +670,10 @@ namespace Risebird.Repository
 
             return parameters;
         }
-        public async Task<bool> AddMeeting(MeetingVM meeting)
+
+        
+
+        public async Task<bool> AddMeeting(AddUpdateMeetingVM meeting)
         {
             try
             {
@@ -733,7 +739,29 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> UpdateMeeting(MeetingVM meeting)
+
+        public async Task<AddUpdateMeetingVM> GetInterviewToUpdateMeetingById(int id)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@interviewId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryFirstAsync<AddUpdateMeetingVM>(con, "usp_GetMeetingById", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> UpdateMeeting(AddUpdateMeetingVM meeting)
         {
             try
             {
@@ -1060,27 +1088,34 @@ namespace Risebird.Repository
             return null;
         }
 
-        public IEnumerable<SkillComment> GetTechSkillComments(int id)
+        public async Task<IEnumerable<SkillComment>> GetTechSkillComments(int id, int userId)
         {
+
             try
             {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@IRFId", id);
+                parameters.Add("@UserId", userId);
 
-
-                var query = "Select * from TechSkillComments where IRFId = @IRFId";
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<SkillComment>(query, dynamicParameters);
-                    return results;
+                    var result = await SqlMapper.QueryAsync<SkillComment>(con, "usp_GetTechSkillQuestionsByUserId", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
                 }
+            }
 
-            }
-            catch (SqlException ex)
+            catch (SqlException e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
-            return null;
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
         }
         public async Task<IEnumerable<Level>> GetLevels()
         {
@@ -1241,7 +1276,7 @@ namespace Risebird.Repository
                     paramx.Add("@InterviewId", reportDetails.InterviewId);
                     paramx.Add("@confirmationStatus", reportDetails.confirmationStatus != null ? reportDetails.confirmationStatus : string.Empty);
                     paramx.Add("@OverallScore", reportDetails.OverallScore);
-                    paramx.Add("@Rating", reportDetails.Rating);
+                    //paramx.Add("@Rating", reportDetails.Rating);
                     paramx.Add("@TechSkillComments", reportDetails.TechSkillComments);
                     paramx.Add("@SkillGeneralComments", reportDetails.SkillGeneralComments);
                     paramx.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
@@ -1261,7 +1296,7 @@ namespace Risebird.Repository
 
                     if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)
                     {
-                        if(reportDetails.VideoDuration == 0)
+                        if (reportDetails.VideoDuration == 0)
                         {
                             parametersPoints.Add("@Points", 0);
                         }
@@ -4231,7 +4266,7 @@ namespace Risebird.Repository
             try
             {
                 List<RBInterviewDetails> _list = new List<RBInterviewDetails>();
-                var query = "Select ph.id,ul.EmailId as InterviewerEmailid, ul.FirstName,ph.PaymentDate as Date,ph.Status,ph.Amount as Points,ip.AssessmentGroupId from PaymentHistory ph join Userlist ul on ul.id=ph.Userid join InterviewerProfile ip on ip.Userid=ul.id ";
+                var query = "Select ph.id,ul.EmailId as InterviewerEmailid, ul.FirstName,ph.PaymentDate as Date,ph.Status,ph.Amount as Points,ip.AssessmentGroupId,ph.TotalAmount from PaymentHistory ph join Userlist ul on ul.id=ph.Userid join InterviewerProfile ip on ip.Userid=ul.id ";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<RBInterviewDetails>(query, null);
@@ -4514,6 +4549,64 @@ namespace Risebird.Repository
             return null;
 
         }
-
+        public async Task<InterviewerRating> FetchRatingDetails(int interviewId, string emailid)
+        {
+            try
+            {
+                int userid = 0;
+                var query = "Select id from Userlist where EmailId=@Emailid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters dp = new DynamicParameters();
+                    dp.Add("@Emailid", emailid);
+                    var result = await con.QueryAsync<int>(query, dp);
+                    userid = result.FirstOrDefault();
+                }
+                var queryfinal = "Select * From InterviewRatings where Userid=@Userid and Interviewid=@Interviewid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters dpfinal = new DynamicParameters();
+                    dpfinal.Add("@Userid", userid);
+                    dpfinal.Add("@Interviewid", interviewId);
+                    var result = await con.QueryAsync<InterviewerRating>(queryfinal, dpfinal);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<string> SaveRatingDetails(InterviewerRating model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Emailid", model.Emailid);
+                    parameters.Add("@Interviewid", model.Interviewid);
+                    parameters.Add("@StarRating", model.StarRating);
+                    parameters.Add("@Comment", model.Comment);
+                    await SqlMapper.QueryAsync(con, "usp_SaveInterviewRating", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return "Save Successfully";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "Fail to save rating.";
+        }
     }
 }

@@ -8,7 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO       
-    CREATE Procedure usp_FetchParticipantZoomMeetingWaiting              
+    Create Procedure usp_FetchParticipantZoomMeetingWaiting              
 AS              
 BEGIN              
               
@@ -117,7 +117,7 @@ where t.IRFId=IRF.id) ei
 Outer Apply (Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_JOINED'  
 EXCEPT Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_LEFT')zmt  
 left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName       
-where (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  and getdate() > dateadd(minute,4,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and IsNull(im.IsMeetingNotificationSent,0)=1  and ISNULL(im.IsNotificationSentToEI,0)!=1 and (ip.NickName is null or ip.NickName='') and zmt.Meetingid!= null           
+where (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  and getdate() > dateadd(minute,4,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and IsNull(im.IsMeetingNotificationSent,0)=1  and ISNULL(im.IsNotificationSentToEI,0)=1 and (ip.NickName is null or ip.NickName='')            
             
 Update InterviewMeetings set IsNotificationSentToEI=1 where ZoomMeetingId in (Select Meetingid from @MeetingNotificationEI)              
       
@@ -137,7 +137,7 @@ where t.IRFId=IRF.id) ei
 outer Apply (Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_JOINED'  
 EXCEPT Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_LEFT')zmt                
 left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName              
-where (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  and getdate() > dateadd(minute,7,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and IsNull(im.IsMeetingNotificationSent,0)=1  and ISNULL(im.IsNotificationSentToEI,0)=1 and ISNULL(im.IsNotificationSentToCandidate,0)!=1 and (ip.NickName is null or ip.NickName='') and zmt.Meetingid!= null           
+where (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  and getdate() > dateadd(minute,7,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and IsNull(im.IsMeetingNotificationSent,0)=1  and ISNULL(im.IsNotificationSentToEI,0)=1 and ISNULL(im.IsNotificationSentToCandidate,0)!=1 and (ip.NickName is null or ip.NickName='')           
             
 Update InterviewMeetings set IsNotificationSentToCandidate=1 where ZoomMeetingId in (Select Meetingid from @MeetingNotificationCandidate)      
             
@@ -157,7 +157,7 @@ where t.IRFId=IRF.id) ei
 outer Apply (Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_JOINED'  
 EXCEPT Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_LEFT')zmt  
 left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName              
-where (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  and getdate() > dateadd(minute,14,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and ISNULL(im.IsMeetingNotificationSent,0)=1 and ISNULL(im.IsNotificationSentToEI,0)=1 and ISNULL(IsRescheduleNotificationSent,0)!=1 and (ip.NickName is null or ip.NickName='') and zmt.Meetingid!= null           
+where (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  and getdate() > dateadd(minute,14,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and ISNULL(im.IsMeetingNotificationSent,0)=1 and ISNULL(im.IsNotificationSentToEI,0)=1 and ISNULL(IsRescheduleNotificationSent,0)!=1 and (ip.NickName is null or ip.NickName='')            
             
 Update InterviewMeetings set IsRescheduleNotificationSent=1 where ZoomMeetingId in (Select Meetingid from @MeetingNotificationReschedule)              
       
@@ -171,6 +171,10 @@ Union
 Select * from @MeetingNotificationReschedule            
             
 END                    
+              
+         
+                 
+                       
               
          
                  

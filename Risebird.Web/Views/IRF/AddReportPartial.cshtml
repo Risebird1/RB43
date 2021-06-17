@@ -88,7 +88,7 @@
                                         </button>
 
 
-                                        <button title="Final Selection Status" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="width:145px;margin-bottom:16px;">
+                                        <button title="Final Selection Status" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="width:145px;">
                                             <span class="fa fa-check-circle" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)"><font style="font-size:12px; font-family: Roboto, sans-serif;"> Select</font></span>
                                         </button>
 
@@ -193,30 +193,14 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
+                                                @*<div class="form-group">
+            @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+        </div>*@
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                                     @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
                                                     @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.Rating, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "select-css form-control", @disabled = "disabled" })
-                                                    @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
-
                                                 </div>
 
                                             </div>
@@ -229,6 +213,8 @@
                                             </div>
 
                                         </div>
+
+                                       
 
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -401,6 +387,7 @@
 
 
                                                                         @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                        @Html.TextBox("QuestionsCollection[0].Comment", new { @class = "select-css form-control text-box single-line"})
 
                                                                     </td>
                                                                     <td>
@@ -441,7 +428,8 @@
                                                                     <tr>
                                                                         <td>
 
-                                                                            @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "dropques select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                            @*@Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "dropques select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })*@
+                                                                            @Html.TextBoxFor(m => m.QuestionsCollection[i].Comment, new { @class = "dropques select-css form-control text-box single-line", onmouseover = "dropDwnToolTips(this)" })
 
 
                                                                         </td>
@@ -804,7 +792,7 @@
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="multiple_row">
-                                                    <h2>Proctoring Report</h2>
+                                                    <h2>Proctoring Report | <span>Count: @Model.ProctoringCount</span></h2>
                                                 </div><!--end of multiple location-->
                                             </div><!--end of col-md-12-->
 
@@ -1117,7 +1105,7 @@
 
             </div>
             <footer class="footer">
-                <div class=" container-fluid ">
+                <div class="container-fluid">
 
                     <div class="copyright" id="copyright">
                         &copy;
@@ -1339,7 +1327,9 @@
         var proctoringItems = $('[id^="Proctoring_"]');
         var proctoringTotal = 0;
         for (i = 0; i < proctoringItems.length; i++) {
-            proctoringTotal += parseInt(proctoringItems[i].value);
+            if (proctoringItems[i].value != null && proctoringItems[i].value != "") {
+                proctoringTotal += parseInt(proctoringItems[i].value);
+            }
         }
         $("#ProctoringCount").val(proctoringTotal);
         if (parseInt(proctoringTotal) > 0) {
@@ -1572,7 +1562,9 @@
         var proctoringItems = $('[id^="Proctoring_"]');
         var proctoringTotal = 0;
         for (i = 0; i < proctoringItems.length; i++) {
-            proctoringTotal += parseInt(proctoringItems[i].value);
+            if (proctoringItems[i].value != null && proctoringItems[i].value != "") {
+                proctoringTotal += parseInt(proctoringItems[i].value);
+            }
         }
         $("#ProctoringCount").val(proctoringTotal);
         if (parseInt(proctoringTotal) > 0) {
@@ -1916,8 +1908,10 @@
         var skillElementid = 'QuestionsCollection_' + index + '__SkillName';
         $.ajax({
             type: "GET",
-            url: "/IRF/GetQuestionSkills",
-            data: { 'id': val },
+            //url: "/IRF/GetQuestionSkills",
+            //data: { 'id': val },
+            url: "/IRF/GetTechSkillofSkillChannelByQuestion",
+            data: { 'question': val, 'irfId' : '@Model.IRFId' },
             success: function (data) {
                 $("#" + skillElementid).val(data);
             }
@@ -1934,8 +1928,10 @@
             var val = $("#QuestionsCollection_0__Comment").val();
             $.ajax({
                 type: "GET",
-                url: "/IRF/GetQuestionSkills",
-                data: { 'id': val },
+                //url: "/IRF/GetQuestionSkills",
+                //data: { 'id': val },
+                url: "/IRF/GetTechSkillofSkillChannelByQuestion",
+                data: { 'question': val, 'irfId' : '@Model.IRFId' },
                 success: function (data) {
                     $("#QuestionsCollection_0__SkillName").val(data);
                 }

@@ -39,7 +39,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <div class="main-panel" id="main-panel">
-  
+
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -79,36 +79,32 @@
                                         <thead>
                                             <tr>
                                                 <th>Date</th>
-                                                <th>Slot</th>
-                                                <th>Duration</th>
                                                 <th>Job Level</th>
                                                 <th id="qcinterview_2">Candidate Name</th>
-                                                <th>Candidate Email</th>
-                                                @*<th>Candidate Contact</th>*@
+                                                @*<th>Candidate Email</th>
+                                                    <th>Candidate Contact</th>*@
                                                 <th id="qcinterview_3">Resume</th>
-                                                <th>Meeting Status</th>
+                                                @*<th>Meeting Status</th>*@
                                                 <th id="qcinterview_5">Interview Status</th>
                                                 <th id="qcinterview_6">JD Link</th>
-                                                <th id="qcinterview_7">Risebird HR</th>
-                                                <th class="disabled-sorting text-right">Actions</th>
+                                                @*<th id="qcinterview_7">Risebird HR</th>*@
+                                                <th class="disabled-sorting text-center">Actions</th>
                                                 @*<th style="text-align:center">Call</th>*@
                                             </tr>
                                         </thead>
                                         <tfoot>
                                             <tr>
                                                 <th>Date</th>
-                                                <th>Slot</th>
-                                                <th>Duration</th>
                                                 <th>Job Level</th>
                                                 <th>Candidate Name</th>
-                                                <th>Candidate Email</th>
-                                                @*<th>Candidate Contact</th>*@
+                                                @* <th>Candidate Email</th>
+                                                    <th>Candidate Contact</th>*@
                                                 <th>Resume</th>
-                                                <th>Meeting Status</th>
+                                                @*<th>Meeting Status</th>*@
                                                 <th>Interview Status</th>
                                                 <th>JD Link</th>
-                                                <th>Risebird HR</th>
-                                                <th class="disabled-sorting text-right">Actions</th>
+                                                @*<th>Risebird HR</th>*@
+                                                <th class="disabled-sorting text-center">Actions</th>
                                                 @*<th style="text-align:center">Call</th>*@
                                             </tr>
                                         </tfoot>
@@ -119,81 +115,80 @@
                                             {
                                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-                                            <tr id=@item.id>
-                                                <td> @item.interviewDate </td>
-                                                <td> @item.interviewSlot </td>
-                                                <td> @item.interviewDuration </td>
-                                                <td> @item.JobLevelDesc </td>
-                                                @if (item.candidateName != null && item.candidateName != "")
-                                                {@if (item.candidateName.Length > 10)
+                                                <tr id=@item.id>
+                                                    <td> @item.interviewDate </td>
+
+                                                    <td> @item.JobLevelDesc </td>
+                                                    @if (item.candidateName != null && item.candidateName != "")
                                                     {
-                                                        <td><a onclick="" data-tooltip="@item.candidateName"> @item.candidateName.Substring(0, 10)...</a></td>
-                                                }
-                                                else { <td> <a onclick="">@item.candidateName</a></td>}
-                                                }
-                                                else
-                                                {
-                                                        <td></td>
-                                                    }
+                                                        <td> @item.candidateName</td>
 
-                                                <td> @Regex.Replace(@item.candidateEmail, "[a-zA-Z0-9.-]", "*")</td>
 
-                                                @if (item.resumeLink != null && item.resumeLink != "")
-                                                {
-                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Resume</td>
-                                                }
-                                                <td>@item.MeetingStatusDesc</td>
-                                                <td>@item.InterviewStatusDesc</td>
-
-                                                @if (item.JDLink != null && item.JDLink != "")
-                                                {
-                                                    <td class="three repeat">  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No JD</td>
-                                                }
-                                                @if (item.risebirdHR != null && item.risebirdHR != "")
-                                                {@if (item.risebirdHR.Length > 10)
-                                                    {
-
-                                                        <td><a onclick="" data-tooltip="@item.risebirdHR"> @item.risebirdHR.Substring(0, 10)... </a></td>
                                                     }
                                                     else
                                                     {
-                                                        <td> <a onclick="">@item.risebirdHR</a></td>
+                                                        <td></td>
                                                     }
-                                            }
-                                            else
-                                            {
-                                                <td></td>
-                                            }
-                                                <td class="text-right">
+                                                    <input id="candidate_name_@item.id" type="hidden" value="@item.candidateName" />
 
-                                                    <button id="qcinterview_8" class="mdc-fab app-fab--absolute four" aria-label="Unassign QC Interview">
-                                                        <span onclick="location.href = '@Url.Action("UnAssignQC", "Interview", new { id = item.id})'" title="Unassign QC Interview" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
-                                                    </button>
+                                                    @*<td> @Regex.Replace(@item.candidateEmail, "[a-zA-Z0-9.-]", "*")</td>*@
+
+                                                    @if (item.resumeLink != null && item.resumeLink != "")
+                                                    {
+                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Resume</td>
+                                                    }
+                                                    @*<td>@item.MeetingStatusDesc</td>*@
+                                                    <td>@item.InterviewStatusDesc</td>
+
+                                                    @if (item.JDLink != null && item.JDLink != "")
+                                                    {
+                                                        <td class="three repeat">  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No JD</td>
+                                                    }
+                                                    @*@if (item.risebirdHR != null && item.risebirdHR != "")
+                                                            {@if (item.risebirdHR.Length > 10)
+                                                                {
+
+                                                                    <td><a onclick="" data-tooltip="@item.risebirdHR"> @item.risebirdHR.Substring(0, 10)... </a></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td> <a onclick="">@item.risebirdHR</a></td>
+                                                                }
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }*@
+                                                    <td class="text-center">
+
+                                                        <button id="qcinterview_8" class="mdc-fab app-fab--absolute four" aria-label="Unassign QC Interview">
+                                                            <span onclick="location.href = '@Url.Action("UnAssignQC", "Interview", new { id = item.id})'" title="Unassign QC Interview" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
+                                                        </button>
 
 
-                                                    <button id="qcinterview_9" class="mdc-fab app-fab--absolute five" aria-label="QC Feedback">
-                                                        <span onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.id)" title="QC Feedback" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                    </button>
+                                                        <button id="qcinterview_9" class="mdc-fab app-fab--absolute five" aria-label="QC Feedback">
+                                                            <span onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.id)" title="QC Feedback" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                        </button>
 
-                                                    <button id="qcinterview_10" class="mdc-fab app-fab--absolute six icon-lst" aria-label="Report" style="top: -3px;">
-                                                        <span class="fa fa-file fa-1x" onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId, isQC=true})'" title="Feedback Report"></span>
-                                                    </button>
-
-
+                                                        <button id="qcinterview_10" class="mdc-fab app-fab--absolute six icon-lst" aria-label="Report" style="top: -3px;">
+                                                            <span class="fa fa-file fa-1x" onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId, isQC=true})'" title="Feedback Report"></span>
+                                                        </button>
 
 
 
-                                                </td>
 
-                                            </tr>
+
+                                                    </td>
+
+                                                </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -215,12 +210,15 @@
 
                         <div class="filheader">
                             <div class="filavatar">
-                                <span class="publicsharing-icon">
+                                <span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
 
                                 </span>
                             </div>
-                            <h5 class="modal-title pull-left">QC Feedback</h5>
+
+                            <h5 class="modal-title pull-left">
+                                QC Feedback  <span class="popup-text" id="candidate_name_pop"></span>
+                            </h5>
                         </div>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true" id="feedbackPopUp" style="cursor:pointer;">&times;</span>
@@ -678,7 +676,6 @@
     });
 
 
-
     function applyDataTable() {
         $('#MyInterviewList').DataTable({
             "pagingType": "full_numbers",
@@ -758,6 +755,7 @@
                 });
     }
 </script>
+
 <script type="text/javascript">
     //// script for loader starts here
     $(".dataloading").hide();
@@ -802,7 +800,8 @@
 
         // Get the modal
         var modal = document.getElementById("myModal");
-
+        var candidate_name_pop = $("#candidate_name_" + imid).val();
+        $("#candidate_name_pop").text(candidate_name_pop);
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
@@ -824,8 +823,6 @@
         document.getElementById("idMeaningfulAssessments").checked = item.MeaningfulAssessments;
         document.getElementById("idGrammar").checked = item.CorrectEnglishGrammar;
         document.getElementById("idProctoring").checked = item.ProctoringReportFilled;
-
-
 
         $.ajax({
             type: "GET",
@@ -1094,7 +1091,7 @@
                     }
                 },
 
-            
+
 
                 {
                     title: "Candidate Name",
@@ -1136,7 +1133,7 @@
                     }
                 },
 
-                
+
                 {
                     title: "Interview Status",
                     content: "Interview status will be shown here",
@@ -1252,7 +1249,7 @@
                 },
 
 
-              
+
 
                 {
                     title: "Proctor Interviews",
@@ -1287,52 +1284,52 @@
 
 
 @*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
-{
-    <script src="~/Newassets/js/enjoyhint.min.js"></script>
-    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-    <script>
+    {
+        <script src="~/Newassets/js/enjoyhint.min.js"></script>
+        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+        <script>
 
-        var enjoyhint_instance = new EnjoyHint({});
+            var enjoyhint_instance = new EnjoyHint({});
 
-        var enjoyhint_script_steps = [
-            {
-                'next .card-title': 'Assigned Quality Check Interviews and click on continue to know its features',
-                'nextButton': { className: "myNext", text: "Continue" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .second': 'Interview Details and scroll right to see action buttons',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .four': 'Click here to Unassign interview incase of emergency you will not able to perform quality check',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .six': 'Click here to see candidate interview feedback report and based on this you need to perform Quality Check',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .five': 'Click here to open and fill Quality Check feedback report and make sure you fill all the section in it',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'click .supportmenu': 'Click on Support Menu to see its features'
+            var enjoyhint_script_steps = [
+                {
+                    'next .card-title': 'Assigned Quality Check Interviews and click on continue to know its features',
+                    'nextButton': { className: "myNext", text: "Continue" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .second': 'Interview Details and scroll right to see action buttons',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .four': 'Click here to Unassign interview incase of emergency you will not able to perform quality check',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .six': 'Click here to see candidate interview feedback report and based on this you need to perform Quality Check',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .five': 'Click here to open and fill Quality Check feedback report and make sure you fill all the section in it',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'click .supportmenu': 'Click on Support Menu to see its features'
 
-            }
+                }
 
-        ];
-        setTimeout(function () {
-            enjoyhint_instance.set(enjoyhint_script_steps);
-            enjoyhint_instance.run();
-        }, 5000)
+            ];
+            setTimeout(function () {
+                enjoyhint_instance.set(enjoyhint_script_steps);
+                enjoyhint_instance.run();
+            }, 5000)
 
-    </script>
-}*@
+        </script>
+    }*@
 
 
 

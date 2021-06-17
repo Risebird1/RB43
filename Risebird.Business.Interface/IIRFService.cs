@@ -46,7 +46,7 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<Candidate>> GetCandidateIRFInvites(string emailId);
         Task<IRFFunnel> GetFunnelData(int irfId, string irfName);
         Task<InvoiceModel> GetInvoiceModel(int irfId, DateTime startDate, DateTime endDate, string srNumber, string poNumber, string reqNumber, string currencyCode, string projectCode, bool isGST, string discount, string clientAddress);
-        int GetUserId(string emailId, string profile);
+        int GetUserId(string emailId, string profile = null);
         string GetRecruiterDomain(int userId);
         List<InterviewVM> GetUpComingInterviewList();
         List<IRFVm> GetUpComingIRFList();
@@ -88,5 +88,7 @@ namespace Risebird.Business.Interface
         Task<StringBuilder> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite);
         Task<IRF> GetIRFForCall(int irfId);
         IEnumerable<Users> GetEligibleChannelOwners();
+        Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId);
+
     }
 }

@@ -25,7 +25,8 @@ namespace Risebird.Business
         private readonly IVoiceItRepository _voiceItRepository;
         private readonly ISupportRepository _supportRespository;
         private readonly IActivityTrackerRepository _activityTrackerRepository;
-        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository)
+        private readonly IWhatsAppHelper _whatsAppHelper;
+        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -37,6 +38,7 @@ namespace Risebird.Business
             _voiceItRepository = voiceItRepository;
             _supportRespository = supportRespository;
             _activityTrackerRepository = activityTrackerRepository;
+            _whatsAppHelper = whatsAppHelper;
         }
 
         public List<MeetingVM> GetMeetingList()
@@ -122,7 +124,7 @@ namespace Risebird.Business
         {
             try
             {
-                var result = await _meetingRespository.GetRiseTubeMeetingsByJD(clientId, Emailid, JDpattern,startDate, endDate, profileName);
+                var result = await _meetingRespository.GetRiseTubeMeetingsByJD(clientId, Emailid, JDpattern, startDate, endDate, profileName);
                 return result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
@@ -305,7 +307,7 @@ namespace Risebird.Business
         }
 
 
-        public bool AddMeeting(MeetingVM meeting)
+        public bool AddMeeting(AddUpdateMeetingVM meeting)
         {
             try
             {
@@ -332,11 +334,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<MeetingVM> GetMeeting(int id)
+        public async Task<AddUpdateMeetingVM> GetMeeting(int id)
         {
             try
             {
-                var meeting = await _meetingRespository.GetInterviewMeetingById(id);
+                var meeting = await _meetingRespository.GetInterviewToUpdateMeetingById(id);
                 meeting.OldConfirmationStatus = meeting.confirmationStatus;
                 meeting.OldHRCoordinatorEmailId = meeting.HRCoordinatorEmailId;
                 meeting.OldinterviewDate = meeting.interviewDate;
@@ -374,7 +376,7 @@ namespace Risebird.Business
             try
             {
                 var list = await _meetingRespository.GetIRFInterviewingMembersEmails(irfId);
-                return new SelectList(list ?? new List<string>() { string.Empty});
+                return new SelectList(list ?? new List<string>() { string.Empty });
             }
 
             catch (Exception e)
@@ -487,7 +489,7 @@ namespace Risebird.Business
             return false;
         }
 
-        public async Task<bool> UpdateMeeting(MeetingVM meetingToUpdate)
+        public async Task<bool> UpdateMeeting(AddUpdateMeetingVM meetingToUpdate)
         {
             try
             {
@@ -872,12 +874,7 @@ namespace Risebird.Business
 
             try
             {
-                var comments = _meetingRespository.GetInterviewComments(interviewId);
-
-                if (comments == null)
-                    return null;
-                else
-                    return comments.Result;
+                return _meetingRespository.GetInterviewComments(interviewId).Result;
             }
 
             catch (Exception e)
@@ -887,22 +884,17 @@ namespace Risebird.Business
             }
         }
 
-        public IEnumerable<SkillComment> GetTechSkillComments(int IRFid)
+        public async Task<IEnumerable<SkillComment>> GetTechSkillComments(int irfId, int userId = 0)
         {
 
             try
             {
-                var comments = _meetingRespository.GetTechSkillComments(IRFid);
-
-                if (comments == null)
-                    return null;
-                else
-                    return comments;
+                return await _meetingRespository.GetTechSkillComments(irfId, userId);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -1109,7 +1101,7 @@ namespace Risebird.Business
                 reportModel.ThumbnailTimeSeconds = interviewDetails.ThumbnailTimeSeconds;
                 reportModel.VideoDuration = interviewDetails.VideoDuration;
 
-                if(reportModel.IsEdited)
+                if (reportModel.IsEdited)
                 {
                     reportModel.OldInterviewerComment = reportModel.InterviewerComment;
                     reportModel.OldInterviewStatus = reportModel.InterviewStatus;
@@ -1286,7 +1278,7 @@ namespace Risebird.Business
                                 summary.Append("Meeting Status changed");
                             }
                         }
-                        
+
                         if (summary.Length == 0)
                         {
                             summary.Append("Feedback updated");
@@ -2742,6 +2734,32 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "";
+            }
+        }
+        public async Task<InterviewerRating> FetchRatingDetails(int interviewId, string emailid)
+        {
+            try
+            {
+                var ratingdetails = await _meetingRespository.FetchRatingDetails(interviewId, emailid);
+                return ratingdetails;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<string> SaveRatingDetails(InterviewerRating model)
+        {
+            try
+            {
+                var ratingdetails = await _meetingRespository.SaveRatingDetails(model);
+                return ratingdetails;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

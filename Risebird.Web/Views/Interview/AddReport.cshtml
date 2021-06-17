@@ -18,7 +18,7 @@
     }
     else
     {
-        meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x=> x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString()).ToList();
+        meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString()).ToList();
 
     }
 }
@@ -84,15 +84,15 @@
 
                                 <div class="row">
                                     @*<div class="col-md-6 col-sm-6">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                        @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                        @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
+                                                @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
 
-                    </div>
+                                            </div>
 
-                </div>*@
+                                        </div>*@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -110,12 +110,12 @@
                                 </div>
                                 <div class="row">
                                     @*<div class="col-md-6 col-sm-6">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                        @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                    </div>
-                </div>*@
+                                                @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            </div>
+                                        </div>*@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -149,14 +149,6 @@
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
 
                                             @Html.HiddenFor(m => m.PreviousMeetingStatus)
                                             @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -167,20 +159,12 @@
                                         <div class="form-group" style="margin-bottom:0px;">
                                             <label class="text-danger" id="meetingStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
                                         </div>
-                                    </div>
+                                        @*<div class="form-group">
+            @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-                                </div>
 
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.Rating, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                            @Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "select-css form-control" })
-                                            @Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" })
-
-                                        </div>
-
+        </div>*@
                                     </div>
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
@@ -193,10 +177,9 @@
                                             <label class="text-danger" id="interviewStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
                                         </div>
                                     </div>
-
                                 </div>
 
-
+                                
 
 
                                 <div class="row">
@@ -412,7 +395,7 @@
                                                     appendTime = Model.ThumbnailTimeSeconds.ToString();
                                                 }
                                                 var src = Model.VideoLink + "#t=" + appendTime;
-                                                <video width="600" controls="controls" preload="metadata">
+                                                <video width="600" controls="controls" preload="metadata" class="vjs-tech">
                                                     <source src='@src' type="video/mp4">
                                                 </video>
                                             }
@@ -486,8 +469,18 @@
                                                         {
                                                             <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
 
+                                                                    @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsCollection[i].Comment))
+                                                                    {
+                                                                        @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        var newList = new List<SelectListItem>();
+                                                                        newList.Add(new SelectListItem() { Value = Model.QuestionsCollection[i].Comment, Text = Model.QuestionsCollection[i].Comment });
+                                                                        @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, newList, new { @class = "select-css form-control text-box single-line", onmouseover = "dropDwnToolTips(this)" })
+
+                                                                    }
 
                                                                 </td>
                                                                 <td>
@@ -1026,7 +1019,8 @@
                                         <input class="toggle-box" id="identifier-2" type="checkbox">
                                         <label for="identifier-2">
                                             <div class="multiple_row">
-                                                <h2>Proctoring Report</h2>
+                                                <h2>Proctoring Report | <span>Count: @Model.ProctoringCount</span></h2>
+                                               
                                             </div>
                                         </label>
 
@@ -1456,9 +1450,14 @@
         var proctoringItems = $('[id^="Proctoring_"]');
         var proctoringTotal = 0;
         for (i = 0; i < proctoringItems.length; i++) {
-            proctoringTotal += parseInt(proctoringItems[i].value);
+            if (proctoringItems[i].value != null && proctoringItems[i].value != "") {
+                proctoringTotal += parseInt(proctoringItems[i].value);
+            }
         }
+        
         $("#ProctoringCount").val(proctoringTotal);
+
+      
         if (parseInt(proctoringTotal) > 0) {
             $("#ProctoringCount").css("border-color", "red");
         }
@@ -1470,8 +1469,6 @@
 
         var time = 1;
         if (questiontime != '') {
-            time = questiontime;
-            time = questiontime;
             time = questiontime;
         }
         var vid = document.getElementsByClassName("vjs-tech");
@@ -1695,7 +1692,9 @@
         var proctoringItems = $('[id^="Proctoring_"]');
         var proctoringTotal = 0;
         for (i = 0; i < proctoringItems.length; i++) {
-            proctoringTotal += parseInt(proctoringItems[i].value);
+            if (proctoringItems[i].value != null && proctoringItems[i].value!="") {
+                proctoringTotal += parseInt(proctoringItems[i].value);
+            }
         }
         $("#ProctoringCount").val(proctoringTotal);
         if (parseInt(proctoringTotal) > 0) {
@@ -1767,7 +1766,9 @@
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
         })
 
+        var rowCount = $('#QuestionsTable tr').length;
 
+        var finalIndex = rowCount - 1;
 
         // reset fields in the new row
         $tr.find("select").val("");
@@ -1786,8 +1787,27 @@
         $form.unbind();
         $form.data("validator", null);
 
+        var options = '@Model.QuestionsListData';
+        optionsData = JSON.parse(options.replace(/&quot;/g, '"'));
+        $("#QuestionsCollection_" + finalIndex + "__Comment" + " option").remove();
+
+        $(optionsData).each(function () {
+            var option = $("<option />");
+
+            //Set Text part.
+            option.html(this.Item1);
+
+            //Set Value part.
+            option.val(this.Item1);
+
+            //Add the Option element to DropDownList.
+
+            $("#QuestionsCollection_" + finalIndex + "__Comment").append(option);
+        });
+        $("#QuestionsCollection_" + finalIndex + "__SkillName").val(optionsData[0].Item2);
+        //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
         // Check document for changes
-        $.validator.unobtrusive.parse(document);
+        //$.validator.unobtrusive.parse(document);
 
     }
 
@@ -1869,8 +1889,8 @@
         var skillElementid = 'QuestionsCollection_' + index + '__SkillName';
         $.ajax({
             type: "GET",
-            url: "/IRF/GetQuestionSkills",
-            data: { 'id': val },
+            url: "/IRF/GetTechSkillofSkillChannelByQuestion",
+            data: { 'question': val, 'irfId' : '@Model.IRFId' },
             success: function (data) {
                 $("#" + skillElementid).val(data);
             }
@@ -1999,8 +2019,8 @@
             var val = $("#QuestionsCollection_0__Comment").val();
             $.ajax({
                 type: "GET",
-                url: "/IRF/GetQuestionSkills",
-                data: { 'id': val },
+                url: "/IRF/GetTechSkillofSkillChannelByQuestion",
+                data: { 'question': val, 'irfId' : '@Model.IRFId' },
                 success: function (data) {
                     $("#QuestionsCollection_0__SkillName").val(data);
                 }

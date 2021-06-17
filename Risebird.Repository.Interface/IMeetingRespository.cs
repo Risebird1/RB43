@@ -10,9 +10,9 @@ namespace Risebird.Repository.Interface
     {
         Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings();
         Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings(DateTime startDate, DateTime endDate, string emailId = null);
-        Task<bool> AddMeeting(MeetingVM meeting);
+        Task<bool> AddMeeting(AddUpdateMeetingVM meeting);
         Task<MeetingVM> GetInterviewMeetingById(int id);
-        Task<bool> UpdateMeeting(MeetingVM meeting);
+        Task<bool> UpdateMeeting(AddUpdateMeetingVM meeting);
         Task<IEnumerable<MeetingVM>> MultipleCandidateInvites();
         Task<IEnumerable<Meeting>> GetAllOpenInterviews(string emailId);
         Task<IEnumerable<Meeting>> GetAllQCInterviews(string emailId);
@@ -26,7 +26,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<TransJoinability>> GetTransJoinability(int id);
         Task<IEnumerable<TransSkill>> GetSkillsbyIRFid(int id);
         Task<IEnumerable<TransSkillGeneral>> GetSkillsGeneralbyIRFid(int id);
-        IEnumerable<SkillComment> GetTechSkillComments(int id);
+        Task<IEnumerable<SkillComment>> GetTechSkillComments(int id, int userId);
         Task<IEnumerable<Level>> GetLevels();
         Task<IEnumerable<Skill>> GetSkills();
         Task<bool> AddInterviewReport(InterviewReport reportDetails);
@@ -170,5 +170,8 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<string>> GetIRFInterviewingMembersEmails(string irfId);
         Task<IEnumerable<string>> GetIRFQualityControllerEmails(string irfId);
         Task<IEnumerable<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string irfId);
+        Task<InterviewerRating> FetchRatingDetails(int interviewId, string emailid);
+        Task<string> SaveRatingDetails(InterviewerRating model);
+        Task<AddUpdateMeetingVM> GetInterviewToUpdateMeetingById(int id);
     }
 }

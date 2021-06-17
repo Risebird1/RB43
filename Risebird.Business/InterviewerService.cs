@@ -772,6 +772,11 @@ namespace Risebird.Business
         {
             try
             {
+                reportModel.CompanySize = string.Empty;
+                reportModel.CompanyStage = string.Empty;
+                reportModel.Yearsofexperience = string.Empty;
+                reportModel.Senioritylevel = string.Empty;
+                reportModel.AssessmentGroupId = string.Empty;
                 if (reportModel.SkillCategoryArray != null)
                 {
                     reportModel.SkillCategory = string.Join(',', reportModel.SkillCategoryArray);
@@ -780,9 +785,27 @@ namespace Risebird.Business
                 {
                     reportModel.SkillCategory = string.Empty;
                 }
-
+                if (reportModel.CompanySizeArray != null)
+                {
+                    reportModel.CompanySize = string.Join(',', reportModel.CompanySizeArray);
+                }
+                if (reportModel.CompanyStageArray != null)
+                {
+                    reportModel.CompanyStage = string.Join(',', reportModel.CompanyStageArray);
+                }
+                if (reportModel.YearsofexperienceArray != null)
+                {
+                    reportModel.Yearsofexperience = string.Join(',', reportModel.YearsofexperienceArray);
+                }
+                if (reportModel.SenioritylevelArray != null)
+                {
+                    reportModel.Senioritylevel = string.Join(',', reportModel.SenioritylevelArray);
+                }
+                if (reportModel.AssessmentGroupIdArray != null)
+                {
+                    reportModel.AssessmentGroupId = string.Join(',', reportModel.AssessmentGroupIdArray);
+                }
                 var result = await _interviewerRepository.InterviewerRecommendation(reportModel);
-
                 return result;
             }
 

@@ -121,8 +121,8 @@ namespace Risebird.Entities.Enum
         Fifteenhundred = 1500,
         [Description("1800")]
         Eighteenhundred = 1800,
-        [Description("2250")]
-        TwentyTwohundredFifty = 2250
+        [Description("2500")]
+        TwentyTwohundredFifty = 2500
     }
     public enum Country
     {
@@ -1220,15 +1220,15 @@ namespace Risebird.Entities.Enum
     public enum Heuristicsscorelevel
     {
         [Description("Basic")]
-        Basic = 5,
+        Basic = 1,
         [Description("Standard")]
-        Standard = 1,
+        Standard = 2,
         [Description("Standard+")]
-        StandardPlus = 2,
+        StandardPlus = 3,
         [Description("Pro")]
-        Pro = 3,
+        Pro = 4,
         [Description("Elite")]
-        Elite = 4
+        Elite = 5
     }
     public enum AssassinationStatus
     {

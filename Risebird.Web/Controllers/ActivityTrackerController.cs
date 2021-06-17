@@ -48,9 +48,9 @@ namespace Risebird.Web.Controllers
                             var filter = JsonConvert.DeserializeObject<ActivityTrackerFilter>(HttpContext.Session.GetString("ActivityTrackerFilters"));
 
                             model = (await _activityTrackerService.
-                                GetAllActivities(filter.StartDate??DateTime.Now, filter.EndDate ?? DateTime.Now)).ToList();
+                                GetAllActivities(filter.StartDate ?? DateTime.Now, filter.EndDate ?? DateTime.Now)).ToList();
 
-                            
+
                             filter.PerformedBy = filter.PerformedBy == null ? model.Select(x => x.PerformedBy).ToArray() : filter.PerformedBy;
                             filter.ActivityType = filter.ActivityType == null ? model.Select(x => x.ActivityTypeDesc).ToArray() : filter.ActivityType;
 
@@ -101,7 +101,7 @@ namespace Risebird.Web.Controllers
                         var model = (await _activityTrackerService.
                                 GetAllActivities(filter.StartDate ?? DateTime.Now, filter.EndDate ?? DateTime.Now)).ToList();
 
-                        
+
 
                         filter.PerformedBy = filter.PerformedBy == null ? model.Select(x => x.PerformedBy).ToArray() : filter.PerformedBy;
                         filter.ActivityType = filter.ActivityType == null ? model.Select(x => x.ActivityTypeDesc).ToArray() : filter.ActivityType;
@@ -178,7 +178,7 @@ namespace Risebird.Web.Controllers
                     model = (await _activityTrackerService.
                                 GetAllActivities(filter.StartDate ?? DateTime.Now, filter.EndDate ?? DateTime.Now)).ToList();
 
-                    
+
                     filter.PerformedBy = filter.PerformedBy == null ? model.Select(x => x.PerformedBy).ToArray() : filter.PerformedBy;
                     filter.ActivityType = filter.ActivityType == null ? model.Select(x => x.ActivityTypeDesc).ToArray() : filter.ActivityType;
 

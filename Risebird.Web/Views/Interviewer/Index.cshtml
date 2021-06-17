@@ -1554,15 +1554,6 @@
         callInterviewer(phoneNumber);
 
     }
-
-    function CallButtonClickjson(userId) {
-        var interviewer = $("#hidfirstname" + userId).val();
-        var mobile = $("#hidmobile" + userId).val();
-
-        // Get the modal
-        CallButtonClick(interviewer, mobile);
-
-    }
     function closeCallPopUp() {
         hangUp();
         var modal = document.getElementById("myCallModal");

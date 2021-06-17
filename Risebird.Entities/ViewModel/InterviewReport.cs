@@ -198,17 +198,20 @@ namespace Risebird.Entities.ViewModel
         public string Creativity { get; set; }
         [Display(Name = "Company Size")]
         public string CompanySize { get; set; }
+        public string[] CompanySizeArray { get; set; }
         [Display(Name = "Job Function")]
         public string JobFunction { get; set; }
         public string Industry { get; set; }
         [Display(Name = "Country")]
         public string Country { get; set; }
         [Display(Name = "Company Type")]
+        [Required(ErrorMessage = "This field is required.")]
         public string CompanyType { get; set; }
         public SelectList CompanyTypelist { get; set; }
         [Display(Name = "Company Stage")]
         public string CompanyStage { get; set; }
-        public SelectList CompanyStageList { get; set; }
+        public string[] CompanyStageArray { get; set; }
+        public List<SelectListItem> CompanyStageList { get; set; }
 
         [Display(Name = "Skill Category")]
         public string SkillCategory { get; set; }
@@ -216,12 +219,17 @@ namespace Risebird.Entities.ViewModel
         public List<SelectListItem> SkillCategoryList { get; set; }
 
         [Display(Name = "Years of Experience")]
+        [Required(ErrorMessage = "This field is required.")]
         public string Yearsofexperience { get; set; }
-        public SelectList YearsofexperienceList { get; set; }
+        
+        public string[] YearsofexperienceArray { get; set; }
+        public List<SelectListItem> YearsofexperienceList { get; set; }
 
         [Display(Name = "Seniority Level")]
+        [Required(ErrorMessage = "This field is required.")]
         public string Senioritylevel { get; set; }
-        public SelectList SenioritylevelList { get; set; }
+        public string[] SenioritylevelArray { get; set; }
+        public List<SelectListItem> SenioritylevelList { get; set; }
 
         [Display(Name = "Skill Nature")]
         public string SkillNature { get; set; }
@@ -288,7 +296,7 @@ namespace Risebird.Entities.ViewModel
         public string ISCId { get; set; }
         public string BackUrl { get; set; }
         //public string PerHourRateOutside { get; set; }
-        public SelectList CompanySizeList { get; set; }
+        public List<SelectListItem> CompanySizeList { get; set; }
         public SelectList CountryList { get; set; }
         public SelectList IndianPrice { get; set; }
         public SelectList OutSideIndiaPrice { get; set; }
@@ -312,6 +320,20 @@ namespace Risebird.Entities.ViewModel
         public int VideoDuration { get; set; }
         public string ResourceUrl { get; set; }
         public string OldInterviewerComment { get; set; }
+        [Display(Name = "Assessment Group Id")]
+        [Required(ErrorMessage = "This field is required.")]
+        public string AssessmentGroupId { get; set; }
+        public string[] AssessmentGroupIdArray { get; set; }
+        [Display(Name = "Coded Resume Link")]
+        public string CodedResumeLink { get; set; }
+        [Display(Name = "Coded Resume File")]
+       
+        public IFormFile CodedResumeFile { get; set; }
+        public List<SelectListItem> AssessmentGroupList { get; set; }
+        public string QuestionsListData { get; set; }
+        [Display(Name = "Trained")]
+        [Required(ErrorMessage = "This field is required.")]
+        public int Trained { get; set; }
     }
     public class RBInterviewDetails
     {
@@ -341,5 +363,6 @@ namespace Risebird.Entities.ViewModel
         public string PrimarySkillInvite { get; set; }
         public string IRFId { get; set; }
         public bool IsEmergency { get; set; }
+        public int TotalAmount { get; set; }
     }
 }

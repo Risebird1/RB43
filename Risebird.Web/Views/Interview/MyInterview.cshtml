@@ -332,10 +332,10 @@
                                                     <tfoot>
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
-                                                            <th style="border-left: 0px !important;">Date</th>
+                                                            <th style="border-left: 0px !important;width:12%">Date</th>
                                                             <th style="text-align:center">Slot</th>
                                                             <th style="text-align:center">Call Candidate</th>
-                                                            <th>Candidate Name</th>
+                                                            <th style="width:18%;">Candidate Name</th>
                                                             <th>Interview level</th>
                                                             <th>JD Link</th>
                                                             <th>Skill Channel</th>
@@ -390,11 +390,11 @@
 
                                                                 @if (item.candidateName != null && item.candidateName != "")
                                                                 {
-                                                                    @if (item.candidateName.Length > 13)
+                                                                    @if (item.candidateName.Length > 26)
                                                                     {
 
                                                                         <td class="cadName">
-                                                                            <a onclick="" data-tooltip="@item.candidateName"> @item.candidateName.Substring(0, 13)... </a>
+                                                                            <a onclick="" data-tooltip="@item.candidateName"> @item.candidateName.Substring(0, 26)... </a>
                                                                         </td>
 
                                                                     }
@@ -415,7 +415,7 @@
                                                                 <td> @item.HeuristicProfileTypeDesc </td>
                                                                 @if (item.JDLink != null && item.JDLink != "")
                                                                 {
-                                                                    <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                                    <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
                                                                 }
                                                                 else
                                                                 {
@@ -459,7 +459,7 @@
                                                                     }
 
                                                                     <button id="myinterview_9" class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
-                                                                        <span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new { id = item.irfIntId })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
+                                                                        <span onclick="location.href = '@Url.Action("SampleQuestions", "IRF", new { id = item.irfIntId })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
                                                                     </button>
                                                                     <button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification">
                                                                         <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, meetingId = item.id })'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg fill=" rgb(255,255,255)" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
@@ -596,7 +596,7 @@
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
-                    <span class="publicsharing-icon">
+                    <span>
 
 
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
@@ -1161,9 +1161,9 @@
 
 
             if (data[i].candidateName != null && data[i].candidateName != "") {
-                if (data[i].candidateName.length > 13) {
+                if (data[i].candidateName.length > 26) {
 
-                    html += ' <td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '">' + data[i].candidateName.substring(0, 13) + '... </a></td>';
+                    html += ' <td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '">' + data[i].candidateName.substring(0, 26) + '... </a></td>';
 
                 }
 
@@ -1211,7 +1211,7 @@ if (new Date(data[i].interviewDate) >= new Date()) {
 }
 
 html += '   <button id="myinterview_9" class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">';
-html += '  <a href = "/Interview/SampleQuestions?id=' + data[i].irfIntId + '" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)"  d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></a>';
+html += '  <a href = "/IRF/SampleQuestions?id=' + data[i].irfIntId + '" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)"  d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></a>';
 html += '  </button>';
 html += '   <button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification">';
 html += ' <a href ="/Interview/VerifyMyInterviewAudio?candidateId=' + data[i].candidateMasterId + '&irfId=' + data[i].irfIntId + '&meetingId =' + data[i].id + '" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></a>';

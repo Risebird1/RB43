@@ -502,7 +502,33 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Question", question);
+                parameters.Add("@IRFId", irfId);
 
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetTechSkillofSkillChannelByQuestion", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public string GetQuestionSkills(string id)
         {
             try
@@ -928,7 +954,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null)
+        public async Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null)
         {
             try
             {
@@ -1115,6 +1141,22 @@ namespace Risebird.Repository
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     }
 
+
+                    if (removedTechSkills != null)
+                    {
+                        foreach (var removedTechSkill in removedTechSkills)
+                        {
+                            try
+                            {
+                                UpdateTechSkillQuestionsForRemovedSkills(removedTechSkill);
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                continue;
+                            }
+                        }
+                    }
 
                     //update trans interviewer table
 
@@ -1461,7 +1503,7 @@ namespace Risebird.Repository
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     }
 
-                    
+
 
                     return true;
                 }
@@ -1491,6 +1533,18 @@ namespace Risebird.Repository
             using (SqlConnection conChange = new SqlConnection(connectionString))
             {
                 await SqlMapper.QueryAsync(conChange, "usp_UpdateAmountBasedOnPerSuccessRate", dynamicParam,
+                   commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        private async void UpdateTechSkillQuestionsForRemovedSkills(RemovedTechSkillsFromIRF removedTechSkill)
+        {
+            DynamicParameters dynamicParam = new DynamicParameters();
+            dynamicParam.Add("@IRFId", removedTechSkill.IRFId);
+            dynamicParam.Add("@SkillId", removedTechSkill.SkillId);
+            using (SqlConnection conChange = new SqlConnection(connectionString))
+            {
+                await SqlMapper.QueryAsync(conChange, "usp_UpdateTechSkillQuestionsForRemovedTechSkill", dynamicParam,
                    commandType: CommandType.StoredProcedure);
             }
         }
@@ -1860,12 +1914,13 @@ namespace Risebird.Repository
                     foreach (var item in obj.SkillCollection)
                     {
 
-                        string sqlJoinability = "INSERT INTO TechSkillComments (IRFId, Skill, Comment) Values (@IRFId, @Skill, @Comment);";
-                        var affectedRows = con.Execute(sqlJoinability, new
+                        string questionRow = "INSERT INTO TechSkillComments (IRFId, Skill, Comment, UserId) Values (@IRFId, @Skill, @Comment, @UserId);";
+                        var affectedRows = con.Execute(questionRow, new
                         {
                             obj.IRFId,
                             Skill = Convert.ToInt16(item.Skill),
-                            item.Comment
+                            item.Comment,
+                            item.UserId
 
                         });
                     }
@@ -1974,7 +2029,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await con.QueryAsync<int>(query, dynamicParameters);
-                    if(result != null && result.FirstOrDefault()==0)
+                    if (result != null && result.FirstOrDefault() == 0)
                     {
                         return true;
                     }
@@ -2707,7 +2762,7 @@ namespace Risebird.Repository
             }
         }
 
-        public int GetUserId(string emailId, string profile)
+        public int GetUserId(string emailId, string profile = null)
         {
             int result = 0;
             try
@@ -2735,6 +2790,8 @@ namespace Risebird.Repository
                 return result;
             }
         }
+
+
 
         public IEnumerable<Recruiter> GetRecruiters()
         {

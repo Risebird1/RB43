@@ -16,7 +16,7 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> RB Pay Details</h4></div>
                 </div>
-                <div class="pull-left" style="color:green">10 of Tds deducted from every payment</div>
+                <div class="pull-left" style="color:green">10% of Tds deducted from every payment</div>
                 <div class="pull-right">
                     <div><a href="../../Newassets/paymentdes.pdf" target="_blank">Risebird Payment Description Link</a></div>
                     <div>
@@ -63,10 +63,12 @@
                                                 <th>Payment For</th>
                                                 <th>Type</th>
                                                 <th>Rate</th>
-                                                <th>VideoLink</th>
+                                                <th>Meeting Status</th>
+                                                <th>Interview Status</th>
+                                                @*<th>VideoLink</th>*@
                                                 <th>Video Duration</th>
                                                 <th>Amount</th>
-                                                <th>Status</th>
+                                                <th>Payment Status</th>
                                             </tr>
                                         </thead>
                                         <tfoot>
@@ -76,10 +78,12 @@
                                                 <th>Payment For</th>
                                                 <th>Type</th>
                                                 <th>Rate</th>
-                                                <th>VideoLink</th>
+                                                <th>Meeting Status</th>
+                                                <th>Interview Status</th>
+                                                @*<th>VideoLink</th>*@
                                                 <th>Video Duration</th>
                                                 <th>Amount</th>
-                                                <th>Status</th>
+                                                <th>Payment Status</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
@@ -90,15 +94,32 @@
                                                     <td>@item.Comment</td>
                                                     <td>@item.Type</td>
                                                     <td>@item.Rate</td>
-                                                    @if (!String.IsNullOrEmpty(item.VideoLink))
+                                                    @if (item.MeetingStatusDetails == "0")
                                                     {
-                                                        <td><a target="_blank" href="@item.VideoLink">Video Link</a></td>
+                                                        <td></td>
                                                     }
                                                     else
                                                     {
-                                                        <td>No Video</td>
+                                                        <td>@item.MeetingStatusDetails</td>
                                                     }
-                                                    <td>@item.VideoDuration</td>
+
+                                                    @if (item.InterviewStatusDetails == "0")
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>@item.InterviewStatusDetails</td>
+                                                    }
+                                                    @*@if (!String.IsNullOrEmpty(item.VideoLink))
+                                                        {
+                                                            <td><a target="_blank" href="@item.VideoLink">Video Link</a></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No Video</td>
+                                                        }*@
+                                                    <td style="width:11%; text-align: center;">@item.VideoDuration</td>
                                                     <td>@item.Points</td>
                                                     <td>@item.Status</td>
 

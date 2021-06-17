@@ -136,8 +136,20 @@ namespace Risebird.Web.Controllers
                         {
                             if (!String.IsNullOrEmpty(item.Senioritylevel))
                             {
-                                int Seniorityid = Convert.ToInt32(item.Senioritylevel);
-                                item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
+                                var Senioritylevelgroups = String.Empty;
+                                foreach (var itemseniority in item.Senioritylevel.Split(","))
+                                {
+                                    int Seniorityid = Convert.ToInt32(itemseniority);
+                                    if (String.IsNullOrEmpty(Senioritylevelgroups))
+                                    {
+                                        Senioritylevelgroups = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
+                                    }
+                                    else
+                                    {
+                                        Senioritylevelgroups = Senioritylevelgroups + " , " + Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
+                                    }
+                                }
+                                item.Senioritylevel = Senioritylevelgroups;
                             }
                         }
                         ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
@@ -1802,7 +1814,19 @@ namespace Risebird.Web.Controllers
             model.InterviewerApproved = new SelectList(isApproved, "ID", "Name");
             var CompanySizeTypes = from CompanySize s in Enum.GetValues(typeof(CompanySize))
                                    select new { ID = (int)s, Name = s.GetDescription() };
-            model.CompanySizeList = new SelectList(CompanySizeTypes, "ID", "Name");
+            var selectListforsize = new List<SelectListItem>();
+            foreach (var item in CompanySizeTypes)
+            {
+                bool selected = false;
+                if (model.CompanySizeArray != null && model.CompanySizeArray.Contains(Convert.ToString(item.ID)))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem(item.Name, Convert.ToString(item.ID), selected);
+                selectListforsize.Add(selectItem);
+            }
+            model.CompanySizeList = selectListforsize;
+            //model.CompanySizeList = new SelectList(CompanySizeTypes, "ID", "Name");
             //var Country = from Country s in Enum.GetValues(typeof(Country))
             //              select new { ID = (int)s, Name = s.GetDescription() };
             var Country = from WorkCountry s in Enum.GetValues(typeof(WorkCountry))
@@ -1832,8 +1856,20 @@ namespace Risebird.Web.Controllers
                 dominlist = dominlist.OrderBy(x => x.Name);
             }
             model.DomainList = new SelectList(dominlist, "Name", "Name");
-
-            model.CompanyStageList = new SelectList(_iRFRepository.GetCompanyStage(), "Id", "Name");
+            var Companystage = _iRFRepository.GetCompanyStage();
+            var selectListforstage = new List<SelectListItem>();
+            foreach (var item in Companystage)
+            {
+                bool selected = false;
+                if (model.CompanyStageArray != null && model.CompanyStageArray.Contains(Convert.ToString(item.Id)))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem(item.Name, Convert.ToString(item.Id), selected);
+                selectListforstage.Add(selectItem);
+            }
+            model.CompanyStageList = selectListforstage;
+            //model.CompanyStageList = new SelectList(_iRFRepository.GetCompanyStage(), "Id", "Name");
             var skillCategories = _iRFRepository.GetSkillCategory();
             var selectList = new List<SelectListItem>();
             foreach (var item in skillCategories)
@@ -1844,12 +1880,37 @@ namespace Risebird.Web.Controllers
                     selected = true;
                 }
                 var selectItem = new SelectListItem(item.Name, Convert.ToString(item.Id), selected);
-
                 selectList.Add(selectItem);
             }
             model.SkillCategoryList = selectList;
-            model.YearsofexperienceList = new SelectList(_iRFRepository.GetInterviewerExprienceYear(), "Id", "Name");
-            model.SenioritylevelList = new SelectList(_iRFRepository.GetSenioritylevel(), "Id", "Name");
+            var yearsofexprience = _iRFRepository.GetInterviewerExprienceYear();
+            selectList = new List<SelectListItem>();
+            foreach (var item in yearsofexprience)
+            {
+                bool selected = false;
+                if (model.YearsofexperienceArray != null && model.YearsofexperienceArray.Contains(Convert.ToString(item.Id)))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem(item.Name, Convert.ToString(item.Id), selected);
+                selectList.Add(selectItem);
+            }
+            model.YearsofexperienceList = selectList;
+            //model.YearsofexperienceList = new SelectList(_iRFRepository.GetInterviewerExprienceYear(), "Id", "Name");
+            var senioritylevel = _iRFRepository.GetSenioritylevel();
+            selectList = new List<SelectListItem>();
+            foreach (var item in senioritylevel)
+            {
+                bool selected = false;
+                if (model.SenioritylevelArray != null && model.SenioritylevelArray.Contains(Convert.ToString(item.Id)))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem(item.Name, Convert.ToString(item.Id), selected);
+                selectList.Add(selectItem);
+            }
+            model.SenioritylevelList = selectList;
+            //model.SenioritylevelList = new SelectList(_iRFRepository.GetSenioritylevel(), "Id", "Name");
             model.SkillNatureList = new SelectList(_iRFRepository.GetSkillNature(), "Id", "Name");
             var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                              select new { ID = (int)s, Name = s.GetDescription() };
@@ -1857,6 +1918,19 @@ namespace Risebird.Web.Controllers
                               select new { ID = (int)s, Name = s.GetDescription() };
             model.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
             model.CompentencyLevelList = new SelectList(Compentencs, "ID", "Name");
+            var Assessmentgroup = _interviewerService.FetchAssessmentGroups();
+            var AssessmentselectList = new List<SelectListItem>();
+            foreach (var item in Assessmentgroup)
+            {
+                bool selected = false;
+                if (model.AssessmentGroupIdArray != null && model.AssessmentGroupIdArray.Contains(item.id.ToString()))
+                {
+                    selected = true;
+                }
+                var selectListassissment = new SelectListItem(item.AssessmentGroup, item.id.ToString(), selected);
+                AssessmentselectList.Add(selectListassissment);
+            }
+            model.AssessmentGroupList = AssessmentselectList;
         }
 
         /// <summary>
@@ -2094,7 +2168,7 @@ namespace Risebird.Web.Controllers
                 if (!String.IsNullOrEmpty(searchValue))
                 {
                     searchValue = searchValue.ToUpper();
-                    model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
+                    model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "") || (!String.IsNullOrEmpty(x.NickName) ? x.NickName.ToUpper().Contains(searchValue) : x.NickName == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
 
                 }
                 ViewBag.TotalCount = model.Count;
@@ -2211,6 +2285,26 @@ namespace Risebird.Web.Controllers
                     {
                         model.SkillCategoryArray = model.SkillCategory.Split(',');
                     }
+                    if (!string.IsNullOrEmpty(model.CompanySize))
+                    {
+                        model.CompanySizeArray = model.CompanySize.Split(',');
+                    }
+                    if (!string.IsNullOrEmpty(model.CompanyStage))
+                    {
+                        model.CompanyStageArray = model.CompanyStage.Split(',');
+                    }
+                    if (!string.IsNullOrEmpty(model.Yearsofexperience))
+                    {
+                        model.YearsofexperienceArray = model.Yearsofexperience.Split(',');
+                    }
+                    if (!string.IsNullOrEmpty(model.Senioritylevel))
+                    {
+                        model.SenioritylevelArray = model.Senioritylevel.Split(',');
+                    }
+                    if (!string.IsNullOrEmpty(model.AssessmentGroupId))
+                    {
+                        model.AssessmentGroupIdArray = model.AssessmentGroupId.Split(',');
+                    }
                     GetStatusList(model);
                     ViewBag.indexid = id;
                     return View(model);
@@ -2241,6 +2335,15 @@ namespace Risebird.Web.Controllers
                     model.UserDetails = emailid;
                     if (profileName == "Admin" || profileName == "HR")
                     {
+                        if (model.CodedResumeFile != null)
+                        {
+                            var codedResumeFileName = model.CodedResumeFile.FileName.Replace(" ", "_");
+                            await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", model.CodedResumeFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
+                            var uploadedFileURL = blob.Uri.ToString();
+                            model.CodedResumeLink = uploadedFileURL;
+                        }
                         if (_interviewerService.InterviewerRecommendation(model).Result)
                         {
                             TempData["MessageInterviewer"] = "Recommendation saved Successfully";

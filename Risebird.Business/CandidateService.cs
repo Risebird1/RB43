@@ -3,6 +3,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -100,6 +101,45 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+        public async Task<CandidateDetailsForWhatsApp> FetchInterviewDetails(int interviewid)
+        {
+            try
+            {
+                return await _candidateRepository.FetchInterviewDetails(interviewid);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<string> CancelInterviewDetails(int interviewid, string CandidateEmail)
+        {
+            try
+            {
+                return await _candidateRepository.CancelInterviewDetails(interviewid, CandidateEmail);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<InterviewUsersDetails> FetchChannelOwnerandInterviewer(int interviewid)
+        {
+            try
+            {
+                return await _candidateRepository.FetchChannelOwnerandInterviewer(interviewid);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
     }

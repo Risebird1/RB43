@@ -1799,7 +1799,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from InterviewerRecommendation where UserId= @UserId";
+                //var query = "Select * from InterviewerRecommendation where UserId= @UserId";
+                var query = "Select ir.*,ip.CodedResumeLink,ip.AssessmentGroupId from InterviewerRecommendation ir left join InterviewerProfile ip on ip.Userid=ir.Userid where ir.UserId= @UserId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@UserId", Userid);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -1837,7 +1838,11 @@ namespace Risebird.Repository
                     parametersRecomm.Add("@ProfileType", reportDetails.ProfileType);
                     parametersRecomm.Add("@CompentencyLevel", reportDetails.CompentencyLevel);
                     parametersRecomm.Add("@Userid", reportDetails.Userid);
+                    parametersRecomm.Add("@AssessmentGroupId", reportDetails.AssessmentGroupId);
+                    parametersRecomm.Add("@CodedResumeLink", reportDetails.CodedResumeLink);
+                    parametersRecomm.Add("@Trained", reportDetails.Trained);
                     parametersRecomm.Add("@DomainName", "");
+
                     if (reportDetails.Domain == "Other")
                     {
                         parametersRecomm.Add("@DomainName", reportDetails.DomainName);

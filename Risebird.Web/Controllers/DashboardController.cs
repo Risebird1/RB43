@@ -893,7 +893,8 @@ namespace Risebird.Web.Controllers
                             var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
 
                             var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
-                            var interviewerids = myInterview.Select(x => x.id).Distinct().ToList();
+                            var WeekDate = DateTime.Now.AddDays(-7);
+                            var interviewerids = myInterview.Where(x => x.interviewDate >= WeekDate).Select(x => x.id).Distinct().ToList();
                             if (interviewerids != null)
                             {
                                 foreach (var item in myInterview)
@@ -1237,7 +1238,8 @@ namespace Risebird.Web.Controllers
                 }
                 var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCountbyHr(email);
                 var myInterview = _meetingService.GetHRAssignedInterviews(email);
-                var interviewerids = myInterview.Select(x => x.id).Distinct().ToList();
+                var WeekDate = DateTime.Now.AddDays(-7);
+                var interviewerids = myInterview.Where(x => x.interviewDate >= WeekDate).Select(x => x.id).Distinct().ToList();
                 int countvalue = 0;
                 if (interviewerids != null)
                 {

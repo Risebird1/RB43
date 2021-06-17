@@ -10,11 +10,11 @@ namespace Risebird.Business.Interface
     public interface IMeetingService
     {
         List<MeetingVM> GetMeetingList();
-        bool AddMeeting(MeetingVM meeting);
+        bool AddMeeting(AddUpdateMeetingVM meeting);
         List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate, string emailId = null);
-        Task<bool> UpdateMeeting(MeetingVM meetingToUpdate);
+        Task<bool> UpdateMeeting(AddUpdateMeetingVM meetingToUpdate);
         List<MeetingVM> MultipleCandidateInvites();
-        Task<MeetingVM> GetMeeting(int id);
+        Task<AddUpdateMeetingVM> GetMeeting(int id);
         List<Meeting> GetAllOpenInterviews(string emailID);
         List<Meeting> GetAllQCInterviews(string emailID);
         List<MeetingVM> GetAllClientInterviews(string emailID);
@@ -26,7 +26,8 @@ namespace Risebird.Business.Interface
         InterviewComments GetInterviewComments(int interviewId);
         Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
         Task<bool> AddInterviewReport(InterviewReport reportModel, string emailId);
-        IEnumerable<SkillComment> GetTechSkillComments(int IRFid);
+        //IEnumerable<SkillComment> GetTechSkillComments(int IRFid);
+        Task<IEnumerable<SkillComment>> GetTechSkillComments(int irfId, int userId = 0);
         SelectList GetIRFList();
         IEnumerable<TransClientUser> GetClientsByRoles(string IRF);
         List<MeetingVM> GetClientMeetingList(string emailId);
@@ -143,5 +144,7 @@ namespace Risebird.Business.Interface
         Task<SelectList> GetIRFInterviewingMembersEmails(string irfId);
         Task<SelectList> GetIRFQualityControllersEmails(string irfId);
         Task<List<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string irfId);
+        Task<InterviewerRating> FetchRatingDetails(int interviewId, string emailid);
+        Task<string> SaveRatingDetails(InterviewerRating model);
     }
 }

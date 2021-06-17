@@ -7,11 +7,21 @@ body {
     color: #9a9a9a !important;
     background: #151515 !important;
 }
-
-    .can-details a:hover,
-    .can-details a:focus {
-        color: #9a9a9a !important
-    }
+.can-details a:hover,
+ .can-details a:focus {
+ color: #9a9a9a !important
+}
+.mdc-fab-secondary .mdc-fab__icon {
+    fill: rgb(121 115 115) !important;
+}
+.rating-btn .fa-rss-square {
+    font-size: 18px;
+    color: #f1eded5c!important;
+    padding-right: 2px;
+}
+.un-left strong {
+    color: #b9b6b6;
+}
 .Fnactive-header-button {
     background-color: #ffffff !important;
     color: #000 !important;

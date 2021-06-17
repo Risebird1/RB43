@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -23,9 +24,10 @@ namespace Risebird.Business
         private readonly IClientService _clientService;
         private readonly IConfiguration _configuration;
         private readonly IActivityTrackerRepository _activityTrackerRepository;
+        private readonly IWhatsAppHelper _whatsAppHelper;
 
         public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,
-            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository)
+            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -33,6 +35,7 @@ namespace Risebird.Business
             _clientService = clientService;
             _configuration = configuration;
             _activityTrackerRepository = activityTrackerRepository;
+            _whatsAppHelper = whatsAppHelper;
         }
 
         #region IRF Functions
@@ -274,6 +277,20 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId)
+        {
+            try
+            {
+                return await _irfRepository.GetTechSkillofSkillChannelByQuestion(question, irfId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
 
         public IEnumerable<Skill> GetTechSkills(int id)
         {
@@ -482,6 +499,7 @@ namespace Risebird.Business
                 model.OldJDLink = model.JDLink;
                 model.OldInterviewerCollection = model.InterviewerCollection;
                 model.OldEmergencyInterviewerCollection = model.EmergencyInterviewerCollection;
+                model.OldSkillCollection = model.SkillCollection;
                 return model;
 
             }
@@ -500,7 +518,8 @@ namespace Risebird.Business
                 var interviewerChangesData = new List<InterviewerSuccessRateChangeData>();
                 var removedInterviewers = new List<RemovedInterviewersFromSkillsChannelData>();
                 var addedNewInterviewers = new List<AddedNewInterviewersInSkillsChannelData>();
-                if(model.OldInterviewerCollection != null && model.InterviewerCollection != null && model.OldInterviewerCollection != model.InterviewerCollection)
+                var removedTechSkills = new List<RemovedTechSkillsFromIRF>();
+                if (model.OldInterviewerCollection != null && model.InterviewerCollection != null && model.OldInterviewerCollection != model.InterviewerCollection)
                 {
                     foreach (var oldInterviewer in model.OldInterviewerCollection)
                     {
@@ -551,7 +570,7 @@ namespace Risebird.Business
 
                     }
                 }
-                if (model.OldEmergencyInterviewerCollection != null && model.EmergencyInterviewerCollection!=null && model.OldEmergencyInterviewerCollection != model.EmergencyInterviewerCollection)
+                if (model.OldEmergencyInterviewerCollection != null && model.EmergencyInterviewerCollection != null && model.OldEmergencyInterviewerCollection != model.EmergencyInterviewerCollection)
                 {
                     foreach (var oldEmergencyInterviewer in model.OldEmergencyInterviewerCollection)
                     {
@@ -601,8 +620,23 @@ namespace Risebird.Business
 
                     }
                 }
-                var result =_irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null, addedNewInterviewers ?? null).Result;
-                if(result)
+
+                if (model.OldSkillCollection != null && model.SkillCollection != null && model.SkillCollection != model.OldSkillCollection)
+                {
+                    foreach (var oldSkill in model.OldSkillCollection)
+                    {
+                        if (!model.SkillCollection.Select(s => s.SkillId).Any(x => x == oldSkill.SkillId))
+                        {
+                            removedTechSkills.Add(new RemovedTechSkillsFromIRF
+                            {
+                                IRFId = model.id,
+                                SkillId = oldSkill.SkillId
+                            });
+                        }
+                    }
+                }
+                var result = _irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null, addedNewInterviewers ?? null, removedTechSkills ?? null).Result;
+                if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateSkillsChannel;
@@ -1010,6 +1044,14 @@ namespace Risebird.Business
                         _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact);
 
                     }
+                    WhatsAppVM _whatsapp = new WhatsAppVM();
+                    _whatsapp.Emailid = email;
+                    _whatsapp.InterviewDate = primarySkill;
+                    _whatsapp.Header = client.Name;
+                    _whatsapp.Event = "Interview Schedule";
+                    _whatsapp.MessageValue = ((JobLevels)(irf.JobLevel)).GetDescription();
+                    _whatsapp.buttonlink = !String.IsNullOrEmpty(calendlyLink) ? calendlyLink.Replace("https://calendly.com/", "") : "";
+                    _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
                     if (candidate.TotalInvites == 0)
                     {
                         _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
@@ -1160,7 +1202,7 @@ namespace Risebird.Business
 
         }
 
-        public int GetUserId(string emailId, string profile)
+        public int GetUserId(string emailId, string profile = null)
         {
             int result = 0;
             try
