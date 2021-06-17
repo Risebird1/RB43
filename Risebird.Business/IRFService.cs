@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -1048,6 +1049,7 @@ namespace Risebird.Business
                     _whatsapp.InterviewDate = primarySkill;
                     _whatsapp.Header = client.Name;
                     _whatsapp.Event = "Interview Schedule";
+                    _whatsapp.MessageValue = ((JobLevels)(irf.JobLevel)).GetDescription();
                     _whatsapp.buttonlink = !String.IsNullOrEmpty(calendlyLink) ? calendlyLink.Replace("https://calendly.com/", "") : "";
                     _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
                     if (candidate.TotalInvites == 0)
