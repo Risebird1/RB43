@@ -10,11 +10,11 @@ namespace Risebird.Business.Interface
     public interface IMeetingService
     {
         List<MeetingVM> GetMeetingList();
-        bool AddMeeting(MeetingVM meeting);
+        bool AddMeeting(AddUpdateMeetingVM meeting);
         List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate, string emailId = null);
-        Task<bool> UpdateMeeting(UpdateMeetingVM meetingToUpdate);
+        Task<bool> UpdateMeeting(AddUpdateMeetingVM meetingToUpdate);
         List<MeetingVM> MultipleCandidateInvites();
-        Task<UpdateMeetingVM> GetMeeting(int id);
+        Task<AddUpdateMeetingVM> GetMeeting(int id);
         List<Meeting> GetAllOpenInterviews(string emailID);
         List<Meeting> GetAllQCInterviews(string emailID);
         List<MeetingVM> GetAllClientInterviews(string emailID);

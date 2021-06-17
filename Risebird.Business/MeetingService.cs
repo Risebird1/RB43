@@ -307,7 +307,7 @@ namespace Risebird.Business
         }
 
 
-        public bool AddMeeting(MeetingVM meeting)
+        public bool AddMeeting(AddUpdateMeetingVM meeting)
         {
             try
             {
@@ -334,7 +334,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<UpdateMeetingVM> GetMeeting(int id)
+        public async Task<AddUpdateMeetingVM> GetMeeting(int id)
         {
             try
             {
@@ -489,7 +489,7 @@ namespace Risebird.Business
             return false;
         }
 
-        public async Task<bool> UpdateMeeting(UpdateMeetingVM meetingToUpdate)
+        public async Task<bool> UpdateMeeting(AddUpdateMeetingVM meetingToUpdate)
         {
             try
             {
