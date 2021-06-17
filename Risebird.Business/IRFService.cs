@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -518,7 +519,7 @@ namespace Risebird.Business
                 var removedInterviewers = new List<RemovedInterviewersFromSkillsChannelData>();
                 var addedNewInterviewers = new List<AddedNewInterviewersInSkillsChannelData>();
                 var removedTechSkills = new List<RemovedTechSkillsFromIRF>();
-                if(model.OldInterviewerCollection != null && model.InterviewerCollection != null && model.OldInterviewerCollection != model.InterviewerCollection)
+                if (model.OldInterviewerCollection != null && model.InterviewerCollection != null && model.OldInterviewerCollection != model.InterviewerCollection)
                 {
                     foreach (var oldInterviewer in model.OldInterviewerCollection)
                     {
@@ -620,11 +621,11 @@ namespace Risebird.Business
                     }
                 }
 
-                if(model.OldSkillCollection!=null && model.SkillCollection!=null && model.SkillCollection!=model.OldSkillCollection)
+                if (model.OldSkillCollection != null && model.SkillCollection != null && model.SkillCollection != model.OldSkillCollection)
                 {
                     foreach (var oldSkill in model.OldSkillCollection)
                     {
-                        if (!model.SkillCollection.Select(s=>s.SkillId).Any(x => x ==oldSkill.SkillId))
+                        if (!model.SkillCollection.Select(s => s.SkillId).Any(x => x == oldSkill.SkillId))
                         {
                             removedTechSkills.Add(new RemovedTechSkillsFromIRF
                             {
@@ -634,8 +635,8 @@ namespace Risebird.Business
                         }
                     }
                 }
-                var result =_irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null, addedNewInterviewers ?? null, removedTechSkills?? null).Result;
-                if(result)
+                var result = _irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null, addedNewInterviewers ?? null, removedTechSkills ?? null).Result;
+                if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateSkillsChannel;
@@ -1048,6 +1049,7 @@ namespace Risebird.Business
                     _whatsapp.InterviewDate = primarySkill;
                     _whatsapp.Header = client.Name;
                     _whatsapp.Event = "Interview Schedule";
+                    _whatsapp.MessageValue = ((JobLevels)(irf.JobLevel)).GetDescription();
                     _whatsapp.buttonlink = !String.IsNullOrEmpty(calendlyLink) ? calendlyLink.Replace("https://calendly.com/", "") : "";
                     _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
                     if (candidate.TotalInvites == 0)
@@ -1200,7 +1202,7 @@ namespace Risebird.Business
 
         }
 
-        public int GetUserId(string emailId, string profile=null)
+        public int GetUserId(string emailId, string profile = null)
         {
             int result = 0;
             try

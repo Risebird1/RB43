@@ -144,7 +144,7 @@ namespace Risebird.CommonHelper
                         var request = new RestRequest(Method.POST);
                         request.AddHeader("Authorization", "Basic " + accesskey);
                         request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + name + "\"\r\n\r\n    }\r\n}", ParameterType.RequestBody);
+                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"Role\":\"" + _whatsAppVM.MessageValue + "\"\r\n    }\r\n}", ParameterType.RequestBody);
                         IRestResponse response = client.Execute(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     }
@@ -170,8 +170,10 @@ namespace Risebird.CommonHelper
                         var name = _userService.FetchNameByEmail(item);
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
+                        var username = _whatsAppVM.UserName;
                         _whatsAppVM.UserName = name;
                         WhatsAppTrackUser(_whatsAppVM);
+                        _whatsAppVM.UserName = username;
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
                         var request = new RestRequest(Method.POST);
@@ -280,7 +282,7 @@ namespace Risebird.CommonHelper
                         var request = new RestRequest(Method.POST);
                         request.AddHeader("Authorization", "Basic " + accesskey);
                         request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + name + "\"\r\n\r\n    }\r\n}", ParameterType.RequestBody);
+                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + name + "\"\r\n\r\n    }\r\n}", ParameterType.RequestBody);
                         IRestResponse response = client.Execute(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     }
@@ -313,7 +315,7 @@ namespace Risebird.CommonHelper
                         var request = new RestRequest(Method.POST);
                         request.AddHeader("Authorization", "Basic " + accesskey);
                         request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
+                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"interviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
                         IRestResponse response = client.Execute(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     }

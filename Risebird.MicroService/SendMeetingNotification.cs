@@ -124,7 +124,7 @@ namespace Risebird.MicroService
                         _whatsAppVMC.Emailid = item.candidateEmail;
                         _whatsAppVMC.UserName = item.candidateName;
                         _whatsAppVMC.Event = "Apology Notification";
-                        _whatsAppHelper.WhatsAppSendApology(_whatsAppVM);
+                        _whatsAppHelper.WhatsAppSendApology(_whatsAppVMC);
                     }
                     else if (item.EmailType == "CApology")
                     {
