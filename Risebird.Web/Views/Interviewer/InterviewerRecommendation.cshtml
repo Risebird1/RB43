@@ -320,15 +320,19 @@
                                                     @Html.LabelFor(model => model.CodedResumeFile, htmlAttributes: new { @class = "control-label  desp-label" })<span class="red">*</span>
                                                 </div>
                                                 @Html.TextBoxFor(model => model.CodedResumeFile, new { id = "txt_CodedResumeFile", type = "file", @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12", @accept = ".doc, .docx, .pdf, .txt" })
-                                                <div>
-                                                    @if (Model.CodedResumeLink != null)
-                                                    {
-                                                        <div class="upload" style=" float: left;margin-left:5px">
-                                                            <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="codedResumeId" target="_blank" title="CodedResume" href=@Model.CodedResumeLink.Replace(" ","%20")>Coded Resume</a>
-                                                        </div>
-                                                    }
-                                                </div>
-                                                @Html.ValidationMessageFor(model => model.CodedResumeFile, "", new { @class = "text-danger", @required = "required" })
+                                            <div>
+                                                @if (Model.CodedResumeLink != null && Model.CodedResumeLink != "")
+                                                {
+                                                    <div class="upload" style=" float: left;margin-left:5px">
+                                                        <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="codedResumeId" target="_blank" title="CodedResume" href=@Model.CodedResumeLink.Replace(" ","%20")>Coded Resume</a>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    @Html.ValidationMessageFor(model => model.CodedResumeFile, "", new { @id = "err_codedResumeId", @class = "text-danger" })
+                                                }
+                                            </div>
+                                               
                                             </div>
                                         </div>
 
@@ -447,6 +451,13 @@
            
                 $("#err_AssessmentGroupIdArray").text("This field is required.");
                 elementId = 'AssessmentGroupIdArray';
+           
+        }
+
+      if ($("#codedResumeId").val() == null) {
+           
+                $("#err_codedResumeId").text("This field is required.");
+                elementId = 'codedResumeId';
            
         }
 

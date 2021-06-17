@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
-    public class UpdateMeetingVM
+    public class AddUpdateMeetingVM
     {
 
         public int imid { get; set; }
@@ -72,7 +72,7 @@ namespace Risebird.Entities.ViewModel
         //public string zoomDetails { get; set; }
 
         [Display(Name = "Risebird HR")]
-        [Required(ErrorMessage = "Please enter Risebird HR Email Id.")]
+        [Required(ErrorMessage = "Please enter Zoom login details.")]
         public string risebirdHR { get; set; }
 
         [Display(Name = "Interviewer")]

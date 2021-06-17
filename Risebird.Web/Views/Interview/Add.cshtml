@@ -1,4 +1,4 @@
-﻿@model Risebird.Entities.ViewModel.MeetingVM
+﻿@model Risebird.Entities.ViewModel.AddUpdateMeetingVM
 
 @{
     ViewData["Title"] = "Add Interview";
@@ -125,14 +125,34 @@
                                     </div>
 
                                     <div class="form-group">
+
+
                                         @Html.LabelFor(model => model.interviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(x => Model.interviewer, new SelectList(new List<string>() { string.Empty}),  htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                        @if (Model.InterviewingMembersList != null && Model.InterviewingMembersList.Count() != 0)
+                                        {
+                                            @Html.DropDownListFor(x => Model.interviewer, Model.InterviewingMembersList, "Select Interviewer", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownListFor(x => Model.interviewer, new SelectList(new List<string>() { string.Empty }), htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+
+                                        }
+
                                         @Html.ValidationMessageFor(model => model.interviewer, "", new { @class = "text-danger" })
                                     </div>
 
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.QCInterviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(x => Model.QCInterviewer, new SelectList(new List<string>() { string.Empty }), htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                        @if (Model.InterviewingMembersList != null && Model.InterviewingMembersList.Count() != 0)
+                                        {
+                                            @Html.DropDownListFor(x => Model.QCInterviewer, Model.QualityControllersList, "Select Quality Controller", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownListFor(x => Model.QCInterviewer, new SelectList(new List<string>() { string.Empty }), htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                        }
+
                                         @Html.ValidationMessageFor(model => model.QCInterviewer, "", new { @class = "text-danger" })
                                     </div>
 
@@ -242,23 +262,23 @@
 
 
 <script>
-    $(document).ready(function () {
-        var inputs = document.getElementsByTagName("input");
-        for (i = 0; i <= inputs.length; i++) {
-            inputs[i].addEventListener("input", function () {
-                document.getElementById("btnUpload").disabled = false;
-            });
-        }
-    });
+    //$(document).ready(function () {
+    //    var inputs = document.getElementsByTagName("input");
+    //    for (i = 0; i <= inputs.length; i++) {
+    //        inputs[i].addEventListener("input", function () {
+    //            document.getElementById("btnUpload").disabled = false;
+    //        });
+    //    }
+    //});
 
 </script>
 
 <script>
-    $('form').submit(function () {
-        if ($(this).valid()) {
-            $(':submit', this).attr('disabled', 'disabled');
-        }
-    });
+    //$('form').submit(function () {
+    //    if ($(this).valid()) {
+    //        $(':submit', this).attr('disabled', 'disabled');
+    //    }
+    //});
     function RadioChanged(val) {
         if (val == 'Upload') {
             document.getElementById("uploadDiv").style.display = "block";
@@ -393,7 +413,7 @@
 
     function checkValidation() {
         if (CheckResume && checkDate && $('#confirmationStatus').val() != '') {
-            $("#btnUpload").attr("disabled", "disabled");
+            //$("#btnUpload").attr("disabled", "disabled");
             return true;
         }
         else { return false; }

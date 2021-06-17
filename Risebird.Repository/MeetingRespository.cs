@@ -637,7 +637,7 @@ namespace Risebird.Repository
 
 
 
-        private DynamicParameters SetStoredProcedureParameterForMeeting(MeetingVM entity)
+        private DynamicParameters SetStoredProcedureParameterForMeeting(AddUpdateMeetingVM entity)
         {
             var parameters = new DynamicParameters();
             if (entity.imid > 0)
@@ -671,41 +671,9 @@ namespace Risebird.Repository
             return parameters;
         }
 
-        private DynamicParameters SetStoredProcedureParameterForMeetingUpdate(UpdateMeetingVM entity)
-        {
-            var parameters = new DynamicParameters();
-            if (entity.imid > 0)
-            {
-                parameters.Add("@interviewId", entity.imid);
-                parameters.Add("@IsEmergency", entity.IsEmergency);
+        
 
-            }
-            parameters.Add("@IRFId", entity.IRFId); // Normal parametersmeters           
-            parameters.Add("@interviewDate", entity.interviewDate);
-            parameters.Add("@interviewSlot", entity.interviewSlot);
-            parameters.Add("@interviewDuration", entity.interviewDuration);
-            parameters.Add("@candidateName", entity.candidateName);
-            parameters.Add("@candidateEmail", entity.candidateEmail);
-            parameters.Add("@hrRiseBirdAssinged", entity.risebirdHR);
-            parameters.Add("@resumeLink", entity.resumeLink);
-            parameters.Add("@zoomLink", entity.zoomLink);
-            parameters.Add("@ClientHrContact", entity.ClientHrContact);
-            parameters.Add("@comfirmationStatus", entity.confirmationStatus);
-            parameters.Add("@interviewer", entity.interviewer);
-            parameters.Add("@preferredLocation", entity.preferredLocation);
-            parameters.Add("@expectedPerHourRate", entity.expectedPerHourRate);
-            parameters.Add("@joiningTime", entity.joiningTime);
-            parameters.Add("@staffingAgency", entity.staffingAgency);
-            parameters.Add("@currentEmployerName", entity.currentEmployerName);
-            parameters.Add("@MobileNumber", entity.MobileNumber);
-            parameters.Add("@HRCoordinatorEmailId", entity.HRCoordinatorEmailId);
-            parameters.Add("@QCInterviewer", entity.QCInterviewer);
-            parameters.Add("@zoomMeetingId", entity.ZoomMeetingId);
-
-            return parameters;
-        }
-
-        public async Task<bool> AddMeeting(MeetingVM meeting)
+        public async Task<bool> AddMeeting(AddUpdateMeetingVM meeting)
         {
             try
             {
@@ -772,7 +740,7 @@ namespace Risebird.Repository
         }
 
 
-        public async Task<UpdateMeetingVM> GetInterviewToUpdateMeetingById(int id)
+        public async Task<AddUpdateMeetingVM> GetInterviewToUpdateMeetingById(int id)
         {
             try
             {
@@ -780,7 +748,7 @@ namespace Risebird.Repository
                 parameters.Add("@interviewId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryFirstAsync<UpdateMeetingVM>(con, "usp_GetMeetingById", parameters,
+                    var result = await SqlMapper.QueryFirstAsync<AddUpdateMeetingVM>(con, "usp_GetMeetingById", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }
@@ -793,12 +761,12 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> UpdateMeeting(UpdateMeetingVM meeting)
+        public async Task<bool> UpdateMeeting(AddUpdateMeetingVM meeting)
         {
             try
             {
                 //Set the parameters to be passed to store procedure
-                DynamicParameters parameters = SetStoredProcedureParameterForMeetingUpdate(meeting);
+                DynamicParameters parameters = SetStoredProcedureParameterForMeeting(meeting);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateMeeting", parameters,
