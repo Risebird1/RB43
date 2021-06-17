@@ -340,11 +340,18 @@ body {
 .tabCon .tab-main-box {
     padding: 30px 30px;
 }
+.rejected .btn-call {
+    width: 24px !important;
+    height: 24px;
+}
+    .rejected .btn-call .fa {
+        top: 6px;
+    }
 .rating-btn {
     background: none;
     border: 0px;
     float: right;
-    margin: 0px;
+    margin: -2px 0px;
     padding: 0px 5px;
 }
 .rating-box {
