@@ -168,7 +168,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select im.interviewer,ul.EmailId,im.interviewDate from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Userlist ul on ul.id=irf.RisebirdHr where im.id=@interviewid and confirmationStatus=2";
+                var query = "Select im.interviewer,ul.EmailId,im.interviewDate from InterviewMeetings im join IRF on im.IRFId=irf.IRFId left join Userlist ul on ul.id=irf.RisebirdHr where im.id=@interviewid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@interviewid", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))
