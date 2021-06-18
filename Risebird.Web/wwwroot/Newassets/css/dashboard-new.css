@@ -1139,7 +1139,7 @@ audio {
 }
 
 table.journey td.cadName, table.journey td.cadEmail {
-    max-width: 200px;
+    max-width: 195px;
 }
 
 table.journey td.cadSkill {
@@ -4500,7 +4500,15 @@ button.btn {
     button.btn.btn-previous:active:focus, button.btn.btn-previous.active:focus {
         background: #bbb;
     }
-
+.cjd {
+    width: 216px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    top: 7px;
+    position: relative;
+}
 
 /***** Media queries *****/
 
@@ -4591,16 +4599,24 @@ button.btn {
 }
 
 @media only screen and (max-width: 1400px) {
-    table.journey td.cadName, table.journey td.cadEmail {
+   /* table.journey td.cadName, table.journey td.cadEmail {
         max-width: 120px;
+    }*/
+    .cjd {
+        width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
     }
-
     table.journey td.cadSkill {
         max-width: 150px;
     }
 
     .candidate table.journey td.cadEmail {
-        max-width: 133px;
+        /* max-width: 133px;*/
     }
 
     .intEmail {
@@ -4614,6 +4630,24 @@ button.btn {
     .rbpay .sb-scrollbar {
         position: absolute;
         right: 0px !important;
+    }
+    .cname {
+        width: 170px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
+    }
+    .s_cname {
+        width: 236px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
     }
 }
 
