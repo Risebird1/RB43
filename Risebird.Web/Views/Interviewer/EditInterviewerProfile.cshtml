@@ -126,7 +126,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label " })
                                         @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+                                        @Html.ValidationMessageFor(model => model.EmailId, "", new { @id = "err_txt_EmailId", @class = "text-danger" })
                                     </div>
 
                                     <div class="form-group">
@@ -982,6 +982,18 @@
                 var today = new Date();
                 var age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
                 document.getElementById("txt_Age").value = age.toString();
+            });
+            $("#txt_EmailId").change(function () {
+                $.ajax({
+                    url: '/Interviewer/EmailIdVilidation',
+                    type: 'POST',
+                    data: { 'EmailId': $("#txt_EmailId").val().trim(), 'UserId': $("#hdn_UserId").val() },
+                    success: function (data) {
+                        if (data != "Not") {
+                            $("#err_txt_EmailId").text(data);
+                        }
+                    }
+                });
             });
         });
     </script>

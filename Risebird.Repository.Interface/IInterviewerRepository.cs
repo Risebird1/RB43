@@ -62,5 +62,6 @@ namespace Risebird.Repository.Interface
         Task<bool> InterviewerRecommendation(InterviewReport reportDetails);
         Task<TransInterviewerAccDetails> fetchBankDetails(int interviewerid);
         Task<List<TransInterviewerAvailability>> fetchAvailDetails(int interviewerid);
+        string GetUserRolebyEmailid(string Emailid);
     }
 }

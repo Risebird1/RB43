@@ -730,6 +730,18 @@ namespace Risebird.Web.Controllers
             else
                 return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
         }
+        [HttpPost]
+        public JsonResult EmailIdVilidation(string EmailId, int UserId)
+        {
+            IEnumerable<string> EmailIdList = _interviewerService.GetEmailIds(UserId);
+            if (EmailIdList.Contains(EmailId))
+            {
+                var role = _interviewerService.GetUserRolebyEmailid(EmailId);
+                return Json("EmailId already in use as " + role + ".", new Newtonsoft.Json.JsonSerializerSettings());
+            }
+            else
+                return Json("Not", new Newtonsoft.Json.JsonSerializerSettings());
+        }
 
 
         #endregion
@@ -2165,7 +2177,7 @@ namespace Risebird.Web.Controllers
                 if (!String.IsNullOrEmpty(searchValue))
                 {
                     searchValue = searchValue.ToUpper();
-                    model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")|| (!String.IsNullOrEmpty(x.NickName) ? x.NickName.ToUpper().Contains(searchValue) : x.NickName == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
+                    model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "") || (!String.IsNullOrEmpty(x.NickName) ? x.NickName.ToUpper().Contains(searchValue) : x.NickName == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
 
                 }
                 ViewBag.TotalCount = model.Count;

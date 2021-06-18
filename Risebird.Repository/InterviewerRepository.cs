@@ -1921,6 +1921,29 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public string GetUserRolebyEmailid(string Emailid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Emailid", Emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<string>(
+                        con, "Select p.Name from Userlist ul join Profile p on p.id=ul.idProfile where ul.Emailid = @Emailid", parameters, commandType: Text);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
+        }
     }
 
 }
