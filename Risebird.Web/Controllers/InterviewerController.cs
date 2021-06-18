@@ -730,6 +730,18 @@ namespace Risebird.Web.Controllers
             else
                 return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
         }
+        [HttpPost]
+        public JsonResult EmailIdVilidation(string EmailId, int UserId)
+        {
+            IEnumerable<string> EmailIdList = _interviewerService.GetEmailIds(UserId);
+            if (EmailIdList.Contains(EmailId))
+            {
+                var role = _interviewerService.GetUserRolebyEmailid(EmailId);
+                return Json("EmailId already in use as " + role + ".", new Newtonsoft.Json.JsonSerializerSettings());
+            }
+            else
+                return Json("Not", new Newtonsoft.Json.JsonSerializerSettings());
+        }
 
 
         #endregion

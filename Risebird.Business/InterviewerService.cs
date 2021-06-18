@@ -837,16 +837,25 @@ namespace Risebird.Business
         {
             try
             {
-
                 var result = await _interviewerRepository.fetchAvailDetails(interviewerid);
-
                 return result;
             }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public string GetUserRolebyEmailid(string Emailid)
+        {
+            try
+            {
+                return _interviewerRepository.GetUserRolebyEmailid(Emailid);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
             }
         }
     }
