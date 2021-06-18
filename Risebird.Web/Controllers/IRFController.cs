@@ -1765,7 +1765,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.ProfileName = prof.ToLower();
 
                 GetStatusList(model, irfId);
-
+                ViewBag.PageStatus = "Mainurl";
                 return PartialView("AddReportPartial", model);
 
             }
@@ -1791,6 +1791,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    ViewBag.PageStatus = "Mainurl";
                     if (profileName == "Admin" || profileName == "HR")
                     {
                         if (model.AudioFile != null)
@@ -5244,6 +5245,40 @@ namespace Risebird.Web.Controllers
                 }
             }
             return Json("Success");
+        }
+        [Authorize]
+        [HttpGet]
+        public IActionResult PublicAddReport(int interviewId, int irfId, bool IsSelected = false)
+        {
+            try
+            {
+                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                ViewBag.IsSelected = IsSelected;
+                if (model.QuestionsCollection == null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
+                ViewBag.ProfileName = "client";
+                ViewBag.PageStatus = "Public";
+                GetStatusList(model, irfId);
+                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (menus != null)
+                {
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                }
+                return PartialView("AddReportPartial", model);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+
         }
     }
 }
