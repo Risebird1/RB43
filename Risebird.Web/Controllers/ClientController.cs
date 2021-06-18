@@ -3428,7 +3428,7 @@ namespace Risebird.Web.Controllers
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
-
+        [Authorize]
         [HttpGet]
         public IActionResult PublicReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
         {
