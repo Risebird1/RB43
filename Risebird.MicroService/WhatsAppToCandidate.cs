@@ -32,7 +32,7 @@ namespace Risebird.MicroService
             _connection = _configuration["ConnectionString:DBConnectionString"];
         }
         [FunctionName("WhatsAppToCandidate")]
-        public async void Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log)
+        public async void Run([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try
