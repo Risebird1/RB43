@@ -188,7 +188,7 @@
                                             {@if (item.Name.Length > 10)
                                                 {
                                                     <td class="cadfName text-left pl15">
-                                                        <a onclick="" data-tooltip="@item.Name"> @item.Name.Substring(0, 10)... </a>
+                                                        <a onclick="" data-tooltip="@item.Name"><span class="cname"> @item.Name</span> </a>
                                                     </td>
 
 
@@ -196,7 +196,7 @@
                                                 else
                                                 {
                                                     <td class=" cadfName text-left pl15">
-                                                        <a onclick=""> @item.Name </a>
+                                                        <a onclick=""><span class="cname"> @item.Name</span> </a>
                                                     </td>
                                                 }
                                         }

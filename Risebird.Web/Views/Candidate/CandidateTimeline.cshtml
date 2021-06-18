@@ -302,13 +302,13 @@
 
 
                                                                         <td class="cadName text-left pl15">
-                                                                            <a onclick="" data-tooltip="@item.CandidateName"> @item.CandidateName.Substring(0, 20)... </a>
+                                                                            <a onclick="" data-tooltip="@item.CandidateName"><span class="cname"> @item.CandidateName</span> </a>
                                                                         </td>
                                                                     }
                                                                     else
                                                                     {
                                                                         <td class="text-left pl15">
-                                                                            <a onclick=""> @item.CandidateName </a>
+                                                                            <a onclick=""><span class="cname"> @item.CandidateName</span> </a>
                                                                         </td>
                                                                     }
                                                                 }
@@ -326,7 +326,7 @@
 
 
                                                                         <td class="cadEmail text-left pl15">
-                                                                            <a onclick="" data-tooltip="@item.CandidateEmailId"> @item.CandidateEmailId.Substring(0, 20)... </a>
+                                                                            <a onclick="" data-tooltip="@item.CandidateEmailId"><span class="cname"> @item.CandidateEmailId</span> </a>
                                                                         </td>
                                                                     }
 
@@ -334,8 +334,8 @@
                                                                     else
                                                                     {
                                                                         <td class="cadEmail text-left pl15">
-                                                                            @item.CandidateEmailId
-                                                                        </td>
+                                                                            <span class="cname"> @item.CandidateEmailId</span>
+</td>
                                                                     }
                                                                 }
                                                                 else
@@ -352,13 +352,13 @@
 
 
                                                                         <td class="cadEmail text-left pl15">
-                                                                            <a onclick="" data-tooltip="@item.PrimarySkill"> @item.PrimarySkill.Substring(0, 15)... </a>
+                                                                            <a onclick="" data-tooltip="@item.PrimarySkill"><span class="cname"> @item.PrimarySkill</span> </a>
                                                                         </td>
                                                                     }
                                                                     else
                                                                     {
                                                                         <td class="text-left pl15">
-                                                                            <a onclick=""> @item.PrimarySkill </a>
+                                                                            <a onclick=""><span class="cname">@item.PrimarySkill</span> </a>
                                                                         </td>
                                                                     }
 
@@ -383,13 +383,13 @@
 
 
                                                                         <td class="cadEmail text-left pl15">
-                                                                            <a onclick="" data-tooltip="@item.HREmail"> @item.HREmail.Substring(0, 15)... </a>
+                                                                            <a onclick="" data-tooltip="@item.HREmail"><span class="cname"> @item.HREmail</span> </a>
                                                                         </td>
                                                                     }
                                                                     else
                                                                     {
                                                                         <td class="text-left pl15">
-                                                                            <a onclick=""> @item.HREmail </a>
+                                                                            <a onclick=""><span class="cname"> @item.HREmail</span> </a>
                                                                         </td>
                                                                     }
 
