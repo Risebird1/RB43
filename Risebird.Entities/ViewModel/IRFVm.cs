@@ -135,7 +135,7 @@ namespace Risebird.Entities.ViewModel
         public IList<TransInterviewer> OldInterviewerCollection { get; set; }
         public IList<TransEmergencyInterviewer> OldEmergencyInterviewerCollection { get; set; }
         public IList<TransSkill> OldSkillCollection { get; set; }
-
+        public string InterviewerId { get; set; }
 
     }
     public class InterviewerIds

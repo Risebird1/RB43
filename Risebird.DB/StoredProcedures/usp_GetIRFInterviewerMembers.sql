@@ -23,40 +23,37 @@ declare @commonTable table (IRFId int, [Type] varchar(25), EmailId varchar(100),
 	insert into @commonTable 
 
 		select ti.IRFId, 'Interviewer' as [Type] ,ul.EmailId, ipr.ResumeLink,
-		count(im.id) as TotalInterviews,
+		dbo.fn_GetInterviewerOrQCMeetingsCount(IRF.IRFId, ul.EmailId, 'I') as TotalInterviews,
 		0 as TotalQCInterviews, ul.MobileNumber 
 		from TransInterviewer ti join InterviewerProfile ipr on ipr.UserId = ti.UserId
 		join UserList ul on ul.id = ti.UserId
 		join IRF on irf.id = ti.IRFId
-		left join InterviewMeetings im on im.IRFId=IRF.IRFId and im.interviewer = ul.EmailId
-		where irf.id=@IRFId and (im.confirmationStatus=1 or im.confirmationStatus is null)
-		group by ti.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber  
-		
+		where irf.id=@IRFId 
+		group by ti.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber, IRF.IRFId
+
 	insert into @commonTable 
 
 		select tqc.IRFId, 'QCInterviewer' as [Type] ,ul.EmailId, ipr.ResumeLink,
 		0 as TotalInterviews,
-		count(im.id) as TotalQCInterviews,
+		dbo.fn_GetInterviewerOrQCMeetingsCount(IRF.IRFId, ul.EmailId, 'QC') as TotalQCInterviews,
 		ul.MobileNumber 
 		from TransQualityController tqc join InterviewerProfile ipr on ipr.UserId = tqc.UserId
 		join UserList ul on ul.id = tqc.UserId
 		join IRF on irf.id = tqc.IRFId
-		left join InterviewMeetings im on im.IRFId=IRF.IRFId and im.QCInterviewer = ul.EmailId
-		where tqc.IRFId = @IRFId and (im.confirmationStatus=1 or im.confirmationStatus is null)
-		group by tqc.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber
+		where tqc.IRFId =@IRFId 
+		group by tqc.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber, IRF.IRFId
 
 	insert into @commonTable 
-		
+
 		select tei.IRFId, 'Emergency Interviewer' as [Type] ,ul.EmailId, ipr.ResumeLink,
-		count(im.id) as TotalInterviews,
+		dbo.fn_GetInterviewerOrQCMeetingsCount(IRF.IRFId, ul.EmailId, 'EI') as TotalInterviews,
 		0 as TotalQCInterviews,  
 		ul.MobileNumber 
 		from TransEmergencyInterviewer tei join InterviewerProfile ipr on ipr.UserId = tei.UserId
 		join UserList ul on ul.id = tei.UserId
 		join IRF on irf.id = tei.IRFId
-		left join InterviewMeetings im on im.IRFId=irf.IRFId and im.interviewer = ul.EmailId
-		where  tei.IRFId = @IRFId  and (im.confirmationStatus=1 or im.confirmationStatus is null)
-		group by tei.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber 
+		where  tei.IRFId = @IRFId 
+		group by tei.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber, IRF.IRFId 
 
 select * from @commonTable		 
 
