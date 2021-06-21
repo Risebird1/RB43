@@ -685,70 +685,13 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") != null)
             {
                 var model = new IRFVm();
-                var skills = _irfRepository.GetSkills();
-                var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-                //SelectList(interviewers, "UserId", "EmailId");
-                var interviewers = _irfService.GetInterviewersForIRF(AssessmentsGroups.FirstOrDefault()?.id.ToString());
-                //var interviewers = _irfRepository.GetInterviewers();
-                model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
-                model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
-                model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
-                var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
-                                    select new { ID = (int)s, Name = s.GetDescription() };
-                model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
-                var clients = _irfRepository.GetClients();
-                ViewBag.Clients = new SelectList(clients, "id", "Name");
-                ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
-                ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
-                //ViewBag.Skill = new SelectList(skills, "id", "Name");
-                var Skillset = skills;
-                if (Skillset != null)
+                if(!string.IsNullOrEmpty(IntrviewerId))
                 {
-                    Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
-                }
-                ViewBag.Skill = new SelectList(Skillset, "id", "Name");
-                ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
-                ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(clients.FirstOrDefault().id), "id", "EmailId");
-                ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-                ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
-                ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
-                ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
-                ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
-                ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
-                ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
-                //ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
-                ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
+                    model.InterviewerId = IntrviewerId;
 
-                model.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
-                var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
-                                 select new { ID = (int)s, Name = s.GetDescription() };
-                ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
-                var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                                select new { ID = (int)s, Name = s.GetDescription() };
-                ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name"); ;
-
-                var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
-                                   select new { ID = (int)s, Name = s.GetDescription() };
-                model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
-                if (!String.IsNullOrEmpty(IntrviewerId))
-                {
-                    List<InterviewerIds> _string = new List<InterviewerIds>();
-                    ViewBag.InterviewerFromSearch = IntrviewerId;
-                    var interviewer = IntrviewerId.Split(',');
-                    var resultset = _irfRepository.pickInterviewerSills(IntrviewerId);
-                    for (int i = 0; i < interviewer.Count(); i++)
-                    {
-                        _string.Add(new InterviewerIds { index = i, Id = Convert.ToInt32(interviewer[i]) });
-                    }
-                    model.InterviewerIds = _string;
-                    ViewBag.InterviewerSkills = resultset;
                 }
-                else
-                {
-                    ViewBag.InterviewerFromSearch = "";
-                    ViewBag.InterviewerSkills = "";
-                }
-                model.Type = "B2B";
+                SetAddIRFProperties(model);
+                
                 return View(model);
             }
             else
@@ -772,6 +715,7 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
+                        
                         string uploadedFileURL = string.Empty;
                         if (irfDetails.JDFile == null && (irfDetails.JDLink == null))
                         {
@@ -824,6 +768,75 @@ namespace Risebird.Web.Controllers
             }
         }
 
+
+        private void SetAddIRFProperties(IRFVm model)
+        {
+            var skills = _irfRepository.GetSkills();
+            var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+            var interviewers = _irfService.GetInterviewersForIRF(AssessmentsGroups.FirstOrDefault()?.id.ToString());
+            model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
+            model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
+            model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
+            var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+            model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
+            var clients = _irfRepository.GetClients();
+            ViewBag.Clients = new SelectList(clients, "id", "Name");
+            ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
+            ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+            var Skillset = skills;
+            if (Skillset != null)
+            {
+                Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+            }
+            ViewBag.Skill = new SelectList(Skillset, "id", "Name");
+            ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
+            ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(clients.FirstOrDefault().id), "id", "EmailId");
+            ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
+            ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+            ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
+            ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
+            ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
+            ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
+            ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
+            //ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
+            ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
+
+            model.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
+            var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                             select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+            var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                            select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name"); ;
+
+            var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                               select new { ID = (int)s, Name = s.GetDescription() };
+            model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+            if (!String.IsNullOrEmpty(model.InterviewerId))
+            {
+                List<InterviewerIds> _string = new List<InterviewerIds>();
+                ViewBag.InterviewerFromSearch = model.InterviewerId;
+                var interviewer = model.InterviewerId.Split(',');
+                var resultset = _irfRepository.pickInterviewerSills(model.InterviewerId);
+                for (int i = 0; i < interviewer.Count(); i++)
+                {
+                    _string.Add(new InterviewerIds { index = i, Id = Convert.ToInt32(interviewer[i]) });
+                }
+                model.InterviewerIds = _string;
+                ViewBag.InterviewerSkills = resultset;
+            }
+            else
+            {
+                ViewBag.InterviewerFromSearch = "";
+                ViewBag.InterviewerSkills = "";
+            }
+            if(string.IsNullOrEmpty(model.Type))
+            {
+                model.Type = "B2B";
+            }
+            return;
+        }
 
         [Authorize]
         public string GetInterviewerSkills(int id)
@@ -1499,100 +1512,16 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult EditIRF(string id, bool isClone = false)
+        public async Task<IActionResult> EditIRF(int id, bool isClone = false)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    string prof = HttpContext.Session.GetString("profileName");
-                    if (prof != null && prof.Contains("Client"))
-                    {
-                        ViewBag.IsClientUser = true;
-                    }
-                    else
-                    {
-                        ViewBag.IsClientUser = false;
-                    }
-                    var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
-
-                    if (model.InterviewerCollection != null)
-                    {
-                        foreach (var item in model.InterviewerCollection)
-                        {
-                            if (item.PerSuccessRate == 0)
-                            {
-                                item.PerSuccessRate = Convert.ToInt32(model.PerMintuteRate);
-                            }
-                        }
-                    }
-                    var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-                    var interviewers = _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
-                    //var interviewers = _irfService.GetInterviewersByTag(model.AssessmentGroupId).Result;
-                    //model.InterviewerList = interviewers.ToList();
-                    ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
-                    ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
-                    ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
-                    // ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
-
-                    var Skillset = _irfRepository.GetSkills();
-                    if (Skillset != null)
-                    {
-                        Skillset = Skillset.OrderBy(x => !String.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
-                    }
-                    ViewBag.Skill = new SelectList(Skillset, "id", "Name");
-                    ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
-                    ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-                    ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
-                    ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
-                    ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
-                    ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
-                    //ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
-                    //ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
-                    ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
-                    ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
-                    ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
-                    var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                                    select new { ID = (int)s, Name = s.GetDescription() };
-                    ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
-                    var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
-                                     select new { ID = (int)s, Name = s.GetDescription() };
-                    ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
-                    model.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
-                    model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
-                    model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
-                    model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
-
-                    var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
-                                       select new { ID = (int)s, Name = s.GetDescription() };
-                    model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
-                    var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
-                                        select new { ID = (int)s, Name = s.GetDescription() };
-                    model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
-                    TempData["JDLink"] = model.JDLink;
-                    TempData["ComapanyDetails"] = model.CompanyDetails;
-                    TempData["EditIRFId"] = model.IRFId;
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    model.LoggedEmail = emailid;
-                    if (String.IsNullOrEmpty(model.Type))
-                    {
-                        model.Type = "B2B";
-                    }
+                    var model = await _irfService.GetEditIRF(id);
                     model.IsClone = isClone;
-                    if (String.IsNullOrEmpty(model.AssessmentGroupId))
-                    {
-                        model.InterviewerMembers = _irfService.GetIRFInterviewerMembers(Convert.ToInt16(id)).Result;
-                        model.InterviewerCollection = new List<TransInterviewer>();
-                        model.EmergencyInterviewerCollection = new List<TransEmergencyInterviewer>();
-                        model.QualityController = new List<TransQualityController>();
-                    }
-                    else
-                    {
-                        model.InterviewerMembers = new List<IRFInterviewerMembers>();
-                    }
-                    model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
-
+                    SetEditIRFProperties(model);
+                    
                     return View(model);
                 }
                 else
@@ -1602,7 +1531,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
 
@@ -1623,7 +1552,40 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
+                        //check duplicates for interviewer, emergency interviewer and quality controllers
+                        bool isDuplicate = false;
+                        var interviewerCollection = model.InterviewerCollection.Select(x => (x.UserId));
+                        if (interviewerCollection.Count() != interviewerCollection.Distinct().Count())
+                        {
+                            //duplicates exist
 
+                            isDuplicate = true;
+                            ModelState.AddModelError("", "Please remove duplicate entries from Interviewers' list.");
+
+                        }
+
+                        var emergencyInterviewerCollection = model.EmergencyInterviewerCollection.Select(x => (x.UserId));
+                        if (emergencyInterviewerCollection.Count() != emergencyInterviewerCollection.Distinct().Count())
+                        {
+                            //duplicates exist
+
+                            isDuplicate = true;
+                            ModelState.AddModelError("", "Please remove duplicate entries from Emergency Interviewers' list.");
+                        }
+
+                        var qualityControllerCollection = model.QualityController.Select(x => (x.UserId));
+                        if (qualityControllerCollection.Count() != qualityControllerCollection.Distinct().Count())
+                        {
+                            //duplicates exist
+                            isDuplicate = true;
+                            ModelState.AddModelError("", "Please remove duplicate entries from Quality Controllers' list.");
+                        }
+
+                        if (isDuplicate)
+                        {
+                            SetEditIRFProperties(model);
+                            return View("EditIRF", model);
+                        }
                         if ((model.JDFile != null))
                         {
 
@@ -1714,6 +1676,94 @@ namespace Risebird.Web.Controllers
                 TempData["SuccessErrorMessage"] = "IRF edits were not saved";
                 return RedirectToAction("Index");
             }
+        }
+
+        private void SetEditIRFProperties(IRFVm model)
+        {
+            string prof = HttpContext.Session.GetString("profileName");
+            if (prof != null && prof.Contains("Client"))
+            {
+                ViewBag.IsClientUser = true;
+            }
+            else
+            {
+                ViewBag.IsClientUser = false;
+            }
+            if (model.InterviewerCollection != null)
+            {
+                foreach (var item in model.InterviewerCollection)
+                {
+                    if (item.PerSuccessRate == 0)
+                    {
+                        item.PerSuccessRate = Convert.ToInt32(model.PerMintuteRate);
+                    }
+                }
+            }
+            var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+            var interviewers = _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
+            ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
+            ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
+            ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+
+            var Skillset = _irfRepository.GetSkills();
+            if (Skillset != null)
+            {
+                Skillset = Skillset.OrderBy(x => !String.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
+            }
+            ViewBag.Skill = new SelectList(Skillset, "id", "Name");
+            ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
+            ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
+            ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+            ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
+            ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
+            ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
+            //ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
+            //ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
+            ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
+            ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
+            ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
+            var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                            select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+            var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                             select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+            model.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
+            model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
+            model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
+            model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
+
+            var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                               select new { ID = (int)s, Name = s.GetDescription() };
+            model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+            var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+            model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
+            
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            emailid = emailid.Replace("\"", "");
+            model.LoggedEmail = emailid;
+            if (string.IsNullOrEmpty(model.Type))
+            {
+                model.Type = "B2B";
+            }
+            if (String.IsNullOrEmpty(model.AssessmentGroupId))
+            {
+                model.InterviewerMembers = _irfService.GetIRFInterviewerMembers(model.id).Result;
+                model.InterviewerCollection = new List<TransInterviewer>();
+                model.EmergencyInterviewerCollection = new List<TransEmergencyInterviewer>();
+                model.QualityController = new List<TransQualityController>();
+            }
+            else
+            {
+                model.InterviewerMembers = new List<IRFInterviewerMembers>();
+            }
+            model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+            TempData["JDLink"] = model.JDLink;
+            TempData["ComapanyDetails"] = model.CompanyDetails;
+            TempData["EditIRFId"] = model.IRFId;
+            //model.IsClone = isClone;
+            return;
         }
 
         [Authorize]
