@@ -10,16 +10,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 
     
-
-Create PROCEDURE [dbo].[usp_SurveyClientDetails]  
-(  
-      @SurveyBulkDetails AS [dbo].[CuratedIRFMapping_TableType] READONLY  
-)  
-AS  
-BEGIN  
+Create PROCEDURE [dbo].[usp_SurveyClientDetails]    
+(    
+      @SurveyBulkDetails AS [dbo].[CuratedIRFMapping_TableType] READONLY    
+)    
+AS    
+BEGIN    
+    
+SET NOCOUNT ON;    
   
-SET NOCOUNT ON;  
-
-Select im.Id as interviewid,cl.Name as ClientName from InterviewMeetings im join IRF on IRF.IRFID=im.IRFId join Client cl on cl.id=irf.ClientId join @SurveyBulkDetails sb on sb.CuratedGroupId=im.id    
-  
-END  
+Select im.Id as interviewid,cl.Name as ClientName,im.interviewdate from InterviewMeetings im join IRF on IRF.IRFID=im.IRFId join Client cl on cl.id=irf.ClientId join @SurveyBulkDetails sb on sb.CuratedGroupId=im.id      
+    
+END 

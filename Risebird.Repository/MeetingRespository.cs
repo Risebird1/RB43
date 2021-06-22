@@ -671,7 +671,7 @@ namespace Risebird.Repository
             return parameters;
         }
 
-        
+
 
         public async Task<bool> AddMeeting(AddUpdateMeetingVM meeting)
         {
@@ -4354,7 +4354,7 @@ namespace Risebird.Repository
                     var dr = cmdSurveyset.ExecuteReader();
                     while (dr.Read())
                     {
-                        result.Add(new SurveyDetails { interviewid = Convert.ToInt32(dr["interviewid"].ToString()), ClientName = dr["ClientName"].ToString() });
+                        result.Add(new SurveyDetails { interviewid = Convert.ToInt32(dr["interviewid"].ToString()), ClientName = dr["ClientName"].ToString(), interviewdate = dr["interviewdate"].ToString() });
                     }
                     con.Close();
                     return result;

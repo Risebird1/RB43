@@ -76,9 +76,42 @@ body {
     font-size: 12px!important;
     margin-left: 865px;
 }
-.mob_h {
-    height: 50px;
+.feedbackdetails table.table-bordered.dataTable th, .feedbackdetails table.table-bordered.dataTable td {
+    border: 1px solid #dee2e6;
 }
+.feedback-tab-ac {
+    float: left;
+    width: auto;
+    text-align: center;
+    cursor: pointer;
+    color: white;
+    font-size: 14px !important;
+    line-height: 6px;
+    padding: 12px 15px;
+    background: #dbecff;
+    color: #54a5f5;
+    border-radius: 22px;
+    text-decoration: none;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.feedback-tab {
+    float: left;
+    width: auto;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px !important;
+    line-height: 6px;
+    padding: 12px 15px;
+    background: #fff;
+    color: #000;
+    border-radius: 22px;
+    text-decoration: none;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+    .feedback-tab strong, .feedback-tab-ac strong{font-weight:600;}
+    .mob_h {
+        height: 50px;
+    }
 
 .user.user-r .main-notification-title, .user .main-notification-title {
     padding-top: 4px !important;
