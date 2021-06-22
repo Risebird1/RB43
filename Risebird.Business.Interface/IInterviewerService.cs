@@ -48,5 +48,6 @@ namespace Risebird.Business.Interface
         Task<TransInterviewerAccDetails> fetchBankDetails(int interviewerid);
         Task<List<TransInterviewerAvailability>> fetchAvailDetails(int interviewerid);
         string GetUserRolebyEmailid(string Emailid);
+        Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid);
     }
 }

@@ -1242,5 +1242,24 @@ namespace Risebird.Repository
             }
             return "";
         }
+        public int GetInterviewerid(string emailid)
+        {
+            try
+            {
+                var query = "Select * from UserList where Emailid=@Emailid";
+                DynamicParameters _dp = new DynamicParameters();
+                _dp.Add("@Emailid", emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, _dp);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return 0;
+        }
     }
 }

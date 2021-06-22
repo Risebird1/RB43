@@ -1944,6 +1944,29 @@ namespace Risebird.Repository
             }
             return "";
         }
+        public async Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid)
+        {
+            try
+            {
+                var query = "Select im.id as interviewid,im.interviewdate,ulc.FirstName as Emailid,ir.Comment,ir.StarRating  From InterviewRatings ir join InterviewMeetings im on im.id=ir.Interviewid join Userlist ul on im.Interviewer=ul.Emailid join Userlist ulc on ulc.id=ir.Userid where ul.Emailid=@Emailid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters parametersRecomm = new DynamicParameters();
+                    parametersRecomm.Add("@Emailid", emailid);
+                    var results = await SqlMapper.QueryAsync<InterviewerRating>(con, query, parametersRecomm,
+                             commandType: CommandType.Text);
+                    return results.ToList();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
     }
-
 }

@@ -858,5 +858,18 @@ namespace Risebird.Business
                 return "";
             }
         }
+        public async Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid)
+        {
+            try
+            {
+                var result = await _interviewerRepository.fetchClientFeedbackbyInterviewer(emailid);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
