@@ -1948,7 +1948,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select im.id as interviewid,im.interviewdate,ulc.FirstName as Emailid,ir.Comment,ir.StarRating  From InterviewRatings ir join InterviewMeetings im on im.id=ir.Interviewid join Userlist ul on im.Interviewer=ul.Emailid join Userlist ulc on ulc.id=ir.Userid where ul.Emailid=@Emailid";
+                var query = "Select im.id as interviewid,im.interviewdate,ulc.FirstName as Name,ir.Comment,ir.StarRating  From InterviewRatings ir join InterviewMeetings im on im.id=ir.Interviewid join Userlist ul on im.Interviewer=ul.Emailid join Userlist ulc on ulc.id=ir.Userid where ul.Emailid=@Emailid";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     DynamicParameters parametersRecomm = new DynamicParameters();

@@ -36,6 +36,9 @@ body {
 .mdc-button--outlined {
     padding: 0 10px 0 10px;
 }
+.article p{
+    margin-bottom:0px;
+}
 #SkillCollection_WeightageError {
     color: red;
     margin-left: 807px;
@@ -109,6 +112,13 @@ body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
     .feedback-tab strong, .feedback-tab-ac strong{font-weight:600;}
+    .overall-rate {
+    position: absolute;
+    right: 25px;
+    top: 10px;
+    color: #7eb38e;
+    font-weight: normal;
+}
     .mob_h {
         height: 50px;
     }
@@ -5293,7 +5303,13 @@ button.btn {
         font-size: 15px;
         width: 100% !important;
     }
-
+    .overall-rate {
+        position: absolute;
+        right: 25px;
+        top: -26px;
+        color: #7eb38e;
+        font-weight: normal;
+    }
     .main-notification-title {
         right: 9px !important;
         padding-top: 0px !important;
@@ -10724,7 +10740,13 @@ div.tagsinput {
         right: 27px;
         top: 11px !important;
     }
-
+    .overall-rate {
+        position: absolute;
+        right: 20px;
+        top: 5px;
+        color: #7eb38e;
+        font-weight: normal;
+    }
     .dash-h {
         padding: 0px 0px 0px 0px;
     }
