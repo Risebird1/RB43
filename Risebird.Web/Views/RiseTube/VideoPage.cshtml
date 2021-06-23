@@ -59,10 +59,10 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 @*<script>
-    amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
-    amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
-    amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
-</script>*@
+        amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
+        amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
+        amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
+    </script>*@
 
 <!-- Custom styles for this template-->
 <link href="~/RiseTube/css/osahan.css" rel="stylesheet">
@@ -76,20 +76,20 @@
 <div class="main-panel bg-white" id="main-panel">
     <!-- Navbar -->
     @*<nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
+            <div class="container-fluid">
+                <div class="navbar-wrapper">
+                    <div class="navbar-toggle">
+                        <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
+                    </div>
+                    <a class="navbar-brand card-title">Risetube</a>
+                    @if (!String.IsNullOrEmpty(Model.LogoUrl))
+                    {
+                        <img src="@Model.LogoUrl" style="width:60px;height:60px" />
+                    }
                 </div>
-                <a class="navbar-brand card-title">Risetube</a>
-                @if (!String.IsNullOrEmpty(Model.LogoUrl))
-                {
-                    <img src="@Model.LogoUrl" style="width:60px;height:60px" />
-                }
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> </button>
             </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> </button>
-        </div>
-    </nav>*@
+        </nav>*@
     <!-- End Navbar -->
     <!--  <div class="panel-header panel-header-sm"> </div>-->
 
@@ -800,7 +800,8 @@
                                                                                     <div class="left-chart">
 
                                                                                         <div id="risetubevideo_9" class="chart-box itemchart">
-                                                                                            <p class="card-text">Overall Score: <span class="toscore" id="totScore"></span></p>
+                                                                                            @*<p class="card-text">Overall Score: <span class="toscore" id="totScore"></span></p>*@
+                                                                                            <p class="card-text">Overall Tech Score: <span class="toscore" id="totTechScore"></span></p>
                                                                                             <div class="col-lg-12 col-md-12 col-sm-12 nopad">
                                                                                                 <div id="scoreChart" style="height: 200px; width: 100%;">
 
@@ -1068,29 +1069,29 @@
                                                                                                 {
                                                                                                     @for (int i = 0; i < Model.IreportModel.TechSkillReportCollection.Count(); i++)
                                                                                                     {
-                                                                                                <tr>
+                                                                                                        <tr>
 
-                                                                                                    <td>
-                                                                                                        @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                    </td>
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                            </td>
 
-                                                                                                    <td>
-                                                                                                        @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
 
-                                                                                                    </td>
-                                                                                                    <td>
-                                                                                                        @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { ID = "droplevel", @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @value = "title", onmouseover = "getOption(this)" })
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { ID = "droplevel", @class = "form-control", @value = "title", onmouseover = "getOption(this)", @disabled = "disabled" })
 
-                                                                                                    </td>
-                                                                                                    <td>
-                                                                                                        @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly", @value = "title" })
-                                                                                                    </td>
-                                                                                                    <td>
-                                                                                                        @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly", @value = "title" })
-                                                                                                    </td>
-                                                                                                    @Html.HiddenFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevelId)
-                                                                                                    @Html.HiddenFor(m => m.IreportModel.TechSkillReportCollection[i].SkillId)
-                                                                                                </tr>
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly", @value = "title" })
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly", @value = "title" })
+                                                                                                            </td>
+                                                                                                            @Html.HiddenFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevelId)
+                                                                                                            @Html.HiddenFor(m => m.IreportModel.TechSkillReportCollection[i].SkillId)
+                                                                                                        </tr>
 
                                                                                                     }
                                                                                                 }
@@ -1160,7 +1161,7 @@
                                                                                                                     <tr onclick="switchtoquestionVideo(@Model.IreportModel.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                                                                         <td>
                                                                                                                             @*@Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", onmouseover = "dropDwnToolTips(this)" })*@
-                                                                                                                            @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].Comment, new {@class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                                            @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].Comment, new { @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
 
                                                                                                                         </td>
                                                                                                                         <td>
@@ -1237,7 +1238,7 @@
                                                                                                                 @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
                                                                                                             </td>
                                                                                                             <td>
-                                                                                                                @Html.DropDownListFor(m => m.IreportModel.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { ID = "droplevel", @class = "dropques form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                                                                @Html.DropDownListFor(m => m.IreportModel.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { ID = "droplevel", @class = "dropques form-control", @disabled = "disabled" })
 
                                                                                                             </td>
                                                                                                             <td class="desktop-view">
@@ -1297,33 +1298,33 @@
                                                                                                 {
                                                                                                     @for (int i = 0; i < Model.IreportModel.JoinabilityHRReportCollection.Count(); i++)
                                                                                                     {
-                                                                                                <tr>
+                                                                                                        <tr>
 
 
-                                                                                                    <td>
-                                                                                                        @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Name, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                    </td>
-                                                                                                    <td>
-                                                                                                        @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Value, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                    </td>
-                                                                                                    <td class="desktop-view">
-                                                                                                        @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Name, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Value, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                            </td>
+                                                                                                            <td class="desktop-view">
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
 
-                                                                                                    </td>
-                                                                                                    <td>
-                                                                                                        @Html.DropDownListFor(m => m.IreportModel.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @readonly = "readonly" })
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.DropDownListFor(m => m.IreportModel.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @disabled = "disabled" })
 
-                                                                                                    </td>
-                                                                                                    <td class="desktop-view">
-                                                                                                        @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                    </td>
-                                                                                                    <td>
-                                                                                                        @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                    </td>
+                                                                                                            </td>
+                                                                                                            <td class="desktop-view">
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                            </td>
 
-                                                                                                    @Html.HiddenFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevelId)
+                                                                                                            @Html.HiddenFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevelId)
 
-                                                                                                </tr>
+                                                                                                        </tr>
 
                                                                                                     }
                                                                                                 }
@@ -1382,7 +1383,7 @@
 
                                                                                                             </td>
                                                                                                             <td>
-                                                                                                                @Html.DropDownListFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @readonly = "readonly" })
+                                                                                                                @Html.DropDownListFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @disabled = "disabled" })
 
                                                                                                             </td>
                                                                                                             <td class="desktop-view">
@@ -1639,11 +1640,11 @@
                                                                                             string src;
                                                                                             if (videolist.ThumbnailTimeSeconds == 0)
                                                                                             {
-                                                                                                src= videolist.VideoLink + "#t=" + appendTime;
+                                                                                                src = videolist.VideoLink + "#t=" + appendTime;
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                                src= videolist.VideoLink + "#t=" + videolist.ThumbnailTimeSeconds.ToString();
+                                                                                                src = videolist.VideoLink + "#t=" + videolist.ThumbnailTimeSeconds.ToString();
                                                                                             }
                                                                                             <video style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
@@ -2631,7 +2632,7 @@
 
                                                                             </td>
                                                                             <td>
-                                                                                @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { ID = "sharedroplevel", @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @value = "title", onmouseover = "getOption(this)" })
+                                                                                @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { ID = "sharedroplevel", @class = "form-control", @value = "title", onmouseover = "getOption(this)", @disabled = "disabled" })
 
                                                                             </td>
                                                                             <td>
@@ -3057,32 +3058,32 @@
 </script>
 @*<script>
 
-    jQuery(document).ready(function ($) {
+        jQuery(document).ready(function ($) {
 
-        var main = function () {
-            $('.btn').click(function () {
-                var post = $('.status-box').val();
-                $('<li>').text(post).prependTo('.posts');
-                $('.status-box').val('');
-                $('.counter').text('450');
-                $('.btn').addClass('disabled');
-            });
-            $('.status-box').keyup(function () {
-                var postLength = $(this).val().length;
-                var charactersLeft = 450 - postLength + "   " + "CharacterLeft";
-                $('.counter').text(charactersLeft);
-                if (charactersLeft < 0) {
+            var main = function () {
+                $('.btn').click(function () {
+                    var post = $('.status-box').val();
+                    $('<li>').text(post).prependTo('.posts');
+                    $('.status-box').val('');
+                    $('.counter').text('450');
                     $('.btn').addClass('disabled');
-                } else if (charactersLeft === 450) {
-                    $('.btn').addClass('disabled');
-                } else {
-                    $('.btn').removeClass('disabled');
-                }
-            });
-        }
-        $('.btn').addClass('disabled');
-        //$(document).ready(main)
-</script>*@
+                });
+                $('.status-box').keyup(function () {
+                    var postLength = $(this).val().length;
+                    var charactersLeft = 450 - postLength + "   " + "CharacterLeft";
+                    $('.counter').text(charactersLeft);
+                    if (charactersLeft < 0) {
+                        $('.btn').addClass('disabled');
+                    } else if (charactersLeft === 450) {
+                        $('.btn').addClass('disabled');
+                    } else {
+                        $('.btn').removeClass('disabled');
+                    }
+                });
+            }
+            $('.btn').addClass('disabled');
+            //$(document).ready(main)
+    </script>*@
 <script>
             $('form').submit(function () {
                 if ($(this).valid()) {
@@ -3203,6 +3204,7 @@
     }
 
 </script>
+<script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
 
 <script>
 
@@ -3215,179 +3217,8 @@
         else {
             closeThMode();
         }
-        var totalScore = 0;
-        var arr = [];
-        var obj = { y: "", legendText: "", label: "" }
-        //TechSkills actual weightage total
-        var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
-        var techTotal = 0;
-        for (i = 0; i < (techItems.length / 2); i++) {
 
-            techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        obj.y = parseInt(techTotal) / 4;
-        obj.label = "Tech Skills Score";
-        obj.legendText = "Tech Skills Score";
-        arr.push(obj.y);
-
-        //SkillsGeneral actual weightage total
-        var objGen = { y: "", legendText: "", label: "" }
-        var genSkillsItems = $('[id^="IreportModel_SkillGeneralReportCollection"][id$="WeightageActual"]');
-        var genTotal = 0;
-        for (i = 0; i < genSkillsItems.length; i++) {
-            var weightage = $("#IreportModel_SkillGeneralReportCollection_" + i + "__WeightageActual").val();
-            genTotal = parseInt(genTotal) + parseInt(weightage);
-
-        }
-
-        objGen.y = parseInt(genTotal) / 4;
-        objGen.label = "General Skills Score";
-        objGen.legendText = "General Skills Score";
-        arr.push(objGen.y);
-
-        //Joinability actual weightage total
-        var objJoin = { y: "", legendText: "", label: "" }
-        var joinabilityItems = $('[id^="IreportModel_JoinabilityHRReportCollection"][id$="WeightageActual"]');
-        var joinabilityTotal = 0;
-        for (i = 0; i < joinabilityItems.length; i++) {
-
-            joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#IreportModel_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        objJoin.y = parseInt(joinabilityTotal) / 4;
-        objJoin.label = "Joinability Score";
-        objJoin.legendText = "Joinability Score";
-        arr.push(objJoin.y);
-
-        //Selectability actual weightage total
-        var objSelect = { y: "", legendText: "", label: "" }
-        var selectabilityItems = $('[id^="IreportModel_SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
-        var selectabilityTotal = 0;
-        for (i = 0; i < selectabilityItems.length; i++) {
-
-            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#IreportModel_SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        objSelect.y = parseInt(selectabilityTotal) / 4;
-        objSelect.label = "Selectability Score";
-        objSelect.legendText = "Selectability Score";
-        arr.push(objSelect.y);
-
-        totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
-        document.getElementById("totScore").innerHTML = totalScore;
-
-
-        am4core.ready(function () {
-
-            // Themes begin
-            am4core.useTheme(am4themes_animated);
-            // Themes end
-
-            // Create chart instance
-            var chart = am4core.create("scoreChart", am4charts.XYChart);
-
-            // Add data
-            chart.data = [{
-                "country": "Tech",
-                "visits": arr[0]
-
-            }, {
-                "country": "General",
-                "visits": arr[1]
-            }, {
-                "country": "Joinability",
-                "visits": arr[2]
-            }, {
-                "country": "Selectability",
-                "visits": arr[3]
-            }, {
-
-                "panelsSettings": {
-                    "panEventsEnabled": false
-                }
-
-            }
-
-            ];
-
-            // Create axes
-
-            chart.logo.disabled = true;
-            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-            categoryAxis.dataFields.category = "country";
-            categoryAxis.renderer.inside = true;
-            categoryAxis.renderer.labels.template.valign = 0;
-
-            categoryAxis.renderer.grid.template.location = 0;
-            categoryAxis.renderer.minGridDistance = 30;
-            chart.fontSize = 13;
-
-            categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
-                if (target.dataItem && target.dataItem.index & 2 == 2) {
-                    return dy;
-                }
-                return dy;
-            });
-
-
-
-
-
-            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-            categoryAxis.renderer.grid.template.disabled = true;
-            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            categoryAxis.renderer.labels.template.paddingBottom = 168;
-            valueAxis.renderer.grid.template.disabled = true;
-            valueAxis.min = 0;
-            valueAxis.max = 30;
-            // Create series
-            var series = chart.series.push(new am4charts.ColumnSeries());
-            series.dataFields.valueY = "visits";
-            series.dataFields.categoryX = "country";
-            series.name = "Visits";
-            series.colorField = "color";
-
-
-            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
-            series.tooltip.label.adapter.add("text", function (text, target) {
-                if (target.dataItem && target.dataItem.valueY == 0) {
-
-                    return "";
-                }
-                else {
-
-                    return text;
-                }
-            });
-            series.columns.template.fillOpacity = .8;
-            series.columns.template.tooltipY = 8;
-            series.tooltip.background.strokeOpacity = 0
-            series.tooltip.pointerOrientation = "vertical";
-            series.columns.template.showTooltipOn = "always";
-            series.tooltip.background.filters.clear();
-            series.tooltip.getFillFromObject = false;
-            series.tooltip.label.fill = am4core.color("#9a9a9a");
-            series.tooltip.background.cornerRadius = 0;
-            series.tooltip.label.textAlign = "middle";
-            series.tooltip.background.fill = 0;
-            var columnTemplate = series.columns.template;
-            columnTemplate.strokeWidth = 0;
-            columnTemplate.strokeOpacity = 1;
-            chart.colors.list = [
-                am4core.color("#07BEF3"),
-                am4core.color("#00F96B"),
-                am4core.color("#F64042"),
-                am4core.color("#ffbc50")
-
-
-
-            ];
-            series.columns.template.events.once("inited", function (event) {
-                event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
-            });
-
-        });
+        SetChartForVideoPage();
 
         //if (isTheaterMode === true) {
         //    getThMode();
@@ -4186,21 +4017,21 @@
             timeout, xhr;
 
         if (input != null) {
-             input.addEventListener("keyup", function (e) {
+            input.addEventListener("keyup", function (e) {
 
-                    if (timeout) clearTimeout(timeout);
+                if (timeout) clearTimeout(timeout);
 
-                    if (!this.value.trim()) words.innerHTML = '';
+                if (!this.value.trim()) words.innerHTML = '';
 
-                    timeout = setTimeout(function () {
+                timeout = setTimeout(function () {
 
-                        var test_phrase = shuffle_words(input.value);
+                    var test_phrase = shuffle_words(input.value);
 
-                        spell_check(test_phrase);
+                    spell_check(test_phrase);
 
-                        timeout = null;
+                    timeout = null;
 
-                    }, 500);
+                }, 500);
 
             });
         }
