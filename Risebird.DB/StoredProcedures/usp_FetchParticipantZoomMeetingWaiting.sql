@@ -93,7 +93,7 @@ left join UserList ulr on IRF.risebirdHR=ulr.id
 left join TransEmergencyInterviewer tei on tei.IRFId=IRF.id              
 left join ZoomMeetingTransmission zmt on zmt.Meetingid=t1.Meetingid and zmt.Event='PARTICIPANT_JOINED' and Event!='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io'           
 left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName              
-where (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1 and IsNull(im.IsMeetingNotificationSent,0)!=1 and dateadd(minute,2,im.Interviewdate)<=dateadd(minute,330,getdate()) and dateadd(minute,10,im.Interviewdate)>=dateadd(minute,330,getdate())     
+where im.Confirmationstatus=1 and (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1 and IsNull(im.IsMeetingNotificationSent,0)!=1 and dateadd(minute,2,im.Interviewdate)<=dateadd(minute,330,getdate()) and dateadd(minute,10,im.Interviewdate)>=dateadd(minute,330,getdate())     
  
 )              
 Insert Into @MeetingNotificationDetails Select * from CTE              

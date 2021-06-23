@@ -2759,17 +2759,20 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> CancelInterviewProcess(int id, string CandidateEmail)
         {
             var model = await _candidateService.CancelInterviewDetails(id, CandidateEmail);
-            var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
-            List<string> interviewers = new List<string>();
-            if (String.IsNullOrEmpty(result.interviewer))
+            if (model.Contains("Successfully"))
             {
-                interviewers.Add(result.interviewer);
+                var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
+                List<string> interviewers = new List<string>();
+                if (!String.IsNullOrEmpty(result.interviewer))
+                {
+                    interviewers.Add(result.interviewer);
+                }
+                if (!String.IsNullOrEmpty(result.EmailId))
+                {
+                    interviewers.Add(result.EmailId);
+                }
+                _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString());
             }
-            if (String.IsNullOrEmpty(result.EmailId))
-            {
-                interviewers.Add(result.EmailId);
-            }
-            _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString());
             return Json(model);
         }
     }
