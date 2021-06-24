@@ -5312,7 +5312,7 @@ namespace Risebird.Web.Controllers
                 {
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
-                ViewBag.ProfileName = "client";
+                ViewBag.ProfileName = "";
                 ViewBag.PageStatus = "Public";
                 GetStatusList(model, irfId);
                 var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();

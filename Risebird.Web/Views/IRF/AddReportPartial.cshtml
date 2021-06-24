@@ -87,22 +87,12 @@
                         {
                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
                             <div class="clearfix text-right">
-
-
-
                                 <button title="Approved For Next Round" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded report-btn">
                                     <span class="fa fa-thumbs-up" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Approve</font></span>
                                 </button>
-
-
                                 <button title="Final Selection Status" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="width:145px;">
                                     <span class="fa fa-check-circle" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)"><font style="font-size:12px; font-family: Roboto, sans-serif;"> Select</font></span>
                                 </button>
-
-
-
-
-
                             </div>
                         }
                         <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="Clienform">
