@@ -40,24 +40,24 @@
                 </div>
 
                 @*<div class="pull-right">
-            <button id="cfeedback_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-toggle="modal" data-target="#filterModal" style="vertical-align:top">
-                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                <div class="mdc-button__ripple"></div>
-            </button>
-        </div>*@
+                        <button id="cfeedback_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-toggle="modal" data-target="#filterModal" style="vertical-align:top">
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
+                    </div>*@
                 <div class="clearfix"></div>
 
                 <div class="row">
                     <div class="col-md-12">
                         @if (ViewBag.type == "Client")
                         {
-                            <div class="feedback-tab-ac"  onclick="Changeurldetails('Client')"><strong>Client Feedback</strong></div>
-                            <div class="feedback-tab"  onclick="Changeurldetails('Candidate')"><strong>Candidate Feedback</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('Client')"><strong>Client Feedback</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('Candidate')"><strong>Candidate Feedback</strong></div>
                         }
                         else
                         {
-                            <div class="feedback-tab"  onclick="Changeurldetails('Client')"><strong>Client Feedback</strong></div>
-                            <div class="feedback-tab-ac"  onclick="Changeurldetails('Candidate')"><strong>Candidate Feedback</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('Client')"><strong>Client Feedback</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate')"><strong>Candidate Feedback</strong></div>
                         }
                     </div>
                 </div>
@@ -151,104 +151,81 @@
                                     </div>
 
                                 </div>*@
-                           
-                          
-                              <div class="feedbackdetails">
+
+
+                            <div class="feedbackdetails">
                                 <table id="interviewer" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                         <tr>
-                                            <th width="25%">Name</th>
-                                            <th  width="40%">Comment</th>
                                             <th>Interview Date</th>
+                                            <th width="25%">Candidate Name</th>
+                                            <th width="40%">Comment</th>
                                             <th>Rating</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
                                         <tr>
-                                            <th width="25%">Name</th>
-                                            <th width="40%">Comment</th>
                                             <th>Interview Date</th>
+                                            <th width="25%">Candidate Name</th>
+                                            <th width="40%">Comment</th>
                                             <th>Rating</th>
                                         </tr>
                                     </tfoot>
                                     <tbody>
                                         @foreach (var item in Model)
                                         {
-                                        <tr id=@item.Interviewid>
-                                            @if (item.Name != null && item.Name != "")
-                                            {
-                                                @*@if (item.Name.Length > 20)
-            {
-                <td width="30%" class="cadfName text-left pl15">
-                    <a onclick="" data-tooltip="@item.Name"><span class="cname"> @item.Name</span> </a>
-                </td>
-            }
-            else
-            {
-                <td width="30%" class=" cadfName text-left pl15">
-                    <a onclick=""><span class="cname"> @item.Name</span> </a>
-                </td>
-            }*@
-                                                <td width="25%" class=" cadfName text-left pl15">
-                                                    <a onclick=""><span class="cname"> @item.Name</span> </a>
-                                                </td>
-                                            }
-                                            else
-                                            {
-                                                <td></td>
-                                            }
-                                            <td width="40%" class="interview-com">
-                                                <div id="section">
-                                                    @if (item.Comment != null && item.Comment != "")
-                                                    {
-                                                        @if (item.Comment.Length > 60)
+                                            <tr id=@item.Interviewid>
+                                                <td>@item.interviewdate</td>
+                                                @if (item.Name != null && item.Name != "")
+                                                {
+                                                    <td width="25%" class=" cadfName text-left pl15">
+                                                        <a onclick=""><span class="cname"> @item.Name</span> </a>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
+                                                <td width="40%" class="interview-com">
+                                                    <div id="section">
+                                                        @if (item.Comment != null && item.Comment != "")
                                                         {
-                                                            <div class="article">
-                                                                <p style="margin-bottom:0px;">
-                                                                    @item.Comment.Substring(0, 60)
-                                                                </p>
-                                                                <p class="moretext_@item.Interviewid moretext">
-                                                                    @item.Comment.Substring(60, @item.Comment.Length - 60)
-                                                                </p>
-                                                            </div>
-                                                        }
+                                                            @if (item.Comment.Length > 60)
+                                                            {
+                                                                <div class="article">
+                                                                    <p style="margin-bottom:0px;">
+                                                                        @item.Comment.Substring(0, 60)
+                                                                    </p>
+                                                                    <p class="moretext_@item.Interviewid moretext">
+                                                                        @item.Comment.Substring(60, @item.Comment.Length - 60)
+                                                                    </p>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="article">
+
+                                                                    <p>
+                                                                        @item.Comment.Substring(0, @item.Comment.Length)
+                                                                    </p>
+                                                                </div>
+                                                            }}
                                                         else
-                                                        {
-                                                            <div class="article">
+                                                        { <div></div>}
 
-                                                                <p>
-                                                                    @item.Comment.Substring(0, @item.Comment.Length)
-                                                                </p>
-                                                            </div>
-                                                        }}
-                                                    else
-                                                    { <div></div>}
-
-                                                    <a onclick="moreless(@item.Interviewid)" class="moreless-button" value="Readmore" id="read_@item.Interviewid" href="#">Read more</a>
+                                                        <a onclick="moreless(@item.Interviewid)" class="moreless-button" value="Readmore" id="read_@item.Interviewid" href="#">Read more</a>
 
 
-                                                </div>
-                                            </td>
-                                            @*@if (item.Comment.Length > 70)
-        {
-            <td class="text-left pl15">
-                <a onclick="" data-tooltip="@item.Comment"> @item.Comment.Substring(0, 70)... </a>
-            </td>
-        }
-        else
-        {
-            <td class="text-left pl15">
-                <a onclick=""> @item.Comment</a>
-            </td>
-        }*@
-                                            <td>@item.interviewdate</td>
-                                            <td>@item.StarRating out of 5</td>
-                                        </tr>
+                                                    </div>
+                                                </td>
+
+                                                <td>@item.StarRating out of 5</td>
+                                            </tr>
                                         }
                                     </tbody>
                                 </table>
-                              </div>
-                           
+                            </div>
+
                         </div>
 
 
