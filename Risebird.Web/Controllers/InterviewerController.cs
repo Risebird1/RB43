@@ -2452,6 +2452,11 @@ namespace Risebird.Web.Controllers
                         if (results != null)
                             modelData = results;
                     }
+                    ViewBag.OverallRating = 0;
+                    if (modelData.Count() != 0)
+                    {
+                        ViewBag.OverallRating = modelData.Select(x => x.StarRating).Average();
+                    }
                     return View(modelData);
                 }
                 else

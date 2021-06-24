@@ -39,12 +39,6 @@
                     <div class="mobile-view"> <h4 class="card-title">FeedBack</h4></div>
                 </div>
 
-                @*<div class="pull-right">
-                        <button id="cfeedback_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-toggle="modal" data-target="#filterModal" style="vertical-align:top">
-                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                            <div class="mdc-button__ripple"></div>
-                        </button>
-                    </div>*@
                 <div class="clearfix"></div>
 
                 <div class="row">
@@ -59,6 +53,19 @@
                             <div class="feedback-tab" onclick="Changeurldetails('Client')"><strong>Client Feedback</strong></div>
                             <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate')"><strong>Candidate Feedback</strong></div>
                         }
+                    <div class="overall-rate">
+                        @if (ViewBag.OverallRating != 0)
+                        {
+                            @if (ViewBag.type == "Client")
+                            {
+                                <label> Overall Client Rating: @ViewBag.OverallRating out 0f 5</label>
+                            }
+                            else
+                            {
+                                <label>Overall Candidate Rating: @ViewBag.OverallRating out 0f 5</label>
+                            }
+                        }
+                    </div>
                     </div>
                 </div>
 
@@ -158,17 +165,17 @@
                                     <thead>
                                         <tr>
                                             <th>Interview Date</th>
-                                            <th width="25%">Candidate Name</th>
-                                            <th width="40%">Comment</th>
-                                            <th>Rating</th>
+                                            <th width="25%">Name</th>
+                                            <th width="35%">Comment</th>
+                                            <th width="18%">Rating</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
                                         <tr>
                                             <th>Interview Date</th>
-                                            <th width="25%">Candidate Name</th>
-                                            <th width="40%">Comment</th>
-                                            <th>Rating</th>
+                                            <th width="25%">Name</th>
+                                            <th width="35%">Comment</th>
+                                            <th width="18%">Rating</th>
                                         </tr>
                                     </tfoot>
                                     <tbody>
@@ -186,7 +193,7 @@
                                                 {
                                                     <td></td>
                                                 }
-                                                <td width="40%" class="interview-com">
+                                                <td width="35%" class="interview-com">
                                                     <div id="section">
                                                         @if (item.Comment != null && item.Comment != "")
                                                         {
@@ -200,26 +207,25 @@
                                                                         @item.Comment.Substring(60, @item.Comment.Length - 60)
                                                                     </p>
                                                                 </div>
+                                                                <a onclick="moreless(@item.Interviewid)" class="moreless-button" value="Readmore" id="read_@item.Interviewid" href="#">Read more</a>
                                                             }
                                                             else
                                                             {
                                                                 <div class="article">
-
                                                                     <p>
                                                                         @item.Comment.Substring(0, @item.Comment.Length)
                                                                     </p>
                                                                 </div>
-                                                            }}
+                                                            }
+                                                        }
                                                         else
-                                                        { <div></div>}
-
-                                                        <a onclick="moreless(@item.Interviewid)" class="moreless-button" value="Readmore" id="read_@item.Interviewid" href="#">Read more</a>
-
+                                                        {
+                                                            <div></div>
+                                                        }
 
                                                     </div>
                                                 </td>
-
-                                                <td>@item.StarRating out of 5</td>
+                                                <td width="18%">@item.StarRating out of 5</td>
                                             </tr>
                                         }
                                     </tbody>
