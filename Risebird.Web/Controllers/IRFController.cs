@@ -5296,7 +5296,7 @@ namespace Risebird.Web.Controllers
             }
             return Json("Success");
         }
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult PublicAddReport(int interviewId, int irfId, bool IsSelected = false)
         {
