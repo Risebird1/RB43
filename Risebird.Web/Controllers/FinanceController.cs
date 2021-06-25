@@ -1,3 +1,5 @@
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +12,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -679,6 +682,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 15].Value = "Rate";
                         Sheet.Cells[1, 16].Value = "Amount";
                         Sheet.Cells[1, 17].Value = "Channel Owner";
+                        Sheet.Cells[1, 18].Value = "Emergency";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
@@ -730,6 +734,7 @@ namespace Risebird.Web.Controllers
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Red);
                                     }
                                     Sheet.Cells[i, 17].Value = item.ChannelOwner;
+                                    Sheet.Cells[i, 18].Value = item.IsEmergency == true ? "Y" : "N";
                                     i++;
                                 }
 
@@ -826,6 +831,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 15].Value = "Rate";
                         Sheet.Cells[1, 16].Value = "Amount";
                         Sheet.Cells[1, 17].Value = "Channel Owner";
+                        Sheet.Cells[1, 18].Value = "Emergency";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
@@ -877,6 +883,7 @@ namespace Risebird.Web.Controllers
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Red);
                                     }
                                     Sheet.Cells[i, 17].Value = item.ChannelOwner;
+                                    Sheet.Cells[i, 18].Value = item.IsEmergency == true ? "Y" : "N";
                                     i++;
                                 }
 
