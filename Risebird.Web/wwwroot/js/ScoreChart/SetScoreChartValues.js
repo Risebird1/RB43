@@ -96,7 +96,6 @@
         categoryAxis.dataFields.category = "country";
         categoryAxis.renderer.inside = true;
         categoryAxis.renderer.labels.template.valign = 0;
-
         categoryAxis.renderer.grid.template.location = 0;
         //categoryAxis.renderer.minGridDistance = 30;
         categoryAxis.renderer.minGridDistance = 100;
@@ -110,7 +109,7 @@
             return dy;
         });
         categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-        categoryAxis.renderer.labels.template.paddingBottom = 172;
+        categoryAxis.renderer.labels.template.paddingBottom = -17;
         categoryAxis.renderer.grid.template.disabled = true;
         var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
         valueAxis.renderer.grid.template.disabled = true;
@@ -290,7 +289,7 @@ function SetChartForVideoPage() {
         var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
         categoryAxis.renderer.grid.template.disabled = true;
         categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-        categoryAxis.renderer.labels.template.paddingBottom = 168;
+        categoryAxis.renderer.labels.template.paddingBottom = -17;
         valueAxis.renderer.grid.template.disabled = true;
         valueAxis.min = 0;
         //valueAxis.max = 30;
