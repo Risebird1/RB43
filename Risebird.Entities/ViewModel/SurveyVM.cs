@@ -56,6 +56,7 @@ namespace Risebird.Entities.ViewModel
         public string Intervieweremail { get; set; }
         public int interviewid { get; set; }
         public string ClientName { get; set; }
+        public string interviewdate { get; set; }
     }
     public class InterviewerRating
     {
@@ -63,5 +64,8 @@ namespace Risebird.Entities.ViewModel
         public string Comment { get; set; }
         public string Emailid { get; set; }
         public int Interviewid { get; set; }
+        public DateTime interviewdate { get; set; }
+        public string Name { get; set; }
+
     }
 }

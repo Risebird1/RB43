@@ -58,5 +58,6 @@ namespace Risebird.Repository.Interface
 
         string FetchWhatsAppNumberByEmail(string Emailid);
         string FetchNameByEmail(string Emailid);
+        int GetInterviewerid(string emailid);
     }
 }

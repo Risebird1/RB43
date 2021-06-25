@@ -29,16 +29,12 @@ namespace Risebird.Web.Controllers
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly INotificationHelper _notificationHelper;
         private readonly IMeetingService _meetingService;
+        private readonly IUserService _userService;
         private static string Searchvalueproiprity;
-
         private static List<MeetingVM> _modelDetails;
         private readonly IIRFService _irfService;
-        private static string Searchvalue;
 
-
-
-
-        public ClientController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IUserRepository userRepository, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IMeetingService meetingService, IIRFService irfService)
+        public ClientController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IUserRepository userRepository, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IMeetingService meetingService, IIRFService irfService, IUserService userService)
         {
             _clientService = clientService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -48,6 +44,7 @@ namespace Risebird.Web.Controllers
             _notificationHelper = notificationHelper;
             _meetingService = meetingService;
             _irfService = irfService;
+            _userService = userService;
         }
 
         public async Task<IActionResult> List()
@@ -1528,6 +1525,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.IsClient = isClient;
                         ViewBag.IsClientSelected = isClientSelected;
                         model.PreviousMeetingStatus = model.MeetingStatus;
+                        ViewBag.PageStatus = "Mainurl";
                         GetStatusList(model, irfId);
                         return PartialView("ClientPartialReport", model);
                     }
@@ -3428,6 +3426,40 @@ namespace Risebird.Web.Controllers
                 ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
                 Rng.Value = "Data export failed !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult PublicReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
+        {
+            try
+            {
+                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                if (model.QuestionsCollection == null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
+                ViewBag.IsClient = isClient;
+                ViewBag.IsClientSelected = isClientSelected;
+                model.PreviousMeetingStatus = model.MeetingStatus;
+                GetStatusList(model, irfId);
+                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (menus != null)
+                {
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                }
+                ViewBag.PageStatus = "Public";
+                return PartialView("ClientPartialReport", model);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("AllMeetings");
             }
         }
     }

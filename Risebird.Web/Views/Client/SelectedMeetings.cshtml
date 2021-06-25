@@ -436,7 +436,7 @@
                                                                 @if (item.IsOnline == 1 && item.candidateName.Length > 30)
                                                                 {
                                                                     <td>
-                                                                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>@item.candidateName.Substring(0, 30)... </a>
+                                                                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span><span class="s_cname">@item.candidateName</span> </a>
                                                                     </td>
                                                                 }
                                                                 else
@@ -447,7 +447,7 @@
 
 
                                                                         <td class="cadName">
-                                                                            <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 30)... </a>
+                                                                            <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span><span class="s_cname"> @item.candidateName</span> </a>
                                                                         </td>
                                                                     }
 
@@ -455,7 +455,7 @@
                                                                     else
                                                                     {
                                                                         <td class="cadName">
-                                                                            <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                            <a onclick=""><span class="dot"></span><span class="s_cname"> @item.candidateName</span> </a>
                                                                         </td>
                                                                     }
 
@@ -514,14 +514,14 @@
                                                                 <div id="section">
                                                                     @if (item.InterviewerComment != null && item.InterviewerComment != "")
                                                                     {
-                                                                        @if (item.InterviewerComment.Length > 40)
+                                                                        @if (item.InterviewerComment.Length > 35)
                                                                         {
                                                                             <div  class="article">
                                                                                 <p style="margin-bottom:0px;">
-                                                                                    @item.InterviewerComment.Substring(0, 40)
+                                                                                    @item.InterviewerComment.Substring(0, 35)
                                                                                 </p>
                                                                                 <p class="moretext_@item.imid moretext">
-                                                                                    @item.InterviewerComment.Substring(40, @item.InterviewerComment.Length - 40)
+                                                                                    @item.InterviewerComment.Substring(35, @item.InterviewerComment.Length - 35)
                                                                                 </p>
                                                                             </div>
                                                                         }
@@ -1453,16 +1453,16 @@
 
             if (data[i].candidateName != null && data[i].candidateName != "") {
                 if (data[i].isOnline == 1 && data[i].candidateName.length > 30) {
-                    html += '  <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName.substring(0, 30) + '... </a> </td>';
+                    html += '  <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span><span class="s_cname">' + data[i].candidateName+ '</span></a> </td>';
                 }
                 else {
 
 
                     if (data[i].candidateName.length > 30) {
-                        html += '<td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 30) + '... </a></td>';
+                        html += '<td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span><span class="s_cname"> ' + data[i].candidateName+ '</span></a></td>';
                     }
                     else {
-                        html += '  <td class="cadName"><a onclick=""><span class="dot"></span> ' + data[i].candidateName + ' </a></td>';
+                        html += '  <td class="cadName"><a onclick=""><span class="dot"></span><span class="s_cname"> ' + data[i].candidateName + '</span> </a></td>';
                     }
                 }
             }

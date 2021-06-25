@@ -891,7 +891,7 @@
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="error_client" ></label>
+                                                            <label class="text-danger" id="error_client"></label>
 
                                                         </div>
                                                     </div><!--end of col-md-12-->
@@ -1288,6 +1288,7 @@
                             @Html.HiddenFor(m => m.OldCalendlyLink)
                             @Html.HiddenFor(m => m.OldJDLink)
                             @Html.HiddenFor(m => m.ResourceUrl)
+                            @Html.HiddenFor(m => m.IsClone)
                             @if (Model.OldInterviewerCollection != null)
                             {
                                 for (int i = 0; i < Model.OldInterviewerCollection.Count(); i++)

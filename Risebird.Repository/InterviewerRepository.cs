@@ -1921,6 +1921,52 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public string GetUserRolebyEmailid(string Emailid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Emailid", Emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<string>(
+                        con, "Select p.Name from Userlist ul join Profile p on p.id=ul.idProfile where ul.Emailid = @Emailid", parameters, commandType: Text);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
+        }
+        public async Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid)
+        {
+            try
+            {
+                var query = "Select im.id as interviewid,im.interviewdate,im.candidateName as Name,ir.Comment,ir.StarRating  From InterviewRatings ir join InterviewMeetings im on im.id=ir.Interviewid join Userlist ul on im.Interviewer=ul.Emailid where ul.Emailid=@Emailid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters parametersRecomm = new DynamicParameters();
+                    parametersRecomm.Add("@Emailid", emailid);
+                    var results = await SqlMapper.QueryAsync<InterviewerRating>(con, query, parametersRecomm,
+                             commandType: CommandType.Text);
+                    return results.ToList();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
     }
-
 }

@@ -37,13 +37,14 @@ namespace Risebird.Web.Controllers
         private ISupportService _supportService;
         private readonly INotificationHelper _notificationHelper;
         private readonly IIRFService _irfService;
+        private readonly IUserRepository _userRepository;
         private static List<InterviewerProfileVM> _modelDetails;
         private static List<Meeting> _modelDl;
         private static string Searchvalue;
         private static string Searchvalueprofile;
         private static string SearchvalueInterviewer;
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService)
+                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository)
 
         {
             _interviewerService = interviewerService;
@@ -59,6 +60,7 @@ namespace Risebird.Web.Controllers
             _supportService = supportService;
             _notificationHelper = notificationHelper;
             _irfService = irfService;
+            _userRepository = userRepository;
         }
 
 
@@ -732,6 +734,18 @@ namespace Risebird.Web.Controllers
             }
             else
                 return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
+        }
+        [HttpPost]
+        public JsonResult EmailIdVilidation(string EmailId, int UserId)
+        {
+            IEnumerable<string> EmailIdList = _interviewerService.GetEmailIds(UserId);
+            if (EmailIdList.Contains(EmailId))
+            {
+                var role = _interviewerService.GetUserRolebyEmailid(EmailId);
+                return Json("EmailId already in use as " + role + ".", new Newtonsoft.Json.JsonSerializerSettings());
+            }
+            else
+                return Json("Not", new Newtonsoft.Json.JsonSerializerSettings());
         }
 
 
@@ -2392,6 +2406,71 @@ namespace Risebird.Web.Controllers
                 }
             }
             return Json(results);
+        }
+        [Authorize]
+        public async Task<IActionResult> FeedbackDetails(string type)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                int interviewerid = 0;
+                var modelData = new List<InterviewerRating>();
+                ViewBag.type = "Client";
+                if (profileName == "Interviewer")
+                {
+                    if (type == "Candidate")
+                    {
+                        ViewBag.type = "Candidate";
+                        AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                        var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
+                        interviewerid = _userRepository.GetInterviewerid(emailid);
+                        result = result.Where(x => x.Interviewerid == interviewerid).ToList();
+                        var _resultinterview = (from data in result
+                                                select new SurveyDetails { interviewid = data.interviewid }).ToList();
+                        _resultinterview = _resultinterview.Distinct().ToList();
+                        var ClientNamelist = _meetingService.FetchSurveyClientName(_resultinterview);
+                        foreach (var item in result)
+                        {
+                            if (modelData.Where(x => x.Interviewid == item.interviewid).Count() == 0)
+                            {
+                                var rating = !String.IsNullOrEmpty(item.Question2) ? item.Question2 : "0";
+                                modelData.Add(new InterviewerRating
+                                {
+                                    Interviewid = item.interviewid,
+                                    StarRating = Convert.ToInt32(rating),
+                                    Name = item.Name,
+                                    Emailid = item.EmailAddress,
+                                    Comment = item.CommentforInterviewer,
+                                    interviewdate = Convert.ToDateTime(ClientNamelist.Where(x => x.interviewid == item.interviewid).Select(x => x.interviewdate).FirstOrDefault())
+                                });
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var results = await _interviewerService.fetchClientFeedbackbyInterviewer(emailid);
+                        if (results != null)
+                            modelData = results;
+                    }
+                    ViewBag.OverallRating = 0;
+                    if (modelData.Count() != 0)
+                    {
+                        ViewBag.OverallRating = modelData.Select(x => x.StarRating).Average();
+                    }
+                    return View(modelData);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
         }
     }
 }

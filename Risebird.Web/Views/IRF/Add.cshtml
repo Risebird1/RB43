@@ -36,6 +36,8 @@
                         @using (Html.BeginForm("AddIRF", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return CheckConditions()" }))
                         {
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            @Html.HiddenFor(x=>x.InterviewerId)
+
                             <div>
 
 
@@ -76,16 +78,17 @@
                                             <div class="tab-main-box">
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:0px;">
-                                                        @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+
+                                                        </div>
+                                                            @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
+                                                            @*<label class="text-danger" id="uniqueMsg" style="color:red"></label>*@
+                                                            @Html.ValidationMessageFor(model => model.IRFId, "", new { @id = "uniqueMsg", @class = "text-danger" })
 
 
-                                                        @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
-                                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                                        @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
-
-
+                                                        </div>
                                                     </div>
-                                                </div>
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:20px;">
                                                         <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
@@ -1123,8 +1126,8 @@
                 var interviewId = $("#" + drpdowns[i].id).val();
                 if (interviewId == '') {
                     //noInterviewer
-                    document.getElementById("noInterviewer").innerHTML = "There should be atleast one Interviewer.";
-                    document.getElementById("noInterviewerDown").innerHTML = "There should be atleast one Interviewer.";
+                    document.getElementById("noInterviewer").innerHTML = "Please select an Interviewer for all interviewer entries.";
+                    document.getElementById("noInterviewerDown").innerHTML = "Please select an Interviewer for all interviewer entries.";
 
                     return false;
                 }
@@ -1141,8 +1144,8 @@
                 var interviewId = $("#" + drpdowns[i].id).val();
                 if (interviewId == '') {
                     //noInterviewer
-                    document.getElementById("noInterviewer").innerHTML = "There should be atleast one Interviewer.";
-                    document.getElementById("noInterviewerDown").innerHTML = "There should be atleast one Interviewer.";
+                    document.getElementById("noInterviewer").innerHTML = "Please select an Interviewer for all Interviewer entries.";
+                    document.getElementById("noInterviewerDown").innerHTML = "Please select an Interviewer for all interviewer entries.";
                     break;
 
                 }
@@ -1404,14 +1407,14 @@
             //document.getElementById("btnUpload").disabled = false;
             return;
         }
-
     }
 
     //checkUniqueness(this.value)
     function checkUniqueness() {
         var val = document.getElementById("IRFId").value;
         if (val == "") {
-            return false;
+            document.getElementById("uniqueMsg").innerHTML = "The Skill Channel ID should be an exact 10 characters long.";
+          return false;
         }
         else if (val.length != 10) {
             document.getElementById("IRFId").focus();
@@ -1438,6 +1441,7 @@
 
                 }
             });
+            return true;
         }
     }
 
@@ -1988,9 +1992,36 @@
         $("#" + skillElementid).val(data);
     }
 
-    function InterviewerChanged(val, id) {
+    function CheckDuplicate(idInitials, searchFor, value, currentIndex) {
+        var users = $(searchFor);
+        if (users != null) {
+            for (i = 0; i < users.length; i++) {
 
+
+                if (i != parseInt(currentIndex)) {
+                    var elementId = idInitials + '_' + i + '__UserId';
+                    userId = document.getElementById(elementId).value;
+                    if (parseInt(userId) == parseInt(value)) {
+                        //duplicate
+                        alert("This user is already added to this list! Kindly choose another user.");
+                        document.getElementById(idInitials + '_' + currentIndex + '__UserId').value = "";
+                        document.getElementById(idInitials + '_' + currentIndex + '__SkillId').value = "";
+                        document.getElementById(idInitials + '_' + currentIndex + '__PerSuccessRate').value = "";
+                        return true;
+                    }
+                }
+
+            }
+        }
+        return false;
+    }
+
+    function InterviewerChanged(val, id) {
         var index = id.split('_')[1];
+        var searchFor = '[id^="InterviewerCollection"][id$="UserId"]';
+        if (CheckDuplicate('InterviewerCollection', searchFor, val, index)) {
+            return;
+        }
         var skillElementid = 'InterviewerCollection_' + index + '__SkillId';
         $.ajax({
             type: "GET",
@@ -2005,6 +2036,12 @@
     }
     function EmergencyInterviewerChanged(val, id) {
         var index = id.split('_')[1];
+        var searchFor = '[id^="EmergencyInterviewerCollection"][id$="UserId"]';
+
+        if (CheckDuplicate('EmergencyInterviewerCollection', searchFor, val, index)) {
+            return;
+        }
+
         //var index = id.charAt(31);
         var skillElementid = 'EmergencyInterviewerCollection_' + index + '__SkillId';
         $.ajax({
@@ -2052,6 +2089,12 @@
 
     function QCChanged(val, id) {
         var index = id.split('_')[1];
+        var searchFor = '[id^="QualityController"][id$="UserId"]';
+
+        if (CheckDuplicate('QualityController', searchFor, val, index)) {
+            return;
+        }
+
        // var index = id.charAt(18);
         var skillElementid = 'QualityController_' + index + '__SkillId';
         $.ajax({
@@ -2449,6 +2492,7 @@
             var flag = false;
             var activeTab = $(".active").text();
             if (activeTab.trim() == "Event Details") {
+                flag = !checkUniqueness();
                 if ($('#CalendlyLink').val() == "") {
                     $('#error_CalendlyLink').text("The CalendlyLink field is required.");
                     flag = true;
@@ -2478,6 +2522,10 @@
                 else {
                     $('#error_AssessmentGroupId').text("");
                 }
+                //if ($('#uniqueMsg').val() != "") {
+                //    debugger;
+                //    flag = true;
+                //}
                 if (!flag) {
                     document.getElementById("btnPrev").style.display = "block";
                     $(".tab-menu li a").removeClass("active");
@@ -2819,7 +2867,7 @@
         for (i = 0; i < drpdowns.length; i++) {
             var interviewId = $("#" + drpdowns[i].id).val();
             if (interviewId == '' || interviewId == null) {
-                document.getElementById("noInterviewer").innerHTML = "There should be atleast one Interviewer.";
+                document.getElementById("noInterviewer").innerHTML = "Please select an Interviewer for all interviewer entries.";
                 return true;
             }
         }
@@ -2844,7 +2892,7 @@
         for (i = 0; i < drpdowns.length; i++) {
             var interviewId = $("#" + drpdowns[i].id).val();
             if (interviewId == '' || interviewId == null) {
-                document.getElementById("qcInterviewer").innerHTML = "There should be atleast one QC.";
+                document.getElementById("qcInterviewer").innerHTML = "Please select a QC for all QC entries.";
                 return true;
             }
         }
@@ -2867,7 +2915,7 @@
         for (i = 0; i < drpdowns.length; i++) {
             var interviewId = $("#" + drpdowns[i].id).val();
             if (interviewId == '' || interviewId == null) {
-                document.getElementById("emInterviewer").innerHTML = "There should be atleast one Emergency Interviewer.";
+                document.getElementById("emInterviewer").innerHTML = "Please select an Emergency Interviewer for all Emergency Interviewer entries.";
                 return true;
             }
         }

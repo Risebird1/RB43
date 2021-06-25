@@ -425,28 +425,28 @@
                                                                             <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
                                                                                 <div class="video-card-image">
                                                                                     @*@if (videolist.VideoLink.Contains(".mp4"))
-                                                                                    {
-                                                                                        @if (videolist.ThumbnailImage != null)
                                                                                         {
-                                                                                            <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
-                                                                                        }
-                                                                                        <video style=" background:black!important;width:100%; height:100%" autoplay>
-                                                                                            <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                        </video>
-                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Interview", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        @if (videolist.ThumbnailImage != null)
-                                                                                        {
-                                                                                            <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                                            @if (videolist.ThumbnailImage != null)
+                                                                                            {
+                                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                                            }
+                                                                                            <video style=" background:black!important;width:100%; height:100%" autoplay>
+                                                                                                <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                            </video>
+                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Interview", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
                                                                                         }
                                                                                         else
                                                                                         {
-                                                                                            <img src="~/RiseTube/img/video-icon.png" />
-                                                                                        }
-                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Interview", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                                    }*@
+                                                                                            @if (videolist.ThumbnailImage != null)
+                                                                                            {
+                                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <img src="~/RiseTube/img/video-icon.png" />
+                                                                                            }
+                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Interview", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                        }*@
 
                                                                                     @{
                                                                                         string appendTime;
@@ -806,7 +806,8 @@
                                                                         <div class="left-chart">
 
                                                                             <div class="chart-box itemchart">
-                                                                                <p class="card-text">Overal Aveage Score: <span class="toscore" id="totScore"></span></p>
+                                                                                @*<p class="card-text">Overal Aveage Score: <span class="toscore" id="totScore"></span></p>*@
+                                                                                <p class="card-text">Overall Tech Score: <span class="toscore" id="totTechScore"></span></p>
                                                                                 <div class="col-lg-12 col-md-12 col-sm-12">
                                                                                     <div id="scoreChart" style="height: 200px; width: 100%;"></div>
                                                                                     <div class="transparent-chart">&nbsp;</div>
@@ -1114,7 +1115,7 @@
                                                                                                     <tr onclick="switchtoquestionVideo(@Model.IreportModel.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                                                         <td>
                                                                                                             @*@Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })*@
-                                                                                                            @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].Comment, new {@class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                            @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].Comment, new { @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
 
 
                                                                                                         </td>
@@ -1758,7 +1759,7 @@
     }
 
 </script>
-
+<script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
 <script>
 
     window.onload = function () {
@@ -1769,187 +1770,8 @@
         else {
             closeThMode();
         }
-        var totalScore = 0;
-        var arr = [];
-        var obj = { y: "", legendText: "", label: "" }
-        //TechSkills actual weightage total
-        var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
-        var techTotal = 0;
-        for (i = 0; i < techItems.length; i++) {
 
-            techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        obj.y = parseInt(techTotal) / 4;
-        obj.label = "Tech Skills Score";
-        obj.legendText = "Tech Skills Score";
-        arr.push(obj.y);
-
-        //SkillsGeneral actual weightage total
-        var objGen = { y: "", legendText: "", label: "" }
-        var genSkillsItems = $('[id^="IreportModel_SkillGeneralReportCollection"][id$="WeightageActual"]');
-        var genTotal = 0;
-        for (i = 0; i < genSkillsItems.length; i++) {
-            var weightage = $("#IreportModel_SkillGeneralReportCollection_" + i + "__WeightageActual").val();
-            genTotal = parseInt(genTotal) + parseInt(weightage);
-
-        }
-
-        objGen.y = parseInt(genTotal) / 4;
-        objGen.label = "General Skills Score";
-        objGen.legendText = "General Skills Score";
-        arr.push(objGen.y);
-
-        //Joinability actual weightage total
-        //var objJoin = { y: "", legendText: "", label: "" }
-        //var joinabilityItems = $('[id^="IreportModel_JoinabilityHRReportCollection"][id$="WeightageActual"]');
-        //var joinabilityTotal = 0;
-        //for (i = 0; i < joinabilityItems.length; i++) {
-
-        //    joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#IreportModel_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
-
-        //}
-        //objJoin.y = parseInt(joinabilityTotal) / 4;
-        //objJoin.label = "Joinability Score";
-        //objJoin.legendText = "Joinability Score";
-        //arr.push(objJoin.y);
-
-        //Selectability actual weightage total
-        var objSelect = { y: "", legendText: "", label: "" }
-        var selectabilityItems = $('[id^="IreportModel_SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
-        var selectabilityTotal = 0;
-        for (i = 0; i < selectabilityItems.length; i++) {
-
-            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#IreportModel_SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        objSelect.y = parseInt(selectabilityTotal) / 4;
-        objSelect.label = "Selectability Score";
-        objSelect.legendText = "Selectability Score";
-        arr.push(objSelect.y);
-
-        //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
-        //document.getElementById("totScore").innerHTML = totalScore;
-
-
-        //var chart = new CanvasJS.Chart("scoreChart", {
-        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
-        //    width: 400,//in pixels
-        //    height: 200,//in pixels
-        //    animationEnabled: true,
-        //    title: {
-        //        text: "Score Chart"
-        //    },
-        //    data: [{
-        //        type: "column",
-        //        //startAngle: 60,
-        //        //innerRadius: 55,
-        //        indexLabelFontSize: 8,
-        //        indexLabel: "{label}  {y}",
-        //        toolTipContent: "<b>{label} </b>({y})",
-        //        dataPoints: arr
-
-        //    }]
-        //});
-        //chart.render();
-
-        am4core.ready(function () {
-
-            // Themes begin
-            am4core.useTheme(am4themes_animated);
-            // Themes end
-
-            // Create chart instance
-            var chart = am4core.create("scoreChart", am4charts.XYChart);
-
-            // Add data
-            chart.data = [{
-                "country": "Tech",
-                "visits": arr[0]
-
-            }, {
-                "country": "General",
-                "visits": arr[1]
-            }//, {
-                //    "country": "Joinability",
-                //    "visits": arr[2]
-                //}, {
-                //    "country": "Selectability",
-                //    "visits": arr[3]
-                //}
-            ];
-
-            // Create axes
-            chart.logo.disabled = true;
-            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-            categoryAxis.dataFields.category = "country";
-            categoryAxis.renderer.inside = true;
-            categoryAxis.renderer.labels.template.valign = 0;
-
-            categoryAxis.renderer.grid.template.location = 0;
-            categoryAxis.renderer.minGridDistance = 30;
-            chart.fontSize = 13;
-
-            categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
-                if (target.dataItem && target.dataItem.index & 2 == 2) {
-                    return dy;
-                }
-                return dy;
-            });
-
-
-
-            categoryAxis.renderer.grid.template.disabled = true;
-            valueAxis.renderer.grid.template.disabled = true;
-            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            categoryAxis.renderer.labels.template.paddingBottom = 168;
-            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-            // Create series
-            var series = chart.series.push(new am4charts.ColumnSeries());
-            series.dataFields.valueY = "visits";
-            series.dataFields.categoryX = "country";
-            series.name = "Visits";
-            series.colorField = "color";
-            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
-            series.tooltip.label.adapter.add("text", function (text, target) {
-                if (target.dataItem && target.dataItem.valueY == 0) {
-
-                    return "";
-                }
-                else {
-
-                    return text;
-                }
-            });
-            series.columns.template.fillOpacity = .8;
-            series.columns.template.tooltipY = 8;
-            series.tooltip.background.strokeOpacity = 0
-            series.tooltip.pointerOrientation = "vertical";
-            series.columns.template.showTooltipOn = "always";
-            series.tooltip.background.filters.clear();
-            series.tooltip.getFillFromObject = false;
-
-            series.tooltip.label.fill = am4core.color("#9a9a9a");
-            series.tooltip.background.cornerRadius = 0;
-            series.tooltip.label.textAlign = "middle";
-            series.tooltip.background.fill = 0;
-            var columnTemplate = series.columns.template;
-            columnTemplate.strokeWidth = 0;
-            columnTemplate.strokeOpacity = 1;
-            chart.colors.list = [
-                am4core.color("#07BEF3"),
-                am4core.color("#00F96B"),
-                am4core.color("#F64042"),
-                am4core.color("#ffbc50")
-
-
-
-            ];
-            series.columns.template.events.once("inited", function (event) {
-                event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
-            });
-
-        });
+        SetChartForVideoPage();
 
         if (isTheaterMode === true) {
             getThMode();

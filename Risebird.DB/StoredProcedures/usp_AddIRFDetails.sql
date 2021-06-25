@@ -43,8 +43,10 @@ GO
         
 AS        
 Begin        
-        
-INSERT INTO [dbo].[IRF]        
+      
+if not exists (select 1 from IRF where IRFId =@IRFId)	
+Begin
+	INSERT INTO [dbo].[IRF]        
    ([IRFId]        
    ,[clientName]        
    ,[JDTiltle]        
@@ -99,6 +101,9 @@ INSERT INTO [dbo].[IRF]
    
 
 select @idIrf = SCOPE_IDENTITY()
+End
+
+
         
 End        
     

@@ -26,11 +26,11 @@
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<script>
-    amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
-    amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
-    amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
-</script>
+@*<script>
+        amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
+        amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
+        amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
+    </script>*@
 
 
 
@@ -160,11 +160,11 @@
                                             <label class="text-danger" id="meetingStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
                                         </div>
                                         @*<div class="form-group">
-            @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-            @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
 
-        </div>*@
+                                            </div>*@
                                     </div>
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
@@ -179,7 +179,7 @@
                                     </div>
                                 </div>
 
-                                
+
 
 
                                 <div class="row">
@@ -192,7 +192,8 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="card chart-box">
                                             <div class="card-body">
-                                                <p class="card-text">Overall Score: <span class="totScore" id="totScore"></span></p>
+                                                @*<p class="card-text">Overall Score: <span class="totScore" id="totScore"></span></p>*@
+                                                <p class="card-text">Tech Score: <span class="totScore" id="totTechScore"></span></p>
                                                 <div>
 
                                                     <div id="scoreChart" style="height: 200px; width:100%;"></div>
@@ -1020,7 +1021,7 @@
                                         <label for="identifier-2">
                                             <div class="multiple_row">
                                                 <h2>Proctoring Report | <span>Count: @Model.ProctoringCount</span></h2>
-                                               
+
                                             </div>
                                         </label>
 
@@ -1421,6 +1422,7 @@
     }
 </script>
 
+<script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
 <script>
 
 
@@ -1454,10 +1456,10 @@
                 proctoringTotal += parseInt(proctoringItems[i].value);
             }
         }
-        
+
         $("#ProctoringCount").val(proctoringTotal);
 
-      
+
         if (parseInt(proctoringTotal) > 0) {
             $("#ProctoringCount").css("border-color", "red");
         }
@@ -1475,6 +1477,7 @@
         vid[0].currentTime = time;
         //time should be in seconds
     }
+
     function CalculateOverAll(id, value) {
         var num = id.match(/(\d+)/);
         var index = num[0];
@@ -1526,166 +1529,7 @@
         var average = totalCount / 4;
         $("#OverallScore").val(average);
 
-        var arr = [];
-        var obj = { y: "", legendText: "", label: "" }
-        //TechSkills actual weightage total
-        var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
-        var techTotal = 0;
-        for (i = 0; i < techItems.length; i++) {
-
-            techTotal = parseInt(techTotal) + parseInt($("#TechSkillReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        obj.y = parseInt(techTotal) / 4;
-        obj.label = "Tech Skills Score";
-        obj.legendText = "Tech Skills Score";
-        arr.push(obj.y);
-
-        //SkillsGeneral actual weightage total
-        var objGen = { y: "", legendText: "", label: "" }
-        var genSkillsItems = $('[id^="SkillGeneralReportCollection"][id$="WeightageActual"]');
-        var genTotal = 0;
-        for (i = 0; i < genSkillsItems.length; i++) {
-            var weightage = $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val();
-            genTotal = parseInt(genTotal) + parseInt(weightage);
-
-        }
-
-        objGen.y = parseInt(genTotal) / 4;
-        objGen.label = "General Skills Score";
-        objGen.legendText = "General Skills Score";
-        arr.push(objGen.y);
-
-        //Joinability actual weightage total
-        var objJoin = { y: "", legendText: "", label: "" }
-        var joinabilityItems = $('[id^="JoinabilityHRReportCollection"][id$="WeightageActual"]');
-        var joinabilityTotal = 0;
-        for (i = 0; i < joinabilityItems.length; i++) {
-
-            joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        objJoin.y = parseInt(joinabilityTotal) / 4;
-        objJoin.label = "Joinability Score";
-        objJoin.legendText = "Joinability Score";
-        arr.push(objJoin.y);
-
-        //Selectability actual weightage total
-        var objSelect = { y: "", legendText: "", label: "" }
-        var selectabilityItems = $('[id^="SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
-        var selectabilityTotal = 0;
-        for (i = 0; i < selectabilityItems.length; i++) {
-
-            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        objSelect.y = parseInt(selectabilityTotal) / 4;
-        objSelect.label = "Selectability Score";
-        objSelect.legendText = "Selectability Score";
-        arr.push(objSelect.y);
-
-        //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
-        document.getElementById("totScore").innerHTML = average;
-
-
-        am4core.ready(function () {
-
-            // Themes begin
-            am4core.useTheme(am4themes_animated);
-            // Themes end
-
-            // Create chart instance
-            var chart = am4core.create("scoreChart", am4charts.XYChart);
-
-            // Add data
-            chart.data = [{
-                "country": "Tech",
-                "visits": arr[0]
-
-            }, {
-                "country": "General",
-                "visits": arr[1]
-            }, {
-                "country": "Joinability",
-                "visits": arr[2]
-            }, {
-                "country": "Selectability",
-                "visits": arr[3]
-            }];
-
-            // Create axes
-            chart.logo.disabled = true;
-            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-            categoryAxis.dataFields.category = "country";
-            categoryAxis.renderer.inside = true;
-            categoryAxis.renderer.labels.template.valign = 0;
-
-            categoryAxis.renderer.grid.template.location = 0;
-            categoryAxis.renderer.minGridDistance = 30;
-            chart.fontSize = 13;
-            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
-                if (target.dataItem && target.dataItem.index & 2 == 2) {
-                    return dy;
-                }
-                return dy;
-            });
-
-            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-
-            categoryAxis.renderer.grid.template.disabled = true;
-            valueAxis.renderer.grid.template.disabled = true;
-            valueAxis.min = 0;
-            valueAxis.max = 30;
-            categoryAxis.renderer.labels.template.paddingBottom = 165;
-
-            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            // Create series
-            var series = chart.series.push(new am4charts.ColumnSeries());
-            series.dataFields.valueY = "visits";
-            series.dataFields.categoryX = "country";
-            series.name = "Visits";
-            series.colorField = "color";
-
-            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
-            series.columns.template.tooltipText = "{valueY.formatNumber('#.00')}";
-            series.tooltip.label.adapter.add("text", function (text, target) {
-                if (target.dataItem && target.dataItem.valueY == 0) {
-
-                    return "";
-                }
-                else {
-
-                    return text;
-                }
-            });
-            series.columns.template.fillOpacity = .8;
-            series.columns.template.tooltipY = 8;
-            series.tooltip.background.strokeOpacity = 0
-            series.tooltip.pointerOrientation = "vertical";
-            series.columns.template.showTooltipOn = "always";
-            series.tooltip.background.filters.clear();
-            series.tooltip.getFillFromObject = false;
-            series.tooltip.label.fill = am4core.color("#9a9a9a");
-            series.tooltip.background.cornerRadius = 0;
-            series.tooltip.label.textAlign = "middle";
-            series.tooltip.background.fill = 0;
-            var columnTemplate = series.columns.template;
-            columnTemplate.strokeWidth = 2;
-            columnTemplate.strokeOpacity = 1;
-            chart.colors.list = [
-                am4core.color("#07BEF3"),
-                am4core.color("#00F96B"),
-                am4core.color("#F64042"),
-                am4core.color("#00A8B0")
-
-            ];
-            series.columns.template.events.once("inited", function (event) {
-                event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
-            });
-
-        });
-
+        SetChart();
     }
 
     $(document).ready(function () {
@@ -1740,11 +1584,7 @@
         var average = totalCount / 4;
         $("#OverallScore").val(average);
 
-
-
-
-
-
+        SetChart();
     });
 
     function AddRow() {
@@ -2033,174 +1873,6 @@
 
 </script>
 
-<script>
-
-    window.onload = function () {
-
-        var totalScore = 0;
-        var arr = [];
-        var obj = { y: "", legendText: "", label: "" }
-        //TechSkills actual weightage total
-        var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
-        var techTotal = 0;
-        for (i = 0; i < techItems.length; i++) {
-
-            techTotal = parseInt(techTotal) + parseInt($("#TechSkillReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        obj.y = parseInt(techTotal) / 4;
-        obj.label = "Tech Skills Score";
-        obj.legendText = "Tech Skills Score";
-        arr.push(obj.y);
-
-        //SkillsGeneral actual weightage total
-        var objGen = { y: "", legendText: "", label: "" }
-        var genSkillsItems = $('[id^="SkillGeneralReportCollection"][id$="WeightageActual"]');
-        var genTotal = 0;
-        for (i = 0; i < genSkillsItems.length; i++) {
-            var weightage = $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val();
-            genTotal = parseInt(genTotal) + parseInt(weightage);
-
-        }
-
-        objGen.y = parseInt(genTotal) / 4;
-        objGen.label = "General Skills Score";
-        objGen.legendText = "General Skills Score";
-        arr.push(objGen.y);
-
-        //Joinability actual weightage total
-        var objJoin = { y: "", legendText: "", label: "" }
-        var joinabilityItems = $('[id^="JoinabilityHRReportCollection"][id$="WeightageActual"]');
-        var joinabilityTotal = 0;
-        for (i = 0; i < joinabilityItems.length; i++) {
-
-            joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        objJoin.y = parseInt(joinabilityTotal) / 4;
-        objJoin.label = "Joinability Score";
-        objJoin.legendText = "Joinability Score";
-        arr.push(objJoin.y);
-
-        //Selectability actual weightage total
-        var objSelect = { y: "", legendText: "", label: "" }
-        var selectabilityItems = $('[id^="SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
-        var selectabilityTotal = 0;
-        for (i = 0; i < selectabilityItems.length; i++) {
-
-            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        objSelect.y = parseInt(selectabilityTotal) / 4;
-        objSelect.label = "Selectability Score";
-        objSelect.legendText = "Selectability Score";
-        arr.push(objSelect.y);
-
-        totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
-        document.getElementById("totScore").innerHTML = totalScore;
-
-
-
-
-        am4core.ready(function () {
-
-            // Themes begin
-            am4core.useTheme(am4themes_animated);
-            // Themes end
-
-            // Create chart instance
-            var chart = am4core.create("scoreChart", am4charts.XYChart);
-
-            // Add data
-            chart.data = [{
-                "country": "Tech",
-                "visits": arr[0]
-
-            }, {
-                "country": "General",
-                "visits": arr[1]
-            }, {
-                "country": "Joinability",
-                "visits": arr[2]
-            }, {
-                "country": "Selectability",
-                "visits": arr[3]
-            }];
-
-            // Create axes
-            chart.logo.disabled = true;
-            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-            categoryAxis.dataFields.category = "country";
-            categoryAxis.renderer.inside = true;
-            categoryAxis.renderer.labels.template.valign = 0;
-
-            categoryAxis.renderer.grid.template.location = 0;
-            categoryAxis.renderer.minGridDistance = 30;
-            chart.fontSize = 13;
-            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
-                if (target.dataItem && target.dataItem.index & 2 == 2) {
-                    return dy;
-                }
-                return dy;
-            });
-
-            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-
-            categoryAxis.renderer.grid.template.disabled = true;
-            valueAxis.renderer.grid.template.disabled = true;
-            valueAxis.min = 0;
-            valueAxis.max = 30;
-            categoryAxis.renderer.labels.template.paddingBottom = 165;
-
-            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            // Create series
-            var series = chart.series.push(new am4charts.ColumnSeries());
-            series.dataFields.valueY = "visits";
-            series.dataFields.categoryX = "country";
-            series.name = "Visits";
-            series.colorField = "color";
-
-            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
-            series.tooltip.label.adapter.add("text", function (text, target) {
-                if (target.dataItem && target.dataItem.valueY == 0) {
-
-                    return "";
-                }
-                else {
-
-                    return text;
-                }
-            });
-            series.columns.template.fillOpacity = .8;
-            series.columns.template.tooltipY = 8;
-            series.tooltip.background.strokeOpacity = 0
-            series.tooltip.pointerOrientation = "vertical";
-            series.columns.template.showTooltipOn = "always";
-            series.tooltip.background.filters.clear();
-            series.tooltip.getFillFromObject = false;
-            series.tooltip.label.fill = am4core.color("#9a9a9a");
-            series.tooltip.background.cornerRadius = 0;
-            series.tooltip.label.textAlign = "middle";
-            series.tooltip.background.fill = 0;
-            var columnTemplate = series.columns.template;
-            columnTemplate.strokeWidth = 2;
-            columnTemplate.strokeOpacity = 1;
-            chart.colors.list = [
-                am4core.color("#07BEF3"),
-                am4core.color("#00F96B"),
-                am4core.color("#F64042"),
-                am4core.color("#00A8B0")
-
-            ];
-            series.columns.template.events.once("inited", function (event) {
-                event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
-            });
-
-        });
-
-    }
-</script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
@@ -2218,23 +1890,26 @@
             input = document.getElementById("text, interviewerComment,skillComment, joinability, selectability"),
             timeout, xhr;
 
-        input.addEventListener("keyup", function (e) {
+        if (input != null) {
+            input.addEventListener("keyup", function (e) {
 
-            if (timeout) clearTimeout(timeout);
+                if (timeout) clearTimeout(timeout);
 
-            if (!this.value.trim()) words.innerHTML = '';
+                if (!this.value.trim()) words.innerHTML = '';
 
-            timeout = setTimeout(function () {
+                timeout = setTimeout(function () {
 
-                var test_phrase = shuffle_words(input.value);
+                    var test_phrase = shuffle_words(input.value);
 
-                spell_check(test_phrase);
+                    spell_check(test_phrase);
 
-                timeout = null;
+                    timeout = null;
 
-            }, 500);
+                }, 500);
 
-        });
+            });
+        }
+
 
         function shuffle_words(inp) {
 

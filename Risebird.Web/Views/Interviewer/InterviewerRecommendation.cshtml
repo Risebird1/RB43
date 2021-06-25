@@ -324,13 +324,12 @@
                                                 @if (Model.CodedResumeLink != null && Model.CodedResumeLink != "")
                                                 {
                                                     <div class="upload" style=" float: left;margin-left:5px">
-                                                        <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="codedResumeId" target="_blank" title="CodedResume" href=@Model.CodedResumeLink.Replace(" ","%20")>Coded Resume</a>
+                                                     <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="codedResumeId" target="_blank" title="CodedResume" href=@Model.CodedResumeLink.Replace(" ","%20")>Coded Resume</a>
                                                     </div>
                                                 }
-                                                else
-                                                {
-                                                    @Html.ValidationMessageFor(model => model.CodedResumeFile, "", new { @id = "err_codedResumeId", @class = "text-danger" })
-                                                }
+                                                <input id="codedResumeId_1" type="hidden" value="@Model.CodedResumeLink"/>
+                                               
+                                                @Html.ValidationMessageFor(model => model.CodedResumeFile, "", new { @id = "err_txt_CodedResumeFile", @class = "text-danger" })
                                             </div>
                                                
                                             </div>
@@ -448,30 +447,24 @@
         }
 
         if ($("#AssessmentGroupIdArray").val() == null) {
-           
-                $("#err_AssessmentGroupIdArray").text("This field is required.");
-                elementId = 'AssessmentGroupIdArray';
-           
-        }
-
-      if ($("#codedResumeId").val() == null) {
-           
-                $("#err_codedResumeId").text("This field is required.");
-                elementId = 'codedResumeId';
+             $("#err_AssessmentGroupIdArray").text("This field is required.");
+             elementId = 'AssessmentGroupIdArray';
            
         }
-
+        if ($("#txt_CodedResumeFile").val() == "" && $("#codedResumeId_1").val() == "" ){
+            $("#err_txt_CodedResumeFile").text("This field is required.");
+            elementId = 'txt_CodedResumeFile';
+           
+        }
         if ($("#YearsofexperienceArray").val() == null) {
-            
-                $("#err_YearsofexperienceArray").text("This field is required.");
-                elementId = 'YearsofexperienceArray';
+            $("#err_YearsofexperienceArray").text("This field is required.");
+            elementId = 'YearsofexperienceArray';
             
         }
 
         if ($("#SenioritylevelArray").val() == null) {
-           
-                $("#err_SenioritylevelArray").text("This field is required.");
-                elementId = 'SenioritylevelArray';
+           $("#err_SenioritylevelArray").text("This field is required.");
+           elementId = 'SenioritylevelArray';
            
         }
         if (elementId != '') {

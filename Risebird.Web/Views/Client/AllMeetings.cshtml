@@ -512,26 +512,26 @@
                                                                     @if (item.IsOnline == 1 && item.candidateName.Length > 13)
                                                                     {
                                                                         <td>
-                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>  @item.candidateName.Substring(0, 13)... </a>
+                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>  @item.candidateName</a>
                                                                         </td>
                                                                     }
                                                                     else
                                                                     {
 
-                                                                        @if (item.candidateName.Length > 13)
+                                                                        @if (item.candidateName.Length > 25)
                                                                         {
 
 
                                                                             <td class="cadName">
-                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 13)...  </a>
+                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span><span class="cname">@item.candidateName</span></a>
                                                                             </td>
                                                                         }
 
 
                                                                         else
                                                                         {
-                                                                            <td class="cadName">
-                                                                                <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                            <td>
+                                                                                <a onclick=""><span class="dot"></span><span class="cname"> @item.candidateName</span> </a>
                                                                             </td>
                                                                         }
 
@@ -552,7 +552,7 @@
 
 
                                                                         <td class="cadEmail">
-                                                                            <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 15)... </a>
+                                                                            <a onclick="" data-tooltip="@item.candidateEmail"><span class="cname"> @item.candidateEmail</span> </a>
                                                                         </td>
                                                                     }
 
@@ -577,7 +577,7 @@
 
 
                                                                         <td class="cadSkill">
-                                                                            <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0].Substring(0, 18)... </a>
+                                                                            <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"><span class="cjd"> @item.JDTiltle.Split("|")[0]</span> </a>
                                                                         </td>
                                                                     }
 
@@ -585,7 +585,7 @@
                                                                     else
                                                                     {
                                                                         <td class="cadSkill">
-                                                                            <a onclick=""> @item.JDTiltle.Split("|")[0] </a>
+                                                                            <a onclick=""><span class="cname"> @item.JDTiltle.Split("|")[0]</span> </a>
                                                                         </td>
                                                                     }
                                                                 }
@@ -968,16 +968,16 @@
             html += ' <td> ' + new Date(data[i].interviewDate).toLocaleString()+ ' </td>';
             if (data[i].candidateName != null && data[i].candidateName != "") {
                 if (data[i].IsOnline == 1 && data[i].candidateName.length > 13) {
-                    html += ' <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName.substring(0, 13) + '...</a> </td>';
+                    html += ' <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName+ '</a> </td>';
                 }
                 else {
 
 
                     if (data[i].candidateName.length > 13) {
-                        html += ' <td><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 13) + '...  </a> </td>';
+                        html += ' <td><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span><span class="cname"> ' + data[i].candidateName+ '</span></a> </td>';
                     }
                     else {
-                        html += ' <td>' + data[i].candidateName + ' </td>';
+                        html += ' <td><span class="cname">' + data[i].candidateName + '</span> </td>';
                     }
 
                 }
@@ -988,18 +988,18 @@
 
             if (data[i].candidateEmail != null && data[i].candidateEmail != "") {
                 if (data[i].candidateEmail.length > 15) {
-                    html += '<td title="' + + data[i].candidateEmail + '">' + data[i].candidateEmail.substring(0, 15) + '...</td>';
+                    html += '<td title="' + + data[i].candidateEmail + '"><span class="cname">' + data[i].candidateEmail+ '</span></td>';
                 } else {
-                    html += '<td>' + data[i].candidateEmail + '</td>';
+                    html += '<td><span class="cname">' + data[i].candidateEmail + '</span></td>';
                 }
 
             }
             else { html += '<td></td>';}
             if (data[i].jdTiltle.split("|")[0] != null && data[i].jdTiltle.split("|")[0] != "") {
                 if (data[i].jdTiltle.split("|")[0].length > 18) {
-                    html += '<td title="' + + data[i].jdTiltle.split("|")[0] + '">' + data[i].jdTiltle.split("|")[0].substring(0, 18) + '...</td>';
+                    html += '<td title="' + + data[i].jdTiltle.split("|")[0] + '"><span class="cjd">' + data[i].jdTiltle.split("|")[0]+ '</span></td>';
                 } else {
-                    html += '<td>' + data[i].jdTiltle.split("|")[0] + '</td>';
+                    html += '<td><span class="cjd">' + data[i].jdTiltle.split("|")[0] + '</td>';
                 }
             }
             else { html += '<td></td>'; }

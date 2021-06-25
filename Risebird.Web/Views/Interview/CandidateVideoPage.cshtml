@@ -4,7 +4,7 @@
 @using Risebird.Entities.ViewModel
 @*@using Microsoft.Extensions.Configuration;
 
-@inject IConfiguration configuration*@
+    @inject IConfiguration configuration*@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "CandidateVideoPage";
@@ -122,23 +122,23 @@
                                                                 {
 
                                                                     @if (@Model.VideoLink.Contains(".mp4") || @Model.VideoLink.Contains(".org"))
-                                                                        {
-                                                                            <video controls class="vjs-tech video-width btnvideo" controlsList="nodownload">
-                                                                                <source src="@Model.VideoLink" type="video/mp4">
-                                                                            </video>
-                                                                        }
-                                                                        else if (Model.VideoLink.Contains("/manifest"))
-                                                                        {
-                                                                            <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
-                                                                                <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
+                                                                    {
+                                                                        <video controls class="vjs-tech video-width btnvideo" controlsList="nodownload">
+                                                                            <source src="@Model.VideoLink" type="video/mp4">
+                                                                        </video>
+                                                                    }
+                                                                    else if (Model.VideoLink.Contains("/manifest"))
+                                                                    {
+                                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
+                                                                            <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
 
-                                                                            </video>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <iframe width="100%" class="vjs-tech btnvideo" height="315" src="@Model.VideoLink" allowfullscreen></iframe>
-                                                                        }
-                                                                    
+                                                                        </video>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <iframe width="100%" class="vjs-tech btnvideo" height="315" src="@Model.VideoLink" allowfullscreen></iframe>
+                                                                    }
+
                                                                 }
                                                                 else
                                                                 {
@@ -461,7 +461,8 @@
                                                                 <div class="left-chart">
 
                                                                     <div class="chart-box itemchart">
-                                                                        <p class="card-text">Overall Score: <span class="toscore" id="totScore"></span></p>
+                                                                        @*<p class="card-text">Overall Score: <span class="toscore" id="totScore"></span></p>*@
+                                                                        <p class="card-text">Overall Tech Score: <span class="toscore" id="totTechScore"></span></p>
                                                                         <div class="col-lg-12 col-md-12 col-sm-12">
                                                                             <div id="scoreChart" style="height: 200px; width: 100%;"></div>
                                                                             <div class="transparent-chart">&nbsp;</div>
@@ -1460,158 +1461,12 @@
 
 </script>
 
+<script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
+
+
 <script>
-
     window.onload = function () {
-        var totalScore = 0;
-        var arr = [];
-        var obj = { y: "", legendText: "", label: "" }
-        //TechSkills actual weightage total
-        var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
-        var techTotal = 0;
-        for (i = 0; i < techItems.length; i++) {
-
-            techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        obj.y = parseInt(techTotal) / 4;
-        obj.label = "Tech Skills Score";
-        obj.legendText = "Tech Skills Score";
-        arr.push(obj.y);
-
-        //SkillsGeneral actual weightage total
-        var objGen = { y: "", legendText: "", label: "" }
-        var genSkillsItems = $('[id^="IreportModel_SkillGeneralReportCollection"][id$="WeightageActual"]');
-        var genTotal = 0;
-        for (i = 0; i < genSkillsItems.length; i++) {
-            var weightage = $("#IreportModel_SkillGeneralReportCollection_" + i + "__WeightageActual").val();
-            genTotal = parseInt(genTotal) + parseInt(weightage);
-
-        }
-
-        objGen.y = parseInt(genTotal) / 4;
-        objGen.label = "General Skills Score";
-        objGen.legendText = "General Skills Score";
-        arr.push(objGen.y);
-
-        //Joinability actual weightage total
-        //var objJoin = { y: "", legendText: "", label: "" }
-        //var joinabilityItems = $('[id^="IreportModel_JoinabilityHRReportCollection"][id$="WeightageActual"]');
-        //var joinabilityTotal = 0;
-        //for (i = 0; i < joinabilityItems.length; i++) {
-
-        //    joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#IreportModel_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
-
-        //}
-        //objJoin.y = parseInt(joinabilityTotal) / 4;
-        //objJoin.label = "Joinability Score";
-        //objJoin.legendText = "Joinability Score";
-        //arr.push(objJoin.y);
-
-        //Selectability actual weightage total
-        var objSelect = { y: "", legendText: "", label: "" }
-        var selectabilityItems = $('[id^="IreportModel_SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
-        var selectabilityTotal = 0;
-        for (i = 0; i < selectabilityItems.length; i++) {
-
-            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#IreportModel_SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        objSelect.y = parseInt(selectabilityTotal) / 4;
-        objSelect.label = "Selectability Score";
-        objSelect.legendText = "Selectability Score";
-        arr.push(objSelect.y);
-
-
-
-        am4core.ready(function () {
-
-            // Themes begin
-            am4core.useTheme(am4themes_animated);
-            // Themes end
-
-            // Create chart instance
-            var chart = am4core.create("scoreChart", am4charts.XYChart);
-
-            // Add data
-            chart.data = [{
-                "country": "Tech",
-                "visits": arr[0]
-
-            }, {
-                "country": "General",
-                "visits": arr[1]
-            }//, {
-                //    "country": "Joinability",
-                //    "visits": arr[2]
-                //}, {
-                //    "country": "Selectability",
-                //    "visits": arr[3]
-                //}
-            ];
-
-            // Create axes
-            chart.logo.disabled = true;
-            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-            categoryAxis.dataFields.category = "country";
-            categoryAxis.renderer.inside = true;
-            categoryAxis.renderer.labels.template.valign = 0;
-
-            categoryAxis.renderer.grid.template.location = 0;
-            categoryAxis.renderer.minGridDistance = 30;
-            chart.fontSize = 13;
-
-            categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
-                if (target.dataItem && target.dataItem.index & 2 == 2) {
-                    return dy;
-                }
-                return dy;
-            });
-
-            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-
-            categoryAxis.renderer.grid.template.disabled = true;
-            valueAxis.renderer.grid.template.disabled = true;
-            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            categoryAxis.renderer.labels.template.paddingBottom = 168;
-            valueAxis.min = 0;
-            valueAxis.max = 30;
-            // Create series
-            var series = chart.series.push(new am4charts.ColumnSeries());
-            series.dataFields.valueY = "visits";
-            series.dataFields.categoryX = "country";
-            series.name = "Visits";
-            series.colorField = "color";
-            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
-            series.tooltip.label.adapter.add("text", function (text, target) {
-                if (target.dataItem && target.dataItem.valueY == 0) {
-
-                    return "";
-                }
-                else {
-
-                    return text;
-                }
-            });
-            series.columns.template.fillOpacity = .8;
-            series.columns.template.tooltipY = 8;
-            var columnTemplate = series.columns.template;
-            columnTemplate.strokeWidth = 0;
-            columnTemplate.strokeOpacity = 1;
-            chart.colors.list = [
-                am4core.color("#07BEF3"),
-                am4core.color("#00F96B"),
-                am4core.color("#F64042"),
-                am4core.color("#ffbc50")
-
-
-
-            ];
-            series.columns.template.events.once("inited", function (event) {
-                event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
-            });
-
-        });
+        SetChartForVideoPage();
     }
 </script>
 

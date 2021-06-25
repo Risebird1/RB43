@@ -36,6 +36,9 @@ body {
 .mdc-button--outlined {
     padding: 0 10px 0 10px;
 }
+.article p{
+    margin-bottom:0px;
+}
 #SkillCollection_WeightageError {
     color: red;
     margin-left: 807px;
@@ -76,9 +79,49 @@ body {
     font-size: 12px!important;
     margin-left: 865px;
 }
-.mob_h {
-    height: 50px;
+.feedbackdetails table.table-bordered.dataTable th, .feedbackdetails table.table-bordered.dataTable td {
+    border: 1px solid #dee2e6;
 }
+.feedback-tab-ac {
+    float: left;
+    width: auto;
+    text-align: center;
+    cursor: pointer;
+    color: white;
+    font-size: 14px !important;
+    line-height: 6px;
+    padding: 12px 15px;
+    background: #dbecff;
+    color: #54a5f5;
+    border-radius: 22px;
+    text-decoration: none;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.feedback-tab {
+    float: left;
+    width: auto;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px !important;
+    line-height: 6px;
+    padding: 12px 15px;
+    background: #fff;
+    color: #000;
+    border-radius: 22px;
+    text-decoration: none;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+    .feedback-tab strong, .feedback-tab-ac strong{font-weight:600;}
+    .overall-rate {
+    position: absolute;
+    right: 25px;
+    top: 10px;
+    color: #7eb38e;
+    font-weight: normal;
+}
+    .mob_h {
+        height: 50px;
+    }
 
 .user.user-r .main-notification-title, .user .main-notification-title {
     padding-top: 4px !important;
@@ -1139,7 +1182,7 @@ audio {
 }
 
 table.journey td.cadName, table.journey td.cadEmail {
-    max-width: 200px;
+    max-width: 195px;
 }
 
 table.journey td.cadSkill {
@@ -4500,7 +4543,15 @@ button.btn {
     button.btn.btn-previous:active:focus, button.btn.btn-previous.active:focus {
         background: #bbb;
     }
-
+.cjd {
+    width: 216px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    top: 7px;
+    position: relative;
+}
 
 /***** Media queries *****/
 
@@ -4591,16 +4642,24 @@ button.btn {
 }
 
 @media only screen and (max-width: 1400px) {
-    table.journey td.cadName, table.journey td.cadEmail {
+   /* table.journey td.cadName, table.journey td.cadEmail {
         max-width: 120px;
+    }*/
+    .cjd {
+        width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
     }
-
     table.journey td.cadSkill {
         max-width: 150px;
     }
 
     .candidate table.journey td.cadEmail {
-        max-width: 133px;
+        /* max-width: 133px;*/
     }
 
     .intEmail {
@@ -4614,6 +4673,24 @@ button.btn {
     .rbpay .sb-scrollbar {
         position: absolute;
         right: 0px !important;
+    }
+    .cname {
+        width: 170px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
+    }
+    .s_cname {
+        width: 236px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
     }
 }
 
@@ -5226,7 +5303,13 @@ button.btn {
         font-size: 15px;
         width: 100% !important;
     }
-
+    .overall-rate {
+        position: absolute;
+        right: 25px;
+        top: -26px;
+        color: #7eb38e;
+        font-weight: normal;
+    }
     .main-notification-title {
         right: 9px !important;
         padding-top: 0px !important;
@@ -10657,7 +10740,13 @@ div.tagsinput {
         right: 27px;
         top: 11px !important;
     }
-
+    .overall-rate {
+        position: absolute;
+        right: 20px;
+        top: 5px;
+        color: #7eb38e;
+        font-weight: normal;
+    }
     .dash-h {
         padding: 0px 0px 0px 0px;
     }

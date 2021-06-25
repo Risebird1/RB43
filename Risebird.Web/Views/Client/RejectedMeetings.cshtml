@@ -230,22 +230,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
-                                                                Meeting Status
-                                                            </label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.MeetingStatusStatusDesc).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
+                                                        
 
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">RFID</label>
@@ -275,22 +260,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ConfirmationStatus">
-                                                                Confirmation Status
-                                                            </label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <select id="ConfirmationStatus" name="ConfirmationStatus" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.confirmationStatus).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
+                                                        
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">End Client Name</label>
                                                             <div class="col-md-12 col-sm-12">
@@ -337,14 +307,30 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ApprovalStatus">
+                                                        @*<div class="form-group">
+            <label class="control-label col-md-12 col-sm-12 desp-label" for="ApprovalStatus">
 
-                                                                Approval Status
+                Approval Status
+            </label>
+            <div class="col-md-12 col-sm-12">
+                <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
+                    @foreach (var item in Model.Select(x => x.NextLevelApprovalStat).Distinct().ToList())
+                    {
+                        @if (item != null && item != "")
+                        {
+                            <option value="@item">@item</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>*@
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
+                                                                Meeting Status
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.NextLevelApprovalStat).Distinct().ToList())
+                                                                <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.MeetingStatusStatusDesc).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -354,7 +340,24 @@
                                                                 </select>
                                                             </div>
                                                         </div>
+
                                                         <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ConfirmationStatus">
+                                                                Confirmation Status
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="ConfirmationStatus" name="ConfirmationStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.confirmationStatus).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        @*<div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="SelectionStatus">
                                                                 Selection Status
                                                             </label>
@@ -401,7 +404,7 @@
                                                                     }
                                                                 </select>
                                                             </div>
-                                                        </div>
+                                                        </div>*@
                                                         <div class="form-group">
 
 
@@ -489,7 +492,7 @@
                                                                     @if (item.IsOnline == 1 && item.candidateName.Length > 15)
                                                                     {
                                                                         <td>
-                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>  @item.candidateName.Substring(0, 10)... </a>
+                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span><span class="s_cname">  @item.candidateName</span></a>
                                                                         </td>
                                                                     }
                                                                     else
@@ -497,13 +500,13 @@
                                                                         @if (item.candidateName.Length > 15)
                                                                         {
                                                                             <td class="cadName">
-                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 10)...  </a>
+                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span><span class="s_cname"> @item.candidateName</span> </a>
                                                                             </td>
                                                                         }
                                                                         else
                                                                         {
                                                                             <td class="cadName">
-                                                                                <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                                <a onclick=""><span class="dot"></span><span class="s_cname"> @item.candidateName</span> </a>
                                                                             </td>
                                                                         }
                                                                     }
@@ -518,13 +521,13 @@
                                                                     @if (item.candidateEmail.Length > 15)
                                                                     {
                                                                         <td class="cadEmail">
-                                                                            <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 15)... </a>
+                                                                            <a onclick="" data-tooltip="@item.candidateEmail"><span class="s_cname"> @item.candidateEmail</span> </a>
                                                                         </td>
                                                                     }
                                                                     else
                                                                     {
                                                                         <td class="cadEmail">
-                                                                            <a onclick=""> @item.candidateEmail </a>
+                                                                            <a onclick=""><span class="s_cname">@item.candidateEmail</span> </a>
                                                                         </td>
                                                                     }
                                                                 }
@@ -537,13 +540,13 @@
                                                                     @if (item.JDTiltle.Split("|")[0].Length > 18)
                                                                     {
                                                                         <td class="cadSkill">
-                                                                            <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0].Substring(0, 18)... </a>
+                                                                            <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"><span class="s_cname"> @item.JDTiltle.Split("|")[0]</span></a>
                                                                         </td>
                                                                     }
                                                                     else
                                                                     {
                                                                         <td class="cadSkill">
-                                                                            <a onclick=""> @item.JDTiltle.Split("|")[0] </a>
+                                                                            <a onclick=""><span class="s_cname"> @item.JDTiltle.Split("|")[0]</span> </a>
                                                                         </td>
                                                                     }
                                                                 }
@@ -913,14 +916,14 @@
             html += ' <td> ' + new Date(data[i].interviewDate).toLocaleString()+ ' </td>';
             if (data[i].candidateName != null && data[i].candidateName != "") {
                 if (data[i].IsOnline == 1 && data[i].candidateName.length > 15) {
-                    html += ' <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>    ' + data[i].candidateName.substring(0, 15) + '...</a> </td>';
+                    html += ' <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName + '</a> </td>';
                 }
                 else {
                     if (data[i].candidateName.length > 15) {
-                        html += ' <td><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 15) + '...  </a> </td>';
+                        html += ' <td><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span><span class="s_cname"> ' + data[i].candidateName + '</span></a> </td>';
                     }
                     else {
-                        html += ' <td>' + data[i].candidateName + ' </td>';
+                        html += ' <td><span class="s_cname">' + data[i].candidateName + '</span> </td>';
                     }
                 }
             }
@@ -929,17 +932,17 @@
             }
             if (data[i].candidateEmail != null && data[i].candidateEmail != "") {
                 if (data[i].candidateEmail.length > 15) {
-                    html += '<td title="' + + data[i].candidateEmail + '">' + data[i].candidateEmail.substring(0, 15) + '...</td>';
+                    html += '<td title="' + + data[i].candidateEmail + '"><span class="s_cname">' + data[i].candidateEmail+ '</span></td>';
                 } else {
-                    html += '<td>' + data[i].candidateEmail + '</td>';
+                    html += '<td><span class="s_cname">' + data[i].candidateEmail + '</span></td>';
                 }
             }
             else { html += '<td></td>';}
             if (data[i].jdTiltle.split("|")[0] != null && data[i].jdTiltle.split("|")[0] != "") {
                 if (data[i].jdTiltle.split("|")[0].length > 18) {
-                    html += '<td title="' + + data[i].jdTiltle.split("|")[0] + '">' + data[i].jdTiltle.split("|")[0].substring(0, 18) + '...</td>';
+                    html += '<td title="' + + data[i].jdTiltle.split("|")[0] + '"><span class="s_cname">' + data[i].jdTiltle.split("|")[0] + '</span></td>';
                 } else {
-                    html += '<td>' + data[i].jdTiltle.split("|")[0] + '</td>';
+                    html += '<td><span class="s_cname">' + data[i].jdTiltle.split("|")[0] + '</span></td>';
                 }
             }
             else {
