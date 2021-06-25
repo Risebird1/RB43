@@ -168,9 +168,6 @@
                         <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
-
-
-
                                     <div class="filheader">
                                         <div class="filavatar">
                                             <span class="fa fa-filter"></span>
@@ -801,10 +798,9 @@
 
                                                                                         <div id="risetubevideo_9" class="chart-box itemchart">
                                                                                             @*<p class="card-text">Overall Score: <span class="toscore" id="totScore"></span></p>*@
-                                                                                            <p class="card-text">Overall Tech Score: <span class="toscore" id="totTechScore"></span></p>
+                                                                                            <p class="card-text">Tech Score: <span class="toscore" id="totTechScore"></span></p>
                                                                                             <div class="col-lg-12 col-md-12 col-sm-12 nopad">
                                                                                                 <div id="scoreChart" style="height: 200px; width: 100%;">
-
 
                                                                                                 </div>
                                                                                                 <div class="transparent-chart">&nbsp;</div>
@@ -2840,7 +2836,6 @@
 
     $(document).ready(function () {
         $('.dropques option').wrap('<span>');
-
         var selectedOption = $('.dropques').find("[selected]");
         $(selectedOption).unwrap();
         if ('@ViewBag.ProfileName' == "CuratedUser" || '@Model.IsClientCurated' =='True' ) {
@@ -2873,7 +2868,7 @@
                 }
                 else {
 
-                    var innerText = '<label class="matchtxt">Total Keywords Match Found:</label><span class="matcnum ">' + data.total + '</span><br>  <div class="matchdiv"><div style="overflow-y:scroll" class="scroller" id="style-2">' + data.convertedText + '</div></div>'
+                    var innerText = '<label class="matchtxt">Total Keywords Match Found:</label><span class="matcnum">' + data.total + '</span><br>  <div class="matchdiv"><div style="overflow-y:scroll" class="scroller" id="style-2">' + data.convertedText + '</div></div>'
 
                     document.getElementById('link9').innerHTML = innerText;
 
