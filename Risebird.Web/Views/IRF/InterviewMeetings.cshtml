@@ -163,7 +163,7 @@
                                                                 @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 20)
                                                                 {
                                                                     <td>
-                                                                        <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact.Substring(0, 20)... </a>
+                                                                        <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span> <span class="cname">    @item.ClientHrContact</span> </a>
                                                                     </td>
 
 
@@ -172,7 +172,7 @@
                                                                 {
 
                                                                     <td>
-                                                                        <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
+                                                                        <a onclick=""><span class="dot"></span><span class="cname"> @item.ClientHrContact </span></a>
                                                                     </td>
                                                                 }
                                                                 @if (item.confirmationStatus.Trim() == "Cancelled")
