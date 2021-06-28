@@ -33,7 +33,7 @@
 
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
-<div class="main-panel" id="main-panel">   
+<div class="main-panel" id="main-panel">
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -349,11 +349,25 @@
                                                         }
                                                         else
                                                         {
-                                                            <td> @item.MeetingStatusStatusDesc</td>
+                                                            @if (item.MeetingStatusStatusDesc != "0")
+                                                            {
+                                                                <td> @item.MeetingStatusStatusDesc</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
                                                         }
                                                         @if (ViewBag.actionstatus != "UnAttendedZoomLink")
                                                         {
-                                                            <td> @item.intervieweStatusStatDesc</td>
+                                                            @if (item.intervieweStatusStatDesc != "0")
+                                                            {
+                                                                <td> @item.intervieweStatusStatDesc</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
                                                         }
                                                         <td>@item.Name</td>
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
@@ -422,7 +436,7 @@
             <div class="modal-body">
                 <div class="col-md-12 ">
                     <div class="zoomMeeting_scroll">
-                        <div id="divZoomMeetingHistory" class="pdr-20" >
+                        <div id="divZoomMeetingHistory" class="pdr-20">
 
                         </div>
                     </div>
