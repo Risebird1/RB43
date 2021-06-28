@@ -47,7 +47,6 @@ GO
           
 AS          
 Begin          
-Declare @id int        
 if not exists (select 1 from IRF where IRFId =@IRFId)   
 Begin  
  INSERT INTO [dbo].[IRF]          

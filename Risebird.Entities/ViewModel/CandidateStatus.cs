@@ -29,5 +29,8 @@ namespace Risebird.Entities.ViewModel
         public string PerformedBy { get; set; }
         public bool IsManuallyDeletable { get; set; }
 
+        public int? InterviewId { get; set; }
+
+
     }
 }
