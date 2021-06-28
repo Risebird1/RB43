@@ -939,9 +939,9 @@ namespace Risebird.Repository
 
                     }
                     else
-                        return false;
+                        return true;
 
-                    
+
                 }
 
             }
