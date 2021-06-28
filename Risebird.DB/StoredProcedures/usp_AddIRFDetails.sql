@@ -12,100 +12,106 @@ SET QUOTED_IDENTIFIER ON
 GO
 
    
- Create PROCEDURE [dbo].[usp_AddIRFDetails]        
-        
-@IRFId nvarchar(200),        
-@clientName varchar(200),        
-@JDTiltle nvarchar(200),        
-@CompanyType varchar(200),        
-@ClientId int,        
-@JobCountry varchar(50),        
-@StartDate datetime,        
-@EndDate datetime,        
-@JDLink varchar(1000),        
-@NoOfPosition int,        
-@NoOfIntterview int,        
-@RisebirdHr int,        
-@PerMintuteRate real,        
-@JobLevel int,        
-@CalendlyLink varchar(500),        
-@TotalBudget int,        
-@CreatedOn date,        
-@IsBiometricEnabled bit,        
-@PriorityLevel int,        
-@CompanyDetails varchar(1000),       
-@Type varchar(5),    
-@Heuristicsscore int,    
-@PrimarySkillInvite varchar(100),    
-@BillingOwner int, 
-@AssessmentGroupId varchar(100),
-@idIrf int output        
-        
-AS        
-Begin        
-      
-if not exists (select 1 from IRF where IRFId =@IRFId)	
-Begin
-	INSERT INTO [dbo].[IRF]        
-   ([IRFId]        
-   ,[clientName]        
-   ,[JDTiltle]        
-   ,[CompanyType]        
-   ,[ClientId]        
-   ,[JobCountry]        
-   ,[StartDate]        
-   ,[EndDate]                   
-   ,[JDLink]        
-   ,[NoOfPosition]        
-   ,[NoOfIntterview]        
-   ,[RisebirdHr]        
-   ,[PerMintuteRate]          
-   ,[JobLevel]        
-   ,[CalendlyLink]        
-   ,[CreatedOn]        
-   ,[IsBiometricEnabled]        
-   ,[TotalBudget]        
-   ,[PriorityLevel]        
-   ,[CompanyDetails]        
-   ,[BussinessType]    
-   ,[Heuristicsscore]    
-   ,[PrimarySkillInvite]  
-   ,[BillingOwner]
-   ,[AssessmentGroupId])        
-       VALUES        
-           (@IRFId,        
-   @clientName,        
-   @JDTiltle,        
-   @CompanyType,        
-   @ClientId,        
-   @JobCountry,        
-   @StartDate,        
-   @EndDate,        
-   @JDLink,        
-   @NoOfPosition,        
-   @NoOfIntterview,        
-   @RisebirdHr,        
-   @PerMintuteRate,        
-   @JobLevel,        
-   @CalendlyLink,        
-   @CreatedOn,        
-   @IsBiometricEnabled,        
-   @TotalBudget,        
-   @PriorityLevel,        
-   @CompanyDetails,      
-   @Type,    
-   @Heuristicsscore,    
-   @PrimarySkillInvite,  
-   @BillingOwner,
-   @AssessmentGroupId)  
    
-
-select @idIrf = SCOPE_IDENTITY()
-End
-
+     
+   
+     
+ Create PROCEDURE [dbo].[usp_AddIRFDetails]          
+          
+@IRFId nvarchar(200),          
+@clientName varchar(200),          
+@JDTiltle nvarchar(200),          
+@CompanyType varchar(200),          
+@ClientId int,          
+@JobCountry varchar(50),          
+@StartDate datetime,          
+@EndDate datetime,          
+@JDLink varchar(1000),          
+@NoOfPosition int,          
+@NoOfIntterview int,          
+@RisebirdHr int,          
+@PerMintuteRate real,          
+@JobLevel int,          
+@CalendlyLink varchar(500),          
+@TotalBudget int,          
+@CreatedOn date,          
+@IsBiometricEnabled bit,          
+@PriorityLevel int,          
+@CompanyDetails varchar(1000),         
+@Type varchar(5),      
+@Heuristicsscore int,      
+@PrimarySkillInvite varchar(100),      
+@BillingOwner int,   
+@AssessmentGroupId varchar(100),  
+@idIrf int output          
+          
+AS          
+Begin          
+Declare @id int        
+if not exists (select 1 from IRF where IRFId =@IRFId)   
+Begin  
+ INSERT INTO [dbo].[IRF]          
+   ([IRFId]          
+   ,[clientName]          
+   ,[JDTiltle]          
+   ,[CompanyType]          
+   ,[ClientId]          
+   ,[JobCountry]          
+   ,[StartDate]          
+   ,[EndDate]                     
+   ,[JDLink]          
+   ,[NoOfPosition]          
+   ,[NoOfIntterview]          
+   ,[RisebirdHr]          
+   ,[PerMintuteRate]            
+   ,[JobLevel]          
+   ,[CalendlyLink]          
+   ,[CreatedOn]          
+   ,[IsBiometricEnabled]          
+   ,[TotalBudget]          
+   ,[PriorityLevel]          
+   ,[CompanyDetails]          
+   ,[BussinessType]      
+   ,[Heuristicsscore]      
+   ,[PrimarySkillInvite]    
+   ,[BillingOwner]  
+   ,[AssessmentGroupId])          
+       VALUES          
+           (@IRFId,          
+   @clientName,          
+   @JDTiltle,          
+   @CompanyType,          
+   @ClientId,          
+   @JobCountry,          
+   @StartDate,          
+   @EndDate,          
+   @JDLink,          
+   @NoOfPosition,          
+   @NoOfIntterview,          
+   @RisebirdHr,          
+   @PerMintuteRate,          
+   @JobLevel,          
+   @CalendlyLink,          
+   @CreatedOn,          
+   @IsBiometricEnabled,          
+   @TotalBudget,          
+   @PriorityLevel,          
+   @CompanyDetails,        
+   @Type,      
+   @Heuristicsscore,      
+   @PrimarySkillInvite,    
+   @BillingOwner,  
+   @AssessmentGroupId)    
+     
+  
+select @idIrf = SCOPE_IDENTITY()  
+End  
+select @idIrf = 0          
+End          
 
         
-End        
+
+  
     
 GO
 

@@ -151,14 +151,16 @@ namespace Risebird.Web.Controllers
                                 item.Senioritylevel = Senioritylevelgroups;
                             }
                         }
-                        ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
+                        //ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
+                        ViewBag.Senioritylevel = Senioritylevel.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
                         ViewBag.ProfileType = model.Where(x => x.ProfileType != "0").Select(x => x.ProfileType).Distinct();
                         ViewBag.CompentencyLevel = model.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
                         ViewBag.IndianRate = model.Select(x => x.PerHourRateIndia).Distinct();
                         ViewBag.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).Distinct();
                         ViewBag.CompanyType = model.Select(x => x.CompanyType).Distinct();
                         ViewBag.Domain = model.Select(x => x.Domain).Distinct();
-                        ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
+                        //ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
+                        ViewBag.AssessmentGroup = AssessmentsGroups.OrderBy(x => x.AssessmentGroup).Select(x => x.AssessmentGroup).Distinct();
 
                         if (String.IsNullOrEmpty(searchValue) && Page > 1)
                         {
@@ -239,6 +241,27 @@ namespace Risebird.Web.Controllers
 
                         }
                         var model = _interviewerService.GetInterviewers();
+                        var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                        foreach (var item in model)
+                        {
+                            if (!String.IsNullOrEmpty(item.AssessmentGroupId))
+                            {
+                                var Assessmentgroups = String.Empty;
+                                foreach (var groups in item.AssessmentGroupId.Split(","))
+                                {
+                                    int assesmsnetid = Convert.ToInt32(groups);
+                                    if (String.IsNullOrEmpty(Assessmentgroups))
+                                    {
+                                        Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                                    }
+                                    else
+                                    {
+                                        Assessmentgroups = Assessmentgroups + " , " + AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                                    }
+                                }
+                                item.AssessmentGroupId = Assessmentgroups;
+                            }
+                        }
                         if (filter != null)
                         {
                             HttpContext.Session.SetString("InterviewerIndexfilters", JsonConvert.SerializeObject(filter));
@@ -272,14 +295,17 @@ namespace Risebird.Web.Controllers
                                 item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
                             }
                         }
-                        ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
+                        //ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
+                        ViewBag.Senioritylevel = Senioritylevel.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
                         ViewBag.ProfileType = model.Where(x => x.ProfileType != "0").Select(x => x.ProfileType).Distinct();
                         ViewBag.CompentencyLevel = model.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
                         ViewBag.IndianRate = model.Select(x => x.PerHourRateIndia).Distinct();
                         ViewBag.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).Distinct();
                         ViewBag.CompanyType = model.Select(x => x.CompanyType).Distinct();
                         ViewBag.Domain = model.Select(x => x.Domain).Distinct();
-                        ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
+                        //ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
+                        ViewBag.AssessmentGroup = AssessmentsGroups.OrderBy(x => x.AssessmentGroup).Select(x => x.AssessmentGroup).Distinct();
+                        
 
                         if (String.IsNullOrEmpty(searchValue) && Page > 1)
                         {
