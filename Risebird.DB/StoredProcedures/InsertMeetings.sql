@@ -209,14 +209,14 @@ set @idIrf =(select id from IRF where IRFId=@IRFId)
 
 if(@comfirmationStatus='1')
 	Begin
-		insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
-		values (@idIrf, @canMstid, 'Scheduled', GETDATE(), 4, 'System')
+		insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy, InterviewId) 
+		values (@idIrf, @canMstid, 'Scheduled', GETDATE(), 4, 'System', @InterviewId)
 	End
 
 Else
 	Begin
-		insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
-		values (@idIrf, @canMstid, 'Cancelled', GETDATE(), 18, 'System')
+		insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy, InterviewId) 
+		values (@idIrf, @canMstid, 'Cancelled', GETDATE(), 18, 'System', @InterviewId)
 	End
 
 End

@@ -11,7 +11,8 @@ CREATE TABLE [dbo].[CandidateStatus](
 	[Comments] [varchar](max) NULL,
 	[Date] [datetime] NULL,
 	[Status] [int] NULL,
-	[PerformedBy] [varchar](100) NULL
+	[PerformedBy] [varchar](100) NULL,
+	[InterviewId] [int] NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([CandidateId]) REFERENCES [dbo].[CandidatesMaster] ([id]),
  CONSTRAINT [PK_CandidateStatus] PRIMARY KEY CLUSTERED 
@@ -32,6 +33,17 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE CandidateStatus
     Add [PerformedBy] VARCHAR(100)
+END
+
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'InterviewId')
+      AND Object_ID = Object_ID(N'CandidateStatus'))
+BEGIN
+    alter table CandidateStatus
+	add InterviewId int
 END
 
 End

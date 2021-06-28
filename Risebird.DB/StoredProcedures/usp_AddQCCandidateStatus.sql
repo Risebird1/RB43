@@ -25,18 +25,18 @@ declare @irfId int, @candidateMasterId int, @status int;
 	set @candidateMasterId = (select cm.id from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId=ul.id where im.id = @InterviewId)
 	set @status = (select InterviewStatus from InterviewComments where InterviewId=@InterviewId)
 	
-	if not exists(select 1 from CandidateStatus where CandidateId=@candidateMasterId and IRFId=@irfId and [Status]=15 and (Comments='Selected' or Comments='Border Line'))
+	if not exists(select 1 from CandidateStatus where CandidateId=@candidateMasterId and IRFId=@irfId and [Status]=15 and (Comments='Selected' or Comments='Border Line') and InterviewId=@InterviewId)
 		Begin
 			if(@status=2)
 				Begin
-					INSERT INTO CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], [PerformedBy])
-					VALUES (@irfId, @candidateMasterId, 'Selected', @Date, 15, @PerformedBy)
+					INSERT INTO CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], [PerformedBy], InterviewId)
+					VALUES (@irfId, @candidateMasterId, 'Selected', @Date, 15, @PerformedBy, @InterviewId)
 				End
 			if(@status=4)
 
 				Begin
-				  INSERT INTO CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], [PerformedBy])
-				  VALUES (@irfId, @candidateMasterId, 'Border Line', @Date, 15, @PerformedBy)
+				  INSERT INTO CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], [PerformedBy], InterviewId)
+				  VALUES (@irfId, @candidateMasterId, 'Border Line', @Date, 15, @PerformedBy, @InterviewId)
 				End
 		End
 	
