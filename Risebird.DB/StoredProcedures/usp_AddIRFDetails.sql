@@ -106,7 +106,7 @@ Begin
   
 select @idIrf = SCOPE_IDENTITY()  
 End  
-          
+select @idIrf = 0          
 End          
 
         
