@@ -41,7 +41,7 @@ left join UserList ulc on ulc.EmailId = ca.ClientHRAttemptContact
 left join UserList uls on uls.EmailId = im.staffingAgency    
 
 where HRCoordinatorEmailId =@emailID and confirmationStatus = 1 and 
-irf.id in(Select IRFId from TransHR where HRId=20)    
+irf.id in(Select IRFId from TransHR where HRId=@hrId)    
     
 End  
   
