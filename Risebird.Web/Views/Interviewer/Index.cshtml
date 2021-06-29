@@ -40,7 +40,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <div class="main-panel" id="main-panel">
- 
+
 
 
     <div class="pt30">
@@ -166,7 +166,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                    @*<div class="col-md-6 col-sm-6 border-rv">
 
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="CompentencyLevel">Compentency Level</label>
@@ -183,7 +183,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </div>*@
                                                     <div class="col-md-6 col-sm-6 border-rv">
 
                                                         <div class="form-group">
@@ -241,11 +241,11 @@
                                                     <div class="col-md-6 col-sm-6 border-rv">
 
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Domain">Domain</label>
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Domain">Country</label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="Domain" name="Domain" class="form-control multiselect" multiple="multiple">
 
-                                                                    @foreach (var item in ViewBag.Domain)
+                                                                    @foreach (var item in ViewBag.Country)
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {

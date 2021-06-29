@@ -469,7 +469,7 @@ namespace Risebird.Business
                 var result = _meetingRespository.SaveQCFeedback(Convert.ToInt32(imid), status, comment, FraudLipSync, QuestionsRelevance, HandsOnCoding, BiasAndCandidateHandling, TechnicalCommunicationSkills, ChapteringCompleted, QuestionsFilled, TechSkillsMetric, SelectabilityMetric, JoinabilityMetric, GeneralSkillMetric, CommentsFilled, MeaningfulAssessments, CorrectEnglishGrammar, ProctoringReportFilled);
 
                 //var oldStatus = Convert.ToInt16(oldQcStatus);
-                if (result  && status == (int)QCStatus.Passed && (oldQcStatus == null || Convert.ToInt16(oldQcStatus) != (int)QCStatus.Passed))
+                if (result && status == (int)QCStatus.Passed && (oldQcStatus == null || Convert.ToInt16(oldQcStatus) != (int)QCStatus.Passed))
                 {
                     //add candidate status
                     _irfRepository.AddQCCandidateStatus(Convert.ToInt32(imid), performedBy);
@@ -922,6 +922,14 @@ namespace Risebird.Business
                     if (clientEmails != null && clientEmails.Any() && !string.IsNullOrEmpty(interviewStatus))
                     {
                         _notificationHelper.SendQCPassNotificationToClient(clientEmails.ToList(), comments.candidateEmail, comments.PrimarySkill, interviewStatus, comments.interviewDate.ToString("MMMM dd, yyyy"));
+                        WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                        _whatsAppVM.Emailid = string.Join(";", clientEmails.ToList());
+                        _whatsAppVM.InterviewDate = comments.PrimarySkill;
+                        _whatsAppVM.UserName = comments.candidateEmail;
+                        _whatsAppVM.Event = "ClientCandidateConfirmation";
+                        _whatsAppVM.MessageValue = interviewStatus;
+                        _whatsAppVM.buttonlink = "Risetube/VideoPage/" + comments.InterviewId;
+                        _whatsAppHelper.WhatsAppSendClientCandidateConfirmation(_whatsAppVM);
                     }
                 }
                 return result;
