@@ -928,7 +928,7 @@ namespace Risebird.Business
                         _whatsAppVM.UserName = comments.candidateEmail;
                         _whatsAppVM.Event = "ClientCandidateConfirmation";
                         _whatsAppVM.MessageValue = interviewStatus;
-                        _whatsAppVM.buttonlink = "https://portal.risebird.io/Risetube/VideoPage/" + comments.InterviewId;
+                        _whatsAppVM.buttonlink = "Risetube/VideoPage/" + comments.InterviewId;
                         _whatsAppHelper.WhatsAppSendClientCandidateConfirmation(_whatsAppVM);
                     }
                 }
