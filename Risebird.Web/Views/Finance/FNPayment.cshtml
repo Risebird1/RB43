@@ -777,7 +777,7 @@
             st = year + '-' + month + '-15';
             se = year + '-' + month + '-21';
         } else if (index == 4) {
-            var lastdate = lastday(year, month);
+            var lastdate = lastday(year, (parseInt(month) - 1));
             st = year + '-' + month + '-22';
             se = year + '-' + month + '-' + lastdate;
         }
