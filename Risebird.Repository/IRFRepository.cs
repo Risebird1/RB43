@@ -3958,6 +3958,7 @@ namespace Risebird.Repository
                 parameters.Add("@AudioFileLink", model.AudioFileLink);
                 parameters.Add("@Status", model.Status);
                 parameters.Add("@PerformedBy", model.PerformedBy);
+                parameters.Add("@InterviewId", model.InterviewId);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
