@@ -153,13 +153,15 @@ namespace Risebird.Web.Controllers
                         }
                         var Country = from Country s in Enum.GetValues(typeof(Country))
                                       select new { ID = (int)s, Name = s.GetDescription() };
+                        var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                                           select new { ID = (int)s, Name = s.GetDescription() };
                         //ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
                         ViewBag.Senioritylevel = Senioritylevel.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
                         ViewBag.ProfileType = model.Where(x => x.ProfileType != "0").Select(x => x.ProfileType).Distinct();
                         ViewBag.CompentencyLevel = model.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
                         ViewBag.IndianRate = model.OrderBy(x => x.PerHourRateIndia).Select(x => x.PerHourRateIndia).Distinct();
                         ViewBag.OutSideIndiaRate = model.OrderBy(x => x.PerHourRateOutside).Select(x => x.PerHourRateOutside).Distinct();
-                        ViewBag.CompanyType = model.Select(x => x.CompanyType).Distinct();
+                        ViewBag.CompanyType = companyTypes.Select(x => x.Name).Distinct();
                         ViewBag.Country = Country.Select(x => x.Name).Distinct();
                         //ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
                         ViewBag.AssessmentGroup = AssessmentsGroups.OrderBy(x => x.AssessmentGroup).Select(x => x.AssessmentGroup).Distinct();
@@ -300,13 +302,15 @@ namespace Risebird.Web.Controllers
                         }
                         var Country = from Country s in Enum.GetValues(typeof(Country))
                                       select new { ID = (int)s, Name = s.GetDescription() };
+                        var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                                           select new { ID = (int)s, Name = s.GetDescription() };
                         //ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
                         ViewBag.Senioritylevel = Senioritylevel.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
                         ViewBag.ProfileType = model.Where(x => x.ProfileType != "0").Select(x => x.ProfileType).Distinct();
                         ViewBag.CompentencyLevel = model.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
                         ViewBag.IndianRate = model.OrderBy(x => x.PerHourRateIndia).Select(x => x.PerHourRateIndia).Distinct();
                         ViewBag.OutSideIndiaRate = model.OrderBy(x => x.PerHourRateOutside).Select(x => x.PerHourRateOutside).Distinct();
-                        ViewBag.CompanyType = model.Select(x => x.CompanyType).Distinct();
+                        ViewBag.CompanyType = companyTypes.Select(x => x.Name).Distinct();
                         ViewBag.Country = Country.Select(x => x.Name).Distinct();
                         //ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
                         ViewBag.AssessmentGroup = AssessmentsGroups.OrderBy(x => x.AssessmentGroup).Select(x => x.AssessmentGroup).Distinct();
