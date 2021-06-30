@@ -10,26 +10,27 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_ClientUserBulkInsert]
-(
-      @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY
-)
-AS
-BEGIN
-
-SET NOCOUNT ON;
-
---This row performs bulk copy of object DataTable to Table in SQL
-INSERT INTO [dbo].[TransClientUser](
-	[IRFId] ,
-	[ClientUserId],
-	[ClientRoleId])
-	
-
-SELECT cubd.*, ClientUser.RoleId as ClientRoleId FROM @ClientUserBulkData cubd left join ClientUser on cubd.ClientUserId= ClientUser.UserId
-
-
-END
+  
+Create PROCEDURE [dbo].[usp_ClientUserBulkInsert]  
+(  
+      @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY  
+)  
+AS  
+BEGIN  
+  
+SET NOCOUNT ON;  
+  DELETE from TransClientUser where IRFID in (Select IRFId From @ClientUserBulkData)
+--This row performs bulk copy of object DataTable to Table in SQL  
+INSERT INTO [dbo].[TransClientUser](  
+ [IRFId] ,  
+ [ClientUserId],  
+ [ClientRoleId])  
+   
+  
+SELECT cubd.*, ClientUser.RoleId as ClientRoleId FROM @ClientUserBulkData cubd left join ClientUser on cubd.ClientUserId= ClientUser.UserId  
+  
+  
+END  
 GO
 
 

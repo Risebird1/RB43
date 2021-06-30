@@ -10,26 +10,27 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_TechSkillBulkInsert]
-(
-      @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY
-)
-AS
-BEGIN
-
-SET NOCOUNT ON;
-
---This row performs bulk copy of object DataTable to Table in SQL
-INSERT INTO [dbo].[TransTechSkill](
-	[IRFId] ,
-	[LevelId],
-	[SkillId],
-	[Weightage])
-
-SELECT * FROM @TechSkillBulkData
-
-
-END
+  
+CREATE PROCEDURE [dbo].[usp_TechSkillBulkInsert]  
+(  
+      @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY  
+)  
+AS  
+BEGIN  
+  
+SET NOCOUNT ON;  
+  DELETE from TransTechSkill where IRFID in (Select IRFId From @TechSkillBulkData)
+--This row performs bulk copy of object DataTable to Table in SQL  
+INSERT INTO [dbo].[TransTechSkill](  
+ [IRFId] ,  
+ [LevelId],  
+ [SkillId],  
+ [Weightage])  
+  
+SELECT * FROM @TechSkillBulkData  
+  
+  
+END  
 GO
 
 
