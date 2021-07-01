@@ -15,37 +15,43 @@ GO
 CREATE PROCEDURE [dbo].[usp_GetCPMeetings]        
      @clientid int 
 AS        
-Begin        
-      
-select distinct im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,          
-im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,im.InterviewBiometryScore,          
-im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,          
-im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,           
-ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,           
-IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,QCF.InterviewId as QCInterview,(CASE WHEN ic.CandidateAvailable = 1 THEN 'Available' ELSE 'NotAvailable' END) as CandidateAvailable,        
-patchvideoCount.MeetingCount as MeetingPatchCount,    
-Techscore.TechSkillScore as TechSkillScore,ic.IsLock,ucl.EmailId, ic.ThumbnailTimeSeconds      
-from InterviewMeetings im            
-inner join [dbo].[InterviewComments] ic on im.id = ic.InterviewId          
-inner join UserList ulc on ulc.EmailId = im.candidateEmail          
-inner join CandidatesMaster cm on ulc.id = cm.UserId          
-inner join QCFeedbackReport QCF on im.id=QCF.InterviewId          
-inner join IRF on im.IRFId = IRF.IRFId              
-inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id          
-inner join dbo.UserList ul on ul.id = tc.ClientUserId          
-inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id  
-left join UserList ucl on ucl.id=ic.ClientUserid
-outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount    
-outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore    
-where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and QCF.QCStatus=1 and ic.MoveToCP =1 and IRF.ClientId=@clientid  
-group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,          
-im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,          
-im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,          
-im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,           
+Begin            
+          
+select distinct im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, im.ClientHrContact,              
+im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,im.InterviewBiometryScore,              
+im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,   
+case   
+  when ulc.LastName is null then ulc.FirstName  
+  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))  
+end as candidateName,              
+im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,               
+ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,               
+IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,QCF.InterviewId as QCInterview,(CASE WHEN ic.CandidateAvailable = 1 THEN 'Available' ELSE 'NotAvailable' END) as CandidateAvailable,            
+patchvideoCount.MeetingCount as MeetingPatchCount,        
+Techscore.TechSkillScore as TechSkillScore,ic.IsLock,ucl.EmailId, ic.ThumbnailTimeSeconds          
+from InterviewMeetings im                
+inner join [dbo].[InterviewComments] ic on im.id = ic.InterviewId              
+inner join UserList ulc on ulc.EmailId = im.candidateEmail              
+inner join CandidatesMaster cm on ulc.id = cm.UserId              
+inner join QCFeedbackReport QCF on im.id=QCF.InterviewId              
+inner join IRF on im.IRFId = IRF.IRFId                  
+inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id              
+inner join dbo.UserList ul on ul.id = tc.ClientUserId              
+inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id      
+left join UserList ucl on ucl.id=ic.ClientUserid    
+outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount        
+outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore        
+where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and QCF.QCStatus=1 and ic.MoveToCP =1 and IRF.ClientId=@clientid      
+group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId, im.ClientHrContact,              
+im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,              
+im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, ulc.FirstName, ulc.LastName,              
+im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,               
 ca.Phone, ca.ResumeLink,IRF.id,IRF.JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id,ic.ThumbnailImage  , QCF.InterviewId ,ic.CandidateAvailable,
-patchvideoCount.MeetingCount,Techscore.TechSkillScore,ic.IsLock,ucl.EmailId, ic.ThumbnailTimeSeconds    
+  
     
-End       
+patchvideoCount.MeetingCount,Techscore.TechSkillScore,ic.IsLock,ucl.EmailId, ic.ThumbnailTimeSeconds        
+        
+End           
  
 
 GO
