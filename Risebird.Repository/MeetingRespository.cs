@@ -822,7 +822,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<TransClientUser>(query, dynamicParameters);
-                    return "Interview assigned successfully.";
+                    return "QC assigned successfully.";
                 }
 
             }
