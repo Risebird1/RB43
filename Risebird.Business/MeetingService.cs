@@ -466,14 +466,14 @@ namespace Risebird.Business
             if (!string.IsNullOrEmpty(qcStatus) && !string.IsNullOrEmpty(imid))
             {
                 var status = Convert.ToInt16(qcStatus);
+                var result = _meetingRespository.SaveQCFeedback(Convert.ToInt32(imid), status, comment, FraudLipSync, QuestionsRelevance, HandsOnCoding, BiasAndCandidateHandling, TechnicalCommunicationSkills, ChapteringCompleted, QuestionsFilled, TechSkillsMetric, SelectabilityMetric, JoinabilityMetric, GeneralSkillMetric, CommentsFilled, MeaningfulAssessments, CorrectEnglishGrammar, ProctoringReportFilled);
+
                 //var oldStatus = Convert.ToInt16(oldQcStatus);
-                if (status == (int)QCStatus.Passed && (oldQcStatus == null || Convert.ToInt16(oldQcStatus) != (int)QCStatus.Passed))
+                if (result && status == (int)QCStatus.Passed && (oldQcStatus == null || Convert.ToInt16(oldQcStatus) != (int)QCStatus.Passed))
                 {
                     //add candidate status
                     _irfRepository.AddQCCandidateStatus(Convert.ToInt32(imid), performedBy);
                 }
-                //var val = Convert.ToInt32(value);
-                var result = _meetingRespository.SaveQCFeedback(Convert.ToInt32(imid), status, comment, FraudLipSync, QuestionsRelevance, HandsOnCoding, BiasAndCandidateHandling, TechnicalCommunicationSkills, ChapteringCompleted, QuestionsFilled, TechSkillsMetric, SelectabilityMetric, JoinabilityMetric, GeneralSkillMetric, CommentsFilled, MeaningfulAssessments, CorrectEnglishGrammar, ProctoringReportFilled);
                 return result;
             }
             return false;
@@ -903,7 +903,7 @@ namespace Risebird.Business
             try
             {
                 var result = _meetingRespository.UpdateComments(comments).Result;
-                if (comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Passed && (comments.OldQCStatus == null || comments.OldQCStatus != (int)QCStatus.Passed))
+                if (result && comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Passed && (comments.OldQCStatus == null || comments.OldQCStatus != (int)QCStatus.Passed))
                 {
                     //add candidate status
                     _irfRepository.AddQCCandidateStatus(comments.InterviewId, performedBy);
@@ -922,6 +922,14 @@ namespace Risebird.Business
                     if (clientEmails != null && clientEmails.Any() && !string.IsNullOrEmpty(interviewStatus))
                     {
                         _notificationHelper.SendQCPassNotificationToClient(clientEmails.ToList(), comments.candidateEmail, comments.PrimarySkill, interviewStatus, comments.interviewDate.ToString("MMMM dd, yyyy"));
+                        WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                        _whatsAppVM.Emailid = string.Join(";", clientEmails.ToList());
+                        _whatsAppVM.InterviewDate = comments.PrimarySkill;
+                        _whatsAppVM.UserName = comments.candidateEmail;
+                        _whatsAppVM.Event = "ClientCandidateConfirmation";
+                        _whatsAppVM.MessageValue = interviewStatus;
+                        _whatsAppVM.buttonlink = "Risetube/VideoPage/" + comments.InterviewId;
+                        _whatsAppHelper.WhatsAppSendClientCandidateConfirmation(_whatsAppVM);
                     }
                 }
                 return result;
@@ -1182,7 +1190,7 @@ namespace Risebird.Business
                     {
                         if (reportModel.MeetingStatus.HasValue && reportModel.MeetingStatus.Value != (int)MeetingStatus.Scheduled)
                         {
-                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription(), (int)CandidateStatusOptions.MeetingStatus);
+                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription(), (int)CandidateStatusOptions.MeetingStatus, reportModel.InterviewId);
                             if (reportModel.MeetingStatus.Value == (int)MeetingStatus.Completed)
                             {
                                 //await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus);
@@ -1191,12 +1199,12 @@ namespace Risebird.Business
                                 {
                                     if (reportModel.InterviewStatus.Value == (int)InterviewStatus.Proxy || reportModel.InterviewStatus.Value == (int)InterviewStatus.Rejected)
                                     {
-                                        await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus);
+                                        await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
 
                                     }
                                     else
                                     {
-                                        await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, CandidateStatusOptions.QCPending.GetDescription(), (int)CandidateStatusOptions.QCPending);
+                                        await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, CandidateStatusOptions.QCPending.GetDescription(), (int)CandidateStatusOptions.QCPending, reportModel.InterviewId);
 
                                     }
                                 }
@@ -1220,7 +1228,7 @@ namespace Risebird.Business
                         {
                             if (reportModel.MeetingStatus.HasValue && reportModel.MeetingStatus.Value != (int)MeetingStatus.Scheduled)
                             {
-                                await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription(), (int)CandidateStatusOptions.MeetingStatus);
+                                await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription(), (int)CandidateStatusOptions.MeetingStatus, reportModel.InterviewId);
 
                             }
                         }
@@ -1234,12 +1242,12 @@ namespace Risebird.Business
                                 {
                                     if (reportModel.InterviewStatus.Value == (int)InterviewStatus.Proxy || reportModel.InterviewStatus.Value == (int)InterviewStatus.Rejected)
                                     {
-                                        await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus);
+                                        await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
 
                                     }
                                     else
                                     {
-                                        await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, CandidateStatusOptions.QCPending.GetDescription(), (int)CandidateStatusOptions.QCPending);
+                                        await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, CandidateStatusOptions.QCPending.GetDescription(), (int)CandidateStatusOptions.QCPending, reportModel.InterviewId);
 
                                     }
                                 }
@@ -1332,7 +1340,7 @@ namespace Risebird.Business
             }
         }
 
-        private async Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, string audioLink = null)
+        private async Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, int? interviewId = null, string audioLink = null)
         {
             try
             {
@@ -1343,6 +1351,7 @@ namespace Risebird.Business
                 model.Comments = comments;
                 model.Status = status;
                 model.PerformedBy = performedBy;
+                model.InterviewId = interviewId;
                 return await _irfRepository.AddCandidateStatus(model);
             }
 

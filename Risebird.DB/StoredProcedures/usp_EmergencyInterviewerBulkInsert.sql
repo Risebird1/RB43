@@ -10,29 +10,30 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_EmergencyInterviewerBulkInsert]
-(
-      @EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY
-)
-AS
-BEGIN
-
-SET NOCOUNT ON;
-
---This row performs bulk copy of object DataTable to Table in SQL
-INSERT INTO [dbo].[TransEmergencyInterviewer](
-	[IRFId] ,
-	[UserId],
-	[PerSuccessRate],
-	[InterviewerId])
-	
-
---SELECT eibd.*, Interviewer.id as InterviewerId FROM @EmergencyInterviewerBulkData eibd left join Interviewer on eibd.UserId = Interviewer.UserId
-SELECT eibd.*, InterviewerProfile.id as InterviewerId FROM @EmergencyInterviewerBulkData eibd left join InterviewerProfile on eibd.UserId = InterviewerProfile.UserId
-
-
-
-END
+  
+CREATE PROCEDURE [dbo].[usp_EmergencyInterviewerBulkInsert]  
+(  
+      @EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY  
+)  
+AS  
+BEGIN  
+  
+SET NOCOUNT ON;  
+  DELETE from TransEmergencyInterviewer where IRFID in (Select IRFId From @EmergencyInterviewerBulkData)
+--This row performs bulk copy of object DataTable to Table in SQL  
+INSERT INTO [dbo].[TransEmergencyInterviewer](  
+ [IRFId] ,  
+ [UserId],  
+ [PerSuccessRate],  
+ [InterviewerId])  
+   
+  
+--SELECT eibd.*, Interviewer.id as InterviewerId FROM @EmergencyInterviewerBulkData eibd left join Interviewer on eibd.UserId = Interviewer.UserId  
+SELECT eibd.*, InterviewerProfile.id as InterviewerId FROM @EmergencyInterviewerBulkData eibd left join InterviewerProfile on eibd.UserId = InterviewerProfile.UserId  
+  
+  
+  
+END  
 GO
 
 

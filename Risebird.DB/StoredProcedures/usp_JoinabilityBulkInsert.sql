@@ -9,27 +9,28 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_JoinabilityBulkInsert]
-(
-      @JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY
-)
-AS
-BEGIN
-
-SET NOCOUNT ON;
-
---This row performs bulk copy of object DataTable to Table in SQL
-INSERT INTO [dbo].[TransJoinability](
-	[IRFId] ,
-	[LevelId],
-	[Type],
-	[Value],
-	[Weightage])
-
-SELECT * FROM @JoinabilityBulkData
-
-
-END
+  
+CREATE PROCEDURE [dbo].[usp_JoinabilityBulkInsert]  
+(  
+      @JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY  
+)  
+AS  
+BEGIN  
+  
+SET NOCOUNT ON;  
+  DELETE from TransJoinability where IRFID in (Select IRFId From @JoinabilityBulkData)
+--This row performs bulk copy of object DataTable to Table in SQL  
+INSERT INTO [dbo].[TransJoinability](  
+ [IRFId] ,  
+ [LevelId],  
+ [Type],  
+ [Value],  
+ [Weightage])  
+  
+SELECT * FROM @JoinabilityBulkData  
+  
+  
+END  
 GO
 
 

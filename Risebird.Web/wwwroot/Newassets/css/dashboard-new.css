@@ -4674,6 +4674,21 @@ button.btn {
         position: absolute;
         right: 0px !important;
     }
+    .hrname {
+        width: 123px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
+    }
+    .allmeeting .table > tbody > tr > td {
+        padding: 12px 2px;
+    }
+    .allmeeting .cname {
+        width: 127px;
+    }
     .cname {
         width: 170px;
         white-space: nowrap;

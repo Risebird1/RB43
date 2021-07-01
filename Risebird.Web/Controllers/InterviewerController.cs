@@ -119,7 +119,7 @@ namespace Risebird.Web.Controllers
                             filter.IndianRate = filter.IndianRate == null ? filter.IndianRate = model.Select(x => x.PerHourRateIndia).ToArray() : filter.IndianRate = filter.IndianRate;
                             filter.OutSideIndiaRate = filter.OutSideIndiaRate == null ? filter.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).ToArray() : filter.OutSideIndiaRate = filter.OutSideIndiaRate;
                             filter.CompanyType = filter.CompanyType == null ? filter.CompanyType = model.Select(x => x.CompanyType).ToArray() : filter.CompanyType = filter.CompanyType;
-                            filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Domain).ToArray() : filter.Domain = filter.Domain;
+                            filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Country).ToArray() : filter.Domain = filter.Domain;
                             filter.AssessmentGroup = filter.AssessmentGroup == null ? filter.AssessmentGroup = model.Select(x => x.AssessmentGroupId).ToArray() : filter.AssessmentGroup = filter.AssessmentGroup;
 
                             model = model.Where(c =>
@@ -129,7 +129,7 @@ namespace Risebird.Web.Controllers
                                && (filter.IndianRate.Count() > 0 ? filter.IndianRate.Contains(c.PerHourRateIndia) : c.PerHourRateIndia == null)
                           && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)
                           && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
-                          && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Domain) : c.Domain == null)
+                          && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Country) : c.Country == null)
                           && (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroupId) : c.AssessmentGroupId == null)).ToList();
 
                         }
@@ -154,14 +154,21 @@ namespace Risebird.Web.Controllers
                                 item.Senioritylevel = Senioritylevelgroups;
                             }
                         }
-                        ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
+                        var Country = from Country s in Enum.GetValues(typeof(Country))
+                                      select new { ID = (int)s, Name = s.GetDescription() };
+                        var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                                           select new { ID = (int)s, Name = s.GetDescription() };
+                        //ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
+                        ViewBag.Senioritylevel = Senioritylevel.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
                         ViewBag.ProfileType = model.Where(x => x.ProfileType != "0").Select(x => x.ProfileType).Distinct();
                         ViewBag.CompentencyLevel = model.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
-                        ViewBag.IndianRate = model.Select(x => x.PerHourRateIndia).Distinct();
-                        ViewBag.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).Distinct();
-                        ViewBag.CompanyType = model.Select(x => x.CompanyType).Distinct();
-                        ViewBag.Domain = model.Select(x => x.Domain).Distinct();
-                        ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
+                        ViewBag.IndianRate = model.OrderBy(x => x.PerHourRateIndia).Select(x => x.PerHourRateIndia).Distinct();
+                        ViewBag.OutSideIndiaRate = model.OrderBy(x => x.PerHourRateOutside).Select(x => x.PerHourRateOutside).Distinct();
+                        ViewBag.CompanyType = companyTypes.Select(x => x.Name).Distinct();
+                        ViewBag.Country = Country.Select(x => x.Name).Distinct();
+                        //ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
+                        ViewBag.AssessmentGroup = AssessmentsGroups.OrderBy(x => x.AssessmentGroup).Select(x => x.AssessmentGroup).Distinct();
+
 
                         if (String.IsNullOrEmpty(searchValue) && Page > 1)
                         {
@@ -242,6 +249,27 @@ namespace Risebird.Web.Controllers
 
                         }
                         var model = _interviewerService.GetInterviewers();
+                        var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                        foreach (var item in model)
+                        {
+                            if (!String.IsNullOrEmpty(item.AssessmentGroupId))
+                            {
+                                var Assessmentgroups = String.Empty;
+                                foreach (var groups in item.AssessmentGroupId.Split(","))
+                                {
+                                    int assesmsnetid = Convert.ToInt32(groups);
+                                    if (String.IsNullOrEmpty(Assessmentgroups))
+                                    {
+                                        Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                                    }
+                                    else
+                                    {
+                                        Assessmentgroups = Assessmentgroups + " , " + AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                                    }
+                                }
+                                item.AssessmentGroupId = Assessmentgroups;
+                            }
+                        }
                         if (filter != null)
                         {
                             HttpContext.Session.SetString("InterviewerIndexfilters", JsonConvert.SerializeObject(filter));
@@ -253,7 +281,7 @@ namespace Risebird.Web.Controllers
                         filter.IndianRate = filter.IndianRate == null ? filter.IndianRate = model.Select(x => x.PerHourRateIndia).ToArray() : filter.IndianRate = filter.IndianRate;
                         filter.OutSideIndiaRate = filter.OutSideIndiaRate == null ? filter.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).ToArray() : filter.OutSideIndiaRate = filter.OutSideIndiaRate;
                         filter.CompanyType = filter.CompanyType == null ? filter.CompanyType = model.Select(x => x.CompanyType).ToArray() : filter.CompanyType = filter.CompanyType;
-                        filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Domain).ToArray() : filter.Domain = filter.Domain;
+                        filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Country).ToArray() : filter.Domain = filter.Domain;
                         filter.AssessmentGroup = filter.AssessmentGroup == null ? filter.AssessmentGroup = model.Select(x => x.AssessmentGroupId).ToArray() : filter.AssessmentGroup = filter.AssessmentGroup;
 
                         model = model.Where(c =>
@@ -263,7 +291,7 @@ namespace Risebird.Web.Controllers
                           && (filter.IndianRate.Count() > 0 ? filter.IndianRate.Contains(c.PerHourRateIndia) : c.PerHourRateIndia == null)
                           && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)
                            && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
-                           && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Domain) : c.Domain == null)
+                           && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Country) : c.Country == null)
                            && (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroupId) : c.AssessmentGroupId == null)).ToList();
 
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
@@ -275,14 +303,21 @@ namespace Risebird.Web.Controllers
                                 item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
                             }
                         }
-                        ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
+                        var Country = from Country s in Enum.GetValues(typeof(Country))
+                                      select new { ID = (int)s, Name = s.GetDescription() };
+                        var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                                           select new { ID = (int)s, Name = s.GetDescription() };
+                        //ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
+                        ViewBag.Senioritylevel = Senioritylevel.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
                         ViewBag.ProfileType = model.Where(x => x.ProfileType != "0").Select(x => x.ProfileType).Distinct();
                         ViewBag.CompentencyLevel = model.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
-                        ViewBag.IndianRate = model.Select(x => x.PerHourRateIndia).Distinct();
-                        ViewBag.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).Distinct();
-                        ViewBag.CompanyType = model.Select(x => x.CompanyType).Distinct();
-                        ViewBag.Domain = model.Select(x => x.Domain).Distinct();
-                        ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
+                        ViewBag.IndianRate = model.OrderBy(x => x.PerHourRateIndia).Select(x => x.PerHourRateIndia).Distinct();
+                        ViewBag.OutSideIndiaRate = model.OrderBy(x => x.PerHourRateOutside).Select(x => x.PerHourRateOutside).Distinct();
+                        ViewBag.CompanyType = companyTypes.Select(x => x.Name).Distinct();
+                        ViewBag.Country = Country.Select(x => x.Name).Distinct();
+                        //ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
+                        ViewBag.AssessmentGroup = AssessmentsGroups.OrderBy(x => x.AssessmentGroup).Select(x => x.AssessmentGroup).Distinct();
+
 
                         if (String.IsNullOrEmpty(searchValue) && Page > 1)
                         {

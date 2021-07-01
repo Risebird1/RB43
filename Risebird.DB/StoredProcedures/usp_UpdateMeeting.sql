@@ -38,7 +38,7 @@ Create PROCEDURE [dbo].[usp_UpdateMeeting]
 AS
 Begin
    declare 
-	   @irfIntId int
+	   @irfIntId int, @oldConfirmationStatus varchar(100)
    
    set @irfIntId =(select id from IRF where IRFId=@IRFId)
 
@@ -46,6 +46,7 @@ Begin
 
 	IF EXISTS (SELECT 1   FROM   InterviewMeetings  WHERE  id=@interviewId)
 		Begin
+		set @oldConfirmationStatus = (select  @oldConfirmationStatus from InterviewMeetings where id =@interviewId)
 			UPDATE  [dbo].[InterviewMeetings]
 			SET         [IRFId] = @IRFId
 					   ,[interviewDate] = @interviewDate
@@ -81,8 +82,11 @@ Begin
 			update InterviewComments set MeetingStatus=null where InterviewId = @interviewId
 		End
 
-	declare
-	@profileId int = (select id from [Profile] where [Name]='Candidate')
+	declare 
+	@canMasterId int,
+	@profileId int 
+
+	set @profileId = (select id from [Profile] where [Name]='Candidate')
 
 IF NOT EXISTS (SELECT 1  FROM  UserList  WHERE  EmailId = @candidateEmail)
 Begin
@@ -95,8 +99,8 @@ Begin
 	@cndUserId int = (select id from UserList where EmailId=@candidateEmail and idProfile=@profileId)
 
 	Insert into CandidatesMaster (UserId) values(@cndUserId)
-	declare
-	@canMasterId int = (select id from CandidatesMaster where UserId=@cndUserId)
+
+	set @canMasterId = (select id from CandidatesMaster where UserId=@cndUserId)
 
 	Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId, ClientHRAttemptContact) 
 	values((select id from IRF where IRFId=@IRFId), @resumeLink, @preferredLocation, @MobileNumber,
@@ -119,21 +123,34 @@ Begin
 			Insert into CandidatesMaster (UserId) values(@candidateUserId)
 		end
 
-	declare
-	@candidateMasterId int = (select id from CandidatesMaster where UserId=@candidateUserId)
+	set @canMasterId = (select id from CandidatesMaster where UserId=@candidateUserId)
 	--declare @irfintid int = (select id from IRF where IRFId=@IRFId)
-	IF NOT EXISTS (SELECT 1  FROM  Candidate  WHERE  CandidateMasterId = @candidateMasterId and IRFID= @irfintid)
+	IF NOT EXISTS (SELECT 1  FROM  Candidate  WHERE  CandidateMasterId = @canMasterId and IRFID= @irfintid)
 		Begin
 			Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId, ClientHRAttemptContact) 
-			values(@irfintid, @resumeLink, @preferredLocation,@MobileNumber, @candidateMasterId, @ClientHrContact) 	
+			values(@irfintid, @resumeLink, @preferredLocation,@MobileNumber, @canMasterId, @ClientHrContact) 	
 			
 			--insert candidate added status
 			insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
-			values (@irfintid, @candidateMasterId, 'Added', GETDATE(), 12, 'System')
+			values (@irfintid, @canMasterId, 'Added', GETDATE(), 12, 'System')
 		End
 
 End
 
+
+if(@oldConfirmationStatus != @comfirmationStatus)
+Begin
+	if(@comfirmationStatus='2')	
+	begin
+		insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy, InterviewId) 
+		values (@irfIntId, @canMasterId, 'Cancelled', GETDATE(), 18, 'System', @interviewId)
+	end
+	else
+	begin
+		insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy, InterviewId) 
+		values (@irfIntId, @canMasterId, 'Scheduled', GETDATE(), 4, 'System', @InterviewId)
+	end
+End
 
 
 --declare @canUserId int,@canMstid int, @idIrf int;
