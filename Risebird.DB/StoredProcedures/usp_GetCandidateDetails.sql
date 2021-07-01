@@ -17,11 +17,15 @@ CREATE PROCEDURE [dbo].[usp_GetCandidateDetails]
 AS
 Begin
 
-select ul.[FirstName] as [Name], ca.Skill from InterviewMeetings im join irf on im.IRFId=irf.IRFId
-join UserList ul on im.candidateEmail = ul.EmailId
-join CandidatesMaster cm on cm.UserId = ul.id
-join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id
-where im.id =@imid
+select case 
+	 when ul.LastName is null then ul.FirstName
+	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
+	 end as [Name],
+ca.Skill from InterviewMeetings im join irf on im.IRFId=irf.IRFId  
+join UserList ul on im.candidateEmail = ul.EmailId  
+join CandidatesMaster cm on cm.UserId = ul.id  
+join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id  
+where im.id =@imid 
 
 End
 GO
