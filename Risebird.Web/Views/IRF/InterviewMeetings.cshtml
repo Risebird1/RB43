@@ -163,7 +163,7 @@
                                                                 @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 20)
                                                                 {
                                                                     <td>
-                                                                        <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span> <span class="cname">    @item.ClientHrContact</span> </a>
+                                                                        <a data-tooltip="@item.ClientHrContact" onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span> <span class="cname">    @item.ClientHrContact</span> </a>
                                                                     </td>
 
 
