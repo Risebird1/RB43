@@ -24,7 +24,8 @@ SELECT [InterviewMeetings].id as imid
 	 ,interviewSlot
 	 ,interviewDuration
 	 ,interviewDuration
-	 ,candidateEmail
+	 ,ul.EmailId as candidateEmail
+	 --,candidateEmail
 	 ,ClientHrContact
 	 ,ca.ResumeLink as resumeLink
 	 ,Isnull(ca.EncodedResumeLink,'') as encodedresumeLink
@@ -35,8 +36,12 @@ SELECT [InterviewMeetings].id as imid
 	 ,PreferredLocation
 	 ,ExpectedPerHourRate
 	 ,staffingAgency
-	 ,JobLevel
-	 ,candidateName
+	 ,JobLevel,
+	 case 
+	 when ul.LastName is null then ul.FirstName
+	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
+	 end as candidateName
+	 --,candidateName
 	 ,joiningTime
 	 ,currentEmployerName
 	 ,ca.Phone as MobileNumber,

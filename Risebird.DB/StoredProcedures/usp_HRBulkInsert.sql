@@ -10,25 +10,26 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_HRBulkInsert]
-(
-      @HRBulkData AS [dbo].[TransHR_TableType] READONLY
-)
-AS
-BEGIN
-
-SET NOCOUNT ON;
-
---This row performs bulk copy of object DataTable to Table in SQL
-INSERT INTO [dbo].[TransHR](
-	[IRFId] ,
-	[HRId])
-	
-
-SELECT hrbd.IRFId, HR.id as HRId FROM @HRBulkData hrbd left join HR on hrbd.UserId = HR.UserId
-
-
-END
+  
+Create PROCEDURE [dbo].[usp_HRBulkInsert]  
+(  
+      @HRBulkData AS [dbo].[TransHR_TableType] READONLY  
+)  
+AS  
+BEGIN  
+  
+SET NOCOUNT ON;  
+  DELETE from TransHR where IRFID in (Select IRFId From @HRBulkData)
+--This row performs bulk copy of object DataTable to Table in SQL  
+INSERT INTO [dbo].[TransHR](  
+ [IRFId] ,  
+ [HRId])  
+   
+  
+SELECT hrbd.IRFId, HR.id as HRId FROM @HRBulkData hrbd left join HR on hrbd.UserId = HR.UserId  
+  
+  
+END  
 GO
 
 

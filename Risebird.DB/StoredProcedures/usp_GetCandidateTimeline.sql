@@ -45,7 +45,12 @@ if @EmailId is not null
 
 		if(@roleId=1 or @roleId=4)
 			Begin
-				select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId, ul.FirstName as [Name], ca.ClientHRAttemptContact as HREmail, ca.IRFId, im.id as InterviewId,
+				select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId,
+				case 
+					when ul.LastName is null then ul.FirstName
+					else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
+				end as [Name],
+				ca.ClientHRAttemptContact as HREmail, ca.IRFId, im.id as InterviewId,
 				ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,
 				mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,
 				ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,
@@ -68,7 +73,12 @@ if @EmailId is not null
 		
 		else
 			Begin
-				select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId, ul.FirstName as [Name], ca.ClientHRAttemptContact as HREmail, ca.IRFId, im.id as InterviewId,
+				select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId,
+				case 
+					when ul.LastName is null then ul.FirstName
+					else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
+				end as [Name],
+				ca.ClientHRAttemptContact as HREmail, ca.IRFId, im.id as InterviewId,
 				ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,
 				mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,
 				ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,
@@ -91,7 +101,12 @@ if @EmailId is not null
 	End
 Else
 	Begin
-		select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId, ul.FirstName as [Name], ca.ClientHRAttemptContact as HREmail, ca.IRFId, im.id as InterviewId,
+		select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId,
+		case 
+			when ul.LastName is null then ul.FirstName
+			else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
+		end as [Name],
+		ca.ClientHRAttemptContact as HREmail, ca.IRFId, im.id as InterviewId,
 		ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,
 		mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,
 		ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,
