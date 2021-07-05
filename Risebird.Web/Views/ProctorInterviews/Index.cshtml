@@ -128,17 +128,26 @@
                                                                 <span>User Name:</span>@item.UserName
                                                             </div> <br /> <br />
                                                         }
+                                                        @if (item.PublicIP != null)
+                                                        {
+                                                            <div id="procinterview_3" class="row"> <span>Public IP Address:</span>@item.PublicIP:3389</div>
+                                                            <br />
+                                                            <br />
+                                                        }
+                                                        else
+                                                        {
+                                                            <div id="procinterview_3" class="row"> <span>Public IP Address:</span>@item.PublicIP</div>
+                                                            <br />
+                                                            <br />
+                                                        }
 
-                                                        <div id="procinterview_3" class="row"> <span>Public IP Address:</span>@item.PublicIP</div>
-                                                        <br />
-                                                        <br />
-                                                        <div  class="row " style="position:relative;">
+                                                        <div class="row " style="position:relative;">
                                                             <div id="procinterview_4" style="padding: 11px 5px 5px 0px;"> <span>Password:</span></div>
 
                                                             <!--- <div class="pull-left">
-                                                                <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.id" style="background:none;">
-                                                                <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
-                                                            </div>--->
+            <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.id" style="background:none;">
+            <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
+        </div>--->
 
 
 
