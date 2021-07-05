@@ -37,9 +37,9 @@
                             </button>*@
 
 
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                        @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick(false)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates</font></span>
-                        </button>
+                        </button>*@
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file and send invitation." onclick="ModalButtonClick(true)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates (Invite)</font></span>
                         </button>
@@ -109,38 +109,49 @@
                                                             <th style="border-right: 0px !important;"></th>
 
                                                             <th>Candidate Email</th>
-                                                            <th id="getstatus_2">RB Attempts</th>
+                                                            @if (ViewBag.Profile != "Client")
+                                                            {
+                                                                <th id="getstatus_2">RB Attempts</th>
+}
                                                             <th id="getstatus_3">Resume</th>
 
                                                             <th id="getstatus_4">Invite Sent</th>
                                                             <th id="getstatus_5">Confirmation</th>
+                                                            @if (ViewBag.Profile != "Client")
+                                                            {
+                                                                <th id="getstatus_6">Joinability</th>
+                                                                <th id="getstatus_7">Selectability</th>
+                                                            }
+                                                                <th width="25%"> Actions </th>
+                                                                <th style="text-align:center">Schedule Call</th>
+                                                                <th style="text-align:center">Call</th>
 
-                                                            <th id="getstatus_6">Joinability</th>
-                                                            <th id="getstatus_7">Selectability</th>
-                                                            <th width="25%"> Actions </th>
-                                                            <th style="text-align:center">Schedule Call</th>
-                                                            <th style="text-align:center">Call</th>
 
-
-                                                        </tr>
+                                                            </tr>
                                                     </thead>
                                                     <tfoot>
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th>Candidate Email</th>
-                                                            <th>RB Attempts</th>
+                                                            @if (ViewBag.Profile != "Client")
+                                                            {
+                                                                <th>RB Attempts</th>
+                                                             }
                                                             <th>Resume</th>
 
                                                             <th>Invite Sent</th>
                                                             <th>Confirmation</th>
-                                                            <th>Joinability</th>
-                                                            <th>Selectability </th>
-                                                            <th style="width:25%"> Actions </th>
-                                                            <th style="text-align:center">Schedule Call</th>
+                                                            @if (ViewBag.Profile != "Client")
+                                                            {
+                                                                <th>Joinability</th>
+                                                                <th>Selectability </th>
+                                                                }
+                                                                <th style="width:25%"> Actions </th>
+                                                                <th style="text-align:center">Schedule Call</th>
 
-                                                            <th style="text-align:center">Call</th>
+                                                                <th style="text-align:center">Call</th>
 
-                                                        </tr>
+                                                            </tr>
                                                     </tfoot>
                                                     <tbody id="tblbodyCandidate">
 
@@ -173,67 +184,72 @@
                                                             {
                                                                 selectabilityColor = "red";
                                                             }
-                                                            <tr id="@item.id" data-changes="1">
-                                                                <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                                                        <tr id="@item.id" data-changes="1">
+                                                            <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
 
 
 
 
-                                                                @if (item.EmailId != null && item.EmailId != "")
+                                                            @if (item.EmailId != null && item.EmailId != "")
+                                                            {
+                                                                @if (item.EmailId.Length > 18)
                                                                 {
-                                                                    @if (item.EmailId.Length > 18)
-                                                                    {
 
 
-                                                                        <td class="cadEmail">
-                                                                            <a onclick="" data-tooltip="@item.EmailId"><span class="cname">@item.EmailId</span> </a>
-                                                                        </td>
-                                                                    }
-
-
-                                                                    else
-                                                                    {
-                                                                        <td class="cadEmail">
-                                                                            <a onclick=""><span class="cname">@item.EmailId</span> </a>
-                                                                        </td>
-                                                                    }
+                                                                    <td class="cadEmail">
+                                                                        <a onclick="" data-tooltip="@item.EmailId"><span class="cname">@item.EmailId</span> </a>
+                                                                    </td>
                                                                 }
+
+
                                                                 else
                                                                 {
-                                                                    <td></td>
+                                                                    <td class="cadEmail">
+                                                                        <a onclick=""><span class="cname">@item.EmailId</span> </a>
+                                                                    </td>
                                                                 }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
 
+                                                            @if (ViewBag.Profile != "Client")
+                                                            {
                                                                 <td class="text-center">@item.AttemptsCount</td>
+}
 
+                                                            @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                            {
                                                                 @if (item.ResumeLink != null && item.ResumeLink != "")
                                                                 {
-                                                                    @if (item.ResumeLink != null && item.ResumeLink != "")
-                                                                    {
-                                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <td>No Resume</td>
-                                                                    }
+                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
                                                                 }
                                                                 else
                                                                 {
-                                                                    <td></td>
+                                                                    <td>No Resume</td>
                                                                 }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
 
 
 
 
-                                                                <td class="text-center">@item.TotalInvites</td>
-                                                                <td class="text-center">@item.InviteConfirmation</td>
+                                                            <td class="text-center">@item.TotalInvites</td>
+                                                            <td class="text-center">@item.InviteConfirmation</td>
 
-
+                                                            @if (ViewBag.Profile != "Client")
+                                                            {
                                                                 <td class="text-center" style="color:@joinabilityColor;">
                                                                     <b>@item.JoinabilityScore</b>
                                                                 </td>
                                                                 <td class="text-center" style="color:@selectabilityColor; ">
                                                                     <b>@item.SelectabilityScore</b>
                                                                 </td>
+                                                            }
 
 
 
@@ -292,10 +308,10 @@
                                                                             </button>
 
                                                                             @*<button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
-                                                                                    <span onclick="javascript:GetCandidateStatusList('@item.IRFId', '@item.CandidateMasterId', '@ViewBag.IRFName', '@item.Name');" title="Candidate Status List" class="mdc-fab__icon material-icons">
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg>
-                                                                                    </span>
-                                                                                </button>*@
+                            <span onclick="javascript:GetCandidateStatusList('@item.IRFId', '@item.CandidateMasterId', '@ViewBag.IRFName', '@item.Name');" title="Candidate Status List" class="mdc-fab__icon material-icons">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg>
+                            </span>
+                        </button>*@
 
                                                                         }
 
