@@ -685,13 +685,13 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") != null)
             {
                 var model = new IRFVm();
-                if(!string.IsNullOrEmpty(IntrviewerId))
+                if (!string.IsNullOrEmpty(IntrviewerId))
                 {
                     model.InterviewerId = IntrviewerId;
 
                 }
                 SetAddIRFProperties(model);
-                
+
                 return View(model);
             }
             else
@@ -715,7 +715,7 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        
+
                         string uploadedFileURL = string.Empty;
                         if (irfDetails.JDFile == null && (irfDetails.JDLink == null))
                         {
@@ -831,7 +831,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.InterviewerFromSearch = "";
                 ViewBag.InterviewerSkills = "";
             }
-            if(string.IsNullOrEmpty(model.Type))
+            if (string.IsNullOrEmpty(model.Type))
             {
                 model.Type = "B2B";
             }
@@ -1521,7 +1521,7 @@ namespace Risebird.Web.Controllers
                     var model = await _irfService.GetEditIRF(id);
                     model.IsClone = isClone;
                     SetEditIRFProperties(model);
-                    
+
                     return View(model);
                 }
                 else
@@ -1739,7 +1739,7 @@ namespace Risebird.Web.Controllers
             var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
                                 select new { ID = (int)s, Name = s.GetDescription() };
             model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
-            
+
             var emailid = HttpContext.Session.GetString("email")?.Trim();
             emailid = emailid.Replace("\"", "");
             model.LoggedEmail = emailid;
@@ -5123,7 +5123,7 @@ namespace Risebird.Web.Controllers
                 {
                     foreach (var item in model)
                     {
-                        Sheet.Cells[i, 1].Value = item.ScheduleStatus.Where(x => x.Status.ToUpper() == "ADDED").FirstOrDefault().ActualDate.ToString("MM/dd/yyyy HH:mm");
+                        Sheet.Cells[i, 1].Value = item.ScheduleStatus.Where(x => x.Status.ToUpper() == "ADDED").FirstOrDefault() != null ? item.ScheduleStatus.Where(x => x.Status.ToUpper() == "ADDED").FirstOrDefault().ActualDate.ToString("MM/dd/yyyy HH:mm") : "";
                         Sheet.Cells[i, 2].Value = item.CandidateName;
                         Sheet.Cells[i, 3].Value = item.CandidateEmailId;
                         Sheet.Cells[i, 4].Value = item.PrimarySkill;
