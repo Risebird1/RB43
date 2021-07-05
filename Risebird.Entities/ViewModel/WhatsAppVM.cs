@@ -33,6 +33,9 @@ namespace Risebird.Entities.ViewModel
         public string interviewer { get; set; }
         public string EmailId { get; set; }
         public DateTime interviewDate { get; set; }
+        public string ClientName { get; set; }
+        public string CalendlyLink { get; set; }
+        public string JDTiltle { get; set; }
     }
 }
 
