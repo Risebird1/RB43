@@ -25,9 +25,10 @@ namespace Risebird.Business
         private readonly IConfiguration _configuration;
         private readonly IActivityTrackerRepository _activityTrackerRepository;
         private readonly IWhatsAppHelper _whatsAppHelper;
+        private readonly ITwilioHelper _twilioHelper;
 
         public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,
-            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper)
+            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, ITwilioHelper twilioHelper)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -36,6 +37,7 @@ namespace Risebird.Business
             _configuration = configuration;
             _activityTrackerRepository = activityTrackerRepository;
             _whatsAppHelper = whatsAppHelper;
+            _twilioHelper = twilioHelper;
         }
 
         #region IRF Functions
@@ -1059,6 +1061,17 @@ namespace Risebird.Business
                     }
                     _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
 
+
+                    try
+                    {
+                        await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, loggedUserEmailId);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+
                     //add candidate status
                     await AddCandidateStatus(loggedUserEmailId, candidate.CandidateMasterId, irfId, "Invitation sent", (int)CandidateStatusOptions.InvitationSent);
 
@@ -1873,6 +1886,18 @@ namespace Risebird.Business
                                    {
                                        data.Rows[index][1] = row.ItemArray[1].ToString() + "(Failed to send invite)";
 
+                                   }
+
+                                   //auto call candidate here
+                                   try
+                                   {
+                                       _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, emailId);
+
+                                   }
+                                   catch (Exception ex)
+                                   {
+                                       _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                       return;
                                    }
 
 
