@@ -2757,6 +2757,7 @@ namespace Risebird.Web.Controllers
             }
             return View(model);
         }
+        [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> CancelInterviewProcess(int id, string CandidateEmail)
         {
