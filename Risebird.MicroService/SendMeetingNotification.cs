@@ -121,7 +121,7 @@ namespace Risebird.MicroService
                         var resultset1 = _notificationHelper.AppologyNotificationToCandidate(_mail1, item.candidateName);
 
                         WhatsAppVM _whatsAppVMC = new WhatsAppVM();
-                        _whatsAppVMC.Emailid = item.candidateEmail + ";" + CCEmails;
+                        _whatsAppVMC.Emailid = item.candidateEmail;
                         _whatsAppVMC.UserName = item.candidateName;
                         _whatsAppVMC.Event = "Apology Notification";
                         _whatsAppHelper.WhatsAppSendApology(_whatsAppVMC);
