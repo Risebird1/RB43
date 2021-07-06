@@ -146,7 +146,7 @@ namespace Risebird.MicroService
                         };
                         var resultset = _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.CalendlyLink, item.candidateName);
                         WhatsAppVM _whatsapp = new WhatsAppVM();
-                        _whatsapp.Emailid = item.candidateEmail + ";" + CCEmails;
+                        _whatsapp.Emailid = item.candidateEmail;
                         _whatsapp.Event = "Interview Reschedule";
                         _whatsapp.buttonlink = !String.IsNullOrEmpty(item.CalendlyLink) ? item.CalendlyLink.Replace("https://calendly.com/", "") : "";
                         _whatsAppHelper.WhatsAppSendReScheduling(_whatsapp);
