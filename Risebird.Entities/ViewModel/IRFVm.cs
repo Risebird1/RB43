@@ -136,6 +136,8 @@ namespace Risebird.Entities.ViewModel
         public IList<TransEmergencyInterviewer> OldEmergencyInterviewerCollection { get; set; }
         public IList<TransSkill> OldSkillCollection { get; set; }
         public string InterviewerId { get; set; }
+        public bool isDuplicateEntries { get; set; }
+        public string OldCompanyDetails { get; set; }
 
     }
     public class InterviewerIds

@@ -1521,7 +1521,10 @@ namespace Risebird.Web.Controllers
                     var model = await _irfService.GetEditIRF(id);
                     model.IsClone = isClone;
                     SetEditIRFProperties(model);
-
+                    //TempData["JDLink"] = model.JDLink;
+                    model.OldJDLink = model.JDLink;
+                    //TempData["ComapanyDetails"] = model.CompanyDetails;
+                    model.OldCompanyDetails = model.CompanyDetails;
                     return View(model);
                 }
                 else
@@ -1583,8 +1586,17 @@ namespace Risebird.Web.Controllers
 
                         if (isDuplicate)
                         {
+                            model.isDuplicateEntries = isDuplicate;
                             SetEditIRFProperties(model);
                             return View("EditIRF", model);
+                        }
+                        if (!model.IsClone)
+                        {
+                            model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                        }
+                        else
+                        {
+                            model.id = 0;
                         }
                         if ((model.JDFile != null))
                         {
@@ -1604,7 +1616,7 @@ namespace Risebird.Web.Controllers
                         }
                         else if (model.JDLink == null || model.JDLink == "")
                         {
-                            model.JDLink = TempData["JDLink"]?.ToString();
+                            model.JDLink = model.OldJDLink;
                         }
                         if ((model.CompanyDetailFile != null))
                         {
@@ -1624,9 +1636,13 @@ namespace Risebird.Web.Controllers
                         }
                         else if (model.CompanyDetails == null || model.CompanyDetails == "")
                         {
-                            model.CompanyDetails = TempData["ComapanyDetails"]?.ToString();
+                            model.CompanyDetails = model.OldCompanyDetails;
                         }
-                        if (TempData["EditIRFId"] != null && (TempData["EditIRFId"].ToString() != model.IRFId))
+                        //if (TempData["EditIRFId"] != null && (TempData["EditIRFId"].ToString() != model.IRFId))
+                        //{
+                           
+                        //}
+                        if(model.IsClone && !string.IsNullOrEmpty(model.IRFId))
                         {
                             if (!(_irfService.CheckUniqueness(model.IRFId)))
                             {
@@ -1644,7 +1660,6 @@ namespace Risebird.Web.Controllers
                                 TempData["SuccessErrorMessage"] = "Skills Channel edits were not saved.";
                                 return RedirectToAction("Index");
                             }
-
                         }
                         else
                         {
@@ -1758,10 +1773,9 @@ namespace Risebird.Web.Controllers
             {
                 model.InterviewerMembers = new List<IRFInterviewerMembers>();
             }
-            model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
-            TempData["JDLink"] = model.JDLink;
-            TempData["ComapanyDetails"] = model.CompanyDetails;
-            TempData["EditIRFId"] = model.IRFId;
+            
+            
+            //TempData["EditIRFId"] = model.IRFId;
             //model.IsClone = isClone;
             return;
         }
