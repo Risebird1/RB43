@@ -4640,11 +4640,37 @@ button.btn {
         right: 10px !important;
     }
 }
+@media only screen and (max-width: 1920px) {
+    .allmeeting .candidate-details {
+        width: 25%
+    }
 
+    .allmeeting .candidate-client {
+        width: 17%
+    }
+
+    .rejectedmeeting .candidate-client {
+        width: 25%
+    }
+
+    .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details {
+        width: 30%
+    }
+}
 @media only screen and (max-width: 1400px) {
    /* table.journey td.cadName, table.journey td.cadEmail {
         max-width: 120px;
     }*/
+    .allmeeting .candidate-details, .rejectedmeeting .candidate-details {
+        width: 35%
+    }
+    .allmeeting .candidate-client {
+        width: 17%
+    }
+    .selectedmeeting .candidate-details{
+        width: 30%
+    }
+
     .cjd {
         width: 100px;
         white-space: nowrap;
@@ -4675,7 +4701,7 @@ button.btn {
         right: 0px !important;
     }
     .hrname {
-        width: 123px;
+        width: 290px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -4684,10 +4710,20 @@ button.btn {
         position: relative;
     }
     .allmeeting .table > tbody > tr > td {
-        padding: 12px 2px;
+        padding: 5px 5px!important;
     }
     .allmeeting .cname {
         width: 127px;
+    }
+
+    .clname {
+        width: 185px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
     }
     .cname {
         width: 170px;
@@ -4697,6 +4733,9 @@ button.btn {
         display: inline-block;
         top: 7px;
         position: relative;
+    }
+    .rejectedmeeting .s_cname{
+        width:280px;
     }
     .s_cname {
         width: 236px;
@@ -5512,7 +5551,9 @@ input[type='radio'] {
     margin-top: 20px;
 }
 
-
+.mtop-5 {
+    margin-top: 5px;
+}
 
 
 .mdc-radio .mdc-radio__native-control:enabled:not(:checked) + .mdc-radio__background .mdc-radio__outer-circle {
