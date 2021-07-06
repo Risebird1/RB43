@@ -70,7 +70,7 @@ namespace Risebird.MicroService
                             };
                             var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer", item.candidateName, item.interviewDate.ToString());
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                            _whatsAppVM.Emailid = item.candidateEmail;
+                            _whatsAppVM.Emailid = item.candidateEmail + ";" + CCEmails;
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString();
                             _whatsAppVM.buttonlink = !String.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";
                             _whatsAppVM.Event = "Interviewer Waiting";
@@ -86,7 +86,7 @@ namespace Risebird.MicroService
                             };
                             var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate", item.candidateName, "");
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                            _whatsAppVM.Emailid = item.interviewer;
+                            _whatsAppVM.Emailid = item.interviewer + ";" + CCEmails;
                             _whatsAppVM.buttonlink = !String.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString();
                             _whatsAppVM.UserName = item.candidateName;
@@ -121,7 +121,7 @@ namespace Risebird.MicroService
                         var resultset1 = _notificationHelper.AppologyNotificationToCandidate(_mail1, item.candidateName);
 
                         WhatsAppVM _whatsAppVMC = new WhatsAppVM();
-                        _whatsAppVMC.Emailid = item.candidateEmail;
+                        _whatsAppVMC.Emailid = item.candidateEmail + ";" + CCEmails;
                         _whatsAppVMC.UserName = item.candidateName;
                         _whatsAppVMC.Event = "Apology Notification";
                         _whatsAppHelper.WhatsAppSendApology(_whatsAppVMC);
@@ -146,7 +146,7 @@ namespace Risebird.MicroService
                         };
                         var resultset = _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.CalendlyLink, item.candidateName);
                         WhatsAppVM _whatsapp = new WhatsAppVM();
-                        _whatsapp.Emailid = item.candidateEmail;
+                        _whatsapp.Emailid = item.candidateEmail + ";" + CCEmails;
                         _whatsapp.Event = "Interview Reschedule";
                         _whatsapp.buttonlink = !String.IsNullOrEmpty(item.CalendlyLink) ? item.CalendlyLink.Replace("https://calendly.com/", "") : "";
                         _whatsAppHelper.WhatsAppSendReScheduling(_whatsapp);
