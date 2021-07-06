@@ -3079,6 +3079,7 @@ namespace Risebird.Web.Controllers
                 model.Emailid = emailid;
                 model.Interviewid = imid;
                 var result = await _meetingService.SaveRatingDetails(model);
+                //Send Mail and WhatsApp
                 return Json(result);
             }
             else
