@@ -506,13 +506,13 @@
                                                                         {
                                                                             @if (item.IsHrOnline == 1)
                                                                             {
-                                                                                <td>
+                                                                                <td class="candidate-client">
                                                                                     <a data-tooltip="@item.ClientHrContact" onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span><span class="cname">@item.ClientHrContact</span></a>
                                                                                 </td>
                                                                             }
                                                                             else
                                                                             {
-                                                                                <td>
+                                                                                <td class="candidate-client">
                                                                                     <a onclick=""><span class="dot"></span><span class="cname">@item.ClientHrContact </span></a>
                                                                                 </td>
                                                                             }
