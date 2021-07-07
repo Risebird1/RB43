@@ -368,7 +368,6 @@ namespace Risebird.CommonHelper
             try
             {
                 var Emailid = _whatsAppVM.Emailid.Split(";");
-                var username = _whatsAppVM.UserName;
                 foreach (var item in Emailid)
                 {
                     var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
@@ -377,7 +376,6 @@ namespace Risebird.CommonHelper
                         var name = _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
                         WhatsAppTrackUser(_whatsAppVM);
-                        _whatsAppVM.UserName = username;
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
