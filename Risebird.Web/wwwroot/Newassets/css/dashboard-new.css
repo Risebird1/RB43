@@ -4716,11 +4716,11 @@ button.btn {
         max-width: 120px;
     }*/
     .allmeeting .candidate-details, .rejectedmeeting .candidate-details {
-        width: 35%
+        width: 36%
     }
 
     .allmeeting .candidate-client {
-        width: 17%
+        width: 18%
     }
 
     .selectedmeeting .candidate-details {
@@ -4769,7 +4769,7 @@ button.btn {
     }
 
     .allmeeting .table > tbody > tr > td {
-        padding: 5px 5px !important;
+        padding: 5px 2px !important;
     }
 
     .allmeeting .cname {
@@ -4777,7 +4777,7 @@ button.btn {
     }
 
     .clname {
-        width: 185px;
+        width: 209px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
