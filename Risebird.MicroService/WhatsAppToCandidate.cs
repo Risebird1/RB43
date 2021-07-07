@@ -39,7 +39,7 @@ namespace Risebird.MicroService
             {
                 var Emails = new List<CandidateDetailsForWhatsApp>();
                 var str = _connection;
-                var query = "select im.id,candidateEmail,interviewDate,Irf.JDTiltle as JobTitle,cl.Name as ClientName from InterviewMeetings im left join IRF on im.IRFID=irf.irfid left join Client cl on cl.id=irf.ClientId where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1";
+                var query = "select distinct im.id,candidateEmail,interviewDate,Irf.JDTiltle as JobTitle,cl.Name as ClientName from InterviewMeetings im left join IRF on im.IRFID=irf.irfid left join Client cl on cl.id=irf.ClientId where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@timeL", DateTime.Now.AddMinutes(115));
                 dynamicParameters.Add("@timeH", DateTime.Now.AddMinutes(125));
