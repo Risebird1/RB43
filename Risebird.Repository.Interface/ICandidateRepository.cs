@@ -14,5 +14,6 @@ namespace Risebird.Repository.Interface
         Task<CandidateDetailsForWhatsApp> FetchInterviewDetails(int interviewid);
         Task<string> CancelInterviewDetails(int interviewid, string CandidateEmail);
         Task<InterviewUsersDetails> FetchChannelOwnerandInterviewer(int interviewid);
+        Task<InterviewUsersDetails> FetchInterviewerDetails(int interviewid);
     }
 }
