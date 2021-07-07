@@ -242,6 +242,10 @@ namespace Risebird.CommonHelper
                         }
                         _whatsAppVM.UserName = name;
                         WhatsAppTrackUser(_whatsAppVM);
+                        if (_whatsAppVM.Event.Contains("Interviewer"))
+                        {
+                            name = _whatsAppVM.UserName;
+                        }
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");

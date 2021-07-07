@@ -72,6 +72,7 @@ namespace Risebird.MicroService
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.candidateEmail + ";" + CCEmails;
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString();
+                            _whatsAppVM.UserName = item.candidateName;
                             _whatsAppVM.buttonlink = !String.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";
                             _whatsAppVM.Event = "Interviewer Waiting";
                             _whatsAppHelper.WhatsAppSendInterviewWaiting(_whatsAppVM);
