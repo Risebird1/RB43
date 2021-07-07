@@ -472,7 +472,7 @@
                                                                 <th id="allinterview_7">Meeting Status</th>
                                                                 <th id="allinterview_8">Interview Status</th>
                                                                 <th id="allinterview_9">Report</th>
-                                                                <th id="allinterview_10">Video</th>
+                                                               
                                                             </tr>
                                                         </thead>
                                                         <tfoot>
@@ -485,7 +485,7 @@
                                                                 <th>Meeting Status</th>
                                                                 <th>Interview Status</th>
                                                                 <th>Report</th>
-                                                                <th>Video</th>
+                                                               
                                                             </tr>
                                                         </tfoot>
                                                         <tbody id="tblbodyPriority">
@@ -499,7 +499,7 @@
                                                             @foreach (var item in Model)
                                                             {
                                                                 <tr id="@item.imid" data-changes="1">
-                                                                    <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
+                                                                    <td style="width:10px;padding:5px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
                                                                     <td> @item.interviewDate </td>
 
                                                                     @if (item.candidateName != null && item.candidateName != "")
@@ -678,14 +678,7 @@
                                                                     {
                                                                         <td>No Report</td>
                                                                     }
-                                                                    @if ((item.MeetingStatus == 4) && item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                                                                    {
-                                                                        <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <td>No Video</td>
-                                                                    }
+                                                                   
                                                                 </tr>
 
                                                                 <tr class="collapse @item.imid">
@@ -701,7 +694,7 @@
                                                                                 <th>Final Selection Status</th>
                                                                                 <th>Offer Status</th>
                                                                                 <th>Joining Status</th>
-
+                                                                                <th>Video</th>
 
                                                                             </tr>
 
@@ -773,7 +766,14 @@
                                                                                 {
                                                                                     <td>No document</td>
                                                                                 }
-
+                                                                                @if ((item.MeetingStatus == 4) && item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                                                {
+                                                                                    <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td>No Video</td>
+                                                                                }
 
                                                                             </tr>
                                                                         </table>
@@ -969,45 +969,9 @@
         }
         for (var i = 0; i < data.length; i++) {
             html += '  <tr id="' + data[i].imid + '" data-changes="1">';
-            html += ' <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
+            html += ' <td style="width:10px;padding:5px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
             html += ' <td> ' + new Date(data[i].interviewDate).toLocaleString()+ ' </td>';
-            //if (data[i].candidateName != null && data[i].candidateName != "") {
-            //    if (data[i].IsOnline == 1 && data[i].candidateName.length > 13) {
-            //        html += ' <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName+ '</a> </td>';
-            //    }
-            //    else {
-
-
-            //        if (data[i].candidateName.length > 13) {
-            //            html += ' <td><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span><span class="cname"> ' + data[i].candidateName+ '</span></a> </td>';
-            //        }
-            //        else {
-            //            html += ' <td><span class="cname">' + data[i].candidateName + '</span> </td>';
-            //        }
-
-            //    }
-            //}
-            //else {
-            //    html += '<td></td>';
-            //}
-
-            //if (data[i].candidateEmail != null && data[i].candidateEmail != "") {
-            //    if (data[i].candidateEmail.length > 15) {
-            //        html += '<td title="' + + data[i].candidateEmail + '"><span class="cname">' + data[i].candidateEmail+ '</span></td>';
-            //    } else {
-            //        html += '<td><span class="cname">' + data[i].candidateEmail + '</span></td>';
-            //    }
-
-            //}
-            //else { html += '<td></td>';}
-            //if (data[i].jdTiltle.split("|")[0] != null && data[i].jdTiltle.split("|")[0] != "") {
-            //    if (data[i].jdTiltle.split("|")[0].length > 18) {
-            //        html += '<td title="' + + data[i].jdTiltle.split("|")[0] + '"><span class="cjd">' + data[i].jdTiltle.split("|")[0]+ '</span></td>';
-            //    } else {
-            //        html += '<td><span class="cjd">' + data[i].jdTiltle.split("|")[0] + '</td>';
-            //    }
-            //}
-            //else { html += '<td></td>'; }
+            
             if (data[i].candidateName != null && data[i].candidateName != "") {
 
                 if (data[i].IsOnline == 1) {
@@ -1110,12 +1074,7 @@
             } else {
                 html += '<td>No Report</td>';
             }
-            if (data[i].videoLink != null && data[i].videoLink != "" && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
-                html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>';
-            }
-            else {
-                html += '<td>No Video</td>';
-            }
+            
             html += '</tr>';
             html += '<tr class="collapse '+data[i].imid+'">';
             html += '<td colspan="999" class="child-section">';
@@ -1128,6 +1087,7 @@
             html += '<th>Final Selection Status</th>';
             html += '<th>Offer Status</th>';
             html += '<th>Joining Status</th></tr>';
+            html += '<th>Video</th>';
             html += '<tr>';
 
             if (data[i].zoomLink != null && data[i].zoomLink != "") {
@@ -1162,6 +1122,12 @@
                 html += '<td>' + data[i].joiningStatusStatDesc + '</td>';
             } else {
                 html += '<td>No document</td>';
+            }
+            if (data[i].videoLink != null && data[i].videoLink != "" && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
+                html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>';
+            }
+            else {
+                html += '<td>No Video</td>';
             }
             html += '</tr>';
             html += '</table>';
