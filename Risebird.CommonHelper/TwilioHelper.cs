@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using System;
@@ -19,7 +20,10 @@ namespace Risebird.CommonHelper
         private readonly string _twilioSMSNumber = string.Empty;
         private readonly string _twilioWhatsappSender = string.Empty;
         private readonly string _twilioCallerNumber = string.Empty;
+        private readonly string _twilioAuthToken = string.Empty;
+        private readonly string _twilioAccountSID = string.Empty;
         private readonly TwilioRestClient _twilioClient;
+        private readonly IIRFService _irfService;
 
         public TwilioHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
         {
@@ -29,9 +33,9 @@ namespace Risebird.CommonHelper
             _twilioSMSNumber = _configuration["TwilioSettings:SmsSENDER"];
             _twilioWhatsappSender = _configuration["TwilioSettings:WhatsappSENDER"];
             _twilioCallerNumber = _configuration["TwilioSettings:CallerNumber"];
-            var twilioAccountSID = _configuration["TwilioSettings:ACCOUNT_SID"];
-            var twilioAuthToken = _configuration["TwilioSettings:AUTH_TOKEN"];
-            _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
+            _twilioAuthToken = _configuration["TwilioSettings:AUTH_TOKEN"];
+            _twilioAccountSID = _configuration["TwilioSettings:ACCOUNT_SID"];
+            _twilioClient = new TwilioRestClient(_twilioAccountSID, _twilioAuthToken);
         }
 
 
@@ -117,6 +121,44 @@ namespace Risebird.CommonHelper
             }
         }
 
+        public async Task<bool> AutoCallCandidate(string phoneNumber, int irfId, int candidateId, string loggedInEmail)
+        {
+            try
+            {
+                var link = string.Format("https://portal.risebird.io/TwilioVoice/Index?irfId={0}", irfId.ToString());
+                var url = new Uri(link);
+                TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
+                var to = new PhoneNumber(phoneNumber);
+                var from = new PhoneNumber(_twilioCallerNumber);
+
+                var call = await CallResource.CreateAsync(
+                    to: to,
+                    from: from,
+                    url: url);
+
+                if (call.Status != null)
+                {
+                    var result = call.Status.ToString();
+                    if (result != CallResource.StatusEnum.Failed.ToString())
+                    {
+                        await _irfService.AddCandidateStatus(loggedInEmail, candidateId, irfId, "Placed a reminder call", (int)CandidateStatusOptions.ReminderCall);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                return false;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
 
     }
 }

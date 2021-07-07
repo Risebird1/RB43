@@ -168,7 +168,30 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select im.interviewer,ul.EmailId,im.interviewDate from InterviewMeetings im join IRF on im.IRFId=irf.IRFId left join Userlist ul on ul.id=irf.RisebirdHr where im.id=@interviewid and confirmationStatus=2";
+                var query = "Select im.interviewer,ul.EmailId,im.interviewDate,Cl.Name as ClientName,IRF.CalendlyLink,IRF.JDTiltle from InterviewMeetings im join IRF left join Client cl on IRF.ClientId=cl.id on im.IRFId=irf.IRFId left join Userlist ul on ul.id=irf.RisebirdHr where im.id=@interviewid and confirmationStatus=2";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<InterviewUsersDetails>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<InterviewUsersDetails> FetchInterviewerDetails(int interviewid)
+        {
+            try
+            {
+                var query = "Select im.interviewer,ul.EmailId,im.interviewDate,Cl.Name as ClientName,IRF.CalendlyLink,IRF.JDTiltle,(Isnull(uli.FirstName,'')+Isnull(uli.LastName,'')) as CandidateName from InterviewMeetings im join IRF left join Client cl on IRF.ClientId=cl.id on im.IRFId=irf.IRFId left join Userlist ul on ul.id=irf.RisebirdHr left join Userlist uli on uli.EmailId=im.candidateEmail  where im.id=@interviewid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@interviewid", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))

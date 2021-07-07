@@ -34,10 +34,11 @@ namespace Risebird.Web.Controllers
         private readonly IUserService _userService;
         private readonly IIRFRepository _iRFRepository;
         private readonly INotificationHelper _notificationHelper;
+        private readonly IWhatsAppHelper _whatsAppHelper;
 
         //private static string Searchvalue;
 
-        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper)
+        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -48,6 +49,7 @@ namespace Risebird.Web.Controllers
             _userService = userService;
             _iRFRepository = iRFRepository;
             _notificationHelper = notificationHelper;
+            _whatsAppHelper = whatsAppHelper;
         }
         public async Task<IActionResult> CandidateTimeline()
         {
@@ -2755,6 +2757,7 @@ namespace Risebird.Web.Controllers
             }
             return View(model);
         }
+        [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> CancelInterviewProcess(int id, string CandidateEmail)
         {
@@ -2772,6 +2775,15 @@ namespace Risebird.Web.Controllers
                     interviewers.Add(result.EmailId);
                 }
                 _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString());
+                //WhatsApp Send
+                WhatsAppVM _whatsapp = new WhatsAppVM();
+                _whatsapp.Emailid = CandidateEmail;
+                _whatsapp.Event = "Interview Reschedule Send";
+                _whatsapp.InterviewDate = result.interviewDate.ToString();
+                _whatsapp.Header = result.ClientName;
+                _whatsapp.MessageValue = result.JDTiltle;
+                _whatsapp.buttonlink = !String.IsNullOrEmpty(result.CalendlyLink) ? result.CalendlyLink.Replace("https://calendly.com/", "") : "";
+                _whatsAppHelper.WhatsAppSendCancleReScheduling(_whatsapp);
             }
             return Json(model);
         }

@@ -1287,6 +1287,7 @@
                             @Html.HiddenFor(m => m.OldAssessmentGroupId)
                             @Html.HiddenFor(m => m.OldCalendlyLink)
                             @Html.HiddenFor(m => m.OldJDLink)
+                            @Html.HiddenFor(m => m.OldCompanyDetails)
                             @Html.HiddenFor(m => m.ResourceUrl)
                             @Html.HiddenFor(m => m.IsClone)
                             @if (Model.OldInterviewerCollection != null)
@@ -2007,7 +2008,7 @@
 <script>
     $(document).ready(function () {
 
-        if ('@Model.IsClone'=='True') {
+        if ('@Model.IsClone'=='True' && '@Model.isDuplicateEntries' == 'False') {
             document.getElementById("IRFId").value = '';
             document.getElementById("CalendlyLink").value = '';
             document.getElementById("JDTiltle").value = '';
@@ -2021,7 +2022,9 @@
             document.getElementById("TotalBudget").value = '';
             document.getElementById("PrimarySkillInvite").value = '';
 
-
+        }
+        if ('@Model.IsClone' == 'True')
+        {
             var jdLinkElement = document.getElementById("JDLink");
             if (jdLinkElement != null) {
                 jdLinkElement.value = '';
@@ -2039,8 +2042,6 @@
             if (companyDetLinkElement != null) {
                 companyDetLinkElement.value = '';
             }
-
-
         }
 
         var inputs = document.getElementsByTagName("input");

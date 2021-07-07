@@ -27,12 +27,18 @@ namespace Risebird.Entities.ViewModel
         public int id { get; set; }
         public DateTime interviewDate { get; set; }
         public string CandidateName { get; set; }
+        public string ClientName { get; set; }
+        public string JobTitle { get; set; }
     }
     public class InterviewUsersDetails
     {
         public string interviewer { get; set; }
         public string EmailId { get; set; }
         public DateTime interviewDate { get; set; }
+        public string ClientName { get; set; }
+        public string CalendlyLink { get; set; }
+        public string JDTiltle { get; set; }
+        public string CandidateName { get; set; }
     }
 }
 

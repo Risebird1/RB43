@@ -94,17 +94,14 @@ namespace Risebird.Web.Controllers
                                 var Assessmentgroups = String.Empty;
                                 foreach (var groups in item.AssessmentGroupId.Split(","))
                                 {
-                                    if (!string.IsNullOrEmpty(groups) && !string.IsNullOrWhiteSpace(groups))
+                                    int assesmsnetid = Convert.ToInt32(groups);
+                                    if (String.IsNullOrEmpty(Assessmentgroups))
                                     {
-                                        int assesmsnetid = Convert.ToInt32(groups);
-                                        if (String.IsNullOrEmpty(Assessmentgroups))
-                                        {
-                                            Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
-                                        }
-                                        else
-                                        {
-                                            Assessmentgroups = Assessmentgroups + " , " + AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
-                                        }
+                                        Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                                    }
+                                    else
+                                    {
+                                        Assessmentgroups = Assessmentgroups + " , " + AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
                                     }
                                 }
                                 item.AssessmentGroupId = Assessmentgroups;
@@ -154,16 +151,22 @@ namespace Risebird.Web.Controllers
                                 item.Senioritylevel = Senioritylevelgroups;
                             }
                         }
-                        var Country = from Country s in Enum.GetValues(typeof(Country))
+                        var Country = from WorkCountry s in Enum.GetValues(typeof(WorkCountry))
                                       select new { ID = (int)s, Name = s.GetDescription() };
                         var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                            select new { ID = (int)s, Name = s.GetDescription() };
+                        var IndiaPrice = from IndiaPrice s in Enum.GetValues(typeof(IndiaPrice))
+                                         select new { ID = (int)s, Name = s.GetDescription() };
+                        var OutSideIndiaPrice = from OutSideIndiaPrice s in Enum.GetValues(typeof(OutSideIndiaPrice))
+                                                select new { ID = (int)s, Name = s.GetDescription() };
+                        var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                         select new { ID = (int)s, Name = s.GetDescription() };
                         //ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
                         ViewBag.Senioritylevel = Senioritylevel.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
-                        ViewBag.ProfileType = model.Where(x => x.ProfileType != "0").Select(x => x.ProfileType).Distinct();
+                        ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct();
                         ViewBag.CompentencyLevel = model.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
-                        ViewBag.IndianRate = model.OrderBy(x => x.PerHourRateIndia).Select(x => x.PerHourRateIndia).Distinct();
-                        ViewBag.OutSideIndiaRate = model.OrderBy(x => x.PerHourRateOutside).Select(x => x.PerHourRateOutside).Distinct();
+                        ViewBag.IndianRate = IndiaPrice.Select(x => x.Name).Distinct();
+                        ViewBag.OutSideIndiaRate = OutSideIndiaPrice.Select(x => x.Name).Distinct();
                         ViewBag.CompanyType = companyTypes.Select(x => x.Name).Distinct();
                         ViewBag.Country = Country.Select(x => x.Name).Distinct();
                         //ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
@@ -303,16 +306,23 @@ namespace Risebird.Web.Controllers
                                 item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
                             }
                         }
-                        var Country = from Country s in Enum.GetValues(typeof(Country))
+                        var Country = from WorkCountry s in Enum.GetValues(typeof(WorkCountry))
                                       select new { ID = (int)s, Name = s.GetDescription() };
                         var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                            select new { ID = (int)s, Name = s.GetDescription() };
                         //ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
+                        var IndiaPrice = from IndiaPrice s in Enum.GetValues(typeof(IndiaPrice))
+                                         select new { ID = (int)s, Name = s.GetDescription() };
+                        var OutSideIndiaPrice = from OutSideIndiaPrice s in Enum.GetValues(typeof(OutSideIndiaPrice))
+                                                select new { ID = (int)s, Name = s.GetDescription() };
+                        var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                         select new { ID = (int)s, Name = s.GetDescription() };
+                        //ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
                         ViewBag.Senioritylevel = Senioritylevel.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
-                        ViewBag.ProfileType = model.Where(x => x.ProfileType != "0").Select(x => x.ProfileType).Distinct();
+                        ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct();
                         ViewBag.CompentencyLevel = model.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
-                        ViewBag.IndianRate = model.OrderBy(x => x.PerHourRateIndia).Select(x => x.PerHourRateIndia).Distinct();
-                        ViewBag.OutSideIndiaRate = model.OrderBy(x => x.PerHourRateOutside).Select(x => x.PerHourRateOutside).Distinct();
+                        ViewBag.IndianRate = IndiaPrice.Select(x => x.Name).Distinct();
+                        ViewBag.OutSideIndiaRate = OutSideIndiaPrice.Select(x => x.Name).Distinct();
                         ViewBag.CompanyType = companyTypes.Select(x => x.Name).Distinct();
                         ViewBag.Country = Country.Select(x => x.Name).Distinct();
                         //ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
@@ -2493,7 +2503,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.OverallRating = 0;
                     if (modelData.Count() != 0)
                     {
-                        ViewBag.OverallRating = modelData.Select(x => x.StarRating).Average();
+                        ViewBag.OverallRating = Math.Round(modelData.Select(x => x.StarRating).Average(), 2);
                     }
                     return View(modelData);
                 }
