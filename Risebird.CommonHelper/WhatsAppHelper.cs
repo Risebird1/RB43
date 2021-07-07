@@ -105,6 +105,7 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         _whatsAppVM.UserName = name;
+                        _whatsAppVM.Emailid = item;
                         WhatsAppTrackUser(_whatsAppVM);
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
@@ -138,6 +139,7 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         _whatsAppVM.UserName = name;
+                        _whatsAppVM.Emailid = item;
                         WhatsAppTrackUser(_whatsAppVM);
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
@@ -172,6 +174,7 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         var username = _whatsAppVM.UserName;
                         _whatsAppVM.UserName = name;
+                        _whatsAppVM.Emailid = item;
                         WhatsAppTrackUser(_whatsAppVM);
                         _whatsAppVM.UserName = username;
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
@@ -206,6 +209,7 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         _whatsAppVM.UserName = name;
+                        _whatsAppVM.Emailid = item;
                         WhatsAppTrackUser(_whatsAppVM);
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
@@ -241,6 +245,7 @@ namespace Risebird.CommonHelper
                             name = _whatsAppVM.UserName;
                         }
                         _whatsAppVM.UserName = name;
+                        _whatsAppVM.Emailid = item;
                         WhatsAppTrackUser(_whatsAppVM);
                         if (_whatsAppVM.Event.Contains("Interviewer"))
                         {
@@ -280,6 +285,7 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         _whatsAppVM.UserName = name;
+                        _whatsAppVM.Emailid = item;
                         WhatsAppTrackUser(_whatsAppVM);
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
@@ -313,6 +319,7 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         _whatsAppVM.UserName = name;
+                        _whatsAppVM.Emailid = item;
                         WhatsAppTrackUser(_whatsAppVM);
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
@@ -345,6 +352,7 @@ namespace Risebird.CommonHelper
                     {
                         var name = _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
+                        _whatsAppVM.Emailid = item;
                         WhatsAppTrackUser(_whatsAppVM);
                         _whatsAppVM.UserName = username;
                         _whatsAppVM.CountryCode = "+91";
@@ -379,6 +387,7 @@ namespace Risebird.CommonHelper
                     {
                         var name = _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
+                        _whatsAppVM.Emailid = item;
                         WhatsAppTrackUser(_whatsAppVM);
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
