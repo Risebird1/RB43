@@ -151,7 +151,7 @@ namespace Risebird.Web.Controllers
                                 item.Senioritylevel = Senioritylevelgroups;
                             }
                         }
-                        var Country = from Country s in Enum.GetValues(typeof(Country))
+                        var Country = from WorkCountry s in Enum.GetValues(typeof(WorkCountry))
                                       select new { ID = (int)s, Name = s.GetDescription() };
                         var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                            select new { ID = (int)s, Name = s.GetDescription() };
@@ -300,7 +300,7 @@ namespace Risebird.Web.Controllers
                                 item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
                             }
                         }
-                        var Country = from Country s in Enum.GetValues(typeof(Country))
+                        var Country = from WorkCountry s in Enum.GetValues(typeof(WorkCountry))
                                       select new { ID = (int)s, Name = s.GetDescription() };
                         var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                            select new { ID = (int)s, Name = s.GetDescription() };
