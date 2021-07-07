@@ -767,7 +767,7 @@
                                             Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
                                         </div>
                                         <div class="col-sm-12 col-md-7 dataTables_paginate pull-right " id="divmeetingpages">
-                                            @Html.PagedListPager(Model, Page => Url.Action("AllMeetings", new { Page = Page }))
+                                            @Html.PagedListPager(Model, Page => Url.Action("RejectedMeetings", new { Page = Page }))
                                         </div>
                                     </div>
                                 </div>
