@@ -4702,153 +4702,113 @@ button.btn {
         width: 17%
     }
 
-    <<<<<<< HEAD
-    =======
-    @media only screen and (max-width: 1920px) {
-        .allmeeting .candidate-details
+    .rejectedmeeting .candidate-client {
+        width: 25%
+    }
 
-{
-    width: 25%
+    .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details {
+        width: 30%
+    }
 }
 
-.allmeeting .candidate-client {
-    width: 17%
-}
-
-> > > > > > > developmentMaster
-.rejectedmeeting .candidate-client {
-    width: 25%
-}
-
-.selectedmeeting .candidate-details, .rejectedmeeting .candidate-details {
-    width: 30%
-}
-
-}
-
-<<<<<<< HEAD
-======= > > > > > > > developmentMaster
 @media only screen and (max-width: 1400px) {
     /* table.journey td.cadName, table.journey td.cadEmail {
         max-width: 120px;
     }*/
-    .allmeeting .candidate-details, .rejectedmeeting .candidate-details
+    .allmeeting .candidate-details, .rejectedmeeting .candidate-details {
+        width: 36%
+    }
 
-{
-    width: 35%
-}
+    .allmeeting .candidate-client {
+        width: 18%
+    }
 
-<<<<<<< HEAD
-.allmeeting .candidate-client {
-    width: 17%
-}
+    .selectedmeeting .candidate-details {
+        width: 30%
+    }
 
-.selectedmeeting .candidate-details {
-    ======= .allmeeting .candidate-client
+    .cjd {
+        width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
+    }
 
-{
-    width: 17%
-}
+    table.journey td.cadSkill {
+        max-width: 150px;
+    }
 
-.selectedmeeting .candidate-details {
-    >>>>>>> developmentMaster width: 30%
-}
+    .candidate table.journey td.cadEmail {
+        /* max-width: 133px;*/
+    }
 
-.cjd {
-    width: 100px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
-    top: 7px;
-    position: relative;
-}
+    .intEmail {
+        width: 90px !important;
+    }
 
-table.journey td.cadSkill {
-    max-width: 150px;
-}
+    .intName {
+        width: 58px !important;
+    }
 
-.candidate table.journey td.cadEmail {
-    /* max-width: 133px;*/
-}
+    .rbpay .sb-scrollbar {
+        position: absolute;
+        right: 0px !important;
+    }
 
-.intEmail {
-    width: 90px !important;
-}
+    .hrname {
+        width: 290px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
+    }
 
-.intName {
-    width: 58px !important;
-}
+    .allmeeting .table > tbody > tr > td {
+        padding: 5px 2px !important;
+    }
 
-.rbpay .sb-scrollbar {
-    position: absolute;
-    right: 0px !important;
-}
+    .allmeeting .cname {
+        width: 127px;
+    }
 
-.hrname {
-    width: 290px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
-    top: 7px;
-    position: relative;
-}
+    .clname {
+        width: 209px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
+    }
 
-.allmeeting .table > tbody > tr > td {
-    <<<<<<< HEAD padding: 5px 5px !important;
-    ======= padding: 5px 5px !important;
-    >>>>>>> developmentMaster
-}
+    .cname {
+        width: 170px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
+    }
 
-.allmeeting .cname {
-    width: 127px;
-}
+    .rejectedmeeting .s_cname {
+        width: 280px;
+    }
 
-.clname {
-    width: 185px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
-    top: 7px;
-    position: relative;
-}
-
-<<<<<<< HEAD
-======= > > > > > > > developmentMaster
-.cname {
-    width: 170px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
-    top: 7px;
-    position: relative;
-}
-
-<<<<<<< HEAD
-.rejectedmeeting .s_cname {
-    width: 280px;
-}
-
-=======
-
-.rejectedmeeting .s_cname {
-    width: 280px;
-}
-
-> > > > > > > developmentMaster
-.s_cname {
-    width: 236px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
-    top: 7px;
-    position: relative;
-}
-
+    .s_cname {
+        width: 236px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
+    }
 }
 
 @media only screen and (max-width: 1024px) {
@@ -5866,7 +5826,6 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
 .has-warning .form-control-feedback {
     color: #1caf9a;
 }
-
 
 .has-warning .form-control {
     border-color: #1caf9a;
