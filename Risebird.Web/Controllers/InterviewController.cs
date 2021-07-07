@@ -1353,7 +1353,7 @@ namespace Risebird.Web.Controllers
                             return RedirectToAction("Index");
 
                         SetAddUpdateMeetingParameters(meetingToUpdate);
-                        
+
                         if (meetingToUpdate != null)
                         {
 
@@ -1467,7 +1467,7 @@ namespace Risebird.Web.Controllers
                             if (await _meetingService.UpdateMeeting(meetingUpdated))
                             {
                                 TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting has been updated successfully";
-                                return RedirectToAction("Edit", new { id = meetingUpdated.imid});
+                                return RedirectToAction("Edit", new { id = meetingUpdated.imid });
                             }
                             else
                             {
