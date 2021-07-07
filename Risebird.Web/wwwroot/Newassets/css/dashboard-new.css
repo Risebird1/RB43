@@ -4699,11 +4699,13 @@ button.btn {
     }
 
     .allmeeting .candidate-client {
-        width: 25%
+        width: 22%
     }
-
+    .selectedmeeting .candidate-client {
+        width: 22%
+    }
     .rejectedmeeting .candidate-client {
-        width: 25%
+        width: 22%
     }
 
     .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details {
