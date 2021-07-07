@@ -32,7 +32,9 @@ namespace Risebird.Web.Controllers
         private readonly IIRFRepository _iRFRepository;
         private readonly IUserRepository _userRepository;
         private readonly INotificationHelper _notificationHelper;
-        public RiseTubeController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, IUserRepository userRepository, INotificationHelper notificationHelper, IUserService userService)
+        private readonly ICandidateService _candidateService;
+
+        public RiseTubeController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, IUserRepository userRepository, INotificationHelper notificationHelper, IUserService userService, ICandidateService candidateService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -43,6 +45,7 @@ namespace Risebird.Web.Controllers
             _userRepository = userRepository;
             _notificationHelper = notificationHelper;
             _userService = userService;
+            _candidateService = candidateService;
         }
 
 
@@ -3080,6 +3083,7 @@ namespace Risebird.Web.Controllers
                 model.Interviewid = imid;
                 var result = await _meetingService.SaveRatingDetails(model);
                 //Send Mail and WhatsApp
+                var resultset = await _candidateService.FetchChannelOwnerandInterviewer(imid);
                 return Json(result);
             }
             else
