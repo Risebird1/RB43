@@ -119,6 +119,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<MeetingVM>> GetRiseTubeMeetingsByIRFId(int clientId, string Emailid, string irfId, DateTime startDate, DateTime endDate, string profileName = null)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetRiseTubeMeetingsByIRFId(clientId, Emailid, irfId, startDate, endDate, profileName);
+                return result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
         public async Task<List<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern, DateTime startDate, DateTime endDate, string profileName = null)
         {
