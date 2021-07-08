@@ -152,7 +152,10 @@
                                         <tr>
                                             <th id="cfeedback_4">Name</th>
                                             <th>Email</th>
-                                            <th>Interviewer</th>
+                                            @if (ViewBag.ProfileName != "Client")
+                                            {
+                                                <th>Interviewer</th>
+}
                                             <th id="cfeedback_5">JD Title</th>
                                             <th id='start' title="Overall, how would you rate the video interview experience?">Question1</th>
                                             <th title="How would you rate the evaluation process of interviewer?">Question2</th>
@@ -168,7 +171,10 @@
                                         <tr>
                                             <th>Name</th>
                                             <th>Email </th>
-                                            <th>Interviewer</th>
+                                            @if (ViewBag.ProfileName != "Client")
+                                            {
+                                                <th>Interviewer</th>
+}
                                             <th>JD Title</th>
                                             <th title="Overall, how would you rate the video interview experience?">Question1</th>
                                             <th title="How would you rate the evaluation process of interviewer?">Question2</th>
@@ -223,11 +229,15 @@
                                             {
                                                 <td></td>
                                             }
-                                            @if (item.IsClient)
-                                            {
-                                                <td>******</td>
-                                            }
-                                            else
+                                            @*@if (item.IsClient)
+        {
+            <td>******</td>
+        }
+        else
+        {
+
+        }*@
+                                            @if (ViewBag.ProfileName != "Client")
                                             {
                                                 <td>@item.interviewerEmail</td>
                                             }
@@ -244,17 +254,17 @@
                                                     <td class="text-left pl15">
                                                         <a onclick=""> @item.PrimarySkill</a>
                                                     </td>
-}
+                                                }
                                             }
                                             else
                                             {
                                                 <td></td>
-}
+                                            }
                                             <td>@item.Question1 out of 5</td>
                                             <td>@item.Question2 out of 5</td>
                                             @if (item.Question3 == "1")
                                             {
-                                                <td >
+                                                <td>
                                                     <div class="talk-bubble tri-right border-bubble right-in" style="width:150px;">
                                                         <div class="talktext">
                                                             <textarea>I am satisfied with the interviewer and evaluation process</textarea>
@@ -282,7 +292,7 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td  class="feedbackbubble">
+                                            <td class="feedbackbubble">
                                                 <div class="talk-bubble tri-right border-bubble right-in" style="width:150px;">
                                                     <div class="talktext">
                                                         <a href="#" data-tooltip="@item.Question5">  <textarea>@item.Question5</textarea></a>
