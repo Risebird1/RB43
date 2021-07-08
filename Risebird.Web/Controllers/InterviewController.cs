@@ -40,6 +40,8 @@ namespace Risebird.Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
+        private readonly IWhatsAppHelper _whatsAppHelper;
+
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
         //private static string Searchvalue;
@@ -47,7 +49,7 @@ namespace Risebird.Web.Controllers
 
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory, IUserRepository userRepository, IUserService userService)
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory, IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -62,7 +64,7 @@ namespace Risebird.Web.Controllers
             _userRepository = userRepository;
             _userService = userService;
             _httpClient = factory.GetHttpClient();
-
+            _whatsAppHelper = whatsAppHelper;
         }
 
 
@@ -5591,6 +5593,11 @@ namespace Risebird.Web.Controllers
                 Subject = "Risebird: Feedback form"
             };
             var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
+            WhatsAppVM _whatsAppVM = new WhatsAppVM();
+            _whatsAppVM.Emailid = CandidateEmail;
+            _whatsAppVM.buttonlink = !String.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
+            _whatsAppVM.Event = "Feedback Remainder";
+            _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
             if (emailsend == "Mail sent Successfully.")
             {
                 return Json("Feedback Form Send Successfully");

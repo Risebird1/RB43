@@ -935,14 +935,14 @@ namespace Risebird.Business
                     if (clientEmails != null && clientEmails.Any() && !string.IsNullOrEmpty(interviewStatus))
                     {
                         _notificationHelper.SendQCPassNotificationToClient(clientEmails.ToList(), comments.candidateEmail, comments.PrimarySkill, interviewStatus, comments.interviewDate.ToString("MMMM dd, yyyy"));
-                        WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                        _whatsAppVM.Emailid = string.Join(";", clientEmails.ToList());
-                        _whatsAppVM.InterviewDate = comments.PrimarySkill;
-                        _whatsAppVM.UserName = comments.candidateEmail;
-                        _whatsAppVM.Event = "ClientCandidateConfirmation";
-                        _whatsAppVM.MessageValue = interviewStatus;
-                        _whatsAppVM.buttonlink = "Risetube/VideoPage/" + comments.InterviewId;
-                        _whatsAppHelper.WhatsAppSendClientCandidateConfirmation(_whatsAppVM);
+                        //WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                        //_whatsAppVM.Emailid = string.Join(";", clientEmails.ToList());
+                        //_whatsAppVM.InterviewDate = comments.PrimarySkill;
+                        //_whatsAppVM.UserName = comments.candidateEmail;
+                        //_whatsAppVM.Event = "ClientCandidateConfirmation";
+                        //_whatsAppVM.MessageValue = interviewStatus;
+                        //_whatsAppVM.buttonlink = "Risetube/VideoPage/" + comments.InterviewId;
+                        //_whatsAppHelper.WhatsAppSendClientCandidateConfirmation(_whatsAppVM);
                     }
                 }
                 return result;
