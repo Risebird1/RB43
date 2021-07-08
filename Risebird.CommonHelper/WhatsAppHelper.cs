@@ -447,5 +447,39 @@ namespace Risebird.CommonHelper
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
+        public string WhatsAppSendFeedbackRemainder(WhatsAppVM _whatsAppVM)
+        {
+            try
+            {
+                var Emailid = _whatsAppVM.Emailid.Split(";");
+                foreach (var item in Emailid)
+                {
+                    var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
+                    if (!String.IsNullOrEmpty(WhatsAppnumber))
+                    {
+                        var name = _userService.FetchNameByEmail(item);
+                        _whatsAppVM.UserName = name;
+                        _whatsAppVM.Emailid = item;
+                        _whatsAppVM.CountryCode = "+91";
+                        _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
+                        WhatsAppTrackUser(_whatsAppVM);
+                        var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+                        client.Timeout = -1;
+                        var request = new RestRequest(Method.POST);
+                        request.AddHeader("Authorization", "Basic " + accesskey);
+                        request.AddHeader("Content-Type", "application/json");
+                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
+                        IRestResponse response = client.Execute(request);
+                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
+                    }
+                }
+                return "Message sent successfully.";
+            }
+            catch (Exception ex)
+            {
+                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to send message. Please check all fields and try again.";
+            }
+        }
     }
 }
