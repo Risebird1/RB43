@@ -497,7 +497,8 @@
                                                                 </tr>
                                                             }
                                                             @foreach (var item in Model)
-                                                            {  <tr id="@item.imid" data-changes="1">
+                                                            {
+                                                                <tr id="@item.imid" data-changes="1">
                                                                     <td style="width:10px;padding:5px!important;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
                                                                     <td> @item.interviewDate </td>
 
