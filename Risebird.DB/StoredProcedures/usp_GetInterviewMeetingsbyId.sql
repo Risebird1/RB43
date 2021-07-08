@@ -1,4 +1,4 @@
-  IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetInterviewMeetingsbyId'))
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetInterviewMeetingsbyId'))
 BEGIN
     DROP PROCEDURE dbo.usp_GetInterviewMeetingsbyId
 END

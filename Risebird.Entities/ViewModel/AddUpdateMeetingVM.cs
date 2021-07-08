@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -89,7 +87,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Notice Period")]
         public string joiningTime { get; set; }
-        
+
 
         [Display(Name = "Mobile Number")]
         // [RegularExpression("^[0-9]{1,12}$", ErrorMessage ="Please enter a valid Mobile Number.")]
@@ -99,8 +97,8 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Upload Resume")]
         //[Required]
         public IFormFile File { get; set; }
-        
-        
+
+
         [Display(Name = "Confirmation Status")]
         public SelectList ConfirmationStatusList { get; set; }
         [Display(Name = "Interview Slot")]
@@ -114,19 +112,19 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Emergency")]
 
         public bool IsEmergency { get; set; }
-       
+
 
         public string QCInterviewer { get; set; }
-       
+
 
         [Display(Name = "Co-ordinating HR")]
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
         ErrorMessage = "Please Enter Correct Email Address")]
         public string HRCoordinatorEmailId { get; set; }
-        
-       
+
+
         public long ZoomMeetingId { get; set; }
-        
+
         public string OldInterviewer { get; set; }
         public string OldQCInterviewer { get; set; }
         public string OldzoomLink { get; set; }
