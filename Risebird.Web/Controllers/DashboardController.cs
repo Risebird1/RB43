@@ -886,6 +886,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
+                        HttpContext.Session.Remove("UnassignedInterviewsFilters");
                         var modelList = new List<MeetingVM>();
                         if (actiontype == 1 && actionstatus == "UnAssignedCoordianter")
                         {
