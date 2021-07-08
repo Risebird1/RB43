@@ -24,7 +24,5 @@ where InterviewDate>@startdate and InterviewDate<@enddate and im.confirmationSta
         
 End   
       
-      
-End 
 GO
   
