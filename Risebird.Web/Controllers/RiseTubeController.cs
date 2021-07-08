@@ -400,7 +400,8 @@ namespace Risebird.Web.Controllers
                                 return View(model);
 
                             }
-                            modelList1 = await _meetingService.GetRiseTubeMeetingsByJD(ClientId, emailId, model.JDTiltle.Split("|")[0], DateTime.Now.AddDays(-14), DateTime.Now);
+                            //modelList1 = await _meetingService.GetRiseTubeMeetingsByJD(ClientId, emailId, model.JDTiltle.Split("|")[0], DateTime.Now.AddDays(-14), DateTime.Now);
+                            modelList1 = await _meetingService.GetRiseTubeMeetingsByIRFId(ClientId, emailId, model.IRFId, DateTime.Now.AddDays(-29), DateTime.Now);
 
                         }
                         else if (profileName == "CuratedUser")
@@ -409,7 +410,8 @@ namespace Risebird.Web.Controllers
                             if (String.IsNullOrEmpty(irfid))
                             {
                                 model = await _meetingService.GetMeetingbyid(id, emailId);
-                                modelList1 = await _meetingService.GetRiseTubeMeetingsByJD(ClientId, emailId, model.JDTiltle.Split("|")[0], DateTime.Now.AddDays(-14), DateTime.Now, profileName);
+                                //modelList1 = await _meetingService.GetRiseTubeMeetingsByJD(ClientId, emailId, model.JDTiltle.Split("|")[0], DateTime.Now.AddDays(-14), DateTime.Now, profileName);
+                                modelList1 = await _meetingService.GetRiseTubeMeetingsByIRFId(ClientId, emailId, model.IRFId, DateTime.Now.AddDays(-29), DateTime.Now, profileName);
 
                             }
 
@@ -458,7 +460,8 @@ namespace Risebird.Web.Controllers
                                 return View(model);
 
                             }
-                            modelList1 = await _meetingService.GetRiseTubeMeetingsByJD(0, emailId, model.JDTiltle.Split("|")[0], DateTime.Now.AddDays(-14), DateTime.Now);
+                            //modelList1 = await _meetingService.GetRiseTubeMeetingsByJD(0, emailId, model.JDTiltle.Split("|")[0], DateTime.Now.AddDays(-14), DateTime.Now);
+                            modelList1 = await _meetingService.GetRiseTubeMeetingsByIRFId(0, emailId, model.IRFId, DateTime.Now.AddDays(-29), DateTime.Now);
                         }
 
                         //Start:Save View counts of vedio
@@ -950,15 +953,17 @@ namespace Risebird.Web.Controllers
 
                         var modelList = new List<MeetingVM>();
                         MeetingVM model = await _meetingService.GetMeetingbyid(id, emailId);
-
+                        string irfId = model.IRFId;
                         if (isClientUser)
                         {
-                            modelList = await _meetingService.GetRiseTubeMeetingsByJD(ClientId, emailId, model.JDTiltle.Split("|")[0], filter.StartDate.Value, filter.EndDate.Value);
+                            //modelList = await _meetingService.GetRiseTubeMeetingsByJD(ClientId, emailId, model.JDTiltle.Split("|")[0], filter.StartDate.Value, filter.EndDate.Value);
+                            modelList = await _meetingService.GetRiseTubeMeetingsByIRFId(ClientId, emailId, irfId, filter.StartDate.Value, filter.EndDate.Value);
 
                         }
                         else if (profileName == "CuratedUser")
                         {
-                            modelList = await _meetingService.GetRiseTubeMeetingsByJD(ClientId, emailId, model.JDTiltle.Split("|")[0], filter.StartDate.Value, filter.EndDate.Value, profileName);
+                            //modelList = await _meetingService.GetRiseTubeMeetingsByJD(ClientId, emailId, model.JDTiltle.Split("|")[0], filter.StartDate.Value, filter.EndDate.Value, profileName);
+                            modelList = await _meetingService.GetRiseTubeMeetingsByIRFId(ClientId, emailId, irfId, filter.StartDate.Value, filter.EndDate.Value, profileName);
                         }
                         else if (profileName == "ExternalUser")
                         {
@@ -967,7 +972,8 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            modelList = await _meetingService.GetRiseTubeMeetingsByJD(0, emailId, model.JDTiltle.Split("|")[0], filter.StartDate.Value, filter.EndDate.Value);
+                            //modelList = await _meetingService.GetRiseTubeMeetingsByJD(0, emailId, model.JDTiltle.Split("|")[0], filter.StartDate.Value, filter.EndDate.Value);
+                            modelList = await _meetingService.GetRiseTubeMeetingsByIRFId(0, emailId, irfId, filter.StartDate.Value, filter.EndDate.Value);
                         }
 
                         if (profileName == "ExternalUser")

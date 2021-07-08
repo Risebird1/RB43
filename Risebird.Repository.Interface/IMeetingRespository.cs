@@ -173,5 +173,6 @@ namespace Risebird.Repository.Interface
         Task<InterviewerRating> FetchRatingDetails(int interviewId, string emailid);
         Task<string> SaveRatingDetails(InterviewerRating model);
         Task<AddUpdateMeetingVM> GetInterviewToUpdateMeetingById(int id);
+        Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsByIRFId(int clientId, string Emailid, string irfId, DateTime startDate, DateTime endDate, string profileName = null);
     }
 }
