@@ -55,6 +55,13 @@ namespace Risebird.MicroService
                     {
                         if (item.isInterviewerWaiting)
                         {
+                            WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                            _whatsAppVM.Emailid = item.candidateEmail + ";" + CCEmails;
+                            _whatsAppVM.InterviewDate = item.interviewDate.ToString();
+                            _whatsAppVM.UserName = item.candidateName;
+                            _whatsAppVM.buttonlink = !String.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";
+                            _whatsAppVM.Event = "Interviewer Waiting";
+                            _whatsAppHelper.WhatsAppSendInterviewWaiting(_whatsAppVM);
                             if (!String.IsNullOrEmpty(item.ClientHrContact))
                             {
                                 if (!CCEmails.Contains(item.ClientHrContact))
@@ -69,12 +76,7 @@ namespace Risebird.MicroService
                                 Subject = item.ClientName + " " + item.PrimarySkill + " Interview-  Interviewer is waiting for you. Please join immediately."
                             };
                             var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer", item.candidateName, item.interviewDate.ToString());
-                            WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                            _whatsAppVM.Emailid = item.candidateEmail + ";" + CCEmails;
-                            _whatsAppVM.InterviewDate = item.interviewDate.ToString();
-                            _whatsAppVM.buttonlink = !String.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";
-                            _whatsAppVM.Event = "Interviewer Waiting";
-                            _whatsAppHelper.WhatsAppSendInterviewWaiting(_whatsAppVM);
+
                         }
                         else
                         {

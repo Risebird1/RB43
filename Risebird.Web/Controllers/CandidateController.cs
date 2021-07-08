@@ -2757,6 +2757,7 @@ namespace Risebird.Web.Controllers
             }
             return View(model);
         }
+        [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> CancelInterviewProcess(int id, string CandidateEmail)
         {
@@ -2776,7 +2777,7 @@ namespace Risebird.Web.Controllers
                 _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString());
                 //WhatsApp Send
                 WhatsAppVM _whatsapp = new WhatsAppVM();
-                _whatsapp.Emailid = String.Join(";", interviewers);
+                _whatsapp.Emailid = CandidateEmail;
                 _whatsapp.Event = "Interview Reschedule Send";
                 _whatsapp.InterviewDate = result.interviewDate.ToString();
                 _whatsapp.Header = result.ClientName;

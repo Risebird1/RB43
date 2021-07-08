@@ -32,7 +32,10 @@ namespace Risebird.Web.Controllers
         private readonly IIRFRepository _iRFRepository;
         private readonly IUserRepository _userRepository;
         private readonly INotificationHelper _notificationHelper;
-        public RiseTubeController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, IUserRepository userRepository, INotificationHelper notificationHelper, IUserService userService)
+        private readonly ICandidateService _candidateService;
+        private readonly IWhatsAppHelper _whatsAppHelper;
+
+        public RiseTubeController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, IUserRepository userRepository, INotificationHelper notificationHelper, IUserService userService, ICandidateService candidateService, IWhatsAppHelper whatsAppHelper)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -43,6 +46,8 @@ namespace Risebird.Web.Controllers
             _userRepository = userRepository;
             _notificationHelper = notificationHelper;
             _userService = userService;
+            _candidateService = candidateService;
+            _whatsAppHelper = whatsAppHelper;
         }
 
 
@@ -3086,6 +3091,14 @@ namespace Risebird.Web.Controllers
                 model.Interviewid = imid;
                 var result = await _meetingService.SaveRatingDetails(model);
                 //Send Mail and WhatsApp
+                var resultset = await _candidateService.FetchInterviewerDetails(imid);
+                WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                _whatsAppVM.Emailid = resultset.interviewer;
+                _whatsAppVM.Event = "Client Rating";
+                _whatsAppVM.InterviewDate = resultset.interviewDate.ToString();
+                _whatsAppVM.UserName = resultset.CandidateName;
+                _whatsAppVM.MessageValue = rating.ToString();
+                _whatsAppHelper.WhatsAppSendRatingNotification(_whatsAppVM);
                 return Json(result);
             }
             else

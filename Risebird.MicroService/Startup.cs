@@ -47,6 +47,7 @@ namespace Risebird.MicroService
             builder.Services.AddScoped<IMeetingRespository, MeetingRespository>();
             builder.Services.AddScoped<IWhatsAppHelper, WhatsAppHelper>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
 
         }
 

@@ -8,9 +8,6 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Twilio;
-using Twilio.Rest.Api.V2010.Account;
-using Twilio.Types;
 
 namespace Risebird.Business
 {
@@ -150,6 +147,19 @@ namespace Risebird.Business
             try
             {
                 return await _candidateRepository.FetchChannelOwnerandInterviewer(interviewid);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<InterviewUsersDetails> FetchInterviewerDetails(int interviewid)
+        {
+            try
+            {
+                return await _candidateRepository.FetchInterviewerDetails(interviewid);
             }
 
             catch (Exception e)

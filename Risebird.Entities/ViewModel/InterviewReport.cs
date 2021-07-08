@@ -221,7 +221,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Years of Experience")]
         [Required(ErrorMessage = "This field is required.")]
         public string Yearsofexperience { get; set; }
-        
+
         public string[] YearsofexperienceArray { get; set; }
         public List<SelectListItem> YearsofexperienceList { get; set; }
 
@@ -327,7 +327,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Coded Resume Link")]
         public string CodedResumeLink { get; set; }
         [Display(Name = "Coded Resume File")]
-       
+
         public IFormFile CodedResumeFile { get; set; }
         public List<SelectListItem> AssessmentGroupList { get; set; }
         public string QuestionsListData { get; set; }

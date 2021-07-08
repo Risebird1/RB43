@@ -1353,7 +1353,7 @@ namespace Risebird.Web.Controllers
                             return RedirectToAction("Index");
 
                         SetAddUpdateMeetingParameters(meetingToUpdate);
-                        
+
                         if (meetingToUpdate != null)
                         {
 
@@ -1462,12 +1462,12 @@ namespace Risebird.Web.Controllers
 
                             meetingUpdated.candidateEmail = meetingUpdated.candidateEmail.ToLower();
                             meetingUpdated.LoggedInUser = emailId;
-                            meetingUpdated.ResourceUrl = Request.Scheme + "://" +Request.Host.Value +Request.Path ;
-                            
+                            meetingUpdated.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
+
                             if (await _meetingService.UpdateMeeting(meetingUpdated))
                             {
                                 TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting has been updated successfully";
-                                return RedirectToAction("Edit", new { id = meetingUpdated.imid});
+                                return RedirectToAction("Edit", new { id = meetingUpdated.imid });
                             }
                             else
                             {
@@ -1547,7 +1547,7 @@ namespace Risebird.Web.Controllers
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return new List<ChannelMembersForInterviewData>(); 
+                return new List<ChannelMembersForInterviewData>();
             }
         }
 
@@ -3387,7 +3387,7 @@ namespace Risebird.Web.Controllers
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
                 model.Userid = _iRFService.GetUserId(email, profileName);
-                if(model.Userid != 0)
+                if (model.Userid != 0)
                 {
                     GetStatusList(model, irfId, model.Userid);
                 }
@@ -3679,8 +3679,8 @@ namespace Risebird.Web.Controllers
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
             var questions = _meetingService.GetTechSkillComments(irfId, userId).Result;
-            model.QuestionsList = new SelectList( questions, "Comment", "Comment");
-            model.QuestionsListData = JsonConvert.SerializeObject(questions.Select(x=>(x.Comment.Replace("\r", "").Replace("\n",""), x.SkillName)));
+            model.QuestionsList = new SelectList(questions, "Comment", "Comment");
+            model.QuestionsListData = JsonConvert.SerializeObject(questions.Select(x => (x.Comment.Replace("\r", "").Replace("\n", ""), x.SkillName)));
         }
 
         //[Authorize]
