@@ -8,9 +8,6 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Twilio;
-using Twilio.Rest.Api.V2010.Account;
-using Twilio.Types;
 
 namespace Risebird.Business
 {
