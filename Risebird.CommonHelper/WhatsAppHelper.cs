@@ -241,19 +241,19 @@ namespace Risebird.CommonHelper
                     if (!String.IsNullOrEmpty(WhatsAppnumber))
                     {
                         var name = _userService.FetchNameByEmail(item);
+                        _whatsAppVM.UserName = name;
+                        _whatsAppVM.Emailid = item;
+                        _whatsAppVM.CountryCode = "+91";
+                        _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
+                        WhatsAppTrackUser(_whatsAppVM);
                         if (_whatsAppVM.Event.Contains("Candidate"))
                         {
                             name = _whatsAppVM.UserName;
                         }
-                        _whatsAppVM.UserName = name;
-                        _whatsAppVM.Emailid = item;
-                        WhatsAppTrackUser(_whatsAppVM);
                         if (_whatsAppVM.Event.Contains("Interviewer"))
                         {
                             name = Username;
                         }
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
                         var request = new RestRequest(Method.POST);
@@ -354,10 +354,10 @@ namespace Risebird.CommonHelper
                         var name = _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
-                        WhatsAppTrackUser(_whatsAppVM);
-                        _whatsAppVM.UserName = username;
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
+                        WhatsAppTrackUser(_whatsAppVM);
+                        _whatsAppVM.UserName = username;
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
                         var request = new RestRequest(Method.POST);
@@ -389,9 +389,9 @@ namespace Risebird.CommonHelper
                         var name = _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
-                        WhatsAppTrackUser(_whatsAppVM);
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
+                        WhatsAppTrackUser(_whatsAppVM);
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
                         var request = new RestRequest(Method.POST);
@@ -425,10 +425,10 @@ namespace Risebird.CommonHelper
                         var name = _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
-                        WhatsAppTrackUser(_whatsAppVM);
-                        _whatsAppVM.UserName = Username;
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
+                        WhatsAppTrackUser(_whatsAppVM);
+                        _whatsAppVM.UserName = Username;
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
                         var request = new RestRequest(Method.POST);
