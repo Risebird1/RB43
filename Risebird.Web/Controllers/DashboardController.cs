@@ -886,7 +886,8 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        HttpContext.Session.Remove("UnassignedInterviewsFilters");
+                        if (HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
+                            HttpContext.Session.Remove("UnassignedInterviewsFilters");
                         var modelList = new List<MeetingVM>();
                         if (actiontype == 1 && actionstatus == "UnAssignedCoordianter")
                         {
@@ -964,76 +965,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.PageHeader = "911 Dashboard / Missing Video Link";
 
                         }
-
-                        if (HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
-                        {
-                            var filter = JsonConvert.DeserializeObject<UnassignedInterviewsFilter>(HttpContext.Session.GetString("UnassignedInterviewsFilters"));
-                            if (actiontype == 1 && actionstatus == "UnAssignedCoordianter")
-                            {
-                                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                                var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
-                                var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
-                                var interviewerids = myInterview.Select(x => x.id).Distinct().ToList();
-                                if (interviewerids != null)
-                                {
-                                    foreach (var item in myInterview)
-                                    {
-                                        if (result.Where(x => x.interviewid == item.id).Count() == 0)
-                                        {
-                                            modelList.Add(new MeetingVM
-                                            {
-                                                IRFId = item.IRFID,
-                                                interviewDate = item.interviewDate,
-                                                candidateName = item.candidateName,
-                                                candidateEmail = item.candidateEmail,
-                                                imid = item.id,
-                                                interviewer = item.interviewer,
-                                                confirmationStatus = "1",
-                                                HRCoordinatorEmailId = emailid,
-                                                MeetingStatus = item.MeetingStatus,
-                                                InterviewStatus = item.InterviewStatus,
-                                            });
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype);
-                            }
-                            if (modelList == null)
-                            {
-                                modelList = new List<MeetingVM>();
-                            }
-                            if (filter.StartDate != null && filter.EndDate != null)
-                            {
-                                modelList = modelList.Where(x => x.interviewDate >= filter.StartDate && x.interviewDate <= filter.EndDate).ToList();
-                            }
-                            filter.Client = filter.Client == null ? filter.Client = modelList.Select(x => x.Name).ToArray() : filter.Client = filter.Client;
-                            filter.ClientHREmail = filter.ClientHREmail == null ? filter.ClientHREmail = modelList.Select(x => x.ClientHrContact).ToArray() : filter.ClientHREmail = filter.ClientHREmail;
-                            modelList = modelList.Where(c => (filter.Client.Count() > 0 ? filter.Client.Contains(c.Name) : c.Name == null)
-                            && (filter.ClientHREmail.Count() > 0 ? filter.ClientHREmail.Contains(c.ClientHrContact) : c.ClientHrContact == null)).ToList();
-
-                            modelList = modelList.Select(x =>
-                            {
-                                x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
-                                return x;
-                            }).ToList();
-                            modelList = modelList.Select(x =>
-                            {
-                                x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription();
-                                return x;
-                            }).ToList();
-                            modelList = modelList.Select(x =>
-                            {
-                                x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription();
-                                return x;
-                            }).ToList();
-                        }
-                        else
-                        {
-                            modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
-                        }
+                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
 
                         modelList = modelList.OrderBy(x => x.interviewDate).ToList();
                         return View(modelList);
