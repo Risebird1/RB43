@@ -241,15 +241,15 @@ namespace Risebird.CommonHelper
                     if (!String.IsNullOrEmpty(WhatsAppnumber))
                     {
                         var name = _userService.FetchNameByEmail(item);
-                        if (_whatsAppVM.Event.Contains("Candidate"))
-                        {
-                            name = _whatsAppVM.UserName;
-                        }
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         WhatsAppTrackUser(_whatsAppVM);
+                        if (_whatsAppVM.Event.Contains("Candidate"))
+                        {
+                            name = _whatsAppVM.UserName;
+                        }
                         if (_whatsAppVM.Event.Contains("Interviewer"))
                         {
                             name = Username;
