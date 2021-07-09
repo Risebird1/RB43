@@ -111,8 +111,6 @@
                                 </div>
                                 <div class="dataloading">
                                     <div class="toolbar">
-
-
                                     </div>
                                     <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                         <div class="modal-dialog modal-lg" role="document">
@@ -507,13 +505,13 @@
                                                                             @if (item.IsHrOnline == 1)
                                                                             {
                                                                                 <td class="candidate-client">
-                                                                                    <a data-tooltip="@item.ClientHrContact" onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span><span class="cname">@item.ClientHrContact</span></a>
+                                                                                    <a data-tooltip="@item.ClientHrContact" onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span><span class="s_cname">@item.ClientHrContact</span></a>
                                                                                 </td>
                                                                             }
                                                                             else
                                                                             {
                                                                                 <td class="candidate-client">
-                                                                                    <a onclick=""><span class="dot"></span><span class="cname">@item.ClientHrContact </span></a>
+                                                                                    <a onclick=""><span class="dot"></span><span class="s_cname">@item.ClientHrContact </span></a>
                                                                                 </td>
                                                                             }
                                                                         }
@@ -1456,6 +1454,7 @@
             searchResult();
         }
     }
+
     function bindtableData(data) {
 
         var html = '';
@@ -1483,7 +1482,7 @@
                     } else { } html += '</div></td>';
                 }
             }
-            else { html += '<td></td>'; } if (data[i].clientHrContact != null && data[i].clientHrContact != "") { if (data[i].isHrOnline == 1 && data[i].clientHrContact.length > 15) { html += '<td><a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span><span class="cname">' + data[i].clientHrContact + '</span> </a></td>'; } else { html += '<td><a onclick=""><span class="dot"></span><span class="cname">' + data[i].clientHrContact + ' </span></a></td>'; } }
+            else { html += '<td></td>'; } if (data[i].clientHrContact != null && data[i].clientHrContact != "") { if (data[i].isHrOnline == 1 && data[i].clientHrContact.length > 15) { html += '<td><a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span><span class="s_cname">' + data[i].clientHrContact + '</span> </a></td>'; } else { html += '<td><a onclick=""><span class="dot"></span><span class="s_cname">' + data[i].clientHrContact + ' </span></a></td>'; } }
             else { html += '<td></td>'; } if ((data[i].meetingStatus == 4) && data[i].videoLink != null && data[i].videoLink != "") { html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>'; } else { html += '<td>No Video</td>'; }
             html += '<td class="interview-com">'; html += ' <div id="section">'; if (data[i].interviewerComment != null && data[i].interviewerComment != "") { if (data[i].interviewerComment.length > 28) { html += ' <div class="article">'; html += ' <p style="margin-bottom:0px;">' + data[i].interviewerComment.substring(0, 28) + '</p>'; html += '<p class="moretext_' + data[i].imid + ' moretext">' + data[i].interviewerComment.substring(28, data[i].interviewerComment.length - 28) + '</p>'; html += '</div>'; } else { html += '<div class="article"><p>' + data[i].interviewerComment.substring(0, data[i].interviewerComment.length - 1) + '</p></div>'; } }
             else { html += '<div></div>'; } html += ' <a onclick="moreless(' + data[i].imid + ')" class="moreless-button" value="Readmore" id="read_' + data[i].imid + '" href="#">Read more</a>'; html += '</div>'; html += ' </td>'; if ((data[i].meetingStatus == 4) && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && data[i].meetingStatus == 4 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) { html += '<td>  <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + data[i].irfIntId + '&isClient= true">Report</a></td>'; } else { html += '   <td>No Report</td>'; } html += '   <td class="text-center action">'; html += '   <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">';
