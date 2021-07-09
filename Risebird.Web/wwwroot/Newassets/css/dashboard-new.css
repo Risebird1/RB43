@@ -420,7 +420,9 @@ body {
     .rejected .btn-call .fa {
         top: 6px;
     }
-
+.counts-liks .rating-btn {
+    margin: 12px 0px;
+}
 .rating-btn {
     background: none;
     border: 0px;
@@ -5302,6 +5304,13 @@ button.btn {
         left: 1% !important;
     }
 
+    .page-container .page-content .page-content-wrap {
+        float: left;
+        width: 100%;
+        margin-top: -10px!important;
+        padding: 0px 15px;
+        font-family: 'Open Sans', sans-serif;
+    }
     #Selectability_WeightageError, #SkillCollection_WeightageError, #Joinability_WeightageError, #SkillGeneral_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
         color: red !important;
         margin-left: 0 !important;
