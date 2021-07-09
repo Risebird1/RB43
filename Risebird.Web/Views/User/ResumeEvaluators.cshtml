@@ -28,7 +28,7 @@
                         <div class="searchCon">
 
                             <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                            <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.Searchvalue">
+                            <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeypress="searchResultEnter(event)" value="@ViewBag.Searchvalue">
 
 
 
@@ -177,7 +177,12 @@
         searchResult();
     }
 
-
+    function searchResultEnter(e) {
+        var code = (e.keyCode ? e.keyCode : e.which);
+        if (code == 13) {
+            searchResult();
+        }
+    }
     $(document).ready(function () {
 
 

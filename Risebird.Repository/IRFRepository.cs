@@ -512,7 +512,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await  SqlMapper.QueryAsync<string>(con, "usp_GetTechSkillofSkillChannelByQuestion", parameters,
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetTechSkillofSkillChannelByQuestion", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
@@ -1510,7 +1510,7 @@ namespace Risebird.Repository
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     }
 
-                    
+
 
                     return true;
                 }
@@ -2036,7 +2036,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await con.QueryAsync<int>(query, dynamicParameters);
-                    if(result != null && result.FirstOrDefault()==0)
+                    if (result != null && result.FirstOrDefault() == 0)
                     {
                         return true;
                     }
@@ -2769,7 +2769,7 @@ namespace Risebird.Repository
             }
         }
 
-        public int GetUserId(string emailId, string profile=null)
+        public int GetUserId(string emailId, string profile = null)
         {
             int result = 0;
             try
@@ -2798,7 +2798,7 @@ namespace Risebird.Repository
             }
         }
 
-        
+
 
         public IEnumerable<Recruiter> GetRecruiters()
         {

@@ -229,6 +229,51 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsByIRFId(int clientId, string Emailid, string irfId, DateTime startDate, DateTime endDate, string profileName = null)
+        {
+            try
+            {
+                if (profileName != null && profileName == "CuratedUser")
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@Emailid", Emailid);
+                        parameters.Add("@IRFId", irfId);
+                        parameters.Add("@startDate", startDate);
+                        parameters.Add("@endDate", endDate);
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsByIRFIdForCuratedUser", parameters,
+                            commandType: CommandType.StoredProcedure);
+                    }
+                }
+                else
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@clientid", clientId);
+                        parameters.Add("@Emailid", Emailid);
+                        parameters.Add("@IRFId", irfId);
+                        parameters.Add("@startDate", startDate);
+                        parameters.Add("@endDate", endDate);
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsByIRFId", parameters,
+                            commandType: CommandType.StoredProcedure);
+                    }
+                }
+
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
 
         public async Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern, DateTime startDate, DateTime endDate, string profileName = null)
         {
@@ -1437,20 +1482,27 @@ namespace Risebird.Repository
 
                     foreach (var item in reportDetails.QuestionsCollection)
                     {
-                        questionsDt.Rows.Add(reportDetails.InterviewId, item.Comment, item.RatingId, item.Timing, item.SkillName);
+                        if(!string.IsNullOrEmpty(item.Comment) && !string.IsNullOrEmpty(item.SkillName))
+                        {
+                            questionsDt.Rows.Add(reportDetails.InterviewId, item.Comment, item.RatingId, item.Timing, item.SkillName);
+                        }
                     }
 
-                    SqlCommand cmdQuestions = new SqlCommand("usp_QuestionsDiscussedBulkInsert", con)
+                    if(questionsDt.Rows != null && questionsDt.Rows.Count>0)
                     {
-                        CommandType = CommandType.StoredProcedure
-                    };
-                    cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
-                    cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
-                    con.Open();
-                    if (cmdQuestions.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
+                        SqlCommand cmdQuestions = new SqlCommand("usp_QuestionsDiscussedBulkInsert", con)
+                        {
+                            CommandType = CommandType.StoredProcedure
+                        };
+                        cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
+                        cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
+                        con.Open();
+                        if (cmdQuestions.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
                     }
+                    
 
                     if (reportDetails.Proctoring != null)
                     {

@@ -119,6 +119,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<MeetingVM>> GetRiseTubeMeetingsByIRFId(int clientId, string Emailid, string irfId, DateTime startDate, DateTime endDate, string profileName = null)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetRiseTubeMeetingsByIRFId(clientId, Emailid, irfId, startDate, endDate, profileName);
+                return result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
         public async Task<List<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern, DateTime startDate, DateTime endDate, string profileName = null)
         {
@@ -922,14 +935,14 @@ namespace Risebird.Business
                     if (clientEmails != null && clientEmails.Any() && !string.IsNullOrEmpty(interviewStatus))
                     {
                         _notificationHelper.SendQCPassNotificationToClient(clientEmails.ToList(), comments.candidateEmail, comments.PrimarySkill, interviewStatus, comments.interviewDate.ToString("MMMM dd, yyyy"));
-                        WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                        _whatsAppVM.Emailid = string.Join(";", clientEmails.ToList());
-                        _whatsAppVM.InterviewDate = comments.PrimarySkill;
-                        _whatsAppVM.UserName = comments.candidateEmail;
-                        _whatsAppVM.Event = "ClientCandidateConfirmation";
-                        _whatsAppVM.MessageValue = interviewStatus;
-                        _whatsAppVM.buttonlink = "Risetube/VideoPage/" + comments.InterviewId;
-                        _whatsAppHelper.WhatsAppSendClientCandidateConfirmation(_whatsAppVM);
+                        //WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                        //_whatsAppVM.Emailid = string.Join(";", clientEmails.ToList());
+                        //_whatsAppVM.InterviewDate = comments.PrimarySkill;
+                        //_whatsAppVM.UserName = comments.candidateEmail;
+                        //_whatsAppVM.Event = "ClientCandidateConfirmation";
+                        //_whatsAppVM.MessageValue = interviewStatus;
+                        //_whatsAppVM.buttonlink = "Risetube/VideoPage/" + comments.InterviewId;
+                        //_whatsAppHelper.WhatsAppSendClientCandidateConfirmation(_whatsAppVM);
                     }
                 }
                 return result;

@@ -1640,9 +1640,9 @@ namespace Risebird.Web.Controllers
                         }
                         //if (TempData["EditIRFId"] != null && (TempData["EditIRFId"].ToString() != model.IRFId))
                         //{
-                           
+
                         //}
-                        if(model.IsClone && !string.IsNullOrEmpty(model.IRFId))
+                        if (model.IsClone && !string.IsNullOrEmpty(model.IRFId))
                         {
                             if (!(_irfService.CheckUniqueness(model.IRFId)))
                             {
@@ -1773,8 +1773,8 @@ namespace Risebird.Web.Controllers
             {
                 model.InterviewerMembers = new List<IRFInterviewerMembers>();
             }
-            
-            
+
+
             //TempData["EditIRFId"] = model.IRFId;
             //model.IsClone = isClone;
             return;
