@@ -148,5 +148,6 @@ namespace Risebird.Business.Interface
         Task<List<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string irfId);
         Task<InterviewerRating> FetchRatingDetails(int interviewId, string emailid);
         Task<string> SaveRatingDetails(InterviewerRating model);
+        List<MeetingVM> GetClientNotScheduledMeetingList(int Clientid);
     }
 }

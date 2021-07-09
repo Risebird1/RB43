@@ -3388,5 +3388,42 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("AllMeetings");
             }
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> NotScheduledMeetings(int? Page, string searchValue)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    int ClientId = 0;
+                    if (profileName == "Client")
+                    {
+                        var client = await _userRepository.GetClientUserDetails(emailid);
+                        ClientId = client.ClientId;
+                        var meetings = _meetingService.GetClientNotScheduledMeetingList(ClientId);
+                        return View(meetings);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+
+        }
     }
 }
