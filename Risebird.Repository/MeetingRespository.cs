@@ -1482,20 +1482,27 @@ namespace Risebird.Repository
 
                     foreach (var item in reportDetails.QuestionsCollection)
                     {
-                        questionsDt.Rows.Add(reportDetails.InterviewId, item.Comment, item.RatingId, item.Timing, item.SkillName);
+                        if(!string.IsNullOrEmpty(item.Comment) && !string.IsNullOrEmpty(item.SkillName))
+                        {
+                            questionsDt.Rows.Add(reportDetails.InterviewId, item.Comment, item.RatingId, item.Timing, item.SkillName);
+                        }
                     }
 
-                    SqlCommand cmdQuestions = new SqlCommand("usp_QuestionsDiscussedBulkInsert", con)
+                    if(questionsDt.Rows != null && questionsDt.Rows.Count>0)
                     {
-                        CommandType = CommandType.StoredProcedure
-                    };
-                    cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
-                    cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
-                    con.Open();
-                    if (cmdQuestions.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
+                        SqlCommand cmdQuestions = new SqlCommand("usp_QuestionsDiscussedBulkInsert", con)
+                        {
+                            CommandType = CommandType.StoredProcedure
+                        };
+                        cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
+                        cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
+                        con.Open();
+                        if (cmdQuestions.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
                     }
+                    
 
                     if (reportDetails.Proctoring != null)
                     {
