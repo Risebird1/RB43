@@ -4700,7 +4700,7 @@ button.btn {
         width: 25%
     }
 
-    .allmeeting .candidate-client {
+    .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
         width: 22%
     }
     .selectedmeeting .candidate-client {
@@ -4710,7 +4710,7 @@ button.btn {
         width: 22%
     }
 
-    .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details {
+    .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
         width: 30%
     }
 }
@@ -4719,11 +4719,11 @@ button.btn {
     /* table.journey td.cadName, table.journey td.cadEmail {
         max-width: 120px;
     }*/
-    .allmeeting .candidate-details, .rejectedmeeting .candidate-details {
+    .allmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
         width: 36%
     }
 
-    .allmeeting .candidate-client {
+    .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
         width: 18%
     }
 

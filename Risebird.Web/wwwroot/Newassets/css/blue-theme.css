@@ -790,7 +790,14 @@ table {
 .tab-box label.choose-file-profile {
     color: rgb(51, 51, 51) !important;
 }
-
+.send-btn {
+    background: #fff;
+    color: #53a4f4;
+    border-radius: 3px;
+    padding: 4px 13px;
+    border: 1px #53a4f4 solid;
+    font-weight: bold;
+}
 @media only screen and (max-width: 767px) {
     .razorpay_btn button.form-control {
         width: 33.3%;

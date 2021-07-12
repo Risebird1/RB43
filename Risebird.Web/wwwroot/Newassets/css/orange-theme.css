@@ -827,6 +827,15 @@ input[type="radio"]:checked {
 .tab-box label.choose-file-profile {
     color: rgb(51, 51, 51)!important;
 }
+
+.send-btn {
+    background: #fff;
+    color: #ec772a;
+    border-radius: 3px;
+    padding: 4px 13px;
+    border: 1px #ec772a solid;
+    font-weight: bold;
+}
 @media only screen and (max-width: 767px) {
 
     .razorpay_btn button.form-control {

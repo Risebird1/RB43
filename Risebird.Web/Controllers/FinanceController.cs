@@ -734,7 +734,9 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 18].Value = item.IsEmergency == true ? "Y" : "N";
                                     i++;
                                 }
-
+                                Sheet.Cells[i, 15].Value = "Sub Total";
+                                Sheet.Cells[i, 16].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum());
+                                i++;
                                 Sheet.Cells[i, 15].Value = "10% TDS";
                                 Sheet.Cells[i, 16].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
                                 i++;
@@ -883,7 +885,9 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 18].Value = item.IsEmergency == true ? "Y" : "N";
                                     i++;
                                 }
-
+                                Sheet.Cells[i, 15].Value = "Sub Total";
+                                Sheet.Cells[i, 16].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum());
+                                i++;
                                 Sheet.Cells[i, 15].Value = "10% TDS";
                                 Sheet.Cells[i, 16].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
                                 i++;
