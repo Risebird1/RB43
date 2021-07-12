@@ -55,6 +55,8 @@
                                                                 <th>Candidate Name</th>
                                                                 <th>Candidate Emailid</th>
                                                                 <th>JDTitle</th>
+                                                                <th>Resume</th>
+                                                                <th>Invite</th>
                                                                 <th>Call</th>
                                                             </tr>
                                                         </thead>
@@ -64,6 +66,8 @@
                                                                 <th>Candidate Name</th>
                                                                 <th>Candidate Emailid</th>
                                                                 <th>JDTitle</th>
+                                                                <th>Resume</th>
+                                                                <th>Invite</th>
                                                                 <th>Call</th>
                                                             </tr>
                                                         </tfoot>
@@ -81,6 +85,15 @@
                                                                     <td>@item.candidateName</td>
                                                                     <td>@item.candidateEmail</td>
                                                                     <td>@item.JDTiltle</td>
+                                                                    @if (!String.IsNullOrEmpty(item.resumeLink))
+                                                                    {
+                                                                        <td><a target="_blank" href=@item.resumeLink>Resume</a></td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+                                                                    }
+                                                                    <td><button onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button></td>
                                                                     <td class="text-left">
                                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                         {
@@ -137,6 +150,16 @@
 </div>
 
 <script>
+    function Sendinvite(id, IRFId, CandidateEmail) {
+        $.ajax({
+            url: '/Client/SendInvite',
+            type: 'POST',
+            data: { 'irfId': id, 'IRFName': IRFId, 'emailId': CandidateEmail },
+            success: function (data) {
+                alert(data);
+            }
+        });
+    }
     function RefreshSearch() {
         $('#meeting').DataTable().destroy();
         setTimeout(function () {
