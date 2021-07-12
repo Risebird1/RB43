@@ -1015,6 +1015,14 @@ table {
 .user-menu {
     border: 2px #969595 solid;
 }
+.send-btn {
+    background: #fff;
+    color: #000;
+    border-radius: 3px;
+    padding: 4px 13px;
+    border: 1px #000 solid;
+    font-weight: bold;
+}
 @media screen and (max-width: 768px) {
     .d_active {
         background-color: #1a1a1a !important;
