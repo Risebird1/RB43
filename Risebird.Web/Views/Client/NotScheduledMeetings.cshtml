@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
 @{
-    ViewData["Title"] = "NotScheduled Meetings";
+    ViewData["Title"] = "Not Scheduled Meetings";
     ViewBag.PageHeader = "Not Scheduled Meetings";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -18,7 +18,7 @@
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title">NotScheduled Meetings</h4></div>
+                    <div class="mobile-view"> <h4 class="card-title">Not Scheduled Meetings</h4></div>
                 </div>
                 <div class="pull-right client-ms">
                     <div style="float:left">
@@ -54,6 +54,7 @@
                                                                 <th style="border-left: 0px !important;" id='start'>Skill Channel ID</th>
                                                                 <th>Candidate Detail</th>
                                                                 <th>Resume</th>
+                                                                <th>Client HR</th>
                                                                 <th>Invite</th>
                                                                 <th>Call</th>
                                                             </tr>
@@ -63,6 +64,7 @@
                                                                 <th style="border-left: 0px !important;" id='start'>Skill Channel ID</th>
                                                                 <th>Candidate Detail</th>
                                                                 <th>Resume</th>
+                                                                <th>Client HR</th>
                                                                 <th>Invite</th>
                                                                 <th>Call</th>
                                                             </tr>
@@ -101,7 +103,7 @@
                                                                         {
                                                                         }
                                                                     </td>
-                                                                      
+
 
                                                                     @if (!String.IsNullOrEmpty(item.resumeLink))
                                                                     {
@@ -111,6 +113,7 @@
                                                                     {
                                                                         <td></td>
                                                                     }
+                                                                    <td>@item.ClientHrContact</td>
                                                                     <td><button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button></td>
                                                                     <td class="text-left">
                                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
