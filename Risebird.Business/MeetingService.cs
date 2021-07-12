@@ -2784,6 +2784,20 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public List<MeetingVM> GetClientNotScheduledMeetingList(int Clientid)
+        {
+            try
+            {
+                var meetings = _meetingRespository.GetClientNotScheduledMeetingList(Clientid).Result.ToList();
+
+                return meetings ?? new List<MeetingVM>();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 
