@@ -2710,7 +2710,17 @@ table {
         left: -20px !important;
     }
 
-
+    .counts-liks .rating-btn {
+        margin: 6px 0px!important;
+        width: 100%;
+        background: #d7d7d7;
+        position: absolute;
+        left: 15px;
+        padding: 4px;
+        border-radius: 3px;
+        color: #fff;
+        border: 1px #d7d7d7 solid;
+    }
     .expected-salari {
         width: 16%;
     }
@@ -2843,7 +2853,9 @@ table {
     .single-video-left .comment-area textarea {
         width: 72%;
     }
-
+    .counts-liks .rating-btn {
+        margin: 10px 0px !important;
+    }
     .k {
         width: auto;
     }
@@ -2921,7 +2933,10 @@ table {
         text-align: left !important;
         left: -15px;
     }
-
+    .counts-liks .rating-btn {
+        margin: 15px 0px !important;
+     
+    }
     .yellow-btn {
         padding: 0px 25px;
     }
@@ -2943,7 +2958,7 @@ table {
         width: 50%;
         margin: 0;
         position: absolute;
-        top: 17px;
+        top: -3px;
         right: 0;
     }
 
