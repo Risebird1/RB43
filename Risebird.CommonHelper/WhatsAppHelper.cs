@@ -246,14 +246,8 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         WhatsAppTrackUser(_whatsAppVM);
-                        if (_whatsAppVM.Event.Contains("Candidate"))
-                        {
-                            name = _whatsAppVM.UserName;
-                        }
-                        if (_whatsAppVM.Event.Contains("Interviewer"))
-                        {
-                            name = Username;
-                        }
+                        name = Username;
+
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
                         var request = new RestRequest(Method.POST);
@@ -434,7 +428,7 @@ namespace Risebird.CommonHelper
                         var request = new RestRequest(Method.POST);
                         request.AddHeader("Authorization", "Basic " + accesskey);
                         request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"MessageValue\": \"" + _whatsAppVM.MessageValue + "\",\r\n        \"CandidateName\":\"" + _whatsAppVM.UserName + "\",\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"Name\":\"" + name + "\",\r\n    }\r\n}", ParameterType.RequestBody);
+                        request.AddParameter("application/json", "{\r\n\n    \"userId\": \"\",\r\n\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n\n    \"traits\": {\r\n\n        \"MessageValue\":\"" + _whatsAppVM.MessageValue + "\",\r\n\n        \"CandidateName\": \"" + _whatsAppVM.UserName + "\",\r\n\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n\n        \"Name\":\"" + name + "\"\r\n\n    }\r\n\n}", ParameterType.RequestBody);
                         IRestResponse response = client.Execute(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     }
