@@ -3403,6 +3403,11 @@ namespace Risebird.Web.Controllers
                     int ClientId = 0;
                     if (profileName == "Client")
                     {
+                        if (TempData["SuccessErrorMessageCandidate"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
+                            TempData.Remove("SuccessErrorMessageCandidate");
+                        }
                         var client = await _userRepository.GetClientUserDetails(emailid);
                         ClientId = client.ClientId;
                         var meetings = _meetingService.GetClientNotScheduledMeetingList(ClientId);
@@ -3423,7 +3428,45 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
-
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> SendInvite(string irfId, string IRFName, string emailId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
+                    loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
+                    if (profileName == "Client")
+                    {
+                        if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, loggedInUserEmail))
+                        {
+                            return Json("Invitation sent successfully!");
+                        }
+                        else
+                        {
+                            return Json("Sorry! Could not send invite!");
+                        }
+                    }
+                    else
+                    {
+                        return Json("Fail");
+                    }
+                }
+                else
+                {
+                    return Json("Fail");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Sorry! Could not send invite!");
+            }
         }
     }
 }
