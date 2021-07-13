@@ -1,8 +1,12 @@
 ﻿@model Risebird.Entities.ViewModel.InvoiceDetailsVM
 
-@using (Html.BeginForm("AddIRF", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return CheckConditions()" }))
+@using (Html.BeginForm("GetInvoiceDetails", "Finance", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm" }))
 {
     @Html.HiddenFor(m => m.id)
+    @Html.HiddenFor(m => m.JobCountry)
+    @Html.HiddenFor(m => m.Name)
+    @Html.HiddenFor(m => m.startdate)
+    @Html.HiddenFor(m => m.enddate)
     <div class="row">
         <div class="col-md-6">
             @Html.LabelFor(m => m.Price, new { @class = "form-control" })
@@ -14,11 +18,22 @@
         </div>
         <div class="col-md-6">
             @Html.LabelFor(m => m.AccountDetails, new { @class = "form-control" })
-            @Html.TextBoxFor(m => m.AccountDetails, new { @class = "form-control" })
+            @Html.TextBoxFor(m => m.AccountDetails, new { @class = "form-control", @maxlength = "200" })
         </div>
         <div class="col-md-6">
-            @Html.LabelFor(m => m.Price, new { @class = "form-control" })
-            @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
+            @Html.LabelFor(m => m.PaymentStatus, new { @class = "form-control" })
+            @Html.DropDownListFor(m => m.PaymentStatus, Model.PaymentStatusList, new { @class = "form-control" })
         </div>
+        <div class="col-md-6">
+            @Html.LabelFor(m => m.ReferenceNumber, new { @class = "form-control" })
+            @Html.TextBoxFor(m => m.ReferenceNumber, new { @class = "form-control" })
+        </div>
+        <div class="col-md-6">
+            @Html.LabelFor(m => m.Comment, new { @class = "form-control" })
+            @Html.TextBoxFor(m => m.Comment, new { @class = "form-control", @maxlength = "200" })
+        </div>
+    </div>
+    <div class="col-md-12">
+        <input type="submit" />
     </div>
 }

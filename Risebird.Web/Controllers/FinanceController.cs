@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using Risebird.Business.Interface;
@@ -1215,6 +1216,13 @@ namespace Risebird.Web.Controllers
                     //    filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.InterviewerEmailid).ToArray() : filter.HREmail = filter.HREmail;
                     //    model = model.Where(x => filter.HREmail.Contains(x.InterviewerEmailid)).ToList();
                     //}
+                    ViewBag.Startdate = Startdate;
+                    ViewBag.Enddate = Enddate;
+                    if (TempData["SuccessErrorMessageCandidate"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
+                        TempData.Remove("SuccessErrorMessageCandidate");
+                    }
                     return View(model);
                 }
                 else
@@ -1227,11 +1235,29 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        [HttpPost]
-        public async Task<IActionResult> GetInvoiceDetails(int id)
+        [HttpGet]
+        public async Task<IActionResult> GetInvoiceDetails(int id, string startdate, string enddate, string Clientname, string jobcountry)
         {
             var model = await _meetingService.GetInvoiceDetailsById(id);
+            if (model == null)
+            {
+                model = new InvoiceDetailsVM();
+            }
+            model.startdate = startdate;
+            model.enddate = enddate;
+            model.Name = Clientname;
+            model.JobCountry = jobcountry;
+            var meetingStatuses = from PaymentStatus s in Enum.GetValues(typeof(PaymentStatus))
+                                  select new { ID = (int)s, Name = s.GetDescription() };
+            model.PaymentStatusList = new SelectList(meetingStatuses, "ID", "Name");
             return PartialView(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetInvoiceDetails(InvoiceDetailsVM model)
+        {
+            var result = await _meetingService.SaveInvoiceDetails(model);
+            TempData["SuccessErrorMessageCandidate"] = result;
+            return RedirectToAction("InvoiceDetails");
         }
     }
 }

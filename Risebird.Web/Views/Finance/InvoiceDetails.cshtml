@@ -14,7 +14,8 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Invoice Details</h4></div>
                 </div>
-                @*<input type="hidden" id="txtmonth" value="@ViewBag.month" />*@
+                <input type="hidden" id="txtStartdate" value="@ViewBag.Startdate" />
+                <input type="hidden" id="txtEnddate" value="@ViewBag.Enddate" />
                 <div class="pull-right client-ms">
                     @*<select id="ddlmonth" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
                             <option value="1">January</option>
@@ -151,7 +152,7 @@
                                                                 <td></td>
                                                                 <td>
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                                        <span onclick="EditDetails(@item.id)" title="Edit" class="mdc-fab__icon material-icons">
+                                                                        <span onclick="EditDetails(@item.id,'@item.Name','@item.JobCountry')" title="Edit" class="mdc-fab__icon material-icons">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
                                                                                 <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
                                                                                 <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
@@ -195,44 +196,14 @@
 
                                     </span>
                                 </div>
-                                <h5 class="modal-title pull-left"> Edit ( <label id="txtInterviewerEmailid"></label> )</h5>
+                                <h5 class="modal-title pull-left"> Invoice ( <label id="txtInterviewerEmailid"></label> )</h5>
                             </div>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="CloseMyModelPopup()">
                                 <span aria-hidden="true" id="importPopUp" style="cursor:pointer;">&times;</span>
                             </button>
                             <div class="modal-body">
                                 <div class="col-md-12">
-
                                     <div id="divDetailedView" style="max-height:250px;overflow-y:auto"></div>
-                                    <div style="text-align:center">
-                                        <div class="col-md-6">
-                                            Price Per Interview
-                                            <input type="text" class="form-control" id="txtmodelprice" />
-                                        </div>
-                                        <div class="col-md-6">
-                                            Account Number
-                                            <input type="text" class="form-control" id="txtaccountnumber" />
-                                        </div>
-                                        <div class="col-md-6">
-                                            Account Details
-                                            <input type="text" class="form-control" id="txtaccountdetails" maxlength="200" />
-                                        </div>
-                                        <div class="col-md-6">
-                                            Payment Status
-                                            <select class="form-control" id="dllpaymentstatus">
-                                                <option value="0">Un-Paid</option>
-                                                <option value="1">Paid</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6">
-                                            Comment
-                                            <input type="text" class="form-control" id="txtComment" maxlength="200" />
-                                        </div>
-                                        <div class="col-md-6">
-                                            Reference Number
-                                            <input type="text" class="form-control" id="txtreferencenumber" />
-                                        </div>
-                                    </div>
                                 </div>
 
                             </div>
@@ -355,19 +326,14 @@
     function CloseMyModelPopup() {
         document.getElementById("myModal").style.display = "none";
     }
-    function EditDetails(index) {
-        //$("#txtmodelprice").val($("#txtprice_" + index).text());
-        //$("#txtaccountnumber").val($("#txtaccountNumber_" + index).text());
-        //$("#txtaccountdetails").val($("#txtaccountdetails_" + index).text());
-        //$("#dllpaymentstatus").val($("#txtpaymentstatus_" + index).text());
-        //$("#txtComment").val($("#txtcomment_" + index).text());
-        //$("#txtreferencenumber").val($("#txtreferenceNumber_" + index).text());
+    function EditDetails(index, clientname, joblocation) {
         $.ajax({
-            type: "POST",
+            type: "GET",
             url: "/Finance/GetInvoiceDetails",
-            data: { 'id': index },
+            data: { 'id': index, 'startdate': $("#txtStartdate").val(), 'enddate': $("#txtEnddate").val(), 'Clientname': clientname, 'jobcountry': joblocation },
             success: function (data) {
                 document.getElementById("myModal").style.display = "block";
+                $("#txtInterviewerEmailid").text(clientname + " -- " + joblocation);
                 $("#divDetailedView").empty().html(data);
             }
         });

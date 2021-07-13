@@ -4717,5 +4717,35 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<string> SaveInvoiceDetails(InvoiceDetailsVM model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", model.id);
+                    parameters.Add("@ClientName", model.Name);
+                    parameters.Add("@JobCountry", model.JobCountry);
+                    parameters.Add("@StartDate", model.startdate);
+                    parameters.Add("@Enddate", model.enddate);
+                    parameters.Add("@AccountNumber", model.AccountNumber);
+                    parameters.Add("@AccountDetails", model.AccountDetails);
+                    parameters.Add("@Comment", model.Comment);
+                    parameters.Add("@PaymentStatus", model.PaymentStatus);
+                    parameters.Add("@ReferenceNumber", model.ReferenceNumber);
+                    parameters.Add("@UploadedFiles", model.filelink);
+                    parameters.Add("@Price", model.Price);
+                    var result = await SqlMapper.QueryAsync<InvoiceDetailsVM>(con, "usp_SaveinvoiceDetails", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Fail";
+            }
+        }
     }
 }

@@ -231,6 +231,13 @@ namespace Risebird.Entities.Enum
         [Description("Approved")]
         Approved = 2,
     }
+    public enum PaymentStatus
+    {
+        [Description("UnPaid")]
+        UnPaid = 0,
+        [Description("Paid")]
+        Paid = 1
+    }
     //public enum JoinabilityType
     //{
 

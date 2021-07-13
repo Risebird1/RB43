@@ -2824,6 +2824,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<string> SaveInvoiceDetails(InvoiceDetailsVM model)
+        {
+            try
+            {
+                var result = _meetingRespository.SaveInvoiceDetails(model);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Fail";
+            }
+        }
     }
 }
 
