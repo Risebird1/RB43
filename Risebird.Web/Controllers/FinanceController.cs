@@ -1188,9 +1188,50 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public IActionResult InvoiceDetails()
+        public async Task<IActionResult> InvoiceDetails()
         {
-            return View();
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var currentMonth = DateTime.Now.Month;
+                    var currentYear = DateTime.Now.Year;
+                    var Previousmonth = DateTime.Now.AddMonths(-1).Month;
+                    var Previousyear = DateTime.Now.AddMonths(-1).Year;
+                    var Startdate = Previousyear + "-" + Previousmonth + "-01";
+                    var Enddate = currentYear + "-" + currentMonth + "-01";
+                    var model = await _meetingService.FetchFNInvoiceDetails(Startdate, Enddate);
+                    //if (HttpContext.Session.GetString("PaymentHistoryfilters") != null)
+                    //{
+                    //    var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PaymentHistoryfilters"));
+                    //    if (filter.StartDate != null && filter.EndDate != null)
+                    //    {
+                    //        model = model.Where(t => t.Date >= filter.StartDate && t.Date <= filter.EndDate).ToList();
+                    //    }
+                    //    filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.InterviewerEmailid).ToArray() : filter.HREmail = filter.HREmail;
+                    //    model = model.Where(x => filter.HREmail.Contains(x.InterviewerEmailid)).ToList();
+                    //}
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetInvoiceDetails(int id)
+        {
+            var model = await _meetingService.GetInvoiceDetailsById(id);
+            return PartialView(model);
         }
     }
 }

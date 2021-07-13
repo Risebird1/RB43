@@ -1,0 +1,24 @@
+﻿@model Risebird.Entities.ViewModel.InvoiceDetailsVM
+
+@using (Html.BeginForm("AddIRF", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return CheckConditions()" }))
+{
+    @Html.HiddenFor(m => m.id)
+    <div class="row">
+        <div class="col-md-6">
+            @Html.LabelFor(m => m.Price, new { @class = "form-control" })
+            @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
+        </div>
+        <div class="col-md-6">
+            @Html.LabelFor(m => m.AccountNumber, new { @class = "form-control" })
+            @Html.TextBoxFor(m => m.AccountNumber, new { @class = "form-control" })
+        </div>
+        <div class="col-md-6">
+            @Html.LabelFor(m => m.AccountDetails, new { @class = "form-control" })
+            @Html.TextBoxFor(m => m.AccountDetails, new { @class = "form-control" })
+        </div>
+        <div class="col-md-6">
+            @Html.LabelFor(m => m.Price, new { @class = "form-control" })
+            @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
+        </div>
+    </div>
+}

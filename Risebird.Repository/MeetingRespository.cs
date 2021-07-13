@@ -1482,13 +1482,13 @@ namespace Risebird.Repository
 
                     foreach (var item in reportDetails.QuestionsCollection)
                     {
-                        if(!string.IsNullOrEmpty(item.Comment) && !string.IsNullOrEmpty(item.SkillName))
+                        if (!string.IsNullOrEmpty(item.Comment) && !string.IsNullOrEmpty(item.SkillName))
                         {
                             questionsDt.Rows.Add(reportDetails.InterviewId, item.Comment, item.RatingId, item.Timing, item.SkillName);
                         }
                     }
 
-                    if(questionsDt.Rows != null && questionsDt.Rows.Count>0)
+                    if (questionsDt.Rows != null && questionsDt.Rows.Count > 0)
                     {
                         SqlCommand cmdQuestions = new SqlCommand("usp_QuestionsDiscussedBulkInsert", con)
                         {
@@ -1502,7 +1502,7 @@ namespace Risebird.Repository
                             con.Close();
                         }
                     }
-                    
+
 
                     if (reportDetails.Proctoring != null)
                     {
@@ -4677,6 +4677,45 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<List<InvoiceDetailsVM>> FetchFNInvoiceDetails(string Startdate, string Enddate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Startdate", Startdate);
+                    parameters.Add("@Enddate", Enddate);
+                    var result = await SqlMapper.QueryAsync<InvoiceDetailsVM>(con, "usp_FetchinvoiceDetails", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return (List<InvoiceDetailsVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<InvoiceDetailsVM> GetInvoiceDetailsById(int id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", id);
+                    var result = await SqlMapper.QueryAsync<InvoiceDetailsVM>(con, "usp_FetchinvoiceDetailsById", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 }

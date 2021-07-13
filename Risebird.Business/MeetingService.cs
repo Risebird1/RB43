@@ -2798,6 +2798,32 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<InvoiceDetailsVM>> FetchFNInvoiceDetails(string Startdate, string Enddate)
+        {
+            try
+            {
+                var result = _meetingRespository.FetchFNInvoiceDetails(Startdate, Enddate);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<InvoiceDetailsVM> GetInvoiceDetailsById(int id)
+        {
+            try
+            {
+                var result = _meetingRespository.GetInvoiceDetailsById(id);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 

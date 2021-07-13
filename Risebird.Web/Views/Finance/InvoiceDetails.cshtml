@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.RBInterviewDetails>
+﻿@model IEnumerable<Risebird.Entities.ViewModel.InvoiceDetailsVM>
+@using System;
 @{
     ViewData["Title"] = "Invoice Details";
     ViewBag.PageHeader = "Invoice Details";
@@ -11,62 +12,62 @@
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title"> RB Payment Details</h4></div>
+                    <div class="mobile-view"> <h4 class="card-title"> Invoice Details</h4></div>
                 </div>
-
+                @*<input type="hidden" id="txtmonth" value="@ViewBag.month" />*@
                 <div class="pull-right client-ms">
-                    <select id="ddlmonth" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                        <option value="1">January</option>
-                        <option value="2">February</option>
-                        <option value="3">March</option>
-                        <option value="4">April</option>
-                        <option value="5">May</option>
-                        <option value="6">June</option>
-                        <option value="7">July</option>
-                        <option value="8">August</option>
-                        <option value="9">September</option>
-                        <option value="10">October</option>
-                        <option value="11">November</option>
-                        <option value="12">December</option>
-                    </select>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="1-7 of this month" onclick="Fetchinvoice(1,1)">
-                        <span data-toggle="tooltip" data-placement="top" title="1-7 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">1-7</font></span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="8-14 of this month" onclick="Fetchinvoice(2,1)">
-                        <span data-toggle="tooltip" data-placement="top" title="8-14 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">8-14</font></span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="15-21 of this month" onclick="Fetchinvoice(3,1)">
-                        <span data-toggle="tooltip" data-placement="top" title="15-21 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">15-21</font></span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="22-month end of this month" onclick="Fetchinvoice(4,1)">
-                        <span data-toggle="tooltip" data-placement="top" title="22-month end of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">22-_</font></span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Payment History">
-                        <span class="fa fa-history" data-toggle="tooltip" data-placement="top" title="Payment History" onclick="openPaymentHistory()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Payment History</font></span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to generate invoice.">
-                        <span class="fa fa-file" data-toggle="tooltip" data-placement="top" title="Click here to generate invoice." onclick="openmyinvoiceModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Generate Invoice</font></span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to Advance Payment.">
-                        <span class="fa fa-credit-card" data-toggle="tooltip" data-placement="top" title="Click here to Advance Payment." onclick="openmyAdvancepaymentModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Advance Payment</font></span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                        @*<span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportFNPayment", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>*@
+                    @*<select id="ddlmonth" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>*@
+                    @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="1-7 of this month" onclick="Fetchinvoice(1,1)">
+                                <span data-toggle="tooltip" data-placement="top" title="1-7 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">1-7</font></span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="8-14 of this month" onclick="Fetchinvoice(2,1)">
+                                <span data-toggle="tooltip" data-placement="top" title="8-14 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">8-14</font></span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="15-21 of this month" onclick="Fetchinvoice(3,1)">
+                                <span data-toggle="tooltip" data-placement="top" title="15-21 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">15-21</font></span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="22-month end of this month" onclick="Fetchinvoice(4,1)">
+                                <span data-toggle="tooltip" data-placement="top" title="22-month end of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">22-_</font></span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Payment History">
+                                <span class="fa fa-history" data-toggle="tooltip" data-placement="top" title="Payment History" onclick="openPaymentHistory()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Payment History</font></span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to generate invoice.">
+                                <span class="fa fa-file" data-toggle="tooltip" data-placement="top" title="Click here to generate invoice." onclick="openmyinvoiceModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Generate Invoice</font></span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to Advance Payment.">
+                                <span class="fa fa-credit-card" data-toggle="tooltip" data-placement="top" title="Click here to Advance Payment." onclick="openmyAdvancepaymentModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Advance Payment</font></span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                        <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportFNPayment", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>
                         <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="ExportFNDetails()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>
-                    </button>
-                    <div id="meeting_filter" class="dataTables_filter pull-right" style="margin-left:5PX;">
+                            </button>*@
+                    @*<div id="meeting_filter" class="dataTables_filter pull-right" style="margin-left:5PX;">
 
-                        <div class="searchCon">
+                            <div class="searchCon">
 
-                            <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                            <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="">
+                                <button onclick="searchResult()" type="button" id="search">&nbsp</button>
+                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="">
 
 
 
-                            <button style="display:none;" type="button" id="x">x</button>
+                                <button style="display:none;" type="button" id="x">x</button>
 
-                        </div>
-                    </div>
+                            </div>
+                        </div>*@
                     <div>
 
                     </div>
@@ -93,69 +94,70 @@
                                     <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
 
                                         <div class="clearfix"></div>
-                                        <div>
-                                            <label id="txtAmount">Amount: @ViewBag.totalAmount </label>
-                                            <label id="txtTdsdeducted">Tds deducted: @ViewBag.Tds</label>
-                                            <label id="txtPayableAmount">Payable Amount: @ViewBag.payableAmount</label>
-                                        </div>
                                         <div class="col-sm-12 nopad">
                                             <div class="table-responsive">
                                                 <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
-                                                            <th>Name</th>
-                                                            <th>Amount</th>
+                                                            <th>Client Name</th>
+                                                            <th>Country</th>
+                                                            <th>Price per Interview</th>
+                                                            <th>Interviews</th>
+                                                            <th>Sum</th>
+                                                            <th>Account Number</th>
+                                                            <th>Account Details</th>
+                                                            <th>Payment Status</th>
+                                                            <th>Comment</th>
+                                                            <th>Reference Number</th>
+                                                            <th>Uploaded File</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tfoot>
                                                         <tr>
 
-                                                            <th>Name</th>
-                                                            <th>Amount</th>
+                                                            <th>Client Name</th>
+                                                            <th>Country</th>
+                                                            <th>Price per Interview</th>
+                                                            <th>Interviews</th>
+                                                            <th>Sum</th>
+                                                            <th>Account Number</th>
+                                                            <th>Account Details</th>
+                                                            <th>Payment Status</th>
+                                                            <th>Comment</th>
+                                                            <th>Reference Number</th>
+                                                            <th>Uploaded File</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </tfoot>
                                                     <tbody id="tblbodyPayment">
                                                         @if (Model.Count() == 0)
                                                         {
-                                                            <tr><td colspan="3" style="text-align:center">No Result found</td></tr>
+                                                            <tr><td colspan="10" style="text-align:center">No Result found</td></tr>
                                                         }
                                                         @foreach (var item in Model)
                                                         {
-
                                                             <tr>
-                                                                <td>@item.Comment<input type="hidden" id="hidcomment_@item.id" value="@item.Comment" /></td>
-                                                                <td>@item.Points<input type="hidden" id="hidpoint_@item.id" value="@item.Points" /></td>
+                                                                <td>@item.Name</td>
+                                                                <td>@item.JobCountry</td>
+                                                                <td>@item.Price</td>
+                                                                <td>@item.CompletedInterview</td>
+                                                                <td>@(item.Price*item.CompletedInterview)</td>
+                                                                <td>@item.AccountNumber</td>
+                                                                <td>@item.AccountDetails</td>
+                                                                <td>@item.PaymentStatus</td>
+                                                                <td>@item.Comment</td>
+                                                                <td>@item.ReferenceNumber</td>
+                                                                <td></td>
                                                                 <td>
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Detailed View">
-                                                                        <span onclick="DetailedView(@item.id)" title="Detailed View" class="mdc-fab__icon material-icons">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                        <span onclick="EditDetails(@item.id)" title="Edit" class="mdc-fab__icon material-icons">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
                                                                                 <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
                                                                                 <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
                                                                             </svg>
                                                                         </span>
                                                                     </button>
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
-                                                                        <span onclick="openPointspopup(@item.id)" title="Add Points" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg>
-                                                                        </span>
-                                                                    </button>
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Query">
-                                                                        <span onclick="openmyQueryModel('@item.Comment')" title="Ask Query" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
-                                                                        </span>
-                                                                    </button>
-                                                                    @if (item.Points > 0)
-                                                                    {
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Confirm">
-                                                                            <span title="Confirm" onclick="confirmpayment(@item.id)" class="mdc-fab__icon material-icons">
-                                                                                <svg style=" top: 3px; position: relative; left: 3px;" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 24 24">
-                                                                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                                                                </svg>
-                                                                            </span>
-                                                                        </button>
-                                                                    }
                                                                 </td>
                                                             </tr>
                                                         }
@@ -193,7 +195,7 @@
 
                                     </span>
                                 </div>
-                                <h5 class="modal-title pull-left"> Detailed View ( <label id="txtInterviewerEmailid"></label> )</h5>
+                                <h5 class="modal-title pull-left"> Edit ( <label id="txtInterviewerEmailid"></label> )</h5>
                             </div>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="CloseMyModelPopup()">
                                 <span aria-hidden="true" id="importPopUp" style="cursor:pointer;">&times;</span>
@@ -203,10 +205,33 @@
 
                                     <div id="divDetailedView" style="max-height:250px;overflow-y:auto"></div>
                                     <div style="text-align:center">
-                                        <label id="txtAmountD">Amount: @ViewBag.totalAmount </label> |
-                                        <label id="txtTdsdeductedD">Tds deducted: @ViewBag.Tds</label> |
-                                        <label id="txtPayableAmountD">Payable Amount: @ViewBag.payableAmount</label>
-
+                                        <div class="col-md-6">
+                                            Price Per Interview
+                                            <input type="text" class="form-control" id="txtmodelprice" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            Account Number
+                                            <input type="text" class="form-control" id="txtaccountnumber" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            Account Details
+                                            <input type="text" class="form-control" id="txtaccountdetails" maxlength="200" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            Payment Status
+                                            <select class="form-control" id="dllpaymentstatus">
+                                                <option value="0">Un-Paid</option>
+                                                <option value="1">Paid</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            Comment
+                                            <input type="text" class="form-control" id="txtComment" maxlength="200" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            Reference Number
+                                            <input type="text" class="form-control" id="txtreferencenumber" />
+                                        </div>
                                     </div>
                                 </div>
 
@@ -241,3 +266,111 @@
         }
     </script>
 }
+
+<script>
+    function RefreshSearch() {
+        $('#meeting').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+        //$("#ddlmonth").val($("#txtmonth").val());
+        applyDataTable();
+    });
+
+    function applyDataTable() {
+        $('#meeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(".dataloading").hide();
+    $("#meeting").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#meeting").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meeting").show();
+        }, 2000);
+    };
+</script>
+
+<script>
+    $('#meeting tbody').on('click', 'td.detail-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+        if (row.child.isShown()) {
+            row.child.hide();
+            tr.removeClass('show');
+        }
+        else {
+            row.child(format(row.data())).show();
+            tr.addClass('show');
+        }
+    });
+</script>
+<script>
+    function CloseMyModelPopup() {
+        document.getElementById("myModal").style.display = "none";
+    }
+    function EditDetails(index) {
+        //$("#txtmodelprice").val($("#txtprice_" + index).text());
+        //$("#txtaccountnumber").val($("#txtaccountNumber_" + index).text());
+        //$("#txtaccountdetails").val($("#txtaccountdetails_" + index).text());
+        //$("#dllpaymentstatus").val($("#txtpaymentstatus_" + index).text());
+        //$("#txtComment").val($("#txtcomment_" + index).text());
+        //$("#txtreferencenumber").val($("#txtreferenceNumber_" + index).text());
+        $.ajax({
+            type: "POST",
+            url: "/Finance/GetInvoiceDetails",
+            data: { 'id': index },
+            success: function (data) {
+                document.getElementById("myModal").style.display = "block";
+                $("#divDetailedView").empty().html(data);
+            }
+        });
+
+    }
+</script>
