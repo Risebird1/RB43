@@ -4700,8 +4700,11 @@ button.btn {
         width: 25%
     }
 
-    .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
+    .allmeeting .candidate-client {
         width: 22%
+    }
+    .notschedulemeeting .candidate-hr {
+        width: 25%
     }
     .selectedmeeting .candidate-client {
         width: 22%
@@ -4725,6 +4728,9 @@ button.btn {
 
     .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
         width: 18%
+    }
+    .notschedulemeeting .candidate-hr {
+        width: 25%
     }
 
     .selectedmeeting .candidate-details {
@@ -4761,7 +4767,7 @@ button.btn {
         position: absolute;
         right: 0px !important;
     }
-
+    .candidate-hr .hrname{width:240px!important}
     .hrname {
         width: 290px;
         white-space: nowrap;
@@ -4819,7 +4825,9 @@ button.btn {
     .razorpay_details {
         width: 60% !important;
     }
-
+    .candidate-hr .hrname {
+        width: 205px !important
+    }
     #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
         color: red !important;
         margin-left: 0 !important;
