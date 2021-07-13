@@ -4822,6 +4822,7 @@ button.btn {
 }
 
 @media only screen and (max-width: 1024px) {
+  
     .razorpay_details {
         width: 60% !important;
     }
