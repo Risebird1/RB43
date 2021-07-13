@@ -15,5 +15,9 @@ namespace Risebird.Repository.Interface
         Task<string> CancelInterviewDetails(int interviewid, string CandidateEmail);
         Task<InterviewUsersDetails> FetchChannelOwnerandInterviewer(int interviewid);
         Task<InterviewUsersDetails> FetchInterviewerDetails(int interviewid);
+        Task<Candidate> GetCandidatesDetails(int irfId, int candidateId);
+        Task<bool> AddResume(List<CandidateResume> resumeList);
+        Task<IEnumerable<CandidateResume>> GetCandidatesResumes(int irfId, int candidateId);
+        Task<bool> DeleteCandidateResume(int id);
     }
 }
