@@ -1015,6 +1015,16 @@ table {
 .user-menu {
     border: 2px #969595 solid;
 }
+.custom-file-label::after {
+    color: #fff !important;
+    background-color: #100e0e!important;
+}
+.custom-file {
+    height: calc(1.5em + .75rem + 1px) !important;
+    margin-bottom: 0;
+    z-index: 0;
+    background: #181818 !important;
+}
 @media screen and (max-width: 768px) {
     .d_active {
         background-color: #1a1a1a !important;
