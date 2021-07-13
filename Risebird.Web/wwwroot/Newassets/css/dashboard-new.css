@@ -42,7 +42,11 @@ body {
 .article p {
     margin-bottom: 0px;
 }
-
+.newsletter .searchbox .ref-btn {
+    position: absolute;
+    top: 8px;
+    right: 55px;
+}
 #SkillCollection_WeightageError {
     color: red;
     margin-left: 807px;
@@ -4771,7 +4775,15 @@ button.btn {
         top: 7px;
         position: relative;
     }
-
+    .join-time {
+        width: 110px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 5px;
+        position: relative;
+    }
     .allmeeting .table > tbody > tr > td {
         padding: 5px 2px !important;
     }
