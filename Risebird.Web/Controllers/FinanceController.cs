@@ -1186,5 +1186,11 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        [Authorize]
+        [HttpGet]
+        public IActionResult InvoiceDetails()
+        {
+            return View();
+        }
     }
 }
