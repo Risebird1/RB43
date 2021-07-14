@@ -16,4 +16,11 @@ namespace Risebird.Entities.ViewModel
         public string[] PrimarySkill { get; set; }
 
     }
+    public class InvoiceFilter
+    {
+        public string Month { get; set; }
+        public string Year { get; set; }
+        public string[] PaymentStatus { get; set; }
+        public string[] Client { get; set; }
+    }
 }
