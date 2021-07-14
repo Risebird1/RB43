@@ -4660,5 +4660,23 @@ namespace Risebird.Repository
             }
             return "Fail to save rating.";
         }
+        public async Task<IEnumerable<MeetingVM>> GetClientNotScheduledMeetingList(int Clientid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("Clientid", Clientid);
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientNotScheduledMeetings", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

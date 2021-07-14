@@ -42,7 +42,11 @@ body {
 .article p {
     margin-bottom: 0px;
 }
-
+.newsletter .searchbox .ref-btn {
+    position: absolute;
+    top: 8px;
+    right: 55px;
+}
 #SkillCollection_WeightageError {
     color: red;
     margin-left: 807px;
@@ -420,6 +424,9 @@ body {
     .rejected .btn-call .fa {
         top: 6px;
     }
+.counts-liks .rating-btn {
+    margin: 12px 0px;
+}
 .col-form-label{line-height:3.5}
 .custom-file {
     position: relative;
@@ -4730,7 +4737,7 @@ button.btn {
         width: 25%
     }
 
-    .allmeeting .candidate-client {
+    .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
         width: 22%
     }
     .selectedmeeting .candidate-client {
@@ -4740,7 +4747,7 @@ button.btn {
         width: 22%
     }
 
-    .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details {
+    .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
         width: 30%
     }
 }
@@ -4749,11 +4756,11 @@ button.btn {
     /* table.journey td.cadName, table.journey td.cadEmail {
         max-width: 120px;
     }*/
-    .allmeeting .candidate-details, .rejectedmeeting .candidate-details {
+    .allmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
         width: 36%
     }
 
-    .allmeeting .candidate-client {
+    .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
         width: 18%
     }
 
@@ -4801,7 +4808,15 @@ button.btn {
         top: 7px;
         position: relative;
     }
-
+    .join-time {
+        width: 110px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 5px;
+        position: relative;
+    }
     .allmeeting .table > tbody > tr > td {
         padding: 5px 2px !important;
     }
@@ -5334,6 +5349,13 @@ button.btn {
         left: 1% !important;
     }
 
+    .page-container .page-content .page-content-wrap {
+        float: left;
+        width: 100%;
+        margin-top: -10px!important;
+        padding: 0px 15px;
+        font-family: 'Open Sans', sans-serif;
+    }
     #Selectability_WeightageError, #SkillCollection_WeightageError, #Joinability_WeightageError, #SkillGeneral_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
         color: red !important;
         margin-left: 0 !important;

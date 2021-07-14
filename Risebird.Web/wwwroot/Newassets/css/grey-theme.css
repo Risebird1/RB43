@@ -759,6 +759,14 @@ table {
     z-index: 0;
     background: #dddddf !important;
 }
+.send-btn {
+    background: #fff;
+    color: #959596;
+    border-radius: 3px;
+    padding: 4px 13px;
+    border: 1px #959596 solid;
+    font-weight: bold;
+}
 @media only screen and (max-width: 767px) {
 
     .razorpay_btn button.form-control {
