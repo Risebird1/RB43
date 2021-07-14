@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using Risebird.Business.Interface;
@@ -8,6 +10,7 @@ using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,14 +29,18 @@ namespace Risebird.Web.Controllers
         private static string SearchValue;
         private IInterviewerService _interviewerService;
         private readonly IWhatsAppHelper _whatsAppHelper;
+        private readonly IConfiguration _configuration;
+        private readonly IAzureStorageHelper _azureStorageHelper;
 
-        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper)
+        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
             _interviewerService = interviewerService;
             _whatsAppHelper = whatsAppHelper;
+            _configuration = configuration;
+            _azureStorageHelper = azureStorageHelper;
         }
         /// <summary>
         /// Interviewer or QC check payment status and request for payment with details
@@ -1185,6 +1192,181 @@ namespace Risebird.Web.Controllers
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
 
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InvoiceDetails()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var model = new List<InvoiceDetailsVM>();
+                    string Startdate = string.Empty;
+                    string Enddate = string.Empty;
+                    var currentMonth = DateTime.Now.Month;
+                    var currentYear = DateTime.Now.Year;
+                    var Previousmonth = DateTime.Now.AddMonths(-1).Month;
+                    var Previousyear = DateTime.Now.AddMonths(-1).Year;
+                    Startdate = Previousyear + "-" + Previousmonth + "-01";
+                    Enddate = currentYear + "-" + currentMonth + "-01";
+                    if (HttpContext.Session.GetString("InvoiceFilter") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<InvoiceFilter>(HttpContext.Session.GetString("InvoiceFilter"));
+                        if (filter.Month != null && filter.Year != null)
+                        {
+                            Previousmonth = Convert.ToInt32(filter.Month);
+                            Previousyear = Convert.ToInt32(filter.Year);
+                            currentMonth = (Previousmonth + 1) > 12 ? 1 : Previousmonth + 1;
+                            currentYear = (Previousmonth + 1) > 12 ? Previousyear + 1 : Previousyear;
+                            Startdate = Previousyear + "-" + Previousmonth + "-01";
+                            Enddate = currentYear + "-" + currentMonth + "-01";
+                        }
+                        model = await _meetingService.FetchFNInvoiceDetails(Startdate, Enddate);
+                        filter.PaymentStatus = filter.PaymentStatus == null ? filter.PaymentStatus = model.Select(x => x.PaymentStatus.ToString()).ToArray() : filter.PaymentStatus = filter.PaymentStatus;
+                        filter.Client = filter.Client == null ? filter.Client = model.Select(x => x.Name).ToArray() : filter.Client = filter.Client;
+                        model = model.Where(c => filter.PaymentStatus.Contains(c.PaymentStatus.ToString()) && filter.Client.Contains(c.Name)).ToList();
+                    }
+                    else
+                    {
+                        model = await _meetingService.FetchFNInvoiceDetails(Startdate, Enddate);
+                    }
+                    ViewBag.Startdate = Startdate;
+                    ViewBag.Enddate = Enddate;
+                    var meetingStatuses = from PaymentStatus s in Enum.GetValues(typeof(PaymentStatus))
+                                          select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.PaymentStatusList = new SelectList(meetingStatuses, "ID", "Name");
+                    if (TempData["SuccessErrorMessageCandidate"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
+                        TempData.Remove("SuccessErrorMessageCandidate");
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> InvoiceDetails(InvoiceFilter filter)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var currentMonth = DateTime.Now.Month;
+                    var currentYear = DateTime.Now.Year;
+                    var Previousmonth = DateTime.Now.AddMonths(-1).Month;
+                    var Previousyear = DateTime.Now.AddMonths(-1).Year;
+                    var Startdate = Previousyear + "-" + Previousmonth + "-01";
+                    var Enddate = currentYear + "-" + currentMonth + "-01";
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("InvoiceFilter", JsonConvert.SerializeObject(filter));
+                    }
+                    if (filter.Month != null && filter.Year != null)
+                    {
+                        Previousmonth = Convert.ToInt32(filter.Month);
+                        Previousyear = Convert.ToInt32(filter.Year);
+                        currentMonth = (Previousmonth + 1) > 12 ? 1 : Previousmonth + 1;
+                        currentYear = (Previousmonth + 1) > 12 ? Previousyear + 1 : Previousyear;
+                        Startdate = Previousyear + "-" + Previousmonth + "-01";
+                        Enddate = currentYear + "-" + currentMonth + "-01";
+                    }
+                    var model = await _meetingService.FetchFNInvoiceDetails(Startdate, Enddate);
+                    filter.PaymentStatus = filter.PaymentStatus == null ? filter.PaymentStatus = model.Select(x => x.PaymentStatus.ToString()).ToArray() : filter.PaymentStatus = filter.PaymentStatus;
+                    filter.Client = filter.Client == null ? filter.Client = model.Select(x => x.Name).ToArray() : filter.Client = filter.Client;
+                    model = model.Where(c => filter.PaymentStatus.Contains(c.PaymentStatus.ToString()) && filter.Client.Contains(c.Name)).ToList();
+                    ViewBag.Startdate = Startdate;
+                    ViewBag.Enddate = Enddate;
+                    var meetingStatuses = from PaymentStatus s in Enum.GetValues(typeof(PaymentStatus))
+                                          select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.PaymentStatusList = new SelectList(meetingStatuses, "ID", "Name");
+                    if (TempData["SuccessErrorMessageCandidate"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
+                        TempData.Remove("SuccessErrorMessageCandidate");
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        public async Task<IActionResult> ResetInvoiceDetails()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("InvoiceFilter");
+                    return RedirectToAction("InvoiceDetails");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetInvoiceDetails(int id, string startdate, string enddate, string Clientname, string jobcountry)
+        {
+            var model = await _meetingService.GetInvoiceDetailsById(id);
+            if (model == null)
+            {
+                model = new InvoiceDetailsVM();
+            }
+            model.startdate = startdate;
+            model.enddate = enddate;
+            model.Name = Clientname;
+            model.JobCountry = jobcountry;
+            var meetingStatuses = from PaymentStatus s in Enum.GetValues(typeof(PaymentStatus))
+                                  select new { ID = (int)s, Name = s.GetDescription() };
+            model.PaymentStatusList = new SelectList(meetingStatuses, "ID", "Name");
+            return PartialView(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetInvoiceDetails(InvoiceDetailsVM model)
+        {
+            if (model.fileupload != null)
+            {
+                var uploadedFileURL = String.Empty;
+                await _azureStorageHelper.InsertBlob(model.fileupload.FileName.Replace(" ", ""), "invoicefiles", model.fileupload);
+                var containerRef = _azureStorageHelper.GetCloudBlobContainer("invoicefiles");
+                var blob = containerRef.GetBlockBlobReference(model.fileupload.FileName.Replace(" ", ""));
+                uploadedFileURL = blob.Uri.ToString();
+                model.filelink = uploadedFileURL;
+            }
+            var result = await _meetingService.SaveInvoiceDetails(model);
+            TempData["SuccessErrorMessageCandidate"] = result;
+            return RedirectToAction("InvoiceDetails");
         }
     }
 }

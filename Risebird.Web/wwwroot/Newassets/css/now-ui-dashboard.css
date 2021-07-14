@@ -7291,6 +7291,11 @@ input.theatre-btn:focus {
 }
 
 @media (max-width: 1024px) {
+    .table-responsive {
+        overflow-x: auto;
+        min-height: .01%;
+        padding-bottom: 10px;
+    }
     .sidebar-mini .sidebar .sidebar-wrapper > .nav [data-toggle="collapse"] ~ div > ul > li > a .sidebar-normal, .sidebar-mini .sidebar .sidebar-wrapper .user .info [data-toggle="collapse"] ~ div > ul > li > a .sidebar-normal, .sidebar-mini .sidebar .sidebar-wrapper .user .info > a > span, .sidebar-mini .sidebar .sidebar-wrapper > .nav li > a p {
         opacity: 1 !important;
     }

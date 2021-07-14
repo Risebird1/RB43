@@ -1,0 +1,468 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.InvoiceDetailsVM>
+@using System;
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Invoice Details";
+    ViewBag.PageHeader = "Invoice Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string Month = String.Empty;
+    string Year = String.Empty;
+    string[] PaymentStatus = new string[] { };
+    string[] Client = new string[] { };
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("InvoiceFilter") != null)
+{
+    filter = JsonConvert.DeserializeObject<InvoiceFilter>(HttpContextAccessor.HttpContext.Session.GetString("InvoiceFilter"));
+    Month = filter.Month != null ? filter.Month : String.Empty;
+    Year = filter.Year != null ? filter.Year : String.Empty;
+    PaymentStatus = filter.PaymentStatus != null ? filter.PaymentStatus : new string[] { };
+    Client = filter.Client != null ? filter.Client : new string[] { };
+}
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad invoice-details" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Invoice Details</h4></div>
+                </div>
+                <input type="hidden" id="txtStartdate" value="@ViewBag.Startdate" />
+                <input type="hidden" id="txtEnddate" value="@ViewBag.Enddate" />
+                <div class="pull-right client-ms">
+                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-toggle="modal" data-target="#filterModal">
+                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                        <div class="mdc-button__ripple"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="content client candidate">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div class="modal   fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+
+
+
+                                        <form action="@Url.Action("InvoiceDetails","Finance")" method="post" id="form">
+
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Month">
+                                                                Month
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="Month" name="Month" class="form-control">
+                                                                    <option value="1">January</option>
+                                                                    <option value="2">February</option>
+                                                                    <option value="3">March</option>
+                                                                    <option value="4">April</option>
+                                                                    <option value="5">May</option>
+                                                                    <option value="6">June</option>
+                                                                    <option value="7">July</option>
+                                                                    <option value="8">August</option>
+                                                                    <option value="9">September</option>
+                                                                    <option value="10">October</option>
+                                                                    <option value="11">November</option>
+                                                                    <option value="12">December</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Year">
+                                                                Year
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="Year" name="Year" class="form-control">
+                                                                    <option value="2021">2021</option>
+                                                                    <option value="2020">2020</option>
+                                                                    <option value="2019">2019</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">Client</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="Client" name="Client" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.Name).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PaymentStatus">Payment Status</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="PaymentStatus" name="PaymentStatus" class="form-control multiselect" multiple="multiple">
+                                                                    <option value="0">Pending</option>
+                                                                    <option value="1">Paid</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+
+                                <div id="tableID">
+                                    <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4 pt-10">
+
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-12 nopad rbpay">
+                                            <div class="table-responsive">
+                                                <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Client Name</th>
+                                                            <th>Country</th>
+                                                            <th>Price per Interview</th>
+                                                            <th>Completed Interviews</th>
+                                                            <th>Total Amount</th>
+                                                            <th>Account Number</th>
+                                                            <th>Account Details</th>
+                                                            <th>Payment Status</th>
+                                                            <th>Comment</th>
+                                                            <th>Reference Number</th>
+                                                            <th>Uploaded File</th>
+                                                            <th class="text-center">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tfoot>
+                                                        <tr>
+
+                                                            <th>Client Name</th>
+                                                            <th>Country</th>
+                                                            <th>Price per Interview</th>
+                                                            <th>Completed Interviews</th>
+                                                            <th>Total Amount</th>
+                                                            <th>Account Number</th>
+                                                            <th>Account Details</th>
+                                                            <th>Payment Status</th>
+                                                            <th>Comment</th>
+                                                            <th>Reference Number</th>
+                                                            <th>Uploaded File</th>
+                                                            <th class="text-center">Action</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                    <tbody id="tblbodyPayment">
+                                                        @if (Model.Count() == 0)
+                                                        {
+                                                            <tr><td colspan="10" style="text-align:center">No Result found</td></tr>
+                                                        }
+                                                        @foreach (var item in Model)
+                                                        {
+                                                            <tr>
+                                                                <td>@item.Name</td>
+                                                                <td>@item.JobCountry</td>
+                                                                <td>@item.Price</td>
+                                                                <td>@item.CompletedInterview</td>
+                                                                <td>@(item.Price*item.CompletedInterview)</td>
+                                                                <td>@item.AccountNumber</td>
+                                                                <td>@item.AccountDetails</td>
+                                                                @if (item.PaymentStatus == 1)
+                                                                {
+                                                                    <td>Paid</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>Pending</td>
+                                                                }
+                                                                <td>@item.Comment</td>
+                                                                <td>@item.ReferenceNumber</td>
+                                                                @if (!String.IsNullOrEmpty(item.filelink))
+                                                                {
+                                                                    <td>
+                                                                        <a href=@item.filelink>Download</a>
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+                                                                <td class="text-center">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                        <span onclick="EditDetails(@item.id,'@item.Name','@item.JobCountry')" title="Edit" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                                                                                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+                                                                                <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+
+            <!-- end col-md-12 -->
+        </div>
+
+        <div class="rbpay">
+            <div id="myModal" class="modal">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="filheader">
+                                <div class="filavatar">
+                                    <span class="publicsharing-icon">
+                                        <i class="fas fa-file-invoice" style="font-size: 23px;"></i>
+                                    </span>
+                                </div>
+                                <h5 class="modal-title pull-left"> Invoice ( <label id="txtInterviewerEmailid"></label> )</h5>
+                            </div>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="CloseMyModelPopup()">
+                                <span aria-hidden="true" id="importPopUp" style="cursor:pointer;">&times;</span>
+                            </button>
+                            <div class="modal-body">
+                                <div class="col-md-12">
+                                    <div id="divDetailedView" style="max-height:300px;"></div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+
+    </div>
+
+</div>
+
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful",'@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+        }
+    </script>
+}
+
+<script>
+    function RefreshSearch() {
+        $('#meeting').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+        //$("#ddlmonth").val($("#txtmonth").val());
+        applyDataTable();
+    });
+
+    function applyDataTable() {
+        $('#meeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(".dataloading").hide();
+    $("#meeting").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#meeting").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meeting").show();
+        }, 2000);
+    };
+</script>
+
+<script>
+    $('#meeting tbody').on('click', 'td.detail-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+        if (row.child.isShown()) {
+            row.child.hide();
+            tr.removeClass('show');
+        }
+        else {
+            row.child(format(row.data())).show();
+            tr.addClass('show');
+        }
+    });
+</script>
+<script>
+    function CloseMyModelPopup() {
+        document.getElementById("myModal").style.display = "none";
+    }
+    function EditDetails(index, clientname, joblocation) {
+        $.ajax({
+            type: "GET",
+            url: "/Finance/GetInvoiceDetails",
+            data: { 'id': index, 'startdate': $("#txtStartdate").val(), 'enddate': $("#txtEnddate").val(), 'Clientname': clientname, 'jobcountry': joblocation },
+            success: function (data) {
+                document.getElementById("myModal").style.display = "block";
+                $("#txtInterviewerEmailid").text(clientname + " -- " + joblocation);
+                $("#divDetailedView").empty().html(data);
+            }
+        });
+    }
+</script>
+<script>
+        $(document).ready(function () {
+            //$("#Month").val("");
+            //$("#Year").val("");
+            $("#Client").val("");
+            $("#PaymentStatus").val("");
+            $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+            }
+
+            $("#Client").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#PaymentStatus").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+        });
+
+        function ResetFilter() {
+            window.location.href = "/Finance/ResetInvoiceDetails";
+        }
+        function ApplySessionFilter() {
+            var month = '@Month';
+            var year = '@Year';
+            var paymentStatus =  @Html.Raw(Json.Serialize(PaymentStatus));
+            var client =  @Html.Raw(Json.Serialize(Client));
+
+            $('#Month').val(month);
+            $('#Year').val(year);
+            $("#Client").val(client);
+            $("#PaymentStatus").val(paymentStatus);
+            var form = $("#form").serialize();
+
+        }
+
+</script>
