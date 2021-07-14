@@ -215,6 +215,7 @@ namespace Risebird.Web
             services.AddScoped<IB2CClientService, B2CClientService>();
             services.AddScoped<IPasswordHelper, PasswordHelper>();
             services.AddScoped<IWhatsAppHelper, WhatsAppHelper>();
+            services.AddScoped<ISASUrlHelper, SASUrlHelper>();
         }
     }
     //Global level antiforgery token security to stop malicious scripts

@@ -798,6 +798,16 @@ table {
     border: 1px #53a4f4 solid;
     font-weight: bold;
 }
+.custom-file-label::after {
+    color: #fff !important;
+    background-color: #bbbec0 !important;
+}
+.custom-file {
+    height: calc(1.5em + .75rem + 1px) !important;
+    margin-bottom: 0;
+    z-index: 0;
+    background: #ececee !important;
+}
 @media only screen and (max-width: 767px) {
     .razorpay_btn button.form-control {
         width: 33.3%;

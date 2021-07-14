@@ -168,5 +168,57 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<Candidate> GetCandidatesDetails(int irfId, int candidateId)
+        {
+            try
+            {
+                return await _candidateRepository.GetCandidatesDetails(irfId, candidateId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
+        public async Task<bool> AddResume(List<CandidateResume> resumeList)
+        {
+            try
+            {
+                return await _candidateRepository.AddResume(resumeList);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<CandidateResume>> GetCandidatesResumes(int irfId, int candidateId)
+        {
+            try
+            {
+                return await _candidateRepository.GetCandidatesResumes(irfId, candidateId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
+        public async Task<bool> DeleteCandidateResume(int id)
+        {
+            try
+            {
+                return await _candidateRepository.DeleteCandidateResume(id);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
