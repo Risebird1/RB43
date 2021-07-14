@@ -798,6 +798,13 @@ table {
     border: 1px #53a4f4 solid;
     font-weight: bold;
 }
+.invoice-details .card-header.bg-w {
+    background: #f8faff !important;
+    border: none;
+}
+.mdc-fab {
+    background-color: #53a5f5 !important;
+}
 @media only screen and (max-width: 767px) {
     .razorpay_btn button.form-control {
         width: 33.3%;

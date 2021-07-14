@@ -1023,6 +1023,9 @@ table {
     border: 1px #000 solid;
     font-weight: bold;
 }
+.pt-10{
+    padding-top:10px;
+}
 @media screen and (max-width: 768px) {
     .d_active {
         background-color: #1a1a1a !important;

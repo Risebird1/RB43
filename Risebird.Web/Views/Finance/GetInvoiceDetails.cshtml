@@ -8,32 +8,33 @@
     @Html.HiddenFor(m => m.startdate)
     @Html.HiddenFor(m => m.enddate)
     <div class="row">
-        <div class="col-md-6">
-            @Html.LabelFor(m => m.Price, new { @class = "form-control" })
-            @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
+        <div class="col-md-6 border-rv">
+            @Html.LabelFor(m => m.Price, new { @class = "control-label col-md-4 col-sm-4 desp-label pull-left" })
+            @Html.TextBoxFor(m => m.Price, new { @class = "form-control col-md-8 col-sm-8 pull-left" })
         </div>
         <div class="col-md-6">
-            @Html.LabelFor(m => m.AccountNumber, new { @class = "form-control" })
-            @Html.TextBoxFor(m => m.AccountNumber, new { @class = "form-control" })
+            @Html.LabelFor(m => m.AccountNumber, new { @class = "control-label col-md-4 col-sm-4 desp-label pull-left" })
+            @Html.TextBoxFor(m => m.AccountNumber, new { @class = "form-control col-md-8 col-sm-8 pull-left" })
+        </div>
+        <div class="col-md-6  border-rv">
+            @Html.LabelFor(m => m.AccountDetails, new { @class = "control-label col-md-4 col-sm-4 desp-label pull-left" })
+            @Html.TextBoxFor(m => m.AccountDetails, new { @class = "form-control col-md-8 col-sm-8 pull-left", @maxlength = "200" })
+        </div>
+        <div class="col-md-6 ">
+            @Html.LabelFor(m => m.PaymentStatus, new { @class = "control-label col-md-4 col-sm-4 desp-label pull-left" })
+            @Html.DropDownListFor(m => m.PaymentStatus, Model.PaymentStatusList, new { @class = "form-control col-md-8 col-sm-8 pull-left" })
+        </div>
+        <div class="col-md-6 border-rv">
+            @Html.LabelFor(m => m.ReferenceNumber, new { @class = "control-label col-md-4 col-sm-4 desp-label pull-left" })
+            @Html.TextBoxFor(m => m.ReferenceNumber, new { @class = "form-control col-md-8 col-sm-8 pull-left" })
         </div>
         <div class="col-md-6">
-            @Html.LabelFor(m => m.AccountDetails, new { @class = "form-control" })
-            @Html.TextBoxFor(m => m.AccountDetails, new { @class = "form-control", @maxlength = "200" })
-        </div>
-        <div class="col-md-6">
-            @Html.LabelFor(m => m.PaymentStatus, new { @class = "form-control" })
-            @Html.DropDownListFor(m => m.PaymentStatus, Model.PaymentStatusList, new { @class = "form-control" })
-        </div>
-        <div class="col-md-6">
-            @Html.LabelFor(m => m.ReferenceNumber, new { @class = "form-control" })
-            @Html.TextBoxFor(m => m.ReferenceNumber, new { @class = "form-control" })
-        </div>
-        <div class="col-md-6">
-            @Html.LabelFor(m => m.Comment, new { @class = "form-control" })
-            @Html.TextBoxFor(m => m.Comment, new { @class = "form-control", @maxlength = "200" })
+            @Html.LabelFor(m => m.Comment, new { @class = "control-label col-md-4 col-sm-4 desp-label pull-left" })
+            @Html.TextBoxFor(m => m.Comment, new { @class = "form-control col-md-8 col-sm-8 pull-left", @maxlength = "200", @style="height:80px;" })
         </div>
     </div>
-    <div class="col-md-12">
-        <input type="submit" />
+    <hr style="margin:0px 0px 5px 0px;"/>
+    <div class="col-md-12 nopad text-right">
+        <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
     </div>
 }
