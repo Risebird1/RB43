@@ -926,7 +926,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (!String.IsNullOrEmpty(searchValue))
                         {
-                            searchValue = searchValue.ToUpper();
+                            searchValue = searchValue.ToUpper().Trim();
                             candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                         }
@@ -1011,7 +1011,7 @@ namespace Risebird.Web.Controllers
                 }
                 if (!String.IsNullOrEmpty(searchValue))
                 {
-                    searchValue = searchValue.ToUpper();
+                    searchValue = searchValue.ToUpper().Trim();
                     candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                 }
