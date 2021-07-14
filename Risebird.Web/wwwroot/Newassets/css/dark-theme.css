@@ -1023,8 +1023,15 @@ table {
     border: 1px #000 solid;
     font-weight: bold;
 }
-.pt-10{
-    padding-top:10px;
+.custom-file-label::after {
+    color: #fff !important;
+    background-color: #100e0e!important;
+}
+.custom-file {
+    height: calc(1.5em + .75rem + 1px) !important;
+    margin-bottom: 0;
+    z-index: 0;
+    background: #181818 !important;
 }
 @media screen and (max-width: 768px) {
     .d_active {

@@ -42,7 +42,11 @@ body {
 .article p {
     margin-bottom: 0px;
 }
-
+.newsletter .searchbox .ref-btn {
+    position: absolute;
+    top: 8px;
+    right: 55px;
+}
 #SkillCollection_WeightageError {
     color: red;
     margin-left: 807px;
@@ -422,6 +426,39 @@ body {
     }
 .counts-liks .rating-btn {
     margin: 12px 0px;
+}
+.col-form-label{line-height:3.5}
+.custom-file {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: calc(1.5em + .75rem + 2px);
+    margin-bottom: 0;
+    background: #ececee;
+}
+ .custom-file input[type=file]:focus {
+outline:none!important;
+border-color:#fff!important;
+box-shadow:none!important;
+    }
+.custom-file-label {
+    background: none !important;
+    border: 0px !important;
+    line-height: 35px !important;
+}
+.custom-file-label::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    display: block;
+    height: calc(1.5em + 1rem) !important;
+    padding: .375rem .75rem;
+    line-height: 2;
+    content: "Browse";
+    border-left: inherit;
+    border-radius: 0 .25rem .25rem 0;
 }
 .rating-btn {
     background: none;
@@ -4796,7 +4833,15 @@ button.btn {
         top: 7px;
         position: relative;
     }
-
+    .join-time {
+        width: 110px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 5px;
+        position: relative;
+    }
     .allmeeting .table > tbody > tr > td {
         padding: 5px 2px !important;
     }

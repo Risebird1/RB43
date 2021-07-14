@@ -1,0 +1,298 @@
+﻿@model Risebird.Entities.ViewModel.ResumeListViewModel
+@{
+    ViewData["Title"] = "Candidate Resume List";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var Header = "Resume(s) of <strong>@(Model.CandidateName)(@(Model.IRFName))</strong>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Resume(s) of <strong>@(Model.CandidateName)(@(Model.IRFName))</strong></h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div>
+                        @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client")
+                        {
+                            @Html.ActionLink("Upload Resume(s)", "UploadResumes", "Candidate", new { candidateId = Model.CandidateId, irfId = Model.IRFId }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                        }
+
+
+                        @Html.ActionLink("Back to List", "GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="content client candidate">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+
+                            <div>
+
+                                <div id="tableID">
+                                    <table id="resumeTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+
+                                                <th>Date</th>
+                                                <th>Resume URL</th>
+                                                <th class="text-center">Actions</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Resume URL</th>
+                                                <th class="text-center">Actions</th>
+                                            </tr>
+
+                                        </tfoot>
+                                        <tbody>
+                                            @foreach (var item in Model.ResumeList)
+                                            {
+                                                <tr id=@item.id>
+
+                                                    <td> @item.AddedOn</td>
+
+                                                    <td>
+                                                        @{
+                                                            var fileName = string.Empty;
+                                                            if (item.ResumeLink.Split('/')?.Last().Split('?') != null)
+                                                            {
+                                                                fileName = item.ResumeLink.Split('/')?.Last().Split('?')?.First();
+                                                            }
+                                                            else
+                                                            {
+                                                                fileName = item.ResumeLink.Split('/')?.Last();
+
+                                                            }
+                                                        }
+                                                        <a target="_blank" title="Resume" href=@item.ResumeLink>@fileName</a>
+                                                    </td>
+
+
+
+                                                    <td class="text-center action">
+
+                                                        @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client")
+                                                        {
+                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                                <span onclick="javascript:Delete('@item.id', '@fileName');" title="Delete" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                                </span>
+                                                            </button>
+                                                        }
+
+                                                    </td>
+
+                                                </tr>
+
+
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+
+            <!-- end col-md-12 -->
+        </div>
+
+
+
+        <!-- end row -->
+    </div>
+
+</div>
+
+
+
+@if (Model.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@Model.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("successful",'@Model.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@Model.Message', "error");
+            }
+
+        }
+
+    </script>
+}
+
+<script>
+
+    function RefreshSearch() {
+        $('#resumeTable').DataTable().destroy();
+
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+
+        applyDataTable();
+
+    });
+
+    function applyDataTable() {
+        $('#resumeTable').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+
+        });
+
+    }
+
+
+
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#resumeTable").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#resumeTable").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#resumeTable").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+
+
+
+
+<script>
+    function Delete(id, fileName) {
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The resume (" + fileName + ") will be deleted permanently!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Candidate/DeleteResume',
+                        method: 'POST',
+                        data: { 'id': id },
+                        success: function (result) {
+                            if (result) {
+                                resolve(result)
+
+                            }
+                            else {
+                                swal.fire("Error deleting!", "Please try again", "error");
+
+                            }
+                        },
+                        error: function () {
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deleted!',
+                    type: 'success',
+                    html: '<p>The resume has been deleted.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    location.reload(true);
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Delete cancelled!',
+                    'error'
+                )
+            }
+        })
+    }
+</script>
+
+

@@ -749,6 +749,16 @@ table {
 .user-menu {
     border: 2px #e0e0ea solid;
 }
+.custom-file-label::after {
+    color: #fff !important;
+    background-color: #bbbec0 !important;
+}
+.custom-file {
+    height: calc(1.5em + .75rem + 1px) !important;
+    margin-bottom: 0;
+    z-index: 0;
+    background: #dddddf !important;
+}
 .send-btn {
     background: #fff;
     color: #959596;
