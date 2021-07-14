@@ -1,0 +1,110 @@
+﻿@model Risebird.Entities.ViewModel.UploadCandidateResumesViewModel
+
+
+@{
+    ViewData["Title"] = "Upload Candidate Resumes";
+    ViewBag.PageHeader = "Upload Candidate Resumes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+<div class="main-panel" id="main-panel">
+    <div class="mt50">
+    </div>
+    <div style="height:20px;"></div>
+    <div class="content client">
+
+        <div class="bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <form action="/Candidate/UploadResumes" multiple enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
+                            @Html.AntiForgeryToken()
+                            <div class="canvas_div_pdf">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group" style="margin-bottom:10px;">
+                                            @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group" style="margin-bottom:10px;">
+                                            @Html.LabelFor(model => model.IRFName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.IRFName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group row">
+                                    <label asp-for="ResumeFiles" class="col-sm-2 col-form-label"></label>
+                                    <div class="col-sm-10">
+                                        <div class="custom-file">
+                                            <input asp-for="ResumeFiles" multiple class="form-control custom-file-input">
+                                            <label class="custom-file-label">Choose File(s)...</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div asp-validation-summary="All" class="text-danger"></div>
+
+
+
+                                @Html.HiddenFor(m => m.IRFId)
+                                @Html.HiddenFor(m => m.CandidateId)
+                                @Html.HiddenFor(m => m.IRFName)
+                                @Html.HiddenFor(m => m.CandidateName)
+
+                                <div class="card-footer ">
+                                    <div class="row">
+
+                                        <div class="col-md-12 mc-button-area text-right">
+
+                                            @Html.ActionLink("Back to List", "Resumes", "Candidate", new { irfId =Model.IRFId, candidateId = Model.CandidateId, irfName = Model.IRFName, candidateName = Model.CandidateName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+
+                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Upload</button>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+
+
+
+                    </div>
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.custom-file-input').on("change", function () {
+            var fileLabel = $(this).next('.custom-file-label');
+            var files = $(this)[0].files;
+            if (files.length > 1) {
+                fileLabel.html(files.length + ' files selected');
+            }
+            else if (files.length == 1) {
+                fileLabel.html(files[0].name);
+            }
+        });
+    });
+</script>

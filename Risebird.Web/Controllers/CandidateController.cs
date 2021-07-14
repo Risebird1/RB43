@@ -35,10 +35,11 @@ namespace Risebird.Web.Controllers
         private readonly IIRFRepository _iRFRepository;
         private readonly INotificationHelper _notificationHelper;
         private readonly IWhatsAppHelper _whatsAppHelper;
+        private readonly ISASUrlHelper _sasUrlHelper;
 
         //private static string Searchvalue;
 
-        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper)
+        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -50,6 +51,7 @@ namespace Risebird.Web.Controllers
             _iRFRepository = iRFRepository;
             _notificationHelper = notificationHelper;
             _whatsAppHelper = whatsAppHelper;
+            _sasUrlHelper = sasUrlHelper;
         }
         public async Task<IActionResult> CandidateTimeline()
         {
@@ -2786,6 +2788,220 @@ namespace Risebird.Web.Controllers
                 _whatsAppHelper.WhatsAppSendCancleReScheduling(_whatsapp);
             }
             return Json(model);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> UploadResumes(int candidateId, int irfId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var model = new UploadCandidateResumesViewModel();
+                        var candidateDetails = await _candidateService.GetCandidatesDetails(irfId, candidateId);
+                        model.CandidateId = candidateId;
+                        model.IRFId = irfId;
+                        model.CandidateName = candidateDetails.Name;
+                        model.IRFName = candidateDetails.IRFName;
+                        return View(model); 
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadResumes(UploadCandidateResumesViewModel model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        if (ModelState.IsValid)
+                        {
+                            var emailId = HttpContext.Session.GetString("email")?.Trim();
+                            emailId = emailId.Replace("\"", "");
+                            if (model.ResumeFiles != null && model.ResumeFiles.Count() > 0)
+                            {
+                                var addedByUserId = _irfService.GetUserId(emailId);
+                                if (addedByUserId > 0)
+                                {
+                                    var resumeList = new List<CandidateResume>();
+                                    foreach (var file in model.ResumeFiles)
+                                    {
+                                        //upload in blob and get the link and and the entry in the list
+                                        var fileName = file.FileName.Replace(" ", "_");
+                                        await _azureStorageHelper.InsertBlob(fileName, "resumes", file);
+                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                        var blob = containerRef.GetBlockBlobReference(fileName);
+                                        string uploadedaudioFileURL = blob.Uri.ToString();
+                                        string sasUrl = string.Empty;
+                                        if (uploadedaudioFileURL == null)
+                                        {
+                                            ModelState.AddModelError(string.Empty, "Resume upload has failed.");
+                                            return View(model);
+                                        }
+                                        else
+                                        {
+                                            //generate SAS URL from the uploaded video url
+                                            var sas = _sasUrlHelper.CreateSasUrl("resumes");
+                                            sasUrl = uploadedaudioFileURL + "?" + sas;
+                                            resumeList.Add(new CandidateResume { CandidateId = model.CandidateId, IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl });
+                                        }
+                                    }
+
+                                    //save the resumeList in db 
+                                    var result = await _candidateService.AddResume(resumeList);
+                                    if (result)
+                                    {
+                                        TempData["SuccessErrorMessageCandidateResume"] = "Resume(s) uploaded successfully.";
+                                    }
+                                    else
+                                    {
+                                        TempData["SuccessErrorMessageCandidateResume"] = "Failed to upload Resume(s)";
+
+                                    }
+                                    return RedirectToAction("Resumes", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+
+                                }
+                                else
+                                {
+                                    return RedirectToAction("SignOut", "Session");
+
+                                }
+                            }
+                            else
+                            {
+                                ModelState.AddModelError(string.Empty, "Please select file(s) to upload.");
+                                return View(model);
+                            }
+                        }
+                        return View(model); 
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("UploadResumes", new { candidateId = model.CandidateId, irfId = model.IRFId});
+            }
+
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Resumes(int irfId, int candidateId, string irfName, string candidateName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var model = new ResumeListViewModel();
+                        model.ResumeList = (await _candidateService.GetCandidatesResumes(irfId, candidateId))?.ToList();
+                        model.IRFName = irfName;
+                        model.CandidateName = candidateName;
+                        model.IRFId = irfId;
+                        model.CandidateId = candidateId;
+                        model.Profile = profileName;
+
+                        if (TempData["SuccessErrorMessageCandidateResume"] != null)
+                        {
+                            model.Message = TempData["SuccessErrorMessageCandidateResume"].ToString();
+                            TempData.Remove("SuccessErrorMessageCandidateResume");
+                        }
+                        return View(model); 
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("GetCandidates", new { id = irfId, irfName = irfName });
+
+            }
+
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> DeleteResume(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var result = await _candidateService.DeleteCandidateResume(id);
+                        return Json(result);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+
         }
     }
 }
