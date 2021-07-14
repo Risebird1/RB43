@@ -30,10 +30,14 @@
         </div>
         <div class="col-md-6">
             @Html.LabelFor(m => m.Comment, new { @class = "control-label col-md-4 col-sm-4 desp-label pull-left" })
-            @Html.TextBoxFor(m => m.Comment, new { @class = "form-control col-md-8 col-sm-8 pull-left", @maxlength = "200", @style="height:80px;" })
+            @Html.TextBoxFor(m => m.Comment, new { @class = "form-control col-md-8 col-sm-8 pull-left", @maxlength = "200", @style = "height:80px;" })
+        </div>
+        <div class="col-md-6 border-rv">
+            @Html.LabelFor(m => m.fileupload, new { @class = "control-label col-md-4 col-sm-4 desp-label pull-left" })
+            @Html.TextBoxFor(m => m.fileupload, new { type = "file", @class = "form-control col-md-8 col-sm-8 pull-left", @accept = ".doc, .docx, .pdf, .txt" })
         </div>
     </div>
-    <hr style="margin:0px 0px 5px 0px;"/>
+    <hr style="margin:0px 0px 5px 0px;" />
     <div class="col-md-12 nopad text-right">
         <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
     </div>

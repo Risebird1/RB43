@@ -233,8 +233,8 @@ namespace Risebird.Entities.Enum
     }
     public enum PaymentStatus
     {
-        [Description("UnPaid")]
-        UnPaid = 0,
+        [Description("Pending")]
+        Pending = 0,
         [Description("Paid")]
         Paid = 1
     }

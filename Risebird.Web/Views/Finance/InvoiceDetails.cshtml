@@ -1,11 +1,27 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.InvoiceDetailsVM>
 @using System;
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Invoice Details";
     ViewBag.PageHeader = "Invoice Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string Month = String.Empty;
+    string Year = String.Empty;
+    string[] PaymentStatus = new string[] { };
+    string[] Client = new string[] { };
 }
-
+@if (HttpContextAccessor.HttpContext.Session.GetString("InvoiceFilter") != null)
+{
+    filter = JsonConvert.DeserializeObject<InvoiceFilter>(HttpContextAccessor.HttpContext.Session.GetString("InvoiceFilter"));
+    Month = filter.Month != null ? filter.Month : String.Empty;
+    Year = filter.Year != null ? filter.Year : String.Empty;
+    PaymentStatus = filter.PaymentStatus != null ? filter.PaymentStatus : new string[] { };
+    Client = filter.Client != null ? filter.Client : new string[] { };
+}
 <div class="main-panel" id="main-panel">
     <div class="pt30">
         <div class="col-md-12 nopad invoice-details" style="margin:0px;">
@@ -17,61 +33,10 @@
                 <input type="hidden" id="txtStartdate" value="@ViewBag.Startdate" />
                 <input type="hidden" id="txtEnddate" value="@ViewBag.Enddate" />
                 <div class="pull-right client-ms">
-                    @*<select id="ddlmonth" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                            <option value="1">January</option>
-                            <option value="2">February</option>
-                            <option value="3">March</option>
-                            <option value="4">April</option>
-                            <option value="5">May</option>
-                            <option value="6">June</option>
-                            <option value="7">July</option>
-                            <option value="8">August</option>
-                            <option value="9">September</option>
-                            <option value="10">October</option>
-                            <option value="11">November</option>
-                            <option value="12">December</option>
-                        </select>*@
-                    @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="1-7 of this month" onclick="Fetchinvoice(1,1)">
-                                <span data-toggle="tooltip" data-placement="top" title="1-7 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">1-7</font></span>
-                            </button>
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="8-14 of this month" onclick="Fetchinvoice(2,1)">
-                                <span data-toggle="tooltip" data-placement="top" title="8-14 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">8-14</font></span>
-                            </button>
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="15-21 of this month" onclick="Fetchinvoice(3,1)">
-                                <span data-toggle="tooltip" data-placement="top" title="15-21 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">15-21</font></span>
-                            </button>
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="22-month end of this month" onclick="Fetchinvoice(4,1)">
-                                <span data-toggle="tooltip" data-placement="top" title="22-month end of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">22-_</font></span>
-                            </button>
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Payment History">
-                                <span class="fa fa-history" data-toggle="tooltip" data-placement="top" title="Payment History" onclick="openPaymentHistory()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Payment History</font></span>
-                            </button>
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to generate invoice.">
-                                <span class="fa fa-file" data-toggle="tooltip" data-placement="top" title="Click here to generate invoice." onclick="openmyinvoiceModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Generate Invoice</font></span>
-                            </button>
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to Advance Payment.">
-                                <span class="fa fa-credit-card" data-toggle="tooltip" data-placement="top" title="Click here to Advance Payment." onclick="openmyAdvancepaymentModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Advance Payment</font></span>
-                            </button>
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                        <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportFNPayment", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>
-                        <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="ExportFNDetails()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>
-                            </button>*@
-                    @*<div id="meeting_filter" class="dataTables_filter pull-right" style="margin-left:5PX;">
-
-                            <div class="searchCon">
-
-                                <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="">
-
-
-
-                                <button style="display:none;" type="button" id="x">x</button>
-
-                            </div>
-                        </div>*@
-                    <div>
-
-                    </div>
+                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-toggle="modal" data-target="#filterModal">
+                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                        <div class="mdc-button__ripple"></div>
+                    </button>
                 </div>
             </div>
         </div>
@@ -87,7 +52,109 @@
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
+                            <div class="modal   fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
 
+
+
+                                        <form action="@Url.Action("InvoiceDetails","Finance")" method="post" id="form">
+
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Month">
+                                                                Month
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="Month" name="Month" class="form-control">
+                                                                    <option value="1">January</option>
+                                                                    <option value="2">February</option>
+                                                                    <option value="3">March</option>
+                                                                    <option value="4">April</option>
+                                                                    <option value="5">May</option>
+                                                                    <option value="6">June</option>
+                                                                    <option value="7">July</option>
+                                                                    <option value="8">August</option>
+                                                                    <option value="9">September</option>
+                                                                    <option value="10">October</option>
+                                                                    <option value="11">November</option>
+                                                                    <option value="12">December</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Year">
+                                                                Year
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="Year" name="Year" class="form-control">
+                                                                    <option value="2021">2021</option>
+                                                                    <option value="2020">2020</option>
+                                                                    <option value="2019">2019</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">Client</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="Client" name="Client" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.Name).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PaymentStatus">Payment Status</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="PaymentStatus" name="PaymentStatus" class="form-control multiselect" multiple="multiple">
+                                                                    <option value="0">Pending</option>
+                                                                    <option value="1">Paid</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div>
 
@@ -103,8 +170,8 @@
                                                             <th>Client Name</th>
                                                             <th>Country</th>
                                                             <th>Price per Interview</th>
-                                                            <th>Interviews</th>
-                                                            <th>Sum</th>
+                                                            <th>Completed Interviews</th>
+                                                            <th>Total Amount</th>
                                                             <th>Account Number</th>
                                                             <th>Account Details</th>
                                                             <th>Payment Status</th>
@@ -120,8 +187,8 @@
                                                             <th>Client Name</th>
                                                             <th>Country</th>
                                                             <th>Price per Interview</th>
-                                                            <th>Interviews</th>
-                                                            <th>Sum</th>
+                                                            <th>Completed Interviews</th>
+                                                            <th>Total Amount</th>
                                                             <th>Account Number</th>
                                                             <th>Account Details</th>
                                                             <th>Payment Status</th>
@@ -146,10 +213,26 @@
                                                                 <td>@(item.Price*item.CompletedInterview)</td>
                                                                 <td>@item.AccountNumber</td>
                                                                 <td>@item.AccountDetails</td>
-                                                                <td>@item.PaymentStatus</td>
+                                                                @if (item.PaymentStatus == 1)
+                                                                {
+                                                                    <td>Paid</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>Pending</td>
+                                                                }
                                                                 <td>@item.Comment</td>
                                                                 <td>@item.ReferenceNumber</td>
-                                                                <td></td>
+                                                                @if (!String.IsNullOrEmpty(item.filelink))
+                                                                {
+                                                                    <td>
+                                                                        <a href=@item.filelink>Download</a>
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
                                                                 <td class="text-center">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                                         <span onclick="EditDetails(@item.id,'@item.Name','@item.JobCountry')" title="Edit" class="mdc-fab__icon material-icons">
@@ -202,7 +285,7 @@
                             </button>
                             <div class="modal-body">
                                 <div class="col-md-12">
-                                    <div id="divDetailedView" style="max-height:250px;"></div>
+                                    <div id="divDetailedView" style="max-height:300px;"></div>
                                 </div>
 
                             </div>
@@ -336,6 +419,50 @@
                 $("#divDetailedView").empty().html(data);
             }
         });
-
     }
+</script>
+<script>
+        $(document).ready(function () {
+            //$("#Month").val("");
+            //$("#Year").val("");
+            $("#Client").val("");
+            $("#PaymentStatus").val("");
+            $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+            }
+
+            $("#Client").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#PaymentStatus").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+        });
+
+        function ResetFilter() {
+            window.location.href = "/Finance/ResetInvoiceDetails";
+        }
+        function ApplySessionFilter() {
+            var month = '@Month';
+            var year = '@Year';
+            var paymentStatus =  @Html.Raw(Json.Serialize(PaymentStatus));
+            var client =  @Html.Raw(Json.Serialize(Client));
+
+            $('#Month').val(month);
+            $('#Year').val(year);
+            $("#Client").val(client);
+            $("#PaymentStatus").val(paymentStatus);
+            var form = $("#form").serialize();
+
+        }
+
 </script>
