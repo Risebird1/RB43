@@ -4685,94 +4685,157 @@ button.btn {
     top: 11px;
 }
 /***** Media queries *****/
-@media only screen and (min-width: 1920px) {
-    .rbpay .sb-scrollbar {
-        position: absolute;
-        right: -6px !important;
-    }
-
-    .tabCon .tab-menu ul li a {
-        font-size: 17px !important;
-        padding: 10px 12px;
-    }
-
-    .tab-menu ul li:nth-child(3) a.active ~ .skillcount {
-        right: 16px !important;
-    }
-
-    .tab-menu ul li:nth-child(3) .skillcount {
-        right: 25px !important;
-    }
-
-    .tab-menu ul li:nth-child(4) .skillcount {
-        right: 22px !important;
-    }
-
-    .tab-menu ul li:nth-child(4) a.active ~ .skillcount {
-        right: 25px !important;
-    }
-
-    .tab-menu ul li:nth-child(5) .skillcount {
-        right: 4px !important;
-    }
-
-    .tab-menu ul li:nth-child(5) a.active ~ .skillcount {
-        right: 6px !important;
-    }
-
-    .tab-menu ul li:nth-child(6) a.active ~ .skillcount {
-        right: 4px !important;
-    }
-
-    .tab-menu ul li:nth-child(6) .skillcount {
-        right: 0px !important;
-    }
-
-    .tab-menu ul li:nth-child(7) .skillcount {
-        right: 22px !important;
-    }
-
-    .tab-menu ul li:nth-child(7) a.active ~ .skillcount {
-        right: 12px !important;
-    }
-
-    .tab-menu ul li:nth-child(8) .skillcount {
-        right: 18px !important;
-    }
-
-    .tab-menu ul li:nth-child(8) a.active ~ .skillcount {
-        right: 5px !important;
-    }
-
-    .tab-menu ul li:nth-child(9) .skillcount {
-        right: 32px !important;
-    }
-
-    .tab-menu ul li:nth-child(9) a.active ~ .skillcount {
-        right: 16px !important;
-    }
-
-    .tab-menu ul li:nth-child(10) .skillcount {
-        right: 0px !important;
-    }
-
-    .tab-menu ul li:nth-child(10) a.active ~ .skillcount {
-        right: 8px !important;
-    }
-
-    .tab-menu ul li:nth-child(11) .skillcount {
-        right: 11px !important;
-    }
-
-    .tab-menu ul li:nth-child(11) a.active ~ .skillcount {
-        right: 10px !important;
-    }
+.copy-btn {
+    background: none;
+    border: 0;
+    position:relative;
+    margin: -10px 0px 0px 0px !important;
 }
 
-@media only screen and (max-width: 1920px) {
-    .allmeeting .candidate-details {
-        width: 25%
+.special-text svg {
+    fill: rgb(83, 165, 245)
+}
+
+.special-text:hover .special-text__tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+.special-text__tooltip::after {
+    border-top: 10px solid grey;
+    margin-top: -2px;
+    z-index: 1;
+}
+.special-text__tooltip {
+    font-size: 12px;
+    position: absolute;
+    width: 100px;
+    right: 15%;
+    bottom: 65%;
+    color: #fff;
+    text-align: center !important;
+    margin-bottom: 15px;
+    padding: 5px 10px;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.5);
+    background: grey;
+    border-radius: 3px;
+    visibility: hidden;
+    opacity: 0;
+    /* Prettify */
+    text-align: left;
+    -webkit-transition-property: opacity;
+    -moz-transition-property: opacity;
+    transition-property: opacity;
+    -webkit-transition-duration: 0.5s;
+    -moz-transition-duration: 0.5s;
+    transition-duration: 0.5s;
+    -webkit-transition-timing-function: linear;
+    -moz-transition-timing-function: linear;
+    transition-timing-function: linear;
+    -webkit-transition-delay: initial;
+    -moz-transition-delay: initial;
+    transition-delay: initial;
+}
+
+    /* The bordered part of the triangle */
+    .special-text__tooltip::before,
+    .special-text__tooltip::after {
+        content: "";
+        position: absolute;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        top: 100%;
+        left: 15%;
+        margin-left: -10px;
     }
+    /***** Media queries *****/
+    @media only screen and (min-width: 1920px) {
+        .rbpay .sb-scrollbar {
+            position: absolute;
+            right: -6px !important;
+        }
+
+        .tabCon .tab-menu ul li a {
+            font-size: 17px !important;
+            padding: 10px 12px;
+        }
+
+        .tab-menu ul li:nth-child(3) a.active ~ .skillcount {
+            right: 16px !important;
+        }
+
+        .tab-menu ul li:nth-child(3) .skillcount {
+            right: 25px !important;
+        }
+
+        .tab-menu ul li:nth-child(4) .skillcount {
+            right: 22px !important;
+        }
+
+        .tab-menu ul li:nth-child(4) a.active ~ .skillcount {
+            right: 25px !important;
+        }
+
+        .tab-menu ul li:nth-child(5) .skillcount {
+            right: 4px !important;
+        }
+
+        .tab-menu ul li:nth-child(5) a.active ~ .skillcount {
+            right: 6px !important;
+        }
+
+        .tab-menu ul li:nth-child(6) a.active ~ .skillcount {
+            right: 4px !important;
+        }
+
+        .tab-menu ul li:nth-child(6) .skillcount {
+            right: 0px !important;
+        }
+
+        .tab-menu ul li:nth-child(7) .skillcount {
+            right: 22px !important;
+        }
+
+        .tab-menu ul li:nth-child(7) a.active ~ .skillcount {
+            right: 12px !important;
+        }
+
+        .tab-menu ul li:nth-child(8) .skillcount {
+            right: 18px !important;
+        }
+
+        .tab-menu ul li:nth-child(8) a.active ~ .skillcount {
+            right: 5px !important;
+        }
+
+        .tab-menu ul li:nth-child(9) .skillcount {
+            right: 32px !important;
+        }
+
+        .tab-menu ul li:nth-child(9) a.active ~ .skillcount {
+            right: 16px !important;
+        }
+
+        .tab-menu ul li:nth-child(10) .skillcount {
+            right: 0px !important;
+        }
+
+        .tab-menu ul li:nth-child(10) a.active ~ .skillcount {
+            right: 8px !important;
+        }
+
+        .tab-menu ul li:nth-child(11) .skillcount {
+            right: 11px !important;
+        }
+
+        .tab-menu ul li:nth-child(11) a.active ~ .skillcount {
+            right: 10px !important;
+        }
+    }
+
+    @media only screen and (max-width: 1920px) {
+        .allmeeting .candidate-details {
+            width: 25%
+        }
 
     .allmeeting .candidate-client {
         width: 22%
@@ -4787,18 +4850,18 @@ button.btn {
         width: 22%
     }
 
-    .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
-        width: 30%
+        .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
+            width: 30%
+        }
     }
-}
 
-@media only screen and (max-width: 1400px) {
-    /* table.journey td.cadName, table.journey td.cadEmail {
+    @media only screen and (max-width: 1400px) {
+        /* table.journey td.cadName, table.journey td.cadEmail {
         max-width: 120px;
     }*/
-    .allmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
-        width: 36%
-    }
+        .allmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
+            width: 36%
+        }
 
     .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
         width: 18%
@@ -4842,13 +4905,13 @@ button.btn {
         /* max-width: 133px;*/
     }
 
-    .intEmail {
-        width: 90px !important;
-    }
+        .intEmail {
+            width: 90px !important;
+        }
 
-    .intName {
-        width: 58px !important;
-    }
+        .intName {
+            width: 58px !important;
+        }
 
     .rbpay .sb-scrollbar {
         position: absolute;
@@ -4877,9 +4940,9 @@ button.btn {
         padding: 5px 2px !important;
     }
 
-    .allmeeting .cname {
-        width: 127px;
-    }
+        .allmeeting .cname {
+            width: 127px;
+        }
 
     .clname {
         width: 197px;
@@ -4891,30 +4954,30 @@ button.btn {
         position: relative;
     }
 
-    .cname {
-        width: 170px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: inline-block;
-        top: 7px;
-        position: relative;
-    }
+        .cname {
+            width: 170px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            top: 7px;
+            position: relative;
+        }
 
-    .rejectedmeeting .s_cname {
-        width: 247px;
-    }
+        .rejectedmeeting .s_cname {
+            width: 247px;
+        }
 
-    .s_cname {
-        width: 236px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: inline-block;
-        top: 7px;
-        position: relative;
+        .s_cname {
+            width: 236px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            top: 7px;
+            position: relative;
+        }
     }
-}
 
 @media only screen and (max-width: 1024px) {
   
@@ -4959,272 +5022,272 @@ button.btn {
         text-align: right;
     }
 
-    .tabCon .tab-menu ul li a {
-        font-size: 11px;
-        padding: 10px 0px;
-    }
-
-    .user.user-r .main-notification-title {
-        padding-top: 0px !important;
-        position: relative;
-        right: -4px;
-    }
-
-    .user .main-notification-title {
-        padding-top: 0px !important;
-        position: relative;
-        right: -6px;
-        top: -46px !important;
-    }
-
-    .user.user-r {
-        right: 60px !important;
-    }
-
-    .user {
-        position: absolute;
-        top: 54px;
-        right: 160px !important;
-    }
-
-        .user .user-menu {
-            top: -17px !important;
-            left: auto;
-            right: -17px !important;
+        .tabCon .tab-menu ul li a {
+            font-size: 11px;
+            padding: 10px 0px;
         }
 
-    .main-img-user {
-        display: block;
-        position: relative;
-        width: 25px !important;
-        height: 25px !important;
-        margin: 0px 0px 0px 30px;
-        top: -73px !important;
-        border-radius: 100%;
-        left: -10px;
-        float: right;
-    }
-
-    .nav-open .navbar {
-        left: 260px;
-    }
-
-    .top-panel {
-        padding: 0px 0px 0px 0px !important;
-    }
-
-    .page-container .page-sidebar {
-        position: relative;
-        float: left;
-        width: 100%;
-    }
-
-        .page-container .page-sidebar.scroll {
+        .user.user-r .main-notification-title {
+            padding-top: 0px !important;
             position: relative;
+            right: -4px;
         }
 
-    .page-container .page-content {
-        margin-left: 0px;
-    }
+        .user .main-notification-title {
+            padding-top: 0px !important;
+            position: relative;
+            right: -6px;
+            top: -46px !important;
+        }
 
-        .page-container .page-content .content-frame .content-frame-left,
-        .page-container .page-content .content-frame .content-frame-right {
+        .user.user-r {
+            right: 60px !important;
+        }
+
+        .user {
+            position: absolute;
+            top: 54px;
+            right: 160px !important;
+        }
+
+            .user .user-menu {
+                top: -17px !important;
+                left: auto;
+                right: -17px !important;
+            }
+
+        .main-img-user {
+            display: block;
+            position: relative;
+            width: 25px !important;
+            height: 25px !important;
+            margin: 0px 0px 0px 30px;
+            top: -73px !important;
+            border-radius: 100%;
+            left: -10px;
+            float: right;
+        }
+
+        .nav-open .navbar {
+            left: 260px;
+        }
+
+        .top-panel {
+            padding: 0px 0px 0px 0px !important;
+        }
+
+        .page-container .page-sidebar {
+            position: relative;
+            float: left;
             width: 100%;
-            display: none;
         }
 
-        .page-container .page-content .content-frame .content-frame-body {
+            .page-container .page-sidebar.scroll {
+                position: relative;
+            }
+
+        .page-container .page-content {
             margin-left: 0px;
-            margin-right: 0px;
         }
 
-            .page-container .page-content .content-frame .content-frame-body.content-frame-body-left {
+            .page-container .page-content .content-frame .content-frame-left,
+            .page-container .page-content .content-frame .content-frame-right {
+                width: 100%;
+                display: none;
+            }
+
+            .page-container .page-content .content-frame .content-frame-body {
+                margin-left: 0px;
                 margin-right: 0px;
             }
 
-        .page-container .page-content .content-frame .content-frame-left-toggle,
-        .page-container .page-content .content-frame .content-frame-right-toggle {
-            display: inline-block;
-        }
+                .page-container .page-content .content-frame .content-frame-body.content-frame-body-left {
+                    margin-right: 0px;
+                }
 
-    .page-container.page-navigation-toggled .page-content {
-        margin-left: 0px;
-    }
-
-    .page-container.page-mode-rtl .page-content {
-        margin-right: 0px;
-    }
-
-    .page-container.page-navigation-top-fixed .x-navigation.x-navigation-horizontal {
-        padding-right: 0px;
-        position: relative;
-    }
-
-    .page-container.page-navigation-top-fixed .page-content {
-        padding-top: 0px;
-    }
-
-    table.journey td.cadName, table.journey td.cadEmail {
-        max-width: 200px;
-    }
-
-    .candidate table.journey td.cadEmail {
-        max-width: 160px;
-    }
-
-    table.journey td.cadSkill {
-        max-width: 150px;
-    }
-
-    .selected-priority table.journey td.cadName {
-        max-width: 250px;
-    }
-
-    .selected-priority table.journey td.cadSkill {
-        max-width: 235px;
-    }
-
-    .selected-priority .journey td.interview-com {
-        max-width: 300px;
-    }
-
-    .selected-priority table.journey td.interviewdate {
-        max-width: 160px;
-    }
-
-    .x-navigation {
-        max-height: 50px;
-        overflow: hidden;
-        background: #1b1e24;
-    }
-
-        .x-navigation.x-navigation-panel {
-            height: 50px;
-            max-height: auto;
-            overflow: visible;
-        }
-
-            .x-navigation.x-navigation-panel li.xn-icon-button {
-                width: 50px;
+            .page-container .page-content .content-frame .content-frame-left-toggle,
+            .page-container .page-content .content-frame .content-frame-right-toggle {
+                display: inline-block;
             }
 
-            .x-navigation.x-navigation-panel li.xn-search {
-                width: auto;
+        .page-container.page-navigation-toggled .page-content {
+            margin-left: 0px;
+        }
+
+        .page-container.page-mode-rtl .page-content {
+            margin-right: 0px;
+        }
+
+        .page-container.page-navigation-top-fixed .x-navigation.x-navigation-horizontal {
+            padding-right: 0px;
+            position: relative;
+        }
+
+        .page-container.page-navigation-top-fixed .page-content {
+            padding-top: 0px;
+        }
+
+        table.journey td.cadName, table.journey td.cadEmail {
+            max-width: 200px;
+        }
+
+        .candidate table.journey td.cadEmail {
+            max-width: 160px;
+        }
+
+        table.journey td.cadSkill {
+            max-width: 150px;
+        }
+
+        .selected-priority table.journey td.cadName {
+            max-width: 250px;
+        }
+
+        .selected-priority table.journey td.cadSkill {
+            max-width: 235px;
+        }
+
+        .selected-priority .journey td.interview-com {
+            max-width: 300px;
+        }
+
+        .selected-priority table.journey td.interviewdate {
+            max-width: 160px;
+        }
+
+        .x-navigation {
+            max-height: 50px;
+            overflow: hidden;
+            background: #1b1e24;
+        }
+
+            .x-navigation.x-navigation-panel {
+                height: 50px;
+                max-height: auto;
+                overflow: visible;
             }
 
-        .x-navigation .xn-search input {
+                .x-navigation.x-navigation-panel li.xn-icon-button {
+                    width: 50px;
+                }
+
+                .x-navigation.x-navigation-panel li.xn-search {
+                    width: auto;
+                }
+
+            .x-navigation .xn-search input {
+                width: 100%;
+            }
+
+            .x-navigation.x-navigation-open {
+                max-height: 1200px;
+                overflow: visible;
+            }
+
+            .x-navigation .x-navigation-control {
+                display: block;
+            }
+
+        .x-navigation-minimize {
+            display: none !important;
+        }
+
+        .x-navigation-horizontal > li > ul ul,
+        .x-navigation-horizontal > li > ul.xn-drop-left ul {
+            position: relative;
+            left: auto;
+            right: auto;
+            margin-left: 0px;
+            margin-right: 0px;
+            -moz-box-shadow: none;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+
+            .x-navigation-horizontal > li > ul ul:after {
+                display: none;
+            }
+        /* XNAV PANEL */
+        .x-navigation li > .panel {
+            width: 250px;
+        }
+        /* END XNAV PANEL */
+        /* list icons */
+        .icons-list li {
             width: 100%;
         }
-
-        .x-navigation.x-navigation-open {
-            max-height: 1200px;
-            overflow: visible;
+        /* END list icons */
+        /* Gallery */
+        .gallery .gallery-item {
+            width: 50%;
+        }
+        /* End Gallery */
+        /* Timeline */
+        .timeline .timeline-item .timeline-item-content {
+            width: 90%;
         }
 
-        .x-navigation .x-navigation-control {
-            display: block;
+            .timeline .timeline-item .timeline-item-content:before,
+            .timeline .timeline-item .timeline-item-content:after {
+                left: 90%;
+            }
+
+        .timeline .timeline-item.timeline-item-right .timeline-item-content:before,
+        .timeline .timeline-item.timeline-item-right .timeline-item-content:after {
+            right: 90%;
         }
-
-    .x-navigation-minimize {
-        display: none !important;
-    }
-
-    .x-navigation-horizontal > li > ul ul,
-    .x-navigation-horizontal > li > ul.xn-drop-left ul {
-        position: relative;
-        left: auto;
-        right: auto;
-        margin-left: 0px;
-        margin-right: 0px;
-        -moz-box-shadow: none;
-        -webkit-box-shadow: none;
-        box-shadow: none;
-    }
-
-        .x-navigation-horizontal > li > ul ul:after {
+        /* END Timeline */
+        /* Error */
+        .error-container {
+            width: 100%;
+        }
+        /* End Error */
+        /* Settings */
+        .theme-settings {
             display: none;
         }
-    /* XNAV PANEL */
-    .x-navigation li > .panel {
-        width: 250px;
-    }
-    /* END XNAV PANEL */
-    /* list icons */
-    .icons-list li {
-        width: 100%;
-    }
-    /* END list icons */
-    /* Gallery */
-    .gallery .gallery-item {
-        width: 50%;
-    }
-    /* End Gallery */
-    /* Timeline */
-    .timeline .timeline-item .timeline-item-content {
-        width: 90%;
+        /* End Settings */
+        .post-image {
+            width: 300px;
+        }
     }
 
-        .timeline .timeline-item .timeline-item-content:before,
-        .timeline .timeline-item .timeline-item-content:after {
-            left: 90%;
+    @media (min-width: 992px) and (max-width: 1199px) {
+        table.journey td.cadName, table.journey td.cadEmail {
+            max-width: 200px;
         }
 
-    .timeline .timeline-item.timeline-item-right .timeline-item-content:before,
-    .timeline .timeline-item.timeline-item-right .timeline-item-content:after {
-        right: 90%;
-    }
-    /* END Timeline */
-    /* Error */
-    .error-container {
-        width: 100%;
-    }
-    /* End Error */
-    /* Settings */
-    .theme-settings {
-        display: none;
-    }
-    /* End Settings */
-    .post-image {
-        width: 300px;
-    }
-}
+        table.journey td.cadSkill {
+            max-width: 150px;
+        }
 
-@media (min-width: 992px) and (max-width: 1199px) {
-    table.journey td.cadName, table.journey td.cadEmail {
-        max-width: 200px;
-    }
+        .candidate table.journey td.cadEmail {
+            max-width: 160px;
+        }
 
-    table.journey td.cadSkill {
-        max-width: 150px;
-    }
+        .selected-priority table.journey td.cadName {
+            max-width: 250px;
+        }
 
-    .candidate table.journey td.cadEmail {
-        max-width: 160px;
-    }
+        .selected-priority table.journey td.cadSkill {
+            max-width: 235px;
+        }
 
-    .selected-priority table.journey td.cadName {
-        max-width: 250px;
-    }
-
-    .selected-priority table.journey td.cadSkill {
-        max-width: 235px;
-    }
-
-    .selected-priority table.journey td.interviewdate {
-        max-width: 160px;
-    }
+        .selected-priority table.journey td.interviewdate {
+            max-width: 160px;
+        }
 
 
-    .selected-priority .journey td.interview-com, .journey td.interview-com {
-        max-width: 300px;
+        .selected-priority .journey td.interview-com, .journey td.interview-com {
+            max-width: 300px;
+        }
     }
-}
 
-@media only screen and (max-width:991px) {
-    .tabCon .tab-main-box {
-        padding: 20px 10px;
-        margin-bottom: 10px;
-    }
+    @media only screen and (max-width:991px) {
+        .tabCon .tab-main-box {
+            padding: 20px 10px;
+            margin-bottom: 10px;
+        }
 
     .tabCon .tabs {
         display: none;
@@ -5239,195 +5302,195 @@ button.btn {
         text-align: right;
     }
 
-    .user {
-        top: -2px !important;
-        right: 160px !important;
-    }
-
-        .user.user-r .main-img-user {
-            top: -78px !important;
+        .user {
+            top: -2px !important;
+            right: 160px !important;
         }
 
-        .user.user-r .main-notification-title {
-            top: -54px !important;
+            .user.user-r .main-img-user {
+                top: -78px !important;
+            }
+
+            .user.user-r .main-notification-title {
+                top: -54px !important;
+            }
+
+        .recommendation .dropdown-toggle::after {
+            border-top: .3em solid;
+            border-right: .3em solid transparent;
+            border-bottom: 0;
+            border-left: .3em solid transparent;
         }
 
-    .recommendation .dropdown-toggle::after {
-        border-top: .3em solid;
-        border-right: .3em solid transparent;
-        border-bottom: 0;
-        border-left: .3em solid transparent;
+        .navbar .container-fluid {
+            height: 100%;
+        }
+
+        .user.user-r {
+            top: 4px !important;
+        }
+
+
+
+        .main-img-user {
+            display: block;
+            position: relative;
+            width: 20px;
+            height: 20px;
+            margin: 0px 0px 0px 30px;
+            top: -73px !important;
+            border-radius: 100%;
+            left: -10px;
+            float: right;
+        }
+
+        .recommendation .multiselect.dropdown-toggle:after {
+            left: 1% !important;
+        }
     }
 
-    .navbar .container-fluid {
-        height: 100%;
+    @media (min-width: 768px) and (max-width: 991px) {
+
+        .tabCon .tab_drawer_heading {
+            background-color: #ececec;
+            color: #5a5757cc;
+            border-bottom: 1px solid #ccc;
+            margin: 0 0 5px 0;
+            padding: 5px 20px;
+            display: block;
+            font-size: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        table.journey td.cadName, table.journey td.cadEmail {
+            max-width: 200px;
+        }
+
+        .user-r .user {
+            position: absolute;
+            top: 4px !important;
+            right: 71px !important;
+        }
+
+        .nav-open .navbar {
+            left: 260px;
+        }
+
+        .candidate table.journey td.cadEmail {
+            max-width: 160px;
+        }
+
+        table.journey td.cadSkill {
+            max-width: 150px;
+        }
+
+        .selected-priority table.journey td.cadName {
+            max-width: 250px;
+        }
+
+        .selected-priority table.journey td.cadSkill {
+            max-width: 235px;
+        }
+
+        .selected-priority table.journey td.interviewdate {
+            max-width: 160px;
+        }
+
+        .selected-priority table.journey td.interviewdate {
+            max-width: 270px;
+        }
     }
 
-    .user.user-r {
-        top: 4px !important;
-    }
+
+    @media only screen and (max-width: 768px) {
+        [class^='col-xs-'],
+        [class^='col-sm-'],
+        [class^='col-md-'],
+        [class^='col-lg-'] {
+            margin-bottom: 10px;
+        }
+        /* LOGIN */
+        .login-container {
+            padding: 0px 10px;
+        }
+
+            .login-container .login-box {
+                padding-top: 10px;
+                width: 100%;
+            }
+        /* END LOGIN */
+        /* TOCIFY */
+        .tocify {
+            display: none;
+        }
+        /* END TOCIFY */
+
+        .recommendation .multiselect.dropdown-toggle:after {
+            left: 1% !important;
+        }
 
 
+        .tab_drawer_heading {
+            background-color: #ececec;
+            color: #5a5757cc;
+            border-bottom: 1px solid #ccc;
+            margin: 0 0 5px 0;
+            padding: 5px 20px;
+            display: block;
+            font-size: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        /* TIMELINE */
+        .timeline.timeline-right:before {
+            left: 60px;
+        }
 
-    .main-img-user {
-        display: block;
-        position: relative;
-        width: 20px;
-        height: 20px;
-        margin: 0px 0px 0px 30px;
-        top: -73px !important;
-        border-radius: 100%;
-        left: -10px;
-        float: right;
-    }
+        .timeline.timeline-right .timeline-item {
+            padding-left: 110px;
+        }
 
-    .recommendation .multiselect.dropdown-toggle:after {
-        left: 1% !important;
-    }
-}
+            .timeline.timeline-right .timeline-item.timeline-main {
+                width: 60px;
+            }
 
-@media (min-width: 768px) and (max-width: 991px) {
+            .timeline.timeline-right .timeline-item .timeline-item-icon {
+                left: 40px;
+            }
 
-    .tabCon .tab_drawer_heading {
-        background-color: #ececec;
-        color: #5a5757cc;
-        border-bottom: 1px solid #ccc;
-        margin: 0 0 5px 0;
-        padding: 5px 20px;
-        display: block;
-        font-size: 15px;
-        border-radius: 8px;
-        cursor: pointer;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-
-    table.journey td.cadName, table.journey td.cadEmail {
-        max-width: 200px;
-    }
-
-    .user-r .user {
-        position: absolute;
-        top: 4px !important;
-        right: 71px !important;
-    }
-
-    .nav-open .navbar {
-        left: 260px;
-    }
-
-    .candidate table.journey td.cadEmail {
-        max-width: 160px;
-    }
-
-    table.journey td.cadSkill {
-        max-width: 150px;
-    }
-
-    .selected-priority table.journey td.cadName {
-        max-width: 250px;
-    }
-
-    .selected-priority table.journey td.cadSkill {
-        max-width: 235px;
-    }
-
-    .selected-priority table.journey td.interviewdate {
-        max-width: 160px;
-    }
-
-    .selected-priority table.journey td.interviewdate {
-        max-width: 270px;
-    }
-}
-
-
-@media only screen and (max-width: 768px) {
-    [class^='col-xs-'],
-    [class^='col-sm-'],
-    [class^='col-md-'],
-    [class^='col-lg-'] {
-        margin-bottom: 10px;
-    }
-    /* LOGIN */
-    .login-container {
-        padding: 0px 10px;
-    }
-
-        .login-container .login-box {
-            padding-top: 10px;
+            .timeline.timeline-right .timeline-item .timeline-item-info {
+                top: 45px;
+                width: 70px;
+                left: 25px;
+                padding: 7px 0px;
+            }
+        /* END TIMELINE */
+        .post-image {
             width: 100%;
         }
-    /* END LOGIN */
-    /* TOCIFY */
-    .tocify {
-        display: none;
-    }
-    /* END TOCIFY */
 
-    .recommendation .multiselect.dropdown-toggle:after {
-        left: 1% !important;
-    }
-
-
-    .tab_drawer_heading {
-        background-color: #ececec;
-        color: #5a5757cc;
-        border-bottom: 1px solid #ccc;
-        margin: 0 0 5px 0;
-        padding: 5px 20px;
-        display: block;
-        font-size: 15px;
-        border-radius: 8px;
-        cursor: pointer;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-    /* TIMELINE */
-    .timeline.timeline-right:before {
-        left: 60px;
-    }
-
-    .timeline.timeline-right .timeline-item {
-        padding-left: 110px;
-    }
-
-        .timeline.timeline-right .timeline-item.timeline-main {
-            width: 60px;
+        .razorpay_details {
+            width: 41% !important;
         }
 
-        .timeline.timeline-right .timeline-item .timeline-item-icon {
-            left: 40px;
+        .user.user-r {
+            top: 4px;
+            right: 55px !important;
         }
-
-        .timeline.timeline-right .timeline-item .timeline-item-info {
-            top: 45px;
-            width: 70px;
-            left: 25px;
-            padding: 7px 0px;
-        }
-    /* END TIMELINE */
-    .post-image {
-        width: 100%;
     }
-
-    .razorpay_details {
-        width: 41% !important;
-    }
-
-    .user.user-r {
-        top: 4px;
-        right: 55px !important;
-    }
-}
 
 @media (max-width: 767px) {
     .recommendation .multiselect.dropdown-toggle:after {
@@ -5477,225 +5540,202 @@ button.btn {
         text-align: right;
     }
 
-    .mob_h {
-        height: 2px;
-    }
-
-
-    .myinterview_modal .btn-group {
-        width: 100% !important;
-    }
-
-    .tabCon .tabs {
-        display: none;
-    }
-
-    .main-notification-title {
-        right: 9px !important;
-        padding-top: 0px !important;
-        position: relative;
-        top: 2px;
-    }
-
-    .user.user-r .main-notification-title {
-        top: -71px !important;
-    }
-
-    .user.user-r {
-        top: 17px !important;
-    }
-
-    .user {
-        position: relative !important;
-        top: 52px;
-        right: 0px !important;
-        left: 0px !important;
-    }
-
-    #txtpageHeader {
-        display: none;
-    }
-
-    .note-meeting {
-        width: 54%;
-        left: 30px;
-        position: absolute;
-        top: 12px !important;
-        font-size: 15px;
-    }
-
-    .nav-open .navbar {
-        left: 260px;
-    }
-
-    .top-panel {
-        padding: 0px 5px !important
-    }
-
-    .timer {
-        font-size: 15px !important;
-    }
-
-    .rbpay .modal-dialog {
-        max-width: 100% !important
-    }
-
-    .mobpad {
-        padding: 0px !important;
-    }
-
-    .mobpad {
-        padding: 0px !important;
-    }
-
-    .navbar {
-        padding-top: 0;
-    }
-
-        .navbar.navbar-no-bg {
-            background: #333;
-            background: rgba(51, 51, 51, 0.9);
+        .mob_h {
+            height: 2px;
         }
 
-    .navbar-brand {
-        height: 60px;
-        margin-left: 0px;
+
+        .myinterview_modal .btn-group {
+            width: 100% !important;
+        }
+
+        .tabCon .tabs {
+            display: none;
+        }
+
+        .main-notification-title {
+            right: 9px !important;
+            padding-top: 0px !important;
+            position: relative;
+            top: 2px;
+        }
+
+        .user.user-r .main-notification-title {
+            top: -71px !important;
+        }
+
+        .user.user-r {
+            top: 17px !important;
+        }
+
+        .user {
+            position: relative !important;
+            top: 52px;
+            right: 0px !important;
+            left: 0px !important;
+        }
+
+        #txtpageHeader {
+            display: none;
+        }
+
+        .note-meeting {
+            width: 54%;
+            left: 30px;
+            position: absolute;
+            top: 12px !important;
+            font-size: 15px;
+        }
+
+        .nav-open .navbar {
+            left: 260px;
+        }
+
+        .top-panel {
+            padding: 0px 5px !important
+        }
+
+        .timer {
+            font-size: 15px !important;
+        }
+
+        .rbpay .modal-dialog {
+            max-width: 100% !important
+        }
+
+        .mobpad {
+            padding: 0px !important;
+        }
+
+        .mobpad {
+            padding: 0px !important;
+        }
+
+        .navbar {
+            padding-top: 0;
+        }
+
+            .navbar.navbar-no-bg {
+                background: #333;
+                background: rgba(51, 51, 51, 0.9);
+            }
+
+        .navbar-brand {
+            height: 60px;
+            margin-left: 0px;
+        }
+
+        .navbar-collapse {
+            border: 0;
+        }
+
+        .navbar-toggle {
+            margin-top: 12px;
+        }
+
+        .top-content {
+            padding: 40px 0 110px 0;
+        }
+
+        .user-r .user-menu {
+            top: -15px;
+            left: auto;
+            right: -19px;
+        }
     }
 
-    .navbar-collapse {
-        border: 0;
+    @media (max-width: 480px) {
+        .note-meeting {
+            left: 7px !important;
+            position: absolute;
+            top: -5px !important;
+            font-size: 15px;
+            width: 100% !important;
+        }
+
+        .overall-rate {
+            position: absolute;
+            right: 25px;
+            top: -26px;
+            color: #7eb38e;
+            font-weight: normal;
+        }
+
+        .main-notification-title {
+            right: 9px !important;
+            padding-top: 0px !important;
+            position: relative;
+            top: 2px;
+        }
+
+        .user-r .user-menu {
+            top: -15px;
+            left: auto;
+            right: -19px;
+        }
     }
 
-    .navbar-toggle {
-        margin-top: 12px;
+    @media (max-width: 415px) {
+
+        h1, h2 {
+            font-size: 32px;
+        }
+
+        .f1 {
+            padding-bottom: 20px;
+        }
+
+        .f1-buttons button {
+            margin-bottom: 5px;
+        }
     }
 
-    .top-content {
-        padding: 40px 0 110px 0;
+    @media (max-width: 360px) {
+        .note-meeting {
+            width: 100% !important;
+            top: -11px !important;
+            font-size: 13px !important;
+        }
+
+        .support {
+            position: absolute;
+            left: auto;
+            right: 27px;
+            top: 2px !important;
+        }
+
+        .main-img-user {
+            display: block;
+            position: relative;
+            width: 20px !important;
+            height: 20px !important;
+            margin: 0px 0px 0px 30px;
+            top: -43px !important;
+            border-radius: 100%;
+            left: -145px !important;
+            float: right;
+        }
+
+        .main-notification-title {
+            padding-top: 0px !important;
+            position: relative;
+            right: 9px !important;
+            top: -19px !important;
+            width: 100%;
+            text-align: center !important;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .user {
+            left: -110px !important;
+            top: 14px !important;
+            width: 100%;
+        }
     }
-
-    .user-r .user-menu {
-        top: -15px;
-        left: auto;
-        right: -19px;
-    }
-}
-
-@media (max-width: 480px) {
-    .note-meeting {
-        left: 7px !important;
-        position: absolute;
-        top: -5px !important;
-        font-size: 15px;
-        width: 100% !important;
-    }
-
-    .overall-rate {
-        position: absolute;
-        right: 25px;
-        top: -26px;
-        color: #7eb38e;
-        font-weight: normal;
-    }
-
-    .main-notification-title {
-        right: 9px !important;
-        padding-top: 0px !important;
-        position: relative;
-        top: 2px;
-    }
-
-    .user-r .user-menu {
-        top: -15px;
-        left: auto;
-        right: -19px;
-    }
-}
-
-@media (max-width: 415px) {
-
-    h1, h2 {
-        font-size: 32px;
-    }
-
-    .f1 {
-        padding-bottom: 20px;
-    }
-
-    .f1-buttons button {
-        margin-bottom: 5px;
-    }
-}
-
-@media (max-width: 360px) {
-    .note-meeting {
-        width: 100% !important;
-        top: -11px !important;
-        font-size: 13px !important;
-    }
-
-    .support {
-        position: absolute;
-        left: auto;
-        right: 27px;
-        top: 2px !important;
-    }
-
-    .main-img-user {
-        display: block;
-        position: relative;
-        width: 20px !important;
-        height: 20px !important;
-        margin: 0px 0px 0px 30px;
-        top: -43px !important;
-        border-radius: 100%;
-        left: -145px !important;
-        float: right;
-    }
-
-    .main-notification-title {
-        padding-top: 0px !important;
-        position: relative;
-        right: 9px !important;
-        top: -19px !important;
-        width: 100%;
-        text-align: center !important;
-        margin: 0px;
-        padding: 0px;
-    }
-
-    .user {
-        left: -110px !important;
-        top: 14px !important;
-        width: 100%;
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* EOF BUTTONS */
-/* FORM ELEMENTS */
-.radio {
+    /* EOF BUTTONS */
+    /* FORM ELEMENTS */
+    .radio {
     margin-top: 5px;
     margin-bottom: 5px;
     float: left;

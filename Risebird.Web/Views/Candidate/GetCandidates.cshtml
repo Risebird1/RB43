@@ -33,13 +33,13 @@
 
 
                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates</font></span>
-                            </button>*@
+            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates</font></span>
+        </button>*@
 
 
                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick(false)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates</font></span>
-                        </button>*@
+            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick(false)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates</font></span>
+        </button>*@
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file and send invitation." onclick="ModalButtonClick(true)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates (Invite)</font></span>
                         </button>
@@ -53,10 +53,18 @@
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Candidate List" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Candidate</font></span>
                         </button>
+                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "HR" || ViewBag.profile == "Client")
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span class="fa fa-file-alt" style="font-size:14px;" data-toggle="tooltip" data-placement="top" title="Click here to view uploaded Candidate Resumes" onclick="location.href='@Url.Action("Resumes", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Candidate Resumes</font></span>
+                            </button>
+                        }
 
                         <button id="getstatus_13" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span data-toggle="tooltip" data-placement="top" title="Back to List" onclick="location.href='@Url.Action("Index", "IRF")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back to List</font></span>
                         </button>
+
+
 
                         @*@Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })*@
 
@@ -356,6 +364,7 @@
                                                                     </span>
                                                                 </button>
                                                             }
+<<<<<<< HEAD
                                                             @if (ViewBag.profile == "Admin" || ViewBag.profile == "HR" || ViewBag.profile == "Client")
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Candidate Resume(s)">
@@ -364,6 +373,9 @@
                                                                     </span>
                                                                 </button>
                                                             }
+=======
+                                                            
+>>>>>>> Harshit_July21_Development
 
                                                         </td>
 

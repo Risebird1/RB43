@@ -926,7 +926,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (!String.IsNullOrEmpty(searchValue))
                         {
-                            searchValue = searchValue.ToUpper().Trim();
+                            searchValue = searchValue.ToUpper();
                             candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                         }
@@ -1011,7 +1011,7 @@ namespace Risebird.Web.Controllers
                 }
                 if (!String.IsNullOrEmpty(searchValue))
                 {
-                    searchValue = searchValue.ToUpper().Trim();
+                    searchValue = searchValue.ToUpper();
                     candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                 }
@@ -2792,7 +2792,7 @@ namespace Risebird.Web.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> UploadResumes(int candidateId, int irfId)
+        public async Task<IActionResult> UploadResumes(int irfId, string irfName)
         {
             try
             {
@@ -2803,11 +2803,9 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var model = new UploadCandidateResumesViewModel();
-                        var candidateDetails = await _candidateService.GetCandidatesDetails(irfId, candidateId);
-                        model.CandidateId = candidateId;
+                        //var candidateDetails = await _candidateService.GetCandidatesDetails(irfId, candidateId);
                         model.IRFId = irfId;
-                        model.CandidateName = candidateDetails.Name;
-                        model.IRFName = candidateDetails.IRFName;
+                        model.IRFName = irfName;
                         return View(model); 
                     }
                     else
@@ -2869,7 +2867,7 @@ namespace Risebird.Web.Controllers
                                             //generate SAS URL from the uploaded video url
                                             var sas = _sasUrlHelper.CreateSasUrl("resumes");
                                             sasUrl = uploadedaudioFileURL + "?" + sas;
-                                            resumeList.Add(new CandidateResume { CandidateId = model.CandidateId, IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl });
+                                            resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl });
                                         }
                                     }
 
@@ -2884,7 +2882,7 @@ namespace Risebird.Web.Controllers
                                         TempData["SuccessErrorMessageCandidateResume"] = "Failed to upload Resume(s)";
 
                                     }
-                                    return RedirectToAction("Resumes", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+                                    return RedirectToAction("Resumes", new { irfId = model.IRFId, irfName = model.IRFName });
 
                                 }
                                 else
@@ -2916,14 +2914,14 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("UploadResumes", new { candidateId = model.CandidateId, irfId = model.IRFId});
+                return RedirectToAction("UploadResumes", new {irfId = model.IRFId, irfName = model.IRFName});
             }
 
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Resumes(int irfId, int candidateId, string irfName, string candidateName)
+        public async Task<IActionResult> Resumes(int irfId, string irfName)
         {
             try
             {
@@ -2935,11 +2933,9 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var model = new ResumeListViewModel();
-                        model.ResumeList = (await _candidateService.GetCandidatesResumes(irfId, candidateId))?.ToList();
+                        model.ResumeList = (await _candidateService.GetCandidatesResumes(irfId))?.ToList();
                         model.IRFName = irfName;
-                        model.CandidateName = candidateName;
                         model.IRFId = irfId;
-                        model.CandidateId = candidateId;
                         model.Profile = profileName;
 
                         if (TempData["SuccessErrorMessageCandidateResume"] != null)
@@ -3000,6 +2996,96 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(false);
+            }
+
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<FileContentResult> CandidateResumesExporttoExcel(int irfId, string irfName)
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Resumes");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_CandidateResumes_" + irfName + ".xlsx";
+            try
+            {
+
+                var model = await _candidateService.GetCandidatesResumes(irfId);
+
+                Sheet.Cells["A1:F1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:F1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:F1"].Style.WrapText = true;
+
+                //Sheet.Column(1).Width = 30;
+                //Sheet.Column(2).Width = 30;
+                int startColumn = 1; int endColumn = 6;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 40;
+                }
+                Sheet.Cells[1, 1].Value = "Date";
+                Sheet.Cells[1, 2].Value = "Skills Channel";
+                Sheet.Cells[1, 3].Value = "File Name";
+                Sheet.Cells[1, 4].Value = "Resume URL";
+                
+                //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
+                int i = 2;
+                //string LastAction = null; ;
+
+                if (model.Count() > 0)
+                {
+                    foreach (var item in model)
+                    {
+                        Sheet.Cells[i, 1].Value = item.AddedOn.ToString("MM/dd/yyyy HH:mm");
+                        Sheet.Cells[i, 2].Value = irfName;
+                        var resumeFileName = string.Empty;
+                        if (item.ResumeLink.Split('/')?.Last().Split('?') != null)
+                        {
+                            resumeFileName = item.ResumeLink.Split('/')?.Last().Split('?')?.First();
+                        }
+                        else
+                        {
+                            resumeFileName = item.ResumeLink.Split('/')?.Last();
+
+                        }
+                        Sheet.Cells[i, 3].Value = resumeFileName;
+
+                        if (!string.IsNullOrEmpty(item.ResumeLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 4].Hyperlink = new Uri(item.ResumeLink, UriKind.Absolute);
+                                Sheet.Cells[i, 4].Value = "Resume";
+                                Sheet.Cells[i, 4].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 4].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 4].Value = "No Resume";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 4].Value = "No Resume";
+                        }
+
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
 
         }
