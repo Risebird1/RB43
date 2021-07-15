@@ -31,8 +31,9 @@ namespace Risebird.Web.Controllers
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly IConfiguration _configuration;
         private readonly IAzureStorageHelper _azureStorageHelper;
+        private readonly IProjectService _projectService;
 
-        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper)
+        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -41,6 +42,7 @@ namespace Risebird.Web.Controllers
             _whatsAppHelper = whatsAppHelper;
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
+            _projectService = projectService;
         }
         /// <summary>
         /// Interviewer or QC check payment status and request for payment with details
@@ -1237,9 +1239,8 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.Startdate = Startdate;
                     ViewBag.Enddate = Enddate;
-                    var meetingStatuses = from PaymentStatus s in Enum.GetValues(typeof(PaymentStatus))
-                                          select new { ID = (int)s, Name = s.GetDescription() };
-                    ViewBag.PaymentStatusList = new SelectList(meetingStatuses, "ID", "Name");
+
+                    ViewBag.ClientList = _projectService.GetClients().Select(x => x.Name).Distinct();
                     if (TempData["SuccessErrorMessageCandidate"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
@@ -1294,9 +1295,7 @@ namespace Risebird.Web.Controllers
                     model = model.Where(c => filter.PaymentStatus.Contains(c.PaymentStatus.ToString()) && filter.Client.Contains(c.Name)).ToList();
                     ViewBag.Startdate = Startdate;
                     ViewBag.Enddate = Enddate;
-                    var meetingStatuses = from PaymentStatus s in Enum.GetValues(typeof(PaymentStatus))
-                                          select new { ID = (int)s, Name = s.GetDescription() };
-                    ViewBag.PaymentStatusList = new SelectList(meetingStatuses, "ID", "Name");
+                    ViewBag.ClientList = _projectService.GetClients().Select(x => x.Name).Distinct();
                     if (TempData["SuccessErrorMessageCandidate"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
