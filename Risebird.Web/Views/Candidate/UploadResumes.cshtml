@@ -26,13 +26,21 @@
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                                 <div class="row">
+<<<<<<< HEAD
                                     <div class="col-md-6 col-sm-6">
+=======
+                                    @*<div class="col-md-6 col-sm-6">
+>>>>>>> Harshit_July21_Development
                                         <div class="form-group" style="margin-bottom:10px;">
                                             @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
                                         </div>
+<<<<<<< HEAD
                                     </div>
+=======
+                                    </div>*@
+>>>>>>> Harshit_July21_Development
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group" style="margin-bottom:10px;">
                                             @Html.LabelFor(model => model.IRFName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -57,16 +65,24 @@
 
 
                                 @Html.HiddenFor(m => m.IRFId)
+<<<<<<< HEAD
                                 @Html.HiddenFor(m => m.CandidateId)
                                 @Html.HiddenFor(m => m.IRFName)
                                 @Html.HiddenFor(m => m.CandidateName)
+=======
+                                @Html.HiddenFor(m => m.IRFName)
+>>>>>>> Harshit_July21_Development
 
                                 <div class="card-footer ">
                                     <div class="row">
 
                                         <div class="col-md-12 mc-button-area text-right">
 
+<<<<<<< HEAD
                                             @Html.ActionLink("Back to List", "Resumes", "Candidate", new { irfId =Model.IRFId, candidateId = Model.CandidateId, irfName = Model.IRFName, candidateName = Model.CandidateName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+=======
+                                            @Html.ActionLink("Back to List", "Resumes", "Candidate", new { irfId =Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+>>>>>>> Harshit_July21_Development
 
                                             <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Upload</button>
 

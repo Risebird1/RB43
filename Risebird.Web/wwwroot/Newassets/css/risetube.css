@@ -383,63 +383,6 @@
     line-height: 18px;
 }
 
-.copy-btn {
-    background: none;
-    border: 0;
-    margin: -10px 0px 0px 0px !important;
-}
-
-.special-text svg {
-    fill: rgb(83, 165, 245)
-}
-
-.special-text:hover .special-text__tooltip {
-    visibility: visible;
-    opacity: 1;
-}
-
-.special-text__tooltip {
-    font-size: 12px;
-    position: absolute;
-    width: 100px;
-    right: 15%;
-    bottom: 65%;
-    color: #fff;
-    text-align: center !important;
-    margin-bottom: 15px;
-    padding: 5px 10px;
-    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.5);
-    background: grey;
-    border-radius: 3px;
-    visibility: hidden;
-    opacity: 0;
-    /* Prettify */
-    text-align: left;
-    -webkit-transition-property: opacity;
-    -moz-transition-property: opacity;
-    transition-property: opacity;
-    -webkit-transition-duration: 0.5s;
-    -moz-transition-duration: 0.5s;
-    transition-duration: 0.5s;
-    -webkit-transition-timing-function: linear;
-    -moz-transition-timing-function: linear;
-    transition-timing-function: linear;
-    -webkit-transition-delay: initial;
-    -moz-transition-delay: initial;
-    transition-delay: initial;
-}
-
-    /* The bordered part of the triangle */
-    .special-text__tooltip::before,
-    .special-text__tooltip::after {
-        content: "";
-        position: absolute;
-        border-left: 10px solid transparent;
-        border-right: 10px solid transparent;
-        top: 100%;
-        left: 15%;
-        margin-left: -10px;
-    }
 
 .publicurl-share {
     background-repeat: no-repeat !important;

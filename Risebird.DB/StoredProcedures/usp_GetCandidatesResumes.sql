@@ -12,12 +12,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 Create PROCEDURE [dbo].[usp_GetCandidatesResumes]  
-@IRFId int,   
-@CandidateId int
+@IRFId int   
 AS  
 Begin
 	
-	select * from CandidateResume where IRFId=@IRFId and CandidateId = @CandidateId order by AddedOn desc
+	select * from CandidateResume where IRFId=@IRFId order by AddedOn desc
 
 End
 GO
