@@ -650,7 +650,9 @@ textarea::-webkit-scrollbar-thumb {
 .theme-settings .ts-body {
     background: #1091f9 !important;
 }
-
+.mdc-fab {
+    background: #54a5f6!important;
+}
 .image-upload label {
     background-color: #fff;
     color: #54a5f5;

@@ -162,7 +162,7 @@
                                     <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4 pt-10">
 
                                         <div class="clearfix"></div>
-                                        <div class="col-sm-12 nopad rbpay">
+                                        <div class="col-sm-12 nopad rbpay mtop-5">
                                             <div class="table-responsive">
                                                 <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
                                                     <thead>
@@ -236,10 +236,9 @@
                                                                 <td class="text-center">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                                         <span onclick="EditDetails(@item.id,'@item.Name','@item.JobCountry')" title="Edit" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-                                                                                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
-                                                                                <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
-                                                                            </svg>
+
+
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16"><path d="M0 0h24v24H0z" fill="none" /><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
                                                                         </span>
                                                                     </button>
                                                                 </td>
@@ -363,6 +362,23 @@
 
         }
 
+</script>
+<script>
+    function CloseMyModelPopup() {
+        document.getElementById("myModal").style.display = "none";
+    }
+    function EditDetails(index, clientname, joblocation) {
+        $.ajax({
+            type: "GET",
+            url: "/Finance/GetInvoiceDetails",
+            data: { 'id': index, 'startdate': $("#txtStartdate").val(), 'enddate': $("#txtEnddate").val(), 'Clientname': clientname, 'jobcountry': joblocation },
+            success: function (data) {
+                document.getElementById("myModal").style.display = "block";
+                $("#txtInterviewerEmailid").text(clientname + " -- " + joblocation);
+                $("#divDetailedView").empty().html(data);
+            }
+        });
+    }
 </script>
 <script>
     function CloseMyModelPopup() {
