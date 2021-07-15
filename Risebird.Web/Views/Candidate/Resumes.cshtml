@@ -5,7 +5,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <script>
+<<<<<<< HEAD
     var Header = "Resume(s) of <strong>@(Model.CandidateName)(@(Model.IRFName))</strong>";
+=======
+    var Header = "Resume(s) for <strong>@(Model.IRFName)</strong>";
+>>>>>>> Harshit_July21_Development
     $('#txtpageHeader').empty().html(Header);
 </script>
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
@@ -17,14 +21,27 @@
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
+<<<<<<< HEAD
                     <div class="mobile-view"> <h4 class="card-title"> Resume(s) of <strong>@(Model.CandidateName)(@(Model.IRFName))</strong></h4></div>
+=======
+                    <div class="mobile-view"> <h4 class="card-title"> Resume(s) for <strong>@(Model.IRFName)</strong></h4></div>
+>>>>>>> Harshit_July21_Development
                 </div>
 
                 <div class="pull-right">
                     <div>
+<<<<<<< HEAD
                         @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client")
                         {
                             @Html.ActionLink("Upload Resume(s)", "UploadResumes", "Candidate", new { candidateId = Model.CandidateId, irfId = Model.IRFId }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+=======
+
+                        @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client")
+                        {
+                            <span class="interview_2"> <i type="submit" class="fa fa-file-excel-o excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateResumesExporttoExcel", "Candidate",  new { irfId = Model.IRFId, irfName = Model.IRFName })'" style=" position: relative; top: 10px; }"></i></span>
+
+                            @Html.ActionLink("Upload Resume(s)", "UploadResumes", "Candidate", new { irfId = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+>>>>>>> Harshit_July21_Development
                         }
 
 
@@ -55,7 +72,11 @@
                                             <tr>
 
                                                 <th>Date</th>
+<<<<<<< HEAD
                                                 <th>Resume URL</th>
+=======
+                                                <th>File Name</th>
+>>>>>>> Harshit_July21_Development
                                                 <th class="text-center">Actions</th>
 
                                             </tr>
@@ -64,7 +85,11 @@
 
                                             <tr>
                                                 <th>Date</th>
+<<<<<<< HEAD
                                                 <th>Resume URL</th>
+=======
+                                                <th>File Name</th>
+>>>>>>> Harshit_July21_Development
                                                 <th class="text-center">Actions</th>
                                             </tr>
 
@@ -89,7 +114,19 @@
 
                                                             }
                                                         }
+<<<<<<< HEAD
                                                         <a target="_blank" title="Resume" href=@item.ResumeLink>@fileName</a>
+=======
+                                                        <a id="resumeLink_@item.id" target="_blank" title="Resume" href=@item.ResumeLink>@fileName</a>
+                                                        <button class="copy-btn" onclick="copyToClipboard('resumeLink_@item.id', 'special_text_@item.id')">
+                                                            <p class="special-text">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                                                <span id="special_text_@item.id" class="special-text__tooltip">
+                                                                    Copy Link
+                                                                </span>
+                                                            </p>
+                                                        </button>
+>>>>>>> Harshit_July21_Development
                                                     </td>
 
 
@@ -294,5 +331,21 @@
         })
     }
 </script>
+<<<<<<< HEAD
+=======
+<script>
+    function copyToClipboard(elementId, indicatorId) {
+        var element = document.getElementById(elementId);
+        var href = element.href;
+        var temp = $("<input>");
+        $("body").append(temp);
+        //temp.val($(element).href).select();
+        temp.val(href).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#' + indicatorId).text('Copied');
+    }
+</script>
+>>>>>>> Harshit_July21_Development
 
 
