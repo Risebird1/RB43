@@ -94,7 +94,7 @@ namespace Risebird.Web.Controllers
 
                         if (!String.IsNullOrEmpty(searchValue))
                         {
-                            searchValue = searchValue.ToUpper();
+                            searchValue = searchValue.ToUpper().Trim();
                             meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")).ToList();
 
                         }
@@ -203,7 +203,7 @@ namespace Risebird.Web.Controllers
 
                         if (!String.IsNullOrEmpty(searchValue))
                         {
-                            searchValue = searchValue.ToUpper();
+                            searchValue = searchValue.ToUpper().Trim();
                             meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")).ToList();
 
                         }
@@ -324,7 +324,7 @@ namespace Risebird.Web.Controllers
                 Searchvalue = searchValue;
                 if (!String.IsNullOrEmpty(searchValue))
                 {
-                    searchValue = searchValue.ToUpper();
+                    searchValue = searchValue.ToUpper().Trim();
                     meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")).ToList();
 
                 }
@@ -447,7 +447,7 @@ namespace Risebird.Web.Controllers
 
                         if (!String.IsNullOrEmpty(searchValue))
                         {
-                            searchValue = searchValue.ToUpper();
+                            searchValue = searchValue.ToUpper().Trim();
                             myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "")).ToList();
 
                         }
@@ -579,7 +579,7 @@ namespace Risebird.Web.Controllers
 
                         if (!String.IsNullOrEmpty(searchValue))
                         {
-                            searchValue = searchValue.ToUpper();
+                            searchValue = searchValue.ToUpper().Trim();
                             myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "")).ToList();
 
                         }
@@ -705,7 +705,7 @@ namespace Risebird.Web.Controllers
                 Searchvalue = searchValue;
                 if (!String.IsNullOrEmpty(searchValue))
                 {
-                    searchValue = searchValue.ToUpper();
+                    searchValue = searchValue.ToUpper().Trim();
                     myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "")).ToList();
                 }
                 int totalcount = myInterview.Count;

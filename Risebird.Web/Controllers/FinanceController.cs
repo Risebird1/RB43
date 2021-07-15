@@ -269,7 +269,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (!String.IsNullOrEmpty(searchValue))
                     {
-                        searchValue = searchValue.ToUpper();
+                        searchValue = searchValue.ToUpper().Trim();
                         model = model.Where(x => (!String.IsNullOrEmpty(x.Comment) ? x.Comment.ToUpper().Contains(searchValue) : x.Comment == "")).ToList();
                     }
                     ViewBag.Searchvalue = searchValue;
@@ -481,7 +481,7 @@ namespace Risebird.Web.Controllers
                 SearchValue = searchValue;
                 if (!String.IsNullOrEmpty(searchValue))
                 {
-                    searchValue = searchValue.ToUpper();
+                    searchValue = searchValue.ToUpper().Trim();
                     model = model.Where(x => (!String.IsNullOrEmpty(x.Comment) ? x.Comment.ToUpper().Contains(searchValue) : x.Comment == "")).ToList();
                 }
                 int totalcount = model.Count;

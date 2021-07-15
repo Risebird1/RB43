@@ -47,6 +47,13 @@ body {
     top: 8px;
     right: 55px;
 }
+.showinter .show [class^="tooltip"]:hover:after {
+    display: none !important;
+}
+.show span:nth-child(5).tooltip--right:before {
+    top: 30px !important;
+    height: 30px;
+}
 #SkillCollection_WeightageError {
     color: red;
     margin-left: 807px;
@@ -171,9 +178,9 @@ body {
     font-weight: bold !important;
     text-transform: uppercase;
     display: block;
-    margin-top: 17PX;
-    WIDTH: 190PX;
-    margin-left: -8PX;
+    margin-top: 17px;
+    width: 190px;
+    margin-left: -8px;
 }
 
 .tab-box label {
@@ -4851,7 +4858,7 @@ button.btn {
     }
 
     .clname {
-        width: 209px;
+        width: 197px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -4890,6 +4897,32 @@ button.btn {
     .razorpay_details {
         width: 60% !important;
     }
+    .s_cname {
+        width: 165px!important;
+    }
+    .table-responsive {
+        overflow-x: auto;
+        min-height: .01%;
+        padding-bottom: 10px;
+    }
+    .hrname {
+        top: 2px!important;
+        position: relative!important;
+        line-height:100%!important;
+    }
+    .clname {
+        width: 170px !important;
+    }
+    .allmeeting .candidate-details, .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
+        width: 100% !important;
+        display: inline-table;
+        white-space: pre-wrap;
+    }
+
+        .allmeeting .candidate-details div.mtop-5, .selectedmeeting .candidate-details div.mtop-5, .rejectedmeeting .candidate-details div.mtop-5 {
+            line-height: 6px;
+        }
+
     .candidate-hr .hrname {
         width: 205px !important
     }
@@ -5172,7 +5205,7 @@ button.btn {
     .tabCon .tabs {
         display: none;
     }
-
+   
     #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
         color: red !important;
         margin-left: 0 !important;
@@ -5376,14 +5409,41 @@ button.btn {
     .recommendation .multiselect.dropdown-toggle:after {
         left: 1% !important;
     }
-
-    .page-container .page-content .page-content-wrap {
-        float: left;
-        width: 100%;
-        margin-top: -10px!important;
-        padding: 0px 15px;
-        font-family: 'Open Sans', sans-serif;
+    .pagination {
+        margin: 10px auto !important;
+        width: 360px;
     }
+
+    #meeting_first a {
+        position: relative;
+        top: 33px !important;
+        left: 60px !important;
+    }
+    #meeting_previous a {
+        position: relative;
+        top: 32px !important;
+        left: 76px !important;
+    }
+    #meeting_next a {
+        position: relative;
+        top: 32px !important;
+        left: -90px !important;
+    }
+    #meeting_last a {
+        position: relative;
+        top: 32px !important;
+        left: -77px !important;
+    }
+    .hrname {
+        top: 0px !important;
+    }
+        .page-container .page-content .page-content-wrap {
+            float: left;
+            width: 100%;
+            margin-top: -10px !important;
+            padding: 0px 15px;
+            font-family: 'Open Sans', sans-serif;
+        }
     #Selectability_WeightageError, #SkillCollection_WeightageError, #Joinability_WeightageError, #SkillGeneral_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
         color: red !important;
         margin-left: 0 !important;
