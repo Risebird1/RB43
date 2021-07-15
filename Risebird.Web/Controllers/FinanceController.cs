@@ -1241,7 +1241,9 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.Startdate = Startdate;
                     ViewBag.Enddate = Enddate;
-                    ViewBag.DateResult = Previousmonth + "/ " + Previousyear;
+                    System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
+                    string strMonthName = mfi.GetMonthName(Previousmonth).ToString();
+                    ViewBag.DateResult = strMonthName + " " + Previousyear;
                     ViewBag.ClientList = _projectService.GetClients().Select(x => x.Name).Distinct();
                     if (TempData["SuccessErrorMessageCandidate"] != null)
                     {
@@ -1298,7 +1300,9 @@ namespace Risebird.Web.Controllers
                     model = model.Where(c => filter.PaymentStatus.Contains(c.PaymentStatus.ToString()) && filter.Client.Contains(c.Name)).ToList();
                     ViewBag.Startdate = Startdate;
                     ViewBag.Enddate = Enddate;
-                    ViewBag.DateResult = Previousmonth + "/ " + Previousyear;
+                    System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
+                    string strMonthName = mfi.GetMonthName(Previousmonth).ToString();
+                    ViewBag.DateResult = strMonthName + " " + Previousyear;
                     ViewBag.ClientList = _projectService.GetClients().Select(x => x.Name).Distinct();
                     if (TempData["SuccessErrorMessageCandidate"] != null)
                     {
