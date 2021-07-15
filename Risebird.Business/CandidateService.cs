@@ -194,11 +194,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<CandidateResume>> GetCandidatesResumes(int irfId, int candidateId)
+        public async Task<IEnumerable<CandidateResume>> GetCandidatesResumes(int irfId)
         {
             try
             {
-                return await _candidateRepository.GetCandidatesResumes(irfId, candidateId);
+                return await _candidateRepository.GetCandidatesResumes(irfId);
             }
             catch (Exception e)
             {

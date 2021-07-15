@@ -240,7 +240,6 @@ namespace Risebird.Repository
                 {
                     DataTable resumeListDt = new DataTable();
                     resumeListDt.Columns.Add("IRFId", typeof(int));
-                    resumeListDt.Columns.Add("CandidateId", typeof(int));
                     resumeListDt.Columns.Add("ResumeLink", typeof(string));
                     resumeListDt.Columns.Add("AddedBy", typeof(int));
                     resumeListDt.Columns.Add("AddedOn", typeof(DateTime));
@@ -248,7 +247,7 @@ namespace Risebird.Repository
 
                     foreach (var item in resumeList)
                     {
-                        resumeListDt.Rows.Add(item.CandidateId, item.IRFId, item.ResumeLink, item.AddedBy, DateTime.Now);
+                        resumeListDt.Rows.Add(item.IRFId, item.ResumeLink, item.AddedBy, DateTime.Now);
                     }
 
                     SqlCommand cmdJoinability = new SqlCommand("usp_CandidateResumeBulkInsert", con);
@@ -270,13 +269,12 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public async Task<IEnumerable<CandidateResume>> GetCandidatesResumes(int irfId, int candidateId)
+        public async Task<IEnumerable<CandidateResume>> GetCandidatesResumes(int irfId)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
-                dynamicParameters.Add("@CandidateId", candidateId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await SqlMapper.QueryAsync<CandidateResume>(con, "usp_GetCandidatesResumes", dynamicParameters,

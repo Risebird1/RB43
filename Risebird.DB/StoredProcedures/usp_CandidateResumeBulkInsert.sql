@@ -20,7 +20,6 @@ BEGIN
 		begin tran
 
 			INSERT INTO [dbo].[CandidateResume]( 
-			[CandidateId],
 			[IRFId] ,  
 			[ResumeLink],  
 			[AddedBy],  
