@@ -2784,11 +2784,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public List<MeetingVM> GetClientNotScheduledMeetingList(int Clientid)
+        public List<MeetingVM> GetClientNotScheduledMeetingList(int Clientid,string Emailid)
         {
             try
             {
-                var meetings = _meetingRespository.GetClientNotScheduledMeetingList(Clientid).Result.ToList();
+                var meetings = _meetingRespository.GetClientNotScheduledMeetingList(Clientid, Emailid).Result.ToList();
 
                 return meetings ?? new List<MeetingVM>();
             }
