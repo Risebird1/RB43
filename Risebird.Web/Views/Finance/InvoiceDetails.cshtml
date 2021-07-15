@@ -113,7 +113,7 @@
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">Client</label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="Client" name="Client" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.Name).Distinct().ToList())
+                                                                    @foreach (var item in ViewBag.ClientList)
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -319,7 +319,68 @@
         }
     </script>
 }
+<script>
+        $(document).ready(function () {
+            $("#Month").val("");
+            $("#Year").val("");
+            $("#Client").val("");
+            $("#PaymentStatus").val("");
+            $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+            }
 
+            $("#Client").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#PaymentStatus").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+        });
+
+        function ResetFilter() {
+            window.location.href = "/Finance/ResetInvoiceDetails";
+        }
+        function ApplySessionFilter() {
+            var month = '@Month';
+            var year = '@Year';
+            var paymentStatus =  @Html.Raw(Json.Serialize(PaymentStatus));
+            var client =  @Html.Raw(Json.Serialize(Client));
+
+            $('#Month').val(month);
+            $('#Year').val(year);
+            $("#Client").val(client);
+            $("#PaymentStatus").val(paymentStatus);
+            var form = $("#form").serialize();
+
+        }
+
+</script>
+<script>
+    function CloseMyModelPopup() {
+        document.getElementById("myModal").style.display = "none";
+    }
+    function EditDetails(index, clientname, joblocation) {
+        $.ajax({
+            type: "GET",
+            url: "/Finance/GetInvoiceDetails",
+            data: { 'id': index, 'startdate': $("#txtStartdate").val(), 'enddate': $("#txtEnddate").val(), 'Clientname': clientname, 'jobcountry': joblocation },
+            success: function (data) {
+                document.getElementById("myModal").style.display = "block";
+                $("#txtInterviewerEmailid").text(clientname + " -- " + joblocation);
+                $("#divDetailedView").empty().html(data);
+            }
+        });
+    }
+</script>
 <script>
     function RefreshSearch() {
         $('#meeting').DataTable().destroy();
@@ -404,65 +465,4 @@
         }
     });
 </script>
-<script>
-    function CloseMyModelPopup() {
-        document.getElementById("myModal").style.display = "none";
-    }
-    function EditDetails(index, clientname, joblocation) {
-        $.ajax({
-            type: "GET",
-            url: "/Finance/GetInvoiceDetails",
-            data: { 'id': index, 'startdate': $("#txtStartdate").val(), 'enddate': $("#txtEnddate").val(), 'Clientname': clientname, 'jobcountry': joblocation },
-            success: function (data) {
-                document.getElementById("myModal").style.display = "block";
-                $("#txtInterviewerEmailid").text(clientname + " -- " + joblocation);
-                $("#divDetailedView").empty().html(data);
-            }
-        });
-    }
-</script>
-<script>
-        $(document).ready(function () {
-            //$("#Month").val("");
-            //$("#Year").val("");
-            $("#Client").val("");
-            $("#PaymentStatus").val("");
-            $("#ResetFilter").click(function () {
-                ResetFilter();
-            })
-            if ('@filter' != "") {
-                ApplySessionFilter();
-            }
 
-            $("#Client").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#PaymentStatus").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-        });
-
-        function ResetFilter() {
-            window.location.href = "/Finance/ResetInvoiceDetails";
-        }
-        function ApplySessionFilter() {
-            var month = '@Month';
-            var year = '@Year';
-            var paymentStatus =  @Html.Raw(Json.Serialize(PaymentStatus));
-            var client =  @Html.Raw(Json.Serialize(Client));
-
-            $('#Month').val(month);
-            $('#Year').val(year);
-            $("#Client").val(client);
-            $("#PaymentStatus").val(paymentStatus);
-            var form = $("#form").serialize();
-
-        }
-
-</script>
