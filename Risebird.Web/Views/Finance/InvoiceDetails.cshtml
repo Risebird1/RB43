@@ -381,6 +381,23 @@
     }
 </script>
 <script>
+    function CloseMyModelPopup() {
+        document.getElementById("myModal").style.display = "none";
+    }
+    function EditDetails(index, clientname, joblocation) {
+        $.ajax({
+            type: "GET",
+            url: "/Finance/GetInvoiceDetails",
+            data: { 'id': index, 'startdate': $("#txtStartdate").val(), 'enddate': $("#txtEnddate").val(), 'Clientname': clientname, 'jobcountry': joblocation },
+            success: function (data) {
+                document.getElementById("myModal").style.display = "block";
+                $("#txtInterviewerEmailid").text(clientname + " -- " + joblocation);
+                $("#divDetailedView").empty().html(data);
+            }
+        });
+    }
+</script>
+<script>
     function RefreshSearch() {
         $('#meeting').DataTable().destroy();
         setTimeout(function () {

@@ -4660,7 +4660,7 @@ namespace Risebird.Repository
             }
             return "Fail to save rating.";
         }
-        public async Task<IEnumerable<MeetingVM>> GetClientNotScheduledMeetingList(int Clientid)
+        public async Task<IEnumerable<MeetingVM>> GetClientNotScheduledMeetingList(int Clientid, string Emailid)
         {
             try
             {
@@ -4668,6 +4668,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("Clientid", Clientid);
+                    parameters.Add("Emailid", Emailid);
                     return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientNotScheduledMeetings", parameters,
                          commandType: CommandType.StoredProcedure);
                 }

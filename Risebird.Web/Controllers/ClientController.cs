@@ -3410,7 +3410,7 @@ namespace Risebird.Web.Controllers
                         }
                         var client = await _userRepository.GetClientUserDetails(emailid);
                         ClientId = client.ClientId;
-                        var meetings = _meetingService.GetClientNotScheduledMeetingList(ClientId);
+                        var meetings = _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
                         return View(meetings);
                     }
                     else
