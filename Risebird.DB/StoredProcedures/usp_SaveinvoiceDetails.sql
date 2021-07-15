@@ -39,6 +39,7 @@ PaymentStatus=ISNULL(@PaymentStatus,PaymentStatus),
 ReferenceNumber=ISNULL(@ReferenceNumber,ReferenceNumber),
 UploadedFiles=ISNULL(@UploadedFiles,UploadedFiles),
 Price=ISNULL(@Price,Price)
+Where id=@id
 END
 
 END
