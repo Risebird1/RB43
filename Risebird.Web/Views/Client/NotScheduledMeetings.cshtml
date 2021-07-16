@@ -52,7 +52,7 @@
                                                         <thead>
                                                             <tr>
                                                                 <th id='start'>Added Date</th>
-                                                                <th style="border-left: 0px !important;" >JD Title</th>
+                                                                <th style="border-left: 0px !important;">JD Title</th>
                                                                 <th>Candidate Detail</th>
                                                                 <th>Resume</th>
                                                                 <th>Client HR</th>
@@ -104,7 +104,7 @@
                                                                         else
                                                                         {
                                                                         }
-                                                                    <div class="mtop-5"><strong>Skill Channel ID:</strong> @item.IRFId</div>
+                                                                        <div class="mtop-5"><strong>Skill Channel ID:</strong> @item.IRFId</div>
                                                                     </td>
 
 
@@ -116,34 +116,34 @@
                                                                     {
                                                                         <td></td>
                                                                     }
-                                                                <td class="candidate-hr">
-                                                                    @if (item.ClientHrContact != null && item.ClientHrContact != "")
-                                                                    {
-                                                                        @if (item.ClientHrContact.Length > 13)
+                                                                    <td class="candidate-hr">
+                                                                        @if (item.ClientHrContact != null && item.ClientHrContact != "")
                                                                         {
-                                                                            <a onclick="" data-tooltip="@item.ClientHrContact"><span class="hrname"> @item.ClientHrContact</span> </a>
+                                                                            @if (item.ClientHrContact.Length > 13)
+                                                                            {
+                                                                                <a onclick="" data-tooltip="@item.ClientHrContact"><span class="hrname"> @item.ClientHrContact</span> </a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <a onclick=""> @item.ClientHrContact </a>
+                                                                            }
+
+
+
                                                                         }
                                                                         else
                                                                         {
-                                                                            <a onclick=""> @item.ClientHrContact </a>
+
                                                                         }
-
-
-                                                                       
-                                                                    }
-                                                                    else
-                                                                    {
-
-                                                                    }
-                                                                </td>
-                                                                <td class="text-left">
-                                                                    <span class="call" data-toggle="tooltip" data-placement="top"  onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -7px; position: relative;left: -2px;" title="Send Invite"><span class="fa fa-send-o"></span></span></span>
-                                                                    @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
-                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                    {
-                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call" style=" top: -7px; position: relative; "  title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
-                                                                    }
-                                                                </td>
+                                                                    </td>
+                                                                    <td class="text-left">
+                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -7px; position: relative;left: -2px;" title="Send Invite"><span class="fa fa-send-o"></span></span></span>
+                                                                        @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
+                                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                        {
+                                                                            <span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call" style=" top: -7px; position: relative; " title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
+                                                                        }
+                                                                    </td>
                                                                 </tr>
                                                             }
                                                         </tbody>
@@ -200,7 +200,7 @@
             type: 'POST',
             data: { 'irfId': id, 'IRFName': IRFId, 'emailId': CandidateEmail },
             success: function (data) {
-                alert(data);
+                swal.fire(data);
             }
         });
     }
@@ -232,7 +232,7 @@
                 searchPlaceholder: "Search records",
             },
             "fnInitComplete": function () {
-               
+
                 $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
                 $(".dataTables_filter").keyup(function (e) {
                     if ($(this).val() != "") {
