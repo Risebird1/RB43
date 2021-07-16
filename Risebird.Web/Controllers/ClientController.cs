@@ -1478,7 +1478,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        private void GetStatusList(InterviewReport model, int irfId = 0)
+        private void GetStatusList(InterviewReport model, int irfId = 0, int userId=0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
@@ -1493,9 +1493,11 @@ namespace Risebird.Web.Controllers
             model.LevelTech = new SelectList(_irfService.GetLevelTech(), "id", "Name");
             var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
                                  select new { ID = (int)s, Name = s.GetDescription() };
+            
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
-
-            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId).Result, "Comment", "Comment");
+            var questions = _meetingService.GetTechSkillComments(irfId, userId).Result;
+            model.QuestionsList = new SelectList(questions, "Comment", "Comment");
+            //model.QuestionsListData = JsonConvert.SerializeObject(questions.Select(x => (x.Comment.Replace("\r", "").Replace("\n", ""), x.SkillName)));
         }
 
         //[Authorize]
