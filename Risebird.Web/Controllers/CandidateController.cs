@@ -13,6 +13,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -2828,6 +2829,8 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
         public async Task<IActionResult> UploadResumes(UploadCandidateResumesViewModel model)
         {
             try
@@ -2852,7 +2855,8 @@ namespace Risebird.Web.Controllers
                                     {
                                         //upload in blob and get the link and and the entry in the list
                                         var fileName = file.FileName.Replace(" ", "_");
-                                        await _azureStorageHelper.InsertBlob(fileName, "resumes", file);
+                                        FileInfo fi = new FileInfo(fileName);
+                                        await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
                                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
                                         var blob = containerRef.GetBlockBlobReference(fileName);
                                         string uploadedaudioFileURL = blob.Uri.ToString();

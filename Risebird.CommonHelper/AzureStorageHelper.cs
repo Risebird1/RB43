@@ -362,6 +362,43 @@ namespace Risebird.CommonHelper
 
         }
 
+        public async Task InsertResumeBlob(string filename, string containerName, IFormFile blobFile, string extension)
+        {
+            CloudBlockBlob blob;
+            blob = GetCloudBlockBlobClient(containerName, filename);
+            string contentType = string.Empty;
+
+            switch (extension)
+            {
+                case ".pdf":
+                    contentType = "application/pdf";
+                    break;
+                case ".txt":
+                    contentType = "text/plain";
+                    break;
+                case ".doc":
+                    contentType = "application/msword";
+                    break;
+                case ".docx":
+                    contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                    break;
+                case ".dotx":
+                    contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.template";
+                    break;
+                default:
+                    contentType = blobFile.ContentType;
+                    break;
+            }
+
+            blob.Properties.ContentType = contentType;
+            using (var fileStream = blobFile.OpenReadStream())
+            {
+                await blob.UploadFromStreamAsync(fileStream).ConfigureAwait(false);
+            }
+
+
+        }
+
         public async Task<string> InsertBlobCloudCompare(string filename, string containerName, MemoryStream blobFile = null, Stream blobFileStream = null)
         {
             CloudBlockBlob blob;
