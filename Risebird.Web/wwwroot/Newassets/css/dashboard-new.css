@@ -4657,10 +4657,10 @@ button.btn {
     font-weight: 500 !important;
     color: #676767;
 }
-.notschedulemeeting div.dataTables_wrapper div.dataTables_filter label, .survey div.dataTables_wrapper div.dataTables_filter label, .candidate-timeline div.dataTables_wrapper div.dataTables_filter label {
+.notschedulemeeting div.dataTables_wrapper div.dataTables_filter label, .survey div.dataTables_wrapper div.dataTables_filter label, .candidate-timeline div.dataTables_wrapper div.dataTables_filter label, .resume div.dataTables_wrapper div.dataTables_filter label {
     position: relative;
 }
-.notschedulemeeting #meeting_filter input[type=search].form-control, .candidate-timeline #candidateTable_filter input[type=search].form-control {
+.notschedulemeeting #meeting_filter input[type=search].form-control, .candidate-timeline #candidateTable_filter input[type=search].form-control, .resume #resumeTable_filter input[type=search].form-control {
     background: #FFF !important;
     border: 1px #ccc solid !important;
     width: 256px !important;
@@ -4676,11 +4676,11 @@ button.btn {
     padding: 9px 10px 9px 10px;
 }
 
-.notschedulemeeting #search, .survey #search, .candidate-timeline #search {
+.notschedulemeeting #search, .survey #search, .candidate-timeline #search, .resume #search, .resume #search {
     right: 65px;
     top: 13px;
 }
-.notschedulemeeting #trigger-update, .survey #trigger-update, .candidate-timeline #trigger-update {
+.notschedulemeeting #trigger-update, .survey #trigger-update, .candidate-timeline #trigger-update, .resume #trigger-update {
     right: 35px;
     top: 11px;
 }
@@ -8915,9 +8915,9 @@ h4.card-title {
     padding: 5px 0px
 }
 
-#questionsTable_filter input[type=search].form-control, #statusTable_filter input[type=search].form-control, #candidateTable_filter input[type=search].form-control, #supportList_filter input[type=search], #txtmeeting_filter input[type=search].form-control, #interviewersTbl_filter input[type=search].form-control, #dupmeeting_filter input[type=search].form-control, #meeting_filter input[type=search].form-control, .interview #meeting_filter input[type=search].form-control, #MyInterviewList_filter input[type=search].form-control, #interviewer_filter input[type=search].form-control, #OpeninterviewList_filter input[type=search].form-control, #profile_filter input[type=search].form-control, #risebirduser_filter input[type=search].form-control, #clientduser_filter input[type=search].form-control, #skill_filter input[type=search].form-control, #skillLevel_filter input[type=search].form-control {
+/*#questionsTable_filter input[type=search].form-control, #statusTable_filter input[type=search].form-control, #candidateTable_filter input[type=search].form-control, #supportList_filter input[type=search], #txtmeeting_filter input[type=search].form-control, #interviewersTbl_filter input[type=search].form-control, #dupmeeting_filter input[type=search].form-control, #meeting_filter input[type=search].form-control, .interview #meeting_filter input[type=search].form-control, #MyInterviewList_filter input[type=search].form-control, #interviewer_filter input[type=search].form-control, #OpeninterviewList_filter input[type=search].form-control, #profile_filter input[type=search].form-control, #risebirduser_filter input[type=search].form-control, #clientduser_filter input[type=search].form-control, #skill_filter input[type=search].form-control, #skillLevel_filter input[type=search].form-control {
     border: 1px #ccc solid !important
-}
+}*/
 
 #questionsTable_filter input[type=search], #interviewer_filter input[type=search], #statusTable_filter input[type=search], #meeting input[type=search], #MyInterviewList_filter input[type=search], #txtmeeting_filter input[type=search], #interviewersTbl_filter input[type=search], #supportList_filter input[type=search], #meeting_filter input[type=search], .interview #meeting_filter input[type=search], #dupmeeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search] {
     background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 75% 9px;
@@ -9392,10 +9392,10 @@ body .top-panel {
     border: solid 1px #ccc !important;
     border-radius: 20px;
 }
-
-.searchbox .searchCon {
-    z-index: 0 !important
-}
+    
+    .searchbox .searchCon {
+        z-index: 0 !important
+    }
 
 .dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
     width: 230px;

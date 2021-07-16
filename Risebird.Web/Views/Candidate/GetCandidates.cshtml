@@ -56,7 +56,7 @@
                         @if (ViewBag.profile == "Admin" || ViewBag.profile == "HR" || ViewBag.profile == "Client")
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-file-alt" style="font-size:14px;" data-toggle="tooltip" data-placement="top" title="Click here to view uploaded Candidate Resumes" onclick="location.href='@Url.Action("Resumes", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Candidate Resumes</font></span>
+                                <span class="fa fa-file-alt" style="font-size:14px;" data-toggle="tooltip" data-placement="top" title="Click here to view uploaded Candidates Resume" onclick="location.href='@Url.Action("Resumes", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Candidates Resume</font></span>
                             </button>
                         }
 
