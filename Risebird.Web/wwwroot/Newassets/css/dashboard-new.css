@@ -9042,7 +9042,7 @@ tbody.collapse.in {
 }
 
 .nav > li > a.active-menu:hover p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:hover p {
-    padding-left: 70px !important;
+    padding-left: 60px !important;
 }
 
 .nav > li > a:hover {
