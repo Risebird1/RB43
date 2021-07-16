@@ -1589,7 +1589,7 @@
 
     function AddRow() {
 
-
+        debugger;
         var $ttc = $("#QuestionsTable").find("tbody tr:last");
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#QuestionsTable tr").length - 1;
@@ -1628,7 +1628,7 @@
         $form.data("validator", null);
 
         var options = '@Model.QuestionsListData';
-        optionsData = JSON.parse(options.replace(/&quot;/g, '"'));
+        optionsData = JSON.parse(options.replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<'));
         $("#QuestionsCollection_" + finalIndex + "__Comment" + " option").remove();
 
         $(optionsData).each(function () {
@@ -1723,6 +1723,7 @@
     }
 
     function QuestionChanged(id, val) {
+        debugger;
         var num = id.match(/(\d+)/);
 
         var index = num[0];//id.charAt(20);
