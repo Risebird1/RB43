@@ -2784,6 +2784,59 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public List<MeetingVM> GetClientNotScheduledMeetingList(int Clientid,string Emailid)
+        {
+            try
+            {
+                var meetings = _meetingRespository.GetClientNotScheduledMeetingList(Clientid, Emailid).Result.ToList();
+
+                return meetings ?? new List<MeetingVM>();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<InvoiceDetailsVM>> FetchFNInvoiceDetails(string Startdate, string Enddate)
+        {
+            try
+            {
+                var result = _meetingRespository.FetchFNInvoiceDetails(Startdate, Enddate);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<InvoiceDetailsVM> GetInvoiceDetailsById(int id)
+        {
+            try
+            {
+                var result = _meetingRespository.GetInvoiceDetailsById(id);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<string> SaveInvoiceDetails(InvoiceDetailsVM model)
+        {
+            try
+            {
+                var result = _meetingRespository.SaveInvoiceDetails(model);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Fail";
+            }
+        }
     }
 }
 

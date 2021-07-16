@@ -120,6 +120,7 @@
                                 <div class="input-group" id="myForm">
                                     <div class="searchbox">
                                         <input type="email" id="txtsearch" value="@ViewBag.searchvalue" class="form-control txtsearch1" placeholder="Please enter Skills (or) Name of Candidate" AutoCompleteType="Disabled">
+                                        <span class="ref-btn" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
                                         <span class="input-group-btn">
                                             <button class="btn btn3" id="btnSearch" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
                                         </span>
@@ -278,7 +279,7 @@
 
                                                         @if (item.candidateName != null && item.candidateName != "")
                                                         {
-                                                            @if (@item.candidateName.Length > 20)
+                                                            @if (@item.candidateName.Length > 10)
                                                             {
                                                                 <a data-tooltip="@item.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@item.candidateName</span> </a>
                                                             }
@@ -295,11 +296,11 @@
                                                         {
                                                             @if (@item.JDTiltle.Length > 20)
                                                             {
-                                                                <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">@item.JDTiltle</span></a>}
+                                                                <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time designation">@item.JDTiltle</span></a>}
 
                                                             else
                                                             {
-                                                                <span class="designation">@item.JDTiltle</span>}
+                                                                <span class="join-time designation">@item.JDTiltle</span>}
                                                         }
                                                         else
                                                         { <span></span>}
@@ -332,7 +333,7 @@
                                                             <span>
                                                                 <button class="rating-btn" aria-label="Rate Interviewer">
                                                                     <span onclick="openpopUpRating('@item.candidateName','@item.imid')" title="Rate Interviewer">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24"><path fill="rgb(169,168,168)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z" /></svg>
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24"><path fill="rgb(169,168,168)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z" /></svg>
                                                                     </span>
                                                                 </button>
                                                             </span>
@@ -672,8 +673,8 @@
     $(document).ready(function () {
 
         $(".candidate-name").each(function () {
-            if ($(this).text().length > 15) {
-                $(this).text($(this).text().substr(0, 15) + "...")
+            if ($(this).text().length > 12) {
+                $(this).text($(this).text().substr(0, 12) + "...")
 
                 $('[role="data-tooltip"]').css("visibility", "visible");
 
@@ -683,17 +684,17 @@
             else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
         });
 
-        $(".join-time").each(function () {
-            if ($(this).text().length > 10) {
-                $(this).text($(this).text().substr(0, 10) + "...")
+        //$(".join-time").each(function () {
+        //    if ($(this).text().length > 10) {
+        //        $(this).text($(this).text().substr(0, 10) + "...")
 
-                $('[role="data-tooltip"]').css("visibility", "visible");
+        //        $('[role="data-tooltip"]').css("visibility", "visible");
 
-            }
+        //    }
 
 
-            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
-        });
+        //    else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        //});
 
         $(".joining-time").each(function () {
             if ($(this).text().length > 12) {

@@ -210,5 +210,114 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<Candidate> GetCandidatesDetails(int irfId, int candidateId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                dynamicParameters.Add("@CandidateId", candidateId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<Candidate>(con, "usp_GetCandidateDetailsByCandidateId", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> AddResume(List<CandidateResume> resumeList)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable resumeListDt = new DataTable();
+                    resumeListDt.Columns.Add("IRFId", typeof(int));
+                    resumeListDt.Columns.Add("ResumeLink", typeof(string));
+                    resumeListDt.Columns.Add("AddedBy", typeof(int));
+                    resumeListDt.Columns.Add("AddedOn", typeof(DateTime));
+
+
+                    foreach (var item in resumeList)
+                    {
+                        resumeListDt.Rows.Add(item.IRFId, item.ResumeLink, item.AddedBy, DateTime.Now);
+                    }
+
+                    SqlCommand cmdJoinability = new SqlCommand("usp_CandidateResumeBulkInsert", con);
+                    cmdJoinability.CommandType = CommandType.StoredProcedure;
+                    cmdJoinability.Parameters.Add(new SqlParameter("@CandidateResumeBulkData", SqlDbType.Structured));
+                    cmdJoinability.Parameters["@CandidateResumeBulkData"].Value = resumeListDt;
+                    con.Open();
+                    if (cmdJoinability.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<IEnumerable<CandidateResume>> GetCandidatesResumes(int irfId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<CandidateResume>(con, "usp_GetCandidatesResumes", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> DeleteCandidateResume(int id)
+        {
+            try
+            {
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_DeleteCandidateResume", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

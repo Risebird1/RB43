@@ -3556,6 +3556,11 @@ namespace Risebird.Web.Controllers
                                     Subject = "Risebird: Feedback form"
                                 };
                                 var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
+                                WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                                _whatsAppVM.Emailid = model.CandidateEmail;
+                                _whatsAppVM.buttonlink = !String.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
+                                _whatsAppVM.Event = "Feedback Remainder";
+                                _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
                             }
                             TempData["SuccessErrorMessageInterview"] = "Report saved successfully";
                             if (profileName == "Admin" || profileName == "HR")

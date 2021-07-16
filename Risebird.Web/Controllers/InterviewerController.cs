@@ -182,7 +182,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.Searchvalue = searchValue;
                         if (!String.IsNullOrEmpty(searchValue))
                         {
-                            searchValue = searchValue.ToUpper();
+                            searchValue = searchValue.ToUpper().Trim();
                             model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                         }
@@ -338,7 +338,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.Searchvalue = searchValue;
                         if (!String.IsNullOrEmpty(searchValue))
                         {
-                            searchValue = searchValue.ToUpper();
+                            searchValue = searchValue.ToUpper().Trim();
                             model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                         }
@@ -1419,7 +1419,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.Searchvalue = searchValue;
                         if (!String.IsNullOrEmpty(searchValue))
                         {
-                            searchValue = searchValue.ToUpper();
+                            searchValue = searchValue.ToUpper().Trim();
                             myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "") || (!String.IsNullOrEmpty(x.PrimarySkill) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
 
                         }
@@ -2226,7 +2226,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.Searchvalue = searchValue;
                 if (!String.IsNullOrEmpty(searchValue))
                 {
-                    searchValue = searchValue.ToUpper();
+                    searchValue = searchValue.ToUpper().Trim();
                     model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "") || (!String.IsNullOrEmpty(x.NickName) ? x.NickName.ToUpper().Contains(searchValue) : x.NickName == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
 
                 }
@@ -2282,7 +2282,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.Searchvalue = searchValue;
                 if (!String.IsNullOrEmpty(searchValue))
                 {
-                    searchValue = searchValue.ToUpper();
+                    searchValue = searchValue.ToUpper().Trim();
                     myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "") || (!String.IsNullOrEmpty(x.PrimarySkill) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
 
                 }
