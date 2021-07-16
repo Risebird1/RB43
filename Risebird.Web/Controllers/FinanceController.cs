@@ -1229,6 +1229,7 @@ namespace Risebird.Web.Controllers
                             Enddate = currentYear + "-" + currentMonth + "-01";
                         }
                         model = await _meetingService.FetchFNInvoiceDetails(Startdate, Enddate);
+                        model = model.OrderBy(x => x.Name).ToList();
                         filter.PaymentStatus = filter.PaymentStatus == null ? filter.PaymentStatus = model.Select(x => x.PaymentStatus.ToString()).ToArray() : filter.PaymentStatus = filter.PaymentStatus;
                         filter.Client = filter.Client == null ? filter.Client = model.Select(x => x.Name).ToArray() : filter.Client = filter.Client;
                         model = model.Where(c => filter.PaymentStatus.Contains(c.PaymentStatus.ToString()) && filter.Client.Contains(c.Name)).ToList();
@@ -1236,10 +1237,13 @@ namespace Risebird.Web.Controllers
                     else
                     {
                         model = await _meetingService.FetchFNInvoiceDetails(Startdate, Enddate);
+                        model = model.OrderBy(x => x.Name).ToList();
                     }
                     ViewBag.Startdate = Startdate;
                     ViewBag.Enddate = Enddate;
-
+                    System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
+                    string strMonthName = mfi.GetMonthName(Previousmonth).ToString();
+                    ViewBag.DateResult = strMonthName + " " + Previousyear;
                     ViewBag.ClientList = _projectService.GetClients().Select(x => x.Name).Distinct();
                     if (TempData["SuccessErrorMessageCandidate"] != null)
                     {
@@ -1290,11 +1294,15 @@ namespace Risebird.Web.Controllers
                         Enddate = currentYear + "-" + currentMonth + "-01";
                     }
                     var model = await _meetingService.FetchFNInvoiceDetails(Startdate, Enddate);
+                    model = model.OrderBy(x => x.Name).ToList();
                     filter.PaymentStatus = filter.PaymentStatus == null ? filter.PaymentStatus = model.Select(x => x.PaymentStatus.ToString()).ToArray() : filter.PaymentStatus = filter.PaymentStatus;
                     filter.Client = filter.Client == null ? filter.Client = model.Select(x => x.Name).ToArray() : filter.Client = filter.Client;
                     model = model.Where(c => filter.PaymentStatus.Contains(c.PaymentStatus.ToString()) && filter.Client.Contains(c.Name)).ToList();
                     ViewBag.Startdate = Startdate;
                     ViewBag.Enddate = Enddate;
+                    System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
+                    string strMonthName = mfi.GetMonthName(Previousmonth).ToString();
+                    ViewBag.DateResult = strMonthName + " " + Previousyear;
                     ViewBag.ClientList = _projectService.GetClients().Select(x => x.Name).Distinct();
                     if (TempData["SuccessErrorMessageCandidate"] != null)
                     {
