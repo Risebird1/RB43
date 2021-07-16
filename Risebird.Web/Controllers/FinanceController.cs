@@ -1363,6 +1363,7 @@ namespace Risebird.Web.Controllers
             return PartialView(model);
         }
         [HttpPost]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> GetInvoiceDetails(InvoiceDetailsVM model)
         {
             if (model.fileupload != null)
