@@ -21,7 +21,7 @@ left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id
 left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=c.IRFId and cs.Status=12    
 join TransClientUser tcu on tcu.IRFId=IRF.id  
 left join Userlist tcul on tcul.id=tcu.ClientUserId  
-Where tcul.EmailId=@Emailid  
+Where tcul.EmailId=@Emailid and cs.Date is not Null  
 group by IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact,cs.Date having Count(*)=1      
 order by cs.Date desc    
     
