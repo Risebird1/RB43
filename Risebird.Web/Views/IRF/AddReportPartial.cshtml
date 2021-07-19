@@ -73,7 +73,7 @@
                     @*<div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="create_pdf" value="Generate PDF" onclick="getPDF()"></div>*@
                     @if (ViewBag.PageStatus == "Mainurl")
                     {
-                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;" value="Generate External Public Url" onclick="GeneratePublicUrl(1)"></div>
+                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;" value="Generate Executive Public Url" onclick="GeneratePublicUrl(1)"></div>
                         <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;" value="Generate Public Url" onclick="GeneratePublicUrl(2)"></div>
                     }
                 </div>
@@ -246,7 +246,7 @@
                                                     appendTime = Model.ThumbnailTimeSeconds.ToString();
                                                 }
                                                 var src = Model.VideoLink + "#t=" + appendTime;
-                                                <video width="400" controls="controls" preload="metadata">
+                                                <video width="400" controls="controls" preload="metadata" class="vjs-tech">
                                                     <source src='@src' type="video/mp4">
                                                 </video>
                                             }
@@ -413,7 +413,7 @@
                                                     {
                                                         for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                         {
-                                                            <tr>
+                                                            <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                 <td>
 
                                                                     @*@Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "dropques select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })*@
@@ -1803,7 +1803,18 @@
 
 
     }
+    function switchtoquestionVedio(questiontime) {
 
+        var time = 1;
+        if (questiontime != '') {
+            time = questiontime;
+            time = questiontime;
+            time = questiontime;
+        }
+        var vid = document.getElementsByClassName("vjs-tech");
+        vid[0].currentTime = time;
+        //time should be in seconds
+    }
     $(document).ready(function () {
         //Perform Ajax request.
         var count = '@ViewBag.QuestionsDiscussedCount';
