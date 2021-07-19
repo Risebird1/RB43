@@ -151,7 +151,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendAlertHRForUnassignedInterview(List<string> hrs, string meetingDate, string candidateEmail, string interviewer)
+        public string SendAlertHRForUnassignedInterview(List<string> hrs, string meetingDate, string candidateEmail, string interviewer, string Skillchannelid, string Client)
         {
             try
             {
@@ -169,7 +169,7 @@ namespace Risebird.CommonHelper
                 StringBuilder msgBody = new StringBuilder("Dear HR,");
                 msgBody.Append("\n");
                 msgBody.AppendLine(
-                    "HR Alert!!! " + interviewer + " Interviewer has unassigned interview for candidate " + candidateEmail + " scheduled on " + meetingDate);
+                    "HR Alert!!! " + interviewer + " Interviewer has unassigned interview for candidate " + candidateEmail + " scheduled on " + meetingDate + "for Client:" + Client + "(" + Skillchannelid + ").");
                 msgBody.Append("\n");
                 msgBody.AppendLine(
                     "Kindly login over risebird portal and click on Interview menu and assign interviewer for unassigned interview.");

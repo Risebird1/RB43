@@ -448,7 +448,9 @@ namespace Risebird.Business
                 if (_interviewerRepository.UnassignYourself(meetingid).Result)
                 {
                     var hrs = _userService.GetAllHrsEmailld()?.ToList();
-                    _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.interviewDate.ToString(), meeting.candidateEmail, email);
+                    var Skillchannelid = meeting.IRFId;
+                    var client = _interviewerRepository.FetchClientName(meeting.IRFId);
+                    _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.interviewDate.ToString(), meeting.candidateEmail, email, Skillchannelid, client);
                     return true;
                 }
                 else
