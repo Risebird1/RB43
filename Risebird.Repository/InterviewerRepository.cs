@@ -1109,7 +1109,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select interviewDate, candidateEmail from UnapprovedInterviewerMeetings where id = @meetingid";
+                var query = "select interviewDate, candidateEmail,ISCId as IRFId from UnapprovedInterviewerMeetings where id = @meetingid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", meetingid);
                 dynamicParameters.Add("@value", 2);
@@ -1967,6 +1967,25 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
             return null;
+        }
+        public string FetchClientName(string IRFId)
+        {
+            try
+            {
+                var query = "Select c.Name from IRF Join Client c on c.id=IRF.ClientId where IRF.IRFId= = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", IRFId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<string>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 }

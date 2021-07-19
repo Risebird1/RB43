@@ -11,14 +11,14 @@ namespace Risebird.CommonHelper.Interface
         string SendHelpsupportMail(Mail model);
         string SendIRFBasedInterviewerMail(List<string> interviwers, string meetingDate);
         string SendInterviewerMailOnAssinment(string interviwers, string meetingDate);
-        string SendAlertHRForUnassignedInterview(List<string> hrs, string meetingDate, string candidateEmail, string interviewer);
+        string SendAlertHRForUnassignedInterview(List<string> hrs, string meetingDate, string candidateEmail, string interviewer, string Skillchannelid, string Client);
         string SendIRFBasedClientMail(List<TransClientUser> clientUsers, string meetingDate, string jdTitle, string candidateName, string reportLink, string interviewStatus, string videoLink, string interviewerComments);
         string SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail);
         string CancelCandidateInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string emailId);
         string SendQCInterviewerMail(List<string> interviwers, string meetingDate);
         string SendInterviewCancelledMail(List<string> interviewers, string interviewDate);
         string SendCandidateOnboardedMail(List<string> mailIds, string candidateName, string irfName, string evaluator);
-        string SendInterviewCancelledMail(string interviewer, string interviewDate);
+        string SendInterviewCancelledMail(string interviewer, string interviewDate, string IRFid);
         string SendInterviewCancelledMailtoCandidate(string candidateMail, string clientHRMail, string interviewDate);
         string CuretatedNotification(Mail model, string UserType, string EmailParameter);
         string SendCuratedUserMail(List<string> curatedUsers, string meetingDate, string irf, string primarySkill, string codedName);

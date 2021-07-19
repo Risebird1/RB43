@@ -5344,5 +5344,39 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult ExecutiveReport(int interviewId, int irfId, bool IsSelected = false)
+        {
+            try
+            {
+                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                ViewBag.IsSelected = IsSelected;
+                if (model.QuestionsCollection == null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
+                ViewBag.ProfileName = "";
+                ViewBag.PageStatus = "PublicExternal";
+                GetStatusList(model, irfId);
+                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (menus != null)
+                {
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                }
+                return PartialView("AddReportPartial", model);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+
+        }
     }
 }
