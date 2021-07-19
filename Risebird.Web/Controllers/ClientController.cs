@@ -2595,6 +2595,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 10].Value = "Approval Comments ";
                 Sheet.Cells[1, 11].Value = "Final Selection Status";
                 Sheet.Cells[1, 12].Value = "Final Selection Comments";
+                Sheet.Cells[1, 13].Value = "Executive Report URL";
 
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
@@ -2638,6 +2639,10 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 11].Value = item.FinalSelectionStat;
                         Sheet.Cells[i, 12].Value = item.FinalComments;
 
+                        Sheet.Cells[i, 13].Hyperlink = new Uri(Request.Host.ToString() + "/Client/ExecutiveReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
+                        Sheet.Cells[i, 13].Value = "Report Url";
+                        Sheet.Cells[i, 13].Style.Font.UnderLine = true;
+                        Sheet.Cells[i, 13].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -3472,7 +3477,7 @@ namespace Risebird.Web.Controllers
         }
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult PublicReportExternl(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
+        public IActionResult ExecutiveReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
         {
             try
             {
