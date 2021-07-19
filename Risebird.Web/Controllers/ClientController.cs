@@ -1478,7 +1478,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        private void GetStatusList(InterviewReport model, int irfId = 0, int userId=0)
+        private void GetStatusList(InterviewReport model, int irfId = 0, int userId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
@@ -1493,7 +1493,7 @@ namespace Risebird.Web.Controllers
             model.LevelTech = new SelectList(_irfService.GetLevelTech(), "id", "Name");
             var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
                                  select new { ID = (int)s, Name = s.GetDescription() };
-            
+
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
             var questions = _meetingService.GetTechSkillComments(irfId, userId).Result;
             model.QuestionsList = new SelectList(questions, "Comment", "Comment");
@@ -3468,6 +3468,40 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Sorry! Could not send invite!");
+            }
+        }
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult PublicReportExternl(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
+        {
+            try
+            {
+                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                if (model.QuestionsCollection == null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
+                ViewBag.IsClient = isClient;
+                ViewBag.IsClientSelected = isClientSelected;
+                model.PreviousMeetingStatus = model.MeetingStatus;
+                GetStatusList(model, irfId);
+                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (menus != null)
+                {
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                }
+                ViewBag.PageStatus = "PublicExternal";
+                return PartialView("ClientPartialReport", model);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("AllMeetings");
             }
         }
     }

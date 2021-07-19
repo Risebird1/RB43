@@ -39,6 +39,7 @@ namespace Risebird.Entities.ViewModel
         public string CalendlyLink { get; set; }
         public string JDTiltle { get; set; }
         public string CandidateName { get; set; }
+        public string IRFId { get; set; }
     }
 }
 
