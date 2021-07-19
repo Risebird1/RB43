@@ -21,7 +21,8 @@ BEGIN
 declare @emailIDParam varchar(200)
 set @emailIDParam=@emailID
 
-select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ul.EmailId as candidateEmail, im.ClientHrContact,        
+select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ul.EmailId as candidateEmail, 
+ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,        
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,        
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,  
 case   
