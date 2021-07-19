@@ -14,7 +14,8 @@ Create PROCEDURE [dbo].[usp_OpenInterviews]
    @emailID varchar(200)       
 AS  
 BEGIN  
-select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,  
+select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail,
+ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,  
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,  
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,  
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,  
@@ -29,7 +30,8 @@ join CandidatesMaster cm on cm.UserId = ulc.id
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId=irf.id  
 where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID
 union 
-select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,  
+select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, 
+ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,    
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,  
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,  
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,  

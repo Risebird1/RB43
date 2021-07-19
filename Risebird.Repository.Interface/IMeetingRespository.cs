@@ -178,5 +178,6 @@ namespace Risebird.Repository.Interface
         Task<List<InvoiceDetailsVM>> FetchFNInvoiceDetails(string Startdate, string Enddate);
         Task<InvoiceDetailsVM> GetInvoiceDetailsById(int id);
         Task<string> SaveInvoiceDetails(InvoiceDetailsVM model);
+        Task<IEnumerable<Meeting>> GetAllAssignedInterviewsForToday(string emailID);
     }
 }

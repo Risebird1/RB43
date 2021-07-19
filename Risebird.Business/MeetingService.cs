@@ -751,11 +751,18 @@ namespace Risebird.Business
         {
             try
             {
-                var assignedMeeting = _meetingRespository.GetAllAssignedInterview(interviewerMail).Result.OrderByDescending(x => x.interviewDate).ToList();
+                //var assignedMeeting = _meetingRespository.GetAllAssignedInterview(interviewerMail).Result.OrderByDescending(x => x.interviewDate).ToList();
+                var assignedMeeting = _meetingRespository.GetAllAssignedInterviewsForToday(interviewerMail).Result;
                 var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == interviewDate);
-                if (checkDateMeeting.Any())
+                if (checkDateMeeting !=null && checkDateMeeting.Count() > 0)
                 {
                     return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";
+                }
+                var upComingInterviews = assignedMeeting.Where(x => Convert.ToInt32(Math.Round((x.interviewDate - interviewDate).TotalMinutes)) <= 30);
+                if(upComingInterviews != null && upComingInterviews.Count()>0)
+                {
+                    return "Failed! You already have an interview scheduled within the next 30 minutes. Please contact Risebird HR.";
+
                 }
                 return _meetingRespository.AssignYourself(meetingid, interviewerMail);
 
@@ -1052,6 +1059,7 @@ namespace Risebird.Business
                     model.IsBiometricEnabled = interviewDetails.IsBiometricEnabled;
                     model.JoiningBiometryScore = interviewDetails.JoiningBiometryScore;
                     model.InterviewBiometryScore = interviewDetails.InterviewBiometryScore;
+                    model.VideoLink = interviewDetails.VideoLink;
                     reportModel = model;
                 }
                 // joinability and Selectability

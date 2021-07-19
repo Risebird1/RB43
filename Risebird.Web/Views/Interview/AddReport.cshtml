@@ -522,6 +522,7 @@
                                             </table>
                                         </div>
                                         <label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
+                                        <label class="text-danger" id="QuestionsCollection_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
 
                                     </div><!--end of col-md-12-->
 
@@ -1589,7 +1590,6 @@
 
     function AddRow() {
 
-        debugger;
         var $ttc = $("#QuestionsTable").find("tbody tr:last");
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#QuestionsTable tr").length - 1;
@@ -1627,7 +1627,7 @@
         $form.unbind();
         $form.data("validator", null);
 
-        var options = '@Model.QuestionsListData';
+        @*var options = '@Model.QuestionsListData';
         optionsData = JSON.parse(options.replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<'));
         $("#QuestionsCollection_" + finalIndex + "__Comment" + " option").remove();
 
@@ -1644,7 +1644,7 @@
 
             $("#QuestionsCollection_" + finalIndex + "__Comment").append(option);
         });
-        $("#QuestionsCollection_" + finalIndex + "__SkillName").val(optionsData[0].Item2);
+        $("#QuestionsCollection_" + finalIndex + "__SkillName").val(optionsData[0].Item2);*@
         //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
         // Check document for changes
         //$.validator.unobtrusive.parse(document);
@@ -1767,7 +1767,7 @@
 
     function CheckConditions() {
 
-        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestionsTiming());
+        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestions() && CheckQuestionsTiming());
     }
 
     function CheckInterviewerComments() {
@@ -1817,7 +1817,20 @@
             return true;
     }
 
+    function CheckQuestions() {
+        var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
+        for (i = 0; i < questionItems.length; i++) {
+            var temp = $("#QuestionsCollection_" + i + "__Comment").val();
+            if (temp == null || temp == '') {
+                document.getElementById('QuestionsCollection_CommentError').innerHTML = "Please select a Question for all the added rows."
+                document.getElementById('QuestionsCollection_CommentError').focus();
+                return false;
+            }
 
+        }
+        document.getElementById('QuestionsCollection_CommentError').innerHTML = "";
+        return true;
+    }
 
 
     function CheckMeetingStatus() {
