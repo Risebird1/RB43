@@ -26,7 +26,9 @@ namespace Risebird.Business
         private readonly ISupportRepository _supportRespository;
         private readonly IActivityTrackerRepository _activityTrackerRepository;
         private readonly IWhatsAppHelper _whatsAppHelper;
-        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper)
+        private readonly IInterviewerRepository _interviewerRepository;
+
+        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -39,6 +41,7 @@ namespace Risebird.Business
             _supportRespository = supportRespository;
             _activityTrackerRepository = activityTrackerRepository;
             _whatsAppHelper = whatsAppHelper;
+            _interviewerRepository = interviewerRepository;
         }
 
         public List<MeetingVM> GetMeetingList()
@@ -830,7 +833,9 @@ namespace Risebird.Business
                     if (hrs != null)
                     {
                         var candidateEmail = meeting.Result.candidateEmail;
-                        _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), candidateEmail, email);
+                        var Skillchannelid = meeting.Result.IRFId;
+                        var client = _interviewerRepository.FetchClientName(meeting.Result.IRFId);
+                        _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), candidateEmail, email, Skillchannelid, client);
 
                     }
                     return true;
@@ -2784,7 +2789,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public List<MeetingVM> GetClientNotScheduledMeetingList(int Clientid,string Emailid)
+        public List<MeetingVM> GetClientNotScheduledMeetingList(int Clientid, string Emailid)
         {
             try
             {
