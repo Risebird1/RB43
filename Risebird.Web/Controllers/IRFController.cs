@@ -5346,7 +5346,7 @@ namespace Risebird.Web.Controllers
         }
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult PublicAddReportExternal(int interviewId, int irfId, bool IsSelected = false)
+        public IActionResult ExecutiveReport(int interviewId, int irfId, bool IsSelected = false)
         {
             try
             {
