@@ -2656,10 +2656,10 @@ namespace Risebird.Web.Controllers
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
-                Rng.Value = "Data export failed !!!";
+                Rng.Value = "Data export failed !!!" + ex.Message.ToString();
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
 
