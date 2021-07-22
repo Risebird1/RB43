@@ -9420,16 +9420,16 @@ body .top-panel {
     border: 1px rgba(80, 158, 235, 0.58) solid !important;
 }
 
-.filheader {
+.filheader, .upload_resume {
     padding: 10px;
 }
 
-.filavatar svg {
+.filavatar svg, .upload_resume svg {
     top: 10px;
     position: relative;
 }
 
-.filavatar {
+.filavatar, .uploadavatar {
     width: 45px;
     float: left;
     border-radius: 50%;
@@ -9439,10 +9439,10 @@ body .top-panel {
     height: 45px;
 }
 
-    .filavatar .fa-filter {
-        font-size: 25px;
+    .filavatar .fa-filter, .uploadavatar .fa {
+        font-size: 22px;
         color: #fff;
-        padding: 13px 30px 0px 13px;
+        padding: 10px 30px 0px 13px;
     }
 
 .broadcastfilter-icon {

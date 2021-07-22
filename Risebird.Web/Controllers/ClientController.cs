@@ -2639,7 +2639,9 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 11].Value = item.FinalSelectionStat;
                         Sheet.Cells[i, 12].Value = item.FinalComments;
 
-                        Sheet.Cells[i, 13].Hyperlink = new Uri(Request.Host.ToString() + "/Client/ExecutiveReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
+                        //var reporturl = Request.Host.ToString() + "/Client/ExecutiveReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true;
+                        string reporturl = "https://portal.risebird.io/Client/ExecutiveReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true;
+                        Sheet.Cells[i, 13].Hyperlink = new Uri(reporturl, UriKind.Absolute);
                         Sheet.Cells[i, 13].Value = "Report Url";
                         Sheet.Cells[i, 13].Style.Font.UnderLine = true;
                         Sheet.Cells[i, 13].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
@@ -2655,10 +2657,10 @@ namespace Risebird.Web.Controllers
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
-                Rng.Value = "Data export failed !!!";
+                Rng.Value = "Data export failed !!!" + ex.ToString();
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
 

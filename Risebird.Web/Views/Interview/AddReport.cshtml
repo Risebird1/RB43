@@ -1628,7 +1628,6 @@
         $form.data("validator", null);
 
         @*var options = '@Model.QuestionsListData';
-        console.log(options);
         optionsData = JSON.parse(options.replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<'));
         $("#QuestionsCollection_" + finalIndex + "__Comment" + " option").remove();
 
@@ -1724,6 +1723,7 @@
     }
 
     function QuestionChanged(id, val) {
+        debugger;
         var num = id.match(/(\d+)/);
 
         var index = num[0];//id.charAt(20);
@@ -1767,7 +1767,7 @@
 
     function CheckConditions() {
 
-        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestions() && CheckQuestionsTiming() );
+        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestions() && CheckQuestionsTiming());
     }
 
     function CheckInterviewerComments() {
@@ -1831,7 +1831,6 @@
         document.getElementById('QuestionsCollection_CommentError').innerHTML = "";
         return true;
     }
-
 
 
     function CheckMeetingStatus() {
