@@ -14,16 +14,23 @@ Create PROCEDURE [dbo].[usp_GetInterviewManagement]
 @startdate datetime,        
 @enddate datetime        
 AS          
-Begin         
-    
-Select Distinct im.id,im.interviewDate,ic.MeetingStatus,tzme.Joinedcount as TotalCount,im.IsMeetingNotificationSent,im.IsRescheduleNotificationSent from InterviewMeetings im    
-Left join InterviewComments ic on ic.InterviewId=im.id  
-left join TransZoomMeetingExtendDetails tzme on im.ZoomMeetingId = tzme.Meetingid
---Outer Apply(Select Count(Distinct ParticipantName) as TotalCount from ZoomMeetingTransmission Where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId )JoinedCount  
-where InterviewDate>@startdate and InterviewDate<@enddate and im.confirmationStatus=1 and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission)    
-        
-        
-End   
+Begin  
+declare 
+@startDateParam datetime,
+@endDateParam datetime
+
+set @startDateParam =@startdate
+set @endDateParam =@enddate
+
+      
+Select Distinct im.id,im.interviewDate,ic.MeetingStatus,tzme.Joinedcount as TotalCount,im.IsMeetingNotificationSent,im.IsRescheduleNotificationSent from InterviewMeetings im      
+Left join InterviewComments ic on ic.InterviewId=im.id    
+left join TransZoomMeetingExtendDetails tzme on im.ZoomMeetingId = tzme.Meetingid  
+--Outer Apply(Select Count(Distinct ParticipantName) as TotalCount from ZoomMeetingTransmission Where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId )JoinedCount    
+where InterviewDate>@startDateParam and InterviewDate<@endDateParam and im.confirmationStatus=1 and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission)      
+          
+          
+End  
       
 GO
   

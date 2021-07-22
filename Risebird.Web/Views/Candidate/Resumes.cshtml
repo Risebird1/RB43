@@ -27,7 +27,13 @@
                         {
                             <span class="interview_2"> <i type="submit" class="fa fa-file-excel-o excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateResumesExporttoExcel", "Candidate",  new { irfId = Model.IRFId, irfName = Model.IRFName })'" style=" position: relative; top: 10px; }"></i></span>
 
-                            @Html.ActionLink("Upload Resume(s)", "UploadResumes", "Candidate", new { irfId = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                            @*@Html.ActionLink("Upload Resume(s)", "UploadResumes", "Candidate", new { irfId = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })*@
+
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#uploadResumesModal">
+
+                                <span class="mdc-button__label"><span class="fa fa-file" data-toggle="tooltip" data-placement="top" title="Upload Resume(s)" data-original-title="Upload Resume(s)"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Upload Resume(s)</font></span></span>
+                                <div class="mdc-button__ripple"></div>
+                            </button>
                         }
 
 
@@ -48,7 +54,79 @@
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
+                            <div class="modal fade" id="uploadResumesModal" tabindex="-1" role="dialog" aria-labelledby="UploadResumesModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="upload_resume">
+                                            <div class="uploadavatar">
+                                                <span class="fa fa-upload"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="UploadResumesModalLabel"> Upload Resume(s)</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <form action="/Candidate/UploadResumes" multiple enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckIfFileSelected()">
+                                            @Html.AntiForgeryToken()
+                                            <div class="canvas_div_pdf">
+                                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
+                                                <div class="row">
+                                                    @*<div class="col-md-6 col-sm-6">
+                        <div class="form-group" style="margin-bottom:10px;">
+                            @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                        </div>
+                    </div>*@
+                                                    @*<div class="col-md-6 col-sm-6">
+                                                        <div class="form-group" style="margin-bottom:10px;">
+                                                            @Html.LabelFor(model => model.IRFName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            @Html.TextBoxFor(m => m.IRFName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </div>
+                                                    </div>*@
+                                                    <div class="col-md-12 col-sm-12">
+                                                        <div class="form-group">
+                                                            <label asp-for="ResumeFiles" class="form-label"></label>
+                                                            <div class="col-sm-12">
+                                                                <div class="custom-file">
+                                                                    <input asp-for="ResumeFiles" multiple class="form-control custom-file-input">
+                                                                    <label class="custom-file-label">Choose File(s)...</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
+                                                <div asp-validation-summary="All" class="text-danger"></div>
+
+
+
+                                                @Html.HiddenFor(m => m.IRFId)
+                                                @Html.HiddenFor(m => m.IRFName)
+
+                                                <div class="card-footer ">
+                                                    <div class="row">
+
+                                                        <div class="col-md-12 mc-button-area text-right">
+
+
+                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Upload</button>
+
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+
+                            </div>
 
                             <div class="resume">
 
@@ -167,7 +245,30 @@
 
     </script>
 }
+<script>
+    function SetUploadInputFileName() {
+        $('.custom-file-input').on("change", function () {
+            var fileLabel = $(this).next('.custom-file-label');
+            var files = $(this)[0].files;
+            if (files.length > 1) {
+                fileLabel.html(files.length + ' files selected');
+            }
+            else if (files.length == 1) {
+                fileLabel.html(files[0].name);
+            }
+        });
+    }
 
+    function CheckIfFileSelected() {
+        var files = document.getElementById("ResumeFiles").value;
+        if (files == null || files == "") {
+            swal.fire("Error!", "Kindly select atleast one file to upload!", "error");
+            return false;
+        }
+        return true;
+    }
+    
+</script>
 <script>
 
     function RefreshSearch() {
@@ -181,6 +282,7 @@
     $(document).ready(function () {
 
         applyDataTable();
+        SetUploadInputFileName();
 
     });
 

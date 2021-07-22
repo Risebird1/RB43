@@ -95,7 +95,8 @@ namespace Risebird.Web.Controllers
                         var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
                         if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
                         {
-                            data = data.Where(x => x.confirmationStatus == 1);
+                            data = data.Where(x => x.confirmationStatus != 2);
+                            data = data.OrderByDescending(x => x.InterviewId);
                         }
                         var firstData = data.FirstOrDefault();
 
@@ -330,7 +331,8 @@ namespace Risebird.Web.Controllers
                         var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
                         if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
                         {
-                            data = data.Where(x => x.confirmationStatus == 1);
+                            data = data.Where(x => x.confirmationStatus != 2);
+                            data = data.OrderByDescending(x => x.InterviewId);
                         }
                         var firstData = data.FirstOrDefault();
 
@@ -574,7 +576,8 @@ namespace Risebird.Web.Controllers
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
                     if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
                     {
-                        data = data.Where(x => x.confirmationStatus == 1);
+                        data = data.Where(x => x.confirmationStatus != 2);
+                        data = data.OrderByDescending(x => x.InterviewId);
                     }
                     var firstData = data.FirstOrDefault();
 
@@ -2828,6 +2831,101 @@ namespace Risebird.Web.Controllers
 
         }
 
+        //[HttpPost]
+        //[RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        //[RequestSizeLimit(1048576000)]
+        //public async Task<IActionResult> UploadResumes(UploadCandidateResumesViewModel model)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
+        //            if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+        //            {
+        //                if (ModelState.IsValid)
+        //                {
+        //                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+        //                    emailId = emailId.Replace("\"", "");
+        //                    if (model.ResumeFiles != null && model.ResumeFiles.Count() > 0)
+        //                    {
+        //                        var addedByUserId = _irfService.GetUserId(emailId);
+        //                        if (addedByUserId > 0)
+        //                        {
+        //                            var resumeList = new List<CandidateResume>();
+        //                            foreach (var file in model.ResumeFiles)
+        //                            {
+        //                                //upload in blob and get the link and and the entry in the list
+        //                                var fileName = file.FileName.Replace(" ", "_");
+        //                                FileInfo fi = new FileInfo(fileName);
+        //                                await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
+        //                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+        //                                var blob = containerRef.GetBlockBlobReference(fileName);
+        //                                string uploadedaudioFileURL = blob.Uri.ToString();
+        //                                string sasUrl = string.Empty;
+        //                                if (uploadedaudioFileURL == null)
+        //                                {
+        //                                    ModelState.AddModelError(string.Empty, "Resume upload has failed.");
+        //                                    return View(model);
+        //                                }
+        //                                else
+        //                                {
+        //                                    //generate SAS URL from the uploaded video url
+        //                                    var sas = _sasUrlHelper.CreateSasUrl("resumes");
+        //                                    sasUrl = uploadedaudioFileURL + "?" + sas;
+        //                                    resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl });
+        //                                }
+        //                            }
+
+        //                            //save the resumeList in db 
+        //                            var result = await _candidateService.AddResume(resumeList);
+        //                            if (result)
+        //                            {
+        //                                TempData["SuccessErrorMessageCandidateResume"] = "Resume(s) uploaded successfully.";
+        //                            }
+        //                            else
+        //                            {
+        //                                TempData["SuccessErrorMessageCandidateResume"] = "Failed to upload Resume(s)";
+
+        //                            }
+        //                            return RedirectToAction("Resumes", new { irfId = model.IRFId, irfName = model.IRFName });
+
+        //                        }
+        //                        else
+        //                        {
+        //                            return RedirectToAction("SignOut", "Session");
+
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        ModelState.AddModelError(string.Empty, "Please select file(s) to upload.");
+        //                        return View(model);
+        //                    }
+        //                }
+        //                return View(model); 
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("SignOut", "Session");
+
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return RedirectToAction("UploadResumes", new {irfId = model.IRFId, irfName = model.IRFName});
+        //    }
+
+        //}
+
         [HttpPost]
         [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
         [RequestSizeLimit(1048576000)]
@@ -2897,11 +2995,15 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                ModelState.AddModelError(string.Empty, "Please select file(s) to upload.");
-                                return View(model);
+                                //ModelState.AddModelError(string.Empty, "Please select file(s) to upload.");
+                                //return View(model);
+                                return RedirectToAction("Resumes", new { irfId = model.IRFId, irfName = model.IRFName });
+
                             }
                         }
-                        return View(model); 
+                        //return View(model);
+                        return RedirectToAction("Resumes", new { irfId = model.IRFId, irfName = model.IRFName });
+
                     }
                     else
                     {
@@ -2918,7 +3020,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("UploadResumes", new {irfId = model.IRFId, irfName = model.IRFName});
+                return RedirectToAction("UploadResumes", new { irfId = model.IRFId, irfName = model.IRFName });
             }
 
         }

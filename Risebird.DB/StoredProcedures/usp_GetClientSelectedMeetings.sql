@@ -36,8 +36,8 @@ if(@roleId=1)
    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
    im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
    case     
-  when ulc.LastName is null then ulc.FirstName    
-  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
+      when ulc.LastName is null then ulc.FirstName    
+	  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
    end as candidateName,      
    im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,       
    ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,      
@@ -69,8 +69,8 @@ if(@roleId=1)
    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
    im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
    case     
-  when ulc.LastName is null then ulc.FirstName    
-  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
+      when ulc.LastName is null then ulc.FirstName    
+      else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
    end as candidateName,      
    im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,       
    ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,      
@@ -105,8 +105,8 @@ if(@roleId=1)
    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
    im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
    case     
-  when ulc.LastName is null then ulc.FirstName    
-  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
+      when ulc.LastName is null then ulc.FirstName    
+      else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
    end as candidateName,     
    im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,       
    ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,      
@@ -139,12 +139,13 @@ else if(@roleId=4)
  Begin      
   if(@timeNow is not null)      
    Begin      
-    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, im.ClientHrContact,      
+    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
+	ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,      
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
- case     
-  when ulc.LastName is null then ulc.FirstName    
-  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
+	case     
+		when ulc.LastName is null then ulc.FirstName    
+		else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
     end as candidateName,     
     im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,       
     ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,      
@@ -172,12 +173,13 @@ else if(@roleId=4)
    End      
   else if((@startDate is not null) and (@endDate is not null))      
    Begin      
-    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, im.ClientHrContact,      
+    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
+	ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,      
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
- case     
-  when ulc.LastName is null then ulc.FirstName    
-  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
+    case     
+       when ulc.LastName is null then ulc.FirstName    
+       else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
     end as candidateName,      
     im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,       
     ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,      
@@ -205,12 +207,13 @@ else if(@roleId=4)
    End      
   else      
    Begin      
-    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, im.ClientHrContact,      
+    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
+	ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,           
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
- case     
-  when ulc.LastName is null then ulc.FirstName    
-  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
+	case     
+		when ulc.LastName is null then ulc.FirstName    
+		else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
     end as candidateName,      
     im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,       
     ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,      
@@ -244,12 +247,13 @@ else
  Begin      
   if(@timeNow is not null)      
    Begin      
-    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, im.ClientHrContact,      
+    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
+	ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,      
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
- case     
-  when ulc.LastName is null then ulc.FirstName    
-  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
+	case     
+		when ulc.LastName is null then ulc.FirstName    
+		else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
     end as candidateName,      
     im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,       
     ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,      
@@ -278,12 +282,13 @@ else
    End      
   else if((@startDate is not null) and (@endDate is not null))      
    Begin      
-    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, im.ClientHrContact,      
+    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
+	ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,     
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
- case     
-  when ulc.LastName is null then ulc.FirstName    
-  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
+	case     
+		when ulc.LastName is null then ulc.FirstName    
+		else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
     end as candidateName,       
     im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,       
     ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,      
@@ -311,12 +316,13 @@ else
    End      
   else      
    Begin      
-    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, im.ClientHrContact,      
+    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
+	ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,    
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
- case     
-  when ulc.LastName is null then ulc.FirstName    
-  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
+	case     
+		when ulc.LastName is null then ulc.FirstName    
+		else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))    
     end as candidateName,       
     im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,       
     ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,      
