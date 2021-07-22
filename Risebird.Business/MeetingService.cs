@@ -747,22 +747,59 @@ namespace Risebird.Business
         /// <param name="interviewerMail"></param>
         /// <param name="interviewDate"></param>
         /// <returns></returns>
+        //public string AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate)
+        //{
+        //    try
+        //    {
+        //        //var assignedMeeting = _meetingRespository.GetAllAssignedInterview(interviewerMail).Result.OrderByDescending(x => x.interviewDate).ToList();
+        //        var assignedMeeting = _meetingRespository.GetAllAssignedInterviewsForToday(interviewerMail).Result;
+        //        var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == interviewDate);
+        //        if (checkDateMeeting !=null && checkDateMeeting.Count() > 0)
+        //        {
+        //            return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";
+        //        }
+        //        var upComingInterviews = assignedMeeting.Where(x => Convert.ToInt32(Math.Round((x.interviewDate - interviewDate).TotalMinutes)) <= 30);
+        //        if(upComingInterviews != null && upComingInterviews.Count()>0)
+        //        {
+        //            return "Failed! You already have an interview scheduled within the next 30 minutes. Please contact Risebird HR.";
+
+        //        }
+        //        return _meetingRespository.AssignYourself(meetingid, interviewerMail);
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return "Failed to assigned interview, Please contact Risebird HR.";
+        //    }
+        //    //try
+        //    //{
+        //    //    var newArr = InterviewDate.Split(" ")[0].Split("/");
+        //    //    var date = newArr[1] + "-" + newArr[0] + "-" + newArr[2] +" "+ InterviewDate.Split(" ")[1];
+        //    //    var assignedMeeting = _meetingRespository.GetAllAssignedInterview(interviewerMail).Result.OrderByDescending(x => x.interviewDate).ToList();
+        //    //    var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == DateTime.Parse(date));
+        //    //    if (checkDateMeeting.Count() > 0)
+        //    //    {
+        //    //        return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";
+        //    //    }
+        //    //    return _meetingRespository.AssignYourself(meetingid, interviewerMail);
+
+        //    //}
+        //    //catch (Exception ex)
+        //    //{
+        //    //    _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //    //    return "Failed to assigned interview, Please contact Risebird HR.";
+        //    //}
+        //}
         public string AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate)
         {
             try
             {
-                //var assignedMeeting = _meetingRespository.GetAllAssignedInterview(interviewerMail).Result.OrderByDescending(x => x.interviewDate).ToList();
-                var assignedMeeting = _meetingRespository.GetAllAssignedInterviewsForToday(interviewerMail).Result;
+                var assignedMeeting = _meetingRespository.GetAllAssignedInterview(interviewerMail).Result.OrderByDescending(x => x.interviewDate).ToList();
                 var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == interviewDate);
-                if (checkDateMeeting !=null && checkDateMeeting.Count() > 0)
+                if (checkDateMeeting.Any())
                 {
                     return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";
-                }
-                var upComingInterviews = assignedMeeting.Where(x => Convert.ToInt32(Math.Round((x.interviewDate - interviewDate).TotalMinutes)) <= 30);
-                if(upComingInterviews != null && upComingInterviews.Count()>0)
-                {
-                    return "Failed! You already have an interview scheduled within the next 30 minutes. Please contact Risebird HR.";
-
                 }
                 return _meetingRespository.AssignYourself(meetingid, interviewerMail);
 
@@ -791,7 +828,6 @@ namespace Risebird.Business
             //    return "Failed to assigned interview, Please contact Risebird HR.";
             //}
         }
-
         public string QCAssignYourself(int meetingid, string interviewerMail)
         {
             try
