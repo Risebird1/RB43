@@ -29,5 +29,7 @@ namespace Risebird.Entities.Data
         public bool IsIRFArchived { get; set; }
         public string IRFName { get; set; }
         public string Phone { get; set; }
+        public DateTime interviewDate { get; set; }
+
     }
 }
