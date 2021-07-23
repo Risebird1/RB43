@@ -54,8 +54,8 @@ function debounce(func, wait, immediate) {
 
     if (isWindows) {
         // if we are on windows OS we activate the perfectScrollbar function
-    //var ps = new PerfectScrollbar('.sidebar-wrapper');
-    // var ps2 = new PerfectScrollbar('.main-panel');
+        //var ps = new PerfectScrollbar('.sidebar-wrapper');
+        // var ps2 = new PerfectScrollbar('.main-panel');
 
         $('html').addClass('perfect-scrollbar-on');
     } else {
@@ -64,13 +64,13 @@ function debounce(func, wait, immediate) {
 })();
 
 
-    //$(document).on('ready', function() {
+//$(document).on('ready', function() {
 
-    //    $('.main-panel').perfectScrollbar();
+//    $('.main-panel').perfectScrollbar();
 
-    //    $('.sidebar-wrapper').perfectScrollbar();
+//    $('.sidebar-wrapper').perfectScrollbar();
 
-    //});
+//});
 
 
 $(document).ready(function () {
@@ -125,6 +125,7 @@ $(document).ready(function () {
             //ps3.destroy();
         });
     }
+
 
     if ($('.full-screen-map').length == 0 && $('.bd-docs').length == 0) {
         // On click navbar-collapse the menu will be white not transparent
