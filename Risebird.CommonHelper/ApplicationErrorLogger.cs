@@ -42,11 +42,9 @@ namespace Risebird.CommonHelper
                                   Method = frame.GetMethod(),
                                   Class = frame.GetMethod().DeclaringType
                               });
-
                 if (query != null)
                 {
                     var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-
                     var exception = new LogData(date, Guid.NewGuid().ToString())
                     {
                         LogeLevel = (int)logLevelInfo,
