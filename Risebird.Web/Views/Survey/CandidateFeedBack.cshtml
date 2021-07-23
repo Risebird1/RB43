@@ -22,7 +22,27 @@
 
 <link href="~/Newassets/css/interviewer.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+@*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />*@
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
+{
+    @if (HttpContextAccessor.HttpContext.Session.GetString("NCandidateFeedBack") != null)
+    {
+
+    }
+    else
+    {
+        <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="~/Newassets/js/chardinjs.js"></script>
+        <script src="~/Newassets/js/demo.js"></script>
+        HttpContextAccessor.HttpContext.Session.SetString("NCandidateFeedBack", "1");
+
+    }
+
+
+}
+
 <style>
     .hopscotch-arrow.down {
         transform: rotate( 1deg );
@@ -31,119 +51,120 @@
     }
 </style>
 <div class="main-panel" id="main-panel">
-    <div class="pt30">
-        <div class="col-md-12 nopad">
-            <div class="card-header bg-w clearfix">
-                <div class="pull-left">
-                    <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title"> Candidate FeedBack</h4></div>
-                </div>
-
-                <div class="pull-right">
-
-
-                    @if (ViewBag.PageName == "IRF")
-                    {
-                        <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="top:-9px;">Back to List</a>
-                        <i type="submit" class="fa fa-file-excel-o excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateFeedBackByIRFIdExporttoExcel", "Survey", new { IRFId = ViewBag.IRFId })'"></i>
-                    }
-                    else
-                    {
-                        <button id="cfeedback_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-toggle="modal" data-target="#filterModal" style="vertical-align:top">
-                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                            <div class="mdc-button__ripple"></div>
-                        </button>
-                        <span id="cfeedback_3">
-                            <i type="submit" class="fa fa-file-excel-o excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateFeedbackExporttoExcel", "Survey")'"></i></span>
-                            }
+    <div class="jumbotron">
+        <div class="pt30">
+            <div class="col-md-12 nopad">
+                <div class="card-header bg-w clearfix">
+                    <img style="visibility:hidden" src="" data-position="right" />
+                    <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
+                    <div class="pull-left">
+                        <h4 class="card-title"></h4>
+                        <div class="mobile-view"> <h4 class="card-title"> Candidate FeedBack</h4></div>
                     </div>
+
+                    <div class="pull-right">
+
+
+                        @if (ViewBag.PageName == "IRF")
+                        {
+                            <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="top:-9px;">Back to List</a>
+                            <i type="submit" class="fa fa-file-excel-o excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateFeedBackByIRFIdExporttoExcel", "Survey", new { IRFId = ViewBag.IRFId })'"></i>
+                        }
+                        else
+                        {
+                            <button id="cfeedback_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-toggle="modal" data-target="#filterModal" style="vertical-align:top">
+                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                <div class="mdc-button__ripple"></div>
+                            </button>
+                            <span id="cfeedback_3">
+                                <i id="allinterview_3" data-intro='Click here to export the Candidate data in excel sheet' data-position='left' type="submit" class="fa fa-file-excel-o excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateFeedbackExporttoExcel", "Survey")'"></i>
+                            </span>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-
-
-
-
-    <div class="content client">
-        <div class="row bl-bg">
-            <div class="col-md-12">
-                <div class="mdc-card card bl-bg">
-                    <div class="mdc-card-wrapper__text-section">
-                        <div class="loader text-center">
-                            <img src="~/Newassets/img/lazyload.gif" />
-                        </div>
-                        <div class="dataloading">
-                            <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-                                        <div class="filheader">
-                                            <div class="filavatar">
-                                                <span class="fa fa-filter"></span>
-                                            </div>
-                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
-                                        </div>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                        <form action="@Url.Action("CandidateFeedBack", "Survey")" method="post" id="form">
-                                            <div class="modal-body">
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6 border-rv">
-                                                        <div class="form-group">
-                                                            <label class="control-label  col-md-12 col-sm-12 desp-label" for="ProfileSource">
-                                                                Primary Skill
-                                                            </label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <select id="ProfileSource" name="ProfileSource" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.PrimarySkill).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
+                            <div class="loader text-center">
+                             <img src="~/Newassets/img/lazyload.gif" />
+                            </div>
+                            <div id="candidatefeedback_table" data-intro="<span style='font-size:16px;'>Overview the summary of Candidate Feedback</span><hr class='btop' />1. Candidate Name<br/> 2. JD title<br/> 3. Rating <br/> 4. Comment <br/><a href='/CommonPool/Index' class='btn btn-primary allmeetingnext-btn'>NEXT</a>" data-position="top">
+                                <div class="dataloading">
+                                    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg" role="document">
+                                            <div class="modal-content">
+                                                <div class="filheader">
+                                                    <div class="filavatar">
+                                                        <span class="fa fa-filter"></span>
                                                     </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        @if (ViewBag.ProfileName == "Admin")
-                                                        {
-                                                            <div class="form-group">
-                                                                <label class="control-label  col-md-12 col-sm-12 desp-label" for="HREmail">
-                                                                    Client
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="HREmail" name="HREmail" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.Type).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        }
-                                                        <div class="form-group">
-                                                            <div>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                                                                        <font style="font-size:12px;"> Reset Filter</font>
-                                                                    </button>
-                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
-                                                                        <font style="font-size:12px;"> Apply Filter</font>
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                                 </div>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <form action="@Url.Action("CandidateFeedBack", "Survey")" method="post" id="form">
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                                <div class="form-group">
+                                                                    <label class="control-label  col-md-12 col-sm-12 desp-label" for="ProfileSource">
+                                                                        Primary Skill
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="ProfileSource" name="ProfileSource" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in Model.Select(x => x.PrimarySkill).Distinct().ToList())
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                @if (ViewBag.ProfileName == "Admin")
+                                                                {
+                                                                    <div class="form-group">
+                                                                        <label class="control-label  col-md-12 col-sm-12 desp-label" for="HREmail">
+                                                                            Client
+                                                                        </label>
+                                                                        <div class="col-md-12 col-sm-12">
+                                                                            <select id="HREmail" name="HREmail" class="form-control multiselect" multiple="multiple">
+                                                                                @foreach (var item in Model.Select(x => x.Type).Distinct().ToList())
+                                                                                {
+                                                                                    @if (item != null && item != "")
+                                                                                    {
+                                                                                        <option value="@item">@item</option>
+                                                                                    }
+                                                                                }
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                <div class="form-group">
+                                                                    <div>
+                                                                        <div class="col-md-12 col-sm-12">
+                                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                                <font style="font-size:12px;"> Reset Filter</font>
+                                                                            </button>
+                                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                                <font style="font-size:12px;"> Apply Filter</font>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
                                             </div>
-                                        </form>
-                                    </div>
-                                </div>
+                                        </div>
 
                             </div>
                             <div  style="overflow-x:scroll" class="scrollbar survey" id="style-2">
@@ -184,18 +205,18 @@
                                             <th title="How friendly was the Risebird staff from scheduling to completion of interviews ?">Question6</th>
                                             <th title="Please share comment for Interviewer">Comment</th>
 
-                                        </tr>
-                                    </tfoot>
-                                    <tbody>
-                                        @foreach (var item in Model)
-                                        {
-                                        <tr id=@item.interviewid>
-                                            @if (item.Name != null && item.Name != "")
-                                            {@if (item.Name.Length > 10)
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                @foreach (var item in Model)
                                                 {
-                                                    <td class="cadfName text-left pl15">
-                                                        <a onclick="" data-tooltip="@item.Name"><span class="cname"> @item.Name</span> </a>
-                                                    </td>
+                                                    <tr id=@item.interviewid>
+                                                        @if (item.Name != null && item.Name != "")
+                                                        {@if (item.Name.Length > 10)
+                                                            {
+                                                                <td class="cadfName text-left pl15">
+                                                                    <a onclick="" data-tooltip="@item.Name"><span class="cname"> @item.Name</span> </a>
+                                                                </td>
 
 
                                                 }
@@ -269,25 +290,25 @@
                                                         <div class="talktext">
                                                             <textarea>I am satisfied with the interviewer and evaluation process</textarea>
 
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            }
-                                            else
-                                            {
-                                                <td>
-                                                    <div class="talk-bubble tri-right border-bubble right-in" style="width:150px;">
-                                                        <div class="talktext">
-                                                            <textarea>I didn't get a fair chance and I can do better</textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:150px;">
+                                                                    <div class="talktext">
+                                                                        <textarea>I didn't get a fair chance and I can do better</textarea>
 
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            }
-                                            <td>
-                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:150px;">
-                                                    <div class="talktext">
-                                                        <textarea>@item.Question4</textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        }
+                                                        <td>
+                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:150px;">
+                                                                <div class="talktext">
+                                                                    <textarea>@item.Question4</textarea>
 
                                                     </div>
                                                 </div>
@@ -305,72 +326,72 @@
                                                     <div class="talktext">
                                                         <textarea>@item.CommentforInterviewer</textarea>
 
-                                                    </div>
-                                                </div>
-                                            </td>
+                                                                </div>
+                                                            </div>
+                                                        </td>
 
-                                        </tr>
-                                        }
-                                    </tbody>
-                                </table>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                            </div>
+                            <!-- end content-->
+                        </div>
+                    <!--  end card  -->
+                </div>
+                <!-- end col-md-12 -->
+            </div>
+            <!-- end row -->
+
+            <div id="myCallModal" class="modal modal-bg">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+
+
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon">
+
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                                </span>
+                            </div>
+                            <h5 class="modal-title pull-left">Call Interviewer!</h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
+
+
+
+
+
+
+                        <div class="modal-body">
+
+                            <h5 class="modal-title text-center " id="callingLabel">Calling...</h5>
+
+
+                            <div class="">
+                                <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 20px auto;
+    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
                             </div>
                         </div>
 
-
-                    </div>
-                    <!-- end content-->
-                </div>
-                <!--  end card  -->
-            </div>
-            <!-- end col-md-12 -->
-        </div>
-        <!-- end row -->
-
-        <div id="myCallModal" class="modal modal-bg">
-            <!-- Modal content -->
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-
-
-                    <div class="filheader">
-                        <div class="filavatar">
-                            <span class="publicsharing-icon">
-
-
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
-                            </span>
-                        </div>
-                        <h5 class="modal-title pull-left">Call Interviewer!</h5>
-                    </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
-                    </button>
-
-
-
-
-
-
-                    <div class="modal-body">
-
-                        <h5 class="modal-title text-center " id="callingLabel">Calling...</h5>
-
-
-                        <div class="">
-                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 20px auto;
-    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
-                        </div>
                     </div>
 
                 </div>
-
             </div>
+
         </div>
 
     </div>
-
 </div>
-
 <script>
     function dropDwnToolTips(id) {
 
@@ -747,225 +768,225 @@
 
 </script>
 
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
-{
+@*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
+    {
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
 
-    <script type="text/javascript">
-        hopscotch.registerHelper('addOverlay', function () {
-            $('body').append('<div class="overlay"></div>');
-        });
-
-        hopscotch.registerHelper('removeOverlay', function () {
-            $('.overlay').fadeOut(function () {
-                $(this).remove();
-                $('.helper').remove();
+        <script type="text/javascript">
+            hopscotch.registerHelper('addOverlay', function () {
+                $('body').append('<div class="overlay"></div>');
             });
-        });
 
-        hopscotch.listen('show', function () {
-            var elementObject = $(hopscotch.getCurrTarget(tour));
-            var element = $('#' + elementObject[0].id);
+            hopscotch.registerHelper('removeOverlay', function () {
+                $('.overlay').fadeOut(function () {
+                    $(this).remove();
+                    $('.helper').remove();
+                });
+            });
 
-            element.prev().removeClass('overlay-relative');
-            element.addClass('overlay-relative');
+            hopscotch.listen('show', function () {
+                var elementObject = $(hopscotch.getCurrTarget(tour));
+                var element = $('#' + elementObject[0].id);
 
-            if ($('.helper').length !== 0) {
+                element.prev().removeClass('overlay-relative');
+                element.addClass('overlay-relative');
 
-                // Use Helper Layer for hilight target element.
-                var helper = $('.helper');
-                var padding = 5;
-                var helperPosX = element.position().left - padding;
-                var helperPosY = element.position().top - padding;
-                var targetWidth = element.outerWidth();
-                var targetHeight = element.outerHeight();
+                if ($('.helper').length !== 0) {
 
-                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+                    // Use Helper Layer for hilight target element.
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
 
-                helper.css('width', targetWidth);
-                helper.css('height', targetHeight);
-                helper.offset({ left: helperPosX, top: helperPosY });
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-            } else {
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
 
-                // Add Helper Layer for highlight target element.
-                var newHelper = '<div class="helper"></div>';
-                $('body').append(newHelper);
+                } else {
 
-                var helper = $('.helper');
-                var padding = 5;
-                var helperPosX = element.position().left - padding;
-                var helperPosY = element.position().top - padding;
-                var targetWidth = element.outerWidth();
-                var targetHeight = element.outerHeight();
+                    // Add Helper Layer for highlight target element.
+                    var newHelper = '<div class="helper"></div>';
+                    $('body').append(newHelper);
 
-                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
 
-                helper.css('width', targetWidth);
-                helper.css('height', targetHeight);
-                helper.offset({ left: helperPosX, top: helperPosY });
-            }
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-        });
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
+                }
 
-        var tour = {
-            id: "hello-hopscotch",
-            showCloseButton: false,
-            steps: [
-                {
-                    title: "Candidate Feedback",
-                    content: "View the Candidate Feedback details here and click on next button to know its features",
-                    target: "cfeedback_1",
-                    placement: "bottom",
-                    showPrevButton: true,
+            });
 
-                    highlight: true,
-                    zindex: 999999,
-                    yOffset: 10,
+            var tour = {
+                id: "hello-hopscotch",
+                showCloseButton: false,
+                steps: [
+                    {
+                        title: "Candidate Feedback",
+                        content: "View the Candidate Feedback details here and click on next button to know its features",
+                        target: "cfeedback_1",
+                        placement: "bottom",
+                        showPrevButton: true,
 
-                    onCTA: function () {
-                        hopscotch.showStep(2);
-                        $('#cfeedback_1').removeClass('overlay-relative');
-                        $('.helper').remove();
+                        highlight: true,
+                        zindex: 999999,
+                        yOffset: 10,
+
+                        onCTA: function () {
+                            hopscotch.showStep(2);
+                            $('#cfeedback_1').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onNext: function () {
+                            $('#cfeedback_1').removeClass('overlay-relative');
+                            $('.helper').remove();
+
+                        }
                     },
-                    onNext: function () {
-                        $('#cfeedback_1').removeClass('overlay-relative');
-                        $('.helper').remove();
+                    {
+                        title: "Filter",
+                        content: "Filter based on available attributes or reset filter if applied earlier",
+                        target: "cfeedback_2",
+                        placement: "left",
+                        showPrevButton: true,
 
-                    }
-                },
-                {
-                    title: "Filter",
-                    content: "Filter based on available attributes or reset filter if applied earlier",
-                    target: "cfeedback_2",
-                    placement: "left",
-                    showPrevButton: true,
+                        zindex: 999999,
+                        xOffset: 10,
+                        onPrev: function () {
 
-                    zindex: 999999,
-                    xOffset: 10,
-                    onPrev: function () {
+                            $('#cfeedback_2').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
 
-                        $('#cfeedback_2').removeClass('overlay-relative');
-                        $('.helper').remove();
+                        onNext: function () {
+
+                            $('#cfeedback_2').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+
+
+                    },
+                    {
+                        title: "Excel",
+                        content: "Click here to export all Candidate Feedback data in excel sheet",
+                        target: "cfeedback_3",
+                        showPrevButton: true,
+                        placement: "left",
+                        zindex: 999999,
+                        xOffset: 10,
+                        onPrev: function () {
+
+                            $('#cfeedback_3').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onNext: function () {
+
+                            $('#cfeedback_3').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+
                     },
 
-                    onNext: function () {
-
-                        $('#cfeedback_2').removeClass('overlay-relative');
-                        $('.helper').remove();
+                    {
+                        title: "Name",
+                        content: "Showing the Name of the candidate here",
+                        target: "cfeedback_4",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#cfeedback_4').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#cfeedback_4').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+                    {
+                        title: "JD Title",
+                        content: "Showing the JD title of the candidate here",
+                        target: "cfeedback_5",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#cfeedback_5').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#cfeedback_5').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+                    {
+                        title: "Comment",
+                        content: "Showing Candidates Comment here",
+                        target: "cfeedback_6",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "left",
+                        xOffset: '0',
+                        arrowOffset: '0',
+                        onNext: function () {
+                            $('#cfeedback_6').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#cfeedback_6').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
 
 
-                },
-                {
-                    title: "Excel",
-                    content: "Click here to export all Candidate Feedback data in excel sheet",
-                    target: "cfeedback_3",
-                    showPrevButton: true,
-                    placement: "left",
-                    zindex: 999999,
-                    xOffset: 10,
-                    onPrev: function () {
+                    {
+                        title: "Support Menu",
+                        content: "Click on Support menu to see its features",
+                        target: "support_menu",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "top",
+                        yOffset: 20,
+                        xOffset: 10,
 
-                        $('#cfeedback_3').removeClass('overlay-relative');
-                        $('.helper').remove();
+                        onNext: function () {
+                            $('#support_menu').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#support_menu').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
                     },
-                    onNext: function () {
 
-                        $('#cfeedback_3').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
+                ],
+                onStart: ["addOverlay"],
+                onEnd: ["removeOverlay"],
+            };
 
-                },
+            hopscotch.startTour(tour);
 
-                {
-                    title: "Name",
-                    content: "Showing the Name of the candidate here",
-                    target: "cfeedback_4",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#cfeedback_4').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#cfeedback_4').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-                {
-                    title: "JD Title",
-                    content: "Showing the JD title of the candidate here",
-                    target: "cfeedback_5",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#cfeedback_5').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#cfeedback_5').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-                {
-                    title: "Comment",
-                    content: "Showing Candidates Comment here",
-                    target: "cfeedback_6",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "left",
-                    xOffset: '0',
-                    arrowOffset: '0',
-                    onNext: function () {
-                        $('#cfeedback_6').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#cfeedback_6').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
+        </script>
 
-
-                {
-                    title: "Support Menu",
-                    content: "Click on Support menu to see its features",
-                    target: "support_menu",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "top",
-                    yOffset: 20,
-                    xOffset: 10,
-
-                    onNext: function () {
-                        $('#support_menu').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#support_menu').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-            ],
-            onStart: ["addOverlay"],
-            onEnd: ["removeOverlay"],
-        };
-
-        hopscotch.startTour(tour);
-
-    </script>
-
-}
+    }*@
 

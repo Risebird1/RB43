@@ -42,838 +42,840 @@
 <link href="~/Newassets/css/irf.css?v=123456" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=123456" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
+
+
 <div class="main-panel" id="main-panel">
 
     <!--  <div class="panel-header panel-header-sm"></div>-->
+    <div class="jumbotron">
+        <div class="pt30">
+            <div class="col-md-12 nopad" style="margin:0px;">
+                <div class="card-header bg-w clearfix">
+                    <img style="visibility:hidden" src="" data-position="right" />
+                    <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
+                    <div class="pull-left">
+                        <h4 class="card-title"></h4>
+                        <div class="mobile-view"> <h4 class="card-title">  Skills Channel</h4></div>
+                    </div>
 
+                    <div class="pull-right">
+                        <div>
 
+                            <div id="skill_2" data-intro='Filter based on available attributes or reset filter if applied earlier' data-position='left' class="pull-left" style="margin-right: 5px;">
+                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-toggle="modal" data-target="#filterModal">
 
-    <div class="pt30">
-        <div class="col-md-12 nopad" style="margin:0px;">
-            <div class="card-header bg-w clearfix">
-                <div class="pull-left">
-                    <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title">  Skills Channel</h4></div>
-                </div>
-
-                <div class="pull-right">
-                    <div>
-
-                        <div id="skill_2" class="pull-left" style="margin-right: 5px;">
-                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-toggle="modal" data-target="#filterModal">
-
-                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                <div class="mdc-button__ripple"></div>
-                            </button>
-                        </div>
-                        <div class="pull-left">
-                            @if (Model.Profile != "CuratedUser")
-                            {
-
-                                @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
+                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                    <div class="mdc-button__ripple"></div>
+                                </button>
+                            </div>
+                            <div class="pull-left">
+                                @if (Model.Profile != "CuratedUser")
                                 {
-                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Skill Channel" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Skill Channel</font></span>
-                                    </button>
 
-                                    @if (Model.Profile == "Admin")
+                                    @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
                                     {
                                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                                            <span data-toggle="tooltip" data-placement="top" title="Client Job Description" onclick="location.href='@Url.Action("CreateJd", "Client")'" data-original-title="Tooltip on top"><font style="font-family:arial;">RB Matches</font></span>
+                                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Skill Channel" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Skill Channel</font></span>
                                         </button>
-                                        
-                                    }
 
-                                    @if (Model.Profile == "Admin" || Model.Profile=="HR")
-                                    {
+                                        @if (Model.Profile == "Admin")
+                                        {
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                                <span data-toggle="tooltip" data-placement="top" title="Client Job Description" onclick="location.href='@Url.Action("CreateJd", "Client")'" data-original-title="Tooltip on top"><font style="font-family:arial;">RB Matches</font></span>
+                                            </button>
+
+                                        }
+
+                                        @if (Model.Profile == "Admin" || Model.Profile == "HR")
+                                        {
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                                <span data-toggle="tooltip" data-placement="top" title="Assessment Market Place" onclick="location.href='@Url.Action("InterviewerEntitle", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Assessment Market Place</font></span>
+                                            </button>
+                                        }
                                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                                            <span data-toggle="tooltip" data-placement="top" title="Assessment Market Place" onclick="location.href='@Url.Action("InterviewerEntitle", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Assessment Market Place</font></span>
+                                            <span data-toggle="tooltip" data-placement="top" title="Curated Groups" onclick="location.href='@Url.Action("CuratedGroups", "IRF")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill=" rgb(255, 255, 255)" d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg><font style="font-family:arial;"> Curated Groups</font></span>
                                         </button>
+
                                     }
-                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                                        <span data-toggle="tooltip" data-placement="top" title="Curated Groups" onclick="location.href='@Url.Action("CuratedGroups", "IRF")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill=" rgb(255, 255, 255)" d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg><font style="font-family:arial;"> Curated Groups</font></span>
-                                    </button>
 
                                 }
+                            </div>
 
-                            }
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="mdc-card card  bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
 
 
-
-
-
-
-    <div class="content client">
-        <div class="row bl-bg">
-            <div class="col-md-12">
-                <div class="mdc-card card  bl-bg">
-                    <div class="mdc-card-wrapper__text-section">
-
-
-                        <div class="modal   fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
-                                    <div class="filheader">
-                                        <div class="filavatar">
-                                            <span class="fa fa-filter"></span>
+                            <div class="modal   fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                         </div>
-                                        <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+
+
+
+                                        <form action="@Url.Action("Index","IRF")" method="post" id="form">
+
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                Start Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                End Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        @if (!Model.IsClientUser && Model.Profile != "CuratedUser")
+                                                        {
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">Client Name</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.IRFList.Select(x => x.ClientCompName).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">End Client Name</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="EndClientName" name="EndClientName" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.IRFList.Select(x => x.ClientName).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        }
+
+                                                        @if (Model.Profile == "CuratedUser")
+                                                        {
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="SubscriptionStatus">Subscription Status</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="SubscriptionStatus" name="SubscriptionStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.IRFList.Select(x => x.SubscriptionStatus).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        }
+
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.IRFList.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+
+                                                            <div>
+                                                                <div class="col-md-12 col-sm-12">
+
+
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
+
+
+
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
+
+
+
+                                                                </div>
+
+                                                            </div>
+
+
+
+                                                        </div>
+                                                    </div>
+
+
+
+
+                                                </div>
+
+                                            </div>
+                                        </form>
                                     </div>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                                </div>
+
+                            </div>
+
+                            <!-- end content-->
+                            <!--  end card  -->
+                            <!-- end col-md-12 -->
+                            <!-- Start Card -->
+
+                            <div id="skill_card">
+                                <div class="row">
+                                    @foreach (var item in Model.IRFList)
+                                    {
+                                        <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
+                                            <div class="card-content-holder border card-blue">
+                                                <div class="card-header">
+                                                    <div class="row">
+                                                        <div class=" col-md-4 col-sm-4">
+                                                            <h6> @item.IRFId <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0])</span></h6>
+                                                        </div>
+
+                                                        <div class="col-md-8 col-sm-8 card-header-buttons action">
+                                                            @if (!@item.IsClientUser && Model.Profile != "Recruiter" && Model.Profile != "CuratedUser")
+                                                            {
+                                                                <button id="skill_17" class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                    <span onclick="javascript:EditIRF('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                                </button>
+                                                                <button id="skill_18" class="mdc-fab app-fab--absolute" aria-label="Candidate Curated Score">
+                                                                    <span onclick="javascript:CandidateCuratedScore('@item.id');" title="Candidate Curated Score" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z" /></svg></span>
+                                                                </button>
+                                                                <button id="skill_19" class="mdc-fab app-fab--absolute" aria-label="Interrview Planner">
+                                                                    <span onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new { irfId = item.id, irfName = item.IRFId })'" title="Interview Planner" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" /></svg></span>
+                                                                </button>
+                                                                <button id="skill_20" class="mdc-fab app-fab--absolute" aria-label="Interview Invoice">
+                                                                    <span onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" title="Interview Invoice" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" /></svg></span>
+                                                                </button>
+                                                                //getIRFMembers
+                                                                <button id="skill_21" class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
+                                                                    <span onclick="javascript:getIRFMembers('@item.id', '@item.IRFId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
+                                                                </button>
+
+                                                            }
+                                                            @if (Model.Profile != "Recruiter" && Model.Profile != "CuratedUser")
+                                                            {
+                                                                if (!item.IsDeleted)
+                                                                {
+                                                                    <button id="btnArchive_@item.id" @*id="skill_22"*@ class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
+                                                                        <span onclick="javascript:ArchiveIRF('@item.id', '@item.IRFId');" title="Archive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
+                                                                    </button>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <button id="btnUnArchive_@item.id" class="mdc-fab app-fab--absolute unarchive-btn" aria-label="UnArchive">
+                                                                        <span onclick="javascript:UnArchiveIRF('@item.id', '@item.IRFId');" title="UnArchive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
+                                                                    </button>
+                                                                }
+                                                            }
+                                                            @if (Model.Profile == "Admin" || Model.Profile == "HR")
+                                                            {
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel" style=" top: -3px;">
+                                                                    <span onclick="location.href='@Url.Action("EditIRF", "IRF", new { id = item.id, isClone = true })'" title="Clone the Skills Channel" class="mdc-fab__icon material-icons">
+                                                                        <i style="font-size:14px;" class="fa fa-clone"></i>
+
+                                                                    </span>
+                                                                </button>
+                                                            }
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- irf body-->
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="statusImg">
+                                                            <img id="statusImage_@item.id" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
+                                                        </div>
+                                                        <div class="statusInfo">
+                                                            <div class="group inner list-group-item-text">
+                                                                @if (Model.Profile != "CuratedUser")
+                                                                {
+                                                                    <div class="row clearfix">
+                                                                        <div class="client-field">
+                                                                            <span> Client Name: </span> <span title="@item.ClientCompName (@item.ClientName)">@item.ClientCompName (@item.ClientName)</span>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="row clearfix">
+                                                                        <div class="client-field">   <span>End Date:</span><span style="font-weight:normal">@item.EndDate</span></div>
+                                                                    </div>
+
+                                                                    <div id="skill_3" class="row clearfix">
+                                                                        <div class="client-field">
+                                                                            <span>Total Candidates:</span><span style="font-weight:normal">@(item.TotalMeetings != null ? item.TotalMeetings : 0)</span>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    @if (Model.Profile != "Recruiter")
+                                                                    {
+                                                                        <div id="skill_4" class="row clearfix ">
+                                                                            <div class="client-field">
+                                                                                <span>Completed Interviews:</span><span style="font-weight:normal">@(item.ScheduledMeetings != null ? item.ScheduledMeetings : 0)</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                }
+
+                                                                @if (Model.Profile != "CuratedUser")
+                                                                {
+                                                                    <div id="skill_5" class="row five clearfix">
+                                                                        <div class="client-field">
+                                                                            <span>Selected Candidates:</span><span style="font-weight:normal">@(item.SelectedMeetings != null ? item.SelectedMeetings : 0)</span>
+                                                                        </div>
+                                                                    </div>
 
 
 
-                                    <form action="@Url.Action("Index","IRF")" method="post" id="form">
+                                                                }
+                                                                @if (!string.IsNullOrEmpty(item.RisebirdHREmail))
+                                                                {
+                                                                    <div class="row clearfix">
+                                                                        <div class="client-field">
+                                                                            <span> Channel Owner: </span> <span title="@item.RisebirdHREmail">@item.RisebirdHREmail</span>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="row clearfix">
+                                                                        <div class="client-field">
+                                                                            <span> Channel Owner: </span><span></span>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="card-footer action">
+                                                    <div class="row">
+
+                                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" id="irf-card-footer">
+
+                                                            @if (@item.IRFStatus == "Active")
+                                                            {
+                                                                <h6 style="color: green;"> @item.IRFStatus</h6>
+                                                            }
+                                                            else if (@item.IRFStatus == "Paused")
+                                                            {
+                                                                <h6 style="color: grey;"> @item.IRFStatus</h6>
+                                                            }
+                                                            else
+                                                            {
+                                                                <h6 style="color: black;"> @item.IRFStatus</h6>
+
+                                                            }
+                                                        </div>
+
+                                                        <div class="stats-bttm-btn  col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                                            @if (Model.Profile == "Admin" || Model.Profile == "HR")
+                                                            {
+                                                                <button id="skill_6" class="mdc-fab app-fab--absolute item1" aria-label="Send Candidate Feedback remainder">
+                                                                    <span onclick="javascript:Candidatesfeedbackremainder('@item.IRFId');" title="Send Candidate Feedback remainder" class="mdc-fab__icon material-icons">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-share-fill" viewBox="0 0 20 20">
+                                                                            <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z" />
+                                                                        </svg>
+                                                                    </span>
+                                                                </button>
+                                                            }
+                                                            <button id="skill_7" class="mdc-fab app-fab--absolute item1" aria-label="Candidate Feedback" style=" position: relative; top: -2px;">
+                                                                <span onclick="javascript:Candidatesfeedback('@item.IRFId');" title="Candidates Feedback" class="mdc-fab__icon material-icons">
+                                                                    <i style="        font-size: 16px;position: relative;top: -1px" class="fa fa-commenting-o"></i>
+                                                                </span>
+                                                            </button>
+                                                            <button id="skill_8" class="mdc-fab app-fab--absolute item1" aria-label="Candidate Status">
+                                                                <span onclick="javascript:CandidatesStatus('@item.id', '@item.IRFId');" title="Candidates Status" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb( 255,255,255)" d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
+                                                            </button>
+                                                            @if (Model.Profile != "CuratedUser")
+                                                            {
+                                                                @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                                                {
+
+
+                                                                    <button id="skill_9" class="mdc-fab app-fab--absolute itemques" aria-label="Questions">
+                                                                        <span onclick="javascript:AddComments('@item.id');" title="Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
+                                                                    </button>
+
+
+                                                                }
+
+
+
+                                                                <button id="skill_10" class="mdc-fab app-fab--absolute item1" aria-label="Candidates List">
+                                                                    <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
+                                                                </button>
+
+
+
+                                                                @if (Model.Profile != "Recruiter")
+                                                                {
+
+                                                                    <button id="skill_11" class="mdc-fab app-fab--absolute item2" aria-label="Meetings">
+                                                                        <span onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" title="Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg></span>
+                                                                    </button>
+
+
+
+                                                                    <button id="skill_12" class="mdc-fab app-fab--absolute item3" aria-label="Selected Candidates">
+                                                                        <span onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" title="Selected Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg></span>
+                                                                    </button>
+
+                                                                    <button id="skill_13" class="mdc-fab app-fab--absolute item2" aria-label="Meetings">
+                                                                        <span onclick="javascript:MultipleCandidateInvites('@item.IRFId');" title="Multiple Candidate Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 18 18"><path d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg></span>
+                                                                    </button>
+
+                                                                    <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
+                                                                        <span onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new
+                                                 {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                                                                    </button>
+
+
+
+                                                                    <button id="skill_15" class="mdc-fab app-fab--absolute item5" aria-label="Stats">
+                                                                        <span onclick="javascript:stats('@item.id', '@item.IRFId');" title="Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>
+                                                                    </button>
+
+                                                                    if (item.IsPaused)
+                                                                    {
+
+
+
+
+                                                                        <button id="skill_16" class="mdc-fab app-fab--absolute " aria-label="Play">
+                                                                            <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+                                                                        </button>
+
+
+
+
+
+
+                                                                    }
+                                                                    else
+                                                                    {
+
+
+
+                                                                        <button id="skill_16" class="mdc-fab app-fab--absolute " aria-label="Pause">
+                                                                            <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                                        </button>
+
+
+                                                                    }
+                                                                }
+
+
+                                                            }
+                                                            @if (Model.Profile == "CuratedUser")
+                                                            {
+                                                                @if (item.SubId != null)
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute allcur" aria-label="All">
+                                                                        <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ALL"})'" title="All Selected Candidates" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button class="mdc-fab app-fab--absolute allshort" aria-label="ShortListed">
+                                                                        <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ShortList"})'" title="Shortlisted Candidates" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg>
+
+
+
+                                                                        </span>
+                                                                    </button>
+                                                                    <button class="mdc-fab app-fab--absolute allintsent" aria-label="Interest-Sent">
+                                                                        <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Intrested"})'" title="Interest-Sent Candidates" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button class="mdc-fab app-fab--absolute allintac" aria-label="Interest-Accept">
+                                                                        <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Accept"})'" title="Interest-Accept Candidates" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button class="mdc-fab app-fab--absolute subc" aria-label="Unsubscribe">
+                                                                        <span onclick="javascript:UnSubscribe('@item.id', '@item.IRFId','@item.JDTiltle.Split("|")[0]');" title="Unsubscribe" class="mdc-fab__icon material-icons">
+                                                                            <i style="font-size:16px;" class="far fa-bell-slash"></i>
+                                                                        </span>
+                                                                    </button>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute subc" aria-label="Subscribe">
+                                                                        <span onclick="javascript:Subscribe('@item.id', '@item.IRFId', '@item.JDTiltle.Split("|")[0]');setNav()" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
+                                                                    </button>
+                                                                }
+
+                                                            }
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- End Card-->
+                            <div id="myModal" class="modal" style=" display: none; /* Hidden by default */ position: fixed; /* Stay in place */ z-index: 1; /* Sit on top */ padding-top: 100px; /* Location of the box */ left: 0; top: 0; width: 100%; /* Full width */ height: 100%; /* Full height */ overflow: auto; /* Enable scroll if needed */ background-color: rgb(0,0,0); /* Fallback color */ background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ ">
+                                <!-- Modal content -->
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+
+
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="rgb(250, 250, 250)" d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"></path></svg>
+                                            </div>
+                                            <h5 class="modal-title pull-left"> Invoice</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true" id="invoicePopUp">&times;</span>
+                                        </button>
+
+
+
 
                                         <div class="modal-body">
                                             <div class="row">
                                                 <div class="col-md-6 col-sm-6 border-rv">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="stDate">
                                                             Start Date
                                                         </label>
                                                         <div class="col-md-12 col-sm-12">
-                                                            <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                            <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
+                                                            <label class="text-danger" id="stDate_Error" style="color:red"></label>
+
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="EndDateInvoice">
                                                             End Date
                                                         </label>
                                                         <div class="col-md-12 col-sm-12">
-                                                            <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                            <input id="EndDateInvoice" name="EndDateInvoice" type="date" class="form-control">
+                                                            <label class="text-danger" id="endDate_Error" style="color:red"></label>
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="row">
                                                 <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="srNumber">
+                                                            SR Number
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <input id="srNumberId" name="srNumberId" type="text" class="form-control">
+                                                            <label class="text-danger" id="srNumber_Error" style="color:red"></label>
 
-                                                    @if (!Model.IsClientUser && Model.Profile != "CuratedUser")
-                                                    {
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">Client Name</label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.IRFList.Select(x => x.ClientCompName).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
                                                         </div>
-
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">End Client Name</label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <select id="EndClientName" name="EndClientName" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.IRFList.Select(x => x.ClientName).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    }
-
-                                                    @if (Model.Profile == "CuratedUser")
-                                                    {
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SubscriptionStatus">Subscription Status</label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <select id="SubscriptionStatus" name="SubscriptionStatus" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.IRFList.Select(x => x.SubscriptionStatus).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    }
-
+                                                    </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-6">
-
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="poNumber">
+                                                            PO Number
+                                                        </label>
                                                         <div class="col-md-12 col-sm-12">
-                                                            <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.IRFList.Select(x => x.JDTiltle).Distinct().ToList())
-                                                                {
-                                                                    @if (item != null && item != "")
-                                                                    {
-                                                                        <option value="@item">@item</option>
-                                                                    }
-                                                                }
-                                                            </select>
+                                                            <input id="poNumberId" name="poNumberId" type="text" class="form-control">
+                                                            <label class="text-danger" id="poNumber_Error" style="color:red"></label>
                                                         </div>
                                                     </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="requestNumber">
+                                                            Request Number
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
+                                                            <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="projectCode">
+                                                            Project Code
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
+                                                            <label class="text-danger" id="projectCode_Error" style="color:red"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="clientAddress">
+                                                            Client Address
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <input id="clientAddressId" name="clientAddressId" type="text" class="form-control">
+                                                            <label class="text-danger" id="clientAddressId_Error" style="color:red"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="discount">
+                                                            Discount
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <input id="discountId" name="discountId" type="text" class="form-control">
+                                                            <label class="text-danger" id="discount_Error" style="color:red"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="currencyCode">
+                                                            Currency Code
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <input id="currencyCodeId" name="currencyCodeId" type="text" class="form-control" required>
+                                                            <label class="text-danger" id="currencyCode_Error" style="color:red"></label>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
 
                                                         <div>
-                                                            <div class="col-md-12 col-sm-12">
 
 
-                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                                                                    <font style="font-size:12px;"> Reset Filter</font>
-                                                                </button>
+                                                            <div class="mdc-form-field pull-left">
+                                                                <div class="mdc-checkbox">
 
-
-
-                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
-                                                                    <font style="font-size:12px;"> Apply Filter</font>
-                                                                </button>
-
-
-
-                                                            </div>
-
-                                                        </div>
-
-
-
-                                                    </div>
-                                                </div>
-
-
-
-
-                                            </div>
-
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <!-- end content-->
-                        <!--  end card  -->
-                        <!-- end col-md-12 -->
-                        <!-- Start Card -->
-
-                        <div class="row">
-                            @foreach (var item in Model.IRFList)
-                            {
-                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
-                                    <div class="card-content-holder border card-blue">
-                                        <div class="card-header">
-                                            <div class="row">
-                                                <div class=" col-md-4 col-sm-4">
-                                                    <h6> @item.IRFId <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0])</span></h6>
-                                                </div>
-
-                                                <div class="col-md-8 col-sm-8 card-header-buttons action">
-                                                    @if (!@item.IsClientUser && Model.Profile != "Recruiter" && Model.Profile != "CuratedUser")
-                                                    {
-                                                        <button id="skill_17" class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                            <span onclick="javascript:EditIRF('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                        </button>
-                                                        <button id="skill_18" class="mdc-fab app-fab--absolute" aria-label="Candidate Curated Score">
-                                                            <span onclick="javascript:CandidateCuratedScore('@item.id');" title="Candidate Curated Score" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z" /></svg></span>
-                                                        </button>
-                                                        <button id="skill_19" class="mdc-fab app-fab--absolute" aria-label="Interrview Planner">
-                                                            <span onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new { irfId = item.id, irfName = item.IRFId })'" title="Interview Planner" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" /></svg></span>
-                                                        </button>
-                                                        <button id="skill_20" class="mdc-fab app-fab--absolute" aria-label="Interview Invoice">
-                                                            <span onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" title="Interview Invoice" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" /></svg></span>
-                                                        </button>
-                                                        //getIRFMembers
-                                                        <button id="skill_21" class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
-                                                            <span onclick="javascript:getIRFMembers('@item.id', '@item.IRFId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
-                                                        </button>
-
-                                                    }
-                                                    @if (Model.Profile != "Recruiter" && Model.Profile != "CuratedUser")
-                                                    {
-                                                        if (!item.IsDeleted)
-                                                        {
-                                                            <button  id="btnArchive_@item.id" @*id="skill_22"*@ class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
-                                                                <span onclick="javascript:ArchiveIRF('@item.id', '@item.IRFId');" title="Archive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
-                                                            </button>
-                                                        }
-                                                        else
-                                                        {
-                                                            <button id="btnUnArchive_@item.id" class="mdc-fab app-fab--absolute unarchive-btn" aria-label="UnArchive">
-                                                                <span onclick="javascript:UnArchiveIRF('@item.id', '@item.IRFId');" title="UnArchive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
-                                                            </button>
-                                                        }
-                                                    }
-                                                    @if (Model.Profile == "Admin" || Model.Profile == "HR")
-                                                    {
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel" style=" top: -3px;">
-                                                            <span onclick="location.href='@Url.Action("EditIRF", "IRF", new { id = item.id, isClone = true })'" title="Clone the Skills Channel" class="mdc-fab__icon material-icons">
-                                                                <i style="font-size:14px;" class="fa fa-clone"></i>
-
-                                                            </span>
-                                                        </button>
-                                                    }
-
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- irf body-->
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="statusImg">
-                                                    <img id="statusImage_@item.id" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
-                                                </div>
-                                                <div class="statusInfo">
-                                                    <div class="group inner list-group-item-text">
-                                                        @if (Model.Profile != "CuratedUser")
-                                                        {
-                                                            <div class="row clearfix">
-                                                                <div class="client-field">
-                                                                    <span> Client Name: </span> <span title="@item.ClientCompName (@item.ClientName)">@item.ClientCompName (@item.ClientName)</span>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="row clearfix">
-                                                                <div class="client-field">   <span>End Date:</span><span style="font-weight:normal">@item.EndDate</span></div>
-                                                            </div>
-
-                                                            <div id="skill_3" class="row clearfix">
-                                                                <div class="client-field">
-                                                                    <span>Total Candidates:</span><span style="font-weight:normal">@(item.TotalMeetings != null ? item.TotalMeetings : 0)</span>
-                                                                </div>
-                                                            </div>
-
-                                                            @if (Model.Profile != "Recruiter")
-                                                            {
-                                                                <div id="skill_4" class="row clearfix ">
-                                                                    <div class="client-field">
-                                                                        <span>Completed Interviews:</span><span style="font-weight:normal">@(item.ScheduledMeetings != null ? item.ScheduledMeetings : 0)</span>
+                                                                    <input id="gstCheckId" name="gstCheckId" type="checkbox" class="mdc-checkbox__native-control" style="">
+                                                                    <div class="mdc-checkbox__background">
+                                                                        <svg class="mdc-checkbox__checkmark"
+                                                                             viewBox="0 0 24 24">
+                                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                                  fill="none"
+                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                        </svg>
+                                                                        <div class="mdc-checkbox__mixedmark"></div>
                                                                     </div>
-                                                                </div>
-                                                            }
-                                                        }
+                                                                    <div class="mdc-checkbox__ripple"></div>
 
-                                                        @if (Model.Profile != "CuratedUser")
-                                                        {
-                                                            <div id="skill_5" class="row five clearfix">
-                                                                <div class="client-field">
-                                                                    <span>Selected Candidates:</span><span style="font-weight:normal">@(item.SelectedMeetings != null ? item.SelectedMeetings : 0)</span>
+
                                                                 </div>
                                                             </div>
 
 
-
-                                                        }
-                                                        @if (!string.IsNullOrEmpty(item.RisebirdHREmail))
-                                                        {
-                                                            <div class="row clearfix">
-                                                                <div class="client-field">
-                                                                    <span> Channel Owner: </span> <span title="@item.RisebirdHREmail">@item.RisebirdHREmail</span>
-                                                                </div>
+                                                            <div class="cheklabel" for="gstCheck">
+                                                                Apply GST
                                                             </div>
-                                                        }
-                                                        else
-                                                        {
-                                                            <div class="row clearfix">
-                                                                <div class="client-field">
-                                                                    <span> Channel Owner: </span><span></span>
-                                                                </div>
-                                                            </div>
-                                                        }
 
+                                                            <label class="text-danger " id="gstCheck_Error" style="color:red"></label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-
-                                        </div>
-
-                                        <div class="card-footer action">
-                                            <div class="row">
-
-                                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" id="irf-card-footer">
-
-                                                    @if (@item.IRFStatus == "Active")
-                                                    {
-                                                        <h6 style="color: green;"> @item.IRFStatus</h6>
-                                                    }
-                                                    else if (@item.IRFStatus == "Paused")
-                                                    {
-                                                        <h6 style="color: grey;"> @item.IRFStatus</h6>
-                                                    }
-                                                    else
-                                                    {
-                                                        <h6 style="color: black;"> @item.IRFStatus</h6>
-
-                                                    }
-                                                </div>
-
-                                                <div class="stats-bttm-btn  col-lg-10 col-md-10 col-sm-10 col-xs-10">
-                                                    @if (Model.Profile == "Admin" || Model.Profile == "HR")
-                                                    {
-                                                        <button id="skill_6" class="mdc-fab app-fab--absolute item1" aria-label="Send Candidate Feedback remainder">
-                                                            <span onclick="javascript:Candidatesfeedbackremainder('@item.IRFId');" title="Send Candidate Feedback remainder" class="mdc-fab__icon material-icons">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-share-fill" viewBox="0 0 20 20">
-                                                                    <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z" />
-                                                                </svg>
-                                                            </span>
-                                                        </button>
-                                                    }
-                                                    <button id="skill_7" class="mdc-fab app-fab--absolute item1" aria-label="Candidate Feedback" style=" position: relative; top: -2px;">
-                                                        <span onclick="javascript:Candidatesfeedback('@item.IRFId');" title="Candidates Feedback" class="mdc-fab__icon material-icons">
-                                                            <i style="        font-size: 16px;position: relative;top: -1px" class="fa fa-commenting-o"></i>
-                                                        </span>
-                                                    </button>
-                                                    <button id="skill_8" class="mdc-fab app-fab--absolute item1" aria-label="Candidate Status">
-                                                        <span onclick="javascript:CandidatesStatus('@item.id', '@item.IRFId');" title="Candidates Status" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb( 255,255,255)" d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
-                                                    </button>
-                                                    @if (Model.Profile != "CuratedUser")
-                                                    {
-                                                        @if (!@item.IsClientUser && Model.Profile != "Recruiter")
-                                                        {
+                                            <label class="text-danger" id="popUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
 
 
-                                                            <button id="skill_9" class="mdc-fab app-fab--absolute itemques" aria-label="Questions">
-                                                                <span onclick="javascript:AddComments('@item.id');" title="Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
-                                                            </button>
-
-
-                                                        }
-
-
-
-                                                        <button id="skill_10" class="mdc-fab app-fab--absolute item1" aria-label="Candidates List">
-                                                            <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
-                                                        </button>
-
-
-
-                                                        @if (Model.Profile != "Recruiter")
-                                                        {
-
-                                                            <button id="skill_11" class="mdc-fab app-fab--absolute item2" aria-label="Meetings">
-                                                                <span onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" title="Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg></span>
-                                                            </button>
-
-
-
-                                                            <button id="skill_12" class="mdc-fab app-fab--absolute item3" aria-label="Selected Candidates">
-                                                                <span onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" title="Selected Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg></span>
-                                                            </button>
-
-                                                            <button id="skill_13" class="mdc-fab app-fab--absolute item2" aria-label="Meetings">
-                                                                <span onclick="javascript:MultipleCandidateInvites('@item.IRFId');" title="Multiple Candidate Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 18 18"><path d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg></span>
-                                                            </button>
-
-                                                            <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
-                                                                <span onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new
-                                                 {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
-                                                            </button>
-
-
-
-                                                            <button id="skill_15" class="mdc-fab app-fab--absolute item5" aria-label="Stats">
-                                                                <span onclick="javascript:stats('@item.id', '@item.IRFId');" title="Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>
-                                                            </button>
-
-                                                            if (item.IsPaused)
-                                                            {
-
-
-
-
-                                                                <button id="skill_16" class="mdc-fab app-fab--absolute " aria-label="Play">
-                                                                    <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
-                                                                </button>
-
-
-
-
-
-
-                                                            }
-                                                            else
-                                                            {
-
-
-
-                                                                <button id="skill_16" class="mdc-fab app-fab--absolute " aria-label="Pause">
-                                                                    <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
-                                                                </button>
-
-
-                                                            }
-                                                        }
-
-
-                                                    }
-                                                    @if (Model.Profile == "CuratedUser")
-                                                    {
-                                                        @if (item.SubId != null)
-                                                        {
-                                                            <button class="mdc-fab app-fab--absolute allcur" aria-label="All">
-                                                                <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ALL"})'" title="All Selected Candidates" class="mdc-fab__icon material-icons">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg>
-                                                                </span>
-                                                            </button>
-                                                            <button class="mdc-fab app-fab--absolute allshort" aria-label="ShortListed">
-                                                                <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ShortList"})'" title="Shortlisted Candidates" class="mdc-fab__icon material-icons">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg>
-
-
-
-                                                                </span>
-                                                            </button>
-                                                            <button class="mdc-fab app-fab--absolute allintsent" aria-label="Interest-Sent">
-                                                                <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Intrested"})'" title="Interest-Sent Candidates" class="mdc-fab__icon material-icons">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
-                                                                </span>
-                                                            </button>
-                                                            <button class="mdc-fab app-fab--absolute allintac" aria-label="Interest-Accept">
-                                                                <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Accept"})'" title="Interest-Accept Candidates" class="mdc-fab__icon material-icons">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
-                                                                </span>
-                                                            </button>
-                                                            <button class="mdc-fab app-fab--absolute subc" aria-label="Unsubscribe">
-                                                                <span onclick="javascript:UnSubscribe('@item.id', '@item.IRFId','@item.JDTiltle.Split("|")[0]');" title="Unsubscribe" class="mdc-fab__icon material-icons">
-                                                                    <i style="font-size:16px;" class="far fa-bell-slash"></i>
-                                                                </span>
-                                                            </button>
-                                                        }
-                                                        else
-                                                        {
-                                                            <button class="mdc-fab app-fab--absolute subc" aria-label="Subscribe">
-                                                                <span onclick="javascript:Subscribe('@item.id', '@item.IRFId', '@item.JDTiltle.Split("|")[0]');setNav()" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
-                                                            </button>
-                                                        }
-
-                                                    }
-
-                                                </div>
+                                            <hr />
+                                            <div class="col-md-12 mc-button-area">
+                                                <input style="box-shadow:none!important" type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Generate Invoice">
                                             </div>
                                         </div>
 
                                     </div>
                                 </div>
-                            }
-                        </div>
+                            </div>
 
-                        <!-- End Card-->
-                        <div id="myModal" class="modal" style=" display: none; /* Hidden by default */ position: fixed; /* Stay in place */ z-index: 1; /* Sit on top */ padding-top: 100px; /* Location of the box */ left: 0; top: 0; width: 100%; /* Full width */ height: 100%; /* Full height */ overflow: auto; /* Enable scroll if needed */ background-color: rgb(0,0,0); /* Fallback color */ background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ ">
-                            <!-- Modal content -->
-                            <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
+                            <div id="interviewerMemberModal" class="modal modal-bg">
+                                <!-- Modal content -->
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
 
 
-                                    <div class="filheader">
-                                        <div class="filavatar">
-                                            <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="rgb(250, 250, 250)" d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"></path></svg>
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="memberHeading">Interviewer Details</h5>
                                         </div>
-                                        <h5 class="modal-title pull-left"> Invoice</h5>
-                                    </div>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true" id="invoicePopUp">&times;</span>
-                                    </button>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true" id="membersPopUp" style="cursor:pointer;">&times;</span>
+                                        </button>
+
+                                        <div class="modal-body" id="memberTableBody">
 
 
 
 
-                                    <div class="modal-body">
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6 border-rv">
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="stDate">
-                                                        Start Date
-                                                    </label>
-                                                    <div class="col-md-12 col-sm-12">
-                                                        <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
-                                                        <label class="text-danger" id="stDate_Error" style="color:red"></label>
 
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="EndDateInvoice">
-                                                        End Date
-                                                    </label>
-                                                    <div class="col-md-12 col-sm-12">
-                                                        <input id="EndDateInvoice" name="EndDateInvoice" type="date" class="form-control">
-                                                        <label class="text-danger" id="endDate_Error" style="color:red"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6 border-rv">
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="srNumber">
-                                                        SR Number
-                                                    </label>
-                                                    <div class="col-md-12 col-sm-12">
-                                                        <input id="srNumberId" name="srNumberId" type="text" class="form-control">
-                                                        <label class="text-danger" id="srNumber_Error" style="color:red"></label>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="poNumber">
-                                                        PO Number
-                                                    </label>
-                                                    <div class="col-md-12 col-sm-12">
-                                                        <input id="poNumberId" name="poNumberId" type="text" class="form-control">
-                                                        <label class="text-danger" id="poNumber_Error" style="color:red"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6 border-rv">
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="requestNumber">
-                                                        Request Number
-                                                    </label>
-                                                    <div class="col-md-12 col-sm-12">
-                                                        <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
-                                                        <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="projectCode">
-                                                        Project Code
-                                                    </label>
-                                                    <div class="col-md-12 col-sm-12">
-                                                        <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
-                                                        <label class="text-danger" id="projectCode_Error" style="color:red"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6 border-rv">
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="clientAddress">
-                                                        Client Address
-                                                    </label>
-                                                    <div class="col-md-12 col-sm-12">
-                                                        <input id="clientAddressId" name="clientAddressId" type="text" class="form-control">
-                                                        <label class="text-danger" id="clientAddressId_Error" style="color:red"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="discount">
-                                                        Discount
-                                                    </label>
-                                                    <div class="col-md-12 col-sm-12">
-                                                        <input id="discountId" name="discountId" type="text" class="form-control">
-                                                        <label class="text-danger" id="discount_Error" style="color:red"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6 border-rv">
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="currencyCode">
-                                                        Currency Code
-                                                    </label>
-                                                    <div class="col-md-12 col-sm-12">
-                                                        <input id="currencyCodeId" name="currencyCodeId" type="text" class="form-control" required>
-                                                        <label class="text-danger" id="currencyCode_Error" style="color:red"></label>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-
-                                                    <div>
-
-
-                                                        <div class="mdc-form-field pull-left">
-                                                            <div class="mdc-checkbox">
-
-                                                                <input id="gstCheckId" name="gstCheckId" type="checkbox" class="mdc-checkbox__native-control" style="">
-                                                                <div class="mdc-checkbox__background">
-                                                                    <svg class="mdc-checkbox__checkmark"
-                                                                         viewBox="0 0 24 24">
-                                                                        <path class="mdc-checkbox__checkmark-path"
-                                                                              fill="none"
-                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                    </svg>
-                                                                    <div class="mdc-checkbox__mixedmark"></div>
-                                                                </div>
-                                                                <div class="mdc-checkbox__ripple"></div>
-
-
-                                                            </div>
-                                                        </div>
-
-
-                                                        <div class="cheklabel" for="gstCheck">
-                                                            Apply GST
-                                                        </div>
-
-                                                        <label class="text-danger " id="gstCheck_Error" style="color:red"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <label class="text-danger" id="popUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
-
-
-                                        <hr />
-                                        <div class="col-md-12 mc-button-area">
-                                            <input style="box-shadow:none!important" type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Generate Invoice">
                                         </div>
                                     </div>
 
                                 </div>
                             </div>
-                        </div>
+                            <!-- end row -->
 
-                        <div id="interviewerMemberModal" class="modal modal-bg">
-                            <!-- Modal content -->
-                            <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
+                            <div id="myCallModal" class="modal modal-wrap modal-bg">
+                                <!-- Modal content -->
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="publicsharing-icon">
 
 
-                                    <div class="filheader">
-                                        <div class="filavatar">
-                                            <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                                                </span>
+                                            </div>
+                                            <h5 class="modal-title pull-left">Call</h5>
                                         </div>
-                                        <h5 class="modal-title pull-left" id="memberHeading">Interviewer Details</h5>
-                                    </div>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true" id="membersPopUp" style="cursor:pointer;">&times;</span>
-                                    </button>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                                        </button>
 
-                                    <div class="modal-body" id="memberTableBody">
+                                        <div class="modal-body">
 
+                                            <h5 class="modal-title text-center mt-20" id="callingLabel"></h5>
 
-
-
-
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        <!-- end row -->
-
-                        <div id="myCallModal" class="modal modal-wrap modal-bg">
-                            <!-- Modal content -->
-                            <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
-
-                                    <div class="filheader">
-                                        <div class="filavatar">
-                                            <span class="publicsharing-icon">
-
-
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
-                                            </span>
-                                        </div>
-                                        <h5 class="modal-title pull-left">Call</h5>
-                                    </div>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
-                                    </button>
-
-                                    <div class="modal-body">
-
-                                        <h5 class="modal-title text-center mt-20" id="callingLabel"></h5>
-
-                                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 0px auto;
+                                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 0px auto;
         display: block;" class="btn btn-fill btn-danger" value="Hang Up">
 
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div id="myEmailModal" class="modal modal-wrap modal-bg">
-                            <!-- Modal content -->
-                            <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
-
-                                    <div class="filheader">
-                                        <div class="filavatar">
-                                            <span class="publicsharing-icon">
-
-
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
-                                            </span>
                                         </div>
-                                        <h5 class="modal-title pull-left">Send Remainder</h5>
-                                    </div>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
-                                    </button>
-
-                                    <div class="modal-body">
-
-                                        <h5 class="modal-title text-center mt-20">Sending mail is in process...</h5>
 
                                     </div>
 
                                 </div>
-
                             </div>
-                        </div>
 
-                        <div id="myEmailModal" class="modal modal-wrap modal-bg">
-                            <!-- Modal content -->
-                            <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
+                            <div id="myEmailModal" class="modal modal-wrap modal-bg">
+                                <!-- Modal content -->
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
 
-                                    <div class="filheader">
-                                        <div class="filavatar">
-                                            <span class="publicsharing-icon">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="publicsharing-icon">
 
 
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
-                                            </span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                                                </span>
+                                            </div>
+                                            <h5 class="modal-title pull-left">Send Remainder</h5>
                                         </div>
-                                        <h5 class="modal-title pull-left">Send Remainder</h5>
-                                    </div>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
-                                    </button>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                                        </button>
 
-                                    <div class="modal-body">
+                                        <div class="modal-body">
 
-                                        <h5 class="modal-title text-center mt-20">Sending mail is in process...</h5>
+                                            <h5 class="modal-title text-center mt-20">Sending mail is in process...</h5>
+
+                                        </div>
 
                                     </div>
 
                                 </div>
+                            </div>
 
+                            <div id="myEmailModal" class="modal modal-wrap modal-bg">
+                                <!-- Modal content -->
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="publicsharing-icon">
+
+
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                                                </span>
+                                            </div>
+                                            <h5 class="modal-title pull-left">Send Remainder</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                                        </button>
+
+                                        <div class="modal-body">
+
+                                            <h5 class="modal-title text-center mt-20">Sending mail is in process...</h5>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
+
                     </div>
-
                 </div>
             </div>
         </div>
@@ -1299,7 +1301,7 @@
         });
 
     }
-    
+
     function PauseIRF(irfId, irfName) {
 
         swal.fire({
@@ -1497,6 +1499,22 @@
 
 </script>
 <script>
+    $(document).ready(function () {
+        $('#skill_card .row .col-lg-4')[0].setAttribute('data-intro', '<span style="font-size:16px;">Skill channel</span><hr class="btop"/> 1. Total no of candidate<br/>2. Total counts of completed interviews<br/>3. Total counts of Selected Candidates <br/><br/> Click on below button to know its features<br/> a. Candidate feedback <br/>b. Candidate status<br/> c. Candidate list<br/> d. Meeting<br/> e. Selected Candidates<br/> f. Multiple Candidate Meeting <br/> g. Schedule Meeting<br/> h. Stats <br/> i. Pause (If you click on pause button it will cancel all the upcoming interviews) <br/><a href="/Client/AllMeetings" class="btn btn-primary skillnext-btn">NEXT</a>');
+        $('#skill_card .row .col-lg-4')[0].setAttribute('data-position', 'right');
+        $('#skill_7 span')[0].setAttribute('data-intro', 'a.');
+        $('#skill_8 span')[0].setAttribute('data-intro', 'b.');
+        $('#skill_10 span')[0].setAttribute('data-intro', 'c.');
+        $('#skill_11 span')[0].setAttribute('data-intro', 'd.');
+        $('#skill_12 span')[0].setAttribute('data-intro', 'e.');
+        $('#skill_13 span')[0].setAttribute('data-intro', 'f.');
+        $('#skill_14 span')[0].setAttribute('data-intro', 'g.');
+        $('#skill_15 span')[0].setAttribute('data-intro', 'h.');
+        $('#skill_16 span')[0].setAttribute('data-intro', 'i.');
+
+    });
+</script>
+<script>
     var irfId = "";
     var irfName = "";
     var span = document.getElementById("invoicePopUp");
@@ -1676,475 +1694,472 @@
     }
 }
 
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
-{
-    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-    pfName = pfName.Replace("\"", "");
-    @if (pfName == "Client")
+@*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
     {
+        var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+        pfName = pfName.Replace("\"", "");
+        @if (pfName == "Client")
+        {
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
 
-        <script type="text/javascript">
-            hopscotch.registerHelper('addOverlay', function () {
-                $('body').append('<div class="overlay"></div>');
-            });
-
-            hopscotch.registerHelper('removeOverlay', function () {
-                $('.overlay').fadeOut(function () {
-                    $(this).remove();
-                    $('.helper').remove();
+            <script type="text/javascript">
+                hopscotch.registerHelper('addOverlay', function () {
+                    $('body').append('<div class="overlay"></div>');
                 });
-            });
 
-            hopscotch.listen('show', function () {
-                var elementObject = $(hopscotch.getCurrTarget(tour));
-                var element = $('#' + elementObject[0].id);
+                hopscotch.registerHelper('removeOverlay', function () {
+                    $('.overlay').fadeOut(function () {
+                        $(this).remove();
+                        $('.helper').remove();
+                    });
+                });
 
-                element.prev().removeClass('overlay-relative');
-                element.addClass('overlay-relative');
+                hopscotch.listen('show', function () {
+                    var elementObject = $(hopscotch.getCurrTarget(tour));
+                    var element = $('#' + elementObject[0].id);
 
-                if ($('.helper').length !== 0) {
+                    element.prev().removeClass('overlay-relative');
+                    element.addClass('overlay-relative');
 
-                    // Use Helper Layer for hilight target element.
-                    var helper = $('.helper');
-                    var padding = 5;
-                    var helperPosX = element.position().left - padding;
-                    var helperPosY = element.position().top - padding;
-                    var targetWidth = element.outerWidth();
-                    var targetHeight = element.outerHeight();
+                    if ($('.helper').length !== 0) {
 
-                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+                        // Use Helper Layer for hilight target element.
+                        var helper = $('.helper');
+                        var padding = 5;
+                        var helperPosX = element.position().left - padding;
+                        var helperPosY = element.position().top - padding;
+                        var targetWidth = element.outerWidth();
+                        var targetHeight = element.outerHeight();
 
-                    helper.css('width', targetWidth);
-                    helper.css('height', targetHeight);
-                    helper.offset({ left: helperPosX, top: helperPosY });
+                        console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                        console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-                } else {
+                        helper.css('width', targetWidth);
+                        helper.css('height', targetHeight);
+                        helper.offset({ left: helperPosX, top: helperPosY });
 
-                    // Add Helper Layer for highlight target element.
-                    var newHelper = '<div class="helper"></div>';
-                    $('body').append(newHelper);
+                    } else {
 
-                    var helper = $('.helper');
-                    var padding = 5;
-                    var helperPosX = element.position().left - padding;
-                    var helperPosY = element.position().top - padding;
-                    var targetWidth = element.outerWidth();
-                    var targetHeight = element.outerHeight();
+                        // Add Helper Layer for highlight target element.
+                        var newHelper = '<div class="helper"></div>';
+                        $('body').append(newHelper);
 
-                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+                        var helper = $('.helper');
+                        var padding = 5;
+                        var helperPosX = element.position().left - padding;
+                        var helperPosY = element.position().top - padding;
+                        var targetWidth = element.outerWidth();
+                        var targetHeight = element.outerHeight();
 
-                    helper.css('width', targetWidth);
-                    helper.css('height', targetHeight);
-                    helper.offset({ left: helperPosX, top: helperPosY });
-                }
+                        console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                        console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-            });
+                        helper.css('width', targetWidth);
+                        helper.css('height', targetHeight);
+                        helper.offset({ left: helperPosX, top: helperPosY });
+                    }
 
-            var tour = {
-                id: "hello-hopscotch",
-                showCloseButton: false,
+                });
 
-                steps: [
-                    {
-                        title: "Skill Channel",
-                        content: "View the list of Skill Based Channel",
-                        target: "skill_1",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        showCTAButton: true,
-                        ctaLabel: 'Skip',
-                        highlight: true,
-                        zindex: 999999,
-                        yOffset: 10,
-                        onCTA: function () {
-                            hopscotch.showStep(2);
-                            $('#skill_1').removeClass('overlay-relative');
-                            $('.helper').remove();
-                            $('.hopscotch-bubble').remove();
-                            $('.overlay-relative').remove();
-                            $('.overlay').remove();
+                var tour = {
+                    id: "hello-hopscotch",
+                    showCloseButton: false,
+
+                    steps: [
+                        {
+                            title: "Skill Channel",
+                            content: "View the list of Skill Based Channel",
+                            target: "skill_1",
+                            placement: "bottom",
+                            showPrevButton: true,
+                            showCTAButton: true,
+                            ctaLabel: 'Skip',
+                            highlight: true,
+                            zindex: 999999,
+                            yOffset: 10,
+                            onCTA: function () {
+                                hopscotch.showStep(2);
+                                $('#skill_1').removeClass('overlay-relative');
+                                $('.helper').remove();
+                                $('.hopscotch-bubble').remove();
+                                $('.overlay-relative').remove();
+                                $('.overlay').remove();
+                            },
+                            onNext: function () {
+                                $('#skill_1').removeClass('overlay-relative');
+                                $('.helper').remove();
+
+                            }
                         },
-                        onNext: function () {
-                            $('#skill_1').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Filter",
+                            content: "Filter based on available attributes or reset filter if applied earlier",
+                            target: "skill_2",
+                            placement: "left",
+                            showPrevButton: true,
 
-                        }
-                    },
-                    {
-                        title: "Filter",
-                        content: "Filter based on available attributes or reset filter if applied earlier",
-                        target: "skill_2",
-                        placement: "left",
-                        showPrevButton: true,
+                            zindex: 999999,
+                            xOffset: 0,
+                            yOffset: -10,
+                            onPrev: function () {
 
-                        zindex: 999999,
-                        xOffset: 0,
-                        yOffset: -10,
-                        onPrev: function () {
+                                $('#skill_2').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
 
-                            $('#skill_2').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
+                            onNext: function () {
 
-                        onNext: function () {
+                                $('#skill_2').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
 
-                            $('#skill_2').removeClass('overlay-relative');
-                            $('.helper').remove();
+
                         },
 
 
-                    },
 
 
 
-
-
-                    {
-                        title: "Total Candidates",
-                        content: "Total no of candidate for particular skill channel",
-                        target: "skill_3",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: 10,
-                        onNext: function () {
-                            $('#skill_3').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Total Candidates",
+                            content: "Total no of candidate for particular skill channel",
+                            target: "skill_3",
+                            placement: "bottom",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 0,
+                            xOffset: 10,
+                            onNext: function () {
+                                $('#skill_3').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#skill_3').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#skill_3').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-                    {
-                        title: "Completed Interviews",
-                        content: "Total counts of completed interviews",
-                        target: "skill_4",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: 10,
-                        onNext: function () {
-                            $('#skill_4').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Completed Interviews",
+                            content: "Total counts of completed interviews",
+                            target: "skill_4",
+                            placement: "bottom",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 0,
+                            xOffset: 10,
+                            onNext: function () {
+                                $('#skill_4').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#skill_4').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#skill_4').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
 
-                    {
-                        title: "Selected Candidates",
-                        content: "Total counts of Selected Candidates",
-                        target: "skill_5",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: 10,
-                        onNext: function () {
-                            $('#skill_5').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Selected Candidates",
+                            content: "Total counts of Selected Candidates",
+                            target: "skill_5",
+                            placement: "bottom",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 0,
+                            xOffset: 10,
+                            onNext: function () {
+                                $('#skill_5').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#skill_5').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#skill_5').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
-                    {
-                        title: "Candidate Feedback Reminder",
-                        content: "Click here to see its features",
-                        target: "skill_6",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: -15,
-                        onNext: function () {
-                            $('#skill_6').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Candidate Feedback Reminder",
+                            content: "Click here to see its features",
+                            target: "skill_6",
+                            placement: "bottom",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 0,
+                            xOffset: -15,
+                            onNext: function () {
+                                $('#skill_6').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#skill_6').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#skill_6').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-                    {
-                        title: "Candidate Feedback",
-                        content: "Click here to see its features",
-                        target: "skill_7",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: -15,
-                        onNext: function () {
-                            $('#skill_7').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Candidate Feedback",
+                            content: "Click here to see its features",
+                            target: "skill_7",
+                            placement: "bottom",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 0,
+                            xOffset: -15,
+                            onNext: function () {
+                                $('#skill_7').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#skill_7').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#skill_7').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-                    {
-                        title: "Candidates Status",
-                        content: "Click here to see its features",
-                        target: "skill_8",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: -15,
-                        onNext: function () {
-                            $('#skill_8').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Candidates Status",
+                            content: "Click here to see its features",
+                            target: "skill_8",
+                            placement: "bottom",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 0,
+                            xOffset: -15,
+                            onNext: function () {
+                                $('#skill_8').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#skill_8').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#skill_8').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-                    {
-                        title: "Question",
-                        content: "Click here to see its features",
-                        target: "skill_9",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: -15,
-                        onNext: function () {
-                            $('#skill_9').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Question",
+                            content: "Click here to see its features",
+                            target: "skill_9",
+                            placement: "bottom",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 0,
+                            xOffset: -15,
+                            onNext: function () {
+                                $('#skill_9').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#skill_9').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#skill_9').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-                    {
-                        title: "Candidates List",
-                        content: "Click here to see its features",
-                        target: "skill_10",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: -15,
-                        onNext: function () {
-                            $('#skill_10').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Candidates List",
+                            content: "Click here to see its features",
+                            target: "skill_10",
+                            placement: "bottom",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 0,
+                            xOffset: -15,
+                            onNext: function () {
+                                $('#skill_10').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#skill_10').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#skill_10').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
 
-                    {
-                        title: "Meeting",
-                        content: "Grid View of All Interview Meetings",
-                        target: "skill_11",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: -15,
-                        onNext: function () {
-                            $('#skill_11').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Meeting",
+                            content: "Grid View of All Interview Meetings",
+                            target: "skill_11",
+                            placement: "bottom",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 0,
+                            xOffset: -15,
+                            onNext: function () {
+                                $('#skill_11').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#skill_11').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#skill_11').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-                    {
-                        title: "Selected Candidates",
-                        content: "Grid View of Selected Candidate Interviews",
-                        target: "skill_12",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: -15,
-                        onNext: function () {
-                            $('#skill_12').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Selected Candidates",
+                            content: "Grid View of Selected Candidate Interviews",
+                            target: "skill_12",
+                            placement: "bottom",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 0,
+                            xOffset: -15,
+                            onNext: function () {
+                                $('#skill_12').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#skill_12').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#skill_12').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
-                    {
-                        title: "Multiple Candidate Meetings",
-                        content: "Grid View of Multiple Candidate Invites",
-                        target: "skill_13",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: -15,
-                        onNext: function () {
-                            $('#skill_13').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Multiple Candidate Meetings",
+                            content: "Grid View of Multiple Candidate Invites",
+                            target: "skill_13",
+                            placement: "bottom",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 0,
+                            xOffset: -15,
+                            onNext: function () {
+                                $('#skill_13').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#skill_13').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#skill_13').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
 
-                    {
-                        title: "Schedule Meeting",
-                        content: "Click here to Schedule meeting over this Skill Channel",
-                        target: "skill_14",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: -15,
-                        onNext: function () {
-                            $('#skill_14').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Schedule Meeting",
+                            content: "Click here to Schedule meeting over this Skill Channel",
+                            target: "skill_14",
+                            placement: "bottom",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 0,
+                            xOffset: -15,
+                            onNext: function () {
+                                $('#skill_14').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#skill_14').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#skill_14').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-                    {
-                        title: "Stats",
-                        content: "Click here to see Interview Stats",
-                        target: "skill_15",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: -15,
-                        onNext: function () {
-                            $('#skill_15').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Stats",
+                            content: "Click here to see Interview Stats",
+                            target: "skill_15",
+                            placement: "bottom",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 0,
+                            xOffset: -15,
+                            onNext: function () {
+                                $('#skill_15').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#skill_15').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#skill_15').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-                    {
-                        title: "Pause",
-                        content: "Click here to pause this Skill Channel and by clicking, it will cancel all upcoming interviews",
-                        target: "skill_16",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: -15,
-                        onNext: function () {
-                            $('#skill_16').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Pause",
+                            content: "Click here to pause this Skill Channel and by clicking, it will cancel all upcoming interviews",
+                            target: "skill_16",
+                            placement: "bottom",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 0,
+                            xOffset: -15,
+                            onNext: function () {
+                                $('#skill_16').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#skill_16  ').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#skill_16  ').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
 
-                    {
-                        title: "Common Pool Menu",
-                        content: "Click on Common Pool menu to see its features",
-                        target: "commonpool_menu",
-                        placement: "top",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 20,
-                        xOffset: 10,
-                        onNext: function () {
-                            $('#commonpool_menu').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        {
+                            title: "Common Pool Menu",
+                            content: "Click on Common Pool menu to see its features",
+                            target: "commonpool_menu",
+                            placement: "top",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 20,
+                            xOffset: 10,
+                            onNext: function () {
+                                $('#commonpool_menu').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#commonpool_menu').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
                         },
-                        onPrev: function () {
-                            $('#commonpool_menu').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
 
 
-                ],
-                onStart: ["addOverlay"],
-                onEnd: ["removeOverlay"],
-            };
-            //if (hopscotch.getState() === "hello-hopscotch:1") {
-            //    hopscotch.startTour(tour);
-            //}
-            hopscotch.startTour(tour);
-            function setCookie(key, value) {
-                var expires = new Date();
-                expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
-                document.cookie = key + '=' + value + ';path=/' + ';expires=' + expires.toUTCString();
-            };
-
-            function getCookie(key) {
-                var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-                return keyValue ? keyValue[2] : null;
-            };
-
-            var tour = {
-                onEnd: function () {
-                    setCookie("toured", "toured");
-                },
-                onClose: function () {
-                    setCookie("toured", "toured");
-                }
-            };
-
-            // Initialize tour if it's the user's first time
-            if (!getCookie("toured")) {
+                    ],
+                    onStart: ["addOverlay"],
+                    onEnd: ["removeOverlay"],
+                };
+                //if (hopscotch.getState() === "hello-hopscotch:1") {
+                //    hopscotch.startTour(tour);
+                //}
                 hopscotch.startTour(tour);
-            }
-        </script>
+                function setCookie(key, value) {
+                    var expires = new Date();
+                    expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+                    document.cookie = key + '=' + value + ';path=/' + ';expires=' + expires.toUTCString();
+                };
+
+                function getCookie(key) {
+                    var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+                    return keyValue ? keyValue[2] : null;
+                };
+
+                var tour = {
+                    onEnd: function () {
+                        setCookie("toured", "toured");
+                    },
+                    onClose: function () {
+                        setCookie("toured", "toured");
+                    }
+                };
+
+                // Initialize tour if it's the user's first time
+                if (!getCookie("toured")) {
+                    hopscotch.startTour(tour);
+                }
+            </script>
 
 
+        }
     }
-}
-
-
-
-
+*@
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {
     var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
@@ -2729,4 +2744,20 @@
 
     }
 }
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
+{
+    @if (HttpContextAccessor.HttpContext.Session.GetString("NSkillIndex") != null)
+    {
 
+    }
+    else
+    {
+        <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="~/Newassets/js/chardinjs.js"></script>
+        <script src="~/Newassets/js/demo.js"></script>
+        HttpContextAccessor.HttpContext.Session.SetString("NSkillIndex", "1");
+
+    }
+
+
+}
