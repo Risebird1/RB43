@@ -161,31 +161,32 @@
                                                             </div>
                                                             <div class="col-md-6 col-sm-6 border-rv">
 
-                                                                <div class="form-group">
-                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
-                                                                        Meeting Status
-                                                                    </label>
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple">
-                                                                            <option value="@(Risebird.Entities.Enum.MeetingStatus.NoShow.GetDescription())">@(Risebird.Entities.Enum.MeetingStatus.NoShow.GetDescription())</option>
-                                                                            <option value="@(Risebird.Entities.Enum.MeetingStatus.Dropped.GetDescription())">@(Risebird.Entities.Enum.MeetingStatus.Dropped.GetDescription())</option>
-                                                                            <option value="@(Risebird.Entities.Enum.MeetingStatus.Completed.GetDescription())">@(Risebird.Entities.Enum.MeetingStatus.Completed.GetDescription())</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
-                                                                        Interview Status
-                                                                    </label>
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
-                                                                            <option value="@(Risebird.Entities.Enum.InterviewStatus.Proxy.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Proxy.GetDescription())</option>
-                                                                            <option value="@(Risebird.Entities.Enum.InterviewStatus.Selected.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Selected.GetDescription())</option>
-                                                                            <option value="@(Risebird.Entities.Enum.InterviewStatus.Rejected.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Rejected.GetDescription())</option>
-                                                                            <option value="@(Risebird.Entities.Enum.InterviewStatus.BorderLine.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.BorderLine.GetDescription())</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
+                                                                Meeting Status
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple">
+                                                                    <option value="@(Risebird.Entities.Enum.MeetingStatus.NoShow.GetDescription())">@(Risebird.Entities.Enum.MeetingStatus.NoShow.GetDescription())</option>
+                                                                    <option value="@(Risebird.Entities.Enum.MeetingStatus.Dropped.GetDescription())">@(Risebird.Entities.Enum.MeetingStatus.Dropped.GetDescription())</option>
+                                                                    <option value="@(Risebird.Entities.Enum.MeetingStatus.Completed.GetDescription())">@(Risebird.Entities.Enum.MeetingStatus.Completed.GetDescription())</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
+                                                                Interview Status
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
+                                                                    <option value="@(Risebird.Entities.Enum.InterviewStatus.Proxy.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Proxy.GetDescription())</option>
+                                                                    <option value="@(Risebird.Entities.Enum.InterviewStatus.Selected.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Selected.GetDescription())</option>
+                                                                    <option value="@(Risebird.Entities.Enum.InterviewStatus.Rejected.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Rejected.GetDescription())</option>
+                                                                    <option value="@(Risebird.Entities.Enum.InterviewStatus.BorderLine.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.BorderLine.GetDescription())</option>
+                                                                    <option value="@(Risebird.Entities.Enum.CandidateStatusOptions.QCPending.GetDescription())">@(Risebird.Entities.Enum.CandidateStatusOptions.QCPending.GetDescription())</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
 
                                                                 <div class="form-group">
                                                                     <label class="control-label  col-md-12 col-sm-12 desp-label" for="ProfileSource">
