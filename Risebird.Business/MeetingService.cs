@@ -797,16 +797,16 @@ namespace Risebird.Business
             try
             {
                 //var assignedMeeting = _meetingRespository.GetAllAssignedInterview(interviewerMail).Result.OrderByDescending(x => x.interviewDate).ToList();
-                var assignedMeeting = _meetingRespository.GetAllAssignedInterviewsForToday(interviewerMail).Result;
+                var assignedMeeting = _meetingRespository.GetAllAssignedInterviewsForTheWeek(interviewerMail).Result;
                 var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == interviewDate);
                 if (checkDateMeeting != null && checkDateMeeting.Count() > 0)
                 {
                     return "Failed! You already have an interview scheduled at this time. Please contact Risebird HR.";
                 }
-                var upComingInterviews = assignedMeeting.Where(x => x.interviewDate > interviewDate && x.interviewDate <= interviewDate.AddMinutes(30));
-                if (upComingInterviews != null && upComingInterviews.Count() > 0)
+                var clashingInterviews = assignedMeeting.Where(x => (x.interviewDate > interviewDate && x.interviewDate <= interviewDate.AddMinutes(30)) || (x.interviewDate < interviewDate && interviewDate.AddMinutes(-30) <= x.interviewDate));
+                if (clashingInterviews != null && clashingInterviews.Count() > 0)
                 {
-                    return "Failed! You already have an interview scheduled within the next 30 minutes. Please contact Risebird HR.";
+                    return "Failed! You already have an interview scheduled within 30 minutes. Please contact Risebird HR.";
 
                 }
                 return _meetingRespository.AssignYourself(meetingid, interviewerMail);
