@@ -803,7 +803,7 @@ namespace Risebird.Business
                 {
                     return "Failed! You already have an interview scheduled at this time. Please contact Risebird HR.";
                 }
-                var upComingInterviews = assignedMeeting.Where(x => Convert.ToInt32(Math.Round((x.interviewDate - interviewDate).TotalMinutes)) <= 30);
+                var upComingInterviews = assignedMeeting.Where(x => x.interviewDate > interviewDate && x.interviewDate <= interviewDate.AddMinutes(30));
                 if (upComingInterviews != null && upComingInterviews.Count() > 0)
                 {
                     return "Failed! You already have an interview scheduled within the next 30 minutes. Please contact Risebird HR.";
