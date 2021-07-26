@@ -573,7 +573,7 @@
                                                                                     <div class="circle-wrap">
                                                                                         @foreach (var status in item.InterviewStatus)
                                                                                         {
-                                                                                            @if (status.Status == "BorderLine")
+                                                                                            @if (status.Status == "Border Line")
                                                                                             {
                                                                                                 <div class="circle borderline" id="circle0" style="left: 0%;">
                                                                                                     <div class="popupSpan">
@@ -630,6 +630,24 @@
                                                                                             else if (status.Status == "Dropped")
                                                                                             {
                                                                                                 <div class="circle dropped" id="circle0" style="left: 0%;">
+                                                                                                    <div class="popupSpan">
+                                                                                                        <div class="event2Bubble">
+                                                                                                            <div class="eventTime">
+                                                                                                                <div class="DayDigit">@status.Date</div>
+                                                                                                                <div class="Day">
+                                                                                                                    @status.Day
+                                                                                                                    <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div class="eventTitle">@status.Status</div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            }
+
+                                                                                            else if (status.Status == "QC Pending")
+                                                                                            {
+                                                                                                <div class="circle qcpending" id="circle0" style="left: 0%;">
                                                                                                     <div class="popupSpan">
                                                                                                         <div class="event2Bubble">
                                                                                                             <div class="eventTime">
