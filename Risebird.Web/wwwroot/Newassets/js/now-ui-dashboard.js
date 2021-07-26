@@ -54,24 +54,14 @@ function debounce(func, wait, immediate) {
 
     if (isWindows) {
         // if we are on windows OS we activate the perfectScrollbar function
-    //var ps = new PerfectScrollbar('.sidebar-wrapper');
-    // var ps2 = new PerfectScrollbar('.main-panel');
+        var ps = new PerfectScrollbar('.sidebar-wrapper');
+        var ps2 = new PerfectScrollbar('.main-panel');
 
         $('html').addClass('perfect-scrollbar-on');
     } else {
         $('html').addClass('perfect-scrollbar-off');
     }
 })();
-
-
-    //$(document).on('ready', function() {
-
-    //    $('.main-panel').perfectScrollbar();
-
-    //    $('.sidebar-wrapper').perfectScrollbar();
-
-    //});
-
 
 $(document).ready(function () {
     $navbar = $('.navbar[color-on-scroll]');
@@ -111,18 +101,18 @@ $(document).ready(function () {
     var isWindows = navigator.platform.startsWith('Win');
     if (isWindows) {
         $('.modal').on('show.bs.modal', function () {
-            //var ps1 = new PerfectScrollbar('#myModal');
-            //var ps2 = new PerfectScrollbar('#noticeModal');
-            //var ps3 = new PerfectScrollbar('#myModal10');
+        //    var ps1 = new PerfectScrollbar('#myModal');
+        //    var ps2 = new PerfectScrollbar('#noticeModal');
+        //    var ps3 = new PerfectScrollbar('#myModal10');
 
-        }).on('hide.bs.modal', function () {
-            //var ps1 = new PerfectScrollbar('#myModal');
-            //var ps2 = new PerfectScrollbar('#noticeModal');
-            //var ps3 = new PerfectScrollbar('#myModal10');
+      }).on('hide.bs.modal', function () {
+        //    var ps1 = new PerfectScrollbar('#myModal');
+        //    var ps2 = new PerfectScrollbar('#noticeModal');
+        //    var ps3 = new PerfectScrollbar('#myModal10');
 
-            //ps1.destroy();
-            //ps2.destroy();
-            //ps3.destroy();
+        //    ps1.destroy();
+        //    ps2.destroy();
+        //    ps3.destroy();
         });
     }
 
@@ -286,7 +276,7 @@ nowuiDashboard = {
             var $btn = $(this);
 
 
-            if (sidebar_mini_active === true) {
+            if (sidebar_mini_active == true) {
                 $('body').removeClass('sidebar-mini');
                 sidebar_mini_active = false;
                 nowuiDashboard.showSidebarMessage('Sidebar mini deactivated...');
@@ -387,3 +377,6 @@ function hexToRGB(hex, alpha) {
         return "rgb(" + r + ", " + g + ", " + b + ")";
     }
 }
+
+
+

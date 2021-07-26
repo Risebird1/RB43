@@ -4684,10 +4684,15 @@ button.btn {
     font-weight: 500 !important;
     color: #676767;
 }
-.notschedulemeeting div.dataTables_wrapper div.dataTables_filter label, .survey div.dataTables_wrapper div.dataTables_filter label, .candidate-timeline div.dataTables_wrapper div.dataTables_filter label, .resume div.dataTables_wrapper div.dataTables_filter label {
+.mdc-fab {
+    width: 30px !important;
+    height: 30px !important;
+}
+    .notschedulemeeting div.dataTables_wrapper div.dataTables_filter label, .survey div.dataTables_wrapper div.dataTables_filter label, .candidate-timeline div.dataTables_wrapper div.dataTables_filter label, .resume div.dataTables_wrapper div.dataTables_filter label {
     position: relative;
 }
-.notschedulemeeting #meeting_filter input[type=search].form-control, .candidate-timeline #candidateTable_filter input[type=search].form-control, .resume #resumeTable_filter input[type=search].form-control {
+
+.notschedulemeeting #meeting_filter input[type=search].form-control, .candidate-timeline #candidateTable_filter input[type=search].form-control, .resume #resumeTable_filter input[type=search].form-control, .unassigned-int #meetingTable_filter input[type=search].form-control {
     background: #FFF !important;
     border: 1px #ccc solid !important;
     width: 256px !important;
@@ -4703,14 +4708,16 @@ button.btn {
     padding: 9px 10px 9px 10px;
 }
 
-.notschedulemeeting #search, .survey #search, .candidate-timeline #search, .resume #search, .resume #search {
+.notschedulemeeting #search, .survey #search, .candidate-timeline #search, .resume #search, .unassigned-int #search {
     right: 65px;
     top: 13px;
 }
-.notschedulemeeting #trigger-update, .survey #trigger-update, .candidate-timeline #trigger-update, .resume #trigger-update {
+
+.notschedulemeeting #trigger-update, .survey #trigger-update, .candidate-timeline #trigger-update, .resume #trigger-update, .unassigned-int #trigger-update {
     right: 35px;
     top: 11px;
 }
+
 /***** Media queries *****/
 .copy-btn {
     background: none;
