@@ -14,8 +14,8 @@ Create PROCEDURE [dbo].[usp_GetAllAssignedInterviewsForToday]
    @emailID varchar(100),
    @DateToday datetime
 AS  
-BEGIN  
-select id, interviewDate from InterviewMeetings where cast(interviewDate as date)= cast(@DateToday as date) and interviewer=@emailID
+BEGIN    
+select id, interviewDate from InterviewMeetings where cast(interviewDate as date)= cast(@DateToday as date) and interviewer=@emailID and confirmationStatus =1
 END  
 
 
