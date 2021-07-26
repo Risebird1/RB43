@@ -3157,7 +3157,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         //[HttpPost]
-        public async Task<IActionResult> AssignYourself(int id, string InterviewDate, string CandidateEmail)
+        public async Task<IActionResult> AssignYourself(int id, string InterviewDate)
         {
             try
             {
