@@ -839,7 +839,7 @@
                                                                                             @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
                                                                                             {
                                                                                                 <div class="col-md-6 col-sm-6">
-                                                                                                    <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                                                    <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName','@Model.imid')" data-original-title="Tooltip on top"> Call Candidate</span></button>
                                                                                                 </div>
                                                                                             }
                                                                                             <div class="col-md-6 col-sm-6">
@@ -1585,23 +1585,23 @@
                                                                                     <div class="underline--magical"></div>
                                                                                 }
                                                                                 @*@if (videolist.VideoLink.Contains(".mp4"))
-                                                                                {
-                                                                                    @if (videolist.ThumbnailImage != null)
                                                                                     {
-                                                                                        <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
-                                                                                    <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload ">
-                                                                                        <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                    </video>
-                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    @if (videolist.ThumbnailImage != null)
-                                                                                    {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
+                                                                                        @if (videolist.ThumbnailImage != null)
+                                                                                        {
+                                                                                            <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
+                                                                                        <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload ">
+                                                                                            <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                        </video>
+                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                    }
                                                                                     else
-                                                                                    { <img src="~/RiseTube/img/video-icon.png" />}
-                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                                }*@
+                                                                                    {
+                                                                                        @if (videolist.ThumbnailImage != null)
+                                                                                        {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
+                                                                                        else
+                                                                                        { <img src="~/RiseTube/img/video-icon.png" />}
+                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                    }*@
                                                                                 @{
                                                                                     string appendTime;
                                                                                     if (videolist.ThumbnailTimeSeconds == 0)
@@ -1710,37 +1710,37 @@
                                                                         <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
                                                                     }
                                                                     @*@if (videolist.VideoLink.Contains(".mp4"))
-                                                                    {
-                                                                        @if (videolist.ThumbnailImage != null)
                                                                         {
-                                                                            <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
-                                                                        <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
-                                                                            <source src="@videolist.VideoLink" type="video/mp4">
-                                                                        </video>
-                                                                        @if (Model.IsClientCurated)
-                                                                        {
-                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                            @if (videolist.ThumbnailImage != null)
+                                                                            {
+                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
+                                                                            <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
+                                                                                <source src="@videolist.VideoLink" type="video/mp4">
+                                                                            </video>
+                                                                            @if (Model.IsClientCurated)
+                                                                            {
+                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                            }
 
                                                                         }
                                                                         else
                                                                         {
-                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
-
-                                                                        }
-
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        @if (videolist.ThumbnailImage != null)
-                                                                        {
-                                                                            <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <img src="~/RiseTube/img/video-icon.png" />
-                                                                        }
-                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube",new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                    }*@
+                                                                            @if (videolist.ThumbnailImage != null)
+                                                                            {
+                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <img src="~/RiseTube/img/video-icon.png" />
+                                                                            }
+                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube",new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                        }*@
                                                                     @{
                                                                         string appendTime;
                                                                         if (videolist.ThumbnailTimeSeconds == 0)
@@ -2431,7 +2431,7 @@
                                                                             <tr id="quetxt_@i" style="cursor:pointer">
                                                                                 <td>
                                                                                     @*@Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })*@
-                                                                                    @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].Comment, new {@class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                    @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].Comment, new { @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
 
                                                                                 </td>
                                                                                 <td>
@@ -3275,6 +3275,7 @@
 </script>
 <script>
     var candidate = "";
+    var caninterviewid = 0;
     var span = document.getElementById("callPopUp");
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
@@ -3305,6 +3306,7 @@
     Twilio.Device.connect(function (connection) {
         var appendText = "In call with " + "<b>" + candidate + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
+        startCallRecording(connection.parameters.CallSid);
     });
 
     function afterTimeOut() {
@@ -3318,9 +3320,20 @@
         setTimeout(afterTimeOut, 2000);
 
     });
-
-    function ModalButtonClick(mobileNumber, candidateName) {
+    function startCallRecording(sid) {
+        console.log("sid:" + sid);
+        $.ajax({
+            url: '/User/makecall',
+            type: "GET",
+            data: { 'sid': sid, 'interviewid': caninterviewid },
+            success: function (data) {
+                console.log("rsid:" + data);
+            }
+        });
+    }
+    function ModalButtonClick(mobileNumber, candidateName, interviewid) {
         candidate = candidateName;
+        caninterviewid = interviewid;
         // Get the modal
         var modal = document.getElementById("myModal");
         // When the user clicks the button, open the modal

@@ -169,7 +169,7 @@ namespace Risebird.CommonHelper
                 StringBuilder msgBody = new StringBuilder("Dear HR,");
                 msgBody.Append("\n");
                 msgBody.AppendLine(
-                    "HR Alert!!! " + interviewer + " Interviewer has unassigned interview for candidate " + candidateEmail + " scheduled on " + meetingDate + "for Client:" + Client + "(" + Skillchannelid + ").");
+                    "HR Alert!!! " + interviewer + " Interviewer has unassigned interview for candidate " + candidateEmail + " scheduled on " + meetingDate + " for Client: " + Client + "(" + Skillchannelid + ").");
                 msgBody.Append("\n");
                 msgBody.AppendLine(
                     "Kindly login over risebird portal and click on Interview menu and assign interviewer for unassigned interview.");

@@ -109,36 +109,7 @@
     </div>
 
 </div>
-<div id="myModal" class="modal modal-bg">
-    <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span class="publicsharing-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
-                    </span>
-                </div>
-                <h5 class="modal-title pull-left">Call Interviewer !</h5>
-            </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
-            </button>
 
-
-
-            <div class="modal-body">
-
-                <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
-
-                <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
-    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
-            </div>
-
-        </div>
-
-    </div>
-</div>
 
 <div id="AssessmentgroupModel" class="modal modal-bg">
     <!-- Modal content -->
@@ -203,78 +174,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+
 <script type="text/javascript">
-    //// script for loader starts here
-    var candidate = "";
-    var span = document.getElementById("callPopUp");
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        hangUp();
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
+    
     $(document).ready(function () {
-        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-            // Set up the Twilio Client Device with the token
-            Twilio.Device.setup(data.token);
-        });
         $("#btnSearch").on('click', function () {
             var value = $("#searchinput").val();
             window.location.href = "/IRF/InterviewerDetail?Searchvalue=" + value;
         });
     });
-    var flag = true;
-    function callingfunction(value) {
-        if (flag == true) {
-            window.location.href = "/IRF/InterviewerDetailById?Id=" + value;
-        } else {
-            flag = true;
-        }
-    }
-    function callatag() {
-        flag = false;
-    }
-    Twilio.Device.ready(function (device) {
-
-    });
-
-    function callCandidate(phoneNumber) {
-        //  phoneNumber = '+918126991790';
-        var params = { "phoneNumber": phoneNumber };
-        Twilio.Device.connect(params);
-    }
-    function hangUp() {
-        Twilio.Device.disconnectAll();
-    }
-
-    Twilio.Device.connect(function (connection) {
-        var appendText = "In call with " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-    });
-
-    function afterTimeOut() {
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
-
-    Twilio.Device.disconnect(function (connection) {
-        var appendText = "Call disconnected! ";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        setTimeout(afterTimeOut, 2000);
-
-    });
-    function ModalButtonClick(candidateObj) {
-        //flag = false;
-        candidate = candidateObj.candidateName;
-        // Get the modal
-        var modal = document.getElementById("myModal");
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
-        var appendText = "Calling... " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        callCandidate(candidateObj.MobileNumber);
-    }
 
     function AddIRF() {
         var array = [];

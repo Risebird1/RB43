@@ -120,7 +120,7 @@
         <div id="myModal" class="modal modal-bg">
             <!-- Modal content -->
             <div class="modal-content">
-              
+
 
                 <div class="filheader">
                     <div class="filavatar">
@@ -136,22 +136,22 @@
                     <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
                 </button>
 
-                <div class="modal-body" >
-          
-                        <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
+                <div class="modal-body">
 
-                 
-                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" tyle="margin: 10px auto;
+                    <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
+
+
+                    <input type="button" onclick="closeCallPopUp()" id="hangUpButton" tyle="margin: 10px auto;
     display: block;" class="btn btn-fill btn-danger" value="Hang Up">
-                 
+
                 </div>
-             
+
             </div>
 
         </div>
         <!-- end row -->
     </div>
-   
+
 </div>
 
 
@@ -159,6 +159,7 @@
 
 <script>
     var interviewerMail = "";
+    var caninterviewid = 0;
     var span = document.getElementById("callPopUp");
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
@@ -189,6 +190,7 @@
     Twilio.Device.connect(function (connection) {
         var appendText = "In call with " + "<b>" + interviewerMail + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
+        startCallRecording(connection.parameters.CallSid);
     });
 
     function afterTimeOut() {
@@ -202,11 +204,22 @@
         setTimeout(afterTimeOut, 2000);
 
     });
-
+    function startCallRecording(sid) {
+        console.log("sid:" + sid);
+        $.ajax({
+            url: '/User/makecall',
+            type: "GET",
+            data: { 'sid': sid, 'interviewid': caninterviewid },
+            success: function (data) {
+                console.log("rsid:" + data);
+            }
+        });
+    }
     function ModalButtonClick(obj) {
 
         //candidate = candidateObj.candidateName;
         interviewerMail = obj.interviewer;
+        caninterviewid = obj.id;
         // Get the modal
         var modal = document.getElementById("myModal");
         // When the user clicks the button, open the modal
@@ -224,7 +237,7 @@
 
 </script>
 <script>
-        function CancelInterview(obj) {
+    function CancelInterview(obj) {
 
         //var IdIRF = dataID;
         swal.fire({
@@ -239,7 +252,7 @@
                 return new Promise(function (resolve, reject) {
                     //var IdIRF = dataID;
                     $.ajax({
-                        url: '/Interview/CancelInterview?id=' + obj.id+ '&interviewDate=' + obj.interviewDate + '&candidateEmail='+obj.candidateEmail,
+                        url: '/Interview/CancelInterview?id=' + obj.id + '&interviewDate=' + obj.interviewDate + '&candidateEmail=' + obj.candidateEmail,
                         success: function (result) {
                             resolve(result)
 
