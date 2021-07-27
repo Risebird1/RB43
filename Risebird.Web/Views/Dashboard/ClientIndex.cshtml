@@ -9,7 +9,16 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
-
+<style>
+    body {
+        overflow-y: hidden;
+        min-height: 1100px !important;
+    }
+      
+    .chardinjs-overlay {
+        position: absolute !important;
+    }
+</style>
 <script>
     var Header = "<a  style='line-height:50px;'><span id='clientdashboard_1'>Dashboard</span></a>";
     $('#txtpageHeader').empty().html(Header);
@@ -204,31 +213,33 @@
 
                             </div>
                             <div class="panel panel-default">
-                                <div class="panel-heading" data-intro="<span style='font-size:16px;'>Candidate Feedback survey depicting </span><hr class='btop' />1. Overall interview rating<br/> 2. Overall interviewer rating<br/> 3. Scheduling rating<br/><a href='/IRF/Index' class='btn btn-primary next-btn'>NEXT</a>" data-position="bottom">
-                                    <div class="panel-title-box">
-                                        <h3><span><strong>Candidate Survey Feedback</strong></span></h3>
+                                <div id="survey-feedback">
+                                    <div class="panel-heading" data-intro="<span style='font-size:16px;'>Candidate Feedback survey </span><hr class='btop' />1. Overall interview rating<br/> 2. Overall interviewer rating<br/> 3. Scheduling rating<br/><a href='/IRF/Index' class='btn btn-primary next-btn'>NEXT</a>" data-position="bottom">
+                                        <div class="panel-title-box">
+                                            <h3><span><strong>Candidate Survey Feedback</strong></span></h3>
 
-                                    </div>
+                                        </div>
 
-                                    <div id="slotsId">
-                                        <div class="panel-body panel-body-table">
-                                            <div>
-                                                <div class="">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-bordered table-striped">
-                                                            <tr>
-                                                                <td>OverAll Interview Rating</td>
-                                                                <td><span id="canfeedInterviewrating">0.00 Out of 5</span></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>OverAll Interviewer Rating</td>
-                                                                <td><span id="canfeedInterviewerrating">0.00 Out of 5</span></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>OverAll Scheduling Rating</td>
-                                                                <td><span id="canfeedschedulerating">0.00 Out of 5</span></td>
-                                                            </tr>
-                                                        </table>
+                                        <div id="slotsId">
+                                            <div class="panel-body panel-body-table">
+                                                <div>
+                                                    <div class="">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered table-striped">
+                                                                <tr>
+                                                                    <td>OverAll Interview Rating</td>
+                                                                    <td><span id="canfeedInterviewrating">0.00 Out of 5</span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>OverAll Interviewer Rating</td>
+                                                                    <td><span id="canfeedInterviewerrating">0.00 Out of 5</span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>OverAll Scheduling Rating</td>
+                                                                    <td><span id="canfeedschedulerating">0.00 Out of 5</span></td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -236,7 +247,6 @@
                                     </div>
                                 </div>
                             </div>
-
 
                             <div class="row">
 

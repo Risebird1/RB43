@@ -139,6 +139,9 @@
     left: 100px !important;
     margin-top:-8px!important;
 }
+[data-id="survey-feedback"] .chardinjs-tooltip.chardinjs-bottom {
+    padding-bottom: 500px!important;
+}
 
 [data-id="notschedule_table"] .chardinjs-tooltip.chardinjs-top {
     left: 200px !important;
