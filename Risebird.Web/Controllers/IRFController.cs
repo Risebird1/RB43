@@ -5396,5 +5396,43 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        [HttpPost]
+        public JsonResult CheckEditCondition(string IRFId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin")
+                    {
+                        return Json("Success");
+                    }
+                    else
+                    {
+                        if (_irfService.CheckChannelOwnerByIrfid(IRFId, emailid))
+                        {
+                            return Json("Success");
+                        }
+                        else
+                        {
+                            return Json("Fail");
+                        }
+                    }
+                }
+                else
+                {
+                    return Json("Fail");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Fail");
+            }
+        }
     }
 }

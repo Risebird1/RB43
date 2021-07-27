@@ -145,5 +145,6 @@ namespace Risebird.Repository.Interface
         Task<IRF> GetIRFForCall(int irfId);
         IEnumerable<Users> GetEligibleChannelOwners();
         Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId);
+        bool CheckChannelOwnerByIrfid(string IRFId, string emailid);
     }
 }

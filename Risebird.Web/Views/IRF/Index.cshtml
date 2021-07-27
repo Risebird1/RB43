@@ -1250,9 +1250,18 @@
         window.location.href = url;
     };
     function EditIRF(id) {
-
-        var url = '/IRF/EditIRF?id=' + id;
-        window.location.href = url;
+        $.ajax({
+            url: '/IRF/CheckEditCondition?IRFId=' + id,
+            type: 'POST',
+            success: function (result) {
+                if (result == "Success") {
+                    var url = '/IRF/EditIRF?id=' + id;
+                    window.location.href = url;
+                } else {
+                    swal.fire("You are not authorize to edit this skill channel.");
+                }
+            }
+        });
     };
     function CandidateCuratedScore(id) {
 

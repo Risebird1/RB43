@@ -4309,7 +4309,30 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public bool CheckChannelOwnerByIrfid(string IRFId, string emailid)
+        {
+            try
+            {
+                var query = "Select 1 from IRF join UserList ul on ul.id=IRF.RisebirdHr where ul.EmailId=@Emailid and IRF.id=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", IRFId);
+                dynamicParameters.Add("@Emailid", emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    if (results.FirstOrDefault() == 1)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
 
-        
     }
 }

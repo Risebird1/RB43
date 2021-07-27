@@ -1967,6 +1967,18 @@ namespace Risebird.Business
             }
 
         }
+        public bool CheckChannelOwnerByIrfid(string IRFId, string emailid)
+        {
+            try
+            {
+                return _irfRepository.CheckChannelOwnerByIrfid(IRFId, emailid);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
 
     }
 }
