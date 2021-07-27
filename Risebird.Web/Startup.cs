@@ -62,8 +62,7 @@ namespace Risebird.Web
                 .AddCookie();
 
             services.AddSession(o =>
-            {
-                o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            {               
                 o.Cookie.Name = "Risebirdportal.Session";
                 o.Cookie.HttpOnly = true;
                 o.Cookie.IsEssential = true;
@@ -120,13 +119,13 @@ namespace Risebird.Web
             }
 
             app.UseSession();
-            app.UseCookiePolicy(new CookiePolicyOptions
-            {
-                HttpOnly = HttpOnlyPolicy.Always,
-                Secure = CookieSecurePolicy.Always,
-                MinimumSameSitePolicy = SameSiteMode.None
+            //app.UseCookiePolicy(new CookiePolicyOptions
+            //{
+            //    HttpOnly = HttpOnlyPolicy.Always,
+            //    Secure = CookieSecurePolicy.Always,
+            //    MinimumSameSitePolicy = SameSiteMode.None
 
-            });
+            //});
             app.UseAuthentication();
             app.UseCors(options => options.AllowAnyOrigin());
             app.UseResponseCompression();
