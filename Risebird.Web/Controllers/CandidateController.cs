@@ -2820,7 +2820,7 @@ namespace Risebird.Web.Controllers
                         //var candidateDetails = await _candidateService.GetCandidatesDetails(irfId, candidateId);
                         model.IRFId = irfId;
                         model.IRFName = irfName;
-                        return View(model); 
+                        return View(model);
                     }
                     else
                     {
@@ -3059,7 +3059,7 @@ namespace Risebird.Web.Controllers
                             model.Message = TempData["SuccessErrorMessageCandidateResume"].ToString();
                             TempData.Remove("SuccessErrorMessageCandidateResume");
                         }
-                        return View(model); 
+                        return View(model);
                     }
                     else
                     {
@@ -3143,7 +3143,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 2].Value = "Skills Channel";
                 Sheet.Cells[1, 3].Value = "File Name";
                 Sheet.Cells[1, 4].Value = "Resume URL";
-                
+
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
                 //string LastAction = null; ;
@@ -3167,7 +3167,8 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 3].Value = resumeFileName;
 
                         if (!string.IsNullOrEmpty(item.ResumeLink))
-                        { Sheet.Cells[i, 4].Value = item.ResumeLink;
+                        {
+                            Sheet.Cells[i, 4].Value = item.ResumeLink;
                             //try
                             //{
                             //    Sheet.Cells[i, 4].Hyperlink = new Uri(item.ResumeLink, UriKind.Absolute);

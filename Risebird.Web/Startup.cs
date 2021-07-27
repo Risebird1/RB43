@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -63,7 +62,6 @@ namespace Risebird.Web
 
             services.AddSession(o =>
             {
-                o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 o.Cookie.Name = "Risebirdportal.Session";
                 o.Cookie.HttpOnly = true;
                 o.Cookie.IsEssential = true;
@@ -120,13 +118,13 @@ namespace Risebird.Web
             }
 
             app.UseSession();
-            app.UseCookiePolicy(new CookiePolicyOptions
-            {
-                HttpOnly = HttpOnlyPolicy.Always,
-                Secure = CookieSecurePolicy.Always,
-                MinimumSameSitePolicy = SameSiteMode.None
+            //app.UseCookiePolicy(new CookiePolicyOptions
+            //{
+            //    HttpOnly = HttpOnlyPolicy.Always,
+            //    Secure = CookieSecurePolicy.Always,
+            //    MinimumSameSitePolicy = SameSiteMode.None
 
-            });
+            //});
             app.UseAuthentication();
             app.UseCors(options => options.AllowAnyOrigin());
             app.UseResponseCompression();

@@ -8,6 +8,6 @@ namespace Risebird.CommonHelper.Interface
         Task MakePhoneCall(string userMobileNumber);
         Task SendWhatappMessageAsync(string msg, string userMobileNumber);
         Task<bool> AutoCallCandidate(string phoneNumber, int irfId, int candidateId, string loggedInEmail);
-        Task<string> callrecording(string callSid,string callbackUrl);
+        Task<string> callrecording(string callSid, string callbackUrl);
     }
 }

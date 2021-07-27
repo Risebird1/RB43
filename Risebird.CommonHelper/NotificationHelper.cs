@@ -164,7 +164,9 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("kamini@risebird.io", "Kamini"));
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("prasad_srinivas@risebird.io", "Prasad Srinivas"));
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("shweta_kadechkar@risebird.io", "Shweta Kadechkar"));
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("soumyashree_gudi@risebird.io", "Soumyashree Gudi"));
 
                 StringBuilder msgBody = new StringBuilder("Dear HR,");
                 msgBody.Append("\n");
