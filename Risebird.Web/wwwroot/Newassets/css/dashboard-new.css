@@ -185,17 +185,24 @@ body {
     font-size: 12px !important;
     background-color: #42A5F6 !important;
     position: absolute !important;
-    bottom: 355px !important;
-    right: -320% !important;
+    bottom: 62px !important;
+    right: -230% !important;
 }
-
+.close-btn {
+    border-radius: 5px !important;
+    font-size: 12px !important;
+    background-color: #42A5F6 !important;
+    position: absolute !important;
+    bottom: 150px !important;
+    right: -72% !important;
+}
 .ntschnext-btn {
     border-radius: 5px !important;
     font-size: 12px !important;
     background-color: #42A5F6 !important;
     position: absolute !important;
-    bottom: 90px !important;
-    right: -420% !important;
+    bottom: 95px !important;
+    right: -395% !important;
 }
 
 .jumbotron {
@@ -5573,6 +5580,9 @@ button.btn {
 }
 
 @media (max-width: 767px) {
+    #chardin-mask, .chardinjs-helper-layer, .chardinjs-tooltip {
+        display:none!important;
+    }
     .recommendation .multiselect.dropdown-toggle:after {
         left: 1% !important;
     }

@@ -123,7 +123,7 @@
                 element_position = this._get_offset(this.$el.get()[0]);
                 if (element_position) {
                     $('*').filter(function () {
-                        return $(this).css('position') == 'fixed';
+                        return $(this).css('position') === 'fixed';
                     }).each(function () {
                         $(this)[0].className += " chardinjs-no-fixed";
                     });
@@ -205,12 +205,12 @@
             chardinJs.prototype._get_position_distance = function (element) {
                 var positionString, _ref;
                 var helpref = element.getAttribute(this.data_attribute);
-                if (helpref[0] == '#' && this.data_helptext[helpref].position)
+                if (helpref[0] === '#' && this.data_helptext[helpref].position)
                     positionString = this.data_helptext[helpref].position;
                 else
                     positionString = element.getAttribute('data-position');
 
-                return (positionString == null ? 100 : parseInt(((_ref = positionString.split(':')) != null ? (_ref[1] || '').split(',')[1] : void 0) || 100, 10));
+                return (positionString === null ? 100 : parseInt(((_ref = positionString.split(':')) !== null ? (_ref[1] || '').split(',')[1] : void 0) || 100, 10));
             };
 
 
@@ -509,3 +509,4 @@
 
 }).call(this);
 
+//$('#toggleHelp').on('click', function () { $('.chardinjs-helper-layer').remove(); });
