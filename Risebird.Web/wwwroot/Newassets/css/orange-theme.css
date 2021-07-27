@@ -1,6 +1,6 @@
 
 body {
-    background: #ebecf1;
+    background: #ebecf1!important;
 }
 
 .main-panel {
@@ -762,7 +762,7 @@ input[type="radio"]:checked {
 }
 
 [data-tooltip]:after {
-    border-top: 8px solid hsl(0deg 0% 50%) !important;
+    border-top: 8px solid hsl(0deg, 0%, 50%) !important;
     border-right: 7px solid white !important;
     border-left: 7px solid white !important;
 }
@@ -846,18 +846,18 @@ input[type="radio"]:checked {
     z-index: 0;
     background: #dddddf !important;
 }
-@media only screen and (max-width: 767px) {
 
+@media only screen and (max-width: 767px) {
     .razorpay_btn button.form-control {
         width: 33.3%;
         float: left;
         border-right: 1px #cccccc54 solid;
     }
 }
-
 @media only screen and (max-width: 480px) {
     .razorpay_btn button.form-control {
         height: 50px;
         font-size: 10px !important;
     }
+    
 }

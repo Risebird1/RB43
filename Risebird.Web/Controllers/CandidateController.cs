@@ -3167,18 +3167,18 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 3].Value = resumeFileName;
 
                         if (!string.IsNullOrEmpty(item.ResumeLink))
-                        {
-                            try
-                            {
-                                Sheet.Cells[i, 4].Hyperlink = new Uri(item.ResumeLink, UriKind.Absolute);
-                                Sheet.Cells[i, 4].Value = "Resume";
-                                Sheet.Cells[i, 4].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 4].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                            }
-                            catch (Exception)
-                            {
-                                Sheet.Cells[i, 4].Value = "No Resume";
-                            }
+                        { Sheet.Cells[i, 4].Value = item.ResumeLink;
+                            //try
+                            //{
+                            //    Sheet.Cells[i, 4].Hyperlink = new Uri(item.ResumeLink, UriKind.Absolute);
+                            //    Sheet.Cells[i, 4].Value = "Resume";
+                            //    Sheet.Cells[i, 4].Style.Font.UnderLine = true;
+                            //    Sheet.Cells[i, 4].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            //}
+                            //catch (Exception)
+                            //{
+                            //    Sheet.Cells[i, 4].Value = "No Resume";
+                            //}
                         }
                         else
                         {
