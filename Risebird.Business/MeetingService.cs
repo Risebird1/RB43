@@ -791,15 +791,23 @@ namespace Risebird.Business
         //    //    return "Failed to assigned interview, Please contact Risebird HR.";
         //    //}
         //}
+
         public string AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate)
         {
             try
             {
-                var assignedMeeting = _meetingRespository.GetAllAssignedInterview(interviewerMail).Result.OrderByDescending(x => x.interviewDate).ToList();
+                //var assignedMeeting = _meetingRespository.GetAllAssignedInterview(interviewerMail).Result.OrderByDescending(x => x.interviewDate).ToList();
+                var assignedMeeting = _meetingRespository.GetAllAssignedInterviewsForTheWeek(interviewerMail).Result;
                 var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == interviewDate);
-                if (checkDateMeeting.Any())
+                if (checkDateMeeting != null && checkDateMeeting.Count() > 0)
                 {
-                    return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";
+                    return "Failed! You already have an interview scheduled at this time. Please contact Risebird HR.";
+                }
+                var clashingInterviews = assignedMeeting.Where(x => (x.interviewDate > interviewDate && x.interviewDate <= interviewDate.AddMinutes(30)) || (x.interviewDate < interviewDate && interviewDate.AddMinutes(-30) <= x.interviewDate));
+                if (clashingInterviews != null && clashingInterviews.Count() > 0)
+                {
+                    return "Failed! You already have an interview scheduled within 30 minutes. Please contact Risebird HR.";
+
                 }
                 return _meetingRespository.AssignYourself(meetingid, interviewerMail);
 
@@ -807,7 +815,7 @@ namespace Risebird.Business
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to assigned interview, Please contact Risebird HR.";
+                return "Failed to assign interview! Please contact Risebird HR.";
             }
             //try
             //{

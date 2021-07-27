@@ -92,13 +92,18 @@ namespace Risebird.Web.Controllers
                     var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                     foreach (var candidate in distinctCandidates)
                     {
+                        var firstData = new CandidateTimelineData();
                         var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
                         if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
                         {
-                            data = data.Where(x => x.confirmationStatus != 2);
-                            data = data.OrderByDescending(x => x.InterviewId);
+                            //data = data.Where(x => x.confirmationStatus != 2);
+                            //data = data.OrderByDescending(x => x.InterviewId);
+                            firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
                         }
-                        var firstData = data.FirstOrDefault();
+                        else
+                        {
+                            firstData = data.FirstOrDefault();
+                        }
 
                         var candidateTimeline = new CandidateTimelineVM();
 
@@ -124,7 +129,7 @@ namespace Risebird.Web.Controllers
                         {
                             scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
                             var scheduleStatusObjList = new List<TimelineStatus>();
-                            foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status"))
+                            foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status" && x.ScheduleStatusComments != CandidateStatusOptions.QCPending.GetDescription()))
                             {
                                 var scheduleStatusObj = new TimelineStatus();
                                 scheduleStatusObj.Date = item.ScheduleStatusDate.ToString("dd");
@@ -328,13 +333,18 @@ namespace Risebird.Web.Controllers
                     var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                     foreach (var candidate in distinctCandidates)
                     {
+                        var firstData = new CandidateTimelineData();
                         var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
                         if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
                         {
-                            data = data.Where(x => x.confirmationStatus != 2);
-                            data = data.OrderByDescending(x => x.InterviewId);
+                            //data = data.Where(x => x.confirmationStatus != 2);
+                            //data = data.OrderByDescending(x => x.InterviewId);
+                            firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
                         }
-                        var firstData = data.FirstOrDefault();
+                        else
+                        {
+                            firstData = data.FirstOrDefault();
+                        }
 
                         var candidateTimeline = new CandidateTimelineVM();
 
@@ -360,7 +370,7 @@ namespace Risebird.Web.Controllers
                         {
                             scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
                             var scheduleStatusObjList = new List<TimelineStatus>();
-                            foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status"))
+                            foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status" && x.ScheduleStatusComments != CandidateStatusOptions.QCPending.GetDescription()))
                             {
                                 var scheduleStatusObj = new TimelineStatus();
                                 scheduleStatusObj.Date = item.ScheduleStatusDate.ToString("dd");
@@ -606,7 +616,7 @@ namespace Risebird.Web.Controllers
                     {
                         scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
                         var scheduleStatusObjList = new List<TimelineStatus>();
-                        foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status"))
+                        foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status" && x.ScheduleStatusComments != CandidateStatusOptions.QCPending.GetDescription()))
                         {
                             var scheduleStatusObj = new TimelineStatus();
                             scheduleStatusObj.Date = item.ScheduleStatusDate.ToString("dd");
@@ -3157,18 +3167,18 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 3].Value = resumeFileName;
 
                         if (!string.IsNullOrEmpty(item.ResumeLink))
-                        {
-                            try
-                            {
-                                Sheet.Cells[i, 4].Hyperlink = new Uri(item.ResumeLink, UriKind.Absolute);
-                                Sheet.Cells[i, 4].Value = "Resume";
-                                Sheet.Cells[i, 4].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 4].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                            }
-                            catch (Exception)
-                            {
-                                Sheet.Cells[i, 4].Value = "No Resume";
-                            }
+                        { Sheet.Cells[i, 4].Value = item.ResumeLink;
+                            //try
+                            //{
+                            //    Sheet.Cells[i, 4].Hyperlink = new Uri(item.ResumeLink, UriKind.Absolute);
+                            //    Sheet.Cells[i, 4].Value = "Resume";
+                            //    Sheet.Cells[i, 4].Style.Font.UnderLine = true;
+                            //    Sheet.Cells[i, 4].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            //}
+                            //catch (Exception)
+                            //{
+                            //    Sheet.Cells[i, 4].Value = "No Resume";
+                            //}
                         }
                         else
                         {

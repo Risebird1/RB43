@@ -50,602 +50,631 @@
 
 }
 <script>
-    var Header = "<a id='commonpool_1'>Common Pool</a>";
+    var Header = "<a data-intro='Find Selected Candidate here which has been pass on by the different HR of your Organization' data-position='right' id='commonpool_1'>Common Pool</a>";
     $('#txtpageHeader').empty().html(Header);
 </script>
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
 <link href="~/Newassets/css/risetube.css?v=6" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+@*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />*@
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
+{
+
+
+    @if (HttpContextAccessor.HttpContext.Session.GetString("NCommonPoolIndex") != null)
+    {
+
+    }
+    else
+    {
+        <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="~/Newassets/js/chardinjs.js"></script>
+        <script src="~/Newassets/js/demo.js"></script>
+        HttpContextAccessor.HttpContext.Session.SetString("NCommonPoolIndex", "1");
+
+    }
+
+
+}
+
+
 <div class="main-panel" id="main-panel">
+    <div class="jumbotron">
+        <div class="pt30">
+            <div class="col-md-12 nopad" style="margin:0px;">
+                <div class="card-header bg-w clearfix">
+                    <div class="pull-left">
+                        <h4 class="card-title"></h4>
+                        <div class="mobile-view"> <h4 class="card-title">Common Pool</h4></div>
+                    </div>
 
-    <div class="pt30">
-        <div class="col-md-12 nopad" style="margin:0px;">
-            <div class="card-header bg-w clearfix">
-                <div class="pull-left">
-                    <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title">Common Pool</h4></div>
-                </div>
+                    <div class="pull-right">
+                        <div>
+                            <div id="commonpool_2" class="newsletter pull-left" data-intro='Enter Skill or Candidate name and Search result<br/><br/><a id="toggleHelp" href="javascript:void;" class="btn btn-primary close-btn">CLOSE</a>' data-position='bottom'>
 
-                <div class="pull-right">
-                    <div>
-                        <div id="commonpool_2" class="newsletter pull-left">
+                                <div class="content">
+                                    <div class="input-group" id="myForm">
+                                        <div class="searchbox">
+                                            <input type="email" id="txtsearch" value="@ViewBag.searchvalue" class="form-control txtsearch1" placeholder="Please enter Skills (or) Name Of candidate">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn3" id="btnSearch" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
 
-                            <div class="content">
-                                <div class="input-group" id="myForm">
-                                    <div class="searchbox">
-                                        <input type="email" id="txtsearch" value="@ViewBag.searchvalue" class="form-control txtsearch1" placeholder="Please enter Skills (or) Name Of candidate">
-                                        <span class="input-group-btn">
-                                            <button class="btn btn3" id="btnSearch" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
-
-                                            <span class="refresh" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
-                                        </span>
+                                                <span class="refresh" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
+
                             </div>
 
+                            <button id="commonpool_3" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 pull-left" data-toggle="modal" data-target="#filterModal">
+
+                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                <div class="mdc-button__ripple"></div>
+                            </button>
+
+
+
                         </div>
-
-                        <button id="commonpool_3" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 pull-left" data-toggle="modal" data-target="#filterModal">
-
-                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                            <div class="mdc-button__ripple"></div>
-                        </button>
-
-
-
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="content video client">
-        <div class="row bl-bg">
-            <div class="col-md-12">
-                <div class="mdc-card card bl-bg">
+        <div class="content video client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <img style="visibility:hidden" src="" data-position="right" />
+                    <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
+                    <div class="mdc-card card bl-bg">
 
-                    <div class="mdc-card-wrapper__text-section">
-                        <div class="loader text-center">
-                            <img src="~/Newassets/img/lazyload.gif" />
-                        </div>
-                        <div class="dataloading">
-
-                            <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-
-
-                                        <div class="filheader">
-                                            <div class="filavatar">
-                                                <span class="fa fa-filter"></span>
-                                            </div>
-                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
-                                        </div>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-
-
-                                        <form action="@Url.Action("Index","commonpool")" method="post" id="form">
-
-                                            <div class="modal-body">
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6 border-rv">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
-                                                                Start Date
-                                                            </label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <input id="StartDate" name="StartDate" type="date" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
-                                                                End Date
-                                                            </label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <input id="EndDate" name="EndDate" type="date" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    @if (ViewBag.ProfileName != "CuratedUser")
-                                                    {
-                                                        <div class="col-md-6 col-sm-6 border-rv">
-
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateName">
-                                                                    Candidate Name
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in ViewBag.CandidateList)
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
-
-                                                                        @foreach (var item in ViewBag.PrimarySkillList)
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
-                                                                    Selection Status
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
-                                                                    Client HR
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in ViewBag.ClientHrContactList)
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <input type="text" id="txtsearch" name="SearchFillter" value="@ViewBag.searchvalue" hidden />
-
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6 border-rv">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">End Client Name</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in ViewBag.ClientNameList)
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
-                                                                        <option value="Available">Available</option>
-                                                                        <option value="NotAvailable">NotAvailable</option>
-
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-
-
-                                                        </div>
-                                                    }
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateLocation">
-                                                                Candidate Location
-                                                            </label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in ViewBag.preferredLocationList)
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <div class="row">
-                                                                <div class="col-md-12 mc-button-area text-right">
-
-                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4  reset-filter">
-                                                                        Reset Filter
-                                                                    </button>
-
-
-
-                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
-                                                                        Apply Filter
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
+                        <div class="mdc-card-wrapper__text-section">
+                            <div class="loader text-center">
+                                <img src="~/Newassets/img/lazyload.gif" />
                             </div>
 
-                            <div class="video-block section-padding" id="VideoList">
-                                <div class="row">
-                                    @foreach (var item in Model)
-                                    {
-                                        var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-                                        var colorcode = "";
-                                        @if (item.CandidateAvailable == "Available" && !item.IsLock)
-                                        {
-                                            colorcode = "green";
-                                        }
-                                        else if (item.CandidateAvailable == "NotAvailable")
-                                        {
-                                            colorcode = "grey";
-                                        }
-                                        else if (item.IsLock)
-                                        {
-                                            colorcode = "black";
-                                        }
-                                        <div class="col-xl-3 col-sm-6 mb-3">
-                                            <div id="commonpool_@item.imid" class="video-card" style="border:3px solid @colorcode">
-                                                <div class="video-card-image">
-                                                    @if (item.MeetingPatchCount > 0)
-                                                    {
-                                                        <div class="count-bg"><span>@item.MeetingPatchCount</span></div>
-                                                    }
-                                                    @*@if (item.VideoLink.Contains(".mp4"))
-                                                    {
-                                                        @if (item.ThumbnailImage != null)
-                                                        {
-                                                            <img src="@item.ThumbnailImage" class="thumbnailImage" />
-                                                        }
-                                                        <video controls class="video-thumb">
-                                                            <source src="@item.VideoLink" type="video/mp4">
-                                                        </video>
-                                                       
-                                                        }
-                                                        @if (item.CandidateAvailable == "Available")
-                                                        {
-                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid })'" style=" cursor: pointer;"></a>
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        @if (item.ThumbnailImage != null)
-                                                        {
-                                                            <img src="@item.ThumbnailImage" class="thumb-height" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <img src="~/RiseTube/img/video-icon.png" class="thumb-height" />
-                                                        }
-                                                        @if (item.CandidateAvailable == "Available")
-                                                        {
-                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid })'" style=" cursor: pointer;"></a>
-                                                        }
-                                                    }*@
-                                                    @if (item.VideoLink != null && Url.Content(item.VideoLink) != null)
-                                                    {
-                                                        string appendTime;
-                                                        if (item.ThumbnailTimeSeconds == 0)
-                                                        {
-                                                            appendTime = configuration["ThumbnailTimeDefault"];
-                                                        }
-                                                        else
-                                                        {
-                                                            appendTime = item.ThumbnailTimeSeconds.ToString();
-                                                        }
-                                                        var src = item.VideoLink + "#t=" + appendTime;
+                            <div class="dataloading">
+
+                                <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
 
 
-                                                        <video class="video-thumb">
-                                                            <source src="@src" type="video/mp4">
-                                                        </video>
-                                                    }
-                                                    @if (item.CandidateAvailable == "Available")
-                                                    {
-                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid })'" style=" cursor: pointer;"></a>
-                                                    }
-
+                                            <div class="filheader">
+                                                <div class="filavatar">
+                                                    <span class="fa fa-filter"></span>
                                                 </div>
-                                                <div class="video-card-body">
-                                                    <div class="video-title">
+                                                <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                            </div>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
 
-                                                        @if (item.candidateName != null && item.candidateName != "")
+
+                                            <form action="@Url.Action("Index","commonpool")" method="post" id="form">
+
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                    Start Date
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                    End Date
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        @if (ViewBag.ProfileName != "CuratedUser")
                                                         {
-                                                            @if (@item.candidateName.Length > 10)
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateName">
+                                                                        Candidate Name
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in ViewBag.CandidateList)
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+
+                                                                            @foreach (var item in ViewBag.PrimarySkillList)
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
+                                                                        Selection Status
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in Model.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
+                                                                        Client HR
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in ViewBag.ClientHrContactList)
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <input type="text" id="txtsearch" name="SearchFillter" value="@ViewBag.searchvalue" hidden />
+
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">End Client Name</label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in ViewBag.ClientNameList)
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
+                                                                            <option value="Available">Available</option>
+                                                                            <option value="NotAvailable">NotAvailable</option>
+
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+
+
+                                                            </div>
+                                                        }
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateLocation">
+                                                                    Candidate Location
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in ViewBag.preferredLocationList)
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-md-12">
+                                                                <div class="row">
+                                                                    <div class="col-md-12 mc-button-area text-right">
+
+                                                                        <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4  reset-filter">
+                                                                            Reset Filter
+                                                                        </button>
+
+
+
+                                                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
+                                                                            Apply Filter
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="video-block section-padding" id="VideoList">
+
+                                    <div class="row">
+                                        @foreach (var item in Model)
+                                        {
+                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+                                            var colorcode = "";
+                                            @if (item.CandidateAvailable == "Available" && !item.IsLock)
+                                            {
+                                                colorcode = "green";
+                                            }
+                                            else if (item.CandidateAvailable == "NotAvailable")
+                                            {
+                                                colorcode = "grey";
+                                            }
+                                            else if (item.IsLock)
+                                            {
+                                                colorcode = "black";
+                                            }
+                                            <div class="col-xl-3 col-sm-6 mb-3">
+                                                <div id="commonpool_@item.imid" class="video-card" style="border:3px solid @colorcode">
+                                                    <div class="video-card-image">
+                                                        @if (item.MeetingPatchCount > 0)
+                                                        {
+                                                            <div class="count-bg"><span>@item.MeetingPatchCount</span></div>
+                                                        }
+                                                        @*@if (item.VideoLink.Contains(".mp4"))
                                                             {
+                                                                @if (item.ThumbnailImage != null)
+                                                                {
+                                                                    <img src="@item.ThumbnailImage" class="thumbnailImage" />
+                                                                }
+                                                                <video controls class="video-thumb">
+                                                                    <source src="@item.VideoLink" type="video/mp4">
+                                                                </video>
+
+                                                                }
                                                                 @if (item.CandidateAvailable == "Available")
                                                                 {
-                                                                    <a onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate-name pull-left candidate">@item.candidateName</span> </a>
+                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid })'" style=" cursor: pointer;"></a>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                @if (item.ThumbnailImage != null)
+                                                                {
+                                                                    <img src="@item.ThumbnailImage" class="thumb-height" />
                                                                 }
                                                                 else
                                                                 {
-                                                                    <a><span class="candidate-name pull-left candidate">@item.candidateName</span> </a>
+                                                                    <img src="~/RiseTube/img/video-icon.png" class="thumb-height" />
+                                                                }
+                                                                @if (item.CandidateAvailable == "Available")
+                                                                {
+                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid })'" style=" cursor: pointer;"></a>
+                                                                }
+                                                            }*@
+                                                        @if (item.VideoLink != null && Url.Content(item.VideoLink) != null)
+                                                        {
+                                                            string appendTime;
+                                                            if (item.ThumbnailTimeSeconds == 0)
+                                                            {
+                                                                appendTime = configuration["ThumbnailTimeDefault"];
+                                                            }
+                                                            else
+                                                            {
+                                                                appendTime = item.ThumbnailTimeSeconds.ToString();
+                                                            }
+                                                            var src = item.VideoLink + "#t=" + appendTime;
+
+
+                                                            <video class="video-thumb">
+                                                                <source src="@src" type="video/mp4">
+                                                            </video>
+                                                        }
+                                                        @if (item.CandidateAvailable == "Available")
+                                                        {
+                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid })'" style=" cursor: pointer;"></a>
+                                                        }
+
+                                                    </div>
+                                                    <div class="video-card-body">
+                                                        <div class="video-title">
+
+                                                            @if (item.candidateName != null && item.candidateName != "")
+                                                            {
+                                                                @if (@item.candidateName.Length > 10)
+                                                                {
+                                                                    @if (item.CandidateAvailable == "Available")
+                                                                    {
+                                                                        <a onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate-name pull-left candidate">@item.candidateName</span> </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <a><span class="candidate-name pull-left candidate">@item.candidateName</span> </a>
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="candidate pull-left">@item.candidateName</span>
                                                                 }
                                                             }
                                                             else
-                                                            {
-                                                                <span class="candidate pull-left">@item.candidateName</span>
-                                                            }
-                                                        }
-                                                        else
-                                                        { <span></span>}
+                                                            { <span></span>}
 
 
-                                                        @if (item.JDTiltle != null && item.JDTiltle != "")
-                                                        {
-                                                            @if (@item.JDTiltle.Length > 10)
+                                                            @if (item.JDTiltle != null && item.JDTiltle != "")
                                                             {
-                                                                <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time pull-left designation">@item.JDTiltle</span></a>
-                                                            }
-                                                            else
-                                                            {
-                                                                <span class="designation pull-left">@item.JDTiltle</span>
-                                                            }
-                                                        }
-                                                        else
-                                                        { <span></span>}
-                                                        <span class="pull-left">
-                                                            @if (item.CandidateAvailable == "Available")
-                                                            {
-                                                                <span class="available"> &nbsp; @item.CandidateAvailable</span>
-                                                            }
-                                                            else
-                                                            {
-                                                                <span class="unavailable"> &nbsp; @item.CandidateAvailable</span>}
-
-                                                        </span>
-                                                        <span class="pull-right">
-                                                            @if (item.CandidateAvailable == "Available")
-                                                            {
-                                                                @if (item.IsLock)
+                                                                @if (@item.JDTiltle.Length > 10)
                                                                 {
-                                                                    @if (item.UnlockVideo)
+                                                                    <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time pull-left designation">@item.JDTiltle</span></a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="designation pull-left">@item.JDTiltle</span>
+                                                                }
+                                                            }
+                                                            else
+                                                            { <span></span>}
+                                                            <span class="pull-left">
+                                                                @if (item.CandidateAvailable == "Available")
+                                                                {
+                                                                    <span class="available"> &nbsp; @item.CandidateAvailable</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="unavailable"> &nbsp; @item.CandidateAvailable</span>}
+
+                                                            </span>
+                                                            <span class="pull-right">
+                                                                @if (item.CandidateAvailable == "Available")
+                                                                {
+                                                                    @if (item.IsLock)
                                                                     {
-                                                                        <span class="pull-left" id="lock_@item.imid" style="display:block">
+                                                                        @if (item.UnlockVideo)
+                                                                        {
+                                                                            <span class="pull-left" id="lock_@item.imid" style="display:block">
+                                                                                <button class="lock-un">
+                                                                                    <span class="un-lock-icon" title="Locked by @item.EmailId" onclick="Lockvideo(@item.imid,0)">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="pull-left" id="lock_@item.imid" style="display:block">
+                                                                                <button class="lock-un">
+                                                                                    <span class="un-lock-icon" title="Locked by @item.EmailId">
+
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </span>
+                                                                        }
+                                                                        <span class="pull-left" id="unlock_@item.imid" style="display:none">
                                                                             <button class="lock-un">
-                                                                                <span class="un-lock-icon" title="Locked by @item.EmailId" onclick="Lockvideo(@item.imid,0)">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>
+                                                                                <span class="un-lock-icon" title="Lock" onclick="Lockvideo(@item.imid,1)">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z" /></svg>
                                                                                 </span>
                                                                             </button>
                                                                         </span>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <span class="pull-left" id="lock_@item.imid" style="display:block">
+                                                                        <span class="pull-left" id="lock_@item.imid" style="display:none">
                                                                             <button class="lock-un">
-                                                                                <span class="un-lock-icon" title="Locked by @item.EmailId">
+                                                                                <span class="un-lock-icon" title="Unlock" onclick="Lockvideo(@item.imid,0)">
 
                                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>
                                                                                 </span>
                                                                             </button>
                                                                         </span>
+                                                                        <span class="pull-left" id="unlock_@item.imid" style="display:block">
+                                                                            <button class="lock-un">
+                                                                                <span class="un-lock-icon" title="Lock" onclick="Lockvideo(@item.imid,1)">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z" /></svg>
+                                                                                </span>
+                                                                            </button>
+                                                                        </span>
                                                                     }
-                                                                    <span class="pull-left" id="unlock_@item.imid" style="display:none">
-                                                                        <button class="lock-un">
-                                                                            <span class="un-lock-icon" title="Lock" onclick="Lockvideo(@item.imid,1)">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z" /></svg>
-                                                                            </span>
-                                                                        </button>
-                                                                    </span>
                                                                 }
-                                                                else
-                                                                {
-                                                                    <span class="pull-left" id="lock_@item.imid" style="display:none">
-                                                                        <button class="lock-un">
-                                                                            <span class="un-lock-icon" title="Unlock" onclick="Lockvideo(@item.imid,0)">
-
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>
-                                                                            </span>
-                                                                        </button>
-                                                                    </span>
-                                                                    <span class="pull-left" id="unlock_@item.imid" style="display:block">
-                                                                        <button class="lock-un">
-                                                                            <span class="un-lock-icon" title="Lock" onclick="Lockvideo(@item.imid,1)">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(136,136,136)" d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z" /></svg>
-                                                                            </span>
-                                                                        </button>
-                                                                    </span>
-                                                                }
-                                                            }
-                                                        </span>
-
-
-                                                        @if (item.MobileNumber != null)
-                                                        {
-                                                            <span class="call-wrap">
-                                                                <button class="call-btn" aria-label="Call">
-                                                                    <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="15" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                </button>
                                                             </span>
-                                                        }
-                                                    </div>
-
-                                                    <div class="video-page text-success">
-                                                        @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@
-
-                                                    </div>
-                                                    <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
-                                                        <i class="fas fa-calendar-alt"></i>
-                                                        <span>@item.interviewDate</span>
-                                                    </div>
-                                                    <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
-                                                        <span class="pull-left">Tech Skill Score:</span>
-
-                                                        <span class="pull-left">@(item.TechSkillScore)%</span>
 
 
-                                                    </div>
-
-
-                                                    <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
-
-
-                                                        <span class="notice"> Notice Period: </span>
-
-                                                        @if (item.joiningTime != null && item.joiningTime != "")
-                                                        {
-                                                            @if (item.joiningTime.Length > 12)
+                                                            @if (item.MobileNumber != null)
                                                             {
-
-                                                                <a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>
+                                                                <span class="call-wrap">
+                                                                    <button class="call-btn" aria-label="Call">
+                                                                        <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="15" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                    </button>
+                                                                </span>
                                                             }
-                                                            else
+                                                        </div>
+
+                                                        <div class="video-page text-success">
+                                                            @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@
+
+                                                        </div>
+                                                        <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                            <i class="fas fa-calendar-alt"></i>
+                                                            <span>@item.interviewDate</span>
+                                                        </div>
+                                                        <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+                                                            <span class="pull-left">Tech Skill Score:</span>
+
+                                                            <span class="pull-left">@(item.TechSkillScore)%</span>
+
+
+                                                        </div>
+
+
+                                                        <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+
+
+                                                            <span class="notice"> Notice Period: </span>
+
+                                                            @if (item.joiningTime != null && item.joiningTime != "")
                                                             {
-                                                                <span class="join"> @item.joiningTime</span>
-                                                            }
-                                                        }
-                                                        else
-                                                        { <span></span>}
-                                                    </div>
-
-                                                    <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
-                                                        <span>Status:</span>
-                                                        @if (item.InterviewStatus == 4)
-                                                        {
-                                                            <span style="color:palevioletred">Border Line</span>
-                                                        }
-
-                                                        else if (item.InterviewStatus == 2)
-                                                        {
-                                                            <span style="color:green">Selected</span>
-
-                                                        }
-                                                    </div>
-                                                    <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
-                                                        <span>Expected Salary:</span>
-                                                        @if (item.expectedPerHourRate != null && item.expectedPerHourRate != "")
-                                                        {
-                                                            @if (@item.expectedPerHourRate.Length > 5)
-                                                            {
-                                                                <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>}
-
-                                                            else
-                                                            {
-                                                                <span>@item.expectedPerHourRate</span>}
-                                                        }
-                                                        else
-                                                        { <span></span>}
-                                                    </div>
-
-                                                    <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
-
-                                                        <span>Location:</span>
-                                                        <span>
-
-                                                            @if (item.preferredLocation != null && item.preferredLocation != "")
-                                                            {
-                                                                @if (@item.preferredLocation.Length > 10)
+                                                                @if (item.joiningTime.Length > 12)
                                                                 {
-                                                                    <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.preferredLocation</span></a>}
+
+                                                                    <a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>
+                                                                }
                                                                 else
-                                                                {<span>@item.preferredLocation</span>}
+                                                                {
+                                                                    <span class="join"> @item.joiningTime</span>
+                                                                }
                                                             }
                                                             else
                                                             { <span></span>}
-                                                        </span>
+                                                        </div>
+
+                                                        <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+                                                            <span>Status:</span>
+                                                            @if (item.InterviewStatus == 4)
+                                                            {
+                                                                <span style="color:palevioletred">Border Line</span>
+                                                            }
+
+                                                            else if (item.InterviewStatus == 2)
+                                                            {
+                                                                <span style="color:green">Selected</span>
+
+                                                            }
+                                                        </div>
+                                                        <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                            <span>Expected Salary:</span>
+                                                            @if (item.expectedPerHourRate != null && item.expectedPerHourRate != "")
+                                                            {
+                                                                @if (@item.expectedPerHourRate.Length > 5)
+                                                                {
+                                                                    <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>}
+
+                                                                else
+                                                                {
+                                                                    <span>@item.expectedPerHourRate</span>}
+                                                            }
+                                                            else
+                                                            { <span></span>}
+                                                        </div>
+
+                                                        <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+
+                                                            <span>Location:</span>
+                                                            <span>
+
+                                                                @if (item.preferredLocation != null && item.preferredLocation != "")
+                                                                {
+                                                                    @if (@item.preferredLocation.Length > 10)
+                                                                    {
+                                                                        <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.preferredLocation</span></a>}
+                                                                    else
+                                                                    {<span>@item.preferredLocation</span>}
+                                                                }
+                                                                else
+                                                                { <span></span>}
+                                                            </span>
+
+                                                        </div>
 
                                                     </div>
-
                                                 </div>
                                             </div>
-                                        </div>
-                                    }
+                                        }
+                                    </div>
+
                                 </div>
+                                <hr>
+                                @foreach (var item in Model)
+                                {
+                                    <p>
+                                        @item.PageNumber of @item.interviewVediosequence
+                                    </p>
+                                    break;
+                                }
+                                @Html.PagedListPager(Model, Page => Url.Action("Index", new { Page = Page }))
                             </div>
-                            <hr>
-                            @foreach (var item in Model)
-                            {
-                                <p>
-                                    @item.PageNumber of @item.interviewVediosequence
-                                </p>
-                                break;
-                            }
-                            @Html.PagedListPager(Model, Page => Url.Action("Index", new { Page = Page }))
+
+
+
+
+
                         </div>
-
-
-
-
                     </div>
+
                 </div>
-
             </div>
-        </div>
 
-        <div id="myCallModal" class="modal modal-wrap modal-bg">
-            <!-- Modal content -->
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-
+            <div id="myCallModal" class="modal modal-wrap modal-bg">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
 
 
 
-                    <div class="filheader">
-                        <div class="filavatar">
-                            <span class="publicsharing-icon">
+
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon">
 
 
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
-                            </span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                                </span>
+                            </div>
+                            <h5 class="modal-title pull-left"> Call Candidate !</h5>
                         </div>
-                        <h5 class="modal-title pull-left"> Call Candidate !</h5>
-                    </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
-                    </button>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
 
 
 
 
-                    <div class="modal-body">
+                        <div class="modal-body">
 
-                        <h5 class="modal-title text-center mt-20" id="callingLabel"></h5>
+                            <h5 class="modal-title text-center mt-20" id="callingLabel"></h5>
 
-                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 0px auto;
+                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 0px auto;
     display: block;" class="btn btn-fill btn-danger" value="Hang Up">
 
+                        </div>
+
                     </div>
 
                 </div>
-
             </div>
+
         </div>
 
     </div>
-
 </div>
-
 
 
 
@@ -657,7 +686,7 @@
 
 
 <!-- Bootstrap core JavaScript-->
-<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
+@*<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>*@
 
 <!-- Core plugin JavaScript-->
 <script src="~/RiseTube/vendor/jquery-easing/jquery.easing.min.js"></script>
@@ -969,227 +998,226 @@
         }, 10000)
     </script>
 }
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
-{
+@*
+    @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
+    {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
 
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
-
-    <script type="text/javascript">
-        hopscotch.registerHelper('addOverlay', function () {
-            $('body').append('<div class="overlay"></div>');
-        });
-
-        hopscotch.registerHelper('removeOverlay', function () {
-            $('.overlay').fadeOut(function () {
-                $(this).remove();
-                $('.helper').remove();
+        <script type="text/javascript">
+            hopscotch.registerHelper('addOverlay', function () {
+                $('body').append('<div class="overlay"></div>');
             });
-        });
 
-        hopscotch.listen('show', function () {
-            var elementObject = $(hopscotch.getCurrTarget(tour));
-            var element = $('#' + elementObject[0].id);
+            hopscotch.registerHelper('removeOverlay', function () {
+                $('.overlay').fadeOut(function () {
+                    $(this).remove();
+                    $('.helper').remove();
+                });
+            });
 
-            element.prev().removeClass('overlay-relative');
-            element.addClass('overlay-relative');
+            hopscotch.listen('show', function () {
+                var elementObject = $(hopscotch.getCurrTarget(tour));
+                var element = $('#' + elementObject[0].id);
 
-            if ($('.helper').length !== 0) {
+                element.prev().removeClass('overlay-relative');
+                element.addClass('overlay-relative');
 
-                // Use Helper Layer for hilight target element.
-                var helper = $('.helper');
-                var padding = 5;
-                var helperPosX = element.position().left - padding;
-                var helperPosY = element.position().top - padding;
-                var targetWidth = element.outerWidth();
-                var targetHeight = element.outerHeight();
+                if ($('.helper').length !== 0) {
 
-                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+                    // Use Helper Layer for hilight target element.
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
 
-                helper.css('width', targetWidth);
-                helper.css('height', targetHeight);
-                helper.offset({ left: helperPosX, top: helperPosY });
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-            } else {
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
 
-                // Add Helper Layer for highlight target element.
-                var newHelper = '<div class="helper"></div>';
-                $('body').append(newHelper);
+                } else {
 
-                var helper = $('.helper');
-                var padding = 5;
-                var helperPosX = element.position().left - padding;
-                var helperPosY = element.position().top - padding;
-                var targetWidth = element.outerWidth();
-                var targetHeight = element.outerHeight();
+                    // Add Helper Layer for highlight target element.
+                    var newHelper = '<div class="helper"></div>';
+                    $('body').append(newHelper);
 
-                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
 
-                helper.css('width', targetWidth);
-                helper.css('height', targetHeight);
-                helper.offset({ left: helperPosX, top: helperPosY });
-            }
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-        });
-
-        var tour = {
-            id: "hello-hopscotch",
-            showCloseButton: false,
-            steps: [
-                {
-                    title: "CommonPool",
-                    content: "Find selected candidate here which has been pass on by the different HR of your organization",
-                    target: "commonpool_1",
-                    placement: "bottom",
-                    showPrevButton: true,
-
-                    highlight: true,
-                    zindex: 999999,
-                    yOffset: 10,
-
-                    onCTA: function () {
-                        hopscotch.showStep(2);
-                        $('#commonpool_1').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onNext: function () {
-                        $('#commonpool_1').removeClass('overlay-relative');
-                        $('.helper').remove();
-
-                    }
-                },
-
-
-                {
-                    title: "Candidate Stats Menu",
-                    content: "Click on Candidate Stats menu to see its features",
-                    target: "status_menu",
-                    placement: "top",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    yOffset: 10,
-                    xOffset: 10,
-                    arrowOffset: 'left',
-                    onNext: function () {
-                        $('#status_menu').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#status_menu').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-                //{
-                //    title: "Search",
-                //    content: "Enter Skill or Candidate name and Search result",
-                //    target: "commonpool_2",
-                //    placement: "left",
-                //    showPrevButton: true,
-
-                //    zindex: 999999,
-                //    xOffset: 0,
-                //    yOffset: -10,
-                //    onPrev: function () {
-
-                //        $('#commonpool_2').removeClass('overlay-relative');
-                //        $('.helper').remove();
-                //    },
-
-                //    onNext: function () {
-
-                //        $('#commonpool_2').removeClass('overlay-relative');
-                //        $('.helper').remove();
-                //    },
-
-
-                //},
-                //{
-                //    title: "Filter",
-                //    content: "Filter here based on available attributes or reset filter if applied earlier",
-                //    target: "commonpool_3",
-                //    showPrevButton: true,
-                //    placement: "left",
-                //    zindex: 999999,
-                //    xOffset: 5,
-                //    yOffset: -20,
-                //    onPrev: function () {
-
-                //        $('#commonpool_3').removeClass('overlay-relative');
-                //        $('.helper').remove();
-                //    },
-                //    onNext: function () {
-
-                //        $('#commonpool_3').removeClass('overlay-relative');
-                //        $('.helper').remove();
-                //    },
-
-                //},
-                //{
-                //    title: "Candidate Video",
-                //    content: "Click here to see the Candidate Video & detailed feedback",
-                //    target: "commonpool_4",
-                //    showPrevButton: true,
-                //    zindex: 999999,
-                //    placement: "bottom",
-                //    xOffset: 0,
-                //    yOffset: 0,
-
-                //    onNext: function () {
-                //        $('#commonpool_4').removeClass('overlay-relative');
-                //        $('.helper').remove();
-                //    },
-                //    onPrev: function () {
-                //        $('#commonpool_4').removeClass('overlay-relative');
-                //        $('.helper').remove();
-                //    }
-                //},
-
-
-            ],
-            onStart: ["addOverlay"],
-            onEnd: ["removeOverlay"],
-        };
-
-        hopscotch.startTour(tour);
-
-    </script>
-
-
-    @*<script src="~/Newassets/js/enjoyhint.min.js"></script>
-        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-        <script>
-
-            var enjoyhint_instance = new EnjoyHint({});
-
-            var enjoyhint_script_steps = [
-                {
-                    'next #commonpoolid': 'CommonPool! Selected Candidate Videos will be available over here  and click on continue to know its features',
-                    'nextButton': { className: "myNext", text: "Continue" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btn3': 'Enter Skill or Candidate name and Search result',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btn4': 'Filter here based on available attributes or reset filter if applied earlier',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'click .video-card': 'Click here to see the Candidate Video',
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
                 }
 
-            ];
-            setTimeout(function () {
-                enjoyhint_instance.set(enjoyhint_script_steps);
-                enjoyhint_instance.run();
-            }, 10000)
-        </script>*@
+            });
+
+            var tour = {
+                id: "hello-hopscotch",
+                showCloseButton: false,
+                steps: [
+                    {
+                        title: "CommonPool",
+                        content: "Find selected candidate here which has been pass on by the different HR of your organization",
+                        target: "commonpool_1",
+                        placement: "bottom",
+                        showPrevButton: true,
+
+                        highlight: true,
+                        zindex: 999999,
+                        yOffset: 10,
+
+                        onCTA: function () {
+                            hopscotch.showStep(2);
+                            $('#commonpool_1').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onNext: function () {
+                            $('#commonpool_1').removeClass('overlay-relative');
+                            $('.helper').remove();
+
+                        }
+                    },
+
+
+                    {
+                        title: "Candidate Stats Menu",
+                        content: "Click on Candidate Stats menu to see its features",
+                        target: "status_menu",
+                        placement: "top",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: 10,
+                        xOffset: 10,
+                        arrowOffset: 'left',
+                        onNext: function () {
+                            $('#status_menu').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#status_menu').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+                    //{
+                    //    title: "Search",
+                    //    content: "Enter Skill or Candidate name and Search result",
+                    //    target: "commonpool_2",
+                    //    placement: "left",
+                    //    showPrevButton: true,
+
+                    //    zindex: 999999,
+                    //    xOffset: 0,
+                    //    yOffset: -10,
+                    //    onPrev: function () {
+
+                    //        $('#commonpool_2').removeClass('overlay-relative');
+                    //        $('.helper').remove();
+                    //    },
+
+                    //    onNext: function () {
+
+                    //        $('#commonpool_2').removeClass('overlay-relative');
+                    //        $('.helper').remove();
+                    //    },
+
+
+                    //},
+                    //{
+                    //    title: "Filter",
+                    //    content: "Filter here based on available attributes or reset filter if applied earlier",
+                    //    target: "commonpool_3",
+                    //    showPrevButton: true,
+                    //    placement: "left",
+                    //    zindex: 999999,
+                    //    xOffset: 5,
+                    //    yOffset: -20,
+                    //    onPrev: function () {
+
+                    //        $('#commonpool_3').removeClass('overlay-relative');
+                    //        $('.helper').remove();
+                    //    },
+                    //    onNext: function () {
+
+                    //        $('#commonpool_3').removeClass('overlay-relative');
+                    //        $('.helper').remove();
+                    //    },
+
+                    //},
+                    //{
+                    //    title: "Candidate Video",
+                    //    content: "Click here to see the Candidate Video & detailed feedback",
+                    //    target: "commonpool_4",
+                    //    showPrevButton: true,
+                    //    zindex: 999999,
+                    //    placement: "bottom",
+                    //    xOffset: 0,
+                    //    yOffset: 0,
+
+                    //    onNext: function () {
+                    //        $('#commonpool_4').removeClass('overlay-relative');
+                    //        $('.helper').remove();
+                    //    },
+                    //    onPrev: function () {
+                    //        $('#commonpool_4').removeClass('overlay-relative');
+                    //        $('.helper').remove();
+                    //    }
+                    //},
+
+
+                ],
+                onStart: ["addOverlay"],
+                onEnd: ["removeOverlay"],
+            };
+
+            hopscotch.startTour(tour);
+
+        </script>
+
+
+     <script src="~/Newassets/js/enjoyhint.min.js"></script>
+            <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+            <script>
+
+                var enjoyhint_instance = new EnjoyHint({});
+
+                var enjoyhint_script_steps = [
+                    {
+                        'next #commonpoolid': 'CommonPool! Selected Candidate Videos will be available over here  and click on continue to know its features',
+                        'nextButton': { className: "myNext", text: "Continue" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .btn3': 'Enter Skill or Candidate name and Search result',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .btn4': 'Filter here based on available attributes or reset filter if applied earlier',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'click .video-card': 'Click here to see the Candidate Video',
+                    }
+
+                ];
+                setTimeout(function () {
+                    enjoyhint_instance.set(enjoyhint_script_steps);
+                    enjoyhint_instance.run();
+                }, 10000)
+            </script>*@
 }
 
 <script>
@@ -1206,76 +1234,83 @@
             // Set up the Twilio Client Device with the token
             Twilio.Device.setup(data.token);
         });
-    });
+        //});
 
-    /* Callback to let us know Twilio Client is ready */
-    Twilio.Device.ready(function (device) {
+        /* Callback to let us know Twilio Client is ready */
+        Twilio.Device.ready(function (device) {
 
-    });
+        });
 
-    function callCandidate(phoneNumber) {
-        var params = { "phoneNumber": phoneNumber };
-        Twilio.Device.connect(params);
-    }
-    function hangUp() {
-        Twilio.Device.disconnectAll();
-    }
+        function callCandidate(phoneNumber) {
+            var params = { "phoneNumber": phoneNumber };
+            Twilio.Device.connect(params);
+        }
+        function hangUp() {
+            Twilio.Device.disconnectAll();
+        }
 
-    Twilio.Device.connect(function (connection) {
-        var appendText = "In call with " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-    });
+        Twilio.Device.connect(function (connection) {
+            var appendText = "In call with " + "<b>" + candidate + "</b>";
+            document.getElementById("callingLabel").innerHTML = appendText;
+        });
 
-    function afterTimeOut() {
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
+        function afterTimeOut() {
+            var modal = document.getElementById("myCallModal");
+            modal.style.display = "none";
+        }
 
-    Twilio.Device.disconnect(function (connection) {
-        var appendText = "Call disconnected! ";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        setTimeout(afterTimeOut, 2000);
+        Twilio.Device.disconnect(function (connection) {
+            var appendText = "Call disconnected! ";
+            document.getElementById("callingLabel").innerHTML = appendText;
+            setTimeout(afterTimeOut, 2000);
 
-    });
+        });
 
-    function CallButtonClick(name, phoneNumber) {
-        candidate = name;
-        // Get the modal
-        var modal = document.getElementById("myCallModal");
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
-        var appendText = "Calling... " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        callCandidate(phoneNumber);
-    }
-    function closeCallPopUp() {
-        hangUp();
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
-    function Lockvideo(interviewid, islock) {
-        $.ajax({
-            url: '/CommonPool/LockorUnlockVideo',
-            data: { 'imid': interviewid, 'islock': islock },
-            success: function (data) {
-                if (data == "Success") {
-                    if (islock == 0) {
-                        swal.fire("Profile Unlocked Successfully");
-                        document.getElementById("unlock_" + interviewid).style.display = "block";
-                        document.getElementById("lock_" + interviewid).style.display = "none";
-                        document.getElementById("commonpool_" + interviewid).style.border = "3px solid green";
+        function CallButtonClick(name, phoneNumber) {
+            candidate = name;
+            // Get the modal
+            var modal = document.getElementById("myCallModal");
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+            var appendText = "Calling... " + "<b>" + candidate + "</b>";
+            document.getElementById("callingLabel").innerHTML = appendText;
+            callCandidate(phoneNumber);
+        }
+        function closeCallPopUp() {
+            hangUp();
+            var modal = document.getElementById("myCallModal");
+            modal.style.display = "none";
+        }
+        function Lockvideo(interviewid, islock) {
+            $.ajax({
+                url: '/CommonPool/LockorUnlockVideo',
+                data: { 'imid': interviewid, 'islock': islock },
+                success: function (data) {
+                    if (data == "Success") {
+                        if (islock == 0) {
+                            swal.fire("Profile Unlocked Successfully");
+                            document.getElementById("unlock_" + interviewid).style.display = "block";
+                            document.getElementById("lock_" + interviewid).style.display = "none";
+                            document.getElementById("commonpool_" + interviewid).style.border = "3px solid green";
 
-                    } else {
-                        swal.fire("Profile Locked Successfully");
-                        document.getElementById("lock_" + interviewid).style.display = "block";
-                        document.getElementById("unlock_" + interviewid).style.display = "none";
-                        document.getElementById("commonpool_" + interviewid).style.border = "3px solid black";
+                        } else {
+                            swal.fire("Profile Locked Successfully");
+                            document.getElementById("lock_" + interviewid).style.display = "block";
+                            document.getElementById("unlock_" + interviewid).style.display = "none";
+                            document.getElementById("commonpool_" + interviewid).style.border = "3px solid black";
+                        }
                     }
                 }
-            }
-        });
-    }
+            });
+        }
 
 </script>
 
+
+@*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
+    {
+        <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="~/Newassets/js/chardinjs.js"></script>
+        <script src="~/Newassets/js/demo.js"></script>
+    }*@
 

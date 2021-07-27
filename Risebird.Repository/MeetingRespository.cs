@@ -627,6 +627,32 @@ namespace Risebird.Repository
 
         }
 
+        public async Task<IEnumerable<Meeting>> GetAllAssignedInterviewsForTheWeek(string emailID)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("emailID", emailID);
+                    parameters.Add("DateToday", DateTime.Now);
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_GetAllAssignedInterviewsForTheWeek", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
+
         public async Task<IEnumerable<Meeting>> GetCandidateInterviews(string emailID, string status)
         {
             try

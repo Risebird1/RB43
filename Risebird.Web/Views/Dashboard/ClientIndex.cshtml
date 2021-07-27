@@ -9,7 +9,16 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
-
+<style>
+    body {
+        overflow-y: hidden;
+        min-height: 1100px !important;
+    }
+      
+    .chardinjs-overlay {
+        position: absolute !important;
+    }
+</style>
 <script>
     var Header = "<a  style='line-height:50px;'><span id='clientdashboard_1'>Dashboard</span></a>";
     $('#txtpageHeader').empty().html(Header);
@@ -19,11 +28,31 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+@*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />*@
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
 <!-- END PLUGINS -->
 <!-- START THIS PAGE PLUGINS-->
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" defer>
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
+{
+    @if (HttpContextAccessor.HttpContext.Session.GetString("NClientIndex") != null)
+    {
+
+        }
+        else
+        {
+        <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="~/Newassets/js/chardinjs.js"></script>
+        <script src="~/Newassets/js/demo.js"></script>
+        HttpContextAccessor.HttpContext.Session.SetString("NClientIndex", "1");
+
+    }
+
+   
+}
 
 
 <!-- END THIS PAGE PLUGINS-->
@@ -35,226 +64,229 @@
     <!-- End Navbar -->
     <!-- START PAGE CONTAINER -->
     <div class="page-container">
+        <div class="jumbotron">
 
-
-        <div class="page-content">
-            <div class="panel-header panel-header-sm">
-            </div>
-            <!-- PAGE CONTENT WRAPPER -->
-            <div class="page-content-wrap dashboard">
-
-                <!-- START DASHBOARD CHART -->
-                <div class="row">
-                    <div class="col-md-12">
-
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <div class="panel-title-box">
-                                    <h3><span id="clientdashboard_2">Daily Interview Tracking</span></h3>
-
-                                </div>
-                                <ul class="panel-controls" style="margin-top: 2px;">
-                                    <li>
-                                        <div id="clientdashboard_3" class="col-md-12 col-sm-12 nopad interview-date">
-                                            <input id="interviewTrackingDate" name="interviewTrackingDate" type="date" class="form-control">
-                                        </div>
-                                    </li>
-                                    <li><button onclick="changeInterviewTracking()" class="panel-fullscreen"><span class="fa fa-eye"></span></button></li>
-
-                                </ul>
-                            </div>
-                            <div class="panel-body">
-                                <div class="chart-holder" id="area-chart" style="height: 200px;"></div>
-                                <div class="block-full-width">
-                                </div>
-                            </div>
-
-
-                        </div>
-                    </div>
+            <div class="page-content">
+                <div class="panel-header panel-header-sm">
                 </div>
+                <!-- PAGE CONTENT WRAPPER -->
+                <div class="page-content-wrap dashboard">
 
-                <div class="row">
-                    <div class="skill">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <div class="panel-title-box">
-                                    <h3><span id="clientdashboard_4">Interview Analysis</span></h3>
+                    <!-- START DASHBOARD CHART -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <img style="visibility:hidden" src="img/chardin.png" data-position="right" />
+                            <a style="visibility: hidden; position: absolute;top: -1px;" data-toggle="chardinjs" data-position="left">See it in action</a>
 
-                                </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="panel-title-box">
+                                        <h3><span id="clientdashboard_2" data-intro="Overview & track the daily Interviews Scheduled" data-position="right">Daily Interview Tracking</span></h3>
 
-                            </div>
-
-
-                            <div class="panel-body">
-                                <div id="myFunnelChart" class="Funnelid"></div>
-
-
-
-
-
-                            </div>
-
-                        </div>
-
-                    </div>
-                    <div class="daily-interview">
-
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <div class="panel-title-box">
-                                    <h3><span id="clientdashboard_5">Daily Interview Stats</span></h3>
-
-                                </div>
-                                <ul class="panel-controls" style="margin-top: 2px;">
-
-                                    <li>
-                                        <div id="clientdashboard_6" class="col-md-12 col-sm-12 nopad interview-date">
-                                            <input id="interviewSlotsDate" name="interviewSlotsDate" type="date" class="form-control">
-                                        </div>
-                                    </li>
-                                    <li>
-
-                                        <button onclick="getInterviewSlots()" class="panel-fullscreen"><span class="fa fa-eye"></span></button>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div id="slotsId">
-                                <div class="panel-body panel-body-table">
-                                    <div class="min-h">
-                                        @if (Model.DailyMeetingResultsSlots != null && Model.DailyMeetingResultsSlots.Count() > 0)
-                                        {
-
-                                            <div class="sb-container scroller-height">
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th width="30%" class="text-center"><strong>Skill</strong></th>
-                                                                <th width="20%" class="text-center"><strong>Morning Count(s)</strong></th>
-                                                                <th width="20%" class="text-center"><strong>Evening Count(s)</strong></th>
-                                                                <th width="50%" class="text-center"><strong>Result</strong></th>
-
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-
-                                                            @{
-                                                                foreach (var item in Model.DailyMeetingResultsSlots)
-                                                                {
-                                                                    <tr>
-                                                                        <td class="text-center"><strong>@(item.IRFnSkill.Split('(')[1].Split(')')[0])</strong></td>
-                                                                        <td class="text-center"><strong>@item.Morning</strong></td>
-                                                                        <td class="text-center"><strong>@item.Evening</strong></td>
-                                                                        <td class="text-center"><a class="selected" href="#" data-toggle="tooltip" title="Selected : @item.Selected"><span><strong>@item.Selected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @item.Rejected"><span><strong>@item.Rejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @item.BorderLine"><span><strong>@item.BorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @item.Proxy"><span><strong>@item.Proxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @item.NoShowCount"><span><strong>@item.NoShowCount </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @item.ScheduledCount"><span><strong>@item.ScheduledCount </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @item.DroppedCount"><span><strong>@item.DroppedCount</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @item.Pending"><span><strong>@item.Pending</strong></span></a></td>
-
-                                                                    </tr>
-
-                                                                }
-                                                            }
-
-
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-
-
+                                    </div>
+                                    <ul class="panel-controls" style="margin-top: 2px;">
+                                        <li>
+                                            <div id="clientdashboard_3" class="col-md-12 col-sm-12 nopad interview-date">
+                                                <input id="interviewTrackingDate" name="interviewTrackingDate" type="date" class="form-control">
                                             </div>
-                                            <div class="legend">
+                                        </li>
+                                        <li><button onclick="changeInterviewTracking()" class="panel-fullscreen"><span class="fa fa-eye"></span></button></li>
 
-                                                <ul>
-                                                    <li><div class="g color"></div>Selected</li>
-                                                    <li><div class="r color"></div>Rejected</li>
-                                                    <li><div class="b color"></div>BorderLine</li>
-                                                    <li><div class="pr color"></div>Proxy</li>
-                                                    <li><div class="ns color"></div>NoShow</li>
-                                                    <li><div class="sch color"></div>Schedule</li>
-                                                    <li><div class="dr color"></div>Dropped</li>
-                                                    <li><div class="pe color"></div>Pending</li>
-
-                                                </ul>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <div>No interviews for this day!</div>
-                                        }
+                                    </ul>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="chart-holder" id="area-chart" style="height: 200px;"></div>
+                                    <div class="block-full-width">
                                     </div>
                                 </div>
+
+
                             </div>
-
-
                         </div>
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <div class="panel-title-box">
-                                    <h3><span><strong>Candidate Survey Feedback</strong></span></h3>
+                    </div>
+
+                    <div class="row">
+                        <div class="skill">
+                            <div class="panel panel-default" data-intro="<span style='font-size:16px;'>Interview Analysis <span style='font-size:13px;'><br/>(Showing last 30 Days data)</span> </span><hr class='btop' />1. Risebird Selection <br/> 2. Interview Completed <br/> 3. Total Candidates" data-position="top">
+                                <div class="panel-heading">
+                                    <div class="panel-title-box">
+                                        <h3><span id="clientdashboard_4">Interview Analysis</span></h3>
+
+                                    </div>
 
                                 </div>
 
+
+                                <div class="panel-body">
+                                    <div id="myFunnelChart" class="Funnelid"></div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="daily-interview">
+
+                            <div class="panel panel-default" data-intro="<span style='font-size:16px;'>Track daily interviews based on</span><hr class='btop' /> 1. Skill Channel <br/> 2. Status" data-position="top">
+                                <div class="panel-heading">
+                                    <div class="panel-title-box">
+                                        <h3><span id="clientdashboard_5">Daily Interview Stats</span></h3>
+
+                                    </div>
+                                    <ul class="panel-controls" style="margin-top: 2px;">
+
+                                        <li>
+                                            <div id="clientdashboard_6" class="col-md-12 col-sm-12 nopad interview-date">
+                                                <input id="interviewSlotsDate" name="interviewSlotsDate" type="date" class="form-control">
+                                            </div>
+                                        </li>
+                                        <li>
+
+                                            <button onclick="getInterviewSlots()" class="panel-fullscreen"><span class="fa fa-eye"></span></button>
+                                        </li>
+                                    </ul>
+                                </div>
                                 <div id="slotsId">
                                     <div class="panel-body panel-body-table">
-                                        <div>
-                                            <div class="">
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered table-striped">
-                                                        <tr>
-                                                            <td>OverAll Interview Rating</td>
-                                                            <td><span id="canfeedInterviewrating">0.00 Out of 5</span></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>OverAll Interviewer Rating</td>
-                                                            <td><span id="canfeedInterviewerrating">0.00 Out of 5</span></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>OverAll Scheduling Rating</td>
-                                                            <td><span id="canfeedschedulerating">0.00 Out of 5</span></td>
-                                                        </tr>
-                                                    </table>
+                                        <div class="min-h">
+                                            @if (Model.DailyMeetingResultsSlots != null && Model.DailyMeetingResultsSlots.Count() > 0)
+                                            {
+
+                                                <div class="sb-container scroller-height">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th width="30%" class="text-center"><strong>Skill</strong></th>
+                                                                    <th width="20%" class="text-center"><strong>Morning Count(s)</strong></th>
+                                                                    <th width="20%" class="text-center"><strong>Evening Count(s)</strong></th>
+                                                                    <th width="50%" class="text-center"><strong>Result</strong></th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+
+                                                                @{
+                                                                    foreach (var item in Model.DailyMeetingResultsSlots)
+                                                                    {
+                                                                        <tr>
+                                                                            <td class="text-center"><strong>@(item.IRFnSkill.Split('(')[1].Split(')')[0])</strong></td>
+                                                                            <td class="text-center"><strong>@item.Morning</strong></td>
+                                                                            <td class="text-center"><strong>@item.Evening</strong></td>
+                                                                            <td class="text-center"><a class="selected" href="#" data-toggle="tooltip" title="Selected : @item.Selected"><span><strong>@item.Selected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @item.Rejected"><span><strong>@item.Rejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @item.BorderLine"><span><strong>@item.BorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @item.Proxy"><span><strong>@item.Proxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @item.NoShowCount"><span><strong>@item.NoShowCount </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @item.ScheduledCount"><span><strong>@item.ScheduledCount </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @item.DroppedCount"><span><strong>@item.DroppedCount</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @item.Pending"><span><strong>@item.Pending</strong></span></a></td>
+
+                                                                        </tr>
+
+                                                                    }
+                                                                }
+
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="legend">
+
+                                                    <ul>
+                                                        <li><div class="g color"></div>Selected</li>
+                                                        <li><div class="r color"></div>Rejected</li>
+                                                        <li><div class="b color"></div>BorderLine</li>
+                                                        <li><div class="pr color"></div>Proxy</li>
+                                                        <li><div class="ns color"></div>NoShow</li>
+                                                        <li><div class="sch color"></div>Schedule</li>
+                                                        <li><div class="dr color"></div>Dropped</li>
+                                                        <li><div class="pe color"></div>Pending</li>
+
+                                                    </ul>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div>No interviews for this day!</div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="panel panel-default">
+                                <div id="survey-feedback">
+                                    <div class="panel-heading" data-intro="<span style='font-size:16px;'>Candidate Feedback Survey </span><hr class='btop' />1. Overall Interview Rating<br/> 2. Overall Interviewer Rating<br/> 3. Scheduling Rating<br/><a href='/IRF/Index' class='btn btn-primary next-btn'>NEXT</a>" data-position="bottom">
+                                        <div class="panel-title-box">
+                                            <h3><span><strong>Candidate Survey Feedback</strong></span></h3>
+
+                                        </div>
+
+                                        <div id="slotsId">
+                                            <div class="panel-body panel-body-table">
+                                                <div>
+                                                    <div class="">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered table-striped">
+                                                                <tr>
+                                                                    <td>OverAll Interview Rating</td>
+                                                                    <td><span id="canfeedInterviewrating">0.00 Out of 5</span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>OverAll Interviewer Rating</td>
+                                                                    <td><span id="canfeedInterviewerrating">0.00 Out of 5</span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>OverAll Scheduling Rating</td>
+                                                                    <td><span id="canfeedschedulerating">0.00 Out of 5</span></td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
+
+                            <div class="row">
 
 
-                            @*<div class="col-md-6 col-lg-6 col-sm-6">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <p style="width:100%" class="card-text">Candidates Current Status: <span><strong>@Model.CandidatesCountObj.TotalCount</strong></span></p>
-                                            <div>
-                                                <div id="candidatesPieId" class="PieId"></div>
+                                @*<div class="col-md-6 col-lg-6 col-sm-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <p style="width:100%" class="card-text">Candidates Current Status: <span><strong>@Model.CandidatesCountObj.TotalCount</strong></span></p>
+                                                <div>
+                                                    <div id="candidatesPieId" class="PieId"></div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                </div>*@
-                            @*<div class="col-md-6 col-lg-6 col-sm-6">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <p class="card-text">Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
-                                            <div>
-                                                <div id="meetingsCountId" class="PieId"></div>
+                                    </div>*@
+                                @*<div class="col-md-6 col-lg-6 col-sm-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <p class="card-text">Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
+                                                <div>
+                                                    <div id="meetingsCountId" class="PieId"></div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>*@
+                                    </div>*@
 
 
 
+
+
+                            </div>
 
 
                         </div>
+
                     </div>
+                    <!-- END DASHBOARD CHART -->
+
 
                 </div>
-                <!-- END DASHBOARD CHART -->
-
-
-
             </div>
             <!-- END PAGE CONTENT WRAPPER -->
         </div>
@@ -276,271 +308,249 @@
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
-{
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+@*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
+    {
 
-    <script type="text/javascript">
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
 
-        hopscotch.registerHelper('addOverlay', function () {
-            $('body').append('<div class="overlay"></div>');
-        });
+                    <script type="text/javascript">
 
-        hopscotch.registerHelper('removeOverlay', function () {
-            $('.overlay').fadeOut(function () {
-                $(this).remove();
-                $('.helper').remove();
-            });
-        });
+                        hopscotch.registerHelper('addOverlay', function () {
+                            $('body').append('<div class="overlay"></div>');
+                        });
 
-        hopscotch.listen('show', function () {
-            var elementObject = $(hopscotch.getCurrTarget(tour));
-            var element = $('#' + elementObject[0].id);
+                        hopscotch.registerHelper('removeOverlay', function () {
+                            $('.overlay').fadeOut(function () {
+                                $(this).remove();
+                                $('.helper').remove();
+                            });
+                        });
 
-            element.prev().removeClass('overlay-relative');
-            element.addClass('overlay-relative');
+                        hopscotch.listen('show', function () {
+                            var elementObject = $(hopscotch.getCurrTarget(tour));
+                            var element = $('#' + elementObject[0].id);
 
-            if ($('.helper').length !== 0) {
+                            element.prev().removeClass('overlay-relative');
+                            element.addClass('overlay-relative');
 
-
-                // Use Helper Layer for hilight target element.
-                var helper = $('.helper');
-                var padding = 5;
-                var helperPosX = element.position().left - padding;
-                var helperPosY = element.position().top - padding;
-                var targetWidth = element.outerWidth();
-                var targetHeight = element.outerHeight();
-
-                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
-
-                helper.css('width', targetWidth);
-                helper.css('height', targetHeight);
-                helper.offset({ left: helperPosX, top: helperPosY });
-
-            } else {
-
-                // Add Helper Layer for highlight target element.
-                var newHelper = '<div class="helper"></div>';
-                $('body').append(newHelper);
-
-                var helper = $('.helper');
-                var padding = 5;
-                var helperPosX = element.position().left - padding;
-                var helperPosY = element.position().top - padding;
-                var targetWidth = element.outerWidth();
-                var targetHeight = element.outerHeight();
-
-                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
-
-                helper.css('width', targetWidth);
-                helper.css('height', targetHeight);
-                helper.offset({ left: helperPosX, top: helperPosY });
-            }
-
-        });
-
-        var tour = {
-            id: "hello-hopscotch",
-            showCloseButton: false,
-            steps: [
-                {
-                    title: "Dashboard",
-                    content: "Dashboard gives the summary of the analysis of the interviews and click on the next button to know its features",
-                    target: "clientdashboard_1",
-                    placement: "bottom",
-                    showPrevButton: true,
-
-                    highlight: true,
-                    zindex: 999999,
-                    yOffset: -10,
-
-                    onCTA: function () {
-
-                        $('#clientdashboard_1').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onNext: function () {
-                        $('#clientdashboard_1').removeClass('overlay-relative');
-                        $('.helper').remove();
-
-                    }
-                },
-                {
-                    title: "Daily Interview Tracking",
-                    content: "Overview & track the daily interviews scheduled",
-                    target: "clientdashboard_2",
-                    placement: "bottom",
-                    showPrevButton: true,
-
-                    zindex: 999999,
-                    xOffset: 10,
-                    onPrev: function () {
-
-                        $('#clientdashboard_2').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-
-                    onNext: function () {
-
-                        $('#clientdashboard_2').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
+                            if ($('.helper').length !== 0) {
 
 
-                },
-                {
-                    title: "Filter by Date",
-                    content: "Apply filter to see the interview detail of the particular date",
-                    target: "clientdashboard_3",
-                    showPrevButton: true,
-                    placement: "left",
-                    zindex: 999999,
-                    yOffset: -10,
-                    xOffset: 5,
-                    onPrev: function () {
+                                // Use Helper Layer for hilight target element.
+                                var helper = $('.helper');
+                                var padding = 5;
+                                var helperPosX = element.position().left - padding;
+                                var helperPosY = element.position().top - padding;
+                                var targetWidth = element.outerWidth();
+                                var targetHeight = element.outerHeight();
 
-                        $('#clientdashboard_3').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onNext: function () {
+                                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-                        $('#clientdashboard_3').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
+                                helper.css('width', targetWidth);
+                                helper.css('height', targetHeight);
+                                helper.offset({ left: helperPosX, top: helperPosY });
 
-                },
-                {
-                    title: "Interview Analysis",
-                    content: "Overview the summary of the Interview Analysis",
-                    target: "clientdashboard_4",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "right",
-                    xOffset: 10,
-                    yOffset: -20,
-                    onNext: function () {
-                        $('#clientdashboard_4').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#clientdashboard_4').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
+                            } else {
 
-                {
-                    title: "Daily Interview Stats",
-                    content: "Overview the summary of the Daily Interview Scheduled",
-                    target: "clientdashboard_5",
-                    placement: "left",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    xOffset: 5,
-                    yOffset: -20,
-                    onNext: function () {
-                        $('#clientdashboard_5').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#clientdashboard_5').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
+                                // Add Helper Layer for highlight target element.
+                                var newHelper = '<div class="helper"></div>';
+                                $('body').append(newHelper);
 
-                {
-                    title: "Filter by Date",
-                    content: "Apply filter to see the interview detail of particular date",
-                    target: "clientdashboard_6",
-                    placement: "left",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    xOffset: 5,
-                    yOffset: -20,
-                    onNext: function () {
-                        $('#clientdashboard_6').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#clientdashboard_6').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
+                                var helper = $('.helper');
+                                var padding = 5;
+                                var helperPosX = element.position().left - padding;
+                                var helperPosY = element.position().top - padding;
+                                var targetWidth = element.outerWidth();
+                                var targetHeight = element.outerHeight();
+
+                                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                                helper.css('width', targetWidth);
+                                helper.css('height', targetHeight);
+                                helper.offset({ left: helperPosX, top: helperPosY });
+                            }
+
+                        });
+
+                        var tour = {
+                            id: "hello-hopscotch",
+                            showCloseButton: false,
+                            steps: [
+                                {
+                                    title: "Dashboard",
+                                    content: "Dashboard gives the summary of the analysis of the interviews and click on the next button to know its features",
+                                    target: "clientdashboard_1",
+                                    placement: "bottom",
+                                    showPrevButton: true,
+                                    highlight: true,
+                                    zindex: 999999,
+                                    yOffset: -10,
+                                    onCTA: function () {
+                                        $('#clientdashboard_1').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+                                    onNext: function () {
+                                        $('#clientdashboard_1').removeClass('overlay-relative');
+                                        $('.helper').remove();
+
+                                    }
+                                },
+                                {
+                                    title: "Daily Interview Tracking",
+                                    content: "Overview & track the daily interviews scheduled",
+                                    target: "clientdashboard_2",
+                                    placement: "bottom",
+                                    showPrevButton: true,
+                                    zindex: 999999,
+                                    xOffset: 10,
+                                    onPrev: function () {
+
+                                        $('#clientdashboard_2').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+
+                                    onNext: function () {
+
+                                        $('#clientdashboard_2').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+
+                                },
+                                {
+                                    title: "Filter by Date",
+                                    content: "Apply filter to see the interview detail of the particular date",
+                                    target: "clientdashboard_3",
+                                    showPrevButton: true,
+                                    placement: "left",
+                                    zindex: 999999,
+                                    yOffset: -10,
+                                    xOffset: 5,
+                                    onPrev: function () {
+
+                                        $('#clientdashboard_3').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+                                    onNext: function () {
+
+                                        $('#clientdashboard_3').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+
+                                },
+                                {
+                                    title: "Interview Analysis",
+                                    content: "Overview the summary of the Interview Analysis",
+                                    target: "clientdashboard_4",
+                                    showPrevButton: true,
+                                    zindex: 999999,
+                                    placement: "right",
+                                    xOffset: 10,
+                                    yOffset: -20,
+                                    onNext: function () {
+                                        $('#clientdashboard_4').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+                                    onPrev: function () {
+                                        $('#clientdashboard_4').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    }
+                                },
+
+                                {
+                                    title: "Daily Interview Stats",
+                                    content: "Overview the summary of the Daily Interview Scheduled",
+                                    target: "clientdashboard_5",
+                                    placement: "left",
+                                    showPrevButton: true,
+                                    zindex: 999999,
+                                    xOffset: 5,
+                                    yOffset: -20,
+                                    onNext: function () {
+                                        $('#clientdashboard_5').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+                                    onPrev: function () {
+                                        $('#clientdashboard_5').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    }
+                                },
+
+                                {
+                                    title: "Filter by Date",
+                                    content: "Apply filter to see the interview detail of particular date",
+                                    target: "clientdashboard_6",
+                                    placement: "left",
+                                    showPrevButton: true,
+                                    zindex: 999999,
+                                    xOffset: 5,
+                                    yOffset: -20,
+                                    onNext: function () {
+                                        $('#clientdashboard_6').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+                                    onPrev: function () {
+                                        $('#clientdashboard_6').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    }
+                                },
 
 
-                {
-                    title: "Color Theme",
-                    content: "Click here to change the overall color theme ",
-                    target: "clientdashboard_7",
-                    placement: "left",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    xOffset: -40,
-                    yOffset: 10,
-                    onNext: function () {
-                        $('#clientdashboard_7').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#clientdashboard_7').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
+                                {
+                                    title: "Color Theme",
+                                    content: "Click here to change the overall color theme ",
+                                    target: "clientdashboard_7",
+                                    placement: "left",
+                                    showPrevButton: true,
+                                    zindex: 999999,
+                                    xOffset: -40,
+                                    yOffset: 10,
+                                    onNext: function () {
+                                        $('#clientdashboard_7').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+                                    onPrev: function () {
+                                        $('#clientdashboard_7').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    }
+                                },
 
 
-                {
-                    title: "All Interviews Menu",
-                    content: "Click on All Interviews menu to see its feature ",
-                    target: "allmeeting_menu",
-                    placement: "bottom",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    xOffset: 10,
-                    yOffset: -20,
-                    onNext: function () {
-                        $('#allmeeting_menu').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#allmeeting_menu').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
+                                {
+                                    title: "All Interviews Menu",
+                                    content: "Click on All Interviews menu to see its feature ",
+                                    target: "allmeeting_menu",
+                                    placement: "bottom",
+                                    showPrevButton: true,
+                                    zindex: 999999,
+                                    xOffset: 10,
+                                    yOffset: -20,
+                                    onNext: function () {
+                                        $('#allmeeting_menu').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+                                    onPrev: function () {
+                                        $('#allmeeting_menu').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    }
+                                },
 
 
+                            ],
 
-                //{
-                //    title: "Call",
-                //    content: "Cilck here to call the Selected Candidate",
-                //    target: "selectedcandidate_7",
-                //    placement: "left",
-                //    showPrevButton: true,
-                //    zindex: 999999,
-                //    xOffset: 10,
-                //    onNext: function () {
-                //        $('#selectedcandidate_7').removeClass('overlay-relative');
-                //        $('.helper').remove();
-                //    },
-                //    onPrev: function () {
-                //        $('#selectedcandidate_7').removeClass('overlay-relative');
-                //        $('.helper').remove();
-                //    }
-                //},
+                            onStart: ["addOverlay"],
+                            onEnd: ["removeOverlay"],
+                        };
 
-            ],
-            onStart: ["addOverlay"],
-            onEnd: ["removeOverlay"],
-        };
+                        hopscotch.startTour(tour);
 
-        hopscotch.startTour(tour);
-
-    </script>
+                    </script>
 
 
 
-}
+            } *@
 
 
 
@@ -694,7 +704,10 @@
 
     }
 </script>
+
+
 <script>
+
     function getInterviewSlots() {
         var date = document.getElementById('interviewSlotsDate').value;
         $.ajax({
@@ -738,6 +751,13 @@
     $(document).ready(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
+</script>
+<script>
+    $(document).ready(function () {
+        $(".chardinjs-tooltiptext span").attr('href', '/Client/AllMeetings');
+
+    });
+
 </script>
 <script>
     $(document).ready(function () {

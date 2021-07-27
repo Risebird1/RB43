@@ -4618,12 +4618,18 @@ namespace Risebird.Web.Controllers
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId, x.Name)).Distinct().OrderBy(x => x.Name);
                 foreach (var candidate in distinctCandidates)
                 {
+                    var firstData = new CandidateTimelineData();
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
                     if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
                     {
-                        data = data.Where(x => x.confirmationStatus == 1);
+                        //data = data.Where(x => x.confirmationStatus != 2);
+                        //data = data.OrderByDescending(x => x.InterviewId);
+                        firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
                     }
-                    var firstData = data.FirstOrDefault();
+                    else
+                    {
+                        firstData = data.FirstOrDefault();
+                    }
 
                     var candidateTimeline = new CandidateTimelineVM();
 
@@ -4647,7 +4653,7 @@ namespace Risebird.Web.Controllers
                     {
                         scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
                         var scheduleStatusObjList = new List<TimelineStatus>();
-                        foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status"))
+                        foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status" && x.ScheduleStatusComments != CandidateStatusOptions.QCPending.GetDescription()))
                         {
                             var scheduleStatusObj = new TimelineStatus();
                             scheduleStatusObj.Date = item.ScheduleStatusDate.ToString("dd");
@@ -4767,12 +4773,18 @@ namespace Risebird.Web.Controllers
                     {
                         HttpContext.Session.SetString("IRFCandidateStatusfilters", JsonConvert.SerializeObject(filter));
                     }
+                    var firstData = new CandidateTimelineData();
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
                     if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
                     {
-                        data = data.Where(x => x.confirmationStatus == 1);
+                        //data = data.Where(x => x.confirmationStatus != 2);
+                        //data = data.OrderByDescending(x => x.InterviewId);
+                        firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
                     }
-                    var firstData = data.FirstOrDefault();
+                    else
+                    {
+                        firstData = data.FirstOrDefault();
+                    }
 
                     var candidateTimeline = new CandidateTimelineVM();
 
@@ -4796,7 +4808,7 @@ namespace Risebird.Web.Controllers
                     {
                         scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
                         var scheduleStatusObjList = new List<TimelineStatus>();
-                        foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status"))
+                        foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status" && x.ScheduleStatusComments != CandidateStatusOptions.QCPending.GetDescription()))
                         {
                             var scheduleStatusObj = new TimelineStatus();
                             scheduleStatusObj.Date = item.ScheduleStatusDate.ToString("dd");
@@ -4966,12 +4978,18 @@ namespace Risebird.Web.Controllers
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId, x.Name)).Distinct().OrderBy(x => x.Name);
                 foreach (var candidate in distinctCandidates)
                 {
+                    var firstData = new CandidateTimelineData();
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
                     if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
                     {
-                        data = data.Where(x => x.confirmationStatus == 1);
+                        //data = data.Where(x => x.confirmationStatus != 2);
+                        //data = data.OrderByDescending(x => x.InterviewId);
+                        firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
                     }
-                    var firstData = data.FirstOrDefault();
+                    else
+                    {
+                        firstData = data.FirstOrDefault();
+                    }
                     var candidateTimeline = new CandidateTimelineVM();
                     candidateTimeline.HREmail = firstData.HREmail;
                     candidateTimeline.CandidateEmailId = firstData.EmailId;
@@ -4992,7 +5010,7 @@ namespace Risebird.Web.Controllers
                     {
                         scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
                         var scheduleStatusObjList = new List<TimelineStatus>();
-                        foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status"))
+                        foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status" && x.ScheduleStatusComments != CandidateStatusOptions.QCPending.GetDescription()))
                         {
                             var scheduleStatusObj = new TimelineStatus();
                             scheduleStatusObj.Date = item.ScheduleStatusDate.ToString("dd");
