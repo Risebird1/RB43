@@ -44,7 +44,7 @@
 
 
 <div class="main-panel" id="main-panel">
- 
+
     @*<div class="mobile-view">*@
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
@@ -235,7 +235,7 @@
                                                         </div>
 
 
-                                                        
+
 
                                                     </div>
                                                 </div>
@@ -875,6 +875,7 @@
 </script>
 <script>
     var candidate = "";
+    var caninterviewid = 0;
     var span = document.getElementById("callPopUp");
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
@@ -905,6 +906,7 @@
     Twilio.Device.connect(function (connection) {
         var appendText = "In call with " + "<b>" + candidate + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
+        startCallRecording(connection.parameters.CallSid);
     });
 
     function afterTimeOut() {
@@ -918,9 +920,20 @@
         setTimeout(afterTimeOut, 2000);
 
     });
-
+    function startCallRecording(sid) {
+        console.log("sid:" + sid);
+        $.ajax({
+            url: '/User/makecall',
+            type: "GET",
+            data: { 'sid': sid, 'interviewid': caninterviewid },
+            success: function (data) {
+                console.log("rsid:" + data);
+            }
+        });
+    }
     function ModalButtonClick(candidateObj) {
         candidate = candidateObj.candidateName;
+        caninterviewid = candidateObj.imid;
         // Get the modal
         var modal = document.getElementById("myModal");
         // When the user clicks the button, open the modal

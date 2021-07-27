@@ -30,8 +30,9 @@ namespace Risebird.Web.Controllers
         private static List<ResumeEvaluator> _modelDl;
         private static string Searchvalue;
         private static string SearchInterviewers;
+        private ITwilioHelper _twiliohelper;
         public UserController(IUserService userService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService)
+                                ISkillService skillService, IProfileService profileService, ITwilioHelper twiliohelper)
 
         {
             _userService = userService;
@@ -40,6 +41,7 @@ namespace Risebird.Web.Controllers
             _azureStorageHelper = azureStorageHelper;
             _skillService = skillService;
             _profileService = profileService;
+            _twiliohelper = twiliohelper;
         }
 
         #region User Fucntions
@@ -1863,10 +1865,26 @@ namespace Risebird.Web.Controllers
                 return Json("failed");
             }
         }
-
+        public async Task<JsonResult> makecall(string sid, int interviewid, string IRFId, string CandidateEmail)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var callbackUrl = Request.Host.ToString() + "/User/CallRecordingback";
+                var result = await _twiliohelper.callrecording(sid, callbackUrl);
+                var resultset = _userService.SaveCallRecording(interviewid, IRFId, CandidateEmail, emailid, sid, "");
+                return Json(result);
+            }
+            return Json("Fail");
+        }
+        [HttpPost]
+        public JsonResult CallRecordingback(string RecordingUrl, string CallSid)
+        {
+            var result = _userService.SaveCallRecording(0, "", "", "", CallSid, RecordingUrl);
+            return Json(new { CallSid, result });
+        }
     }
-
-
 }
 
 

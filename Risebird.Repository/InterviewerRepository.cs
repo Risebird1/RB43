@@ -1972,7 +1972,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select c.Name from IRF Join Client c on c.id=IRF.ClientId where IRF.IRFId= = @IRFId";
+                var query = "Select c.Name from IRF Join Client c on c.id=IRF.ClientId where IRF.IRFId=@IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))

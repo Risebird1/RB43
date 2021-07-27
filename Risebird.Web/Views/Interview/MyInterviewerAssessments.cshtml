@@ -96,7 +96,7 @@
                             <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
-                                      
+
 
                                         <div class="filheader">
                                             <div class="filavatar">
@@ -359,7 +359,7 @@
             <div id="myModal" class="modal modal-bg">
                 <!-- Modal content -->
                 <div class="modal-content">
-                   
+
                     <div class="filheader">
                         <div class="filavatar">
                             <span class="publicsharing-icon">
@@ -378,17 +378,17 @@
 
 
                     <div class="modal-body">
-                   <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
-                  <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
-                     
+                        <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
+                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
+
                     </div>
-                   
+
                 </div>
 
             </div>
             <!-- end row -->
         </div>
-        
+
     </div>
 </div>
 
@@ -555,6 +555,7 @@
 </script>
 <script>
     var candidate = "";
+    var caninterviewid = 0;
     var span = document.getElementById("callPopUp");
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
@@ -585,6 +586,7 @@
     Twilio.Device.connect(function (connection) {
         var appendText = "In call with " + "<b>" + candidate + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
+        startCallRecording(connection.parameters.CallSid);
     });
 
     function afterTimeOut() {
@@ -598,9 +600,20 @@
         setTimeout(afterTimeOut, 2000);
 
     });
-
+    function startCallRecording(sid) {
+        console.log("sid:" + sid);
+        $.ajax({
+            url: '/User/makecall',
+            type: "GET",
+            data: { 'sid': sid, 'interviewid': caninterviewid },
+            success: function (data) {
+                console.log("rsid:" + data);
+            }
+        });
+    }
     function ModalButtonClick(candidateObj) {
         candidate = candidateObj.candidateName;
+        caninterviewid = candidateObj.id;
         // Get the modal
         var modal = document.getElementById("myModal");
         // When the user clicks the button, open the modal

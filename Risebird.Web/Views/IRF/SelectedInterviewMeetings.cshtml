@@ -197,7 +197,7 @@
                                                                     }
                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                     {
-                                                                        <span id="intselmeet_9" onclick="callCandidate(@item.MobileNumber)" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>
+                                                                        <span id="intselmeet_9" onclick="callCandidate(@item.MobileNumber,@item.imid)" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>
                                                                         <span id="intselmeet_10" onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone"></i></span>
 
                                                                     }
@@ -660,7 +660,7 @@
             }
             if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
                 html += '    <td class="text-right action">';
-                html += '   <span onclick="callCandidate(' + data[i].mobileNumber + ')" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>';
+                html += '   <span onclick="callCandidate(' + data[i].mobileNumber + ',' + data[i].imid + ')" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>';
                 html += ' <span onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone"></i></span>';
                 html += '     </td>';
             }
@@ -784,7 +784,8 @@
 
     });
 
-    function callCandidate(phoneNumber) {
+    function callCandidate(phoneNumber, interviewid) {
+        imid = interviewid;
         var params = { "phoneNumber": phoneNumber };
         Twilio.Device.connect(params);
     }
@@ -793,8 +794,7 @@
     }
 
     Twilio.Device.connect(function (connection) {
-
-
+        startCallRecording(connection.parameters.CallSid);
     });
 
     Twilio.Device.disconnect(function (connection) {
@@ -815,6 +815,17 @@
 
 </script>
 <script>
+    function startCallRecording(sid) {
+        console.log("sid:" + sid);
+        $.ajax({
+            url: '/User/makecall',
+            type: "GET",
+            data: { 'sid': sid, 'interviewid': imid },
+            success: function (data) {
+                console.log("rsid:" + data);
+            }
+        });
+    }
     function ModalButtonClickjson(item) {
         var obj = list[item];
         ModalButtonClick(obj);
