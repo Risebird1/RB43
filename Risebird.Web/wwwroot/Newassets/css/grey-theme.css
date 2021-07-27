@@ -1,5 +1,5 @@
 body {
-    background: #ebecf1;
+    background: #ebecf1!important;
 }
 .availbg {
     background: #fff;
@@ -12,7 +12,7 @@ body {
     background-size: 7% !important;
 }
 .mdc-fab-secondary .mdc-fab__icon {
-    fill: rgb(121 115 115) !important;
+    fill: rgb(121, 115, 115) !important;
 }
 .navbar.navbar-transparent.btn-primary:hover, .navbar.navbar-transparent.btn-primary:focus {
     background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
@@ -653,7 +653,7 @@ input[type="radio"]:checked {
 }
 
 [data-tooltip]:after {
-    border-top: 8px solid hsl(0deg 0% 50%) !important;
+    border-top: 8px solid hsl(0deg, 0%, 50%) !important;
     border-right: 7px solid white !important;
     border-left: 7px solid white !important;
 }
@@ -753,7 +753,7 @@ table {
     color: #fff !important;
     background-color: #bbbec0 !important;
 }
-.custom-file {
+.custom-file  {
     height: calc(1.5em + .75rem + 1px) !important;
     margin-bottom: 0;
     z-index: 0;

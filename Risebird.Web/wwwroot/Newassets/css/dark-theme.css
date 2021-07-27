@@ -1,5 +1,5 @@
 body {
-    background: #151515 !important;
+    background: #151515!important;
     color: #9a9a9a !important
 }
 
@@ -12,7 +12,7 @@ body {
  color: #9a9a9a !important
 }
 .mdc-fab-secondary .mdc-fab__icon {
-    fill: rgb(121 115 115) !important;
+    fill: rgb(121, 115, 115) !important;
 }
 .rating-btn .fa-rss-square {
     font-size: 18px;
@@ -226,7 +226,7 @@ table.dataTable thead .sorting:after {
 }
 
 .card-header.bg-w {
-    background: rgb(21 21 21) !important;
+    background: rgb(21, 21, 21) !important;
 }
 
 .bl-bg {
@@ -907,7 +907,7 @@ input[type="radio"]:checked {
 }
 
 [data-tooltip]:after {
-    border-top: 8px solid hsl(0deg 0% 7%) !important;
+    border-top: 8px solid hsl(0deg, 0%, 7%) !important;
     border-right: 8px solid transparent !important;
     border-left: 8px solid transparent !important;
 }
