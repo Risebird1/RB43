@@ -1261,5 +1261,35 @@ namespace Risebird.Repository
             }
             return 0;
         }
+        public string SaveCallRecording(int interviewid, string IRFId, string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@interviewid", interviewid);
+                parameters.Add("@IRFId", IRFId);
+                parameters.Add("@RecordingUrl", RecordingUrl);
+                parameters.Add("@Sid", CallSid);
+                parameters.Add("@CandidateEmail", CandidateEmail);
+                parameters.Add("@WhoCalled", WhoCalled);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<string>(con, "usp_AddorUpdateCallRecording", parameters,
+                       commandType: CommandType.StoredProcedure);
+                    return "success";
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Fail";
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Fail";
+            }
+        }
     }
 }

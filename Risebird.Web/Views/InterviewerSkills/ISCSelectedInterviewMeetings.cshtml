@@ -15,7 +15,7 @@
 <input type="hidden" value="@ViewBag.IRFId" id="hidirfid" />
 <input type="hidden" value="@ViewBag.Profile" id="hidprofile" />
 <div class="main-panel" id="main-panel">
-   
+
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -38,10 +38,9 @@
                                 <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.searchValue">
 
                                 <span class="ref-btn" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>-->
+                        @*<button style="display:none;" type="button" id="x">x</button>*@
 
-                                @*<button style="display:none;" type="button" id="x">x</button>*@
-
-                            <!--</div>
+                        <!--</div>
                         </div>-->
 
                     </div>
@@ -166,10 +165,10 @@
                                                                 <td> @item.intervieweStatusStatDesc </td>
 
                                                                 <td class="text-right action">
-                                                                    
+
                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                     {
-                                                                        <span onclick="callCandidate(@item.MobileNumber)" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>
+                                                                        <span onclick="callCandidate(@item.MobileNumber,@item.imid)" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>
                                                                         <span onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone"></i></span>
 
                                                                     }
@@ -185,7 +184,7 @@
                                                                 <td colspan="999" class="child-section">
                                                                     <table class="table table-striped table-responsive">
                                                                         <tr>
-                                                                           
+
                                                                             <th>Approval Status</th>
                                                                             <th>Approval Comments</th>
 
@@ -597,7 +596,7 @@
 
             if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
                 html += '    <td class="text-right action">';
-                html += '   <span onclick="callCandidate(' + data[i].mobileNumber + ')" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>';
+                html += '   <span onclick="callCandidate(' + data[i].mobileNumber + ',' + data[i].imid + ')" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>';
                 html += ' <span onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone"></i></span>';
                 html += '     </td>';
             }
@@ -607,7 +606,7 @@
             html += '  <td colspan="999" class="child-section">';
             html += ' <table class="table table-striped table-responsive">';
             html += '    <tr>';
-           
+
             html += '   <th>Approval Status</th>';
             html += '   <th>Approval Comments</th>';
             html += '   <th>Final Selection Status</th>';
@@ -697,7 +696,7 @@
     }
 </script>
 <script>
-
+    var caninterviewid = 0;
     $(document).ready(function () {
 
         $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
@@ -712,7 +711,8 @@
 
     });
 
-    function callCandidate(phoneNumber) {
+    function callCandidate(phoneNumber, interviewid) {
+        caninterviewid = interviewid;
         var params = { "phoneNumber": phoneNumber };
         Twilio.Device.connect(params);
     }
@@ -721,14 +721,24 @@
     }
 
     Twilio.Device.connect(function (connection) {
-
+        startCallRecording(connection.parameters.CallSid);
 
     });
 
     Twilio.Device.disconnect(function (connection) {
 
     });
-
+    function startCallRecording(sid) {
+        console.log("sid:" + sid);
+        $.ajax({
+            url: '/User/makecall',
+            type: "GET",
+            data: { 'sid': sid, 'interviewid': caninterviewid },
+            success: function (data) {
+                console.log("rsid:" + data);
+            }
+        });
+    }
 
 </script>
 <script>

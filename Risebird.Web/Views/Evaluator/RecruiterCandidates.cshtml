@@ -200,7 +200,7 @@
                                                     <td>
                                                         @if (item.Phone != null && item.Phone != string.Empty)
                                                         {
-                                                            <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@item.Phone','@item.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                            <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@item.Phone','@item.CandidateName','@item.IRFId','@item.CandidateEmailId')" data-original-title="Tooltip on top"> Call Candidate</span></button>
                                                         }
 
                                                     </td>
@@ -257,7 +257,7 @@
         </div>
         <!-- end row -->
     </div>
-   
+
 </div>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
@@ -367,6 +367,8 @@
 
 <script>
     var candidate = "";
+    var canIrfid = "";
+    var cancandidateEmail = "";
     var span = document.getElementById("callPopUp");
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
@@ -397,6 +399,7 @@
     Twilio.Device.connect(function (connection) {
         var appendText = "In call with " + "<b>" + candidate + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
+        startCallRecording(connection.parameters.CallSid);
     });
 
     function afterTimeOut() {
@@ -410,9 +413,21 @@
         setTimeout(afterTimeOut, 2000);
 
     });
-
-    function ModalButtonClick(mobileNumber, candidateName) {
+    function startCallRecording(sid) {
+        console.log("sid:" + sid);
+        $.ajax({
+            url: '/User/makecall',
+            type: "GET",
+            data: { 'sid': sid, 'IRFId': canIrfid, 'CandidateEmail': cancandidateEmail },
+            success: function (data) {
+                console.log("rsid:" + data);
+            }
+        });
+    }
+    function ModalButtonClick(mobileNumber, candidateName, irfid, candidateemailid) {
         candidate = candidateName;
+        canIrfid = irfid;
+        cancandidateEmail = candidateemailid;
         // Get the modal
         var modal = document.getElementById("myModal");
         // When the user clicks the button, open the modal

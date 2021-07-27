@@ -541,183 +541,183 @@
 
                                                                 </h1>
                                                             }
-                                                        <div class="row counts-liks">
-                                                            @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
-                                                            {
-                                                                <div class="k col-md-2">
-                                                                    @if (Model.IsLike == "Liked")
-                                                                    {
-                                                                        <div>
-                                                                            <span class="pull-left">
-                                                                                <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click" style="line-height: 42px;">
-                                                                                    <label id="pTotalvideolike">@Model.TotalVedioLike</label>
-                                                                                </i>
-                                                                            </span> <span class="pull-left">
-                                                                                <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1">
-                                                                                    <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
-                                                                                </i>
-                                                                            </span>
-                                                                        </div>
-                                                                    }
-                                                                    else if (Model.IsLike == "Disliked")
-                                                                    {
-                                                                        <div>
-                                                                            <span class="pull-left">
-                                                                                <span>
-                                                                                    <i class="fa fa-thumbs-up fa-5px " aria-hidden="true" id="toggle-click" style="color: #504d4d;font-size: 24px;padding-right: 0px">
+                                                            <div class="row counts-liks">
+                                                                @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
+                                                                {
+                                                                    <div class="k col-md-2">
+                                                                        @if (Model.IsLike == "Liked")
+                                                                        {
+                                                                            <div>
+                                                                                <span class="pull-left">
+                                                                                    <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click" style="line-height: 42px;">
+                                                                                        <label id="pTotalvideolike">@Model.TotalVedioLike</label>
+                                                                                    </i>
+                                                                                </span> <span class="pull-left">
+                                                                                    <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1">
+                                                                                        <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
+                                                                                    </i>
+                                                                                </span>
+                                                                            </div>
+                                                                        }
+                                                                        else if (Model.IsLike == "Disliked")
+                                                                        {
+                                                                            <div>
+                                                                                <span class="pull-left">
+                                                                                    <span>
+                                                                                        <i class="fa fa-thumbs-up fa-5px " aria-hidden="true" id="toggle-click" style="color: #504d4d;font-size: 24px;padding-right: 0px">
 
+                                                                                            <label id="pTotalvideolike">@Model.TotalVedioLike</label>
+                                                                                        </i>
+                                                                                    </span>
+                                                                                </span>
+                                                                                <span class="pull-left">
+                                                                                    <span>
+                                                                                        <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: blue; font-size: 24px;padding-right:0px">
+                                                                                            <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
+                                                                                        </i>
+                                                                                    </span>
+                                                                                </span>
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        { <span class="pull-left">
+                                                                                <span>
+                                                                                    <i class="fa fa-thumbs-up fa-5px btn2" aria-hidden="true" id="toggle-click" style="color: #504d4d;
+        font-size: 24px;
+        padding-right: 0px">
                                                                                         <label id="pTotalvideolike">@Model.TotalVedioLike</label>
                                                                                     </i>
                                                                                 </span>
-                                                                            </span>
-                                                                            <span class="pull-left">
+                                                                            </span><span class="pull-left">
                                                                                 <span>
-                                                                                    <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: blue; font-size: 24px;padding-right:0px">
+                                                                                    <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style="color: #504d4d;
+        font-size: 24px;
+        padding-right: 0px">
                                                                                         <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
                                                                                     </i>
                                                                                 </span>
                                                                             </span>
-                                                                        </div>
-                                                                    }
-                                                                    else
-                                                                    { <span class="pull-left">
-                                                                            <span>
-                                                                                <i class="fa fa-thumbs-up fa-5px btn2" aria-hidden="true" id="toggle-click" style="color: #504d4d;
-        font-size: 24px;
-        padding-right: 0px">
-                                                                                    <label id="pTotalvideolike">@Model.TotalVedioLike</label>
-                                                                                </i>
-                                                                            </span>
-                                                                        </span><span class="pull-left">
-                                                                            <span>
-                                                                                <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style="color: #504d4d;
-        font-size: 24px;
-        padding-right: 0px">
-                                                                                    <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
-                                                                                </i>
-                                                                            </span>
-                                                                        </span>
-                                                                    }
-                                                                </div>
-                                                            }
-
-                                                            @if (Model.VideoLink != null)
-                                                            {
-                                                                @if (ViewBag.VideoStatus != "Public")
-                                                                {
-                                                                    @if (ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated)
-                                                                    {
-                                                                        <div class="col-md-2 share">
-                                                                            <div class="btn-group">
-                                                                                <button id="risetubevideo_6" type="button" class="share-btn sharebtn1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                                                    <img src="../../img/share-tweet-icon.png" style=" width: 28px;padding-left:4px;"> Share
-                                                                                </button>
-                                                                                <div class="dropdown-menu">
-                                                                                    <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
-                                                                                        <input type="button" class="share-wrap btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
-                                                                                    </span>
-
-                                                                                    <span class="tooltip--right" data-tooltip="To convey the act of sharing  through email ">
-
-                                                                                        <input type="button" class="share-wrap btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
-
-                                                                                    </span>
-                                                                                    <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user publicly "><input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" /></span>
-                                                                                    <span class="tooltip--right" data-tooltip="To generate public sharing url"><input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
-
-
-                                                                                </div>
-                                                                            </div>
-
-                                                                        </div>
-                                                                        <div class="col-md-2 shortlist nopad" style="text-align: end;">
-                                                                            @if (Model.IsShortlisted > 0)
-                                                                            {<i class="fa fa-check"></i>
-                                                                                <input type="button" class="share-wrap btnShortlist shortlist" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
-                                                                            }
-                                                                            else
-                                                                            { <i class="fa fa-check"></i>
-                                                                                <input type="button" class="share-wrap btnShortlist shortlist" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
-
-                                                                            }
-                                                                        </div>
-                                                                    }
-
+                                                                        }
+                                                                    </div>
                                                                 }
-                                                            }
-                                                            <div class="col-md-2 showinter" style="text-align: end;">
+
                                                                 @if (Model.VideoLink != null)
                                                                 {
                                                                     @if (ViewBag.VideoStatus != "Public")
                                                                     {
                                                                         @if (ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated)
                                                                         {
-                                                                            @if (Model.IsIntrested == "Interest Sent")
+                                                                            <div class="col-md-2 share">
+                                                                                <div class="btn-group">
+                                                                                    <button id="risetubevideo_6" type="button" class="share-btn sharebtn1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                                        <img src="../../img/share-tweet-icon.png" style=" width: 28px;padding-left:4px;"> Share
+                                                                                    </button>
+                                                                                    <div class="dropdown-menu">
+                                                                                        <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
+                                                                                            <input type="button" class="share-wrap btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
+                                                                                        </span>
+
+                                                                                        <span class="tooltip--right" data-tooltip="To convey the act of sharing  through email ">
+
+                                                                                            <input type="button" class="share-wrap btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
+
+                                                                                        </span>
+                                                                                        <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user publicly "><input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" /></span>
+                                                                                        <span class="tooltip--right" data-tooltip="To generate public sharing url"><input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
+
+
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            </div>
+                                                                            <div class="col-md-2 shortlist nopad" style="text-align: end;">
+                                                                                @if (Model.IsShortlisted > 0)
+                                                                                {<i class="fa fa-check"></i>
+                                                                                    <input type="button" class="share-wrap btnShortlist shortlist" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
+                                                                                }
+                                                                                else
+                                                                                { <i class="fa fa-check"></i>
+                                                                                    <input type="button" class="share-wrap btnShortlist shortlist" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
+
+                                                                                }
+                                                                            </div>
+                                                                        }
+
+                                                                    }
+                                                                }
+                                                                <div class="col-md-2 showinter" style="text-align: end;">
+                                                                    @if (Model.VideoLink != null)
+                                                                    {
+                                                                        @if (ViewBag.VideoStatus != "Public")
+                                                                        {
+                                                                            @if (ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated)
                                                                             {
-                                                                                <input type="button" class=" btninterest yellow-btn" id="btnIntrest" value="Interest Sent" Shortvalue="2" />
-                                                                            }
-                                                                            else if (Model.IsIntrested == "Interest Accepted")
-                                                                            {
-                                                                                <input type="button" class="btninterest limebtn " id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border: none; background-color: limegreen;font-weight: bold;font-size: 13px !important;padding: 0px 5px;height: 30px;" />
+                                                                                @if (Model.IsIntrested == "Interest Sent")
+                                                                                {
+                                                                                    <input type="button" class=" btninterest yellow-btn" id="btnIntrest" value="Interest Sent" Shortvalue="2" />
+                                                                                }
+                                                                                else if (Model.IsIntrested == "Interest Accepted")
+                                                                                {
+                                                                                    <input type="button" class="btninterest limebtn " id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border: none; background-color: limegreen;font-weight: bold;font-size: 13px !important;padding: 0px 5px;height: 30px;" />
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <input type="button" class=" show-interest " id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none; font-weight: bold;font-size: 13px !important;  padding: 0px 5px; height: 30px;" />
+                                                                                }
                                                                             }
                                                                             else
                                                                             {
-                                                                                <input type="button" class=" show-interest " id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none; font-weight: bold;font-size: 13px !important;  padding: 0px 5px; height: 30px;" />
+                                                                                <div class="btn-group">
+                                                                                    <button id="risetubevideo_6" type="button" class="share-btn sharebtn1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                                        <img class="tweet-icon" src="../../img/share-tweet-icon.png">  Share
+                                                                                    </button>
+                                                                                    <div class="dropdown-menu">
+                                                                                        <span class="tooltip--right" data-tooltip="To convey the act to generate public sharing url ">   <input type="button" class="share-wrap btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
+
+                                                                                        <span class="tooltip--right" data-tooltip="To convey the act of sharing publicly">
+                                                                                            <input type="button" class="share-wrap btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
+                                                                                        </span>
+                                                                                        <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user through email ">
+                                                                                            <input type="button" class="share-wrap btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
+                                                                                        </span>
+                                                                                        <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
+                                                                                            <input type="button" class="share-wrap btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
+                                                                                        </span>
+                                                                                        <span class="tooltip--right" data-tooltip="Create/Edit View and Share ">   <input type="button" class="form-control btninterest sharebtn1 edit-share" id="btnShare4" value="Create/Edit View" Shortvalue="1" /></span>
+
+
+                                                                                    </div>
+                                                                                </div>
                                                                             }
                                                                         }
-                                                                        else
-                                                                        {
-                                                                            <div class="btn-group">
-                                                                                <button id="risetubevideo_6" type="button" class="share-btn sharebtn1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                                                    <img class="tweet-icon" src="../../img/share-tweet-icon.png">  Share
-                                                                                </button>
-                                                                                <div class="dropdown-menu">
-                                                                                    <span class="tooltip--right" data-tooltip="To convey the act to generate public sharing url ">   <input type="button" class="share-wrap btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
-
-                                                                                    <span class="tooltip--right" data-tooltip="To convey the act of sharing publicly">
-                                                                                        <input type="button" class="share-wrap btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
-                                                                                    </span>
-                                                                                    <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user through email ">
-                                                                                        <input type="button" class="share-wrap btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
-                                                                                    </span>
-                                                                                    <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
-                                                                                        <input type="button" class="share-wrap btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
-                                                                                    </span>
-                                                                                    <span class="tooltip--right" data-tooltip="Create/Edit View and Share ">   <input type="button" class="form-control btninterest sharebtn1 edit-share" id="btnShare4" value="Create/Edit View" Shortvalue="1" /></span>
-
-
-                                                                                </div>
-                                                                            </div>
-                                                                        }
                                                                     }
+                                                                </div>
+                                                                @if (ViewBag.ProfileName == "Client" && ViewBag.VideoStatus != "Public")
+                                                                {
+                                                                    <span class="col-md-4">
+                                                                        <button class="rating-btn" aria-label="Rate Interviewer">
+                                                                            <span class="view-video" onclick="openpopUpRating('@Model.candidateName','@Model.imid')" title="Rate Interviewer">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="rgb(169,168,168)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z" /></svg>
+                                                                                RATE THE INTERVIEWER
+                                                                            </span>
+                                                                        </button>
+                                                                    </span>
+                                                                }
+                                                                @if (ViewBag.VideoStatus == "Public")
+                                                                {
+                                                                    <div class="col-md-6"></div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="col-md-4 views tooltip1" style="text-align: end;">
+                                                                        <span id="risetubevideo_7">
+                                                                            <i class="fa fa-video video-icon"></i>
+
+                                                                            <input class="view-video" type="button" onclick="openVideoDetailsModel()" value="Share/View Details" />
+                                                                        </span>
+                                                                    </div>
                                                                 }
                                                             </div>
-                                                            @if (ViewBag.ProfileName == "Client" && ViewBag.VideoStatus != "Public")
-                                                            {
-                                                                <span class="col-md-4">
-                                                                    <button class="rating-btn" aria-label="Rate Interviewer">
-                                                                        <span class="view-video" onclick="openpopUpRating('@Model.candidateName','@Model.imid')" title="Rate Interviewer">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="rgb(169,168,168)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z" /></svg>
-                                                                       RATE THE INTERVIEWER
-                                                                        </span>
-                                                                    </button>
-                                                                </span>
-                                                            }
-                                                            @if (ViewBag.VideoStatus == "Public")
-                                                            {
-                                                                <div class="col-md-6"></div>
-                                                            }
-                                                            else
-                                                            {
-                                                                <div class="col-md-4 views tooltip1" style="text-align: end;">
-                                                                    <span id="risetubevideo_7">
-                                                                        <i class="fa fa-video video-icon"></i>
-
-                                                                        <input class="view-video" type="button" onclick="openVideoDetailsModel()" value="Share/View Details" />
-                                                                    </span>
-                                                                </div>
-                                                            }
-                                                        </div>
                                                             <div class="splitvideo-mobile mobdr">
                                                                 @if (Model.MeetingPatch.Count > 0)
                                                                 {
@@ -1002,44 +1002,44 @@
                                                                                                     <div class="form-group">
 
 
-                                                                                                        @{
-                                                                                                            if (Model.IreportModel.AadharFileLink != null && Model.IreportModel.AadharFileLink != "")
-                                                                                                            { @Html.LabelFor(model => model.IreportModel.AadharFileLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })<a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ","%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
-                                                                                                        }
+                                                                                                    @{
+                                                                                                        if (Model.IreportModel.AadharFileLink != null && Model.IreportModel.AadharFileLink != "")
+                                                                                                        { @Html.LabelFor(model => model.IreportModel.AadharFileLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })<a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ","%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
+                                                                                                    }
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
+                                                                                            {
+                                                                                                <div class="col-md-6 col-sm-6">
+                                                                                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName','@Model.imid')" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Call Candidate</font></span></button>
+                                                                                                </div>
+                                                                                            }
+                                                                                        </div>
+                                                                                    }
+                                                                                    @if ((ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated))
+                                                                                    {
+                                                                                        @if (Model.IsIntrested == "Interest Accepted")
+                                                                                        {
+                                                                                            <div class="row">
+                                                                                                <div class="col-md-6 col-sm-6">
+                                                                                                    <div class="form-group">
+                                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="col-md-6 col-sm-6">
+                                                                                                    <div class="form-group">
+                                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>
                                                                                             <div class="row">
-                                                                                                @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
-                                                                                                {
-                                                                                                    <div class="col-md-6 col-sm-6">
-                                                                                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Call Candidate</font></span></button>
-                                                                                                    </div>
-                                                                                                }
-                                                                                            </div>
-                                                                                        }
-                                                                                        @if ((ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated))
-                                                                                        {
-                                                                                            @if (Model.IsIntrested == "Interest Accepted")
-                                                                                            {
-                                                                                                <div class="row">
-                                                                                                    <div class="col-md-6 col-sm-6">
-                                                                                                        <div class="form-group">
-                                                                                                            @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                                            @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div class="col-md-6 col-sm-6">
-                                                                                                        <div class="form-group">
-                                                                                                            @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                                            @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="row">
-                                                                                                    <div class="col-md-6 col-sm-6">
-                                                                                                        <div class="form-group">
-                                                                                                            @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+                                                                                                <div class="col-md-6 col-sm-6">
+                                                                                                    <div class="form-group">
+                                                                                                        @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
 
                                                                                                             @{
                                                                                                                 if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
@@ -1051,22 +1051,22 @@
                                                                                                         <div class="form-group">
                                                                                                             @Html.LabelFor(model => model.IreportModel.AadharFileLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
 
-                                                                                                            @{
-                                                                                                                if (Model.IreportModel.AadharFileLink != null && Model.IreportModel.AadharFileLink != "")
-                                                                                                                { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ","%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
-                                                                                                            }
-                                                                                                        </div>
+                                                                                                        @{
+                                                                                                            if (Model.IreportModel.AadharFileLink != null && Model.IreportModel.AadharFileLink != "")
+                                                                                                            { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ","%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
+                                                                                                        }
                                                                                                     </div>
                                                                                                 </div>
-                                                                                                <div class="row">
-                                                                                                    @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
-                                                                                                    {
-                                                                                                        <div class="col-md-6 col-sm-6">
-                                                                                                            <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
-                                                                                                        </div>
-                                                                                                    }
-                                                                                                </div>
-                                                                                            }
+                                                                                            </div>
+                                                                                            <div class="row">
+                                                                                                @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
+                                                                                                {
+                                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                                        <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName','@Model.imid')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                                                    </div>
+                                                                                                }
+                                                                                            </div>
+                                                                                        }
 
                                                                                         }
                                                                                     }
@@ -3548,22 +3548,23 @@
     }
 
 
-    </script>
-    <script>
-        var candidate = "";
-        var span = document.getElementById("callPopUp");
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
-            hangUp();
-            var modal = document.getElementById("myModal");
-            modal.style.display = "none";
-        }
-        $(document).ready(function () {
-            $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-                // Set up the Twilio Client Device with the token
-                Twilio.Device.setup(data.token);
-            });
+</script>
+<script>
+    var candidate = "";
+    var caninterviewid = 0;
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
         });
+    });
 
         /* Callback to let us know Twilio Client is ready */
         Twilio.Device.ready(function (device) {
@@ -3578,10 +3579,11 @@
             Twilio.Device.disconnectAll();
         }
 
-        Twilio.Device.connect(function (connection) {
-            var appendText = "In call with " + "<b>" + candidate + "</b>";
-            document.getElementById("callingLabel").innerHTML = appendText;
-        });
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        startCallRecording(connection.parameters.CallSid);
+    });
 
         function afterTimeOut() {
             var modal = document.getElementById("myModal");
@@ -3593,23 +3595,34 @@
             document.getElementById("callingLabel").innerHTML = appendText;
             setTimeout(afterTimeOut, 2000);
 
+    });
+    function startCallRecording(sid) {
+        console.log("sid:" + sid);
+        $.ajax({
+            url: '/User/makecall',
+            type: "GET",
+            data: { 'sid': sid, 'interviewid': caninterviewid },
+            success: function (data) {
+                console.log("rsid:" + data);
+            }
         });
-
-        function ModalButtonClick(mobileNumber, candidateName) {
-            candidate = candidateName;
-            // Get the modal
-            var modal = document.getElementById("myModal");
-            // When the user clicks the button, open the modal
-            modal.style.display = "block";
-            var appendText = "Calling... " + "<b>" + candidate + "</b>";
-            document.getElementById("callingLabel").innerHTML = appendText;
-            callCandidate(mobileNumber);
-        }
-        function closeCallPopUp() {
-            hangUp();
-            var modal = document.getElementById("myModal");
-            modal.style.display = "none";
-        }
+    }
+    function ModalButtonClick(mobileNumber, candidateName, interviewid) {
+        candidate = candidateName;
+        caninterviewid = interviewid;
+        // Get the modal
+        var modal = document.getElementById("myModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(mobileNumber);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
 
 
     </script>

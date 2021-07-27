@@ -49,7 +49,7 @@
 
 
 <div class="main-panel" id="main-panel">
-    
+
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -366,13 +366,14 @@
                                     <div id="tableID" class="second interview">
                                         <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
                                             <thead>
-                                                <tr><th class="disabled-sorting" style="text-align:center">Actions</th>
+                                                <tr>
+                                                    <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th id='start'>Skill Channel ID</th>
                                                     <th>Interview Date</th>
                                                     <th>Candidate Name</th>
                                                     <th>Candidate Email</th>
                                                     <th>JD Title</th>
-                                                    <th >Zoom Link</th>
+                                                    <th>Zoom Link</th>
                                                     <th>Interviewer</th>
                                                     <th>Confirmation Status</th>
                                                     <th>Meeting Status</th>
@@ -589,23 +590,23 @@
 
 
                                                         @*@if (item.confirmationStatus.Trim() != Risebird.Entities.Enum.ReceiveMeetingStatus.Cancelled.GetDescription())
-            {
-                @if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
-                {
-                    <td class="text-center">
-                        <a style="color:hotpink; font-weight: bold">Status Pending</a>
-                    </td>
+                                                            {
+                                                                @if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                                                                {
+                                                                    <td class="text-center">
+                                                                        <a style="color:hotpink; font-weight: bold">Status Pending</a>
+                                                                    </td>
 
-                }
-                else
-                {
-                    <td class="text-center">@item.MeetingStatusStatusDesc</td>
-                }
-            }
-            else
-            {
-                <td></td>
-            }*@
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td class="text-center">@item.MeetingStatusStatusDesc</td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }*@
                                                         @if (item.MeetingStatusStatusDesc == "Status Pending")
                                                         {
                                                             <td><a style="color:hotpink; font-weight: bold">@item.MeetingStatusStatusDesc</a></td>
@@ -859,7 +860,7 @@
                                                             {
                                                                 <!--- <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick()" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
 
-                                                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
+                                                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
 
 
                                                             }
@@ -1303,7 +1304,7 @@
         $("#ClientName").val(clientName);
         $("#Client").val(client);
         var form = $("#form").serialize();
-        
+
     }
 
 
@@ -1436,6 +1437,7 @@
 </script>
 <script>
     var candidate = "";
+    var caninterviewid = 0;
     var span = document.getElementById("callPopUp");
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
@@ -1466,6 +1468,7 @@
     Twilio.Device.connect(function (connection) {
         var appendText = "In call with " + "<b>" + candidate + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
+        startCallRecording(connection.parameters.CallSid);
     });
 
     function afterTimeOut() {
@@ -1479,9 +1482,20 @@
         setTimeout(afterTimeOut, 2000);
 
     });
-
-    function ModalButtonClick(candidateName, mobileNumber) {
+    function startCallRecording(sid) {
+        console.log("sid:" + sid);
+        $.ajax({
+            url: '/User/makecall',
+            type: "GET",
+            data: { 'sid': sid, 'interviewid': caninterviewid },
+            success: function (data) {
+                console.log("rsid:" + data);
+            }
+        });
+    }
+    function ModalButtonClick(candidateName, mobileNumber, interviewid) {
         candidate = candidateName;
+        caninterviewid = interviewid;
         // Get the modal
         var modal = document.getElementById("myModal");
         // When the user clicks the button, open the modal
@@ -1875,7 +1889,7 @@
                     showPrevButton: true,
 
                     zindex: 999999,
-                    xOffset:"550",
+                    xOffset: "550",
                     yOffset: 0,
                     onPrev: function () {
 
@@ -2068,7 +2082,7 @@
                     }
                 },
 
-                
+
                 {
                     title: "Interviewer",
                     content: "Click on Interviewer menu to see its features",
