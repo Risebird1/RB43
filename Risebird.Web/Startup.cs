@@ -60,12 +60,7 @@ namespace Risebird.Web
                 .AddAzureAdB2C(options => Configuration.Bind("Authentication:AzureAdB2C", options))
                 .AddCookie();
 
-            services.AddSession(o =>
-            {
-                o.Cookie.Name = "Risebirdportal.Session";
-                o.Cookie.HttpOnly = true;
-                o.Cookie.IsEssential = true;
-            });
+           
 
             services.Configure<BrotliCompressionProviderOptions>(options =>
             {
@@ -89,7 +84,7 @@ namespace Risebird.Web
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(1440);
-                options.Cookie.IsEssential = true;
+                options.Cookie.Name = "Risebirdportal.Session";
                 options.Cookie.HttpOnly = true;
             });
             //Set this values according to your requirements  
