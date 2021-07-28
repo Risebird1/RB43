@@ -168,19 +168,20 @@ namespace Risebird.CommonHelper
                 string authToken = _configuration["TwilioSettings:AUTH_TOKEN"];
                 TwilioClient.Init(accountSid, authToken);
 
-                //var recording = await Twilio.Rest.Api.V2010.Account.Call.RecordingResource.CreateAsync(
-                //    pathCallSid: callSid
-                //);
-                var recordingStatusCallbackEvent = new List<string> {
-                    "completed"        };
-
-                //recordingStatusCallback: new Uri("https://portal.risebird.io/User/CallRecordingback"),
                 var recording = await Twilio.Rest.Api.V2010.Account.Call.RecordingResource.CreateAsync(
-                    recordingStatusCallback: new Uri(callbackUrl),
-                    recordingStatusCallbackEvent: recordingStatusCallbackEvent,
                     recordingChannels: "dual",
                     pathCallSid: callSid
                 );
+                //var recordingStatusCallbackEvent = new List<string> {
+                //    "completed"        };
+
+                //recordingStatusCallback: new Uri("https://portal.risebird.io/User/CallRecordingback"),
+                //var recording = await Twilio.Rest.Api.V2010.Account.Call.RecordingResource.CreateAsync(
+                //    recordingStatusCallback: new Uri(callbackUrl),
+                //    recordingStatusCallbackEvent: recordingStatusCallbackEvent,
+                //    recordingChannels: "dual",
+                //    pathCallSid: callSid
+                //);
                 return recording.Sid;
             }
             catch (Exception e)
