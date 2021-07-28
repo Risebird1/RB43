@@ -737,11 +737,11 @@
 
 
 
-                                                    <div class="col-sm-12 col-md-5 pull-left" id="divmeetingentries">
+                                                    <div class="col-sm-5 col-md-5 pull-left" id="divmeetingentries">
                                                         Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
                                                     </div>
 
-                                                    <div class="col-sm-12 col-md-7 dataTables_paginate pull-right" id="divmeetingpages">
+                                                    <div class="col-sm-7 col-md-7 dataTables_paginate pull-right" id="divmeetingpages">
                                                         @Html.PagedListPager(Model, Page => Url.Action("SelectedMeetings", new { Page = Page, searchValue = ViewBag.Searchvalue }))
                                                     </div>
 

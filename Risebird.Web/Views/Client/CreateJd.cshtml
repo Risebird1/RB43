@@ -52,12 +52,12 @@
                     </div>
                     @if (!Model._clientjddetails.isClientUser)
                     {
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1 card-title-space" data-toggle="modal" data-target="#filterModal">
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1" data-toggle="modal" data-target="#filterModal">
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
                         </button>
 
-                        <a onclick="CreateJd(2)" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" style="color:#fff;"></span>&nbsp;Create JD</a>
+                        <a onclick="CreateJd(2)" class="mdc-button mdc-button--raised mdc-ripple-upgraded"><span class="fa fa-plus-square" style="color:#fff;"></span>&nbsp;Create JD</a>
                     }
                     @*<a href="/User/Interviewers" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left"></span> Back to List</a>*@
                 </div>
@@ -172,12 +172,12 @@
                                         <div class="card-content-holder border card-blue">
                                             <div class="card-header jd">
                                                 <div class="row">
-                                                    <div id="rbmatches_2" class="col-md-6 col-sm-6 first">
+                                                    <div id="rbmatches_2" class="col-md-6 col-sm-12 first">
 
 
                                                         @if (@item.JDTitle.Length > 10)
                                                         {
-                                                            <a style="text-decoration: none; cursor: pointer;" data-tooltip="@item.JDTitle"><h6 class="jd-name assessment-grp">@item.JDTitle</h6> </a>
+                                                            <a style="text-decoration: none; cursor: pointer;" data-tooltip="@item.JDTitle"><h6 class="skillname assessment-grp">@item.JDTitle</h6> </a>
                                                         }
                                                         else
                                                         {
@@ -190,7 +190,7 @@
 
                                                     </div>
 
-                                                    <div class="col-md-6 col-sm-6 card-header-buttons action text-right">
+                                                    <div class="col-md-6 col-sm-12 card-header-buttons action text-right">
                                                         @if (!Model._clientjddetails.isClientUser)
                                                         {
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">

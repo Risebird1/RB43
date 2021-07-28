@@ -61,7 +61,7 @@
                     </div>
 
                     <div class="pull-right">
-                        <div>
+                        <div class="mc-button-area text-left">
 
                             <div id="skill_2" data-intro='Filter based on available attributes or reset filter if applied earlier' data-position='left' class="pull-left" style="margin-right: 5px;">
                                 <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-toggle="modal" data-target="#filterModal">
@@ -319,7 +319,7 @@
                                                             }
                                                             @if (Model.Profile == "Admin" || Model.Profile == "HR")
                                                             {
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel" style=" top: -3px;">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel">
                                                                     <span onclick="location.href='@Url.Action("EditIRF", "IRF", new { id = item.id, isClone = true })'" title="Clone the Skills Channel" class="mdc-fab__icon material-icons">
                                                                         <i style="font-size:14px;" class="fa fa-clone"></i>
 

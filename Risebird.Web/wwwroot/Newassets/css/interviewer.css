@@ -1188,7 +1188,7 @@ div.dataTables_wrapper div.dataTables_processing {
 @media screen and (max-width:640px) {
 
     .cmt-w, .talk-bubble {
-        width: 98%;
+        width: 98%!important;
     }
 
     .upload a {
