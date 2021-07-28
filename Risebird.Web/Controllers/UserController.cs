@@ -1873,7 +1873,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 var callbackUrl = Request.Host.ToString() + "/User/CallRecordingback";
                 var result = await _twiliohelper.callrecording(sid, callbackUrl);
-                var resultset = _userService.SaveCallRecording(interviewid, IRFId, CandidateEmail, emailid, sid, "");
+                var resultset = _userService.SaveCallRecording(interviewid, IRFId, CandidateEmail, emailid, sid, result);
                 return Json(result);
             }
             return Json("Fail");
