@@ -35,6 +35,16 @@ body {
     .clearfix:after {
         clear: both;
     }
+#style-2::-webkit-scrollbar, .style-2::-webkit-scrollbar {
+    width: 6px;
+}
+
+#style-2::-webkit-scrollbar-thumb, .style-2::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: darkgray;
+}
+
 
 .chardinjs-tooltiptext {
     font-family: 'Architects Daughter', cursive;
@@ -48,8 +58,11 @@ body {
 .article p {
     margin-bottom: 0px;
 }
-
-#SkillCollection_WeightageError {
+.meeting-detail-icon .mdc-fab {
+    width: 25px !important;
+    height: 25px !important;
+}
+    #SkillCollection_WeightageError {
     color: red;
     margin-left: 807px;
     font-size: 12px;
@@ -2762,6 +2775,7 @@ table.interviewertable th, table.interviewertable td {
     font-weight: bold;
     padding-right: 4px;
     margin-bottom: 10px;
+    line-height:18px;
 }
 
 .assesment .card-blue .card-body .client-field {
@@ -4991,9 +5005,11 @@ button.btn {
     .candidate-hr .hrname {
         width: 250px !important
     }
+
     .candidate-hr {
         width: 25% !important;
     }
+
     .hrname {
         width: 290px;
         white-space: nowrap;
@@ -5013,7 +5029,9 @@ button.btn {
         top: 5px;
         position: relative;
     }
-
+    .single-video-left .join-time {
+        top: 15px!important;
+    }
     .allmeeting .table > tbody > tr > td {
         padding: 5px 2px !important;
     }
@@ -5032,6 +5050,15 @@ button.btn {
         position: relative;
     }
 
+    .skillname {
+        width: 170px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
+    }
     .cname {
         width: 170px;
         white-space: nowrap;
@@ -5059,6 +5086,34 @@ button.btn {
 
 
 @media only screen and (max-width: 1024px) {
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        width: 285px!important;
+        height: 160px!important;
+    }
+    #tblbodyCandidate .action {
+        max-width: 100% !important;
+    }
+    .tab-menu ul li:nth-child(3) .skillcount {
+        right: 1px !important;
+    }
+    .tab-menu ul li:nth-child(4) .skillcount {
+        right: -1px !important;
+    }
+    .tab-menu ul li:nth-child(5) .skillcount {
+        right: -11px !important;
+    }
+    .tab-menu ul li:nth-child(6) .skillcount {
+        right: -15px !important;
+    }
+    .tab-menu ul li:nth-child(8) .skillcount {
+        right: -6px !important;
+    }
+    .tab-menu ul li:nth-child(9) .skillcount {
+        right: 9px !important;
+    }
+    .tab-menu ul li:last-child .skillcount {
+        right: -10px !important;
+    }
     .razorpay_details {
         width: 60% !important;
     }
@@ -5079,8 +5134,8 @@ button.btn {
         line-height: 100% !important;
     }
 
-    .clname {
-        width: 170px !important;
+    .clname, .skillname {
+        width:170px!important;
     }
 
     .allmeeting .candidate-details, .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details{
@@ -5106,7 +5161,7 @@ button.btn {
     }
 
     .tabCon .tab-menu ul li a {
-        font-size: 11px;
+        font-size: 11px!important;
         padding: 10px 0px;
     }
 
@@ -5371,11 +5426,16 @@ button.btn {
         padding: 20px 10px;
         margin-bottom: 10px;
     }
-
+    .single-video {
+        margin-bottom: 0px !important;
+    }
     .tabCon .tabs {
         display: none;
     }
-
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        width: 350px!important;
+        height: 200px!important;
+    }
     #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
         color: red !important;
         margin-left: 0 !important;
@@ -5433,7 +5493,9 @@ button.btn {
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
-
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        font-size:11px!important;
+    }
     .tabCon .tab_drawer_heading {
         background-color: #ececec;
         color: #5a5757cc;
@@ -5489,6 +5551,10 @@ button.btn {
     .selected-priority table.journey td.interviewdate {
         max-width: 270px;
     }
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        position: absolute;
+        left: 30px !important;
+    }
 }
 
 
@@ -5498,6 +5564,7 @@ button.btn {
     [class^='col-md-'],
     [class^='col-lg-'] {
         margin-bottom: 10px;
+
     }
     /* LOGIN */
     .login-container {
@@ -5523,7 +5590,9 @@ button.btn {
         bottom: 735% !important;
         right: 0% !important;
     }
-
+    .mc-button-area.text-left .mdc-button {
+        margin-top: 5px;
+    }
     .tab_drawer_heading {
         background-color: #ececec;
         color: #5a5757cc;
@@ -5577,11 +5646,63 @@ button.btn {
         top: 4px;
         right: 55px !important;
     }
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        position: absolute;
+        left: 40px !important;
+    }
+
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        width: 270px !important;
+        height: 164px !important;
+    }
 }
 
 @media (max-width: 767px) {
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        width: 350px !important;
+        height: 200px !important;
+    }
+    
+    .jd .skillname {
+        width: 100% !important;
+        text-align: center;
+    }
+
+    .jd .card-header-buttons.action.text-right {
+        text-align: center !important;
+    }
+    .canvas_div_pdf .card-body{
+        padding:0px!important;
+    }
+    #tblbodyCandidate .action {
+        max-width: 100% !important;
+    }
+    .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
+        border: 0;
+        border-radius: 30px !important;
+        transition: all .3s;
+        padding: 0px 0px;
+        margin: 0px 1px !important;
+        min-width: 20px !important;
+        text-align: center;
+        height: 22px !important;
+        line-height: 24px;
+        color: #2c2c2c;
+        cursor: pointer;
+        font-size: 14px;
+        text-transform: uppercase;
+        background: transparent;
+        outline: none;
+    }
+    #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
+        padding-right: 10px !important;
+        padding-left: 10px !important;
+    }
     #chardin-mask, .chardinjs-helper-layer, .chardinjs-tooltip {
-        display:none!important;
+        display: none !important;
+    }
+    .mob_canvas-height{
+        height:400px;
     }
     .recommendation .multiselect.dropdown-toggle:after {
         left: 1% !important;
@@ -5716,7 +5837,15 @@ button.btn {
         font-size: 15px;
         width: 100% !important;
     }
-
+    .single-video-left h1 .mdc-button {
+        height: 30px !important;
+    }
+    .single-video-left .join-time {
+        top: 8px !important;
+    }
+    .mob_canvas-height {
+        height: 300px;
+    }
     .overall-rate {
         position: absolute;
         right: 25px;
@@ -5760,7 +5889,22 @@ button.btn {
         top: -11px !important;
         font-size: 13px !important;
     }
-
+    .single-video-left h1 .mdc-button {
+        height: 30px!important;
+       
+    }
+    .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
+        font-size: 11px !important;
+    }
+    #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
+        padding-right: 5px !important;
+        padding-left: 5px !important;
+    }
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        width: 285px !important;
+        height: 160px !important;
+        left: 7px !important;
+    }
     .support {
         position: absolute;
         left: auto;
@@ -11161,7 +11305,9 @@ div.tagsinput {
         right: 27px;
         top: 11px !important;
     }
-
+    .single-video {
+        margin-bottom: 0px!important;
+    }
     .overall-rate {
         position: absolute;
         right: 20px;

@@ -747,6 +747,8 @@ input[type=number] {
     white-space: nowrap;
     overflow: hidden !important;
     text-overflow: ellipsis;
+    position: relative;
+    top: 6px;
 }
 
 .clientName {
@@ -773,7 +775,7 @@ input[type=number] {
 
 
     .card-blue .card-header h6 {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 600;
         text-transform: uppercase;
         line-height: 20px;
@@ -1498,7 +1500,9 @@ input[type=number] {
     .clientName {
         width: 170px;
     }
-
+    .statusInfo {
+        padding: 0px 8px;
+    }
     .note {
         line-height: 22px;
         color: #000;
