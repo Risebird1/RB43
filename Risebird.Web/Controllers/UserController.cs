@@ -1871,19 +1871,20 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                var callbackUrl = "https://" + Request.Host.ToString() + "/User/CallRecordingback";
+                //var callbackUrl = "https://" + Request.Host.ToString() + "/User/CallRecordingback";
+                var callbackUrl = "";
                 var result = await _twiliohelper.callrecording(sid, callbackUrl);
                 var resultset = _userService.SaveCallRecording(interviewid, IRFId, CandidateEmail, emailid, sid, result);
                 return Json(result);
             }
             return Json("Fail");
         }
-        [HttpPost]
-        public JsonResult CallRecordingback(string RecordingUrl, string CallSid)
-        {
-            var result = _userService.SaveCallRecording(0, "", "", "", CallSid, RecordingUrl);
-            return Json(new { CallSid, result });
-        }
+        //[HttpPost]
+        //public JsonResult CallRecordingback(string RecordingUrl, string CallSid)
+        //{
+        //    var result = _userService.SaveCallRecording(0, "", "", "", CallSid, RecordingUrl);
+        //    return Json(new { CallSid, result });
+        //}
     }
 }
 
