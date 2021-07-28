@@ -186,7 +186,7 @@ namespace Risebird.CommonHelper
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return "";
+                return e.ToString();
             }
         }
     }

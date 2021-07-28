@@ -11,11 +11,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twilio.Clients;
-using Twilio.Rest.Api.V2010.Account;
-using Twilio.Types;
 
 namespace Risebird.Functions
 {
@@ -29,7 +25,7 @@ namespace Risebird.Functions
             {
                 var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";
                 var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";
-              //  var twilioSMSNumber = "+12055768041";
+                //  var twilioSMSNumber = "+12055768041";
                 var _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
 
                 var meetings = new List<UnassignedMeeting>();

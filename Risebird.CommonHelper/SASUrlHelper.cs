@@ -3,8 +3,6 @@ using Azure.Storage.Sas;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Risebird.CommonHelper
 {
@@ -16,7 +14,7 @@ namespace Risebird.CommonHelper
         public SASUrlHelper(IConfiguration configuration)
         {
             _configuration = configuration;
-             //ContainerName = _configuration["SASURLSettings:ContainerName"];
+            //ContainerName = _configuration["SASURLSettings:ContainerName"];
             SASConnectionString = _configuration["SASURLSettings:ConnectionString"];
         }
 

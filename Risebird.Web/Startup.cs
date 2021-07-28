@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -62,7 +61,7 @@ namespace Risebird.Web
                 .AddCookie();
 
             services.AddSession(o =>
-            {               
+            {
                 o.Cookie.Name = "Risebirdportal.Session";
                 o.Cookie.HttpOnly = true;
                 o.Cookie.IsEssential = true;
