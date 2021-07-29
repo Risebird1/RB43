@@ -1291,5 +1291,30 @@ namespace Risebird.Repository
                 return "Fail";
             }
         }
+        public List<CallRecordingDetailsVM> FetchCallRecording(string candidateEmailid, string irfid)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@IRFId", irfid);
+                parameters.Add("@CandidateEmail", candidateEmailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<CallRecordingDetailsVM>(con, "usp_FetchCallRecording", parameters,
+                       commandType: CommandType.StoredProcedure);
+                    return (List<CallRecordingDetailsVM>)result;
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
     }
 }

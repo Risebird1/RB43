@@ -708,5 +708,18 @@ namespace Risebird.Business
                 return "Fail";
             }
         }
+        public List<CallRecordingDetailsVM> FetchCallRecording(string candidateEmailid, string irfid)
+        {
+            try
+            {
+                return _userRepository.FetchCallRecording(candidateEmailid, irfid);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

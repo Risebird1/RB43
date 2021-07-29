@@ -459,7 +459,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<string>(
-                        con, "select EmailId from [dbo].[UserList] where Id != @UserId", parameters, commandType: Text);
+                        con, "select Upper(EmailId) from [dbo].[UserList] where Id != @UserId", parameters, commandType: Text);
                 }
             }
             catch (SqlException ex)

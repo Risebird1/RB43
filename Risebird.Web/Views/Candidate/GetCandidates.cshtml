@@ -365,7 +365,12 @@
                                                                         </button>
                                                                     }
 
+                                                                    <button class="mdc-fab app-fab--absolute record-btn" aria-label="Call Record">
+                                                                        <span onclick="FetchRecording('@item.EmailId')" title="Call Record" class="mdc-fab__icon material-icons">
+                                                                            <i class="fa fa-dot-circle"></i>
 
+                                                                        </span>
+                                                                    </button>
                                                                 </td>
 
                                                                 <td class="text-center">
@@ -885,6 +890,50 @@
             </div>
 
             <!-- end row -->
+            <div id="myCallRecords" class="modal modal-bg">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon">
+                                    <i class="fa fa-phone-square" style="font-size: 25px;"></i>
+                                </span>
+                            </div>
+                            <h5 class="modal-title pull-left">Call Details </h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span onclick="closemyCallRecords()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
+                        <div class="modal-body" style="padding: 2px 16px;">
+                            <div class="row" style="padding:10px">
+                                <table class="table table-striped table-bordered" style="width:100%;" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Who called</th>
+                                            <th>Call date</th>
+                                            <th>Recording</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblcallrecdetails">
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 text-right">
+                                    <input style="color: #fff;line-height: 13px;" type="button" onclick="closemyCallRecords()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -1614,6 +1663,36 @@
         pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
         $("#divmeetingentries").empty().html(pagestartdetails);
 
+    }
+    function closemyCallRecords() {
+        var modal = document.getElementById("myCallRecords");
+        modal.style.display = "none";
+    }
+    function FetchRecording(candidateEmailid) {
+        $.ajax({
+            type: "POST",
+            url: "/User/FetchRecordings",
+            data: { 'candidateEmailid': candidateEmailid, 'irfid': $("#hidirfid").val() },
+            success: function (data) {
+                bindCallData(data);
+                var modal = document.getElementById("myCallRecords");
+                modal.style.display = "block";
+            }
+        });
+    }
+    function bindCallData(data) {
+        var html = '';
+        for (var i = 0; i < data.length; i++) {
+            html += '<tr>';
+            html += '<td>' + data[i].whoCalled + '</td>';
+            html += '<td><audio controls><source src = "' + data[i].RecordingUrl + '" type = "audio/ogg" ><source src="' + data[i].RecordingUrl + '" type="audio/mpeg"></audio></td>';
+            html += '<td>' + data[i].whoCalled + '</td>';
+            html += '</tr>';
+        }
+        if (data.length == 0) {
+            html = '<td colspan="3" style="text-align:center">No call records founds.</td>';
+        }
+        $("#tblcallrecdetails").empty().html(html);
     }
 </script>
 

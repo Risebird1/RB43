@@ -2277,10 +2277,22 @@ table.journey td.cadSkill {
     width: 29px !important;
     height: 30px !important;
 }
-
-#tblbodyCandidate .action {
-    width: 235px
-}
+    #tblbodyCandidate .action .mdc-fab.record-btn {
+        width: 26px !important;
+        height: 26px !important;
+        background: #d50b0b !important;
+        border-radius: 3px;
+    }
+        #tblbodyCandidate .action .mdc-fab.record-btn .fa {
+            font-size: 15px;
+            color: #f4a5a5;
+            position: relative;
+            left: 0px;
+            top: -1px;
+        }
+    #tblbodyCandidate .action {
+        width: 235px
+    }
 /* Position tooltip above the element */
 .selected-priority .talk-bubble [data-tooltip]:before, .selected-priority .cadName [data-tooltip]:before, .selected-priority .cadSkill [data-tooltip]:before, .selected-priority .cadEmail [data-tooltip]:before,
 .cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
