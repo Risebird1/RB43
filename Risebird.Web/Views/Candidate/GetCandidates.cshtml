@@ -1685,6 +1685,37 @@
         for (var i = 0; i < data.length; i++) {
             html += '<tr>';
             html += '<td>' + data[i].whoCalled + '</td>';
+            html += '<td>' + data[i].calledOn.replace("T", " ") + '</td>';
+            html += '<td><audio controls><source src = "' + data[i].recordingUrl + '" type = "audio/ogg" ><source src="' + data[i].recordingUrl + '" type="audio/mpeg"></audio></td>';
+
+            html += '</tr>';
+        }
+        if (data.length == 0) {
+            html = '<td colspan="3" style="text-align:center">No call records founds.</td>';
+        }
+        $("#tblcallrecdetails").empty().html(html);
+    }
+    function closemyCallRecords() {
+        var modal = document.getElementById("myCallRecords");
+        modal.style.display = "none";
+    }
+    function FetchRecording(candidateEmailid) {
+        $.ajax({
+            type: "POST",
+            url: "/User/FetchRecordings",
+            data: { 'candidateEmailid': candidateEmailid, 'irfid': $("#hidirfid").val() },
+            success: function (data) {
+                bindCallData(data);
+                var modal = document.getElementById("myCallRecords");
+                modal.style.display = "block";
+            }
+        });
+    }
+    function bindCallData(data) {
+        var html = '';
+        for (var i = 0; i < data.length; i++) {
+            html += '<tr>';
+            html += '<td>' + data[i].whoCalled + '</td>';
             html += '<td><audio controls><source src = "' + data[i].RecordingUrl + '" type = "audio/ogg" ><source src="' + data[i].RecordingUrl + '" type="audio/mpeg"></audio></td>';
             html += '<td>' + data[i].whoCalled + '</td>';
             html += '</tr>';
