@@ -179,7 +179,7 @@
                                             </div>
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.RisebirdHr, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.DropDownList("RisebirdHr", (SelectList)ViewBag.RiseBirdHR, new { ID = "drp_RiseBirdHR", @class = "select-css form-control" })
+                                                @Html.DropDownList("RisebirdHr", (SelectList)ViewBag.RiseBirdHR, "Select", new { ID = "drp_RiseBirdHR", @class = "select-css form-control" })
                                                 @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
                                             </div>
                                         </div>
