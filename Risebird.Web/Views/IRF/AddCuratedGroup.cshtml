@@ -27,7 +27,7 @@
 
                             <div style="width: 100%;">&nbsp;</div>
                             <div class="col-md-4 col-sm-4 pr-1">
-                                <div class="form-group">
+                                <div class="form-group mb-0">
                                     @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                     @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
@@ -40,57 +40,53 @@
                         </div>
                         <hr class="l-hr" />
                         <div id="tableID">
-                            <table class="table table-bordered mbn" id="IRFList">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center border-db" style="font-size:15px!important;border:0px!important; width:30%">IRF ID</th>
-                                        <th class="text-center border-db" style="        font-size: 15px !important;
-        border: 0px !important;
-        width: 40%">Primary Skills</th>
-                                        <th class="text-center" style="        font-size: 15px !important;
-        width: 30%;
-        border: 0px !important;
-">Add</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @for (int i = 0; i < Model.CuratedIRFMappings.Count(); i++)
-                                    {
+                            <div class="table-responsive">
+                                <table class="table table-bordered mbn" id="IRFList">
+                                    <thead>
                                         <tr>
-
-                                            <td class="text-center border-db"> <a id="@("irflink_"+i)" target="_blank" title="IRF" href='@Url.Action("EditIRF", "IRF", new { id = Model.CuratedIRFMappings[i].IRFId })'> @Model.CuratedIRFMappings[i].IRFName</a> </td>
-                                            <td class="text-center border-db" width="30%">@Model.CuratedIRFMappings[i].PrimarySkills</td>
-                                            <td class="text-center" width="20%">
-                                                <div class="mdc-form-field" style="margin-bottom: 10px;">
-                                                    <div class="mdc-checkbox">
-                                                        @Html.CheckBoxFor(m => m.CuratedIRFMappings[i].IsAdded, new { @class = "mdc-checkbox__native-control", @onclick = "UpdateCGList(this.id)" })
-
-
-                                                        <div class="mdc-checkbox__background">
-                                                            <svg class="mdc-checkbox__checkmark"
-                                                                 viewBox="0 0 24 24">
-                                                                <path class="mdc-checkbox__checkmark-path"
-                                                                      fill="none"
-                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                            </svg>
-                                                            <div class="mdc-checkbox__mixedmark"></div>
-                                                        </div>
-                                                        <div class="mdc-checkbox__ripple"></div>
-
-
-                                                    </div>
-                                                </div>
-
-                                            </td>
-                                            @Html.HiddenFor(m => m.CuratedIRFMappings[i].IRFId)
-
+                                            <th class="text-center border-db" style="font-size:15px!important;border:0px!important; width:30%">IRF ID</th>
+                                            <th class="text-center border-db" style="font-size: 15px !important; border: 0px !important;width: 40%">Primary Skills</th>
+                                            <th class="text-center" style="font-size: 15px !important; width: 30%; border: 0px !important;">Add</th>
                                         </tr>
-                                    }
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.CuratedIRFMappings.Count(); i++)
+                                        {
+                                            <tr>
 
-                                </tbody>
-                            </table>
+                                                <td class="text-center border-db"> <a id="@("irflink_"+i)" target="_blank" title="IRF" href='@Url.Action("EditIRF", "IRF", new { id = Model.CuratedIRFMappings[i].IRFId })'> @Model.CuratedIRFMappings[i].IRFName</a> </td>
+                                                <td class="text-center border-db" width="30%">@Model.CuratedIRFMappings[i].PrimarySkills</td>
+                                                <td class="text-center" width="20%">
+                                                    <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                        <div class="mdc-checkbox">
+                                                            @Html.CheckBoxFor(m => m.CuratedIRFMappings[i].IsAdded, new { @class = "mdc-checkbox__native-control", @onclick = "UpdateCGList(this.id)" })
+
+
+                                                            <div class="mdc-checkbox__background">
+                                                                <svg class="mdc-checkbox__checkmark"
+                                                                     viewBox="0 0 24 24">
+                                                                    <path class="mdc-checkbox__checkmark-path"
+                                                                          fill="none"
+                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                </svg>
+                                                                <div class="mdc-checkbox__mixedmark"></div>
+                                                            </div>
+                                                            <div class="mdc-checkbox__ripple"></div>
+
+
+                                                        </div>
+                                                    </div>
+
+                                                </td>
+                                                @Html.HiddenFor(m => m.CuratedIRFMappings[i].IRFId)
+
+                                            </tr>
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-
                         <div class="card-footer ">
 
                             <div class="row">
@@ -170,24 +166,44 @@
 </script>
 
 <script>
-    $(document).ready(function () {
+    function searchResult() {
+        $('#IRFList').DataTable();
+    }
+    function RefreshSearch() {
+        $('#IRFList').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 100);
+    }
 
-        $('#IRFList').DataTable({
-            "pagingType": "full_numbers",
-            "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
-            ],
-            order: [],
-            responsive: false,
+    $(document).ready(function () {
+        applyDataTable();
+    });
+    function applyDataTable() {
+
+        var table = $('#IRFList').DataTable({
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
             }
-
         });
-        var table = $('#IRFList').DataTable();
-    });
+        $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+
+        $(".dataTables_filter").keyup(function (e) {
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            //searchResult();
+        });
+
+    };
 </script>
 
 
