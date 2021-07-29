@@ -19,8 +19,8 @@ AS
 BEGIN
 if not Exists (Select 1 from CallRecordingDetails where Sid=@Sid)
 BEGIN
-Insert into CallRecordingDetails(Interviewid,IRFId,Sid,CandidateEmail,WhoCalled,CalledOn) 
-values(@Interviewid,@IRFId,@Sid,@CandidateEmail,@WhoCalled,getdate())
+Insert into CallRecordingDetails(Interviewid,IRFId,RecordingUrl,Sid,CandidateEmail,WhoCalled,CalledOn)   
+values(@Interviewid,@IRFId,@RecordingUrl,@Sid,@CandidateEmail,@WhoCalled,getdate())  
 END
 Else
 Begin

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 using OfficeOpenXml;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -31,8 +32,9 @@ namespace Risebird.Web.Controllers
         private static string Searchvalue;
         private static string SearchInterviewers;
         private ITwilioHelper _twiliohelper;
+        private readonly IConfiguration _configuration;
         public UserController(IUserService userService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService, ITwilioHelper twiliohelper)
+                                ISkillService skillService, IProfileService profileService, ITwilioHelper twiliohelper, IConfiguration configuration)
 
         {
             _userService = userService;
@@ -42,6 +44,7 @@ namespace Risebird.Web.Controllers
             _skillService = skillService;
             _profileService = profileService;
             _twiliohelper = twiliohelper;
+            _configuration = configuration;
         }
 
         #region User Fucntions
@@ -1885,6 +1888,17 @@ namespace Risebird.Web.Controllers
         //    var result = _userService.SaveCallRecording(0, "", "", "", CallSid, RecordingUrl);
         //    return Json(new { CallSid, result });
         //}
+        [HttpPost]
+        public JsonResult FetchRecordings(string candidateEmailid, string irfid)
+        {
+            string accountSid = _configuration["TwilioSettings:ACCOUNT_SID"];
+            var resultset = _userService.FetchCallRecording(candidateEmailid, irfid);
+            foreach (var item in resultset)
+            {
+                item.RecordingUrl = "https://api.twilio.com/2010-04-01/Accounts/" + accountSid + "/Recordings/" + item.RecordingUrl;
+            }
+            return Json(resultset);
+        }
     }
 }
 
