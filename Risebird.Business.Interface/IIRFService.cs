@@ -89,6 +89,9 @@ namespace Risebird.Business.Interface
         Task<IRF> GetIRFForCall(int irfId);
         IEnumerable<Users> GetEligibleChannelOwners();
         Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId);
+        Task<IEnumerable<TemplateInterviewerData>> GetInterviewersByAssessmentGroup(string assessmentGroupId);
+        Task<string> GetInterviewerSkillsByUserId(int userId);
+        IEnumerable<Skill> GetSkills();
 
     }
 }
