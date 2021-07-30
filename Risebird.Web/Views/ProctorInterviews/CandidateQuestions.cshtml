@@ -4,7 +4,7 @@
 
 @{
     ViewData["Title"] = "Proctor Interviews";
-    ViewBag.PageHeader = "";
+     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
@@ -39,7 +39,7 @@
                     <div class="mdc-card card bg-white">
                         <div class="mdc-card-wrapper__text-section">
                             <div class="container tabs-wrap">
-                                <div class="text-center">
+                                <div class="step-wrapper">
                                     <ul class="nav nav-tabs" role="tablist">
                                         @for (int i = 0; i < Model.QuestionList.Count(); i++)
                                         {
