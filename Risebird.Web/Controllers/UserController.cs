@@ -1891,7 +1891,7 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public JsonResult FetchRecordings(string candidateEmailid, string irfid)
         {
-            string accountSid = _configuration["TwilioSettings:ACCOUNT_SID"];
+            string accountSid = "ACcad9f6682d4a76df9af7cde78dd0867e";//_configuration["TwilioSettings:ACCOUNT_SID"];
             var resultset = _userService.FetchCallRecording(candidateEmailid, irfid);
             foreach (var item in resultset)
             {
