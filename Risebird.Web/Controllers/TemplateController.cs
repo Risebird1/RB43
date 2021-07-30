@@ -41,9 +41,28 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        var model = new List<SkillChannelTemplateVM>();
-                        model = (await _templateService.GetAllTemplates()).ToList();
-
+                        //var model = new List<SkillChannelTemplateVM>();
+                        var model = new TemplatesListVM();
+                        model.TemplateList = (await _templateService.GetAllTemplates()).ToList();
+                        model.Profile = profileName;
+                        foreach (var item in model.TemplateList)
+                        {
+                            if (item.IsDeleted)
+                            {
+                                item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                                item.Status = "Archived";
+                            }
+                            else
+                            {
+                                item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                                item.Status = "Active";
+                            }
+                        }
+                        if (TempData["SuccessErrorMessageTemplate"] != null)
+                        {
+                            model.Message = TempData["SuccessErrorMessageTemplate"].ToString();
+                            TempData.Remove("SuccessErrorMessageTemplate");
+                        }
                         return View(model);
 
                     }
@@ -156,7 +175,7 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                TempData["SuccessErrorMessage"] = "Failed to add Template";
+                                TempData["SuccessErrorMessageTemplate"] = "Failed to add Template";
                                 return RedirectToAction("Index");
                             }
                         }
@@ -180,7 +199,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Failed to add Template";
+                TempData["SuccessErrorMessageTemplate"] = "Failed to add Template";
                 return RedirectToAction("Index");
             }
         }

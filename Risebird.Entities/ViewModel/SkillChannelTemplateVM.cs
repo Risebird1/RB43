@@ -31,5 +31,8 @@ namespace Risebird.Entities.ViewModel
         public SelectList AssessmentGroupList { get; set; }
         public SelectList Skill { get; set; }
         public SelectList LevelTech { get; set; }
+        public string ImageUrl { get; set; }
+        public string Status { get; set; }
+        public string CreatedByEmailId { get; set; }
     }
 }
