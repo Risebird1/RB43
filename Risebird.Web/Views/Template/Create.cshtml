@@ -59,10 +59,6 @@
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnAddTechSkill" value="Add Tech Skill(s)" onclick="AddRow()"> Add Tech Skill</button>
-                            </div>
-
                             <br />
 
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -106,9 +102,8 @@
                                 </tbody>
                             </table>
 
-
                             <div class="row">
-                                <button type="button" style="display:none" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnAddInterviewer" value="Add Interviewer(s)" onclick="AddRowInterviewer()"> Add Interviewer</button>
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnAddTechSkill" value="Add Tech Skill(s)" onclick="AddRow()"> Add Tech Skill</button>
                             </div>
 
                             <br />
@@ -152,8 +147,14 @@
                                 </tbody>
                             </table>
 
-                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-left" id="btnSubmit" value="Submit">Submit</button>
+                            <div class="row">
+                                <button type="button" style="display:none" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnAddInterviewer" value="Add Interviewer(s)" onclick="AddRowInterviewer()"> Add Interviewer</button>
+                            </div>
+
                             <br />
+
+                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-left" id="btnSubmit" value="Submit">Submit</button>
+
 
 
                         </form>
