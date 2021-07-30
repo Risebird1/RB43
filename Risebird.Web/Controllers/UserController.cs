@@ -1891,14 +1891,21 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public JsonResult FetchRecordings(string candidateEmailid, string irfid)
         {
-            string accountSid = "ACcad9f6682d4a76df9af7cde78dd0867e";//_configuration["TwilioSettings:ACCOUNT_SID"];
-            var resultset = _userService.FetchCallRecording(candidateEmailid, irfid);
-            foreach (var item in resultset)
+            try
             {
-                item.RecordingUrl = "https://api.twilio.com/2010-04-01/Accounts/" + accountSid + "/Recordings/" + item.RecordingUrl;
-                item.CalledOn = Convert.ToDateTime(item.CalledOn.ToString("dd-MM-yyyy hh:mm:ss tt"));
+                string accountSid = "ACcad9f6682d4a76df9af7cde78dd0867e";//_configuration["TwilioSettings:ACCOUNT_SID"];
+                var resultset = _userService.FetchCallRecording(candidateEmailid, irfid);
+                foreach (var item in resultset)
+                {
+                    item.RecordingUrl = "https://api.twilio.com/2010-04-01/Accounts/" + accountSid + "/Recordings/" + item?.RecordingUrl;
+                    item.CalledOn = Convert.ToDateTime(item.CalledOn.ToString("dd-MM-yyyy hh:mm:ss tt"));
+                }
+                return Json(resultset);
             }
-            return Json(resultset);
+            catch(Exception)
+            {
+                return Json("Failure");
+            }
         }
     }
 }
