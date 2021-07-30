@@ -39,9 +39,9 @@
                                 <div asp-validation-summary="All" class="text-danger"></div>
                             </div>
                             <div class="row">
-                                <div class="form-group">
+                                <div class="form-group col-md-6">
                                     <label asp-for="TemplateName" class="form-label"></label>
-                                    <div class="col-sm-12">
+                                    <div class="col-sm-12 nopad">
                                         <div class="custom-file">
                                             <input asp-for="TemplateName" type="text" class="form-control text-box single-line">
                                             <span asp-validation-for="TemplateName" class="text-danger"></span>
@@ -49,9 +49,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group">
+
+                                <div class="form-group col-md-6">
                                     <label asp-for="AssessmentGroupId" class="form-label"></label>
 
                                     @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "select-css form-control", @onchange = "AssessmentGroupChanged()" })
@@ -61,106 +60,106 @@
 
                             <br />
 
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 nopad">
                                 <div class="multiple_row">
                                     <h2>Tech Skill(s)</h2>
                                 </div><!--end of multiple location-->
                             </div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered mbn" id="SkillTable">
+                                    <thead>
+                                        <tr>
+                                            <th width="5%" class="table_heading">Select</th>
+                                            <th width="15%" class="table_heading">Level<span class="red">*</span></th>
+                                            <th width="65%" class="table_heading">Skill Name<span class="red">*</span></th>
+                                            <th width="10%" class="table_heading">Weightage<span class="red">*</span></th>
+                                            <th width="5%" class="table_heading text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
 
-                            <table class="table table-bordered mbn" id="SkillTable">
-                                <thead>
-                                    <tr>
-                                        <th width="5%" class="table_heading">Select</th>
-                                        <th width="15%" class="table_heading">Level<span class="red">*</span></th>
-                                        <th width="65%" class="table_heading">Skill Name<span class="red">*</span></th>
-                                        <th width="10%" class="table_heading">Weightage<span class="red">*</span></th>
-                                        <th width="5%" class="table_heading text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                                        <tr>
+                                            <td class="text-center">
+                                                @Html.CheckBox("TechSkillCollection[0].IsSelected", new { @checked = "checked" })
+                                            </td>
+                                            <td>
+                                                @Html.DropDownList("TechSkillCollection[0].LevelId", Model.LevelTech, "Select", new { @class = "select-css form-control " })
+                                            </td>
+                                            <td>
+                                                @Html.DropDownList("TechSkillCollection[0].SkillId", Model.Skill, "Select", new { @class = "select-css form-control " })
+                                            </td>
+                                            <td>
+                                                <input class="form-control text-box single-line" id="TechSkillCollection_0__Weightage" name="TechSkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
+                                            </td>
+                                            <td class="action text-center">
 
-                                    <tr>
-                                        <td class="text-center">
-                                            @Html.CheckBox("TechSkillCollection[0].IsSelected", new { @checked = "checked" })
-                                        </td>
-                                        <td>
-                                            @Html.DropDownList("TechSkillCollection[0].LevelId", Model.LevelTech, "Select", new { @class = "select-css form-control " })
-                                        </td>
-                                        <td>
-                                            @Html.DropDownList("TechSkillCollection[0].SkillId", Model.Skill, "Select", new { @class = "select-css form-control " })
-                                        </td>
-                                        <td>
-                                            <input class="form-control text-box single-line" id="TechSkillCollection_0__Weightage" name="TechSkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
-                                        </td>
-                                        <td class="action text-center">
+                                                <span id="btnMinus" onclick="DeleteRow(this, 'TechSkillCollection', 'LevelId', 'SkillId', 'IsSelected', 'Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                            <span id="btnMinus" onclick="DeleteRow(this, 'TechSkillCollection', 'LevelId', 'SkillId', 'IsSelected', 'Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                            </td>
+                                        </tr>
 
-                                        </td>
-                                    </tr>
-
-                                </tbody>
-                            </table>
-
+                                    </tbody>
+                                </table>
+                            </div>
                             <div class="row">
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnAddTechSkill" value="Add Tech Skill(s)" onclick="AddRow()"> Add Tech Skill</button>
+                                <div class="col-md-12 text-right"><button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnAddTechSkill" value="Add Tech Skill(s)" onclick="AddRow()"> Add Tech Skill</button></div>
                             </div>
 
                             <br />
 
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 nopad">
                                 <div class="multiple_row">
                                     <h2>Interviewer</h2>
                                 </div><!--end of multiple location-->
                             </div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered mbn" id="InterviewerTable">
+                                    <thead>
+                                        <tr>
+                                            <th width="5%" class="table_heading">Select</th>
+                                            <th width="30%" class="table_heading">User<span class="red">*</span></th>
+                                            <th width="60%" class="table_heading">Skills</th>
+                                            <th width="5%" class="table_heading text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
 
-                            <table class="table table-bordered mbn" id="InterviewerTable">
-                                <thead>
-                                    <tr>
-                                        <th width="5%" class="table_heading">Select</th>
-                                        <th width="30%" class="table_heading">User<span class="red">*</span></th>
-                                        <th width="60%" class="table_heading">Skills</th>
-                                        <th width="5%" class="table_heading text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                                        <tr>
+                                            <td class="text-center">
+                                                @Html.CheckBox("InterviewerCollection[0].IsSelected", new { @checked = "checked" })
+                                            </td>
+                                            <td>
+                                                @Html.DropDownList("InterviewerCollection[0].UserId", new List<SelectListItem>(), new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                            </td>
 
-                                    <tr>
-                                        <td class="text-center">
-                                            @Html.CheckBox("InterviewerCollection[0].IsSelected", new { @checked = "checked" })
-                                        </td>
-                                        <td>
-                                            @Html.DropDownList("InterviewerCollection[0].UserId", new List<SelectListItem>(), new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
-                                        </td>
+                                            <td>
 
-                                        <td>
+                                                @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
 
-                                            @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
+                                            </td>
 
-                                        </td>
+                                            <td class="action text-center">
+                                                <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'IsSelected')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                        <td class="action text-center">
-                                            <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'IsSelected')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <div class="row">
-                                <button type="button" style="display:none" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnAddInterviewer" value="Add Interviewer(s)" onclick="AddRowInterviewer()"> Add Interviewer</button>
-                            </div>
-
-                            <br />
-
-                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-left" id="btnSubmit" value="Submit">Submit</button>
-
-
-
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="pull-left">
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                                <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("Index", "Template")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back </font></span>
+                                            </button>
+                                        </div>
+                                        <div class="pull-right">
+                                            <button type="button" style="display:none;margin-right:5px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" id="btnAddInterviewer" value="Add Interviewer(s)" onclick="AddRowInterviewer()"> Add Interviewer</button>
+                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-right" id="btnSubmit" value="Submit">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
                         </form>
-
-
-
                     </div>
 
                     <!-- end content-->
@@ -413,7 +412,6 @@
     }
 
     $(document).ready(function () {
-        debugger;
         $.validator.addMethod("__dummy__", function (value, element) {
             return true;
         });
