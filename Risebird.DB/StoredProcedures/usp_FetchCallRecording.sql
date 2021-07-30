@@ -13,9 +13,9 @@ Create Procedure usp_FetchCallRecording
 @CandidateEmail varchar(150)
 As
 BEGIN
-Select * From CallRecordingDetails where IRFId=@IRFId and CandidateEmail=@CandidateEmail
+Select *,Convert(datetime,CONVERT(varchar,CalledOn,120)) as CalledOn From CallRecordingDetails where IRFId=@IRFId and CandidateEmail=@CandidateEmail
 Union
-Select cr.* from CallRecordingDetails cr join InterviewMeetings im on im.id=cr.Interviewid join IRF on IRF.IRFId=im.IRFId where irf.id=@IRFId and im.CandidateEmail=@CandidateEmail
+Select cr.*,Convert(datetime,CONVERT(varchar,cr.CalledOn,120)) as CalledOn from CallRecordingDetails cr join InterviewMeetings im on im.id=cr.Interviewid join IRF on IRF.IRFId=im.IRFId where irf.id=@IRFId and im.CandidateEmail=@CandidateEmail
 END
 Go
 

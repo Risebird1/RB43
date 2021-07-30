@@ -1896,7 +1896,6 @@ namespace Risebird.Web.Controllers
             foreach (var item in resultset)
             {
                 item.RecordingUrl = "https://api.twilio.com/2010-04-01/Accounts/" + accountSid + "/Recordings/" + item.RecordingUrl;
-                item.CalledOn = Convert.ToDateTime(item.CalledOn.ToString("dd-MM-yyyy hh:mm:ss tt"));
             }
             return Json(resultset);
         }
