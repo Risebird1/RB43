@@ -15,7 +15,7 @@ As
 BEGIN
 Select * From CallRecordingDetails where IRFId=@IRFId and CandidateEmail=@CandidateEmail
 Union
-Select cr.* from CallRecordingDetails cr join InterviewMeetings im on im.id=cr.Interviewid where im.IRFId=@IRFId and im.CandidateEmail=@CandidateEmail
+Select cr.* from CallRecordingDetails cr join InterviewMeetings im on im.id=cr.Interviewid join IRF on IRF.IRFId=im.IRFId where irf.id=@IRFId and im.CandidateEmail=@CandidateEmail
 END
 Go
 
