@@ -1882,29 +1882,25 @@ namespace Risebird.Web.Controllers
             }
             return Json("Fail");
         }
-        //[HttpPost]
-        //public JsonResult CallRecordingback(string RecordingUrl, string CallSid)
-        //{
-        //    var result = _userService.SaveCallRecording(0, "", "", "", CallSid, RecordingUrl);
-        //    return Json(new { CallSid, result });
-        //}
+
         [HttpPost]
         public JsonResult FetchRecordings(string candidateEmailid, string irfid)
         {
             try
             {
-                string accountSid = "ACcad9f6682d4a76df9af7cde78dd0867e";//_configuration["TwilioSettings:ACCOUNT_SID"];
+                //string accountSid = _configuration["TwilioSettings:ACCOUNT_SID"];
                 var resultset = _userService.FetchCallRecording(candidateEmailid, irfid);
                 foreach (var item in resultset)
                 {
-                    item.RecordingUrl = "https://api.twilio.com/2010-04-01/Accounts/" + accountSid + "/Recordings/" + item?.RecordingUrl;
-                    item.CalledOn = Convert.ToDateTime(item.CalledOn.ToString("dd-MM-yyyy hh:mm:ss tt"));
+                    if (!String.IsNullOrEmpty(item.RecordingUrl))
+                        item.RecordingUrl = "https://api.twilio.com/2010-04-01/Accounts/ACcad9f6682d4a76df9af7cde78dd0867e/Recordings/" + item.RecordingUrl;
                 }
                 return Json(resultset);
             }
-            catch(Exception)
+            catch (Exception ex)
             {
-                return Json("Failure");
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(ex);
             }
         }
     }
