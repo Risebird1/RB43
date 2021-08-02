@@ -25,11 +25,11 @@ namespace Risebird.Business
             
         }
 
-        public async Task<IEnumerable<SkillChannelTemplateVM>> GetAllTemplates()
+        public async Task<IEnumerable<SkillChannelTemplateVM>> GetAllTemplates(string emailId, DateTime startDate, DateTime endDate)
         {
             try
             {
-                return await _templateRespository.GetAllTemplates();
+                return await _templateRespository.GetAllTemplates(emailId, startDate, endDate);
             }
             catch (Exception ex)
             {

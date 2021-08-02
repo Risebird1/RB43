@@ -9,7 +9,7 @@ namespace Risebird.Repository.Interface
 {
     public interface ITemplateRepository
     {
-        Task<IEnumerable<SkillChannelTemplateVM>> GetAllTemplates();
+        Task<IEnumerable<SkillChannelTemplateVM>> GetAllTemplates(string emailId, DateTime startDate, DateTime endDate);
         Task<bool> AddTemplate(SkillChannelTemplateVM templateDetails, string createdByEmailId);
         Task<bool> IsTemplateNameInUse(string templateName);
     }

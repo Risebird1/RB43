@@ -28,13 +28,17 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
 
-        public async Task<IEnumerable<SkillChannelTemplateVM>> GetAllTemplates()
+        public async Task<IEnumerable<SkillChannelTemplateVM>> GetAllTemplates(string emailId, DateTime startDate, DateTime endDate)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<SkillChannelTemplateVM>(con, "usp_GetAllTemplates",
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@emailId", emailId);
+                    parameters.Add("@startDate", startDate);
+                    parameters.Add("@endDate", endDate);
+                    var result = await SqlMapper.QueryAsync<SkillChannelTemplateVM>(con, "usp_GetAllTemplates", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }
