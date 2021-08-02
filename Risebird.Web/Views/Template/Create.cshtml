@@ -31,7 +31,7 @@
 
                     <div class="mdc-card-wrapper__text-section">
 
-                        <form action="/Template/Create" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
+                        <form action="/Template/Create" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid" onsubmit="return CheckConditions()">
 
                             @Html.AntiForgeryToken()
 
@@ -100,6 +100,8 @@
 
                                     </tbody>
                                 </table>
+                                <label class="text-danger" id="TechSkillCollection_Error" style="color:red; margin-left:433px; font-size:16px"></label>
+
                             </div>
                             <div class="row">
                                 <div class="col-md-12 text-right"><button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnAddTechSkill" value="Add Tech Skill(s)" onclick="AddRow()"> Add Tech Skill</button></div>
@@ -144,8 +146,11 @@
                                             </td>
                                         </tr>
                                     </tbody>
+
                                 </table>
-                                </div>
+                                <label class="text-danger" id="InterviewerCollection_Error" style="color:red; margin-left:433px; font-size:16px"></label>
+
+                            </div>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="pull-left">
@@ -179,6 +184,11 @@
 
 
 <script>
+
+    function CheckConditions() {
+
+        return (CheckIfInterviewersAdded() && CheckIfSkillsAdded());
+    }
 
     function AssessmentGroupChanged() {
         var Assessmentgroupid = $("#AssessmentGroupId").val();
@@ -433,7 +443,42 @@
 
     });
 
+    function CheckIfInterviewersAdded() {
 
+        var assessmentGroupElem = document.getElementById("AssessmentGroupId");
+        if (assessmentGroupElem.value != null && assessmentGroupElem.value !='') {
+            var interviewerItems = $('[id^="InterviewerCollection"][id$="UserId"]');
+            for (i = 0; i < interviewerItems.length; i++) {
+                var temp = $("#InterviewerCollection_" + i + "__UserId").val();
+                if (temp == null || temp == '') {
+                    document.getElementById('InterviewerCollection_Error').innerHTML = "Please select an Interviewer for all the added rows."
+                    document.getElementById('InterviewerCollection_Error').focus();
+                    return false;
+                }
+
+            }
+
+        }
+        document.getElementById('InterviewerCollection_Error').innerHTML = "";
+        return true;
+    }
+
+    function CheckIfSkillsAdded() {
+        var techSkillItems = $('[id^="TechSkillCollection"][id$="SkillId"]');
+        for (i = 0; i < techSkillItems.length; i++) {
+            var skill = $("#TechSkillCollection_" + i + "__SkillId").val();
+            var level = $("#TechSkillCollection_" + i + "__LevelId").val();
+            var weightage = $("#TechSkillCollection_" + i + "__Weightage").val();
+            if ((skill == null || skill == '') || (level == null || level == '') || (weightage == null || weightage == '')) {
+                document.getElementById('TechSkillCollection_Error').innerHTML = "Please select a value for all the added rows for Tech Skills."
+                document.getElementById('TechSkillCollection_Error').focus();
+                return false;
+            }
+
+        }
+        document.getElementById('TechSkillCollection_Error').innerHTML = "";
+        return true;
+    }
 </script>
 
 
