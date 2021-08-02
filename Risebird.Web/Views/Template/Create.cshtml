@@ -152,15 +152,20 @@
 
                             </div>
                                 <div class="row">
+                                    <div class="col-md-12"> 
+                                        <button type="button" style="display:none;margin:0px 5px 20px 0px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnAddInterviewer" value="Add Interviewer(s)" onclick="AddRowInterviewer()"> Add Interviewer</button>
+                                    </div>
+                                   
                                     <div class="col-md-12">
-                                        <div class="pull-left">
-                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                                                <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("Index", "Template")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back </font></span>
-                                            </button>
-                                        </div>
-                                        <div class="pull-right">
-                                            <button type="button" style="display:none;margin-right:5px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" id="btnAddInterviewer" value="Add Interviewer(s)" onclick="AddRowInterviewer()"> Add Interviewer</button>
-                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-right" id="btnSubmit" value="Submit">Submit</button>
+                                        <div class="card-footer clearfix">
+                                            <div class="pull-left">
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                                    <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("Index", "Template")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back </font></span>
+                                                </button>
+                                            </div>
+                                            <div class="pull-right">
+                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-right" id="btnSubmit" value="Submit">Submit</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

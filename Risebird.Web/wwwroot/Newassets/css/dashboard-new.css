@@ -4738,10 +4738,21 @@ button.btn {
     right: 35px;
     top: 10px;
 }
-.step-wrapper{
-    text-align:center;
-    width:200px;
-    margin:0px auto!important;
+.jumbotron .statusImg img {
+    height: 126px!important;
+    max-height: 126px!important;
+}
+.jumbotron .template .statusImg img {
+    height: 100px !important;
+    max-height: 100px !important;
+}
+.template-name{
+    line-height:40px!important;
+}
+.step-wrapper {
+    text-align: center;
+    width: 200px;
+    margin: 0px auto !important;
 }
 .search-field #meeting_filter input[type=search], .search-field #meeting_filter input[type=search]:focus, #supportList_filter input[type=search], #supportList_filter input[type=search]:focus, #skillLevel_filter input[type=search], #skillLevel_filter input[type=search]:focus, #clientduser_filter input[type=search], #clientduser_filter input[type=search]:focus, #risebirduser_filter input[type=search], #risebirduser_filter input[type=search]:focus, .indexemp #interviewer_filter input[type=search], .indexemp #interviewer_filter input[type=search]:focus, .curatedgrp #meeting_filter input[type=search], .curatedgrp #meeting_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search].form-control, #IRFList_filter input[type=search], .candidate-timeline #candidateTable_filter input[type=search].form-control, .resume #resumeTable_filter input[type=search].form-control, .unassigned-int #meetingTable_filter input[type=search].form-control, #skill_filter input[type=search], #skill_filter input[type=search]:focus, #UserListTb_filter input[type=search], #UserListTb_filter input[type=search]:focus, #questionsTable_filter input[type=search], #questionsTable_filter input[type=search]:focus {
     background: #FFF !important;
