@@ -86,7 +86,7 @@
 
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.ISCId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.DropDownListFor(model => model.ISCId, Model.ISCList, new { @class = "select-css form-control" })
+                                    @Html.DropDownListFor(model => model.ISCId, Model.ISCList, "Select", new { @class = "select-css form-control" })
                                     @Html.ValidationMessageFor(model => model.ISCId, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="form-group interviewDate">
@@ -101,7 +101,7 @@
                                     <div class="mandate">
                                         @Html.LabelFor(model => model.interviewSlot, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
 
-                                        @Html.DropDownListFor(x => Model.interviewSlot, Model.InterviewSlotList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                        @Html.DropDownListFor(x => Model.interviewSlot, Model.InterviewSlotList, "Select Slot", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                         @Html.ValidationMessageFor(model => model.interviewSlot, "", new { @class = "text-danger" })
 
                                     </div>

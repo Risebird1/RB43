@@ -59,5 +59,7 @@ namespace Risebird.Repository.Interface
         string FetchWhatsAppNumberByEmail(string Emailid);
         string FetchNameByEmail(string Emailid);
         int GetInterviewerid(string emailid);
+        string SaveCallRecording(int interviewid, string IRFId, string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl);
+        List<CallRecordingDetailsVM> FetchCallRecording(string candidateEmailid, string irfid);
     }
 }

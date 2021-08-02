@@ -174,10 +174,11 @@ namespace Risebird.Repository.Interface
         Task<string> SaveRatingDetails(InterviewerRating model);
         Task<AddUpdateMeetingVM> GetInterviewToUpdateMeetingById(int id);
         Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsByIRFId(int clientId, string Emailid, string irfId, DateTime startDate, DateTime endDate, string profileName = null);
-        Task<IEnumerable<MeetingVM>> GetClientNotScheduledMeetingList(int Clientid,string Emailid);
+        Task<IEnumerable<MeetingVM>> GetClientNotScheduledMeetingList(int Clientid, string Emailid);
         Task<List<InvoiceDetailsVM>> FetchFNInvoiceDetails(string Startdate, string Enddate);
         Task<InvoiceDetailsVM> GetInvoiceDetailsById(int id);
         Task<string> SaveInvoiceDetails(InvoiceDetailsVM model);
         Task<IEnumerable<Meeting>> GetAllAssignedInterviewsForToday(string emailID);
+        Task<IEnumerable<Meeting>> GetAllAssignedInterviewsForTheWeek(string emailID);
     }
 }

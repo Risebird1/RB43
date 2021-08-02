@@ -222,7 +222,7 @@
 
                             </div>
 
-                            <div>
+                            <div class="candidate-timeline">
                                 <div id="tableID" class="second">
                                     <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
 
@@ -231,7 +231,7 @@
 
                                         <div class="col-sm-12 nopad">
 
-                                            <div class="table-responsive scrollbar" style="overflow-x:scroll" @*id="style-2"*@>
+                                            <div class="table-responsive  scrollbar" style="overflow-x:scroll" @*id="style-2"*@>
 
                                                 <table id="candidateTable" class="table table-striped table-bordered dataTable journey" cellspacing="0" width="100%">
                                                     <thead>
@@ -262,12 +262,6 @@
                                                     </tfoot>
                                                     <tbody id="tblbodyTimeline">
 
-                                                        @if (Model.Count() == 0)
-                                                        {
-                                                            <tr>
-                                                                <td colspan="9" class="text-center">No data available in table</td>
-                                                            </tr>
-                                                        }
                                                         @foreach (var item in Model)
                                                         {
                                                             <tr>
@@ -319,7 +313,7 @@
                                                                 else
                                                                 {
                                                                     <td></td>
-}
+                                                                }
 
                                                                 @if (item.PrimarySkill != null && item.PrimarySkill != "")
                                                                 {
@@ -379,33 +373,33 @@
 
 
                                                                 @*@if (item.OnboardingDetails != null)
-                                                                    {
-                                                                        <td style="padding:10px 0px;">
-                                                                            <div class="timeline-section-tl">
-                                                                                <div class="tl-round round1" style="background-color: #35353599;"></div>
-                                                                                <div class="circle-wrap">
-                                                                                    <div class="circle" id="circle0" style="left: 0%;">
-                                                                                        <div class="popupSpan">
-                                                                                            <div class="event2Bubble">
-                                                                                                <div class="eventTime">
-                                                                                                    <div class="DayDigit">@item.OnboardingDetails.Date</div>
-                                                                                                    <div class="Day">
-                                                                                                        @item.OnboardingDetails.Day
-                                                                                                        <div class="MonthYear">@item.OnboardingDetails.StatusDate</div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="eventTitle">@item.OnboardingDetails.Status</div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <td></td>
-                                                                    }*@
+                                        {
+                                            <td style="padding:10px 0px;">
+                                                <div class="timeline-section-tl">
+                                                    <div class="tl-round round1" style="background-color: #35353599;"></div>
+                                                    <div class="circle-wrap">
+                                                        <div class="circle" id="circle0" style="left: 0%;">
+                                                            <div class="popupSpan">
+                                                                <div class="event2Bubble">
+                                                                    <div class="eventTime">
+                                                                        <div class="DayDigit">@item.OnboardingDetails.Date</div>
+                                                                        <div class="Day">
+                                                                            @item.OnboardingDetails.Day
+                                                                            <div class="MonthYear">@item.OnboardingDetails.StatusDate</div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="eventTitle">@item.OnboardingDetails.Status</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }*@
                                                                 @if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
                                                                 {
                                                                     <td style="padding:10px 0px;">
@@ -787,14 +781,33 @@
             $("#candidateTable").show();
         }, 2000);
     };
+    function searchResult() {
+        $('#candidateTable').DataTable();
+    }
+    function RefreshSearch() {
+        $('#candidateTable').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 100);
+    }
+
+    $(document).ready(function () {
+        applyDataTable();
+    });
     //// script for loader ends here
 </script>
 <script>
+    function applyDataTable() {
+        var table = $('#candidateTable').DataTable(
+            {
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search records",
+                }
+            });
+        $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
 
-    $(document).ready(function () {
-        var table = $('#candidateTable').DataTable();
         $(".dataTables_filter").keyup(function (e) {
-
             if ($('#txtmeeting_filter').val() == "") {
                 $("#x").hide();
             }
@@ -808,7 +821,7 @@
             //searchResult();
         });
 
-    });
+    };
 
 
 

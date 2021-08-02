@@ -92,7 +92,7 @@
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:20px;">
                                                         <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
-                                                        @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "select-css form-control", @onchange = "ClientChanged(this.value)" })
+                                                        @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, "Select Client Name", new { @class = "select-css form-control", @onchange = "ClientChanged(this.value)" })
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 col-sm-4 pull-left">
@@ -183,7 +183,7 @@
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            @Html.DropDownList("CompanyType[0].Type", (SelectList)Model.CompanyTypeList, new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownList("CompanyType[0].Type", (SelectList)Model.CompanyTypeList, "Select", new { @class = "select-css form-control text-box single-line" })
 
 
                                                             @Html.ValidationMessageFor(model => model.CompanyType, "", new { @id = "error_CompanyType", @class = "text-danger" })
@@ -674,7 +674,7 @@
 
                                                                     <tr>
                                                                         <td>
-                                                                            @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                                            @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, "Select", new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                                         </td>
 
                                                                         <td>
@@ -724,7 +724,7 @@
 
                                                                     <tr>
                                                                         <td>
-                                                                            @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, new { @class = "select-css form-control ", @onchange = "QCChanged(this.value, this.id)" })
+                                                                            @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, "Select", new { @class = "select-css form-control ", @onchange = "QCChanged(this.value, this.id)" })
                                                                         </td>
 
                                                                         <td>
@@ -770,7 +770,9 @@
 
                                                                     <tr>
                                                                         <td>
-                                                                            @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "select-css form-control ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
+
+                                                                            @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers,"Select", new { @class = "select-css form-control ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
+                                                                           
                                                                         </td>
 
                                                                         <td>
@@ -817,7 +819,7 @@
 
                                                                     <tr>
                                                                         <td>
-                                                                            @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators, new { @class = "select-css form-control " })
+                                                                            @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators,"Select", new { @class = "select-css form-control " })
                                                                         </td>
 
                                                                         <td class="action text-center">
@@ -854,7 +856,7 @@
 
                                                                     <tr>
                                                                         <td>
-                                                                            @Html.DropDownList("HRCollection[0].UserId", (SelectList)ViewBag.HRs, new { @class = "select-css form-control " })
+                                                                            @Html.DropDownList("HRCollection[0].UserId", (SelectList)ViewBag.HRs,"Select", new { @class = "select-css form-control " })
                                                                         </td>
 
                                                                         <td class="action text-center">

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 using OfficeOpenXml;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -30,8 +31,10 @@ namespace Risebird.Web.Controllers
         private static List<ResumeEvaluator> _modelDl;
         private static string Searchvalue;
         private static string SearchInterviewers;
+        private ITwilioHelper _twiliohelper;
+        private readonly IConfiguration _configuration;
         public UserController(IUserService userService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService)
+                                ISkillService skillService, IProfileService profileService, ITwilioHelper twiliohelper, IConfiguration configuration)
 
         {
             _userService = userService;
@@ -40,6 +43,8 @@ namespace Risebird.Web.Controllers
             _azureStorageHelper = azureStorageHelper;
             _skillService = skillService;
             _profileService = profileService;
+            _twiliohelper = twiliohelper;
+            _configuration = configuration;
         }
 
         #region User Fucntions
@@ -1863,10 +1868,42 @@ namespace Risebird.Web.Controllers
                 return Json("failed");
             }
         }
+        public async Task<JsonResult> makecall(string sid, int interviewid, string IRFId, string CandidateEmail)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                //var callbackUrl = "https://" + Request.Host.ToString() + "/User/CallRecordingback";
+                var callbackUrl = "";
+                var result = await _twiliohelper.callrecording(sid, callbackUrl);
+                var resultset = _userService.SaveCallRecording(interviewid, IRFId, CandidateEmail, emailid, sid, result);
+                return Json(result);
+            }
+            return Json("Fail");
+        }
 
+        [HttpPost]
+        public JsonResult FetchRecordings(string candidateEmailid, string irfid)
+        {
+            try
+            {
+                //string accountSid = _configuration["TwilioSettings:ACCOUNT_SID"];
+                var resultset = _userService.FetchCallRecording(candidateEmailid, irfid);
+                foreach (var item in resultset)
+                {
+                    if (!String.IsNullOrEmpty(item.RecordingUrl))
+                        item.RecordingUrl = "https://api.twilio.com/2010-04-01/Accounts/ACcad9f6682d4a76df9af7cde78dd0867e/Recordings/" + item.RecordingUrl;
+                }
+                return Json(resultset);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(ex);
+            }
+        }
     }
-
-
 }
 
 

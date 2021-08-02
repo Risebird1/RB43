@@ -1723,7 +1723,6 @@
     }
 
     function QuestionChanged(id, val) {
-        debugger;
         var num = id.match(/(\d+)/);
 
         var index = num[0];//id.charAt(20);
@@ -1818,15 +1817,20 @@
     }
 
     function CheckQuestions() {
-        var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
-        for (i = 0; i < questionItems.length; i++) {
-            var temp = $("#QuestionsCollection_" + i + "__Comment").val();
-            if (temp == null || temp == '') {
-                document.getElementById('QuestionsCollection_CommentError').innerHTML = "Please select a Question for all the added rows."
-                document.getElementById('QuestionsCollection_CommentError').focus();
-                return false;
-            }
 
+        var meetingStatusElem = document.getElementById("MeetingStatus");
+        if (meetingStatusElem.value != null && meetingStatusElem.value == 4) {
+            var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
+            for (i = 0; i < questionItems.length; i++) {
+                var temp = $("#QuestionsCollection_" + i + "__Comment").val();
+                if (temp == null || temp == '') {
+                    document.getElementById('QuestionsCollection_CommentError').innerHTML = "Please select a Question for all the added rows."
+                    document.getElementById('QuestionsCollection_CommentError').focus();
+                    return false;
+                }
+
+            }
+            
         }
         document.getElementById('QuestionsCollection_CommentError').innerHTML = "";
         return true;

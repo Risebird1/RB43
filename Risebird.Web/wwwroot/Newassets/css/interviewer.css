@@ -18,9 +18,15 @@ textarea::-webkit-scrollbar-thumb {
     margin: 2px;
     border-radius: 2px;
 }
-
+.table#availabilityDetailsTable > thead > tr > th, .table#availabilityDetailsTable > tfoot > tr > th {
+    padding: 2px 7px !important;
+    font-weight: normal !important;
+}
+#availDetails {
+    padding: 12px 10px 0px 12px;
+}
 #candidateTable.journey td {
-    vertical-align: middle!important;
+    vertical-align: middle !important;
 }
 
 .employee .mdc-card .form-control[disabled] {
@@ -1043,7 +1049,9 @@ div.dataTables_wrapper div.dataTables_processing {
 .selected {
     background: green;
 }
-
+.qcpending {
+    background: #67ddec;
+}
 .pending {
     background: orangered;
 }
@@ -1061,7 +1069,7 @@ div.dataTables_wrapper div.dataTables_processing {
 }
 
 .borderline {
-    background: yellow;
+    background: #fff389;
 }
 
 .schedule {
@@ -1186,7 +1194,7 @@ div.dataTables_wrapper div.dataTables_processing {
 @media screen and (max-width:640px) {
 
     .cmt-w, .talk-bubble {
-        width: 98%;
+        width: 98%!important;
     }
 
     .upload a {

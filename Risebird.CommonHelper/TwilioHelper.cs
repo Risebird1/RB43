@@ -3,6 +3,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Twilio;
 using Twilio.Clients;
@@ -159,6 +160,35 @@ namespace Risebird.CommonHelper
                 return false;
             }
         }
+        public async Task<string> callrecording(string callSid, string callbackUrl)
+        {
+            try
+            {
+                string accountSid = _configuration["TwilioSettings:ACCOUNT_SID"];
+                string authToken = _configuration["TwilioSettings:AUTH_TOKEN"];
+                TwilioClient.Init(accountSid, authToken);
 
+                var recording = await Twilio.Rest.Api.V2010.Account.Call.RecordingResource.CreateAsync(
+                    recordingChannels: "dual",
+                    pathCallSid: callSid
+                );
+                //var recordingStatusCallbackEvent = new List<string> {
+                //    "completed"        };
+
+                //recordingStatusCallback: new Uri("https://portal.risebird.io/User/CallRecordingback"),
+                //var recording = await Twilio.Rest.Api.V2010.Account.Call.RecordingResource.CreateAsync(
+                //    recordingStatusCallback: new Uri(callbackUrl),
+                //    recordingStatusCallbackEvent: recordingStatusCallbackEvent,
+                //    recordingChannels: "dual",
+                //    pathCallSid: callSid
+                //);
+                return recording.Sid;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return e.ToString();
+            }
+        }
     }
 }

@@ -773,7 +773,7 @@ namespace Risebird.Web.Controllers
         {
             //check if the Email Id exists
             IEnumerable<string> EmailIdList = _interviewerService.GetEmailIds(UserId);
-            if (EmailIdList.Contains(EmailId))
+            if (EmailIdList.Contains(EmailId.ToUpper()))
             {
                 return Json(false, new Newtonsoft.Json.JsonSerializerSettings());
             }
@@ -784,7 +784,7 @@ namespace Risebird.Web.Controllers
         public JsonResult EmailIdVilidation(string EmailId, int UserId)
         {
             IEnumerable<string> EmailIdList = _interviewerService.GetEmailIds(UserId);
-            if (EmailIdList.Contains(EmailId))
+            if (EmailIdList.Contains(EmailId.ToUpper()))
             {
                 var role = _interviewerService.GetUserRolebyEmailid(EmailId);
                 return Json("EmailId already in use as " + role + ".", new Newtonsoft.Json.JsonSerializerSettings());

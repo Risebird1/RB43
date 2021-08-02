@@ -109,7 +109,7 @@
                                                         <th>JD Link</th>
 
                                                         <th class="disabled-sorting text-center">Actions</th>
-                                                        <th  style="text-align:center">Call</th>
+                                                        <th style="text-align:center">Call</th>
                                                     </tr>
                                                 </tfoot>
                                                 <tbody id="tblbodyInterviewerAssessment">
@@ -166,15 +166,15 @@
 
                                                                 }
 
-                                                                <button  id="myinterviewerassmenu_6" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report">
+                                                                <button id="myinterviewerassmenu_6" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report">
                                                                     <span onclick="location.href = '@Url.Action("AddReport", "Interviewer", new { interviewId = item.id, iscId = item.iscIntId })'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                                 </button>
                                                             </td>
                                                             <td class="callInterviewerbtn text-center">
                                                                 @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                                                 {
-                                                                    <button  id="myinterviewerassmenu_5" class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer.">
-                                                                        <span onclick="ModalButtonClick('@item.MobileNumber', '@item.candidateEmail')" data-original-title="Tooltip on top" title="Click here to call the interviewer." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                    <button id="myinterviewerassmenu_5" class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer.">
+                                                                        <span onclick="ModalButtonClick('@item.MobileNumber', '@item.candidateEmail', '@item.id')" data-original-title="Tooltip on top" title="Click here to call the interviewer." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
                                                                     </button>
                                                                 }
 
@@ -314,6 +314,7 @@
 </script>
 <script>
     var interviewer = "";
+    var caninterviewid = 0;
     var span = document.getElementById("callPopUp");
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
@@ -344,6 +345,7 @@
     Twilio.Device.connect(function (connection) {
         var appendText = "In call with " + "<b>" + interviewer + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
+        startCallRecording(connection.parameters.CallSid);
     });
 
     function afterTimeOut() {
@@ -357,14 +359,26 @@
         setTimeout(afterTimeOut, 2000);
 
     });
+    function startCallRecording(sid) {
+        console.log("sid:" + sid);
+        $.ajax({
+            url: '/User/makecall',
+            type: "GET",
+            data: { 'sid': sid, 'interviewid': caninterviewid },
+            success: function (data) {
+                console.log("rsid:" + data);
+            }
+        });
+    }
     function ModalButtonClickJson(phoneNumber, id) {
         var emailId = $('#hidemail_' + id).val();
-        ModalButtonClick(phoneNumber, emailId);
+        ModalButtonClick(phoneNumber, emailId, id);
 
     }
 
-    function ModalButtonClick(phoneNumber, interviewerMail) {
+    function ModalButtonClick(phoneNumber, interviewerMail, interviewid) {
         interviewer = interviewerMail;
+        caninterviewid = interviewid;
         // Get the modal
         var modal = document.getElementById("myModal");
         // When the user clicks the button, open the modal
@@ -686,116 +700,116 @@
 
             html += ' <td>' + data[i].heuristicProfileTypeDesc + '</td>';
             if (data[i].jdLink != null && data[i].jdLink != "") {
-                html += '<td><a target="_blank" title="JD Link" href=' + data[i].jdLink.replace(" ", "%20").replace(" ", "%20")+'>JD Link</a> </td>';
-}
-else {
-    html += ' <td></td>';
-}
+                html += '<td><a target="_blank" title="JD Link" href=' + data[i].jdLink.replace(" ", "%20").replace(" ", "%20") + '>JD Link</a> </td>';
+            }
+            else {
+                html += ' <td></td>';
+            }
 
 
 
 
-html += '  <td class="text-center">';
-if (data[i].interviewDate.Date >= new Date().getDate()) {
+            html += '  <td class="text-center">';
+            if (data[i].interviewDate.Date >= new Date().getDate()) {
 
-    html += '<button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">  <span onclick="javascript:CheckTimeDifference(' + data[i].id + ',' + data[i].interviewDate + ');" title="UnAssign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span> </button>';
-}
-html += '<button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report"> <a href = "Interviewer/AddReport?interviewId=' + data[i].id + '&irfId=' + data[i].iscIntId + '"  title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></a> </button>';
-
-
-html += ' </td> ';
+                html += '<button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">  <span onclick="javascript:CheckTimeDifference(' + data[i].id + ',' + data[i].interviewDate + ');" title="UnAssign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span> </button>';
+            }
+            html += '<button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report"> <a href = "Interviewer/AddReport?interviewId=' + data[i].id + '&irfId=' + data[i].iscIntId + '"  title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></a> </button>';
 
 
-html += '   <td class="callInterviewerbtn text-center">';
-var oldDateObj = new Date();
-var newDateObj = new Date();
-var newObj = new Date();
-newDateObj.setTime(oldDateObj.getTime() - (5 * 60 * 1000));
-newObj.setTime(oldDateObj.getTime() + (65 * 60 * 1000));
-if (data[i].mobileNumber != null && data[i].mobileNumber != "" && newDateObj <= new Date(data[i].interviewDate) && new Date(data[i].interviewDate) <= newObj) {
-    html += '<input id="hidemail_' + data[i].id + '" type="hidden" value="' + data[i].candidateEmail + '"/><button class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer."><span onclick="ModalButtonClickJson(' + data[i].mobileNumber + ', ' + data[i].id + ')" data-original-title="Tooltip on top" title="Click here to call the interviewer." class="mdc - fab__icon material - icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span></button>';
-
-}
-
-html += '  </td>';
-
-html += '  </tr>';
+            html += ' </td> ';
 
 
-html += '   <tr class="collapse ' + data[i].id + '">';
+            html += '   <td class="callInterviewerbtn text-center">';
+            var oldDateObj = new Date();
+            var newDateObj = new Date();
+            var newObj = new Date();
+            newDateObj.setTime(oldDateObj.getTime() - (5 * 60 * 1000));
+            newObj.setTime(oldDateObj.getTime() + (65 * 60 * 1000));
+            if (data[i].mobileNumber != null && data[i].mobileNumber != "" && newDateObj <= new Date(data[i].interviewDate) && new Date(data[i].interviewDate) <= newObj) {
+                html += '<input id="hidemail_' + data[i].id + '" type="hidden" value="' + data[i].candidateEmail + '"/><button class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer."><span onclick="ModalButtonClickJson(' + data[i].mobileNumber + ', ' + data[i].id + ')" data-original-title="Tooltip on top" title="Click here to call the interviewer." class="mdc - fab__icon material - icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span></button>';
 
-html += ' <td colspan="999" class="child-section">';
-html += ' <table class="table table-striped">';
-html += '  <tr>';
-html += ' <th>Risebird HR</th>';
-html += ' <th>Meeting Status</th>';
-html += ' <th>Interview Status</th>';
-html += '   </tr>';
+            }
 
-html += '  <tr>';
+            html += '  </td>';
 
-if (data[i].hRCoordinatorEmailId != null && data[i].hRCoordinatorEmailId != "") {
-    html += ' <td>' + data[i].hRCoordinatorEmailId + '</td>';
-}
-else {
-    html += '  <td></td>';
-}
+            html += '  </tr>';
 
 
-if (data[i].meetingStatusDesc != null && data[i].meetingStatusDesc != "") {
-    html += ' <td>' + data[i].meetingStatusDesc + '</td>';
-}
-else {
-    html += '  <td></td>';
-}
+            html += '   <tr class="collapse ' + data[i].id + '">';
 
-if (data[i].interviewStatusDesc != null && data[i].interviewStatusDesc != "") {
-    html += ' <td>' + data[i].interviewStatusDesc + '</td>';
-}
-else {
-    html += '  <td></td>';
-}
+            html += ' <td colspan="999" class="child-section">';
+            html += ' <table class="table table-striped">';
+            html += '  <tr>';
+            html += ' <th>Risebird HR</th>';
+            html += ' <th>Meeting Status</th>';
+            html += ' <th>Interview Status</th>';
+            html += '   </tr>';
 
-html += '  </tr>';
+            html += '  <tr>';
 
-html += '   </table>';
-html += '   </td>';
-html += '   </tr>';
+            if (data[i].hRCoordinatorEmailId != null && data[i].hRCoordinatorEmailId != "") {
+                html += ' <td>' + data[i].hRCoordinatorEmailId + '</td>';
+            }
+            else {
+                html += '  <td></td>';
+            }
 
 
-}
-$("#tblbodyInterviewerAssessment").empty().html(html);
-}
-function bindPages(pagecount, startpage, endpage, totalcount) {
-var html = '';
-html += '<div class="pagination-container">';
-html += '<ul class="pagination">';
-for (var i = 1; i <= pagecount; i++) {
-if (i == 1) {
-    html += '   <li class="active"><span>1</span></li>';
-} else if (i <= 10) {
-    html += '<li><a href="/Interviewer/MyInterviewerAssessment?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
-} else if (i == 11) {
-    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-    html += '<li class="PagedList-skipToNext"><a href="/Interviewer/MyInterviewerAssessment?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-    html += '<li class="PagedList-skipToLast"><a href="/Interviewer/MyInterviewerAssessment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-} else {
-    break;
-}
-if (pagecount <= 10 && i == pagecount && i != 1) {
-    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-    html += '<li class="PagedList-skipToNext"><a href="/Interviewer/MyInterviewerAssessment?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-    html += '<li class="PagedList-skipToLast"><a href="/Interviewer/MyInterviewerAssessment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-}
-}
-html += '</ul>';
-html += '</div>';
-$("#divmeetingpages").empty().html(html);
-var pagestartdetails = '';
-pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
-$("#divmeetingentries").empty().html(pagestartdetails);
+            if (data[i].meetingStatusDesc != null && data[i].meetingStatusDesc != "") {
+                html += ' <td>' + data[i].meetingStatusDesc + '</td>';
+            }
+            else {
+                html += '  <td></td>';
+            }
 
-}
+            if (data[i].interviewStatusDesc != null && data[i].interviewStatusDesc != "") {
+                html += ' <td>' + data[i].interviewStatusDesc + '</td>';
+            }
+            else {
+                html += '  <td></td>';
+            }
+
+            html += '  </tr>';
+
+            html += '   </table>';
+            html += '   </td>';
+            html += '   </tr>';
+
+
+        }
+        $("#tblbodyInterviewerAssessment").empty().html(html);
+    }
+    function bindPages(pagecount, startpage, endpage, totalcount) {
+        var html = '';
+        html += '<div class="pagination-container">';
+        html += '<ul class="pagination">';
+        for (var i = 1; i <= pagecount; i++) {
+            if (i == 1) {
+                html += '   <li class="active"><span>1</span></li>';
+            } else if (i <= 10) {
+                html += '<li><a href="/Interviewer/MyInterviewerAssessment?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+            } else if (i == 11) {
+                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Interviewer/MyInterviewerAssessment?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Interviewer/MyInterviewerAssessment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            } else {
+                break;
+            }
+            if (pagecount <= 10 && i == pagecount && i != 1) {
+                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Interviewer/MyInterviewerAssessment?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Interviewer/MyInterviewerAssessment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            }
+        }
+        html += '</ul>';
+        html += '</div>';
+        $("#divmeetingpages").empty().html(html);
+        var pagestartdetails = '';
+        pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
+        $("#divmeetingentries").empty().html(pagestartdetails);
+
+    }
 </script>
 
 <script>
@@ -891,87 +905,87 @@ $("#divmeetingentries").empty().html(pagestartdetails);
 
 }
 @*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
-{
-    <script src="~/Newassets/js/enjoyhint.min.js"></script>
-    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-    <script>
-        var openInterview = localStorage.getItem('openinterview');
+    {
+        <script src="~/Newassets/js/enjoyhint.min.js"></script>
+        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+        <script>
+            var openInterview = localStorage.getItem('openinterview');
 
-        if (openInterview == "true") {
-            var enjoyhint_instance = new EnjoyHint({});
+            if (openInterview == "true") {
+                var enjoyhint_instance = new EnjoyHint({});
 
-            var enjoyhint_script_steps = [
-                {
-                    'next .card-title': 'Your assigned interviews and click on continue to know its features',
-                    'nextButton': { className: "myNext", text: "Continue" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
+                var enjoyhint_script_steps = [
+                    {
+                        'next .card-title': 'Your assigned interviews and click on continue to know its features',
+                        'nextButton': { className: "myNext", text: "Continue" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
 
-                {
-                    'next .first': 'Filter here based on available attributes or reset filter if applied earlier',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .second': 'Interview Details, scroll right or expand first column to see action buttons',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .unassignIntr': 'Click here to Unassign interview incase you will not able to take interview in case of emergency only',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .sampleQues': 'Click here to fill questions discussed during interview and each questions need to be filled in seperate row based on its skill',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
+                    {
+                        'next .first': 'Filter here based on available attributes or reset filter if applied earlier',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .second': 'Interview Details, scroll right or expand first column to see action buttons',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .unassignIntr': 'Click here to Unassign interview incase you will not able to take interview in case of emergency only',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .sampleQues': 'Click here to fill questions discussed during interview and each questions need to be filled in seperate row based on its skill',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
 
-                {
-                    'next .voicebiobtn': 'Click here to upload voice biometric audio sample of candidate',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .feedbackreportbtn': 'Click here to open and fill candidate interview feedback report, Upload Video, Interviewer Comment, Questions, Tech Skill Report and General Skill report. All these section are mandatory',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .callInterviewerbtn': 'Click here to call candidate incase it is require',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'click .iqcomenu': 'Click on Open QC Interviews menu to see its features',
+                    {
+                        'next .voicebiobtn': 'Click here to upload voice biometric audio sample of candidate',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .feedbackreportbtn': 'Click here to open and fill candidate interview feedback report, Upload Video, Interviewer Comment, Questions, Tech Skill Report and General Skill report. All these section are mandatory',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .callInterviewerbtn': 'Click here to call candidate incase it is require',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'click .iqcomenu': 'Click on Open QC Interviews menu to see its features',
 
-                }
+                    }
 
-            ];
-            setTimeout(function () {
-                enjoyhint_instance.set(enjoyhint_script_steps);
-                enjoyhint_instance.run();
-            }, 5000)
-        }
-        else {
-            var enjoyhint_instance = new EnjoyHint({});
+                ];
+                setTimeout(function () {
+                    enjoyhint_instance.set(enjoyhint_script_steps);
+                    enjoyhint_instance.run();
+                }, 5000)
+            }
+            else {
+                var enjoyhint_instance = new EnjoyHint({});
 
-            var enjoyhint_script_steps = [
-                {
-                    'click .inoi': 'Click here to navigate to Open Interview menu to see its features then return back to this menu again',
+                var enjoyhint_script_steps = [
+                    {
+                        'click .inoi': 'Click here to navigate to Open Interview menu to see its features then return back to this menu again',
 
-                }
-            ];
-            setTimeout(function () {
-                enjoyhint_instance.set(enjoyhint_script_steps);
-                enjoyhint_instance.run();
-            }, 10000)
+                    }
+                ];
+                setTimeout(function () {
+                    enjoyhint_instance.set(enjoyhint_script_steps);
+                    enjoyhint_instance.run();
+                }, 10000)
 
-        }
+            }
 
-    </script>
-}*@
+        </script>
+    }*@
 
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Interviewer\"")

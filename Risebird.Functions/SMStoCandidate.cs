@@ -6,9 +6,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
-using Twilio.Clients;
-using Twilio.Rest.Api.V2010.Account;
-using Twilio.Types;
 
 namespace Risebird.Functions
 {
@@ -31,38 +28,38 @@ namespace Risebird.Functions
                     candidates = con.Query<SMSCandidate>(query).ToList();
                 }
 
-                if (candidates != null)
-                {
-                    var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";
-                    var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";
-                    var twilioSMSNumber = "+12055768041";
-                    var _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
-                    foreach (var candidate in candidates)
-                    {
-                        if (candidate.EndDate < DateTime.Now)
-                        {
-                            int checkScheduleCount = 0;
-                            var checkQuery = "select id from InterviewMeetings where IRFId=@IRFId and candidateEmail = @EmailId and confirmationStatus!=2 and interviewDate > dateadd(dd,-3,getdate())";
-                            var dynamicParameters = new DynamicParameters();
-                            dynamicParameters.Add("@IRFId", candidate.IRFId);
-                            dynamicParameters.Add("@EmailId", candidate.EmailId);
-                            using (SqlConnection con = new SqlConnection(str))
-                            {
-                                var scheduleResult = con.Query<int>(checkQuery, dynamicParameters).ToList();
-                                checkScheduleCount = scheduleResult.Count();
-                            }
-                            if (checkScheduleCount == 0)
-                            {
-                                var msg = "Dear Candidate! Greetings from RiseBird. This is a gentle reminder for you to kindly schedule a meeting against the invite for the Client Name " + candidate.ClientName + " and Skill " + candidate.JDTiltle + " sent to you.";
-                                if (!string.IsNullOrEmpty(candidate.Phone))
-                                    MessageResource.CreateAsync(to: new PhoneNumber(candidate.Phone), from: new PhoneNumber(twilioSMSNumber), body: msg, client: _twilioClient);
-                                log.Info($"SMS Timer trigger function executed for: {candidate.Phone}");
-                            }
-                        }
+                //if (candidates != null)
+                //{
+                //    var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";
+                //    var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";
+                //    var twilioSMSNumber = "+12055768041";
+                //    var _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
+                //    foreach (var candidate in candidates)
+                //    {
+                //        if (candidate.EndDate < DateTime.Now)
+                //        {
+                //            int checkScheduleCount = 0;
+                //            var checkQuery = "select id from InterviewMeetings where IRFId=@IRFId and candidateEmail = @EmailId and confirmationStatus!=2 and interviewDate > dateadd(dd,-3,getdate())";
+                //            var dynamicParameters = new DynamicParameters();
+                //            dynamicParameters.Add("@IRFId", candidate.IRFId);
+                //            dynamicParameters.Add("@EmailId", candidate.EmailId);
+                //            using (SqlConnection con = new SqlConnection(str))
+                //            {
+                //                var scheduleResult = con.Query<int>(checkQuery, dynamicParameters).ToList();
+                //                checkScheduleCount = scheduleResult.Count();
+                //            }
+                //            if (checkScheduleCount == 0)
+                //            {
+                //                var msg = "Dear Candidate! Greetings from RiseBird. This is a gentle reminder for you to kindly schedule a meeting against the invite for the Client Name " + candidate.ClientName + " and Skill " + candidate.JDTiltle + " sent to you.";
+                //                if (!string.IsNullOrEmpty(candidate.Phone))
+                //                    MessageResource.CreateAsync(to: new PhoneNumber(candidate.Phone), from: new PhoneNumber(twilioSMSNumber), body: msg, client: _twilioClient);
+                //                log.Info($"SMS Timer trigger function executed for: {candidate.Phone}");
+                //            }
+                //        }
 
-                    }
+                //    }
 
-                }
+                //}
 
             }
             catch (Exception)

@@ -11,11 +11,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twilio.Clients;
-using Twilio.Rest.Api.V2010.Account;
-using Twilio.Types;
 
 namespace Risebird.Functions
 {
@@ -29,7 +25,7 @@ namespace Risebird.Functions
             {
                 var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";
                 var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";
-                var twilioSMSNumber = "+12055768041";
+                //  var twilioSMSNumber = "+12055768041";
                 var _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
 
                 var meetings = new List<UnassignedMeeting>();
@@ -63,34 +59,34 @@ namespace Risebird.Functions
 
                             SendMailToInterviewer(interviewerMailList, irfName, candidateEmail, primarySkill, interviewDate);
 
-                            var sb = new StringBuilder();
-                            sb.Append("You have received this communication as a reminder to assign a meeting scheduled for the date " + interviewDate + ".");
-                            sb.AppendLine();
-                            sb.Append("Skills Channel: " + irfName);
-                            sb.AppendLine();
-                            sb.Append("Candidate EmailId: " + candidateEmail);
-                            sb.AppendLine();
-                            sb.Append("Primary Skill: " + primarySkill);
-                            var msg = sb.ToString();
+                            //var sb = new StringBuilder();
+                            //sb.Append("You have received this communication as a reminder to assign a meeting scheduled for the date " + interviewDate + ".");
+                            //sb.AppendLine();
+                            //sb.Append("Skills Channel: " + irfName);
+                            //sb.AppendLine();
+                            //sb.Append("Candidate EmailId: " + candidateEmail);
+                            //sb.AppendLine();
+                            //sb.Append("Primary Skill: " + primarySkill);
+                            //var msg = sb.ToString();
 
-                            var phoneNumbers = meetings.Where(x => x.imid == meetingId).Select(x => x.InterviewerPhone);
-                            if (phoneNumbers != null && phoneNumbers.Count() > 0)
-                            {
-                                //send an sms to all the interviewers with the message
+                            //var phoneNumbers = meetings.Where(x => x.imid == meetingId).Select(x => x.InterviewerPhone);
+                            //if (phoneNumbers != null && phoneNumbers.Count() > 0)
+                            //{
+                            //    //send an sms to all the interviewers with the message
 
-                                Parallel.ForEach(phoneNumbers, phoneNumber =>
-                                {
-                                    if (!string.IsNullOrEmpty(phoneNumber))
-                                    {
-                                        if (!string.IsNullOrEmpty(phoneNumber))
-                                            MessageResource.CreateAsync(to: new PhoneNumber(phoneNumber), from: new PhoneNumber(twilioSMSNumber), body: msg, client: _twilioClient);
-                                        log.Info($"SMS Timer trigger function executed for: {phoneNumber}");
-                                    }
+                            //    Parallel.ForEach(phoneNumbers, phoneNumber =>
+                            //    {
+                            //        if (!string.IsNullOrEmpty(phoneNumber))
+                            //        {
+                            //            if (!string.IsNullOrEmpty(phoneNumber))
+                            //                MessageResource.CreateAsync(to: new PhoneNumber(phoneNumber), from: new PhoneNumber(twilioSMSNumber), body: msg, client: _twilioClient);
+                            //            log.Info($"SMS Timer trigger function executed for: {phoneNumber}");
+                            //        }
 
-                                }
-                                );
-                            }
-                            log.Info($"UnassignedMeetingsReminder Timer trigger function executed for meeting: {meetingId}");
+                            //    }
+                            //    );
+                            //}
+                            //log.Info($"UnassignedMeetingsReminder Timer trigger function executed for meeting: {meetingId}");
 
                         }
                     }

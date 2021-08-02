@@ -165,7 +165,7 @@
                             <div class="loader text-center">
                                 <img src="~/Newassets/img/lazyload.gif" />
                             </div>
-                            <div id="allinterview_table" data-intro="<span style='font-size:16px;'>Overview the summary of Rejected Meeting details:</span><hr class='btop' /> 1. Candidate Details (Name, Email, JD title) <br/>2. Report & Video <br/> 3. Click on star button to Rate the Interviewer.<br/><a href='/Client/NotScheduledMeetings' class='btn btn-primary allmeetingnext-btn'>NEXT</a>" data-position="top">
+                            <div id="allinterview_table" data-intro="<span style='font-size:16px;'>Overview the summary of Rejected Meeting details:</span><hr class='btop' /> 1. Candidate Details (Name, Email, JD Title) <br/>2. Report & Video <br/> 3. Click on Star button to Rate the Interviewer.<br/><a href='/Client/NotScheduledMeetings' class='btn btn-primary allmeetingnext-btn'>NEXT</a>" data-position="top">
                                 <div class="dataloading">
                                     <div class="toolbar">
 
@@ -1483,73 +1483,7 @@
     }
 
 </script>
-<script>
-    var candidate = "";
-    var span = document.getElementById("callPopUp");
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        hangUp();
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
-    $(document).ready(function () {
-        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-            // Set up the Twilio Client Device with the token
-            Twilio.Device.setup(data.token);
-        });
-    });
 
-    /* Callback to let us know Twilio Client is ready */
-    Twilio.Device.ready(function (device) {
-
-    });
-
-    function callCandidate(phoneNumber) {
-        var params = { "phoneNumber": phoneNumber };
-        Twilio.Device.connect(params);
-    }
-    function hangUp() {
-        Twilio.Device.disconnectAll();
-    }
-
-    Twilio.Device.connect(function (connection) {
-        var appendText = "In call with " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-    });
-
-    function afterTimeOut() {
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
-
-    Twilio.Device.disconnect(function (connection) {
-        var appendText = "Call disconnected! ";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        setTimeout(afterTimeOut, 2000);
-
-    });
-
-    function CallButtonClick(candidateName, mobileNumber) {
-        candidate = candidateName;
-        // Get the modal
-        var modal = document.getElementById("myCallModal");
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
-        var appendText = "Calling... " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        callCandidate(mobileNumber);
-    }
-    function CallButtonClickjson(imid) {
-        var candidate = $("#hidcandidate_" + imid).val();
-        var mobile = $("#hidmobile" + imid).val();
-        CallButtonClick(candidate, mobile);
-    }
-    function closeCallPopUp() {
-        hangUp();
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
-</script>
 <loading></loading>
 
 

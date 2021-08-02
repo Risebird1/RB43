@@ -29,17 +29,17 @@
                 </div>
 
                 <div class="pull-right client-ms">
-                    <div>
+                    <div class="mc-button-area text-left">
 
 
                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates</font></span>
-        </button>*@
+                                <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates</font></span>
+                            </button>*@
 
 
                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick(false)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates</font></span>
-        </button>*@
+                                <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick(false)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates</font></span>
+                            </button>*@
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file and send invitation." onclick="ModalButtonClick(true)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates (Invite)</font></span>
                         </button>
@@ -120,7 +120,7 @@
                                                             @if (ViewBag.Profile != "Client")
                                                             {
                                                                 <th id="getstatus_2">RB Attempts</th>
-}
+                                                            }
                                                             <th id="getstatus_3">Resume</th>
 
                                                             <th id="getstatus_4">Invite Sent</th>
@@ -130,12 +130,12 @@
                                                                 <th id="getstatus_6">Joinability</th>
                                                                 <th id="getstatus_7">Selectability</th>
                                                             }
-                                                                <th width="25%"> Actions </th>
-                                                                <th style="text-align:center">Schedule Call</th>
-                                                                <th style="text-align:center">Call</th>
+                                                            <th width="25%"> Actions </th>
+                                                            <th style="text-align:center">Schedule Call</th>
+                                                            <th style="text-align:center">Call</th>
 
 
-                                                            </tr>
+                                                        </tr>
                                                     </thead>
                                                     <tfoot>
                                                         <tr>
@@ -144,7 +144,7 @@
                                                             @if (ViewBag.Profile != "Client")
                                                             {
                                                                 <th>RB Attempts</th>
-                                                             }
+                                                            }
                                                             <th>Resume</th>
 
                                                             <th>Invite Sent</th>
@@ -153,13 +153,13 @@
                                                             {
                                                                 <th>Joinability</th>
                                                                 <th>Selectability </th>
-                                                                }
-                                                                <th style="width:25%"> Actions </th>
-                                                                <th style="text-align:center">Schedule Call</th>
+                                                            }
+                                                            <th style="width:25%"> Actions </th>
+                                                            <th style="text-align:center">Schedule Call</th>
 
-                                                                <th style="text-align:center">Call</th>
+                                                            <th style="text-align:center">Call</th>
 
-                                                            </tr>
+                                                        </tr>
                                                     </tfoot>
                                                     <tbody id="tblbodyCandidate">
 
@@ -192,72 +192,72 @@
                                                             {
                                                                 selectabilityColor = "red";
                                                             }
-                                                        <tr id="@item.id" data-changes="1">
-                                                            <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                                                            <tr id="@item.id" data-changes="1">
+                                                                <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
 
 
 
 
-                                                            @if (item.EmailId != null && item.EmailId != "")
-                                                            {
-                                                                @if (item.EmailId.Length > 18)
+                                                                @if (item.EmailId != null && item.EmailId != "")
                                                                 {
+                                                                    @if (item.EmailId.Length > 18)
+                                                                    {
 
 
-                                                                    <td class="cadEmail">
-                                                                        <a onclick="" data-tooltip="@item.EmailId"><span class="cname">@item.EmailId</span> </a>
-                                                                    </td>
+                                                                        <td class="cadEmail">
+                                                                            <a onclick="" data-tooltip="@item.EmailId"><span class="cname">@item.EmailId</span> </a>
+                                                                        </td>
+                                                                    }
+
+
+                                                                    else
+                                                                    {
+                                                                        <td class="cadEmail">
+                                                                            <a onclick=""><span class="cname">@item.EmailId</span> </a>
+                                                                        </td>
+                                                                    }
                                                                 }
-
-
                                                                 else
                                                                 {
-                                                                    <td class="cadEmail">
-                                                                        <a onclick=""><span class="cname">@item.EmailId</span> </a>
-                                                                    </td>
+                                                                    <td></td>
                                                                 }
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
 
-                                                            @if (ViewBag.Profile != "Client")
-                                                            {
-                                                                <td class="text-center">@item.AttemptsCount</td>
-}
+                                                                @if (ViewBag.Profile != "Client")
+                                                                {
+                                                                    <td class="text-center">@item.AttemptsCount</td>
+                                                                }
 
-                                                            @if (item.ResumeLink != null && item.ResumeLink != "")
-                                                            {
                                                                 @if (item.ResumeLink != null && item.ResumeLink != "")
                                                                 {
-                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
+                                                                    @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                                    {
+                                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>No Resume</td>
+                                                                    }
                                                                 }
                                                                 else
                                                                 {
-                                                                    <td>No Resume</td>
+                                                                    <td></td>
                                                                 }
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
 
 
 
 
-                                                            <td class="text-center">@item.TotalInvites</td>
-                                                            <td class="text-center">@item.InviteConfirmation</td>
+                                                                <td class="text-center">@item.TotalInvites</td>
+                                                                <td class="text-center">@item.InviteConfirmation</td>
 
-                                                            @if (ViewBag.Profile != "Client")
-                                                            {
-                                                                <td class="text-center" style="color:@joinabilityColor;">
-                                                                    <b>@item.JoinabilityScore</b>
-                                                                </td>
-                                                                <td class="text-center" style="color:@selectabilityColor; ">
-                                                                    <b>@item.SelectabilityScore</b>
-                                                                </td>
-                                                            }
+                                                                @if (ViewBag.Profile != "Client")
+                                                                {
+                                                                    <td class="text-center" style="color:@joinabilityColor;">
+                                                                        <b>@item.JoinabilityScore</b>
+                                                                    </td>
+                                                                    <td class="text-center" style="color:@selectabilityColor; ">
+                                                                        <b>@item.SelectabilityScore</b>
+                                                                    </td>
+                                                                }
 
 
 
@@ -269,104 +269,109 @@
 
 
 
-                                                        <td class="text-left action">
+                                                                <td class="text-left action">
 
-                                                            @if (ViewBag.Profile != "Recruiter")
+                                                                    @if (ViewBag.Profile != "Recruiter")
 
-                                                            {
+                                                                    {
 
-                                                                if (!string.IsNullOrEmpty(item.ClientHRAttemptContact))
-                                                                {
-                                                                    <button id="getstatus_8" class="mdc-fab app-fab--absolute" aria-label="Send Invite">
-                                                                        <span onclick="location.href = '@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })'" title="Send Invite" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                        if (!string.IsNullOrEmpty(item.ClientHRAttemptContact))
+                                                                        {
+                                                                            <button id="getstatus_8" class="mdc-fab app-fab--absolute" aria-label="Send Invite">
+                                                                                <span onclick="location.href = '@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })'" title="Send Invite" class="mdc-fab__icon material-icons">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                                </span>
+                                                                            </button>
+                                                                        }
+
+                                                                        else
+                                                                        {
+                                                                            <button id="getstatus_8" class="mdc-fab app-fab--absolute" aria-label="Kindly enter Client HR's EmailId to send invite!">
+                                                                                <span title="Kindly enter Client HR's EmailId to send invite!" class="mdc-fab__icon material-icons">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                                </span>
+                                                                            </button>
+
+                                                                        }
+
+
+
+
+                                                                        <span id="getstatus_9" onclick="location.href = '@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })'" title="Cancel Invite" class="mdc-fab app-fab--absolute trash-btn">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
+                                                                        </span>
+
+
+                                                                        @if (ViewBag.profile != "Client")
+                                                                        {
+                                                                            <button class="mdc-fab app-fab--absolute mdc-fab-secondary" aria-label="Audio files">
+                                                                                <span onclick="location.href = '@Url.Action("UploadAudio", "Candidate", new { candidateId = item.CandidateMasterId, irfId= item.IRFId, rfName=ViewBag.IRFName})'" title="Audio files" class="mdc-fab__icon material-icons">
+
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>
+                                                                                </span>
+                                                                            </button>
+
+                                                                            <button class="mdc-fab app-fab--absolute itemques" aria-label="Add Candidate Status">
+                                                                                <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
+                                                                            </button>
+
+                                                                            @*<button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
+                                                                                    <span onclick="javascript:GetCandidateStatusList('@item.IRFId', '@item.CandidateMasterId', '@ViewBag.IRFName', '@item.Name');" title="Candidate Status List" class="mdc-fab__icon material-icons">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg>
+                                                                                    </span>
+                                                                                </button>*@
+
+                                                                        }
+
+
+                                                                    }
+
+
+
+                                                                    <button id="getstatus_10" class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                        <span onclick="location.href = '@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
                                                                         </span>
                                                                     </button>
-                                                                }
 
-                                                                else
-                                                                {
-                                                                    <button id="getstatus_8" class="mdc-fab app-fab--absolute" aria-label="Kindly enter Client HR's EmailId to send invite!">
-                                                                        <span title="Kindly enter Client HR's EmailId to send invite!" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                    @if (ViewBag.profile == "Admin")
+                                                                    {
+                                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                                            <span onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    }
+
+                                                                    @if (ViewBag.profile != "Client")
+                                                                    {
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                            <span onclick="location.href = '@Url.Action("Report", "Candidate", new { candidateId = item.CandidateMasterId, irfId = item.IRFId, rfName = item.IRFName })'" title="Report" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    }
+
+
+
+
+                                                                    @if (ViewBag.profile != "Client")
+                                                                    {
+
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
+                                                                            <span onclick="location.href = '@Url.Action("StatusList", "Candidate", new { irfId= item.IRFId, candidateId = item.CandidateMasterId,  irfName=ViewBag.IRFName, candidateName=item.Name})'" title="Candidate Status" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    }
+
+                                                                    <button class="mdc-fab app-fab--absolute record-btn" aria-label="Call Record">
+                                                                        <span onclick="FetchRecording('@item.EmailId')" title="Call Record" class="mdc-fab__icon material-icons">
+                                                                            <i class="fa fa-dot-circle"></i>
+
                                                                         </span>
                                                                     </button>
-
-                                                                }
-
-
-
-
-                                                                <span id="getstatus_9" onclick="location.href = '@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })'" title="Cancel Invite" class="mdc-fab app-fab--absolute trash-btn">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
-                                                                </span>
-
-
-                                                                @if (ViewBag.profile != "Client")
-                                                                {
-                                                                    <button class="mdc-fab app-fab--absolute mdc-fab-secondary" aria-label="Audio files">
-                                                                        <span onclick="location.href = '@Url.Action("UploadAudio", "Candidate", new { candidateId = item.CandidateMasterId, irfId= item.IRFId, rfName=ViewBag.IRFName})'" title="Audio files" class="mdc-fab__icon material-icons">
-
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>
-                                                                        </span>
-                                                                    </button>
-
-                                                                    <button class="mdc-fab app-fab--absolute itemques" aria-label="Add Candidate Status">
-                                                                        <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
-                                                                    </button>
-
-                                                                    @*<button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
-                    <span onclick="javascript:GetCandidateStatusList('@item.IRFId', '@item.CandidateMasterId', '@ViewBag.IRFName', '@item.Name');" title="Candidate Status List" class="mdc-fab__icon material-icons">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg>
-                    </span>
-                </button>*@
-
-                                                                }
-
-
-                                                            }
-
-
-
-                                                            <button id="getstatus_10" class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                                <span onclick="location.href = '@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="mdc-fab__icon material-icons">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
-                                                                </span>
-                                                            </button>
-
-                                                            @if (ViewBag.profile == "Admin")
-                                                            {
-                                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                    <span onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
-                                                                    </span>
-                                                                </button>
-                                                            }
-
-                                                            @if (ViewBag.profile != "Client")
-                                                            {
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                    <span onclick="location.href = '@Url.Action("Report", "Candidate", new { candidateId = item.CandidateMasterId, irfId = item.IRFId, rfName = item.IRFName })'" title="Report" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
-                                                                    </span>
-                                                                </button>
-                                                            }
-
-
-
-
-                                                            @if (ViewBag.profile != "Client")
-                                                            {
-
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
-                                                                    <span onclick="location.href = '@Url.Action("StatusList", "Candidate", new { irfId= item.IRFId, candidateId = item.CandidateMasterId,  irfName=ViewBag.IRFName, candidateName=item.Name})'" title="Candidate Status" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
-                                                                    </span>
-                                                                </button>
-                                                            }
-                                                            
-
-                                                        </td>
+                                                                </td>
 
                                                                 <td class="text-center">
                                                                     @if (item.Phone != null && item.Phone != string.Empty)
@@ -444,7 +449,7 @@
                                                                             }
                                                                             @if (item.ClientHRAttemptContact != null && item.ClientHRAttemptContact.Length > 13)
                                                                             {
-                                                                                <td class="text-center">@item.ClientHRAttemptContact.Substring(0, 13)... </td>
+                                                                                <td data-tooltip="@item.ClientHRAttemptContact" class="text-center"><span class="cname">@item.ClientHRAttemptContact</span> </td>
 
                                                                             }
                                                                             else
@@ -885,12 +890,56 @@
             </div>
 
             <!-- end row -->
+            <div id="myCallRecords" class="modal modal-bg">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon">
+                                    <i class="fa fa-phone-square" style="font-size: 25px;"></i>
+                                </span>
+                            </div>
+                            <h5 class="modal-title pull-left">Call Details <span class="popup-text" id="candidate_email_pop"></span> </h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span onclick="closemyCallRecords()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
+                        <div class="modal-body" style="padding: 2px 16px;">
+                            <div class="row">
+                                <table class="table table-striped table-bordered" style="width:100%;" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Who called</th>
+                                            <th>Call date</th>
+                                            <th>Recording</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblcallrecdetails">
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 text-right">
+                                    <input style="color: #fff;line-height: 13px;margin-bottom:10px;" type="button" onclick="closemyCallRecords()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
 </div>
-    
-    <script>
+
+<script>
         var spanImport = document.getElementById("importResultPopUp");
         // When the user clicks on <span> (x), close the modal
         spanImport.onclick = function () {
@@ -928,10 +977,10 @@
                 }
             });
         }
-    </script>
-    @if (ViewBag.Message != null)
-    {
-        <script type="text/javascript">
+</script>
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
 
         function my_code() {
             var msg = '@ViewBag.Message';
@@ -979,155 +1028,155 @@
         }
 
         window.onload = my_code();
-        </script>
+    </script>
+
+}
+
+
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#meeting").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#meeting").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meeting").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+<script>
+
+    function FilterInterviews(filterValue) {
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/GetFilteredInterviews",
+            data: { 'filterValue': filterValue },
+            success: function (data) {
+
+                if (data == '' && filterValue == 'seven') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews for the next seven days.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                if (data == '' && filterValue == 'all') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                if (data == '') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews for ' + filterValue + '.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                $('#tableID').css("margin-left", "");
+                $('#tableID').html('');
+                $('#tableID').html(data);
+
+                $('#meeting').DataTable({
+                    "pagingType": "full_numbers",
+                    "lengthMenu": [
+                        [10, 25, 50, -1],
+                        [10, 25, 50, "All"]
+                    ],
+                    responsive: false,
+                    language: {
+                        search: "_INPUT_",
+                        searchPlaceholder: "Search records",
+                    }
+
+                });
+                var table = $('#meeting').DataTable();
+
+
+
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+</script>
+
+<script>
+    var span = document.getElementById("importPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+    //var closeStatus = document.getElementById("statusPopUp");
+    //// When the user clicks on <span> (x), close the modal
+    //closeStatus.onclick = function () {
+    //    var modal = document.getElementById("statusModal");
+    //    modal.style.display = "none";
+    //}
+    var candidateId;
+    var irfId;
+</script>
+<script>
+    function ModalButtonClick(value) {
+        document.getElementById("IsSendInvite").value = value;
+
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
 
     }
 
+    //function OpenStatusModal(id, name, status) {
+    //    candidateId = id;
+    //    // Get the modal
+    //    var modal = document.getElementById("statusModal");
+
+    //    document.getElementById("statusHeading").innerHTML = "Status for " + name;
+
+    //    if (status != null && status != "") {
+    //        $("#statusDrpDwn").val(status);
+    //    }
+    //    // When the user clicks the button, open the modal
+    //    modal.style.display = "block";
 
 
-    <script type="text/javascript">
-        //// script for loader starts here
-        $(".dataloading").hide();
-        $("#meeting").hide();
-        var loader;
-        function ShowProgress() {
-            $(".dataloading").hide();
-            $("#meeting").hide();
-            loader = document.getElementsByClassName("loader")[0];
-            loader.style.display = "block";
-            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-            loader.style.top = top + "px";
-            loader.style.left = left + "px";
-        };
-        ShowProgress();
+    //}
+    //function SaveStatusPopUp() {
+    //    var statusValue = document.getElementById("statusDrpDwn").value;
 
-        window.onload = function () {
-            setTimeout(function () {
-                loader.style.display = "none";
-                $(".dataloading").show();
-                $("#meeting").show();
-            }, 2000);
-        };
-        //// script for loader ends here
-    </script>
-    <script>
+    //    $.ajax({
+    //        type: "GET",
+    //        url: "/IRF/SaveCandidateStatus",
+    //        data: { 'candidateId': candidateId, 'statusValue': statusValue },
+    //        success: function (data) {
 
-        function FilterInterviews(filterValue) {
+    //            location.reload(true);
 
-            $.ajax({
-                type: "GET",
-                url: "/Interview/GetFilteredInterviews",
-                data: { 'filterValue': filterValue },
-                success: function (data) {
+    //        }
+    //    });
+    //}
 
-                    if (data == '' && filterValue == 'seven') {
-                        $('#tableID').html('');
-                        $('#tableID').html('No interviews for the next seven days.');
-                        $('#tableID').css("margin-left", "452px");
-                        return;
-                    }
-                    if (data == '' && filterValue == 'all') {
-                        $('#tableID').html('');
-                        $('#tableID').html('No interviews.');
-                        $('#tableID').css("margin-left", "452px");
-                        return;
-                    }
-                    if (data == '') {
-                        $('#tableID').html('');
-                        $('#tableID').html('No interviews for ' + filterValue + '.');
-                        $('#tableID').css("margin-left", "452px");
-                        return;
-                    }
-                    $('#tableID').css("margin-left", "");
-                    $('#tableID').html('');
-                    $('#tableID').html(data);
-
-                    $('#meeting').DataTable({
-                        "pagingType": "full_numbers",
-                        "lengthMenu": [
-                            [10, 25, 50, -1],
-                            [10, 25, 50, "All"]
-                        ],
-                        responsive: false,
-                        language: {
-                            search: "_INPUT_",
-                            searchPlaceholder: "Search records",
-                        }
-
-                    });
-                    var table = $('#meeting').DataTable();
-
-
-
-                },
-                error: function (err) {
-                    alert(err.responseText);
-                }
-            });
-        }
-    </script>
-
-    <script>
-        var span = document.getElementById("importPopUp");
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
-            var modal = document.getElementById("myModal");
-            modal.style.display = "none";
-        }
-        //var closeStatus = document.getElementById("statusPopUp");
-        //// When the user clicks on <span> (x), close the modal
-        //closeStatus.onclick = function () {
-        //    var modal = document.getElementById("statusModal");
-        //    modal.style.display = "none";
-        //}
-        var candidateId;
-        var irfId;
-    </script>
-    <script>
-        function ModalButtonClick(value) {
-            document.getElementById("IsSendInvite").value = value;
-
-            // Get the modal
-            var modal = document.getElementById("myModal");
-
-            // When the user clicks the button, open the modal
-            modal.style.display = "block";
-
-        }
-
-        //function OpenStatusModal(id, name, status) {
-        //    candidateId = id;
-        //    // Get the modal
-        //    var modal = document.getElementById("statusModal");
-
-        //    document.getElementById("statusHeading").innerHTML = "Status for " + name;
-
-        //    if (status != null && status != "") {
-        //        $("#statusDrpDwn").val(status);
-        //    }
-        //    // When the user clicks the button, open the modal
-        //    modal.style.display = "block";
-
-
-        //}
-        //function SaveStatusPopUp() {
-        //    var statusValue = document.getElementById("statusDrpDwn").value;
-
-        //    $.ajax({
-        //        type: "GET",
-        //        url: "/IRF/SaveCandidateStatus",
-        //        data: { 'candidateId': candidateId, 'statusValue': statusValue },
-        //        success: function (data) {
-
-        //            location.reload(true);
-
-        //        }
-        //    });
-        //}
-
-    </script>
-    <script>
+</script>
+<script>
     function DeleteCandidate(id, emailId) {
         //var IdIRF = dataID;
         var irfName = '@ViewBag.IRFName';
@@ -1189,1037 +1238,1079 @@
             }
         })
     }
-    </script>
-    <script>
-        function changeicon(id) {
-            if ($("#" + id).attr("data-changes") == "1") {
-                $("#" + id).addClass("shows");
-                $("#" + id).attr("data-changes", "2");
+</script>
+<script>
+    function changeicon(id) {
+        if ($("#" + id).attr("data-changes") == "1") {
+            $("#" + id).addClass("shows");
+            $("#" + id).attr("data-changes", "2");
+        }
+        else {
+            $("#" + id).removeClass("shows");
+            $("#" + id).attr("data-changes", "1");
+        }
+    }
+    function RefreshSearch() {
+        $(".dataTables_filter input").val('');
+        searchResult();
+    }
+    $(document).ready(function () {
+
+        $(".dataTables_filter").keyup(function (e) {
+
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
             }
             else {
-                $("#" + id).removeClass("shows");
-                $("#" + id).attr("data-changes", "1");
+                $("#x").show();
             }
-        }
-        function RefreshSearch() {
-            $(".dataTables_filter input").val('');
-            searchResult();
-        }
-        $(document).ready(function () {
-
-            $(".dataTables_filter").keyup(function (e) {
-
-                if ($('#txtmeeting_filter').val() == "") {
-                    $("#x").hide();
-                }
-                else {
-                    $("#x").show();
-                }
-            });
-            $("#x").click(function (e) {
-                $(".dataTables_filter input").val('');
-                $(this).hide();
-                searchResult();
-            });
-
-
-
-
         });
-        function CallButtonClickjson(item) {
-            var obj = list[item];
-            CallButtonClick(obj, 0);
-        }
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            searchResult();
+        });
 
 
-        var list;
-        function searchResult() {
-            $.ajax({
-                type: "POST",
-                url: "/Candidate/CandidatesJson",
-                data: { 'searchValue': $('#txtmeeting_filter').val(), 'id': $("#hidirfid").val()},
-                success: function (data) {
-                    if (data != "failed") {
-                        list = data.result;
-                        bindtableData(data.result);
-                        bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
-                    }
+
+
+    });
+    function CallButtonClickjson(item) {
+        var obj = list[item];
+        CallButtonClick(obj, 0);
+    }
+
+
+    var list;
+    function searchResult() {
+        $.ajax({
+            type: "POST",
+            url: "/Candidate/CandidatesJson",
+            data: { 'searchValue': $('#txtmeeting_filter').val(), 'id': $("#hidirfid").val() },
+            success: function (data) {
+                if (data != "failed") {
+                    list = data.result;
+                    bindtableData(data.result);
+                    bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
                 }
-            });
-        }
-
-
-        function bindtableData(data) {
-
-            var profile = $("#hidprofile").val();
-            var irfname = $("#hidirfname").val();
-            var irfid = $("#hidirfid").val();
-            var html = '';
-            if (data.length == 0) {
-                html += '  <tr>';
-                html += ' <td colspan="10" class="text-center">No data available in table</td>';
-                html += ' </tr>';
             }
-            for (var i = 0; i < data.length; i++) {
-
-                var joinabilityColor;
-                var selectabilityColor;
-                if (data[i].joinabilityScore >= 70) {
-                    joinabilityColor = "green";
-                }
-                else if (data[i].joinabilityScore >= 40 && data[i].joinabilityScore < 70) {
-                    joinabilityColor = "orange";
-                }
-                else {
-                    joinabilityColor = "red";
-                }
-                if (data[i].selectabilityScore >= 70) {
-                    selectabilityColor = "green";
-                }
-                else if (data[i].selectabilityScore >= 40 && data[i].selectabilityScore < 70) {
-                    selectabilityColor = "orange";
-                }
-                else {
-                    selectabilityColor = "red";
-                }
-
-                html += '  <tr id="' + data[i].id + '" data-changes="1">   ';
-                html += ' <td style="width:10px;" data-toggle="collapse" id="' + data[i].id + '" data-target=".' + data[i].id + '" class="detail-row" onclick="changeicon(' + data[i].id + ')">&nbsp;</td>';
-
-                if (data[i].emailId != null && data[i].emailId != "") {
-                    if (data[i].emailId.length > 18) {
-
-                        html += '  <td class="cadEmail">';
-                        html += ' <a onclick="" data-tooltip="' + data[i].emailId + '"> ' + data[i].emailId.substring(0, 18) + '... </a>';
-                        html += '   </td>';
-                    }
-
-                    else {
-                        html += '   <td class="cadEmail">';
-                        html += '  <a onclick=""> ' + data[i].emailId + ' </a>';
-                        html += ' </td>';
-                    }
-                }
-                else {
-                    html += '   <td></td>';
-                }
-                if (profile != "Client") {
-                    html += ' <td class="text-center">' + data[i].attemptsCount + '</td>';
-                }
-                if (data[i].resumeLink != null && data[i].resumeLink != "") {
-                    html += '   <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a> </td>';
-                }
-                else {
-                    html += '   <td>No Resume</td>';
-                }
+        });
+    }
 
 
-                html += '  <td class="text-center">' + data[i].totalInvites + '</td>';
+    function bindtableData(data) {
 
-                html += ' <td class="text-center">' + data[i].inviteConfirmation + '</td>';
-                if (profile != "Client") {
-                    html += '  <td class="text-center" style="color:' + joinabilityColor + ';">';
-                    html += '  <b>' + data[i].joinabilityScore + '</b>';
+        var profile = $("#hidprofile").val();
+        var irfname = $("#hidirfname").val();
+        var irfid = $("#hidirfid").val();
+        var html = '';
+        if (data.length == 0) {
+            html += '  <tr>';
+            html += ' <td colspan="10" class="text-center">No data available in table</td>';
+            html += ' </tr>';
+        }
+        for (var i = 0; i < data.length; i++) {
+
+            var joinabilityColor;
+            var selectabilityColor;
+            if (data[i].joinabilityScore >= 70) {
+                joinabilityColor = "green";
+            }
+            else if (data[i].joinabilityScore >= 40 && data[i].joinabilityScore < 70) {
+                joinabilityColor = "orange";
+            }
+            else {
+                joinabilityColor = "red";
+            }
+            if (data[i].selectabilityScore >= 70) {
+                selectabilityColor = "green";
+            }
+            else if (data[i].selectabilityScore >= 40 && data[i].selectabilityScore < 70) {
+                selectabilityColor = "orange";
+            }
+            else {
+                selectabilityColor = "red";
+            }
+
+            html += '  <tr id="' + data[i].id + '" data-changes="1">   ';
+            html += ' <td style="width:10px;" data-toggle="collapse" id="' + data[i].id + '" data-target=".' + data[i].id + '" class="detail-row" onclick="changeicon(' + data[i].id + ')">&nbsp;</td>';
+
+            if (data[i].emailId != null && data[i].emailId != "") {
+                if (data[i].emailId.length > 18) {
+
+                    html += '  <td class="cadEmail">';
+                    html += ' <a onclick="" data-tooltip="' + data[i].emailId + '"> ' + data[i].emailId.substring(0, 18) + '... </a>';
                     html += '   </td>';
-                    html += '  <td class="text-center" style="color:' + selectabilityColor + '; ">';
-                    html += '  <b>' + data[i].selectabilityScore + '</b>';
+                }
+
+                else {
+                    html += '   <td class="cadEmail">';
+                    html += '  <a onclick=""> ' + data[i].emailId + ' </a>';
                     html += ' </td>';
                 }
-                html += '    <td class="text-left action">';
-
-                if (profile != "Recruiter") {
-
-                    if (data[i].clientHRAttemptContact != null && data[i].clientHRAttemptContact != "") {
-                        html += '    <button class="mdc-fab app-fab--absolute" aria-label="Send Invite">';
-                        html += '   <a href = "/Candidate/SendInvite?IRFName=' + irfname + '&irfId=' + irfid + '&emailId=' + data[i].emailId + '&endDate=' + data[i].endDate + '" title="Send Invite" class="mdc-fab__icon material-icons">';
-                        html += '        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>';
-                        html += '  </a></button>';
-
-                    }
-
-                    else {
-                        html += '   <button class="mdc-fab app-fab--absolute" aria-label="Kindly enter Client HRs EmailId to send invite!">';
-                        html += '  <span title="Kindly enter Client HRs EmailId to send invite!" class="mdc-fab__icon material-icons">';
-                        html += '   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>';
-                        html += '</span></button>';
-
-
-
-                    }
-
-
-                    html +'<input type="hidden" id="hiditem' + data[i].irfId + '" value="' + data[i].name + '"/>';
-
-                    html += '  <a href = "/Candidate/CancelInvite?IRFName=' + irfname + '&irfId=' + irfid + '&emailId=' + data[i].emailId + '" title="Cancel Invite" class="mdc-fab app-fab--absolute trash-btn">';
-                    html += '  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>';
-                    html += ' </a>';
-
-                    if (profile != "Client") {
-
-                        html += ' <button class="mdc-fab app-fab--absolute mdc-fab-secondary" aria-label="Audio files">';
-                        html += '   <a href = "/Candidate/UploadAudio?candidateId=' + data[i].candidateMasterId + '&irfId=' + data[i].irfId + '&irfName=' + irfname + '" title="Audio files" class="mdc-fab__icon material-icons">';
-                        html += '    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>';
-                        html += '  </a> </button>';
-
-                        html += '  <input type="hidden" id="hidcandidatestatus' + data[i].irfId + '" value="' + data[i].irfName + '"/><button class="mdc-fab app-fab--absolute itemques" aria-label="Add Candidate Status"><span onclick="OpenStatusModalJson(' + data[i].irfId + ',' + data[i].candidateMasterId + ')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span></button>';
-
-                      //  html += '  <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status"> <span onclick="javascript:GetCandidateStatusListJson(' + data[i].irfId + ',' + data[i].candidateMasterId + ');" title="Candidate Status List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg> </span></button>';
-
-                    }
-
-
-                }
-
-
-
-
-                html += '  <button class="mdc-fab app-fab--absolute" aria-label="Edit">';
-                html += '<a style="color:#fff;" href = "/Candidate/Edit?id=' + data[i].id + '&irfName=' + irfname + '&irfId=' + irfid + '" title="Edit" class="mdc-fab__icon material-icons">';
-                html += '  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>';
-                html += '   </a></button>';
-
-
-
-                if (profile != "Client") {
-                    html += ' <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">';
-                    html += ' <span onclick="javascript:DeleteCandidate(' + data[i].id + ',' + "'" + data[i].emailId + "'" + ');" title="Delete" class="mdc-fab__icon material-icons">';
-                    html += '  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>';
-                    html += '  </span> </button>';
-                }
-
-
-
-                if (profile != "Client") {
-                    html += '   <button class="mdc-fab app-fab--absolute" aria-label="Report">';
-                    html += '  <a style="color:#fff;" href = "/Candidate/Report?candidateId=' + data[i].candidateMasterId + '&irfId=' + data[i].irfId + '" title="Report" class="mdc-fab__icon material-icons">';
-                    html += ' <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>';
-                    html += ' </a ></button>';
-                }
-
-                if (profile != "Client") {
-                    html += ' <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">';
-                    html += '  <a style="color:#fff;" href = "/Candidate/StatusList?irfId=' + data[i].irfId + '&candidateId=' + data[i].candidateMasterId + '&irfName=' + irfname + '&candidateName=' + data[i].name + '" title="Candidate Status" class="mdc-fab__icon material-icons">';
-                    html += '  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>';
-                    html += '  </a>  </button>';
-                }
-
-                html += '  </td>';
-
-                html += ' <td class="text-center">';
-
-                if (data[i].phone != null && data[i].phone != "") {
-                    html += '<input type="hidden" id="hidphone' + data[i].irfId + '" value="' + data[i].phone + '"/><input type="hidden" id="hiditem' + data[i].irfId + '" value="' + data[i].name + '"/><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to place a reminder call to the candidate." onclick="AutoCallCandidatejson(' + data[i].irfId + ', ' + data[i].candidateMasterId + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-square"></span></span></span>';
-                }
-                html += '</td>';
-                html += '<td>';
-                if (data[i].phone != null && data[i].phone != "") {
-
-
-                    html += '   <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClickjson(' + i + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>';
-
-                }
-
-
-                html += '    </td>';
-
-
-
-
-
-                html += '</tr>';
-
-                html += '  <tr class="collapse ' + data[i].id + '">';
-
-                html += '  <td colspan="999" class="child-section">';
-                html += '  <table class="table table-striped table-responsive">';
-                html += '  <tr>';
-                html += '   <th>Candidate Name</th>';
-                html += '   <th>Client HR</th>';
-                html += '   <th>Coded Resume</th>';
-                html += '     <th>Type</th>';
-                html += '     <th>Location(Applied for)</th>';
-                //html += '    <th>Skill</th>';
-                html += '    <th>Work Auth</th>';
-                html += '    <th>Current Location</th>';
-                html += '   <th>Current Employer</th>';
-                html += '  <th>Total Experience</th>';
-                html += '  <th>Current Salary</th>';
-                html += ' <th>Expected Salary</th>';
-                html += ' <th>Notice</th>';
-                html += ' <th>Confirmation Status</th>';
-                html += ' <th>Video Link</th>';
-                html += ' <th>Meeting Status</th>';
-                html += ' <th>Interview Status</th>';
-                html += ' <th>Interview Date</th>';
-                html += ' <th>Cost Estimate</th>';
-                html += ' <th>Profile Type</th>';
-                html += ' <th>Available for Full-time</th>';
-                html += ' <th>Available for Freelancing</th>';
-                html += ' </tr>';
-                html += '<tr>';
-                if (data[i].name != null && data[i].name != "") {
-                    if (data[i].name.length > 20) {
-                        html += '  <td class="cadName">';
-                        html += '  <a onclick="" data-tooltip="' + data[i].name + '"> ' + data[i].name.substring(0, 20) + '... </a>';
-                        html += '  </td>';
-                    } else {
-                        html += '<td class="cadName">';
-                        html += '   <a onclick=""> ' + data[i].name + ' </a>';
-                        html += '   </td>';
-                    }
-                }
-                else {
-                    html += '<td></td>';
-                }
-
-
-
-                if (data[i].clientHRAttemptContact != null) {
-                    html += '  <td class="text-center">' + data[i].clientHRAttemptContact + '</td>';
-
-                }
-                else {
-                    html += '    <td></td>';
-                }
-
-                if (data[i].encodedResumeLink != null && data[i].encodedResumeLink != "") {
-                    html += '    <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=' + data[i].encodedResumeLink + '>Coded Resume</a> </td>';
-                }
-                else {
-                    html += '   <td>No Coded Resume</td>';
-                }
-                if (data[i].type == null) {
-                    html += ' <td></td>';
-                }
-                else { html += ' <td>' + data[i].type + '</td>'; }
-
-
-                if (data[i].location == null) {
-                    html += ' <td></td>';
-                }
-                else { html += ' <td>' + data[i].location + '</td>'; }
-                //html += '  <td>' + data[i].skill + '</td>';
-
-                if (data[i].workAuth == null) {
-                    html += ' <td></td>';
-                }
-                else { html += ' <td>' + data[i].workAuth + '</td>'; }
-
-                if (data[i].currentLocation == null) {
-                    html += ' <td></td>';
-                }
-                else { html += ' <td>' + data[i].currentLocation + '</td>'; }
-                if (data[i].currentEmployer == null) {
-                    html += ' <td></td>';
-                }
-                else { html += ' <td>' + data[i].currentEmployer + '</td>'; }
-
-                html += '  <td>' + data[i].totalExperience + '</td>';
-                html += '  <td>' + data[i].currentSalary + '</td>';
-                html += '  <td>' + data[i].expectedSalary + '</td>';
-                html += '  <td>' + data[i].notice + '</td>';
-
-                if (data[i].confirmationStatusDesc != "0") {
-                    html += '  <td>' + data[i].confirmationStatusDesc + '</td>';
-                }
-                else {
-                    html += ' <td></td>';
-                }
-                if (data[i].videoLink != null && data[i].videoLink != "") {
-                    html += '    <td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>';
-                }
-                else {
-                    html += '  <td>No Video</td>';
-                }
-                if (data[i].meetingStatusDesc != "0") {
-                    html += '  <td>' + data[i].meetingStatusDesc + '</td>';
-                }
-                else {
-                    html += '    <td></td>';
-                }
-                if (data[i].interviewStatusDesc != "0") {
-                    html += '   <td>' + data[i].interviewStatusDesc + '</td>';
-                }
-                else {
-                    html += '   <td></td>';
-                }
-                if (data[i].interviewDate != null) {
-                    html += '   <td>' + data[i].interviewDate + '</td>';
-                }
-                else {
-                    html += '     <td></td>';
-                }
-                if (data[i].costEstimate != null) {
-                    html += '       <td>' + data[i].costEstimate + '</td>';
-                }
-                else {
-                    html += '   <td></td>';
-                }
-                html += '   <td>' + data[i].heuristicsscoreDesc + '</td>';
-                if (data[i].availableFullTime) {
-                    html += '  <td>Yes</td>';
-
-                }
-                else {
-                    html += '  <td>No</td>';
-
-
-                }
-                if (data[i].availableFreeLancing) {
-                    html += '    <td>Yes</td>';
-
-                }
-                else {
-                    html += '  <td>No</td>';
-                }
-
-                html += '    </tr>';
-                html += '  </table>';
-
-                html += '  </td>';
-                html += '   </tr>';
-
-
-
-            }
-            $("#tblbodyCandidate").empty().html(html);
-        }
-        function bindPages(pagecount, startpage, endpage, totalcount) {
-            var id = $("#hidirfid").val();
-            var html = '';
-            html += '<div class="pagination-container">';
-            html += '<ul class="pagination">';
-            for (var i = 1; i <= pagecount; i++) {
-                if (i == 1) {
-                    html += '   <li class="active"><span>1</span></li>';
-                } else if (i <= 10) {
-                    html += '<li><a href="/Candidate/GetCandidates/'+id+'?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
-                } else if (i == 11) {
-                    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                    html += '<li class="PagedList-skipToNext"><a href="/Candidate/GetCandidates/'+id+'?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                    html += '<li class="PagedList-skipToLast"><a href="/Candidate/GetCandidates/'+id+'?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-                } else {
-                    break;
-                }
-                if (pagecount <= 10 && i == pagecount && i != 1) {
-                    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                    html += '<li class="PagedList-skipToNext"><a href="/Candidate/GetCandidates/'+id+'?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                    html += '<li class="PagedList-skipToLast"><a href="/Candidate/GetCandidates/'+id+'?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-                }
-            }
-            html += '</ul>';
-            html += '</div>';
-            $("#divmeetingpages").empty().html(html);
-            var pagestartdetails = '';
-            pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
-            $("#divmeetingentries").empty().html(pagestartdetails);
-
-        }
-    </script>
-
-    <script>
-        var candidate = "";
-        var span = document.getElementById("callPopUp");
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
-            hangUp();
-            var modal = document.getElementById("myCallModal");
-            modal.style.display = "none";
-        }
-        $(document).ready(function () {
-            $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-                // Set up the Twilio Client Device with the token
-                Twilio.Device.setup(data.token);
-            });
-        });
-
-        /* Callback to let us know Twilio Client is ready */
-        Twilio.Device.ready(function (device) {
-
-        });
-
-        function callCandidate(phoneNumber) {
-            var params = { "phoneNumber": phoneNumber };
-            Twilio.Device.connect(params);
-        }
-        function hangUp() {
-            Twilio.Device.disconnectAll();
-        }
-
-        Twilio.Device.connect(function (connection) {
-            var appendText = "In call with " + "<b>" + candidate + "</b>";
-            document.getElementById("callingLabel").innerHTML = appendText;
-        });
-
-        function afterTimeOut() {
-            var modal = document.getElementById("myCallModal");
-            modal.style.display = "none";
-        }
-
-        Twilio.Device.disconnect(function (connection) {
-            var appendText = "Call disconnected! ";
-            document.getElementById("callingLabel").innerHTML = appendText;
-            setTimeout(afterTimeOut, 2000);
-
-        });
-
-        function CallButtonClick(candidateObj, indexid) {
-            if (indexid == 1) {
-                candidate = candidateObj.Name;
             }
             else {
-                candidate = candidateObj.name;
+                html += '   <td></td>';
             }
-            // Get the modal
-            var modal = document.getElementById("myCallModal");
-            // When the user clicks the button, open the modal
-            modal.style.display = "block";
-            var appendText = "Calling... " + "<b>" + candidate + "</b>";
-            document.getElementById("callingLabel").innerHTML = appendText;
-            if (indexid == 1) {
-                callCandidate(candidateObj.Phone);
+            if (profile != "Client") {
+                html += ' <td class="text-center">' + data[i].attemptsCount + '</td>';
             }
-
+            if (data[i].resumeLink != null && data[i].resumeLink != "") {
+                html += '   <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a> </td>';
+            }
             else {
-                callCandidate(candidateObj.phone);
+                html += '   <td>No Resume</td>';
             }
-        }
-        function closeCallPopUp() {
-            hangUp();
-            var modal = document.getElementById("myCallModal");
-            modal.style.display = "none";
-        }
 
 
-    </script>
+            html += '  <td class="text-center">' + data[i].totalInvites + '</td>';
 
-    <script>
-        var irfStatusId;//since the property irfId already exists above, hence this name
-        var candidateStatusId;
-        var irfStatusName;
-        var candidateStatusName;
-        var spanStatusModal = document.getElementById("candidateStatusPopUp");
-        // When the user clicks on <span> (x), close the modal
-        spanStatusModal.onclick = function () {
-            var modal = document.getElementById("candidateStatusModal");
-            modal.style.display = "none";
-        }
-
-        function OpenStatusModalJson(irfId, candidateId) {
-            var irfname = $('#hidcandidatestatus' + irfId).val();
-            var itemname = $('#hiditem' + irfId).val();
-            OpenStatusModal(irfId, candidateId, irfname, itemname);
-        }
-
-        function OpenStatusModal(irfId, candidateId, irfName, candidateName) {
-            irfStatusId = irfId;
-            candidateStatusId = candidateId;
-            irfStatusName = irfName;
-            candidateStatusName = candidateName;
-
-            // Get the modal
-            var modal = document.getElementById("candidateStatusModal");
-
-            document.getElementById("candidateStatusHeading").innerHTML = "Add status for " + candidateName;
-
-            // When the user clicks the button, open the modal
-            modal.style.display = "block";
-
-        }
-
-
-        function SaveCandidateStatus() {
-
-            var comment = document.getElementById("idComments").value;
-            var audio_file = $("#idAudioFile")[0].files[0];
-            var statusValue = document.getElementById("statusDrpDwn").value;
-
-
-            var formdata = new FormData();
-            formdata.append('irfId', irfStatusId);
-            formdata.append('candidateId', candidateStatusId);
-            formdata.append('comment', comment);
-            formdata.append('audio_file', audio_file);
-            formdata.append('status', statusValue);
-            formdata.append('candidateName', candidateStatusName);
-            formdata.append('irfName', irfStatusName);
-
-            $.ajax({
-                type: "POST",
-                url: "/Candidate/AddStatus",
-                contentType: false,
-                processData: false,
-                data: formdata,
-                success: function (data) {
-                    location.reload(true);
-                }
-            });
-        }
-    </script>
-    <script>
-        var closeStatusList = document.getElementById("statusListPopUp");
-        closeStatusList.onclick = function () {
-            var modal = document.getElementById("statusListModal");
-            modal.style.display = "none";
-        }
-        function GetCandidateStatusListJson(irfId, candidateId) {
-
-            var itemname = $('#hiditem' + irfId).val();
-            var irfname = $('hidirfname').val();
-            GetCandidateStatusList(irfId, candidateId, irfname, itemname);
-        }
-
-        function GetCandidateStatusList(irfId, candidateId, irfName, candidateName) {
-            $.ajax({
-                url: '/Candidate/GetCandidateStatusList',
-                data: { 'irfId': irfId, 'candidateId': candidateId, 'irfName': irfName, 'candidateName': candidateName },
-                success: function (data) {
-                    var modal = document.getElementById("statusListModal");
-                    modal.style.display = "block";
-                    var appendText = 'Status list for ' + candidateName;
-                    $('#statusListHeading').html('');
-                    $('#statusListHeading').html(appendText);
-                    $('#statusListTableBody').html('');
-                    $('#statusListTableBody').html(data);
-
+            html += ' <td class="text-center">' + data[i].inviteConfirmation + '</td>';
+            if (profile != "Client") {
+                html += '  <td class="text-center" style="color:' + joinabilityColor + ';">';
+                html += '  <b>' + data[i].joinabilityScore + '</b>';
+                html += '   </td>';
+                html += '  <td class="text-center" style="color:' + selectabilityColor + '; ">';
+                html += '  <b>' + data[i].selectabilityScore + '</b>';
+                html += ' </td>';
+            }
+            html += '    <td class="text-left action">';
+            if (profile != "Recruiter") {
+                if (data[i].clientHRAttemptContact != null && data[i].clientHRAttemptContact != "") {
+                    html += '    <button class="mdc-fab app-fab--absolute" aria-label="Send Invite">';
+                    html += '   <a href = "/Candidate/SendInvite?IRFName=' + irfname + '&irfId=' + irfid + '&emailId=' + data[i].emailId + '&endDate=' + data[i].endDate + '" title="Send Invite" class="mdc-fab__icon material-icons">';
+                    html += '        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>';
+                    html += '  </a></button>';
 
                 }
-            });
-        }
 
+                else {
+                    html += '   <button class="mdc-fab app-fab--absolute" aria-label="Kindly enter Client HRs EmailId to send invite!">';
+                    html += '  <span title="Kindly enter Client HRs EmailId to send invite!" class="mdc-fab__icon material-icons">';
+                    html += '   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>';
+                    html += '</span></button>';
 
-    </script>
-    <script>
-        function AutoCallCandidatejson(irfId, candidateMasterId) {
-            var phone = $('#hidphone' + irfId).val();
-            var candidatename = $('#hiditem' + irfId).val();
-            AutoCallCandidate(phone, irfId, candidateMasterId, candidatename);
-        }
-        function AutoCallCandidate(phoneNumber, irfId, candidateId, candidateName) {
-
-            swal.fire({
-                title: 'Call ' + candidateName + '?',
-                text: "A system generated schedule call will be placed to the candidate.",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes!',
-                preConfirm: function () {
-                    return new Promise(function (resolve, reject) {
-                        $.ajax({
-                            url: '/Candidate/AutoCallCandidate',
-                            data: { 'phoneNumber': phoneNumber, 'irfId': irfId, 'candidateId': candidateId },
-                            success: function (result) {
-                                if (result == true) {
-                                    resolve(result)
-
-                                }
-                                else {
-                                    swal.fire("Error calling!", "Please try again", "error");
-
-                                }
-
-                            },
-                            error: function () {
-                                swal.fire("Error calling!", "Please try again", "error");
-                            }
-                        })
-                    })
-                },
-                allowOutsideClick: false
-            }).then(function (result) {
-                if (result.dismiss !== 'cancel') {
-                    swal.fire({
-                        title: 'Call placed!',
-                        type: 'success',
-                        html: '<p>Successfully completed the schedule call.</p>',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Close!',
-                        allowOutsideClick: false
-                    })
-                    //.then(function () {
-                    //    window.location = "/Interviewer/Index";
-                    //})
                 }
-                else if (result.dismiss === 'cancel') {
-                    swal.fire(
-                        'Cancelled',
-                        'Cancelled!',
-                        'error'
-                    )
+                html + '<input type="hidden" id="hiditem' + data[i].irfId + '" value="' + data[i].name + '"/>';
+                html += '  <a href = "/Candidate/CancelInvite?IRFName=' + irfname + '&irfId=' + irfid + '&emailId=' + data[i].emailId + '" title="Cancel Invite" class="mdc-fab app-fab--absolute trash-btn">';
+                html += '  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>';
+                html += ' </a>';
+
+                if (profile != "Client") {
+
+                    html += ' <button class="mdc-fab app-fab--absolute mdc-fab-secondary" aria-label="Audio files">';
+                    html += '   <a href = "/Candidate/UploadAudio?candidateId=' + data[i].candidateMasterId + '&irfId=' + data[i].irfId + '&irfName=' + irfname + '" title="Audio files" class="mdc-fab__icon material-icons">';
+                    html += '    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>';
+                    html += '  </a> </button>';
+
+                    html += '  <input type="hidden" id="hidcandidatestatus' + data[i].irfId + '" value="' + data[i].irfName + '"/><button class="mdc-fab app-fab--absolute itemques" aria-label="Add Candidate Status"><span onclick="OpenStatusModalJson(' + data[i].irfId + ',' + data[i].candidateMasterId + ')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span></button>';
+
+                    //  html += '  <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status"> <span onclick="javascript:GetCandidateStatusListJson(' + data[i].irfId + ',' + data[i].candidateMasterId + ');" title="Candidate Status List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg> </span></button>';
+
                 }
-            })
-        }
 
-    </script>
-   <script>$("form").on("change", ".file-upload-field", function () {
-           $(this).parent(".file-upload-wrapper").attr("data-text", $(this).val().replace(/.*(\/|\\)/, ''));
-       });</script>
-    @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
-    {
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+            }
+            html += '  <button class="mdc-fab app-fab--absolute" aria-label="Edit">';
+            html += '<a style="color:#fff;" href = "/Candidate/Edit?id=' + data[i].id + '&irfName=' + irfname + '&irfId=' + irfid + '" title="Edit" class="mdc-fab__icon material-icons">';
+            html += '  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>';
+            html += '   </a></button>';
+            if (profile != "Client") {
+                html += ' <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">';
+                html += ' <span onclick="javascript:DeleteCandidate(' + data[i].id + ',' + "'" + data[i].emailId + "'" + ');" title="Delete" class="mdc-fab__icon material-icons">';
+                html += '  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>';
+                html += '  </span> </button>';
+            }
+            if (profile != "Client") {
+                html += '   <button class="mdc-fab app-fab--absolute" aria-label="Report">';
+                html += '  <a style="color:#fff;" href = "/Candidate/Report?candidateId=' + data[i].candidateMasterId + '&irfId=' + data[i].irfId + '" title="Report" class="mdc-fab__icon material-icons">';
+                html += ' <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>';
+                html += ' </a ></button>';
+            }
 
-        <script type="text/javascript">
-            hopscotch.registerHelper('addOverlay', function () {
-                $('body').append('<div class="overlay"></div>');
-            });
+            if (profile != "Client") {
+                html += ' <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">';
+                html += '  <a style="color:#fff;" href = "/Candidate/StatusList?irfId=' + data[i].irfId + '&candidateId=' + data[i].candidateMasterId + '&irfName=' + irfname + '&candidateName=' + data[i].name + '" title="Candidate Status" class="mdc-fab__icon material-icons">';
+                html += '  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>';
+                html += '  </a>  </button>';
+            }
+            html += '<button class="mdc-fab app-fab--absolute record-btn" aria-label="Call Record">';
 
-            hopscotch.registerHelper('removeOverlay', function () {
-                $('.overlay').fadeOut(function () {
-                    $(this).remove();
-                    $('.helper').remove();
-                });
-            });
+            html += '<span onclick="FetchRecording(' + "'" + data[i].emailId + "'" + ')" title="Call Record" class="mdc-fab__icon material-icons">';
 
-            hopscotch.listen('show', function () {
-                var elementObject = $(hopscotch.getCurrTarget(tour));
-                var element = $('#' + elementObject[0].id);
+            html += '<i class="fa fa-dot-circle"></i>';
 
-                element.prev().removeClass('overlay-relative');
-                element.addClass('overlay-relative');
+            html += '</span>';
+            html += '</button>';
+            html += '</td>';
 
-                if ($('.helper').length !== 0) {
+            html += ' <td class="text-center">';
 
-                    // Use Helper Layer for hilight target element.
-                    var helper = $('.helper');
-                    var padding = 5;
-                    var helperPosX = element.position().left - padding;
-                    var helperPosY = element.position().top - padding;
-                    var targetWidth = element.outerWidth();
-                    var targetHeight = element.outerHeight();
+            if (data[i].phone != null && data[i].phone != "") {
+                html += '<input type="hidden" id="hidphone' + data[i].irfId + '" value="' + data[i].phone + '"/><input type="hidden" id="hiditem' + data[i].irfId + '" value="' + data[i].name + '"/><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to place a reminder call to the candidate." onclick="AutoCallCandidatejson(' + data[i].irfId + ', ' + data[i].candidateMasterId + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-square"></span></span></span>';
+            }
+            html += '</td>';
+            html += '<td>';
+            if (data[i].phone != null && data[i].phone != "") {
 
-                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-                    helper.css('width', targetWidth);
-                    helper.css('height', targetHeight);
-                    helper.offset({ left: helperPosX, top: helperPosY });
+                html += '   <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClickjson(' + i + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>';
 
+            }
+
+
+            html += '    </td>';
+
+
+
+
+
+            html += '</tr>';
+
+            html += '  <tr class="collapse ' + data[i].id + '">';
+
+            html += '  <td colspan="999" class="child-section">';
+            html += '  <table class="table table-striped table-responsive">';
+            html += '  <tr>';
+            html += '   <th>Candidate Name</th>';
+            html += '   <th>Client HR</th>';
+            html += '   <th>Coded Resume</th>';
+            html += '     <th>Type</th>';
+            html += '     <th>Location(Applied for)</th>';
+            //html += '    <th>Skill</th>';
+            html += '    <th>Work Auth</th>';
+            html += '    <th>Current Location</th>';
+            html += '   <th>Current Employer</th>';
+            html += '  <th>Total Experience</th>';
+            html += '  <th>Current Salary</th>';
+            html += ' <th>Expected Salary</th>';
+            html += ' <th>Notice</th>';
+            html += ' <th>Confirmation Status</th>';
+            html += ' <th>Video Link</th>';
+            html += ' <th>Meeting Status</th>';
+            html += ' <th>Interview Status</th>';
+            html += ' <th>Interview Date</th>';
+            html += ' <th>Cost Estimate</th>';
+            html += ' <th>Profile Type</th>';
+            html += ' <th>Available for Full-time</th>';
+            html += ' <th>Available for Freelancing</th>';
+            html += ' </tr>';
+            html += '<tr>';
+            if (data[i].name != null && data[i].name != "") {
+                if (data[i].name.length > 20) {
+                    html += '  <td class="cadName">';
+                    html += '  <a onclick="" data-tooltip="' + data[i].name + '"> ' + data[i].name.substring(0, 20) + '... </a>';
+                    html += '  </td>';
                 } else {
-
-                    // Add Helper Layer for highlight target element.
-                    var newHelper = '<div class="helper"></div>';
-                    $('body').append(newHelper);
-
-                    var helper = $('.helper');
-                    var padding = 5;
-                    var helperPosX = element.position().left - padding;
-                    var helperPosY = element.position().top - padding;
-                    var targetWidth = element.outerWidth();
-                    var targetHeight = element.outerHeight();
-
-                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
-
-                    helper.css('width', targetWidth);
-                    helper.css('height', targetHeight);
-                    helper.offset({ left: helperPosX, top: helperPosY });
+                    html += '<td class="cadName">';
+                    html += '   <a onclick=""> ' + data[i].name + ' </a>';
+                    html += '   </td>';
                 }
-
-            });
-
-            var tour = {
-                id: "hello-hopscotch",
-                showCloseButton: false,
-                steps: [
-                    {
-                        title: "Candidate",
-                        content: "Detailed view of candidates of a particular irf and click on next button to know its features",
-                        target: "getstatus_1",
-                        placement: "bottom",
-                        showPrevButton: true,
-
-                        highlight: true,
-                        zindex: 999999,
-                        yOffset: 10,
-
-                        onCTA: function () {
-                            hopscotch.showStep(2);
-                            $('#getstatus_1').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onNext: function () {
-                            $('#getstatus_1').removeClass('overlay-relative');
-                            $('.helper').remove();
-
-                        }
-                    },
+            }
+            else {
+                html += '<td></td>';
+            }
 
 
 
+            if (data[i].clientHRAttemptContact != null) {
+                html += '  <td class="text-center">' + data[i].clientHRAttemptContact + '</td>';
+
+            }
+            else {
+                html += '    <td></td>';
+            }
+
+            if (data[i].encodedResumeLink != null && data[i].encodedResumeLink != "") {
+                html += '    <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=' + data[i].encodedResumeLink + '>Coded Resume</a> </td>';
+            }
+            else {
+                html += '   <td>No Coded Resume</td>';
+            }
+            if (data[i].type == null) {
+                html += ' <td></td>';
+            }
+            else { html += ' <td>' + data[i].type + '</td>'; }
 
 
-                    {
-                        title: "RB Attempt",
-                        content: "Attempt made by the client to react out to the candidate",
-                        target: "getstatus_2",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#getstatus_2').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#getstatus_2').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
+            if (data[i].location == null) {
+                html += ' <td></td>';
+            }
+            else { html += ' <td>' + data[i].location + '</td>'; }
+            //html += '  <td>' + data[i].skill + '</td>';
+
+            if (data[i].workAuth == null) {
+                html += ' <td></td>';
+            }
+            else { html += ' <td>' + data[i].workAuth + '</td>'; }
+
+            if (data[i].currentLocation == null) {
+                html += ' <td></td>';
+            }
+            else { html += ' <td>' + data[i].currentLocation + '</td>'; }
+            if (data[i].currentEmployer == null) {
+                html += ' <td></td>';
+            }
+            else { html += ' <td>' + data[i].currentEmployer + '</td>'; }
+
+            html += '  <td>' + data[i].totalExperience + '</td>';
+            html += '  <td>' + data[i].currentSalary + '</td>';
+            html += '  <td>' + data[i].expectedSalary + '</td>';
+            html += '  <td>' + data[i].notice + '</td>';
+
+            if (data[i].confirmationStatusDesc != "0") {
+                html += '  <td>' + data[i].confirmationStatusDesc + '</td>';
+            }
+            else {
+                html += ' <td></td>';
+            }
+            if (data[i].videoLink != null && data[i].videoLink != "") {
+                html += '    <td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>';
+            }
+            else {
+                html += '  <td>No Video</td>';
+            }
+            if (data[i].meetingStatusDesc != "0") {
+                html += '  <td>' + data[i].meetingStatusDesc + '</td>';
+            }
+            else {
+                html += '    <td></td>';
+            }
+            if (data[i].interviewStatusDesc != "0") {
+                html += '   <td>' + data[i].interviewStatusDesc + '</td>';
+            }
+            else {
+                html += '   <td></td>';
+            }
+            if (data[i].interviewDate != null) {
+                html += '   <td>' + data[i].interviewDate + '</td>';
+            }
+            else {
+                html += '     <td></td>';
+            }
+            if (data[i].costEstimate != null) {
+                html += '       <td>' + data[i].costEstimate + '</td>';
+            }
+            else {
+                html += '   <td></td>';
+            }
+            html += '   <td>' + data[i].heuristicsscoreDesc + '</td>';
+            if (data[i].availableFullTime) {
+                html += '  <td>Yes</td>';
+
+            }
+            else {
+                html += '  <td>No</td>';
 
 
-                    {
-                        title: "Resume",
-                        content: "Click here to view the resume of the candidate",
-                        target: "getstatus_3",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#getstatus_3').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#getstatus_3').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
+            }
+            if (data[i].availableFreeLancing) {
+                html += '    <td>Yes</td>';
 
-                    {
-                        title: "Invite Sent",
-                        content: "Showing the count of invite sent here",
-                        target: "getstatus_4",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#getstatus_4').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#getstatus_4').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
+            }
+            else {
+                html += '  <td>No</td>';
+            }
 
-                    {
-                        title: "Confirmation",
-                        content: "Showing the count of confirmation here",
-                        target: "getstatus_5",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#getstatus_5').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#getstatus_5').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
+            html += '    </tr>';
+            html += '  </table>';
 
-
-                    {
-                        title: "Joinability	",
-                        content: "Showing the count of joinability here",
-                        target: "getstatus_6",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#getstatus_6').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#getstatus_6').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-
-                    {
-                        title: "Selectability",
-                        content: "Showing the count of selectability here",
-                        target: "getstatus_7",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#getstatus_7').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#getstatus_7').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-                    {
-                        title: "Invite Sent",
-                        content: "Click here to send the invite ",
-                        target: "getstatus_8",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#getstatus_8').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#getstatus_8').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
+            html += '  </td>';
+            html += '   </tr>';
 
 
 
-                    {
-                        title: "Cancel Invite",
-                        content: "Click here to cancel the invite ",
-                        target: "getstatus_9",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#getstatus_9').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#getstatus_9').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-
-                    {
-                        title: "Edit",
-                        content: "Click here to edit the candidate detail ",
-                        target: "getstatus_10",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#getstatus_10').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#getstatus_10').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-                    {
-                        title: "Schedule Call",
-                        content: "Click here to schedule a call for the candidate ",
-                        target: "getstatus_11",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "left",
-                        xOffset: '0',
-
-                        onNext: function () {
-                            $('#getstatus_11').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#getstatus_11').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-
-                    {
-                        title: "Call",
-                        content: "Click here to call the candidate ",
-                        target: "getstatus_12",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "left",
-                        xOffset: '0',
-
-                        onNext: function () {
-                            $('#getstatus_12').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#getstatus_12').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-
-                    {
-                        title: "Back to List",
-                        content: "Click here to go back to Skill Channel Page",
-                        target: "getstatus_13",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "left",
-                        yOffset: -10,
-                        xOffset: 0,
-                        arrowOffset: 'left',
-
-                        onNext: function () {
-                            $('#getstatus_13').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#getstatus_13').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-                    {
-                        title: "Common Pool Menu",
-                        content: "Click on Common Pool menu to see its features",
-                        target: "commonpool_menu",
-                        placement: "top",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 20,
-                        xOffset: 10,
-                        onNext: function () {
-                            $('#commonpool_menu').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#commonpool_menu').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-
-
-                ],
-                onStart: ["addOverlay"],
-                onEnd: ["removeOverlay"],
-            };
-
-            hopscotch.startTour(tour);
-
-        </script>
+        }
+        $("#tblbodyCandidate").empty().html(html);
     }
+    function bindPages(pagecount, startpage, endpage, totalcount) {
+        var id = $("#hidirfid").val();
+        var html = '';
+        html += '<div class="pagination-container">';
+        html += '<ul class="pagination">';
+        for (var i = 1; i <= pagecount; i++) {
+            if (i == 1) {
+                html += '   <li class="active"><span>1</span></li>';
+            } else if (i <= 10) {
+                html += '<li><a href="/Candidate/GetCandidates/' + id + '?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+            } else if (i == 11) {
+                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Candidate/GetCandidates/' + id + '?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Candidate/GetCandidates/' + id + '?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            } else {
+                break;
+            }
+            if (pagecount <= 10 && i == pagecount && i != 1) {
+                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Candidate/GetCandidates/' + id + '?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Candidate/GetCandidates/' + id + '?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            }
+        }
+        html += '</ul>';
+        html += '</div>';
+        $("#divmeetingpages").empty().html(html);
+        var pagestartdetails = '';
+        pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
+        $("#divmeetingentries").empty().html(pagestartdetails);
+
+    }
+    function closemyCallRecords() {
+        var modal = document.getElementById("myCallRecords");
+        modal.style.display = "none";
+    }
+    function FetchRecording(candidateEmailid) {
+        $.ajax({
+            type: "POST",
+            url: "/User/FetchRecordings",
+            data: { 'candidateEmailid': candidateEmailid, 'irfid': $("#hidirfid").val() },
+            success: function (data) {
+                bindCallData(data);
+                var modal = document.getElementById("myCallRecords");
+                modal.style.display = "block";
+                $("#candidate_email_pop").text(candidateEmailid);
+                
+            }
+        });
+    }
+    function bindCallData(data) {
+        var html = '';
+        debugger;
+        for (var i = 0; i < data.length; i++) {
+            html += '<tr>';
+            html += '<td>' + data[i].whoCalled + '</td>';
+            html += '<td>' + data[i].calledOn.replace("T", " ").replace(".000", "") + '</td>';
+            html += '<td><audio controls><source src = "' + data[i].recordingUrl + '" type = "audio/ogg" ><source src="' + data[i].recordingUrl + '" type="audio/mpeg"></audio></td>';
+
+            html += '</tr>';
+        }
+        if (data.length == 0) {
+            html = '<td colspan="3" style="text-align:center">No call records founds.</td>';
+        }
+        $("#tblcallrecdetails").empty().html(html);
+    }
+</script>
+
+<script>
+    var candidate = "";
+    var canIrfid = "";
+    var cancandidateEmail = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
+
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+
+    });
+
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        startCallRecording(connection.parameters.CallSid);
+    });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+
+    });
+    function startCallRecording(sid) {
+        console.log("sid:" + sid);
+        $.ajax({
+            url: '/User/makecall',
+            type: "GET",
+            data: { 'sid': sid, 'IRFId': canIrfid, 'CandidateEmail': cancandidateEmail },
+            success: function (data) {
+                console.log("rsid:" + data);
+            }
+        });
+    }
+    function CallButtonClick(candidateObj, indexid) {
+        if (indexid == 1) {
+            candidate = candidateObj.Name;
+            canIrfid = candidateObj.IRFId;
+            cancandidateEmail = candidateObj.EmailId;
+        }
+        else {
+            candidate = candidateObj.name;
+            canIrfid = candidateObj.irfId;
+            cancandidateEmail = candidateObj.emailId;
+        }
+        // Get the modal
+        var modal = document.getElementById("myCallModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        if (indexid == 1) {
+            callCandidate(candidateObj.Phone);
+        }
+
+        else {
+            callCandidate(candidateObj.phone);
+        }
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+
+
+</script>
+
+<script>
+    var irfStatusId;//since the property irfId already exists above, hence this name
+    var candidateStatusId;
+    var irfStatusName;
+    var candidateStatusName;
+    var spanStatusModal = document.getElementById("candidateStatusPopUp");
+    // When the user clicks on <span> (x), close the modal
+    spanStatusModal.onclick = function () {
+        var modal = document.getElementById("candidateStatusModal");
+        modal.style.display = "none";
+    }
+
+    function OpenStatusModalJson(irfId, candidateId) {
+        var irfname = $('#hidcandidatestatus' + irfId).val();
+        var itemname = $('#hiditem' + irfId).val();
+        OpenStatusModal(irfId, candidateId, irfname, itemname);
+    }
+
+    function OpenStatusModal(irfId, candidateId, irfName, candidateName) {
+        irfStatusId = irfId;
+        candidateStatusId = candidateId;
+        irfStatusName = irfName;
+        candidateStatusName = candidateName;
+
+        // Get the modal
+        var modal = document.getElementById("candidateStatusModal");
+
+        document.getElementById("candidateStatusHeading").innerHTML = "Add status for " + candidateName;
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+
+    }
+
+
+    function SaveCandidateStatus() {
+
+        var comment = document.getElementById("idComments").value;
+        var audio_file = $("#idAudioFile")[0].files[0];
+        var statusValue = document.getElementById("statusDrpDwn").value;
+
+
+        var formdata = new FormData();
+        formdata.append('irfId', irfStatusId);
+        formdata.append('candidateId', candidateStatusId);
+        formdata.append('comment', comment);
+        formdata.append('audio_file', audio_file);
+        formdata.append('status', statusValue);
+        formdata.append('candidateName', candidateStatusName);
+        formdata.append('irfName', irfStatusName);
+
+        $.ajax({
+            type: "POST",
+            url: "/Candidate/AddStatus",
+            contentType: false,
+            processData: false,
+            data: formdata,
+            success: function (data) {
+                location.reload(true);
+            }
+        });
+    }
+</script>
+<script>
+    var closeStatusList = document.getElementById("statusListPopUp");
+    closeStatusList.onclick = function () {
+        var modal = document.getElementById("statusListModal");
+        modal.style.display = "none";
+    }
+    function GetCandidateStatusListJson(irfId, candidateId) {
+
+        var itemname = $('#hiditem' + irfId).val();
+        var irfname = $('hidirfname').val();
+        GetCandidateStatusList(irfId, candidateId, irfname, itemname);
+    }
+
+    function GetCandidateStatusList(irfId, candidateId, irfName, candidateName) {
+        $.ajax({
+            url: '/Candidate/GetCandidateStatusList',
+            data: { 'irfId': irfId, 'candidateId': candidateId, 'irfName': irfName, 'candidateName': candidateName },
+            success: function (data) {
+                var modal = document.getElementById("statusListModal");
+                modal.style.display = "block";
+                var appendText = 'Status list for ' + candidateName;
+                $('#statusListHeading').html('');
+                $('#statusListHeading').html(appendText);
+                $('#statusListTableBody').html('');
+                $('#statusListTableBody').html(data);
+
+
+            }
+        });
+    }
+
+
+</script>
+<script>
+    function AutoCallCandidatejson(irfId, candidateMasterId) {
+        var phone = $('#hidphone' + irfId).val();
+        var candidatename = $('#hiditem' + irfId).val();
+        AutoCallCandidate(phone, irfId, candidateMasterId, candidatename);
+    }
+    function AutoCallCandidate(phoneNumber, irfId, candidateId, candidateName) {
+
+        swal.fire({
+            title: 'Call ' + candidateName + '?',
+            text: "A system generated schedule call will be placed to the candidate.",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Candidate/AutoCallCandidate',
+                        data: { 'phoneNumber': phoneNumber, 'irfId': irfId, 'candidateId': candidateId },
+                        success: function (result) {
+                            if (result == true) {
+                                resolve(result)
+
+                            }
+                            else {
+                                swal.fire("Error calling!", "Please try again", "error");
+
+                            }
+
+                        },
+                        error: function () {
+                            swal.fire("Error calling!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Call placed!',
+                    type: 'success',
+                    html: '<p>Successfully completed the schedule call.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                })
+                //.then(function () {
+                //    window.location = "/Interviewer/Index";
+                //})
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Cancelled!',
+                    'error'
+                )
+            }
+        })
+    }
+
+</script>
+<script>
+    $("form").on("change", ".file-upload-field", function () {
+        $(this).parent(".file-upload-wrapper").attr("data-text", $(this).val().replace(/.*(\/|\\)/, ''));
+    });</script>
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
+{
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        hopscotch.registerHelper('addOverlay', function () {
+            $('body').append('<div class="overlay"></div>');
+        });
+
+        hopscotch.registerHelper('removeOverlay', function () {
+            $('.overlay').fadeOut(function () {
+                $(this).remove();
+                $('.helper').remove();
+            });
+        });
+
+        hopscotch.listen('show', function () {
+            var elementObject = $(hopscotch.getCurrTarget(tour));
+            var element = $('#' + elementObject[0].id);
+
+            element.prev().removeClass('overlay-relative');
+            element.addClass('overlay-relative');
+
+            if ($('.helper').length !== 0) {
+
+                // Use Helper Layer for hilight target element.
+                var helper = $('.helper');
+                var padding = 5;
+                var helperPosX = element.position().left - padding;
+                var helperPosY = element.position().top - padding;
+                var targetWidth = element.outerWidth();
+                var targetHeight = element.outerHeight();
+
+                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                helper.css('width', targetWidth);
+                helper.css('height', targetHeight);
+                helper.offset({ left: helperPosX, top: helperPosY });
+
+            } else {
+
+                // Add Helper Layer for highlight target element.
+                var newHelper = '<div class="helper"></div>';
+                $('body').append(newHelper);
+
+                var helper = $('.helper');
+                var padding = 5;
+                var helperPosX = element.position().left - padding;
+                var helperPosY = element.position().top - padding;
+                var targetWidth = element.outerWidth();
+                var targetHeight = element.outerHeight();
+
+                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                helper.css('width', targetWidth);
+                helper.css('height', targetHeight);
+                helper.offset({ left: helperPosX, top: helperPosY });
+            }
+
+        });
+
+        var tour = {
+            id: "hello-hopscotch",
+            showCloseButton: false,
+            steps: [
+                {
+                    title: "Candidate",
+                    content: "Detailed view of candidates of a particular irf and click on next button to know its features",
+                    target: "getstatus_1",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    highlight: true,
+                    zindex: 999999,
+                    yOffset: 10,
+
+                    onCTA: function () {
+                        hopscotch.showStep(2);
+                        $('#getstatus_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onNext: function () {
+                        $('#getstatus_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+
+                    }
+                },
+
+
+
+
+
+                {
+                    title: "RB Attempt",
+                    content: "Attempt made by the client to react out to the candidate",
+                    target: "getstatus_2",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#getstatus_2').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#getstatus_2').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+                {
+                    title: "Resume",
+                    content: "Click here to view the resume of the candidate",
+                    target: "getstatus_3",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#getstatus_3').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#getstatus_3').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Invite Sent",
+                    content: "Showing the count of invite sent here",
+                    target: "getstatus_4",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#getstatus_4').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#getstatus_4').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Confirmation",
+                    content: "Showing the count of confirmation here",
+                    target: "getstatus_5",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#getstatus_5').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#getstatus_5').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+                {
+                    title: "Joinability	",
+                    content: "Showing the count of joinability here",
+                    target: "getstatus_6",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#getstatus_6').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#getstatus_6').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+                {
+                    title: "Selectability",
+                    content: "Showing the count of selectability here",
+                    target: "getstatus_7",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#getstatus_7').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#getstatus_7').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Invite Sent",
+                    content: "Click here to send the invite ",
+                    target: "getstatus_8",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#getstatus_8').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#getstatus_8').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+
+                {
+                    title: "Cancel Invite",
+                    content: "Click here to cancel the invite ",
+                    target: "getstatus_9",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#getstatus_9').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#getstatus_9').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+                {
+                    title: "Edit",
+                    content: "Click here to edit the candidate detail ",
+                    target: "getstatus_10",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#getstatus_10').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#getstatus_10').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+                {
+                    title: "Schedule Call",
+                    content: "Click here to schedule a call for the candidate ",
+                    target: "getstatus_11",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "left",
+                    xOffset: '0',
+
+                    onNext: function () {
+                        $('#getstatus_11').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#getstatus_11').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+                {
+                    title: "Call",
+                    content: "Click here to call the candidate ",
+                    target: "getstatus_12",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "left",
+                    xOffset: '0',
+
+                    onNext: function () {
+                        $('#getstatus_12').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#getstatus_12').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+                {
+                    title: "Back to List",
+                    content: "Click here to go back to Skill Channel Page",
+                    target: "getstatus_13",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "left",
+                    yOffset: -10,
+                    xOffset: 0,
+                    arrowOffset: 'left',
+
+                    onNext: function () {
+                        $('#getstatus_13').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#getstatus_13').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Common Pool Menu",
+                    content: "Click on Common Pool menu to see its features",
+                    target: "commonpool_menu",
+                    placement: "top",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    yOffset: 20,
+                    xOffset: 10,
+                    onNext: function () {
+                        $('#commonpool_menu').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#commonpool_menu').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+
+            ],
+            onStart: ["addOverlay"],
+            onEnd: ["removeOverlay"],
+        };
+
+        hopscotch.startTour(tour);
+
+    </script>
+}
 
 
 

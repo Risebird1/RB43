@@ -49,18 +49,18 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
 {
-   @if (HttpContextAccessor.HttpContext.Session.GetString("NSelectedMeeting") != null)
-        {
+    @if (HttpContextAccessor.HttpContext.Session.GetString("NSelectedMeeting") != null)
+    {
 
-        }
-        else
-        {
-            <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
-            <script src="~/Newassets/js/chardinjs.js"></script>
-            <script src="~/Newassets/js/demo.js"></script>
-            HttpContextAccessor.HttpContext.Session.SetString("NSelectedMeeting", "1");
+    }
+    else
+    {
+        <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="~/Newassets/js/chardinjs.js"></script>
+        <script src="~/Newassets/js/demo.js"></script>
+        HttpContextAccessor.HttpContext.Session.SetString("NSelectedMeeting", "1");
 
-        }
+    }
 
 
 }
@@ -87,7 +87,7 @@
                                 <div id="selectedcandidate_2">
                                     <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three  pull-left" data-toggle="modal" data-target="#filterModal">
 
-                                        <span class="mdc-button__label"><span class="fa fa-filter"  data-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                        <span class="mdc-button__label"><span class="fa fa-filter" data-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
 
                                     </button>
 
@@ -135,7 +135,7 @@
                                         <img src="~/Newassets/img/lazyload.gif" />
                                     </div>
                                     <div id="selectedcandidate_table"
-                                         data-intro="<span style='font-size:16px;'>Overview the summary of Selected Meeting details:</span><hr class='btop' />1. Candidate Detail ( Candidate Name & JD title )<br/> 2. Candidate Video & Report <br/> 3. Interviewer Comment<br/> 4. Client  Feedback<br/> 5. Click on call button to call candidate <br/><a href='/RiseTube/Index' class='btn btn-primary allmeetingnext-btn'>NEXT</a>" data-position="top">
+                                         data-intro="<span style='font-size:16px;'>Overview the summary of Selected Meeting details:</span><hr class='btop' />1. Candidate Detail ( Candidate Name & JD Title )<br/> 2. Candidate Video & Report <br/> 3. Interviewer Comment<br/> 4. Client  Feedback<br/> 5. Click on Call button to Call the Candidate <br/><a href='/RiseTube/Index' class='btn btn-primary allmeetingnext-btn'>NEXT</a>" data-position="top">
                                         <div class="dataloading">
                                             <div class="toolbar">
                                             </div>
@@ -637,7 +637,7 @@
                                                                                         <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
 
 
-                                                                                        <span id="selectedcandidate_10" class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
+                                                                                        <span id="selectedcandidate_10" class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
 
 
 
@@ -737,11 +737,11 @@
 
 
 
-                                                    <div class="col-sm-12 col-md-5 pull-left" id="divmeetingentries">
+                                                    <div class="col-sm-5 col-md-5 pull-left" id="divmeetingentries">
                                                         Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
                                                     </div>
 
-                                                    <div class="col-sm-12 col-md-7 dataTables_paginate pull-right" id="divmeetingpages">
+                                                    <div class="col-sm-7 col-md-7 dataTables_paginate pull-right" id="divmeetingpages">
                                                         @Html.PagedListPager(Model, Page => Url.Action("SelectedMeetings", new { Page = Page, searchValue = ViewBag.Searchvalue }))
                                                     </div>
 
@@ -966,10 +966,10 @@
     </div>
 
 </div>
-    @if (ViewBag.Message != null)
-    {
+@if (ViewBag.Message != null)
+{
 
-        <script type="text/javascript">
+    <script type="text/javascript">
 
         function my_code() {
             var msg = '@ViewBag.Message';
@@ -1010,12 +1010,12 @@
         }
 
         window.onload = my_code();
-        </script>
+    </script>
 
-    }
+}
 
 
-    <script>
+<script>
             $(document).ready(function () {
 
                 $("#ResetFilter").click(function () {
@@ -1147,890 +1147,903 @@
                 var form = $("#form").serialize();
 
             }
-    </script>
+</script>
 
-    <script>
-        var imid = "";
-        var span = document.getElementById("feedbackPopUp");
-        var comm = '';
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
-            var modal = document.getElementById("myModal");
-            modal.style.display = "none";
-        }
+<script>
+    var imid = "";
+    var span = document.getElementById("feedbackPopUp");
+    var comm = '';
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
 
-    </script>
-    <script>
-        function ModalButtonClickjson(item) {
-            var obj = list[item];
-            ModalButtonClick(obj);
-        }
-        function ModalButtonClick(item) {
-            imid = item.imid;
+</script>
+<script>
+    function ModalButtonClickjson(item) {
+        var obj = list[item];
+        ModalButtonClick(obj);
+    }
+    function ModalButtonClick(item) {
+        imid = item.imid;
 
-            // Get the modal
-            var modal = document.getElementById("myModal");
+        // Get the modal
+        var modal = document.getElementById("myModal");
 
-            // Get the button that opens the modal
-            //var btn = document.getElementById("myBtn_" + item.imid);
+        // Get the button that opens the modal
+        //var btn = document.getElementById("myBtn_" + item.imid);
 
 
-            // When the user clicks the button, open the modal
-            modal.style.display = "block";
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
 
-            //document.getElementById("IsApproved").checked = item.IsApproved;
-            document.getElementById("appComments").value = item.ApprovalComments;
+        //document.getElementById("IsApproved").checked = item.IsApproved;
+        document.getElementById("appComments").value = item.ApprovalComments;
 
-            document.getElementById("selecComments").value = item.FinalComments;
+        document.getElementById("selecComments").value = item.FinalComments;
 
-            document.getElementById("joinComments").value = item.JoiningComments;
+        document.getElementById("joinComments").value = item.JoiningComments;
 
-            document.getElementById("offComments").value = item.OfferComments;
-            document.getElementById("MoveToCP").checked = item.MoveToCP;
+        document.getElementById("offComments").value = item.OfferComments;
+        document.getElementById("MoveToCP").checked = item.MoveToCP;
 
-            ;
-            $.ajax({
-                type: "GET",
-                url: "/Interview/getApprovalStatusList",
-                data: "{}",
-                success: function (data) {
-                    var s = '<option value="-1">Please Select a Status</option>';
-                    for (var i = 0; i < data.length; i++) {
-                        s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
-                    }
-                    $("#approveDropdown").html(s);
-                    if (item.IsApproved != null) {
-                        $("#approveDropdown").val(item.IsApproved);
-                    }
-                    else {
-                        $("#approveDropdown").val("-1");
-
-                    }
+        ;
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getApprovalStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
                 }
-            });
-
-            $.ajax({
-                type: "GET",
-                url: "/Interview/getSelectionStatusList",
-                data: "{}",
-                success: function (data) {
-                    var s = '<option value="-1">Please Select a Status</option>';
-                    for (var i = 0; i < data.length; i++) {
-                        s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
-                    }
-                    $("#selectionDropdown").html(s);
-                    if (item.IsSelected != null) {
-                        $("#selectionDropdown").val(item.IsSelected);
-                    }
-                    else {
-                        $("#selectionDropdown").val("-1");
-                    }
-
-
-                }
-            });
-
-            $.ajax({
-                type: "GET",
-                url: "/Interview/getOfferStatusList",
-                data: "{}",
-                success: function (data) {
-                    var s = '<option value="-1">Please Select a Status</option>';
-                    for (var i = 0; i < data.length; i++) {
-                        s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
-                    }
-                    $("#offerDropdown").html(s);
-                    if (item.OfferStatus != null) {
-                        $("#offerDropdown").val(item.OfferStatus);
-                    }
-                    else {
-                        $("#offerDropdown").val("-1");
-                    }
-
-                }
-            });
-
-            $.ajax({
-                type: "GET",
-                url: "/Interview/getJoiningStatusList",
-                data: "{}",
-                success: function (data) {
-                    var s = '<option value="-1">Please Select a Status</option>';
-                    for (var i = 0; i < data.length; i++) {
-                        s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
-                    }
-                    $("#joiningDropdown").html(s);
-                    if (item.JoiningStatus != null) {
-                        $("#joiningDropdown").val(item.JoiningStatus);
-                    }
-                    else {
-                        $("#joiningDropdown").val("-1");
-                    }
-
-                }
-            });
-
-
-        }
-
-
-        function SavePopUp() {
-
-            var approvalComment = document.getElementById("appComments").value;
-            var isApproved = document.getElementById("approveDropdown").value;
-
-            var selectionComment = document.getElementById("selecComments").value;
-            var isSelected = document.getElementById("selectionDropdown").value;
-
-            var joiningComment = document.getElementById("joinComments").value;
-            var joiningStatus = document.getElementById("joiningDropdown").value;
-
-            var offerComment = document.getElementById("offComments").value;
-            var offerStatus = document.getElementById("offerDropdown").value;
-            var movetoCP = document.getElementById("MoveToCP").checked;
-            var id = imid;
-
-            $.ajax({
-                type: "GET",
-                url: "/Interview/SaveClientFeedback",
-                data: { 'imid': id, 'isApproved': isApproved, 'approvalComment': approvalComment, 'isSelected': isSelected, 'selectionComment': selectionComment, 'joiningStatus': joiningStatus, 'joiningComment': joiningComment, 'offerStatus': offerStatus, 'offerComment': offerComment, 'movetoCP': movetoCP },
-                success: function (data) {
-
-                    location.reload(true);
-
-                }
-            });
-        }
-
-    </script>
-
-
-    <script type="text/javascript">
-        //// script for loader starts here
-        $(".dataloading").hide();
-        $("#meeting").hide();
-        var loader;
-        function ShowProgress() {
-            $(".dataloading").hide();
-            $("#meeting").hide();
-            loader = document.getElementsByClassName("loader")[0];
-            loader.style.display = "block";
-            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-            loader.style.top = top + "px";
-            loader.style.left = left + "px";
-        };
-        ShowProgress();
-
-        window.onload = function () {
-            setTimeout(function () {
-                loader.style.display = "none";
-                $(".dataloading").show();
-                $("#meeting").show();
-            }, 2000);
-        };
-        //// script for loader ends here
-    </script>
-
-    <script>
-        function FilterInterviews(filterValue) {
-            $.ajax({
-                type: "GET",
-                url: "/Interview/GetSelectedPriorityClientFilteredMeetings",
-                data: { 'filterValue': filterValue },
-                success: function (data) {
-                    if (data == '' && filterValue == 'Next Seven Days') {
-                        $('#tableID').html('');
-                        $('#tableID').html('No interviews for the next seven days.');
-                        $('#tableID').css("margin-left", "452px");
-                        return;
-                    }
-                    if (data == '' && filterValue == 'All') {
-                        $('#tableID').html('');
-                        $('#tableID').html('No interviews.');
-                        $('#tableID').css("margin-left", "452px");
-                        return;
-                    }
-                    if (data == '') {
-                        $('#tableID').html('');
-                        $('#tableID').html('No interviews for ' + filterValue + '.');
-                        $('#tableID').css("margin-left", "452px");
-                        return;
-                    }
-                    $('#tableID').css("margin-left", "");
-                    $('#tableID').html('');
-                    $('#tableID').html(data);
-
-                    $('#meeting').DataTable({
-                        "pagingType": "full_numbers",
-                        "lengthMenu": [
-                            [10, 25, 50, -1],
-                            [10, 25, 50, "All"]
-                        ],
-                        responsive: true,
-                        language: {
-                            search: "_INPUT_",
-                            searchPlaceholder: "Search records",
-                        }
-
-                    });
-                    var table = $('#meeting').DataTable();
-
-
-
-                },
-                error: function (err) {
-                    alert(err.responseText);
-                }
-            });
-        }
-    </script>
-    <script>
-        var candidate = "";
-        var span = document.getElementById("callPopUp");
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
-            hangUp();
-            var modal = document.getElementById("myCallModal");
-            modal.style.display = "none";
-        }
-        $(document).ready(function () {
-            $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-                // Set up the Twilio Client Device with the token
-                Twilio.Device.setup(data.token);
-            });
-        });
-
-        /* Callback to let us know Twilio Client is ready */
-        Twilio.Device.ready(function (device) {
-
-        });
-
-        function callCandidate(phoneNumber) {
-            var params = { "phoneNumber": phoneNumber };
-            Twilio.Device.connect(params);
-        }
-        function hangUp() {
-            Twilio.Device.disconnectAll();
-        }
-
-        Twilio.Device.connect(function (connection) {
-            var appendText = "In call with " + "<b>" + candidate + "</b>";
-            document.getElementById("callingLabel").innerHTML = appendText;
-        });
-
-        function afterTimeOut() {
-            var modal = document.getElementById("myCallModal");
-            modal.style.display = "none";
-        }
-
-        Twilio.Device.disconnect(function (connection) {
-            var appendText = "Call disconnected! ";
-            document.getElementById("callingLabel").innerHTML = appendText;
-            setTimeout(afterTimeOut, 2000);
-
-        });
-
-        function CallButtonClick(candidateName, mobileNumber) {
-            candidate = candidateName;
-            // Get the modal
-            var modal = document.getElementById("myCallModal");
-            // When the user clicks the button, open the modal
-            modal.style.display = "block";
-            var appendText = "Calling... " + "<b>" + candidate + "</b>";
-            document.getElementById("callingLabel").innerHTML = appendText;
-            callCandidate(mobileNumber);
-        }
-        function CallButtonClickjson(imid) {
-            var candidate = $("#hidcandidate_" + imid).val();
-            var mobile = $("#hidmobile" + imid).val();
-
-            // Get the modal
-            CallButtonClick(candidate, mobile);
-
-        }
-        function closeCallPopUp() {
-            hangUp();
-            var modal = document.getElementById("myModal");
-            modal.style.display = "none";
-        }
-
-
-    </script>
-
-    <script>
-        var list;
-        function searchResult() {
-            //window.location.href = "/Interview/SelectedPriorityClientMeetings?searchValue=" + $('#txtmeeting_filter').val();
-            $.ajax({
-                type: "POST",
-                url: "/Client/SelectedPriorityClientMeetingsJson",
-                data: { 'searchValue': $('#txtmeeting_filter').val() },
-                success: function (data) {
-                    if (data != "failed") {
-                        list = data.result;
-                        bindtableData(data.result);
-                        bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
-                    }
-                }
-            });
-        }
-
-        function searchResultEnter(e) {
-            var code = (e.keyCode ? e.keyCode : e.which);
-            if (code == 13) {
-                searchResult();
-            }
-        }
-
-        function bindtableData(data) {
-
-            var html = '';
-            if (data.length == 0) {
-                html += '  <tr>';
-                html += ' <td colspan="9" class="text-center">No data available in table</td>';
-                html += ' </tr>';
-            }
-
-            for (var i = 0; i < data.length; i++) {
-                html += '<tr id=' + data[i].imid + ' data-changes="1">'; html += ' <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
-                html += '<td class="interviewdate"> ' + new Date(data[i].interviewDate).toLocaleString() + '<input type="hidden" id="hidcandidate_' + data[i].imid + '" value="' + data[i].candidateName + '"/></td>'; if (data[i].candidateName != null && data[i].candidateName != "") {
-                    if (data[i].IsOnline == 1) {
-                        html += ' <td class="candidate-details"><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName + '</a>'; html += ' <div class="mtop-5">'; if (data[i].jdTiltle.split("|")[0] != null && data[i].jdTiltle.split("|")[0] != "") {
-                            if (data[i].jdTiltle.split("|")[0].length > 38) {
-                                html += ' <a onClick="" data-tooltip="' + data[i].jdTiltle.split("|")[0] + '"><strong>Jd Title: </strong><span class="hrname"> ' + data[i].jdTiltle.split("|")[0] + '</span> </a>';
-                            } else { html += '  <a onClick=""><strong>Jd Title: </strong> ' + data[i].jdTiltle.split("|")[0] + ' </a>'; }
-                        } else { } html += '</div></td>';
-                    }
-                    else {
-                        html += '<td class="candidate-details"><a onClick=""><span class="dot"></span>' + data[i].candidateName + '</a>'; html += ' <div class="mtop-5">'; if (data[i].jdTiltle.split("|")[0] != null && data[i].jdTiltle.split("|")[0] != "") {
-                            if (data[i].jdTiltle.split("|")[0].length > 38) {
-                                html += ' <a onClick="" data-tooltip="' + data[i].jdTiltle.split("|")[0] + '"><strong>Jd Title: </strong><span class="hrname"> ' + data[i].jdTiltle.split("|")[0] + '</span> </a>';
-                            } else { html += '<a onClick=""><strong>Jd Title: </strong> ' + data[i].jdTiltle.split("|")[0] + ' </a>'; }
-                        } else { } html += '</div></td>';
-                    }
-                }
-                else { html += '<td></td>'; } if (data[i].clientHrContact != null && data[i].clientHrContact != "") { if (data[i].isHrOnline == 1 && data[i].clientHrContact.length > 15) { html += '<td><a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span><span class="s_cname">' + data[i].clientHrContact + '</span> </a></td>'; } else { html += '<td><a onclick=""><span class="dot"></span><span class="s_cname">' + data[i].clientHrContact + ' </span></a></td>'; } }
-                else { html += '<td></td>'; } if ((data[i].meetingStatus == 4) && data[i].videoLink != null && data[i].videoLink != "") { html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>'; } else { html += '<td>No Video</td>'; }
-                html += '<td class="interview-com">'; html += ' <div id="section">'; if (data[i].interviewerComment != null && data[i].interviewerComment != "") { if (data[i].interviewerComment.length > 28) { html += ' <div class="article">'; html += ' <p style="margin-bottom:0px;">' + data[i].interviewerComment.substring(0, 28) + '</p>'; html += '<p class="moretext_' + data[i].imid + ' moretext">' + data[i].interviewerComment.substring(28, data[i].interviewerComment.length - 28) + '</p>'; html += '</div>'; } else { html += '<div class="article"><p>' + data[i].interviewerComment.substring(0, data[i].interviewerComment.length - 1) + '</p></div>'; } }
-                else { html += '<div></div>'; } html += ' <a onclick="moreless(' + data[i].imid + ')" class="moreless-button" value="Readmore" id="read_' + data[i].imid + '" href="#">Read more</a>'; html += '</div>'; html += ' </td>'; if ((data[i].meetingStatus == 4) && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && data[i].meetingStatus == 4 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) { html += '<td>  <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + data[i].irfIntId + '&isClient= true">Report</a></td>'; } else { html += '   <td>No Report</td>'; } html += '   <td class="text-center action">'; html += '   <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">';
-                html += ' <span onclick="ModalButtonClickjson(' + i + ')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>'; html += '</button>'; if (data[i].isBiometricEnabled) {
-                    html += ' <button class="mdc-fab app-fab--absolute" aria-label="Verify">';
-                    html += '<a href ="/Client/VerifyJoiningAudio?candidateId = ' + data[i].candidateId + '&CandidateName=' + data[i].candidateName + '&irfId=' + data[i].irfIntId + '&meetingId=' + data[i].imid + '" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255) d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></a>'; html += '</button>';
-                }
-                html += '</td>'; html += '<td>'; if (data[i].mobileNumber != null && data[i].mobileNumber != "") { html += '<input type="hidden" id="hidmobile' + data[i].id + '" value="' + data[i].mobileNumber + '"/><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClickjson(' + data[i].imid + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>'; } html += '</td>'; html += '</tr>'; html += '<tr class="collapse ' + data[i].imid + '">'; html += '<td colspan="999" class=child-section">'; html += '<table class="table table-striped">'; html += '<tr>'; html += '<th>End Client Name</th>'; html += ' <th>Aadhar Link</th>'; html += ' <th>Approval Status</th>'; html += '<th>Final Selection Status</th>'; html += '<th>Offer Status</th>'; html += '<th>Joining Status</th>'; html += '</tr>'; html += '<tr>'; html += '<td> ' + data[i].clientName + ' </td>'; if (data[i].aadharFileLink != null && data[i].aadharFileLink != "") {
-                    html += '<td><a id="aadharLinkId" target="_blank" title="Aadhar" href=' + data[i].aadharFileLink.tostring().replace(" ", "%20") + '>Aadhar</a></td>';
-                } else { html += '<td>No document</td>'; } if (data[i].nextLevelApprovalStat != null && data[i].nextLevelApprovalStat != "") { html += '<td>    ' + data[i].nextLevelApprovalStat + '</td></td>'; } else { html += ' <td>No document</td>'; }
-                if (data[i].finalSelectionStat != null && data[i].finalSelectionStat != "") { html += '<td>' + data[i].finalSelectionStat + ' </td>'; } else { html += ' <td>No document</td>'; } if (data[i].offerStatusStatDesc != null && data[i].offerStatusStatDesc != "") { html += ' <td>' + data[i].offerStatusStatDesc + '</td>'; } else { html += '<td>No document</td>'; } if (data[i].joiningStatusStatDesc != null && data[i].joiningStatusStatDesc != "") { html += '   <td>' + data[i].joiningStatusStatDesc + '</td>'; } else { html += '<td>No document</td>'; } html += '   </tr>'; html += '</table>'; html += '   </td>'; html += ' </tr>';
-            }
-            $("#tblbodySelect").empty().html(html);
-        }
-        function bindPages(pagecount, startpage, endpage, totalcount) {
-            var html = '';
-            html += '<div class="pagination-container">';
-            html += '<ul class="pagination">';
-            for (var i = 1; i <= pagecount; i++) {
-                if (i == 1) {
-                    html += '   <li class="active"><span>1</span></li>';
-                } else if (i <= 10) {
-                    html += '<li><a href="/Client/SelectedMeetings?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
-                } else if (i == 11) {
-                    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                    html += '<li class="PagedList-skipToNext"><a href="/Client/SelectedMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                    html += '<li class="PagedList-skipToLast"><a href="/Client/SelectedMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-                } else {
-                    break;
-                }
-                if (pagecount <= 10 && i == pagecount && i != 1) {
-                    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                    html += '<li class="PagedList-skipToNext"><a href="/Client/SelectedMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                    html += '<li class="PagedList-skipToLast"><a href="/Client/SelectedMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-                }
-            }
-            html += '</ul>';
-            html += '</div>';
-            $("#divmeetingpages").empty().html(html);
-            var pagestartdetails = '';
-            pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
-            $("#divmeetingentries").empty().html(pagestartdetails);
-
-        }
-    </script>
-
-    <script>
-        $(".candidateName").each(function () {
-            if ($(this).text().length > 25) {
-                $(this).text($(this).text().substr(0, 25) + "...")
-
-                $('[role="data-tooltip"]').css("visibility", "visible");
-
-            }
-
-
-            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
-        });
-
-
-        $(".candidateSkill").each(function () {
-            if ($(this).text().length > 20) {
-                $(this).text($(this).text().substr(0, 20) + "...")
-
-                $('[role="data-tooltip"]').css("visibility", "visible");
-
-            }
-
-
-            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
-        });
-
-        function RefreshSearch() {
-            $(".dataTables_filter input").val('');
-            searchResult();
-        }
-
-        $(document).ready(function () {
-
-            $(".dataTables_filter").keyup(function (e) {
-
-                if ($('#txtmeeting_filter').val() == "") {
-                    $("#x").hide();
+                $("#approveDropdown").html(s);
+                if (item.IsApproved != null) {
+                    $("#approveDropdown").val(item.IsApproved);
                 }
                 else {
-                    $("#x").show();
+                    $("#approveDropdown").val("-1");
+
                 }
-            });
-            $("#x").click(function (e) {
-                $(".dataTables_filter input").val('');
-                $(this).hide();
-                searchResult();
-            });
-
-
-
-
+            }
         });
-    </script>
 
-    <script>
-        var start = document.getElementById('start');
-        start.focus();
-
-        function dotheneedful(sibling) {
-            if (sibling != null) {
-                start.focus();
-                start.style.backgroundColor = '';
-                start.style.color = '';
-                sibling.focus();
-                start = sibling;
-            }
-        }
-
-        document.onkeydown = checkKey;
-
-        function checkKey(e) {
-            e = e || window.event;
-            if (e.keyCode == '38') {
-                // up arrow
-                var idx = start.cellIndex;
-                var nextrow = start.parentElement.previousElementSibling;
-                if (nextrow != null) {
-                    var sibling = nextrow.cells[idx];
-                    dotheneedful(sibling);
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getSelectionStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
                 }
-            } else if (e.keyCode == '40') {
-                // down arrow
-                var idx = start.cellIndex;
-                var nextrow = start.parentElement.nextElementSibling;
-                if (nextrow != null) {
-                    var sibling = nextrow.cells[idx];
-                    dotheneedful(sibling);
+                $("#selectionDropdown").html(s);
+                if (item.IsSelected != null) {
+                    $("#selectionDropdown").val(item.IsSelected);
                 }
-            } else if (e.keyCode == '37') {
-                // left arrow
-                var sibling = start.previousElementSibling;
-                dotheneedful(sibling);
-            } else if (e.keyCode == '39') {
-                // right arrow
-                var sibling = start.nextElementSibling;
-                dotheneedful(sibling);
-            }
-        }
-    </script>
-    <!-- Keep the Page Content Here.-->
-    @*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") != "Recruiter")
-            {
-
-            }
-
-        <script src="~/Newassets/js/enjoyhint.min.js"></script>
-        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-        <script>
-            var enjoyhint_instance = new EnjoyHint({});
-
-            var enjoyhint_script_steps = [
-                {
-                    'next .first': 'Selected Candidate Priority View and click on continue to know its features',
-                    'nextButton': { className: "myNext", text: "Continue" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .second': 'Interview details will be available here, prior of that click on filter and select date range',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .three': 'Filters here based on available attributes or reset filters if applied earlier',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .exportfive': 'Export the Selected Candidates Interview data over excel',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'click .four': "Click here to see detail view of Selected Candidates Interview"
+                else {
+                    $("#selectionDropdown").val("-1");
                 }
 
 
-            ];
-            setTimeout(function () {
-                enjoyhint_instance.set(enjoyhint_script_steps);
-                enjoyhint_instance.run();
-            }, 5000)
-        </script>
+            }
+        });
 
-    *@
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getOfferStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                }
+                $("#offerDropdown").html(s);
+                if (item.OfferStatus != null) {
+                    $("#offerDropdown").val(item.OfferStatus);
+                }
+                else {
+                    $("#offerDropdown").val("-1");
+                }
 
-    @*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
-        {
+            }
+        });
 
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getJoiningStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                }
+                $("#joiningDropdown").html(s);
+                if (item.JoiningStatus != null) {
+                    $("#joiningDropdown").val(item.JoiningStatus);
+                }
+                else {
+                    $("#joiningDropdown").val("-1");
+                }
 
-            <script type="text/javascript">
-
-                hopscotch.registerHelper('addOverlay', function () {
-                    $('body').append('<div class="overlay"></div>');
-                });
-
-                hopscotch.registerHelper('removeOverlay', function () {
-                    $('.overlay').fadeOut(function () {
-                        $(this).remove();
-                        $('.helper').remove();
-                    });
-                });
-
-                hopscotch.listen('show', function () {
-                    var elementObject = $(hopscotch.getCurrTarget(tour));
-                    var element = $('#' + elementObject[0].id);
-
-                    element.prev().removeClass('overlay-relative');
-                    element.addClass('overlay-relative');
-
-                    if ($('.helper').length !== 0) {
+            }
+        });
 
 
-                        // Use Helper Layer for hilight target element.
-                        var helper = $('.helper');
-                        var padding = 5;
-                        var helperPosX = element.position().left - padding;
-                        var helperPosY = element.position().top - padding;
-                        var targetWidth = element.outerWidth();
-                        var targetHeight = element.outerHeight();
+    }
 
-                        console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                        console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-                        helper.css('width', targetWidth);
-                        helper.css('height', targetHeight);
-                        helper.offset({ left: helperPosX, top: helperPosY });
+    function SavePopUp() {
 
-                    } else {
+        var approvalComment = document.getElementById("appComments").value;
+        var isApproved = document.getElementById("approveDropdown").value;
 
-                        // Add Helper Layer for highlight target element.
-                        var newHelper = '<div class="helper"></div>';
-                        $('body').append(newHelper);
+        var selectionComment = document.getElementById("selecComments").value;
+        var isSelected = document.getElementById("selectionDropdown").value;
 
-                        var helper = $('.helper');
-                        var padding = 5;
-                        var helperPosX = element.position().left - padding;
-                        var helperPosY = element.position().top - padding;
-                        var targetWidth = element.outerWidth();
-                        var targetHeight = element.outerHeight();
+        var joiningComment = document.getElementById("joinComments").value;
+        var joiningStatus = document.getElementById("joiningDropdown").value;
 
-                        console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                        console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+        var offerComment = document.getElementById("offComments").value;
+        var offerStatus = document.getElementById("offerDropdown").value;
+        var movetoCP = document.getElementById("MoveToCP").checked;
+        var id = imid;
 
-                        helper.css('width', targetWidth);
-                        helper.css('height', targetHeight);
-                        helper.offset({ left: helperPosX, top: helperPosY });
+        $.ajax({
+            type: "GET",
+            url: "/Interview/SaveClientFeedback",
+            data: { 'imid': id, 'isApproved': isApproved, 'approvalComment': approvalComment, 'isSelected': isSelected, 'selectionComment': selectionComment, 'joiningStatus': joiningStatus, 'joiningComment': joiningComment, 'offerStatus': offerStatus, 'offerComment': offerComment, 'movetoCP': movetoCP },
+            success: function (data) {
+
+                location.reload(true);
+
+            }
+        });
+    }
+
+</script>
+
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#meeting").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#meeting").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meeting").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+
+<script>
+    function FilterInterviews(filterValue) {
+        $.ajax({
+            type: "GET",
+            url: "/Interview/GetSelectedPriorityClientFilteredMeetings",
+            data: { 'filterValue': filterValue },
+            success: function (data) {
+                if (data == '' && filterValue == 'Next Seven Days') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews for the next seven days.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                if (data == '' && filterValue == 'All') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                if (data == '') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews for ' + filterValue + '.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                $('#tableID').css("margin-left", "");
+                $('#tableID').html('');
+                $('#tableID').html(data);
+
+                $('#meeting').DataTable({
+                    "pagingType": "full_numbers",
+                    "lengthMenu": [
+                        [10, 25, 50, -1],
+                        [10, 25, 50, "All"]
+                    ],
+                    responsive: true,
+                    language: {
+                        search: "_INPUT_",
+                        searchPlaceholder: "Search records",
                     }
 
                 });
-
-                var tour = {
-                    id: "hello-hopscotch",
-                    showCloseButton: false,
-                    steps: [
-                        {
-                            title: "Selected Candidates",
-                            content: "View the details of all Selected candidates and click on next button to know its features",
-                            target: "selectedcandidate_1",
-                            placement: "bottom",
-                            showPrevButton: true,
-
-                            highlight: true,
-                            zindex: 999999,
-                            yOffset: 10,
-
-                            onCTA: function () {
-                                hopscotch.showStep(2);
-                                $('#selectedcandidate_1').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onNext: function () {
-                                $('#selectedcandidate_1').removeClass('overlay-relative');
-                                $('.helper').remove();
-
-                            }
-                        },
-                        {
-                            title: "Filter",
-                            content: "Filter based on available attributes or reset filter if applied earlier",
-                            target: "selectedcandidate_2",
-                            placement: "left",
-                            showPrevButton: true,
-
-                            zindex: 999999,
-                            xOffset: 0,
-                            yOffset: -10,
-                            onPrev: function () {
-
-                                $('#selectedcandidate_2').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-
-                            onNext: function () {
-
-                                $('#selectedcandidate_2').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-
-
-                        },
-
-
-                        {
-                            title: "Export",
-                            content: "Click here to export the Selected Candidate data in excel sheet",
-                            target: "selectedcandidate_3",
-                            placement: "left",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            xOffset: -40,
-                            yOffset: -10,
-                            onPrev: function () {
-
-                                $('#selectedcandidate_3').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-
-                            onNext: function () {
-
-                                $('#selectedcandidate_3').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-
-
-                        },
-                        {
-                            title: "Search",
-                            content: "Search the records here based on available details",
-                            target: "selectedcandidate_4",
-                            showPrevButton: true,
-                            placement: "left",
-                            zindex: 999999,
-                            xOffset: 10,
-                            onPrev: function () {
-
-                                $('#selectedcandidate_4').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onNext: function () {
-
-                                $('#selectedcandidate_4').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-
-                        },
-                        {
-                            title: "JD Title",
-                            content: "Showing the JD title here",
-                            target: "selectedcandidate_5",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            placement: "bottom",
-                            xOffset: 'center',
-                            arrowOffset: 'center',
-                            onNext: function () {
-                                $('#selectedcandidate_5').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#selectedcandidate_5').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-                        {
-                            title: "Video",
-                            content: "Click here to see the video",
-                            target: "selectedcandidate_6",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            placement: "bottom",
-                            xOffset: 'center',
-                            arrowOffset: 'center',
-                            onNext: function () {
-                                $('#selectedcandidate_6').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#selectedcandidate_6').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-
-                        {
-                            title: "Interviewer Comment",
-                            content: "View the interviewer comment for the candidate",
-                            target: "selectedcandidate_7",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            placement: "bottom",
-                            xOffset: 'center',
-                            arrowOffset: 'center',
-                            onNext: function () {
-                                $('#selectedcandidate_7').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#selectedcandidate_7').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-                        {
-                            title: "Report",
-                            content: "Click here to open the candidate report & generate PDF ",
-                            target: "selectedcandidate_8",
-                            placement: "left",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            xOffset: 10,
-                            yOffset: -20,
-                            onNext: function () {
-                                $('#selectedcandidate_8').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#selectedcandidate_8').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-                        {
-                            title: "Client Feedback",
-                            content: "Click here to provide Client Feedback ",
-                            target: "selectedcandidate_9",
-                            placement: "left",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            xOffset: 10,
-                            yOffset: -20,
-                            onNext: function () {
-                                $('#selectedcandidate_9').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#selectedcandidate_9').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-                        {
-                            title: "Call",
-                            content: "Cilck here to call the candidate",
-                            target: "selectedcandidate_10",
-                            placement: "left",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            xOffset: 10,
-                            yOffset: -20,
-                            onNext: function () {
-                                $('#selectedcandidate_10').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#selectedcandidate_10').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-                        {
-                            title: "Risetube Menu",
-                            content: "Click on Risetube menu to see its features",
-                            target: "risetube_menu",
-                            placement: "bottom",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            yOffset: -20,
-                            xOffset: 10,
-                            onNext: function () {
-                                $('#risetube_menu').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#risetube_menu').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-                    ],
-                    onStart: ["addOverlay"],
-                    onEnd: ["removeOverlay"],
-                };
-
-                hopscotch.startTour(tour);
-
-            </script>
-
-        }*@
+                var table = $('#meeting').DataTable();
 
 
 
-    <loading></loading>
-
-
-
-    <script>
-
-
-        function moreless(id) {
-
-            $('.moretext_' + id).slideToggle();
-            if ($('#read_' + id).val() == 'Readmore') {
-                $('#read_' + id).empty().html('Read more');
-                $('#read_' + id).val('Readless');
-            } else {
-                $('#read_' + id).empty().html('Read less');
-                $('#read_' + id).val('Readmore');
+            },
+            error: function (err) {
+                alert(err.responseText);
             }
+        });
+    }
+</script>
+<script>
+    var candidate = "";
+    var caninterviewid = 0;
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
+
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+
+    });
+
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        startCallRecording(connection.parameters.CallSid);
+    });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+
+    });
+    function startCallRecording(sid) {
+        console.log("sid:" + sid);
+        $.ajax({
+            url: '/User/makecall',
+            type: "GET",
+            data: { 'sid': sid, 'interviewid': caninterviewid },
+            success: function (data) {
+                console.log("rsid:" + data);
+            }
+        });
+    }
+    function CallButtonClick(candidateName, mobileNumber, interviewid) {
+        candidate = candidateName;
+        caninterviewid = interviewid;
+        // Get the modal
+        var modal = document.getElementById("myCallModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(mobileNumber);
+    }
+    function CallButtonClickjson(imid) {
+        var candidate = $("#hidcandidate_" + imid).val();
+        var mobile = $("#hidmobile" + imid).val();
+
+        // Get the modal
+        CallButtonClick(candidate, mobile, imid);
+
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+
+</script>
+
+<script>
+    var list;
+    function searchResult() {
+        //window.location.href = "/Interview/SelectedPriorityClientMeetings?searchValue=" + $('#txtmeeting_filter').val();
+        $.ajax({
+            type: "POST",
+            url: "/Client/SelectedPriorityClientMeetingsJson",
+            data: { 'searchValue': $('#txtmeeting_filter').val() },
+            success: function (data) {
+                if (data != "failed") {
+                    list = data.result;
+                    bindtableData(data.result);
+                    bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
+                }
+            }
+        });
+    }
+
+    function searchResultEnter(e) {
+        var code = (e.keyCode ? e.keyCode : e.which);
+        if (code == 13) {
+            searchResult();
+        }
+    }
+
+    function bindtableData(data) {
+
+        var html = '';
+        if (data.length == 0) {
+            html += '  <tr>';
+            html += ' <td colspan="9" class="text-center">No data available in table</td>';
+            html += ' </tr>';
         }
 
+        for (var i = 0; i < data.length; i++) {
+            html += '<tr id=' + data[i].imid + ' data-changes="1">'; html += ' <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
+            html += '<td class="interviewdate"> ' + new Date(data[i].interviewDate).toLocaleString() + '<input type="hidden" id="hidcandidate_' + data[i].imid + '" value="' + data[i].candidateName + '"/></td>'; if (data[i].candidateName != null && data[i].candidateName != "") {
+                if (data[i].IsOnline == 1) {
+                    html += ' <td class="candidate-details"><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName + '</a>'; html += ' <div class="mtop-5">'; if (data[i].jdTiltle.split("|")[0] != null && data[i].jdTiltle.split("|")[0] != "") {
+                        if (data[i].jdTiltle.split("|")[0].length > 38) {
+                            html += ' <a onClick="" data-tooltip="' + data[i].jdTiltle.split("|")[0] + '"><strong>Jd Title: </strong><span class="hrname"> ' + data[i].jdTiltle.split("|")[0] + '</span> </a>';
+                        } else { html += '  <a onClick=""><strong>Jd Title: </strong> ' + data[i].jdTiltle.split("|")[0] + ' </a>'; }
+                    } else { } html += '</div></td>';
+                }
+                else {
+                    html += '<td class="candidate-details"><a onClick=""><span class="dot"></span>' + data[i].candidateName + '</a>'; html += ' <div class="mtop-5">'; if (data[i].jdTiltle.split("|")[0] != null && data[i].jdTiltle.split("|")[0] != "") {
+                        if (data[i].jdTiltle.split("|")[0].length > 38) {
+                            html += ' <a onClick="" data-tooltip="' + data[i].jdTiltle.split("|")[0] + '"><strong>Jd Title: </strong><span class="hrname"> ' + data[i].jdTiltle.split("|")[0] + '</span> </a>';
+                        } else { html += '<a onClick=""><strong>Jd Title: </strong> ' + data[i].jdTiltle.split("|")[0] + ' </a>'; }
+                    } else { } html += '</div></td>';
+                }
+            }
+            else { html += '<td></td>'; } if (data[i].clientHrContact != null && data[i].clientHrContact != "") { if (data[i].isHrOnline == 1 && data[i].clientHrContact.length > 15) { html += '<td><a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span><span class="s_cname">' + data[i].clientHrContact + '</span> </a></td>'; } else { html += '<td><a onclick=""><span class="dot"></span><span class="s_cname">' + data[i].clientHrContact + ' </span></a></td>'; } }
+            else { html += '<td></td>'; } if ((data[i].meetingStatus == 4) && data[i].videoLink != null && data[i].videoLink != "") { html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>'; } else { html += '<td>No Video</td>'; }
+            html += '<td class="interview-com">'; html += ' <div id="section">'; if (data[i].interviewerComment != null && data[i].interviewerComment != "") { if (data[i].interviewerComment.length > 28) { html += ' <div class="article">'; html += ' <p style="margin-bottom:0px;">' + data[i].interviewerComment.substring(0, 28) + '</p>'; html += '<p class="moretext_' + data[i].imid + ' moretext">' + data[i].interviewerComment.substring(28, data[i].interviewerComment.length - 28) + '</p>'; html += '</div>'; } else { html += '<div class="article"><p>' + data[i].interviewerComment.substring(0, data[i].interviewerComment.length - 1) + '</p></div>'; } }
+            else { html += '<div></div>'; } html += ' <a onclick="moreless(' + data[i].imid + ')" class="moreless-button" value="Readmore" id="read_' + data[i].imid + '" href="#">Read more</a>'; html += '</div>'; html += ' </td>'; if ((data[i].meetingStatus == 4) && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && data[i].meetingStatus == 4 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) { html += '<td>  <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + data[i].irfIntId + '&isClient= true">Report</a></td>'; } else { html += '   <td>No Report</td>'; } html += '   <td class="text-center action">'; html += '   <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">';
+            html += ' <span onclick="ModalButtonClickjson(' + i + ')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>'; html += '</button>'; if (data[i].isBiometricEnabled) {
+                html += ' <button class="mdc-fab app-fab--absolute" aria-label="Verify">';
+                html += '<a href ="/Client/VerifyJoiningAudio?candidateId = ' + data[i].candidateId + '&CandidateName=' + data[i].candidateName + '&irfId=' + data[i].irfIntId + '&meetingId=' + data[i].imid + '" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255) d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></a>'; html += '</button>';
+            }
+            html += '</td>'; html += '<td>'; if (data[i].mobileNumber != null && data[i].mobileNumber != "") { html += '<input type="hidden" id="hidmobile' + data[i].id + '" value="' + data[i].mobileNumber + '"/><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClickjson(' + data[i].imid + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>'; } html += '</td>'; html += '</tr>'; html += '<tr class="collapse ' + data[i].imid + '">'; html += '<td colspan="999" class=child-section">'; html += '<table class="table table-striped">'; html += '<tr>'; html += '<th>End Client Name</th>'; html += ' <th>Aadhar Link</th>'; html += ' <th>Approval Status</th>'; html += '<th>Final Selection Status</th>'; html += '<th>Offer Status</th>'; html += '<th>Joining Status</th>'; html += '</tr>'; html += '<tr>'; html += '<td> ' + data[i].clientName + ' </td>'; if (data[i].aadharFileLink != null && data[i].aadharFileLink != "") {
+                html += '<td><a id="aadharLinkId" target="_blank" title="Aadhar" href=' + data[i].aadharFileLink.tostring().replace(" ", "%20") + '>Aadhar</a></td>';
+            } else { html += '<td>No document</td>'; } if (data[i].nextLevelApprovalStat != null && data[i].nextLevelApprovalStat != "") { html += '<td>    ' + data[i].nextLevelApprovalStat + '</td></td>'; } else { html += ' <td>No document</td>'; }
+            if (data[i].finalSelectionStat != null && data[i].finalSelectionStat != "") { html += '<td>' + data[i].finalSelectionStat + ' </td>'; } else { html += ' <td>No document</td>'; } if (data[i].offerStatusStatDesc != null && data[i].offerStatusStatDesc != "") { html += ' <td>' + data[i].offerStatusStatDesc + '</td>'; } else { html += '<td>No document</td>'; } if (data[i].joiningStatusStatDesc != null && data[i].joiningStatusStatDesc != "") { html += '   <td>' + data[i].joiningStatusStatDesc + '</td>'; } else { html += '<td>No document</td>'; } html += '   </tr>'; html += '</table>'; html += '   </td>'; html += ' </tr>';
+        }
+        $("#tblbodySelect").empty().html(html);
+    }
+    function bindPages(pagecount, startpage, endpage, totalcount) {
+        var html = '';
+        html += '<div class="pagination-container">';
+        html += '<ul class="pagination">';
+        for (var i = 1; i <= pagecount; i++) {
+            if (i == 1) {
+                html += '   <li class="active"><span>1</span></li>';
+            } else if (i <= 10) {
+                html += '<li><a href="/Client/SelectedMeetings?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+            } else if (i == 11) {
+                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Client/SelectedMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Client/SelectedMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            } else {
+                break;
+            }
+            if (pagecount <= 10 && i == pagecount && i != 1) {
+                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Client/SelectedMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Client/SelectedMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            }
+        }
+        html += '</ul>';
+        html += '</div>';
+        $("#divmeetingpages").empty().html(html);
+        var pagestartdetails = '';
+        pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
+        $("#divmeetingentries").empty().html(pagestartdetails);
+
+    }
+</script>
+
+<script>
+    $(".candidateName").each(function () {
+        if ($(this).text().length > 25) {
+            $(this).text($(this).text().substr(0, 25) + "...")
+
+            $('[role="data-tooltip"]').css("visibility", "visible");
+
+        }
+
+
+        else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+    });
+
+
+    $(".candidateSkill").each(function () {
+        if ($(this).text().length > 20) {
+            $(this).text($(this).text().substr(0, 20) + "...")
+
+            $('[role="data-tooltip"]').css("visibility", "visible");
+
+        }
+
+
+        else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+    });
+
+    function RefreshSearch() {
+        $(".dataTables_filter input").val('');
+        searchResult();
+    }
+
+    $(document).ready(function () {
+
+        $(".dataTables_filter").keyup(function (e) {
+
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            searchResult();
+        });
+
+
+
+
+    });
+</script>
+
+<script>
+    var start = document.getElementById('start');
+    start.focus();
+
+    function dotheneedful(sibling) {
+        if (sibling != null) {
+            start.focus();
+            start.style.backgroundColor = '';
+            start.style.color = '';
+            sibling.focus();
+            start = sibling;
+        }
+    }
+
+    document.onkeydown = checkKey;
+
+    function checkKey(e) {
+        e = e || window.event;
+        if (e.keyCode == '38') {
+            // up arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.previousElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '40') {
+            // down arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.nextElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '37') {
+            // left arrow
+            var sibling = start.previousElementSibling;
+            dotheneedful(sibling);
+        } else if (e.keyCode == '39') {
+            // right arrow
+            var sibling = start.nextElementSibling;
+            dotheneedful(sibling);
+        }
+    }
+</script>
+<!-- Keep the Page Content Here.-->
+@*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") != "Recruiter")
+        {
+
+        }
+
+    <script src="~/Newassets/js/enjoyhint.min.js"></script>
+    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+    <script>
+        var enjoyhint_instance = new EnjoyHint({});
+
+        var enjoyhint_script_steps = [
+            {
+                'next .first': 'Selected Candidate Priority View and click on continue to know its features',
+                'nextButton': { className: "myNext", text: "Continue" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .second': 'Interview details will be available here, prior of that click on filter and select date range',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .three': 'Filters here based on available attributes or reset filters if applied earlier',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .exportfive': 'Export the Selected Candidates Interview data over excel',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'click .four': "Click here to see detail view of Selected Candidates Interview"
+            }
+
+
+        ];
+        setTimeout(function () {
+            enjoyhint_instance.set(enjoyhint_script_steps);
+            enjoyhint_instance.run();
+        }, 5000)
     </script>
 
+*@
+
+@*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
+    {
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+
+        <script type="text/javascript">
+
+            hopscotch.registerHelper('addOverlay', function () {
+                $('body').append('<div class="overlay"></div>');
+            });
+
+            hopscotch.registerHelper('removeOverlay', function () {
+                $('.overlay').fadeOut(function () {
+                    $(this).remove();
+                    $('.helper').remove();
+                });
+            });
+
+            hopscotch.listen('show', function () {
+                var elementObject = $(hopscotch.getCurrTarget(tour));
+                var element = $('#' + elementObject[0].id);
+
+                element.prev().removeClass('overlay-relative');
+                element.addClass('overlay-relative');
+
+                if ($('.helper').length !== 0) {
 
 
-    <!-- PAGE CONTENT WRAPPER -->
+                    // Use Helper Layer for hilight target element.
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
+
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
+
+                } else {
+
+                    // Add Helper Layer for highlight target element.
+                    var newHelper = '<div class="helper"></div>';
+                    $('body').append(newHelper);
+
+                    var helper = $('.helper');
+                    var padding = 5;
+                    var helperPosX = element.position().left - padding;
+                    var helperPosY = element.position().top - padding;
+                    var targetWidth = element.outerWidth();
+                    var targetHeight = element.outerHeight();
+
+                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                    helper.css('width', targetWidth);
+                    helper.css('height', targetHeight);
+                    helper.offset({ left: helperPosX, top: helperPosY });
+                }
+
+            });
+
+            var tour = {
+                id: "hello-hopscotch",
+                showCloseButton: false,
+                steps: [
+                    {
+                        title: "Selected Candidates",
+                        content: "View the details of all Selected candidates and click on next button to know its features",
+                        target: "selectedcandidate_1",
+                        placement: "bottom",
+                        showPrevButton: true,
+
+                        highlight: true,
+                        zindex: 999999,
+                        yOffset: 10,
+
+                        onCTA: function () {
+                            hopscotch.showStep(2);
+                            $('#selectedcandidate_1').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onNext: function () {
+                            $('#selectedcandidate_1').removeClass('overlay-relative');
+                            $('.helper').remove();
+
+                        }
+                    },
+                    {
+                        title: "Filter",
+                        content: "Filter based on available attributes or reset filter if applied earlier",
+                        target: "selectedcandidate_2",
+                        placement: "left",
+                        showPrevButton: true,
+
+                        zindex: 999999,
+                        xOffset: 0,
+                        yOffset: -10,
+                        onPrev: function () {
+
+                            $('#selectedcandidate_2').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+
+                        onNext: function () {
+
+                            $('#selectedcandidate_2').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+
+
+                    },
+
+
+                    {
+                        title: "Export",
+                        content: "Click here to export the Selected Candidate data in excel sheet",
+                        target: "selectedcandidate_3",
+                        placement: "left",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        xOffset: -40,
+                        yOffset: -10,
+                        onPrev: function () {
+
+                            $('#selectedcandidate_3').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+
+                        onNext: function () {
+
+                            $('#selectedcandidate_3').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+
+
+                    },
+                    {
+                        title: "Search",
+                        content: "Search the records here based on available details",
+                        target: "selectedcandidate_4",
+                        showPrevButton: true,
+                        placement: "left",
+                        zindex: 999999,
+                        xOffset: 10,
+                        onPrev: function () {
+
+                            $('#selectedcandidate_4').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onNext: function () {
+
+                            $('#selectedcandidate_4').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+
+                    },
+                    {
+                        title: "JD Title",
+                        content: "Showing the JD title here",
+                        target: "selectedcandidate_5",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#selectedcandidate_5').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#selectedcandidate_5').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                    {
+                        title: "Video",
+                        content: "Click here to see the video",
+                        target: "selectedcandidate_6",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#selectedcandidate_6').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#selectedcandidate_6').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+
+                    {
+                        title: "Interviewer Comment",
+                        content: "View the interviewer comment for the candidate",
+                        target: "selectedcandidate_7",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        placement: "bottom",
+                        xOffset: 'center',
+                        arrowOffset: 'center',
+                        onNext: function () {
+                            $('#selectedcandidate_7').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#selectedcandidate_7').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                    {
+                        title: "Report",
+                        content: "Click here to open the candidate report & generate PDF ",
+                        target: "selectedcandidate_8",
+                        placement: "left",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        xOffset: 10,
+                        yOffset: -20,
+                        onNext: function () {
+                            $('#selectedcandidate_8').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#selectedcandidate_8').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                    {
+                        title: "Client Feedback",
+                        content: "Click here to provide Client Feedback ",
+                        target: "selectedcandidate_9",
+                        placement: "left",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        xOffset: 10,
+                        yOffset: -20,
+                        onNext: function () {
+                            $('#selectedcandidate_9').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#selectedcandidate_9').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                    {
+                        title: "Call",
+                        content: "Cilck here to call the candidate",
+                        target: "selectedcandidate_10",
+                        placement: "left",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        xOffset: 10,
+                        yOffset: -20,
+                        onNext: function () {
+                            $('#selectedcandidate_10').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#selectedcandidate_10').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+                    {
+                        title: "Risetube Menu",
+                        content: "Click on Risetube menu to see its features",
+                        target: "risetube_menu",
+                        placement: "bottom",
+                        showPrevButton: true,
+                        zindex: 999999,
+                        yOffset: -20,
+                        xOffset: 10,
+                        onNext: function () {
+                            $('#risetube_menu').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        },
+                        onPrev: function () {
+                            $('#risetube_menu').removeClass('overlay-relative');
+                            $('.helper').remove();
+                        }
+                    },
+
+                ],
+                onStart: ["addOverlay"],
+                onEnd: ["removeOverlay"],
+            };
+
+            hopscotch.startTour(tour);
+
+        </script>
+
+    }*@
+
+
+
+<loading></loading>
+
+
+
+<script>
+
+
+    function moreless(id) {
+
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
+
+</script>
+
+
+
+<!-- PAGE CONTENT WRAPPER -->

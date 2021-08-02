@@ -459,7 +459,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<string>(
-                        con, "select EmailId from [dbo].[UserList] where Id != @UserId", parameters, commandType: Text);
+                        con, "select Upper(EmailId) from [dbo].[UserList] where Id != @UserId", parameters, commandType: Text);
                 }
             }
             catch (SqlException ex)
@@ -1972,7 +1972,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select c.Name from IRF Join Client c on c.id=IRF.ClientId where IRF.IRFId= = @IRFId";
+                var query = "Select c.Name from IRF Join Client c on c.id=IRF.ClientId where IRF.IRFId=@IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))

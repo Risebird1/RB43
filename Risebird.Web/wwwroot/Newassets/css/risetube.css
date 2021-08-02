@@ -2181,7 +2181,11 @@ table {
     .single-video-right.related {
         overflow-x: hidden;
     }
-
+    .video-title .call-btn {
+        width: 17px !important;
+        height: 17px !important;
+        top: 0px !important
+    }
     .designation {
         font-size: 16px;
     }
@@ -2484,9 +2488,11 @@ table {
 
 @media screen and (max-width: 767px) {
     #myForm .searchbox input[type=email], #myForm .searchbox input[type=text] {
-        width: 230px;
+       width: 230px;
     }
-
+    .video-title .candidate {
+        font-size: 13px !important;
+    }
     .chart-box .card-text {
         text-align: center
     }

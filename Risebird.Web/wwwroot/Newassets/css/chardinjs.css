@@ -23,7 +23,7 @@
   transition: all 0.3s ease-out; }
   .chardinjs-helper-layer.chardinjs-left {
     border-left: solid 1px;
-    margin-left: -10px; }
+    margin-left: -12px; }
   .chardinjs-helper-layer.chardinjs-right {
     border-right: solid 1px;
     padding-right: 10px; }
@@ -138,6 +138,9 @@
 [data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-top, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-top, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top {
     left: 100px !important;
     margin-top:-8px!important;
+}
+[data-id="survey-feedback"] .chardinjs-tooltip.chardinjs-bottom {
+    padding-bottom: 500px!important;
 }
 
 [data-id="notschedule_table"] .chardinjs-tooltip.chardinjs-top {

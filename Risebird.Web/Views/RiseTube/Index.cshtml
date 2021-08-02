@@ -118,7 +118,7 @@
 
                     <div class="pull-right">
                         <div>
-                            <div id="risetube_2" class="newsletter" data-intro='Enter Skill or Candidate name and Search result' data-position='left'>
+                            <div id="risetube_2" class="newsletter" data-intro='Enter Skill or Candidate name and Search result<br/><br/><a href="/Client/RejectedMeetings" class="btn btn-primary risetubenext-btn">NEXT</a>' data-position='left'>
 
                                 <div class="content">
                                     <div class="input-group" id="myForm">
@@ -154,16 +154,19 @@
 
 
 
-                        </div>
                     </div>
-
                 </div>
+
             </div>
         </div>
-        <div class="content video client">
-            <div class="row bl-bg">
-                <div class="col-md-12">
-                    <div class="mdc-card card bl-bg">
+    </div>
+
+
+
+    <div class="content video client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
 
                         <div class="mdc-card-wrapper__text-section">
                             <div class="loader text-center">
@@ -306,21 +309,21 @@
                                                                     { <span></span>}
 
 
-                                                                    @if (item.MobileNumber != null && !(ViewBag.Profile == "CuratedUser"))
-                                                                    {
-                                                                        <span>
-                                                                            <button class="call-btn" aria-label="Call">
-                                                                                <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                            </button>
-                                                                        </span>
-                                                                    }
-                                                                    else if (@item.CostEstimate != null)
-                                                                    {
-                                                                        <div class="video-info nopad pull-right">
-                                                                            <span>Matching Fee:</span> @if (@item.CostEstimate.Length > 10)
-                                                                            {
-                                                                                <a href="#" data-tooltip="@item.CostEstimate"> <span class="expected-salari">@item.CostEstimate</span></a>
-                                                                            }
+                                                        @if (item.MobileNumber != null && !(ViewBag.Profile == "CuratedUser"))
+                                                        {
+                                                            <span>
+                                                                <button class="call-btn" aria-label="Call">
+                                                                    <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber','@item.imid')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                </button>
+                                                            </span>
+                                                        }
+                                                        else if (@item.CostEstimate != null)
+                                                        {
+                                                            <div class="video-info nopad pull-right">
+                                                                <span>Matching Fee:</span> @if (@item.CostEstimate.Length > 10)
+                                                                {
+                                                                    <a href="#" data-tooltip="@item.CostEstimate"> <span class="expected-salari">@item.CostEstimate</span></a>
+                                                                }
 
                                                                             else
                                                                             {
@@ -1344,6 +1347,7 @@
 
 <script>
     var candidate = "";
+    var caninterviewid = 0;
     var span = document.getElementById("callPopUp");
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
@@ -1374,6 +1378,7 @@
     Twilio.Device.connect(function (connection) {
         var appendText = "In call with " + "<b>" + candidate + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
+        startCallRecording(connection.parameters.CallSid);
     });
 
     function afterTimeOut() {
@@ -1385,11 +1390,22 @@
         var appendText = "Call disconnected! ";
         document.getElementById("callingLabel").innerHTML = appendText;
         setTimeout(afterTimeOut, 2000);
-
     });
 
-    function CallButtonClick(name, phoneNumber) {
+    function startCallRecording(sid) {
+        console.log("sid:" + sid);
+        $.ajax({
+            url: '/User/makecall',
+            type: "GET",
+            data: { 'sid': sid, 'interviewid': caninterviewid },
+            success: function (data) {
+                console.log("rsid:" + data);
+            }
+        });
+    }
+    function CallButtonClick(name, phoneNumber, interviewid) {
         candidate = name;
+        caninterviewid = interviewid;
         // Get the modal
         var modal = document.getElementById("myCallModal");
         // When the user clicks the button, open the modal
@@ -1458,7 +1474,7 @@
 </script>
 <script>
     $(document).ready(function () {
-        $('#risetube_video .row .col-xl-3')[0].setAttribute('data-intro', '<span style="font-size:16px;">Video showing Candidate details:</span><hr class="btop"/>1. Candidate Name <br/> 2. JD title <br/> 3. Star Button to Rate the Interviewer  <br/> 4. Call button to Call the Candidate <br/> 5.Tech Skill Score <br/> 6. Status (Selected, Borderline) <br/><br/><a href="/Client/RejectedMeetings" class="btn btn-primary risetubenext-btn">NEXT</a>');
+        $('#risetube_video .row .col-xl-3')[0].setAttribute('data-intro', '<span style="font-size:16px;">Video showing Candidate details:</span><hr class="btop"/>1. Candidate Name <br/> 2. JD Title <br/> 3. Star button to Rate the Interviewer  <br/> 4. Call button to Call the Candidate <br/> 5.Tech Skill Score <br/> 6. Status (Selected, Borderline)');
         $('#risetube_video .row .col-xl-3')[0].setAttribute('data-position', 'right');
     });
 </script>

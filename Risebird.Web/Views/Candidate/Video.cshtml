@@ -618,7 +618,7 @@
                                                                 @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
                                                                 {
                                                                     <div class="col-md-6 col-sm-6">
-                                                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Call Candidate</font></span></button>
+                                                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName','@Model.IreportModel.InterviewId')" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Call Candidate</font></span></button>
                                                                     </div>
                                                                 }
                                                             </div>
@@ -1548,7 +1548,7 @@
             var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
             categoryAxis.dataFields.category = "country";
             categoryAxis.renderer.inside = true;
-         categoryAxis.renderer.labels.template.valign = 0;
+            categoryAxis.renderer.labels.template.valign = 0;
 
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
@@ -1565,7 +1565,7 @@
 
             categoryAxis.renderer.grid.template.disabled = true;
             valueAxis.renderer.grid.template.disabled = true;
-          categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
             categoryAxis.renderer.labels.template.paddingBottom = 168;
             valueAxis.min = 0;
             valueAxis.max = 30;
@@ -1575,8 +1575,8 @@
             series.dataFields.categoryX = "country";
             series.name = "Visits";
             series.colorField = "color";
-             series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
-       series.tooltip.label.adapter.add("text", function (text, target) {
+            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
+            series.tooltip.label.adapter.add("text", function (text, target) {
                 if (target.dataItem && target.dataItem.valueY == 0) {
 
                     return "";
@@ -1725,6 +1725,7 @@
 </script>
 <script>
     var candidate = "";
+    var caninterviewid = 0;
     var span = document.getElementById("callPopUp");
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
@@ -1755,6 +1756,7 @@
     Twilio.Device.connect(function (connection) {
         var appendText = "In call with " + "<b>" + candidate + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
+        startCallRecording(connection.parameters.CallSid);
     });
 
     function afterTimeOut() {
@@ -1768,9 +1770,20 @@
         setTimeout(afterTimeOut, 2000);
 
     });
-
-    function ModalButtonClick(mobileNumber, candidateName) {
+    function startCallRecording(sid) {
+        console.log("sid:" + sid);
+        $.ajax({
+            url: '/User/makecall',
+            type: "GET",
+            data: { 'sid': sid, 'interviewid': caninterviewid },
+            success: function (data) {
+                console.log("rsid:" + data);
+            }
+        });
+    }
+    function ModalButtonClick(mobileNumber, candidateName, interviewid) {
         candidate = candidateName;
+        caninterviewid = interviewid;
         // Get the modal
         var modal = document.getElementById("myModal");
         // When the user clicks the button, open the modal

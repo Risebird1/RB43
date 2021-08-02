@@ -164,12 +164,14 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("kamini@risebird.io", "Kamini"));
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("prasad_srinivas@risebird.io", "Prasad Srinivas"));
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("shweta_kadechkar@risebird.io", "Shweta Kadechkar"));
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("soumyashree_gudi@risebird.io", "Soumyashree Gudi"));
 
                 StringBuilder msgBody = new StringBuilder("Dear HR,");
                 msgBody.Append("\n");
                 msgBody.AppendLine(
-                    "HR Alert!!! " + interviewer + " Interviewer has unassigned interview for candidate " + candidateEmail + " scheduled on " + meetingDate + "for Client:" + Client + "(" + Skillchannelid + ").");
+                    "HR Alert!!! " + interviewer + " Interviewer has unassigned interview for candidate " + candidateEmail + " scheduled on " + meetingDate + " for Client: " + Client + "(" + Skillchannelid + ").");
                 msgBody.Append("\n");
                 msgBody.AppendLine(
                     "Kindly login over risebird portal and click on Interview menu and assign interviewer for unassigned interview.");

@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Risebird.Entities.Data;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
