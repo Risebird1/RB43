@@ -5566,6 +5566,12 @@ button.btn {
 }
 
 @media (max-width: 767px) {
+    #SkillTable select.form-control{
+        width:auto!important;
+    }
+    #InterviewerTable .form-control {
+        width: 200px!important;
+    }
     .recommendation .multiselect.dropdown-toggle:after {
         left: 1% !important;
     }
