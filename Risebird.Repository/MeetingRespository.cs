@@ -463,6 +463,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("emailID", emailID);
+                    parameters.Add("@timeNow", DateTime.Now);
                     return await SqlMapper.QueryAsync<Meeting>(con, "usp_OpenInterviews", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
