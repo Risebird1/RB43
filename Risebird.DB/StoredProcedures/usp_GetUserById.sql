@@ -15,7 +15,7 @@ AS
 Begin  
  Declare @uid int  
  SET @uid = @id  
- SELECT [idProfile], [FirstName], [LastName], [EmailId], [MobileNumber],[WhatsappNumber]  
+ SELECT [idProfile], [FirstName], [LastName], [EmailId], [MobileNumber],[WhatsappNumber] ,[IsActive] 
    FROM [dbo].[UserList] where Id = @uid  
 End  
   
