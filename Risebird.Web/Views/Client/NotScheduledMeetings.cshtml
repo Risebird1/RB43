@@ -2,12 +2,12 @@
 @using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "Not Scheduled Candidates";
-    ViewBag.PageHeader = "Not Scheduled Candidates";
+    ViewData["Title"] = "Rescheduled Meetings";
+    ViewBag.PageHeader = "Rescheduled Meetings";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <script>
-    var Header = "<div>Not Scheduled Candidates</div>";
+    var Header = "<div>Rescheduled Meetings</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
@@ -15,23 +15,7 @@
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
-{
-    @if (HttpContextAccessor.HttpContext.Session.GetString("NNotScheduleCandidate") != null)
-    {
 
-    }
-    else
-    {
-        <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
-        <script src="~/Newassets/js/chardinjs.js"></script>
-        <script src="~/Newassets/js/demo.js"></script>
-        HttpContextAccessor.HttpContext.Session.SetString("NNotScheduleCandidate", "1");
-
-    }
-
-
-}
 <div class="main-panel" id="main-panel">
     <div class="jumbotron">
         <div class="pt30">
@@ -41,7 +25,7 @@
                         <img style="visibility:hidden" src="img/chardin.png" data-position="right" />
                         <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
                         <h4 class="card-title"></h4>
-                        <div class="mobile-view"> <h4 class="card-title">NotScheduled Meetings</h4></div>
+                        <div class="mobile-view"> <h4 class="card-title">Rescheduled Meetings</h4></div>
                     </div>
                     <div class="pull-right client-ms">
                         <div style="float:left">
@@ -80,6 +64,7 @@
                                                                         <th>Candidate Detail</th>
                                                                         <th>Resume</th>
                                                                         <th>Client HR</th>
+                                                                        <th>Meeting Status</th>
                                                                         <th>Action</th>
                                                                     </tr>
                                                                 </thead>
@@ -90,6 +75,7 @@
                                                                         <th>Candidate Detail</th>
                                                                         <th>Resume</th>
                                                                         <th class="candidate-hr">Client HR</th>
+                                                                        <th>Meeting Status</th>
                                                                         <th>Action</th>
                                                                     </tr>
                                                                 </tfoot>
@@ -160,6 +146,7 @@
 
                                                                                 }
                                                                             </td>
+                                                                            <td>@item.MeetingStatusStatusDesc</td>
                                                                             <td class="text-left">
                                                                                 <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -7px; position: relative;left: -2px;" title="Send Invite"><span class="fa fa-send-o"></span></span></span>
                                                                                 @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@

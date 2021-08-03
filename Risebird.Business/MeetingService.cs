@@ -2908,6 +2908,20 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public List<MeetingVM> GetClientReScheduledMeetingList(int Clientid, string Emailid)
+        {
+            try
+            {
+                var meetings = _meetingRespository.GetClientReScheduledMeetingList(Clientid, Emailid).Result.ToList();
+
+                return meetings ?? new List<MeetingVM>();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 
