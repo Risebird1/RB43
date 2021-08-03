@@ -29,6 +29,8 @@ namespace Risebird.Web.Controllers
             _irfService = irfService;
 
         }
+
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             try
@@ -83,6 +85,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
         public async Task<IActionResult> Create()
         {
             try
@@ -96,7 +99,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR")
                     {
                         var model = new SkillChannelTemplateVM();
-                        SetCreateTemplateParameters(model);
+                        SetTemplateParameters(model);
                         return View(model);
 
                     }
@@ -117,13 +120,37 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        private void SetCreateTemplateParameters(SkillChannelTemplateVM model)
+        private void SetTemplateParameters(SkillChannelTemplateVM model)
         {
             model.AssessmentGroupList = new SelectList(_interviewerService.FetchAssessmentGroups(), "id", "AssessmentGroup"); ;
-            model.Skill = new SelectList(_irfService.GetSkills(), "id", "Name");
+            model.Skills = new SelectList(_irfService.GetSkills(), "id", "Name");
             model.LevelTech = new SelectList(_irfService.GetLevelTech(), "id", "Name");
         }
+        private void SetEditTemplateParameters(EditSkillChannelTemplateVM model)
+        {
+            model.AssessmentGroupList = new SelectList(_interviewerService.FetchAssessmentGroups(), "id", "AssessmentGroup"); ;
+            model.Skills = new SelectList(_irfService.GetSkills(), "id", "Name");
+            model.LevelTech = new SelectList(_irfService.GetLevelTech(), "id", "Name");
+            model.InterviewerList = new SelectList(_irfService.GetInterviewers(model.AssessmentGroupId?.ToString()), "UserId", "EmailId");
 
+        }
+        
+        [Authorize]
+        public SelectList GetInterviewers(string assessmentgroupid)
+        {
+
+            var list = new List<SelectListItem>();
+            var interviewers = _irfService.GetInterviewers(assessmentgroupid);
+
+            if (interviewers != null && interviewers.Count() > 0)
+            {
+                return new SelectList(interviewers, "UserId", "EmailId");
+            }
+            else
+                list.Add(new SelectListItem { Text = "No Interviewer", Value = "" });
+            //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
+            return new SelectList(list, "Value", "Text");
+        }
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -161,7 +188,7 @@ namespace Risebird.Web.Controllers
 
                         if (isDuplicate)
                         {
-                            SetCreateTemplateParameters(templateDetails);
+                            SetTemplateParameters(templateDetails);
                             return View(templateDetails);
                         }
 
@@ -181,7 +208,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            SetCreateTemplateParameters(templateDetails);
+                            SetTemplateParameters(templateDetails);
                             return View(templateDetails);
                         }
 
@@ -239,6 +266,158 @@ namespace Risebird.Web.Controllers
             {
                 return Json($"Template Name '{templateName}' is already in use.");
             }
+        }
+
+
+        [Authorize]
+        public async Task<IActionResult> Edit(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        var model = new EditSkillChannelTemplateVM();
+                        model = await _templateService.GetTemplateById(id);
+                        SetEditTemplateParameters(model);
+                        return View(model);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(EditSkillChannelTemplateVM templateDetails)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        //check duplicates for interviewer, emergency interviewer and quality controllers
+                        bool isDuplicate = false;
+                        templateDetails.InterviewerCollection = templateDetails.InterviewerCollection.Where(x => x.UserId != null).ToList();
+                        var interviewerCollection = templateDetails.InterviewerCollection.Select(x => (x.UserId));
+                        if (interviewerCollection.Count() != interviewerCollection.Distinct().Count())
+                        {
+                            //duplicates exist
+
+                            isDuplicate = true;
+                            ModelState.AddModelError("", "Please remove duplicate entries from Interviewers' list.");
+
+                        }
+
+                        templateDetails.TechSkillCollection = templateDetails.TechSkillCollection.Where(x => x.LevelId != null).ToList();
+                        var techSkillCollection = templateDetails.TechSkillCollection.Select(x => (x.SkillId));
+                        if (techSkillCollection.Count() != techSkillCollection.Distinct().Count())
+                        {
+                            //duplicates exist
+                            isDuplicate = true;
+                            ModelState.AddModelError("", "Please remove duplicate entries from Tech Skills' list.");
+                        }
+
+                        if (isDuplicate)
+                        {
+                            SetEditTemplateParameters(templateDetails);
+                            return View(templateDetails);
+                        }
+
+
+                        if (ModelState.IsValid)
+                        {
+                            if (await _templateService.UpdateTemplate(templateDetails, emailId))
+                            {
+                                TempData["SuccessErrorMessageTemplate"] = "Template updated Successfully";
+                                return RedirectToAction("Index");
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessageTemplate"] = "Failed to update Template";
+                                return RedirectToAction("Index");
+                            }
+                        }
+                        else
+                        {
+                            SetEditTemplateParameters(templateDetails);
+                            return View(templateDetails);
+                        }
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageTemplate"] = "Failed to update Template";
+                return RedirectToAction("Index");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> DeleteTemplate(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        var result = await _templateService.DeleteTemplate(id);
+                        return Json(result);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+
         }
     }
 }

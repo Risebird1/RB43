@@ -12,5 +12,8 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<SkillChannelTemplateVM>> GetAllTemplates(string emailId, DateTime startDate, DateTime endDate);
         Task<bool> AddTemplate(SkillChannelTemplateVM templateDetails, string createdByEmailId);
         Task<bool> IsTemplateNameInUse(string templateName);
+        Task<EditSkillChannelTemplateVM> GetTemplateById(int id);
+        Task<bool> UpdateTemplate(EditSkillChannelTemplateVM templateDetails, string modifiedByEmailId);
+        Task<bool> DeleteTemplate(int id);
     }
 }

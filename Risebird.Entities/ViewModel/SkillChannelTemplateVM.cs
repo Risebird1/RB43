@@ -29,7 +29,8 @@ namespace Risebird.Entities.ViewModel
         public IList<TransTemplateTechSkill> TechSkillCollection { get; set; }
         public IList<TransTemplateInterviewer> InterviewerCollection { get; set; }
         public SelectList AssessmentGroupList { get; set; }
-        public SelectList Skill { get; set; }
+        public SelectList InterviewerList { get; set; }
+        public SelectList Skills { get; set; }
         public SelectList LevelTech { get; set; }
         public string ImageUrl { get; set; }
         public string Status { get; set; }

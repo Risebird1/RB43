@@ -86,7 +86,7 @@
                                                 @Html.DropDownList("TechSkillCollection[0].LevelId", Model.LevelTech, "Select", new { @class = "select-css form-control " })
                                             </td>
                                             <td>
-                                                @Html.DropDownList("TechSkillCollection[0].SkillId", Model.Skill, "Select", new { @class = "select-css form-control " })
+                                                @Html.DropDownList("TechSkillCollection[0].SkillId", Model.Skills, "Select", new { @class = "select-css form-control " })
                                             </td>
                                             <td>
                                                 <input class="form-control text-box single-line" id="TechSkillCollection_0__Weightage" name="TechSkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
@@ -208,7 +208,7 @@
                     var skillText = $('[id^="InterviewerCollection"][id$="PrimarySkill"]');
                     for (i = 0; i < drpdowns.length; i++) {
                         $("#" + drpdowns[i].id + " option").remove();
-                        $("#" + skillText[i].id).text("");
+                        $("#" + skillText[i].id).val("");
                     }
 
                     if (data.length > 0) {
@@ -308,8 +308,7 @@
         $tr.find("select").val("");
         $tr.find("input[type=text]").val("");
         $tr.find("input[type=hidden]").val("");
-
-        $tr.find("a").val("");
+        $tr.find("input[type=checkbox]").prop("checked", true);
 
         // add cloned row as last row
         $("#SkillTable").find("tbody tr:last").after($tr);
@@ -355,8 +354,7 @@
         $tr.find("select").val("");
         $tr.find("input[type=text]").val("");
         $tr.find("input[type=hidden]").val("");
-
-        $tr.find("a").val("");
+        $tr.find("input[type=checkbox]").prop("checked", true);
 
         // add cloned row as last row
         $("#InterviewerTable").find("tbody tr:last").after($tr);
@@ -456,7 +454,7 @@
             for (i = 0; i < interviewerItems.length; i++) {
                 var temp = $("#InterviewerCollection_" + i + "__UserId").val();
                 if (temp == null || temp == '') {
-                    document.getElementById('InterviewerCollection_Error').innerHTML = "Please select an Interviewer for all the added rows."
+                    document.getElementById('InterviewerCollection_Error').innerHTML = "Please select an Interviewer for all the added rows under Interviewers."
                     document.getElementById('InterviewerCollection_Error').focus();
                     return false;
                 }
@@ -475,7 +473,7 @@
             var level = $("#TechSkillCollection_" + i + "__LevelId").val();
             var weightage = $("#TechSkillCollection_" + i + "__Weightage").val();
             if ((skill == null || skill == '') || (level == null || level == '') || (weightage == null || weightage == '')) {
-                document.getElementById('TechSkillCollection_Error').innerHTML = "Please select a value for all the added rows for Tech Skills."
+                document.getElementById('TechSkillCollection_Error').innerHTML = "Please select a value for all the added rows under Tech Skills."
                 document.getElementById('TechSkillCollection_Error').focus();
                 return false;
             }
