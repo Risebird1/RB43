@@ -3410,15 +3410,18 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     int ClientId = 0;
-                    if (profileName == "Client")
+                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR")
                     {
                         if (TempData["SuccessErrorMessageCandidate"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
                             TempData.Remove("SuccessErrorMessageCandidate");
                         }
-                        var client = await _userRepository.GetClientUserDetails(emailid);
-                        ClientId = client.ClientId;
+                        if (profileName == "Client")
+                        {
+                            var client = await _userRepository.GetClientUserDetails(emailid);
+                            ClientId = client.ClientId;
+                        }
                         var meetings = _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
                         return View(meetings);
                     }
@@ -3511,5 +3514,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("AllMeetings");
             }
         }
+        
     }
 }
