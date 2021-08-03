@@ -153,5 +153,6 @@ namespace Risebird.Business.Interface
         Task<InvoiceDetailsVM> GetInvoiceDetailsById(int id);
         Task<string> SaveInvoiceDetails(InvoiceDetailsVM model);
         List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId);
+        List<MeetingVM> GetClientReScheduledMeetingList(int Clientid, string Emailid);
     }
 }
