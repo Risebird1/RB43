@@ -11,7 +11,8 @@ GO
 
   
 Create PROCEDURE [dbo].[usp_OpenInterviews]   
-   @emailID varchar(200)       
+   @emailID varchar(200),
+   @timeNow datetime
 AS  
 BEGIN  
 select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail,
@@ -28,7 +29,7 @@ left join [dbo].[UserList] ul on inte.UserId = ul.id
 left join UserList ulc on ulc.EmailId = im.candidateEmail  
 join CandidatesMaster cm on cm.UserId = ulc.id  
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId=irf.id  
-where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID
+where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID and im.interviewDate>=@timeNow
 union 
 select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, 
 ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,    
@@ -44,7 +45,7 @@ left join [dbo].[UserList] ul on inte.UserId = ul.id
 left join UserList ulc on ulc.EmailId = im.candidateEmail  
 join CandidatesMaster cm on cm.UserId = ulc.id  
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId=irf.id  
-where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID
+where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID and im.interviewDate>=@timeNow
 END  
 
 

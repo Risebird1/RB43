@@ -3410,16 +3410,24 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     int ClientId = 0;
-                    if (profileName == "Client")
+                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR")
                     {
                         if (TempData["SuccessErrorMessageCandidate"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
                             TempData.Remove("SuccessErrorMessageCandidate");
                         }
-                        var client = await _userRepository.GetClientUserDetails(emailid);
-                        ClientId = client.ClientId;
-                        var meetings = _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
+                        if (profileName == "Client")
+                        {
+                            var client = await _userRepository.GetClientUserDetails(emailid);
+                            ClientId = client.ClientId;
+                        }
+                        var meetings = _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
+                        meetings = meetings.Select(x =>
+                        {
+                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                            return x;
+                        }).ToList();
                         return View(meetings);
                     }
                     else
@@ -3509,6 +3517,50 @@ namespace Risebird.Web.Controllers
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("AllMeetings");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ReScheduledMeetings()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    int ClientId = 0;
+                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR")
+                    {
+                        if (TempData["SuccessErrorMessageCandidate"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
+                            TempData.Remove("SuccessErrorMessageCandidate");
+                        }
+                        if (profileName == "Client")
+                        {
+                            var client = await _userRepository.GetClientUserDetails(emailid);
+                            ClientId = client.ClientId;
+                        }
+                        var meetings = _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
+                        return View(meetings);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
             }
         }
     }

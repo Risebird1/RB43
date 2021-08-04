@@ -2608,7 +2608,12 @@ table {
     .shortlist {
         width: 25%;
     }
-
+    .interviewerVideo .shortlist {
+        width: 24%!important;
+    }
+    .interviewerVideo .share-wrap.btnShortlist.shortlist{
+        width:auto!important;
+    }
     .k {
         width: 50%;
         margin: 0;
@@ -2877,111 +2882,113 @@ table {
     }
 }
 
-@media screen and (max-width: 375px) {
-    #link8 .canvasjs-chart-container {
-        text-align: left !important;
-        left: -15px;
+
+    @media screen and (max-width: 375px) {
+        #link8 .canvasjs-chart-container {
+            text-align: left !important;
+            left: -15px;
+        }
+
+        .counts-liks .rating-btn {
+            margin: 15px 0px !important;
+        }
+
+        .yellow-btn {
+            padding: 0px 25px;
+        }
+
+        .newsletter .mdc-button--outlined.card-title-space {
+            margin-top: 0px;
+        }
+
+        .newsletter .input-group.card-title-space {
+            margin: 0px;
+            width: 100%;
+        }
+
+        .comment-area .talk-bubble {
+            width: 75%;
+        }
+
+        .k {
+            width: 50%;
+            margin: 0;
+            position: absolute;
+            top: -3px;
+            right: 0;
+        }
+
+
+        .single-video-info-content {
+            margin-top: 20px;
+        }
+
+        .share-btn {
+            position: relative;
+            left: 0px;
+        }
+
+        .video-card-list .video-card-image {
+            height: 70px !important;
+            width: 90px !important;
+        }
+
+        .video-card-list .video-card-body {
+            width: 200px !important;
+        }
+
+        #myForm .searchbox {
+            margin-bottom: 10px !important;
+            margin-right: 0px !important;
+        }
+
+        .designation {
+            font-size: 14px;
+        }
+
+        .video-title .candidate {
+            font-size: 14px;
+        }
+
+        .video-view span {
+            font-size: 13px;
+        }
+
+        .video-info span {
+            font-size: 13px;
+        }
+
+        .views {
+            padding: 0px 10px 0px 10px;
+            right: -15px;
+            top: 35px !important;
+        }
+
+        .share {
+            width: 50% !important;
+        }
+
+        .shortlist {
+            width: 50% !important;
+        }
+
+        .limebtn {
+            left: 20px !important;
+            top: -13px;
+        }
+
+        #myForm .searchbox input[type=email] {
+            width: 260px !important;
+            padding-left: 4px;
+            /* height: auto;*/
+        }
     }
-    .counts-liks .rating-btn {
-        margin: 15px 0px !important;
-     
+
+
+
+
+    @media screen and (max-width: 360px) {
+        .date-calendar {
+            font-size: 11px;
+        }
     }
-    .yellow-btn {
-        padding: 0px 25px;
-    }
-
-    .newsletter .mdc-button--outlined.card-title-space {
-        margin-top: 0px;
-    }
-
-    .newsletter .input-group.card-title-space {
-        margin: 0px;
-        width:100%;
-    }
-
-    .comment-area .talk-bubble {
-        width: 75%;
-    }
-
-    .k {
-        width: 50%;
-        margin: 0;
-        position: absolute;
-        top: -3px;
-        right: 0;
-    }
-
-
-    .single-video-info-content {
-        margin-top: 20px;
-    }
-
-    .share-btn {
-        position: relative;
-        left: 0px;
-    }
-
-    .video-card-list .video-card-image {
-        height: 70px !important;
-        width: 90px !important;
-    }
-
-    .video-card-list .video-card-body {
-        width: 200px !important;
-    }
-
-    #myForm .searchbox {
-        margin-bottom: 10px !important;
-        margin-right: 0px !important;
-    }
-
-    .designation {
-        font-size: 14px;
-    }
-
-    .video-title .candidate {
-        font-size: 14px;
-    }
-
-    .video-view span {
-        font-size: 13px;
-    }
-
-    .video-info span {
-        font-size: 13px;
-    }
-
-    .views {
-        padding: 0px 10px 0px 10px;
-        right: -15px;
-        top: 35px !important;
-    }
-
-    .share {
-        width: 50% !important;
-    }
-
-    .shortlist {
-        width: 50% !important;
-    }
-
-    .limebtn {
-        left: 20px !important;
-        top: -13px;
-    }
-
-    #myForm .searchbox input[type=email] {
-        width: 260px !important;
-        padding-left: 4px;
-        /* height: auto;*/
-    }
-}
-
-
-
-
-@media screen and (max-width: 360px) {
-    .date-calendar {
-        font-size: 11px;
-    }
-}

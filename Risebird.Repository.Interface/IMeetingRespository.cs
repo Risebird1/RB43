@@ -180,5 +180,7 @@ namespace Risebird.Repository.Interface
         Task<string> SaveInvoiceDetails(InvoiceDetailsVM model);
         Task<IEnumerable<Meeting>> GetAllAssignedInterviewsForToday(string emailID);
         Task<IEnumerable<Meeting>> GetAllAssignedInterviewsForTheWeek(string emailID);
+        Task<IEnumerable<MeetingVM>> GetClientNotScheduledMeetingListByIRFId(string IRFId);
+        Task<IEnumerable<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid);
     }
 }

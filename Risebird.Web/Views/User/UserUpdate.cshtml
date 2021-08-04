@@ -101,6 +101,13 @@
                                             @Html.ValidationMessageFor(model => model.WhatsappNumber, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
+                                    <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.CheckBoxFor(model => model.IsActive)
+                                            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label" })
+                                            @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
 
                                 </div>
 
