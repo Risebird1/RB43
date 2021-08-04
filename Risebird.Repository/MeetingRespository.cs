@@ -4838,5 +4838,24 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<CallCatalogueVM>> GetCallCatalogueList(string profile, string Emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserRole", profile);
+                    parameters.Add("@Emailid", Emailid);
+                    return await SqlMapper.QueryAsync<CallCatalogueVM>(con, "usp_FetchCallCatalogue", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
