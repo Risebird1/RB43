@@ -147,17 +147,14 @@
                                                                                 }
                                                                             </td>
                                                                             <td>
-                                                                                @item.MeetingStatusStatusDesc
+
                                                                                 @if (item.confirmationStatus == "2")
                                                                                 {
-                                                                                    @if (String.IsNullOrEmpty(item.MeetingStatusStatusDesc))
-                                                                                    {
-                                                                                        <span style="color:red">Cancelled</span>
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        <span style="color:red">(Cancelled)</span>
-                                                                                    }
+                                                                                    <span style="color:red">Cancelled</span>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    @item.MeetingStatusStatusDesc
                                                                                 }
                                                                             </td>
 
