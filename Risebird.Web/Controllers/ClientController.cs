@@ -3423,11 +3423,7 @@ namespace Risebird.Web.Controllers
                             ClientId = client.ClientId;
                         }
                         var meetings = _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
-                        meetings = meetings.Select(x =>
-                        {
-                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
-                            return x;
-                        }).ToList();
+                        
                         return View(meetings);
                     }
                     else
@@ -3545,6 +3541,11 @@ namespace Risebird.Web.Controllers
                             ClientId = client.ClientId;
                         }
                         var meetings = _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
+                        meetings = meetings.Select(x =>
+                        {
+                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                            return x;
+                        }).ToList();
                         return View(meetings);
                     }
                     else
