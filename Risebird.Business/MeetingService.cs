@@ -2922,6 +2922,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public List<CallCatalogueVM> GetCallCatalogueList(string profile, string Emailid)
+        {
+            try
+            {
+                var meetings = _meetingRespository.GetCallCatalogueList(profile, Emailid).Result.ToList();
+                return meetings ?? new List<CallCatalogueVM>();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 
