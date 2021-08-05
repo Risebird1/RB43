@@ -3546,7 +3546,7 @@ namespace Risebird.Web.Controllers
                             x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
                             return x;
                         }).ToList();
-                        return View("ReScheduleMeetings", meetings);
+                        return View(meetings);
                     }
                     else
                     {
