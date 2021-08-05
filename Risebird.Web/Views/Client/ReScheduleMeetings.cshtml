@@ -59,23 +59,23 @@
                                                             <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th id='start'>Added Date</th>
+                                                                        <th id='start'>Interview Date</th>
+                                                                        <th>Status</th>
                                                                         <th style="border-left: 0px !important;">JD Title</th>
                                                                         <th>Candidate Detail</th>
                                                                         <th>Resume</th>
                                                                         <th>Client HR</th>
-                                                                        <th>Meeting Status</th>
                                                                         <th>Action</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tfoot>
                                                                     <tr>
-                                                                        <th id='start'>Added Date</th>
+                                                                        <th id='start'>Interview Date</th>
+                                                                        <th>Status</th>
                                                                         <th style="border-left: 0px !important;">JD Title</th>
                                                                         <th>Candidate Detail</th>
                                                                         <th>Resume</th>
                                                                         <th class="candidate-hr">Client HR</th>
-                                                                        <th>Meeting Status</th>
                                                                         <th>Action</th>
                                                                     </tr>
                                                                 </tfoot>
@@ -90,13 +90,20 @@
                                                                     {
                                                                         <tr data-changes="1">
                                                                             <td>@item.dtCreatedOn</td>
+                                                                            <td>
+                                                                                @if (item.confirmationStatus == "2")
+                                                                                {
+                                                                                    <span style="color:red">Cancelled</span>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    @item.MeetingStatusStatusDesc
+                                                                                }
+                                                                            </td>
                                                                             <td class="candidate-details">
                                                                                 @if (item.JDTiltle != null && item.JDTiltle != "")
                                                                                 {
                                                                                     <div class="mtop-5">@item.JDTiltle</div>
-                                                                                }
-                                                                                else
-                                                                                {
                                                                                 }
                                                                             </td>
                                                                             <td class="candidate-details">
@@ -104,20 +111,12 @@
                                                                                 {
                                                                                     <div class="mtop-5">@item.candidateName</div>
                                                                                 }
-                                                                                else
-                                                                                {
-                                                                                }
                                                                                 @if (item.candidateEmail != null && item.candidateEmail != "")
                                                                                 {
                                                                                     <div class="mtop-5"><strong>Email:</strong> @item.candidateEmail</div>
                                                                                 }
-                                                                                else
-                                                                                {
-                                                                                }
                                                                                 <div class="mtop-5"><strong>Skill Channel ID:</strong> @item.IRFId</div>
                                                                             </td>
-
-
                                                                             @if (!String.IsNullOrEmpty(item.resumeLink))
                                                                             {
                                                                                 <td><a target="_blank" href=@item.resumeLink>Resume</a></td>
@@ -137,27 +136,8 @@
                                                                                     {
                                                                                         <a onclick=""> @item.ClientHrContact </a>
                                                                                     }
-
-
-
-                                                                                }
-                                                                                else
-                                                                                {
-
                                                                                 }
                                                                             </td>
-                                                                            <td>
-
-                                                                                @if (item.confirmationStatus == "2")
-                                                                                {
-                                                                                    <span style="color:red">Cancelled</span>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    @item.MeetingStatusStatusDesc
-                                                                                }
-                                                                            </td>
-
                                                                             <td class="text-left">
                                                                                 <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -7px; position: relative;left: -2px;" title="Send Invite"><span class="fa fa-send-o"></span></span></span>
                                                                                 @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
