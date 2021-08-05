@@ -23,7 +23,7 @@ namespace Risebird.Entities.Data
         [Display(Name = "Mobile Number")]
         public string MobileNumber { get; set; }
 
-        public int IsActive { get; set; }
+        public bool IsActive { get; set; }
         public DateTime LastLogin { get; set; }
         public DateTime LastLogout { get; set; }
         public string ImageURL { get; set; }

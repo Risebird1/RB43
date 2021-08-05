@@ -176,7 +176,7 @@ namespace Risebird.Repository
             parameters.Add("@userEmailId", entity.EmailId);
             parameters.Add("@userMobileNumber", entity.MobileNumber);
             parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
-
+            parameters.Add("@IsActive", entity.IsActive);
             return parameters;
         }
 

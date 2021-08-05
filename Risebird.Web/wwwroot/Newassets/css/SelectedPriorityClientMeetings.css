@@ -553,7 +553,7 @@ modal-content .modal-body {
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
     background: #42a5f5;
     font-family: Roboto, sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     text-decoration: none;
 }
 

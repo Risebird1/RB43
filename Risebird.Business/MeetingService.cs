@@ -2894,6 +2894,47 @@ namespace Risebird.Business
                 return "Fail";
             }
         }
+        public List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId)
+        {
+            try
+            {
+                var meetings = _meetingRespository.GetClientNotScheduledMeetingListByIRFId(IRFId).Result.ToList();
+
+                return meetings ?? new List<MeetingVM>();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<MeetingVM> GetClientReScheduledMeetingList(int Clientid, string Emailid)
+        {
+            try
+            {
+                var meetings = _meetingRespository.GetClientReScheduledMeetingList(Clientid, Emailid).Result.ToList();
+
+                return meetings ?? new List<MeetingVM>();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<CallCatalogueVM> GetCallCatalogueList(string profile, string Emailid)
+        {
+            try
+            {
+                var meetings = _meetingRespository.GetCallCatalogueList(profile, Emailid).Result.ToList();
+                return meetings ?? new List<CallCatalogueVM>();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 
