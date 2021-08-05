@@ -3422,12 +3422,8 @@ namespace Risebird.Web.Controllers
                             var client = await _userRepository.GetClientUserDetails(emailid);
                             ClientId = client.ClientId;
                         }
-                        var meetings = _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
-                        meetings = meetings.Select(x =>
-                        {
-                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
-                            return x;
-                        }).ToList();
+                        var meetings = _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
+
                         return View(meetings);
                     }
                     else
@@ -3458,7 +3454,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
                     loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
-                    if (profileName == "Client")
+                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR")
                     {
                         if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, loggedInUserEmail))
                         {
@@ -3521,7 +3517,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> ReScheduledMeetings()
+        public async Task<IActionResult> ReScheduleMeetings()
         {
             try
             {
@@ -3544,8 +3540,13 @@ namespace Risebird.Web.Controllers
                             var client = await _userRepository.GetClientUserDetails(emailid);
                             ClientId = client.ClientId;
                         }
-                        var meetings = _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
-                        return View(meetings);
+                        var meetings = _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
+                        meetings = meetings.Select(x =>
+                        {
+                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                            return x;
+                        }).ToList();
+                        return View("ReScheduleMeetings", meetings);
                     }
                     else
                     {

@@ -1890,6 +1890,10 @@ namespace Risebird.Web.Controllers
             {
                 //string accountSid = _configuration["TwilioSettings:ACCOUNT_SID"];
                 var resultset = _userService.FetchCallRecording(candidateEmailid, irfid);
+                if (resultset != null)
+                {
+                    resultset = resultset.OrderByDescending(x => x.CalledOn).ToList();
+                }
                 foreach (var item in resultset)
                 {
                     if (!String.IsNullOrEmpty(item.RecordingUrl))
