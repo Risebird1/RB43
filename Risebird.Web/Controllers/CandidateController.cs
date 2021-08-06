@@ -1117,8 +1117,17 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
                     {
+                        if (!string.IsNullOrEmpty(model.EmailId))
+                        {
+                            model.EmailId = model.EmailId.ToLower();
+                        }
+                        if (!string.IsNullOrEmpty(model.ClientHRAttemptContact))
+                        {
+                            model.ClientHRAttemptContact = model.ClientHRAttemptContact.ToLower();
+                        }
                         var result = _irfService.AddCandidate(model, emailid, profileName).Result;
                         TempData["SuccessErrorMessageCandidate"] = result;
                         return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
@@ -2277,6 +2286,7 @@ namespace Risebird.Web.Controllers
                             var valuestatus = HttpContext.Session.GetString("UserLogedIn")?.Trim();
                             if (valuestatus == "Yes")
                             {
+
                                 var emailaddress = HttpContext.Session.GetString("email")?.Trim();
                                 emailaddress = emailaddress.Replace("\"", "");
                                 await _meetingService.AddTotalViewCount(id, emailaddress, "Public");
@@ -2420,6 +2430,7 @@ namespace Risebird.Web.Controllers
                         NewModel.InterviewerComment = model.InterviewerComment;
                         NewModel.InterviewStatus = model.InterviewStatus;
                         NewModel.JDTiltle = model.JDTiltle;
+
                         NewModel.JDLink = model.JDLink;
                         NewModel.MeetingStatus = model.MeetingStatus;
                         NewModel.confirmationStatus = model.confirmationStatus;
@@ -3115,7 +3126,6 @@ namespace Risebird.Web.Controllers
             }
 
         }
-
         [Authorize]
         [HttpGet]
         public async Task<FileContentResult> CandidateResumesExporttoExcel(int irfId, string irfName)
@@ -3206,6 +3216,6 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
     }
 }
