@@ -114,7 +114,10 @@ namespace Risebird.Web.Controllers
                         user.FirstName = user.FirstName.Trim();
                         user.LastName = user.LastName.Trim();
                         user.EmailId = user.EmailId.Trim();
-                        user.EmailId = user.EmailId.ToLower();
+                        if (!string.IsNullOrEmpty(user.EmailId))
+                        {
+                            user.EmailId = user.EmailId.ToLower();
+                        }
                         if (_userService.AddUser(user))
                         {
                             TempData["SuccessErrorMessageUser"] = "User is added Successfully";
