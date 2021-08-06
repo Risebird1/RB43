@@ -1,10 +1,27 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
 @using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+@using Risebird.Entities.ViewModel
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Reschedule Meetings";
     ViewBag.PageHeader = "Reschedule Meetings";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = String.Empty;
+    string endDte = String.Empty;
+    string[] RFID = new string[] { };
+    string[] primarySkills = new string[] { };
+    string[] ClientHR = new string[] { };
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("ReScheduleMeetingsfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("ReScheduleMeetingsfilters"));
+    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
+    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    RFID = filter.RFID != null ? filter.RFID : new string[] { };
+    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
+    ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
 }
 <script>
     var Header = "<div>Reschedule Meetings</div>";
@@ -29,7 +46,10 @@
                     </div>
                     <div class="pull-right client-ms">
                         <div style="float:left">
-
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-toggle="modal" data-target="#filterModal">
+                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                <div class="mdc-button__ripple"></div>
+                            </button>
                         </div>
                         <div style="float:left">
                         </div>
@@ -47,6 +67,111 @@
                             <div class="loader text-center">
                                 <img src="~/Newassets/img/lazyload.gif" />
                             </div>
+                            <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <form action="@Url.Action("ReScheduleMeetings","Client")" method="post" id="form">
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                Start Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                End Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">
+                                                                Skill Channel Id
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
+                                                                Client HR
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.ClientHrContact).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <div>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 10px 0px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 10px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div id="notschedule_table" data-intro="<span style='font-size:16px;'>Overview the summary of Not Scheduled Meeting details:</span><hr class='btop' />1. Jd Title<br/> 2. Candidate Details (Name, Email, Skill Channel Id) <br/> 3. Resume <br/>4. Client HR  <br/>5. Click on Send Invite button to Send Invite &  Call button to Call the Candidate.<br/><a href='/Candidate/CandidateTimeline' class='btn btn-primary ntschnext-btn'>NEXT</a>" data-position="top">
                                 <div class="dataloading">
                                     <div class="toolbar">
@@ -195,7 +320,58 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
 
+    $(document).ready(function () {
+            $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+              }
+
+            $("#PrimarySkill").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '100%',
+                    maxHeight: 200
+                });
+
+
+            $("#ClientHR").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+        $("#RFID").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+
+    });
+    function ResetFilter() {
+        window.location.href = "/Client/ResetReScheduleMeetingsFilter";
+    }
+
+    function ApplySessionFilter() {
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
+        var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
+        var rFID =  @Html.Raw(Json.Serialize(RFID));
+
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        $("#PrimarySkill").val(primarySkillsArr);
+        $("#ClientHR").val(clientHR);
+        $("#RFID").val(rFID);
+        var form = $("#form").serialize();
+    }
+
+</script>
 <script>
     function Sendinvite(id, IRFId, CandidateEmail) {
         $.ajax({
