@@ -28,7 +28,7 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
 
-        public async Task<IEnumerable<SkillChannelTemplateVM>> GetAllTemplates(string emailId, DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<SkillChannelTemplateVM>> GetAllTemplates(string emailId/*, DateTime startDate, DateTime endDate*/)
         {
             try
             {
@@ -36,8 +36,8 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@emailId", emailId);
-                    parameters.Add("@startDate", startDate);
-                    parameters.Add("@endDate", endDate);
+                    //parameters.Add("@startDate", startDate);
+                    //parameters.Add("@endDate", endDate);
                     var result = await SqlMapper.QueryAsync<SkillChannelTemplateVM>(con, "usp_GetAllTemplates", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
@@ -316,5 +316,40 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> RestoreTemplate(int id)
+        {
+            try
+            {
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_RestoreTemplate", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    if (result != null && result.FirstOrDefault() == 0)
+                    {
+                        return true;
+                    }
+                    return false;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

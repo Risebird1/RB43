@@ -21,6 +21,7 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Assessment Group")]
         [Required]
         public int? AssessmentGroupId { get; set; }
+        public string AssessmentGroupName { get; set; }
         public DateTime CreatedOn { get; set; }
         public int CreatedBy { get; set; }
         public DateTime ModifiedOn { get; set; }

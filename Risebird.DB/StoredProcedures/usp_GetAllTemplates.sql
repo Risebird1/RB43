@@ -11,15 +11,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[usp_GetAllTemplates]  
-@emailId varchar(100),
-@startDate datetime,
-@endDate datetime
+@emailId varchar(100)
+--@startDate datetime,
+--@endDate datetime
 AS  
 Begin 
 
-declare @startDateParam datetime,  @endDateParam datetime, @emailIdParam varchar(100), @profile varchar(100)
-set @startDateParam = @startDate
-set @endDateParam = @endDate
+declare  @emailIdParam varchar(100), @profile varchar(100)--, @startDateParam datetime,  @endDateParam datetime,
+--set @startDateParam = @startDate
+--set @endDateParam = @endDate
 set @emailIdParam = @emailId
 
 
@@ -28,13 +28,17 @@ select @profile = [Profile].[Name] from UserList ul join [Profile] on [Profile].
 
 if(@profile='Admin')
 Begin
-	select sct.*, ul.EmailId as CreatedByEmailId from SkillChannelTemplate sct join UserList ul on ul.id = sct.CreatedBy
-	where IsDeleted = 0 and  CreatedOn>@startDateParam and CreatedOn<@endDateParam order by CreatedOn desc
+	select sct.*, ul.EmailId as CreatedByEmailId, ag.AssessmentGroup as AssessmentGroupName from SkillChannelTemplate sct 
+	join UserList ul on ul.id = sct.CreatedBy
+	join AssessmentGroup ag on ag.id = sct.AssessmentGroupId
+	order by CreatedOn desc --where  IsDeleted = 0 and  CreatedOn>@startDateParam and CreatedOn<@endDateParam 
 End
 else
 Begin
-	select sct.*, ul.EmailId as CreatedByEmailId from SkillChannelTemplate sct join UserList ul on ul.id = sct.CreatedBy
-	where IsDeleted = 0 and  CreatedOn>@startDateParam and CreatedOn<@endDateParam and ul.EmailId = @emailIdParam order by CreatedOn desc 
+	select sct.*, ul.EmailId as CreatedByEmailId, ag.AssessmentGroup as AssessmentGroupName from SkillChannelTemplate sct 
+	join UserList ul on ul.id = sct.CreatedBy
+	join AssessmentGroup ag on ag.id = sct.AssessmentGroupId
+	where ul.EmailId = @emailIdParam order by CreatedOn desc -- IsDeleted = 0 and  CreatedOn>@startDateParam and CreatedOn<@endDateParam and
 End
 
 End

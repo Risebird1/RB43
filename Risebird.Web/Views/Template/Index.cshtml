@@ -1,16 +1,14 @@
 ﻿@model Risebird.Entities.ViewModel.TemplatesListVM
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
-@using Risebird.Entities.ViewModel
+@using Risebird.Entities.Data
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Templates";
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    //dynamic filter = null;
-    //string strtDte = String.Empty;
-    //string endDte = String.Empty;
-    //string[] primarySkills = new string[] { };
+    dynamic filter = null;
+    string[] AssessmentGroup = new string[] { };
     //string[] RFID = new string[] { };
     //string[] ArchiveStatus = new string[] { };
     //string[] ClientName = new string[] { };
@@ -20,21 +18,14 @@
     //string[] EndClientName = new string[] { };
 
 }
-@*@if (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters") != null)
+@if (HttpContextAccessor.HttpContext.Session.GetString("TemplateFilters") != null)
 {
-    filter = JsonConvert.DeserializeObject<IRFFilter>
-    (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters"));
-    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
-    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
-    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
-    RFID = filter.RFID != null ? filter.RFID : new string[] { };
-    ArchiveStatus = filter.ArchiveStatus != null ? filter.ArchiveStatus : new string[] { };
-    SubscriptionStatus = filter.SubscriptionStatus != null ? filter.SubscriptionStatus : new string[] { };
-    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
-    ClientRole = filter.ClientRole != null ? filter.ClientRole : new string[] { };
-    PrimarySkill = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
-    EndClientName = filter.EndClientName != null ? filter.EndClientName : new string[] { };
-}*@
+    filter = JsonConvert.DeserializeObject<TemplateFilter>
+    (HttpContextAccessor.HttpContext.Session.GetString("TemplateFilters"));
+
+    AssessmentGroup = filter.AssessmentGroup != null ? filter.AssessmentGroup : new string[] { };
+
+}
 <script>
     var Header = "<div id='templates'>Templates</div>";
     $('#txtpageHeader').empty().html(Header);
@@ -63,13 +54,13 @@
                     <div class="pull-right">
                         <div>
 
-                            @*<div id="skill_2" data-intro='Filter based on available attributes or reset filter if applied earlier' data-position='left' class="pull-left" style="margin-right: 5px;">
+                            <div  data-intro='Filter based on available attributes or reset filter if applied earlier' data-position='left' class="pull-left" style="margin-right: 5px;">
                                 <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-toggle="modal" data-target="#filterModal">
 
                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                     <div class="mdc-button__ripple"></div>
                                 </button>
-                            </div>*@
+                            </div>
                             <div class="pull-left">
                                 @if (Model.Profile == "Admin" || Model.Profile == "HR")
                                 {
@@ -94,7 +85,88 @@
                         <div class="mdc-card-wrapper__text-section">
 
 
-                            
+                            <div class="modal   fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+
+
+
+                                        <form action="@Url.Action("Index","Template")" method="post" id="form">
+
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroup">Assessment Group</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="AssessmentGroup" name="AssessmentGroup" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.TemplateList.Select(x => x.AssessmentGroupName).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+
+                                                       
+
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+
+                                                        
+                                                        <div class="form-group">
+
+                                                            <div>
+                                                                <div class="col-md-12 col-sm-12">
+
+
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
+
+
+
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
+
+
+
+                                                                </div>
+
+                                                            </div>
+
+
+
+                                                        </div>
+                                                    </div>
+
+
+
+
+                                                </div>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
 
                             <!-- end content-->
                             <!--  end card  -->
@@ -235,7 +307,39 @@
 
     </script>
 }
+<script>
+        $(document).ready(function () {
+           
+            $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+            }
 
+            $("#AssessmentGroup").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            
+        });
+
+        function ResetFilter() {
+            window.location.href = "/Template/ResetTemplateFilter";
+        }
+        function ApplySessionFilter() {
+           
+            var assessmentGroup =  @Html.Raw(Json.Serialize(AssessmentGroup));
+            
+            $("#AssessmentGroup").val(assessmentGroup);
+            
+            var form = $("#form").serialize();
+
+        }
+
+</script>
 @*<script type="text/javascript">
     $(".sb-container").scrollBox();
 </script>*@
@@ -302,6 +406,64 @@
             }
         })
     }
+
+    function Restore(id, templateName) {
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The Template (" + templateName + ") will be restored!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, restore it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Template/RestoreTemplate',
+                        method: 'POST',
+                        data: { 'id': id },
+                        success: function (result) {
+                            if (result) {
+                                resolve(result)
+
+                            }
+                            else {
+                                swal.fire("Error restoring!", "Please try again", "error");
+
+                            }
+                        },
+                        error: function () {
+                            swal.fire("Error restoring!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Restored!',
+                    type: 'success',
+                    html: '<p>The template has been restored.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    location.reload(true);
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Restore cancelled!',
+                    'error'
+                )
+            }
+        })
+    }
+
 
 </script>
 

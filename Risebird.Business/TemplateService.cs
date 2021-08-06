@@ -26,11 +26,11 @@ namespace Risebird.Business
             
         }
 
-        public async Task<IEnumerable<SkillChannelTemplateVM>> GetAllTemplates(string emailId, DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<SkillChannelTemplateVM>> GetAllTemplates(string emailId/*, DateTime startDate, DateTime endDate*/)
         {
             try
             {
-                return await _templateRespository.GetAllTemplates(emailId, startDate, endDate);
+                return await _templateRespository.GetAllTemplates(emailId);
             }
             catch (Exception ex)
             {
@@ -98,6 +98,20 @@ namespace Risebird.Business
             try
             {
                 return await _templateRespository.DeleteTemplate(id);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> RestoreTemplate(int id)
+        {
+            try
+            {
+                return await _templateRespository.RestoreTemplate(id);
             }
 
             catch (Exception e)

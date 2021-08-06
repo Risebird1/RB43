@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
@@ -43,10 +45,18 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        //var model = new List<SkillChannelTemplateVM>();
                         var model = new TemplatesListVM();
-                        model.TemplateList = (await _templateService.GetAllTemplates(emailId, DateTime.Now.AddDays(-30), DateTime.Now)).ToList();
+                        model.TemplateList = (await _templateService.GetAllTemplates(emailId/*, DateTime.Now.AddDays(-30), DateTime.Now*/)).ToList();
                         model.Profile = profileName;
+
+                        if (HttpContext.Session.GetString("TemplateFilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<TemplateFilter>(HttpContext.Session.GetString("TemplateFilters"));
+
+                            filter.AssessmentGroup = filter.AssessmentGroup == null ? model.TemplateList.Select(x => x.AssessmentGroupName).ToArray() : filter.AssessmentGroup;
+                            model.TemplateList = model.TemplateList.Where(c => filter.AssessmentGroup.Contains(c.AssessmentGroupName)).ToList();
+                        }
+
                         foreach (var item in model.TemplateList)
                         {
                             if (item.IsDeleted)
@@ -83,6 +93,79 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Index(TemplateFilter filter)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                if (filter != null)
+                {
+                    HttpContext.Session.SetString("TemplateFilters", JsonConvert.SerializeObject(filter));
+
+                }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR")
+                {
+
+                    var model = new TemplatesListVM();
+                    model.TemplateList = (await _templateService.GetAllTemplates(emailId)).ToList();
+                    model.Profile = profileName;
+                   
+                    filter.AssessmentGroup = filter.AssessmentGroup == null ?  model.TemplateList.Select(x => x.AssessmentGroupName).ToArray() : filter.AssessmentGroup;
+                    model.TemplateList = model.TemplateList.Where(c => filter.AssessmentGroup.Contains(c.AssessmentGroupName)).ToList();
+                    foreach (var item in model.TemplateList)
+                    {
+                        if (item.IsDeleted)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                            item.Status = "Archived";
+                        }
+                        else
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                            item.Status = "Active";
+                        }
+                    }
+
+                    return View(model);
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        public async Task<IActionResult> ResetTemplateFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("TemplateFilters");
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
         }
 
         [Authorize]
@@ -400,6 +483,39 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR")
                     {
                         var result = await _templateService.DeleteTemplate(id);
+                        return Json(result);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> RestoreTemplate(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        var result = await _templateService.RestoreTemplate(id);
                         return Json(result);
                     }
                     else
