@@ -1032,6 +1032,7 @@ namespace Risebird.Web.Controllers
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("CallCataloguefilters"));
                             if (filter.StartDate != null && filter.EndDate != null)
                             {
+                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
                                 meetings = meetings.Where(t => t.CalledOn >= filter.StartDate && t.CalledOn <= filter.EndDate).ToList();
                             }
                             else if (filter.StartDate != null && filter.EndDate == null)
@@ -1040,6 +1041,7 @@ namespace Risebird.Web.Controllers
                             }
                             else if (filter.StartDate == null && filter.EndDate != null)
                             {
+                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
                                 meetings = meetings.Where(t => t.CalledOn <= filter.EndDate).ToList();
                             }
                             filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = meetings.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
@@ -1098,6 +1100,7 @@ namespace Risebird.Web.Controllers
                         var meetings = _meetingService.GetCallCatalogueList(profileName, emailid);
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
+                            filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
                             meetings = meetings.Where(t => t.CalledOn >= filter.StartDate && t.CalledOn <= filter.EndDate).ToList();
                         }
                         else if (filter.StartDate != null && filter.EndDate == null)
@@ -1106,6 +1109,7 @@ namespace Risebird.Web.Controllers
                         }
                         else if (filter.StartDate == null && filter.EndDate != null)
                         {
+                            filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
                             meetings = meetings.Where(t => t.CalledOn <= filter.EndDate).ToList();
                         }
 
