@@ -4784,7 +4784,17 @@ button.btn {
     right: 35px;
     top: 10px;
 }
-
+.jumbotron .statusImg img {
+    height: 126px!important;
+    max-height: 126px!important;
+}
+.jumbotron .template .statusImg img {
+    height: 100px !important;
+    max-height: 100px !important;
+}
+.template-name{
+    line-height:40px!important;
+}
 .step-wrapper {
     text-align: center;
     width: 200px;
@@ -5902,7 +5912,12 @@ button.btn {
     .mob_canvas-height {
         height: 400px;
     }
-
+    #SkillTable select.form-control{
+        width:auto!important;
+    }
+    #InterviewerTable .form-control {
+        width: 200px!important;
+    }
     .recommendation .multiselect.dropdown-toggle:after {
         left: 1% !important;
     }

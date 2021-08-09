@@ -1980,5 +1980,47 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IEnumerable<TemplateInterviewerData>> GetInterviewersByAssessmentGroup(string assessmentGroupId)
+        {
+            try
+            {
+                return await _irfRepository.GetInterviewersByAssessmentGroup(assessmentGroupId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<string> GetInterviewerSkillsByUserId(int userId)
+        {
+            try
+            {
+                return await _irfRepository.GetInterviewerSkillsByUserId(userId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public IEnumerable<Skill> GetSkills()
+        {
+            try
+            {
+                return _irfRepository.GetSkills();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        
     }
 }
