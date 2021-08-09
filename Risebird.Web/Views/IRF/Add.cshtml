@@ -51,14 +51,14 @@
                                         <ul class="tabs">
                                             <li><a href="#" class="active text-center" rel="tab-1" id="rtab-1">Event Details</a></li>
                                             <li><a href="#" rel="tab-2" class="text-center" id="rtab-2">Job Details</a></li>
-                                            <li><a href="#" rel="tab-3" class="" id="rtab-3">Tech Skill</a><span id="count_SkillCollection" class="skillcount">0</span></li>
+                                            <li><a href="#" rel="tab-3" class="" id="rtab-3">Tech Skill</a><span id="count_SkillCollection" class="skillcount">@(Model.SkillCollection != null ? Model.SkillCollection.Count() : 0)</span></li>
                                             <li><a href="#" rel="tab-4" class="" id="rtab-4">Joinability</a><span id="count_Joinability" class="skillcount">0</span></li>
                                             <li><a href="#" rel="tab-5" class="" id="rtab-5">Selectability</a><span id="count_Selectability" class="skillcount">0</span></li>
                                             <li><a href="#" rel="tab-6" class="" id="rtab-6">General Skill</a><span id="count_SkillGeneral" class="skillcount">0</span></li>
                                             <li><a href="#" rel="tab-7" class="text-center" id="rtab-7">Client</a><span id="count_ClientTable" class="skillcount">0</span></li>
-                                            <li><a href="#" rel="tab-8" class="" id="rtab-8">Interviewer</a><span id="count_Interviewer" class="skillcount">0</span></li>
-                                            <li><a href="#" rel="tab-9" class="text-center" id="rtab-9">QC</a><span id="count_qc" class="skillcount">0</span></li>
-                                            <li><a href="#" rel="tab-10" class="" id="rtab-10">E.Interviewer</a><span id="count_Em" class="skillcount">0</span></li>
+                                            <li><a href="#" rel="tab-8" class="" id="rtab-8">Interviewer</a><span id="count_Interviewer" class="skillcount">@(Model.InterviewerCollection != null ? Model.InterviewerCollection.Count() : 0)</span></li>
+                                            <li><a href="#" rel="tab-9" class="text-center" id="rtab-9">QC</a><span id="count_qc" class="skillcount">@(Model.QualityController != null ? Model.QualityController.Count() : 0)</span></li>
+                                            <li><a href="#" rel="tab-10" class="" id="rtab-10">E.Interviewer</a><span id="count_Em" class="skillcount">@(Model.EmergencyInterviewerCollection != null ? Model.EmergencyInterviewerCollection.Count() : 0)</span></li>
                                             @*<li><a href="#" rel="tab-11" class="" id="rtab-11">Resume Evaluator</a></li>*@
                                             <li><a href="#" rel="tab-11" class="" id="rtab-11">Coordinator</a><span id="count_Hr" class="skillcount">0</span></li>
                                             @*<li><a href="#" rel="tab-13" class="" id="rtab-13">Recruiter</a></li>*@
@@ -420,26 +420,62 @@
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
+                                                                    @if (Model.SkillCollection == null || Model.SkillCollection.Count() == 0)
+                                                                    {
+                                                                        <tr>
+                                                                            <td>
+                                                                                @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
 
-                                                                    <tr>
-                                                                        <td>
-                                                                            @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
+                                                                            </td>
+                                                                            <td>
+                                                                                @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control " })
+                                                                            </td>
+                                                                            <td>
+                                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
+                                                                            </td>
+                                                                            <td class="action text-center">
 
-                                                                        </td>
-                                                                        <td>
-                                                                            @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control " })
-                                                                        </td>
-                                                                        <td>
-                                                                            <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
-                                                                        </td>
-                                                                        <td class="action text-center">
-
-                                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
 
-                                                                        </td>
-                                                                    </tr>
+                                                                            </td>
+                                                                        </tr>
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        for (int i = 0; i < Model.SkillCollection.Count(); i++)
+                                                                        {
+                                                                            <tr>
+
+                                                                                <td>
+
+                                                                                    @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
+
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+
+                                                                                </td>
+
+                                                                                <td class="action text-center">
+                                                                                    <div>
+
+                                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+
+                                                                        }
+                                                                    }
+
 
                                                                 </tbody>
                                                             </table>
@@ -671,30 +707,59 @@
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
+                                                                    @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
+                                                                    {
+                                                                        <tr>
+                                                                            <td>
+                                                                                @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, "Select", new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                                            </td>
 
-                                                                    <tr>
-                                                                        <td>
-                                                                            @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, "Select", new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
-                                                                        </td>
+                                                                            <td>
 
-                                                                        <td>
+                                                                                @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
 
-                                                                            @Html.TextBox("InterviewerCollection[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                            </td>
+                                                                            <td>
 
-                                                                        </td>
-                                                                        <td>
+                                                                                @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                            </td>
+                                                                            <td class="action text-center">
+                                                                                
+                                                                                <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill','PerSuccessRate')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                                            @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
-                                                                        </td>
-                                                                        <td class="action text-center">
-                                                                            <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'SkillId','PerSuccessRate')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        for (int i = 0; i < Model.InterviewerCollection.Count(); i++)
+                                                                        {
+                                                                            <tr>
+                                                                                <td>
+                                                                                    @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                                                </td>
 
+                                                                                <td>
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
 
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
 
+                                                                                </td>
+                                                                                <td class="action text-center">
 
-                                                                        </td>
-                                                                    </tr>
+                                                                                    <div>
+                                                                                        <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
+                                                                    }
+
                                                                 </tbody>
                                                             </table>
                                                             <label class="text-danger" id="noInterviewer"></label>
@@ -721,27 +786,58 @@
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
+                                                                    @if (Model.QualityController == null || Model.QualityController.Count() == 0)
+                                                                    {
+                                                                        <tr>
+                                                                            <td>
+                                                                                @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, "Select", new { @class = "select-css form-control ", @onchange = "QCChanged(this.value, this.id)" })
+                                                                            </td>
 
-                                                                    <tr>
-                                                                        <td>
-                                                                            @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, "Select", new { @class = "select-css form-control ", @onchange = "QCChanged(this.value, this.id)" })
-                                                                        </td>
+                                                                            <td>
+                                                                                @Html.TextBox("QualityController[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
 
-                                                                        <td>
-                                                                            @Html.TextBox("QualityController[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                            </td>
+                                                                            <td>
 
-                                                                        </td>
-                                                                        <td>
+                                                                                @Html.TextBox("QualityController[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                            </td>
+                                                                            <td class="action text-center">
+                                                                                <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-                                                                            @Html.TextBox("QualityController[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
-                                                                        </td>
-                                                                        <td class="action text-center">
-                                                                            <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'SkillId', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @for (int i = 0; i < Model.QualityController.Count(); i++)
+                                                                        {
+                                                                            <tr>
+                                                                                <td>
+                                                                                    @Html.DropDownListFor(m => m.QualityController[i].UserId, (SelectList)ViewBag.QualityController, new { @class = "form-control select-css ", @onchange = "QCChanged(this.value, this.id)" })
+                                                                                </td>
 
-                                                                        </td>
-                                                                    </tr>
+                                                                                <td>
+                                                                                    @Html.TextBoxFor(m => m.QualityController[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.TextBoxFor(m => m.QualityController[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+
+                                                                                </td>
+                                                                                <td class="action text-center">
+                                                                                    <div>
+                                                                                        <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+
+                                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
+                                                                    }
+
                                                                 </tbody>
                                                             </table>
                                                             <label class="text-danger" id="qcInterviewer"></label>
@@ -767,32 +863,64 @@
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
+                                                                    @if (Model.EmergencyInterviewerCollection == null || Model.EmergencyInterviewerCollection.Count() == 0)
+                                                                    {
+                                                                        <tr>
+                                                                            <td>
 
-                                                                    <tr>
-                                                                        <td>
+                                                                                @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, "Select", new { @class = "select-css form-control ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
 
-                                                                            @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers,"Select", new { @class = "select-css form-control ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
-                                                                           
-                                                                        </td>
+                                                                            </td>
 
-                                                                        <td>
-                                                                            @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
-                                                                            @Html.TextBox("EmergencyInterviewerCollection[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                            <td>
+                                                                                @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
+                                                                                @Html.TextBox("EmergencyInterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
 
-                                                                        </td>
-                                                                        <td>
+                                                                            </td>
+                                                                            <td>
 
-                                                                            @Html.TextBox("EmergencyInterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                @Html.TextBox("EmergencyInterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
 
-                                                                        </td>
-                                                                        <td class="action text-center">
+                                                                            </td>
+                                                                            <td class="action text-center">
 
-                                                                            <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'SkillId', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
 
-                                                                        </td>
-                                                                    </tr>
+                                                                            </td>
+                                                                        </tr>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @for (int i = 0; i < Model.EmergencyInterviewerCollection.Count(); i++)
+                                                                        {
+                                                                            <tr>
+                                                                                <td>
+                                                                                    @Html.DropDownListFor(m => m.EmergencyInterviewerCollection[i].UserId, (SelectList)ViewBag.EmergencyInterviewers, new { @class = "select-css form-control ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+
+                                                                                </td>
+                                                                                <td class="action text-center">
+
+                                                                                    <div>
+
+                                                                                        <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill','PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
+                                                                    }
+
                                                                 </tbody>
                                                             </table>
                                                             <label class="text-danger" id="emInterviewer"></label>
@@ -891,7 +1019,11 @@
                             <div class="card-footer mt-20 clearfix">
                                 <div class="row  mc-button-area pull-right">
                                     <div class="col-md-12">
-                                        @if (String.IsNullOrEmpty(ViewBag.InterviewerFromSearch))
+                                        @if (Model.TemplateId != 0)
+                                        {
+                                            @Html.ActionLink("Back to List", "Index", "Template", null, htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
+                                        }
+                                        else if (String.IsNullOrEmpty(ViewBag.InterviewerFromSearch))
                                         {
                                             @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
                                         }
@@ -902,8 +1034,8 @@
                                         <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" id="btnPrev" value="Prev" style="display:none;">
 
                                         <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnNext" value="Next">
-                                        
-                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-left" id="btnUpload" value="Save" style="display:none">Save</button>
+
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-left" id="btnUpload" value="Save" style="display:none">Save</button>
 
                                     </div>
                                 </div>
@@ -1990,7 +2122,7 @@
         var num = id.match(/(\d+)/);
         var index = num[0];
         var idArray = id.split('_');
-        var skillElementid = idArray[0] + '_' + index + '__SkillId';
+        var skillElementid = idArray[0] + '_' + index + '__PrimarySkill';
         $("#" + skillElementid).val(data);
     }
 
@@ -2007,7 +2139,7 @@
                         //duplicate
                         alert("This user is already added to this list! Kindly choose another user.");
                         document.getElementById(idInitials + '_' + currentIndex + '__UserId').value = "";
-                        document.getElementById(idInitials + '_' + currentIndex + '__SkillId').value = "";
+                        document.getElementById(idInitials + '_' + currentIndex + '__PrimarySkill').value = "";
                         document.getElementById(idInitials + '_' + currentIndex + '__PerSuccessRate').value = "";
                         return true;
                     }
@@ -2024,7 +2156,7 @@
         if (CheckDuplicate('InterviewerCollection', searchFor, val, index)) {
             return;
         }
-        var skillElementid = 'InterviewerCollection_' + index + '__SkillId';
+        var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
         $.ajax({
             type: "GET",
             url: "/IRF/GetInterviewerSkills",
@@ -2045,7 +2177,7 @@
         }
 
         //var index = id.charAt(31);
-        var skillElementid = 'EmergencyInterviewerCollection_' + index + '__SkillId';
+        var skillElementid = 'EmergencyInterviewerCollection_' + index + '__PrimarySkill';
         $.ajax({
             type: "GET",
             url: "/IRF/GetInterviewerSkills",
@@ -2098,7 +2230,7 @@
         }
 
        // var index = id.charAt(18);
-        var skillElementid = 'QualityController_' + index + '__SkillId';
+        var skillElementid = 'QualityController_' + index + '__PrimarySkill';
         $.ajax({
             type: "GET",
             url: "/IRF/GetInterviewerSkills",
@@ -2113,47 +2245,48 @@
 
 
     $(document).ready(function () {
+        if (@Model.TemplateId == null || @Model.TemplateId== 0) {
+            TechSkillChanged();
+            //Perform Ajax request.
 
-        TechSkillChanged();
-        //Perform Ajax request.
+            var id = $("#InterviewerCollection_0__UserId").val();
+            $.ajax({
+                type: "GET",
+                url: "/IRF/GetInterviewerSkills",
+                data: { 'id': id },
+                success: function (data) {
+                    $("#InterviewerCollection_0__PrimarySkill").val(data);
+                    $("#QualityController_0__PrimarySkill").val(data);
+                    $("#EmergencyInterviewerCollection_0__PrimarySkill").val(data);
 
-        var id = $("#InterviewerCollection_0__UserId").val();
-        $.ajax({
-            type: "GET",
-            url: "/IRF/GetInterviewerSkills",
-            data: { 'id': id },
-            success: function (data) {
-                $("#InterviewerCollection_0__SkillId").val(data);
-                $("#QualityController_0__SkillId").val(data);
-                $("#EmergencyInterviewerCollection_0__SkillId").val(data);
+                }
+            });
 
-            }
-        });
+            var userId = $("#RecruiterCollection_0__UserId").val();
+            $.ajax({
+                type: "GET",
+                url: "/IRF/GetRecruiterDomain",
+                data: { 'userId': userId },
+                success: function (data) {
+                    $("#RecruiterCollection_0__Domain").val(data);
 
-        var userId = $("#RecruiterCollection_0__UserId").val();
-        $.ajax({
-            type: "GET",
-            url: "/IRF/GetRecruiterDomain",
-            data: { 'userId': userId },
-            success: function (data) {
-                $("#RecruiterCollection_0__Domain").val(data);
-
-            }
-        });
+                }
+            });
 
 
 
-        //Get Client Role based on Client User Id
-        var id = $("#ClientCollection_0__ClientUserId").val();
-        $.ajax({
-            type: "GET",
-            url: "/IRF/GetClientUserRole",
-            data: { 'id': id },
-            success: function (data) {
-                $("#ClientCollection_0__ClientRoleId").val(data);
-            }
-        });
-
+            //Get Client Role based on Client User Id
+            var id = $("#ClientCollection_0__ClientUserId").val();
+            $.ajax({
+                type: "GET",
+                url: "/IRF/GetClientUserRole",
+                data: { 'id': id },
+                success: function (data) {
+                    $("#ClientCollection_0__ClientRoleId").val(data);
+                }
+            });
+        }
+        
     });
 
 
