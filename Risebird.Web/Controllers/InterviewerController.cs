@@ -689,6 +689,7 @@ namespace Risebird.Web.Controllers
                                       select new { ID = (int)s, Name = s.GetDescription() };
             model.SkillExpertiseLevelList = new SelectList(SkillExpertiseLevel, "ID", "Name");
             var SkillIP = from SkillIP s in Enum.GetValues(typeof(SkillIP))
+
                           select new { ID = (int)s, Name = s.GetDescription() };
             model.SkillIPList = new SelectList(SkillIP, "ID", "Name");
             var SkillYearsOfExperience = from SkillYearsOfExperience s in Enum.GetValues(typeof(SkillYearsOfExperience))
@@ -1638,6 +1639,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
 
         [Authorize]
         //[HttpPost]

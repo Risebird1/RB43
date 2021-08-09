@@ -1,13 +1,17 @@
 ﻿/* CSS Document */
 
 /* CSS Document */
+
+/* CSS Document */
+
+/* CSS Document */
 @charset "UTF-8";
 
 
 html, body {
     margin: 0;
     padding: 0;
-    overflow-x:hidden;
+    overflow-x: hidden;
 }
 
 html {
@@ -35,9 +39,11 @@ body {
     .clearfix:after {
         clear: both;
     }
+
 #scoreChart tspan {
     font-size: 12px;
 }
+
 #style-2::-webkit-scrollbar, .style-2::-webkit-scrollbar {
     width: 6px;
 }
@@ -61,14 +67,16 @@ body {
 .article p {
     margin-bottom: 0px;
 }
+
 .meeting-detail-icon .mdc-fab {
     width: 25px !important;
     height: 25px !important;
 }
-    #SkillCollection_WeightageError {
-    color: red!important;
+
+#SkillCollection_WeightageError {
+    color: red !important;
     margin-left: 807px;
-    font-size: 12px!important;
+    font-size: 12px !important;
 }
 
 #Joinability_WeightageError {
@@ -112,16 +120,19 @@ body {
     font-size: 12px !important;
     margin-left: 865px;
 }
+
 .curated-score .table-responsive-sm .table > tbody > tr > td:last-child {
     padding: 12px 5px !important;
-    border: 0px!important;
+    border: 0px !important;
 }
+
 .curated-score .table-bordered td, .curated-score .table-bordered th {
     border-right: 1px solid #dee2e6 !important;
     border-left: 0px !important;
     border-top: 0px !important;
     border-bottom: 0px !important;
 }
+
 .feedbackdetails table.table-bordered.dataTable th, .feedbackdetails table.table-bordered.dataTable td {
     border: 1px solid #dee2e6;
 }
@@ -179,7 +190,7 @@ body {
 
 .next-btn {
     position: absolute !important;
-    bottom: 845% !important;
+    bottom: 828% !important;
     right: -140% !important;
     border-radius: 5px !important;
     font-size: 12px !important;
@@ -192,8 +203,8 @@ body {
     font-size: 12px !important;
     background-color: #42A5F6 !important;
     position: absolute !important;
-    bottom: 95px !important;
-    right: -450% !important;
+    bottom: 100px !important;
+    right: -495% !important;
 }
 
 .skillnext-btn {
@@ -201,7 +212,7 @@ body {
     font-size: 12px !important;
     background-color: #42A5F6 !important;
     position: absolute !important;
-    bottom: 425px !important;
+    bottom: 444px !important;
     right: -280% !important;
 }
 
@@ -211,23 +222,25 @@ body {
     background-color: #42A5F6 !important;
     position: absolute !important;
     bottom: 62px !important;
-    right: -230% !important;
+    right: -200% !important;
 }
+
 .close-btn {
     border-radius: 5px !important;
     font-size: 12px !important;
     background-color: #42A5F6 !important;
     position: absolute !important;
     bottom: 150px !important;
-    right: -72% !important;
+    right: -45% !important;
 }
+
 .ntschnext-btn {
     border-radius: 5px !important;
     font-size: 12px !important;
     background-color: #42A5F6 !important;
     position: absolute !important;
-    bottom: 95px !important;
-    right: -395% !important;
+    bottom: 130px !important;
+    right: -445% !important;
 }
 
 .jumbotron {
@@ -353,11 +366,13 @@ body {
     position: absolute;
     right: 75px;
 }
- #tblbodyCandidate [data-tooltip]:before {
+
+#tblbodyCandidate [data-tooltip]:before {
     position: absolute;
     bottom: 75% !important;
 }
-    #qualityControlComments textarea {
+
+#qualityControlComments textarea {
     background: #fff !important
 }
 
@@ -2292,6 +2307,7 @@ table.journey td.cadSkill {
     width: 29px !important;
     height: 30px !important;
 }
+
     #tblbodyCandidate .action .mdc-fab.record-btn {
         width: 26px !important;
         height: 26px !important;
@@ -2301,6 +2317,7 @@ table.journey td.cadSkill {
         left: 2px;
         top: -2px;
     }
+
         #tblbodyCandidate .action .mdc-fab.record-btn .fa {
             font-size: 15px;
             color: #f4a5a5;
@@ -2308,9 +2325,10 @@ table.journey td.cadSkill {
             left: 0px;
             top: -1px;
         }
-    #tblbodyCandidate .action {
-        width: 235px
-    }
+
+#tblbodyCandidate .action {
+    width: 235px
+}
 /* Position tooltip above the element */
 .selected-priority .talk-bubble [data-tooltip]:before, .selected-priority .cadName [data-tooltip]:before, .selected-priority .cadSkill [data-tooltip]:before, .selected-priority .cadEmail [data-tooltip]:before,
 .cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
@@ -2805,7 +2823,7 @@ table.interviewertable th, table.interviewertable td {
     font-weight: bold;
     padding-right: 4px;
     margin-bottom: 10px;
-    line-height:18px;
+    line-height: 18px;
 }
 
 .assesment .card-blue .card-body .client-field {
@@ -4479,16 +4497,20 @@ textarea.form-control {
     border-top: 1px solid #dee2e6 !important;
     border-bottom: 0px solid #dee2e6 !important;
 }
+
     #QuestionsTable.table-bordered td:nth-of-type(even) {
         border-right: 0px !important;
     }
+
 .interviewer #QuestionsTable.table-bordered td:nth-of-type(even) {
     border-right: 1px solid #dee2e6 !important;
 }
+
 .interviewer #QuestionsTable.table-bordered td:last-of-type {
     border-right: 0px !important;
     border-left: 0px !important;
 }
+
 #SkillTable.table-bordered td {
     border-right: 1px solid #dee2e6 !important;
     border-left: 0px solid #dee2e6 !important;
@@ -4729,37 +4751,46 @@ button.btn {
     top: 7px;
     position: relative;
 }
+
 [data-id="candidatetimeline"] .btop {
-    margin: 2px 0px!important;
+    margin: 2px 0px !important;
 }
+
 .btop {
     border-top: 1px #fff solid !important;
     margin: 7px 0px;
 }
+
 .rbpay table.dataTable thead > tr > th.sorting, .rbpay table.dataTable tfoot > tr > th {
     font-weight: 500 !important;
     color: #676767;
 }
+
 .mdc-fab {
     width: 30px !important;
     height: 30px !important;
 }
-    .notschedulemeeting div.dataTables_wrapper div.dataTables_filter label, .survey div.dataTables_wrapper div.dataTables_filter label, .candidate-timeline div.dataTables_wrapper div.dataTables_filter label, .resume div.dataTables_wrapper div.dataTables_filter label {
+
+.notschedulemeeting div.dataTables_wrapper div.dataTables_filter label, .survey div.dataTables_wrapper div.dataTables_filter label, .candidate-timeline div.dataTables_wrapper div.dataTables_filter label, .resume div.dataTables_wrapper div.dataTables_filter label {
     position: relative;
 }
+
 #IRFList_filter #search {
     right: 65px;
-    top:12px;
+    top: 12px;
 }
+
 #IRFList_filter #trigger-update {
     right: 35px;
     top: 10px;
 }
-.step-wrapper{
-    text-align:center;
-    width:200px;
-    margin:0px auto!important;
+
+.step-wrapper {
+    text-align: center;
+    width: 200px;
+    margin: 0px auto !important;
 }
+
 .jumbotron .statusImg img {
     height: 126px !important;
     max-height: 126px !important;
@@ -4769,6 +4800,7 @@ button.btn {
     height: 100px !important;
     max-height: 100px !important;
 }
+
 .search-field #meeting_filter input[type=search], .search-field #meeting_filter input[type=search]:focus, #interviewersTbl_filter input[type=search], #interviewersTbl_filter input[type=search]:focus, #supportList_filter input[type=search], #supportList_filter input[type=search]:focus, #skillLevel_filter input[type=search], #skillLevel_filter input[type=search]:focus, #clientduser_filter input[type=search], #clientduser_filter input[type=search]:focus, #risebirduser_filter input[type=search], #risebirduser_filter input[type=search]:focus, .indexemp #interviewer_filter input[type=search], .indexemp #interviewer_filter input[type=search]:focus, .curatedgrp #meeting_filter input[type=search], .curatedgrp #meeting_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search].form-control, #IRFList_filter input[type=search], .candidate-timeline #candidateTable_filter input[type=search].form-control, .resume #resumeTable_filter input[type=search].form-control, .unassigned-int #meetingTable_filter input[type=search].form-control, #skill_filter input[type=search], #skill_filter input[type=search]:focus, #UserListTb_filter input[type=search], #UserListTb_filter input[type=search]:focus, #questionsTable_filter input[type=search], #questionsTable_filter input[type=search]:focus, #statusTable_filter input[type=search], #statusTable_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search], .notschedulemeeting #meeting_filter input[type=search]:focus, #profile_filter input[type=search], #profile_filter input[type=search]:focus {
     background: #FFF !important;
     border: 1px #ccc solid !important;
@@ -4776,38 +4808,49 @@ button.btn {
     height: 39px !important;
     padding: 9px 10px 9px 10px;
 }
+
 .indexemp #search, #skillLevel_filter #search, #risebirduser_filter #search, #clientduser_filter #search, #skill_filter #search, #questionsTable_filter #search {
     right: 45px;
 }
+
 #statusTable_filter #search, #interviewersTbl_filter #search, .notschedulemeeting #meeting_filter #search, #profile_filter #search {
     right: 55px;
 }
+
 .indexemp #trigger-update, #interviewersTbl_filter #trigger-update, #skillLevel_filter #trigger-update, #risebirduser_filter #trigger-update, #clientduser_filter #trigger-update, #skill_filter #trigger-update, #questionsTable_filter #trigger-update {
     right: 20px;
 }
+
 #statusTable_filter #trigger-update, .notschedulemeeting #meeting_filter #trigger-update {
     right: 28px;
 }
+
 .resumeEvaluator #meeting_filter #search {
     right: 37px;
 }
+
 .resumeEvaluator #trigger-update {
     top: 8px;
 }
+
 .recruiter #meeting_filter #search {
     right: 37px;
 }
+
 .recruiter #trigger-update, #UserListTb_filter #trigger-update {
     top: 7px !important;
     right: 30px;
 }
+
 #supportList_filter #search, #UserListTb_filter #search {
     right: 56px;
 }
+
 #supportList_filter #trigger-update {
-    top: 10px!important;
+    top: 10px !important;
     right: 30px;
 }
+
 .survey #interviewer_filter input[type=search].form-control {
     background: #FFF !important;
     border: 1px #ccc solid !important;
@@ -4901,25 +4944,35 @@ button.btn {
         right: -6px !important;
     }
 
+    [data-id="candidatetimeline"] .allmeetingnext-btn {
+        right: -653% !important;
+        bottom: 135px !important;
+    }
+
+    [data-id="candidatefeedback_table"] .allmeetingnext-btn {
+        bottom: 90px !important;
+        right: -653% !important;
+    }
+
     .next-btn {
         position: absolute !important;
         right: -230% !important;
-        bottom: 860% !important;
+        bottom: 827% !important;
     }
 
     .allmeetingnext-btn {
-        bottom: 76px !important;
-        right: -735% !important;
+        bottom: 96px !important;
+        right: -705% !important;
     }
 
     .skillnext-btn {
-        bottom: 430px !important;
-        right: -460% !important;
+        bottom: 446px !important;
+        right: -440% !important;
     }
 
     .risetubenext-btn {
-        bottom: 360px !important;
-        right: -535% !important;
+        bottom: 60px !important;
+        right: -200% !important;
     }
 
     .tabCon .tab-menu ul li a {
@@ -4928,8 +4981,8 @@ button.btn {
     }
 
     .ntschnext-btn {
-        bottom: 60px !important;
-        right: -710% !important;
+        bottom: 93px !important;
+        right: -655% !important;
     }
 
     .tab-menu ul li:nth-child(3) a.active ~ .skillcount {
@@ -5025,9 +5078,11 @@ button.btn {
     .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
         width: 30%
     }
+
     .candidate-hr .hrname {
         width: 250px !important
     }
+
     .hrname, .chrname {
         width: 290px;
         white-space: nowrap;
@@ -5037,6 +5092,7 @@ button.btn {
         top: 7px;
         position: relative;
     }
+
     .notschedulemeeting .candidate-hr .hrname {
         width: 190px !important
     }
@@ -5107,6 +5163,7 @@ button.btn {
         position: absolute;
         right: 0px !important;
     }
+
     .notschedulemeeting .candidate-hr .hrname {
         width: 230px !important
     }
@@ -5120,7 +5177,7 @@ button.btn {
     }
 
     .candidate-hr {
-        width: 25%!important;
+        width: 25% !important;
     }
 
     .hrname {
@@ -5142,9 +5199,11 @@ button.btn {
         top: 5px;
         position: relative;
     }
+
     .single-video-left .join-time {
-        top: 15px!important;
+        top: 15px !important;
     }
+
     .allmeeting .table > tbody > tr > td {
         padding: 5px 2px !important;
     }
@@ -5172,6 +5231,7 @@ button.btn {
         top: 7px;
         position: relative;
     }
+
     .cname {
         width: 170px;
         white-space: nowrap;
@@ -5200,33 +5260,42 @@ button.btn {
 
 @media only screen and (max-width: 1024px) {
     #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-        width: 285px!important;
-        height: 160px!important;
+        width: 285px !important;
+        height: 160px !important;
     }
+
     #tblbodyCandidate .action {
         max-width: 100% !important;
     }
+
     .tab-menu ul li:nth-child(3) .skillcount {
         right: 1px !important;
     }
+
     .tab-menu ul li:nth-child(4) .skillcount {
         right: -1px !important;
     }
+
     .tab-menu ul li:nth-child(5) .skillcount {
         right: -11px !important;
     }
+
     .tab-menu ul li:nth-child(6) .skillcount {
         right: -15px !important;
     }
+
     .tab-menu ul li:nth-child(8) .skillcount {
         right: -6px !important;
     }
+
     .tab-menu ul li:nth-child(9) .skillcount {
         right: 9px !important;
     }
+
     .tab-menu ul li:last-child .skillcount {
         right: -10px !important;
     }
+
     .razorpay_details {
         width: 60% !important;
     }
@@ -5248,10 +5317,10 @@ button.btn {
     }
 
     .clname, .skillname {
-        width:170px!important;
+        width: 170px !important;
     }
 
-    .allmeeting .candidate-details, .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details{
+    .allmeeting .candidate-details, .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details {
         width: 100% !important;
         display: inline-table;
         white-space: pre-wrap;
@@ -5260,10 +5329,11 @@ button.btn {
         .allmeeting .candidate-details div.mtop-5, .selectedmeeting .candidate-details div.mtop-5, .rejectedmeeting .candidate-details div.mtop-5 {
             line-height: 6px;
         }
-   
+
     .candidate-hr .hrname {
         width: 205px !important
     }
+
     #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
         color: red !important;
         margin-left: 0 !important;
@@ -5274,7 +5344,7 @@ button.btn {
     }
 
     .tabCon .tab-menu ul li a {
-        font-size: 11px!important;
+        font-size: 11px !important;
         padding: 10px 0px;
     }
 
@@ -5539,16 +5609,20 @@ button.btn {
         padding: 20px 10px;
         margin-bottom: 10px;
     }
+
     .single-video {
         margin-bottom: 0px !important;
     }
+
     .tabCon .tabs {
         display: none;
     }
+
     #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-        width: 350px!important;
-        height: 200px!important;
+        width: 350px !important;
+        height: 200px !important;
     }
+
     #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
         color: red !important;
         margin-left: 0 !important;
@@ -5607,8 +5681,9 @@ button.btn {
 
 @media (min-width: 768px) and (max-width: 991px) {
     .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        font-size:11px!important;
+        font-size: 11px !important;
     }
+
     .tabCon .tab_drawer_heading {
         background-color: #ececec;
         color: #5a5757cc;
@@ -5664,6 +5739,7 @@ button.btn {
     .selected-priority table.journey td.interviewdate {
         max-width: 270px;
     }
+
     #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
         position: absolute;
         left: 30px !important;
@@ -5677,7 +5753,6 @@ button.btn {
     [class^='col-md-'],
     [class^='col-lg-'] {
         margin-bottom: 10px;
-
     }
     /* LOGIN */
     .login-container {
@@ -5703,10 +5778,12 @@ button.btn {
         bottom: 735% !important;
         right: 0% !important;
     }
+
     .mc-button-area.text-left .mdc-button {
         margin-top: 2px;
         margin-bottom: 5px;
     }
+
     .tab_drawer_heading {
         background-color: #ececec;
         color: #5a5757cc;
@@ -5760,6 +5837,7 @@ button.btn {
         top: 4px;
         right: 55px !important;
     }
+
     #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
         position: absolute;
         left: 40px !important;
@@ -5776,7 +5854,7 @@ button.btn {
         width: 350px !important;
         height: 200px !important;
     }
-    
+
     .jd .skillname {
         width: 100% !important;
         text-align: center;
@@ -5785,12 +5863,15 @@ button.btn {
     .jd .card-header-buttons.action.text-right {
         text-align: center !important;
     }
-    .canvas_div_pdf .card-body{
-        padding:0px!important;
+
+    .canvas_div_pdf .card-body {
+        padding: 0px !important;
     }
+
     #tblbodyCandidate .action {
         max-width: 100% !important;
     }
+
     .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
         border: 0;
         border-radius: 30px !important;
@@ -5808,16 +5889,20 @@ button.btn {
         background: transparent;
         outline: none;
     }
+
     #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
         padding-right: 10px !important;
         padding-left: 10px !important;
     }
+
     #chardin-mask, .chardinjs-helper-layer, .chardinjs-tooltip {
         display: none !important;
     }
-    .mob_canvas-height{
-        height:400px;
+
+    .mob_canvas-height {
+        height: 400px;
     }
+
     .recommendation .multiselect.dropdown-toggle:after {
         left: 1% !important;
     }
@@ -5947,6 +6032,7 @@ button.btn {
     #scoreChart tspan {
         font-size: 11.5px;
     }
+
     .note-meeting {
         left: 7px !important;
         position: absolute;
@@ -5954,20 +6040,25 @@ button.btn {
         font-size: 15px;
         width: 100% !important;
     }
+
     .popup-text {
-        right: 60px!important;
-        top: 24px!important;
-        font-size: 16px!important;
+        right: 60px !important;
+        top: 24px !important;
+        font-size: 16px !important;
     }
+
     .single-video-left h1 .mdc-button {
         height: 30px !important;
     }
+
     .single-video-left .join-time {
         top: 8px !important;
     }
+
     .mob_canvas-height {
         height: 300px;
     }
+
     .overall-rate {
         position: absolute;
         right: 25px;
@@ -5991,13 +6082,14 @@ button.btn {
 }
 
 @media (max-width: 415px) {
-    .popup-text{
-        display:none!important;
+    .popup-text {
+        display: none !important;
     }
-   
+
     #scoreChart tspan {
         font-size: 11px;
     }
+
     h1, h2 {
         font-size: 32px;
     }
@@ -6009,6 +6101,7 @@ button.btn {
     .f1-buttons button {
         margin-bottom: 5px;
     }
+
     #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
         width: 310px !important;
         height: 180px !important;
@@ -6017,28 +6110,35 @@ button.btn {
 }
 
 @media (max-width: 360px) {
-    #scoreChart tspan{font-size:9.3px;}
+    #scoreChart tspan {
+        font-size: 9.3px;
+    }
+
     .note-meeting {
         width: 100% !important;
         top: -11px !important;
         font-size: 13px !important;
     }
+
     .single-video-left h1 .mdc-button {
-        height: 30px!important;
-       
+        height: 30px !important;
     }
+
     .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
         font-size: 11px !important;
     }
+
     #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
         padding-right: 5px !important;
         padding-left: 5px !important;
     }
+
     #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
         width: 285px !important;
         height: 160px !important;
         left: 7px !important;
     }
+
     .support {
         position: absolute;
         left: auto;
@@ -9233,19 +9333,24 @@ button.close {
 #trigger-update {
     right: 45px;
 }
+
 #meeting_filter #trigger-update {
     right: 18px;
 }
+
 #meeting_filter #search {
     right: 40px;
 }
+
 .search-field #meeting_filter #search {
     right: 60px;
 }
+
 .search-field #meeting_filter #trigger-update {
     right: 30px;
 }
-    h4 .card-title {
+
+h4 .card-title {
     margin-top: 0px;
 }
 
@@ -9271,7 +9376,7 @@ h4.card-title {
     border: 0px !important;
 }
 
-#dupmeeting_filter input[type=search], .dataTables_filter input[type=search],  #meeting_filter input[type=search],  #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search] {
+#dupmeeting_filter input[type=search], .dataTables_filter input[type=search], #meeting_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search] {
     border: 0px !important;
     padding: 9px 10px 9px 10px;
     width: 256px;
@@ -9295,7 +9400,7 @@ h4.card-title {
     border: 1px #ccc solid !important
 }*/
 
- #interviewer_filter input[type=search], #statusTable_filter input[type=search], #meeting input[type=search], #MyInterviewList_filter input[type=search], #txtmeeting_filter input[type=search],  .interview #meeting_filter input[type=search], #dupmeeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search] {
+#interviewer_filter input[type=search], #statusTable_filter input[type=search], #meeting input[type=search], #MyInterviewList_filter input[type=search], #txtmeeting_filter input[type=search], .interview #meeting_filter input[type=search], #dupmeeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search] {
     background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 75% 9px;
 }
 
@@ -9409,7 +9514,7 @@ tbody.collapse.in {
     padding-left: 35px;
 }
 
-.sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu p {
+.sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu p, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu p {
     padding-left: 60px;
 }
 
@@ -9720,20 +9825,53 @@ body .top-panel {
     border-radius: 0px 0px 48px 0px;
 }
 
-.sidebar-wrapper > .nav li > a.active-menu .shape1, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .shape1 {
-    position: absolute;
+.sidebar-wrapper > .nav li > a.active-menu .shape1, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .shape1, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .shape1 {
+    /* position: absolute;
     top: -30px;
     width: 20px;
     height: 60px;
-    right: 0px;
+    right: 0px;*/
+    position: absolute;
+    top: 9px;
+    width: 20px;
+    /* height: 60px; */
+    right: -1px;
+    /* border-right: 20px solid #47484a; */
+    content: "";
+    position: absolute;
+    top: -7px;
+    z-index: 9;
+    bottom: 0;
+    transform: rotate( 63deg );
+    height: 30px;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-bottom: transparent;
+    border-radius: 0px 0px 48px 0px;
 }
 
-.sidebar-wrapper > .nav li > a.active-menu .shape2, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .shape2 {
-    position: absolute;
+.sidebar-wrapper > .nav li > a.active-menu .shape2, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .shape2, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .shape2 {
+    /*    position: absolute;
     top: 30px;
     width: 20px;
     height: 30px;
-    right: 0px;
+    right: 0px;*/
+    position: absolute;
+    top: 24px;
+    width: 20px;
+    height: 60px;
+    right: -1px;
+    content: "";
+    position: absolute;
+    bottom: -12px;
+    z-index: 9;
+    bottom: 0;
+    transform: rotate( -59deg );
+    height: 30px;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-bottom: transparent;
+    border-radius: 0px 0px 48px 0px;
 }
 
 .sidebar-wrapper > .nav li > a.active-menu svg, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu svg {
@@ -9768,12 +9906,12 @@ body .top-panel {
     border: solid 1px #ccc !important;
     border-radius: 20px;
 }
-    
-    .searchbox .searchCon {
-        z-index: 0 !important
-    }
 
-.dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus,  #clientduser_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
+.searchbox .searchCon {
+    z-index: 0 !important
+}
+
+.dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
     width: 230px;
     background-color: #fff;
     border-color: #4a93de;
@@ -9800,10 +9938,10 @@ body .top-panel {
     padding: 10px;
 }
 
-.filavatar svg, .upload_resume svg {
-    top: 10px;
-    position: relative;
-}
+    .filavatar svg, .upload_resume svg {
+        top: 10px;
+        position: relative;
+    }
 
 .filavatar, .uploadavatar {
     width: 45px;
@@ -11012,6 +11150,7 @@ div.tagsinput {
 .popover[class*=tour-] {
     z-index: 1100;
 }
+
 .newsletter .searchbox .ref-btn {
     position: absolute;
     top: 8px;
@@ -11114,7 +11253,7 @@ div.tagsinput {
 
 .file-preview-image {
     height: 150px;
-    vertical-align:middle;
+    vertical-align: middle;
 }
 
 .file-preview-text {
@@ -11450,9 +11589,11 @@ div.tagsinput {
         right: 27px;
         top: 11px !important;
     }
+
     .single-video {
-        margin-bottom: 0px!important;
+        margin-bottom: 0px !important;
     }
+
     .overall-rate {
         position: absolute;
         right: 20px;

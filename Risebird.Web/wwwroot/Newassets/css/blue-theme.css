@@ -1,5 +1,7 @@
+/* CSS Document */
+
 body {
-    background: #f8faff!important;
+    background: #f8faff !important;
 }
 
 .main-panel {
@@ -650,9 +652,11 @@ textarea::-webkit-scrollbar-thumb {
 .theme-settings .ts-body {
     background: #1091f9 !important;
 }
+
 .mdc-fab {
-    background: #54a5f6!important;
+    background: #54a5f6 !important;
 }
+
 .image-upload label {
     background-color: #fff;
     color: #54a5f5;
@@ -730,26 +734,32 @@ table {
     background: #295994;
 }
 
-.sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .sidemenu-icon, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .sidemenu-icon {
-    background: #295994;
-    position: absolute;
-    z-index: 1000;
-    top: 8px;
-    left: 0px;
-}
-
-.sidebar-wrapper > .nav li > a.active-menu:before, .sidebar-wrapper > .nav li > a.active-menu:after {
-    border-right: 20px solid #42a5f5;
-}
-
-.sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:before, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:after {
-    border-right: 20px solid #2ca8ff;
-}
-
-.sidebar-wrapper > .nav li > a.active-menu p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+.sidebar-wrapper > .nav li > a.active-menu, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+    background-color: #fff;
     color: #173457;
-    font-weight: bolder;
+    font-weight: bolder
 }
+
+    .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .sidemenu-icon, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .sidemenu-icon {
+        background: #295994;
+        position: absolute;
+        z-index: 1000;
+        top: 8px;
+        left: 0px;
+    }
+
+    .sidebar-wrapper > .nav li > a.active-menu:before, .sidebar-wrapper > .nav li > a.active-menu:after {
+        border-right: 20px solid #42a5f5;
+    }
+
+    .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:before, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:after {
+        border-right: 20px solid #2ca8ff;
+    }
+
+    .sidebar-wrapper > .nav li > a.active-menu p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+        color: #173457;
+        font-weight: bolder;
+    }
 
 .nav > li > a.active-menu:hover {
     background-color: #fff !important;
@@ -792,6 +802,7 @@ table {
 .tab-box label.choose-file-profile {
     color: rgb(51, 51, 51) !important;
 }
+
 .send-btn {
     background: #fff;
     color: #53a4f4;
@@ -800,16 +811,19 @@ table {
     border: 1px #53a4f4 solid;
     font-weight: bold;
 }
+
 .custom-file-label::after {
     color: #fff !important;
     background-color: #bbbec0 !important;
 }
+
 .custom-file {
     height: calc(1.5em + .75rem + 1px) !important;
     margin-bottom: 0;
     z-index: 0;
     background: #ececee !important;
 }
+
 @media only screen and (max-width: 767px) {
     .razorpay_btn button.form-control {
         width: 33.3%;
