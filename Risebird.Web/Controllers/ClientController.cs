@@ -3429,6 +3429,7 @@ namespace Risebird.Web.Controllers
 
                             if (filter.StartDate != null && filter.EndDate != null)
                             {
+                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
                                 meetings = meetings.Where(t => t.dtCreatedOn >= filter.StartDate && t.dtCreatedOn <= filter.EndDate).ToList();
                             }
                             else if (filter.StartDate != null && filter.EndDate == null)
@@ -3437,6 +3438,7 @@ namespace Risebird.Web.Controllers
                             }
                             else if (filter.StartDate == null && filter.EndDate != null)
                             {
+                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
                                 meetings = meetings.Where(t => t.dtCreatedOn <= filter.EndDate).ToList();
                             }
 
@@ -3582,6 +3584,7 @@ namespace Risebird.Web.Controllers
 
                             if (filter.StartDate != null && filter.EndDate != null)
                             {
+                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
                                 meetings = meetings.Where(t => t.dtCreatedOn >= filter.StartDate && t.dtCreatedOn <= filter.EndDate).ToList();
                             }
                             else if (filter.StartDate != null && filter.EndDate == null)
@@ -3590,6 +3593,7 @@ namespace Risebird.Web.Controllers
                             }
                             else if (filter.StartDate == null && filter.EndDate != null)
                             {
+                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
                                 meetings = meetings.Where(t => t.dtCreatedOn <= filter.EndDate).ToList();
                             }
 
@@ -3663,6 +3667,7 @@ namespace Risebird.Web.Controllers
 
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
+                            filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
                             meetings = meetings.Where(t => t.dtCreatedOn >= filter.StartDate && t.dtCreatedOn <= filter.EndDate).ToList();
                         }
                         else if (filter.StartDate != null && filter.EndDate == null)
@@ -3671,6 +3676,7 @@ namespace Risebird.Web.Controllers
                         }
                         else if (filter.StartDate == null && filter.EndDate != null)
                         {
+                            filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
                             meetings = meetings.Where(t => t.dtCreatedOn <= filter.EndDate).ToList();
                         }
 
@@ -3751,6 +3757,7 @@ namespace Risebird.Web.Controllers
                         var meetings = _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
+                            filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
                             meetings = meetings.Where(t => t.dtCreatedOn >= filter.StartDate && t.dtCreatedOn <= filter.EndDate).ToList();
                         }
                         else if (filter.StartDate != null && filter.EndDate == null)
@@ -3759,6 +3766,7 @@ namespace Risebird.Web.Controllers
                         }
                         else if (filter.StartDate == null && filter.EndDate != null)
                         {
+                            filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
                             meetings = meetings.Where(t => t.dtCreatedOn <= filter.EndDate).ToList();
                         }
 

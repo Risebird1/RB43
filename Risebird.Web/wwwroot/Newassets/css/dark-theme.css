@@ -1,5 +1,7 @@
+/* CSS Document */
+
 body {
-    background: #151515!important;
+    background: #151515 !important;
     color: #9a9a9a !important
 }
 
@@ -7,25 +9,31 @@ body {
     color: #9a9a9a !important;
     background: #151515 !important;
 }
-.can-details a:hover,
- .can-details a:focus {
- color: #9a9a9a !important
-}
+
+    .can-details a:hover,
+    .can-details a:focus {
+        color: #9a9a9a !important
+    }
+
 .mdc-fab-secondary .mdc-fab__icon {
     fill: rgb(121, 115, 115) !important;
 }
+
 .rating-btn .fa-rss-square {
     font-size: 18px;
-    color: #f1eded5c!important;
+    color: #f1eded5c !important;
     padding-right: 2px;
 }
+
 .un-left strong {
     color: #b9b6b6;
 }
+
 .Fnactive-header-button {
     background-color: #ffffff !important;
     color: #000 !important;
 }
+
 table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead > th, table.journey th {
     background: transparent !important;
 }
@@ -33,9 +41,11 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
 .table-striped > tbody > tr:nth-of-type(odd) {
     background-color: transparent !important;
 }
+
 #interviewer.table.dataTable > thead > tr > th.overlay-relative {
     color: #fff !important
 }
+
 td.detail-row {
     background-color: #2f2e2e;
 }
@@ -499,19 +509,22 @@ table {
     border-radius: 10px;
     background: #000 url(../../Newassets/img/refresh.png) 1px no-repeat;
 }
+
 .spinner, .spinner .button {
     background: #181818;
 }
+
 .table-bordered.interviewertable th, .table-bordered th, .table-bordered.journey th {
-    background:transparent!important;
+    background: transparent !important;
     border: 0px !important;
 }
+
 .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
     border-bottom: 2px #121212 solid !important;
 }
 
-.mdc-card button.dropdown-toggle:focus #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover{
-border-bottom: 2px #121212 solid !important;
+.mdc-card button.dropdown-toggle:focus #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
+    border-bottom: 2px #121212 solid !important;
 }
 
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
@@ -645,10 +658,14 @@ select * {
     background: #121212;
     color: #9a9a9a;
 }
-    .table-bordered th:last-child{border:0px!important}
-    div.dataTables_wrapper div.dataTables_info {
-        color: #f7eaea75;
+
+    .table-bordered th:last-child {
+        border: 0px !important
     }
+
+div.dataTables_wrapper div.dataTables_info {
+    color: #f7eaea75;
+}
 
 #supportList_filter input[type=search] {
     background: #000 url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center !important;
@@ -692,9 +709,11 @@ select * {
     font-weight: bold;
     color: #969494;
 }
+
 .availbg {
     background: #131313;
 }
+
 .sb-scrollbar:hover {
     background: rgb(115 115 115 / 50%);
 }
@@ -733,9 +752,11 @@ select * {
 .interviewer .multiselect {
     background: #181818 !important;
 }
+
 .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa, .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
     color: #fff;
 }
+
 #candidateStatusModal .file-upload-wrapper:before {
     background: #353434;
 }
@@ -750,6 +771,7 @@ select * {
     color: #ada2a2f2;
     border: 1px #181818 solid;
 }
+
 .talk-bubble {
     background-color: #181818;
     border: 1px #77737359 solid !important;
@@ -775,12 +797,15 @@ select * {
 .special-text svg {
     fill: rgb(119, 115, 115) !important;
 }
+
 .un-left {
     background: #252424;
 }
+
 table.bod {
     border: 0px !important;
 }
+
 .public-share {
     background-image: url('../../img/share-3g.png') !important;
     color: #a9a5a5 !important;
@@ -912,30 +937,21 @@ input[type="radio"]:checked {
     border-left: 8px solid transparent !important;
 }
 
-.jd-title [data-tooltip]:after {
-    border-right: 5px solid white !important;
-    border-left: 5px solid white !important;
-}
-.sidebar-wrapper > .nav li > a.active-menu .shape1, .sidebar-wrapper > .nav li > a.active-menu .shape2 {
-    background: #fff;
-}
-
-.sidebar-wrapper > .nav li > a.active-menu:before, .sidebar-wrapper > .nav li > a.active-menu:after {
-    border-right: 20px solid #000000;
-}
-.nav > li > a.active-menu:hover {
-    background-color: #fff !important;
-}
-.sidebar-wrapper > .nav li > a.active-menu .sidemenu-icon {
-    background: #000;
-}
-
-.sidebar-wrapper > .nav li > a.active-menu p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+.sidebar-wrapper > .nav li > a.active-menu p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
     color: #000;
     font-weight: bolder;
 }
-.sidebar-wrapper > .nav li > a.active-menu, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
-    background-color: #fff!important;
+
+.sidebar-wrapper > .nav li > a.active-menu .sidemenu-icon, .sidebar-wrapper > .nav li > label.active-menu .sidemenu-icon {
+    background: #000;
+}
+
+.sidebar-wrapper > .nav li > a.active-menu .shape1, .sidebar-wrapper > .nav li > a.active-menu .shape2, .sidebar-wrapper > .nav li > label.active-menu .shape1, .sidebar-wrapper > .nav li > label.active-menu .shape2 {
+    background: rgb(255, 255, 255);
+}
+
+.sidebar-wrapper > .nav li > a.active-menu, .sidebar-wrapper > .nav li > label.active-menu, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+    background-color: #fff !important;
 }
 
     .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .sidemenu-icon, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .sidemenu-icon {
@@ -945,6 +961,45 @@ input[type="radio"]:checked {
         top: 8px;
         left: 0px;
     }
+
+.jd-title [data-tooltip]:after {
+    border-right: 5px solid white !important;
+    border-left: 5px solid white !important;
+}
+
+.sidebar-wrapper > .nav li > a.active-menu .shape1, .sidebar-wrapper > .nav li > a.active-menu .shape2 {
+    background: #fff;
+}
+
+.sidebar-wrapper > .nav li > a.active-menu:before, .sidebar-wrapper > .nav li > a.active-menu:after {
+    border-right: 20px solid #000000;
+}
+
+.nav > li > a.active-menu:hover {
+    background-color: #fff !important;
+}
+
+.sidebar-wrapper > .nav li > a.active-menu .sidemenu-icon {
+    background: #000;
+}
+
+.sidebar-wrapper > .nav li > a.active-menu p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+    color: #000;
+    font-weight: bolder;
+}
+
+.sidebar-wrapper > .nav li > a.active-menu, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+    background-color: #fff !important;
+}
+
+    .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .sidemenu-icon, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .sidemenu-icon {
+        background: #000;
+        position: absolute;
+        z-index: 1000;
+        top: 8px;
+        left: 0px;
+    }
+
 .alert.alert-info {
     background-color: #504c4c;
 }
@@ -955,6 +1010,7 @@ input[type="radio"]:checked {
     background: none;
     color: #716f6f;
 }
+
     .tab-menu ul li a.active {
         background: #1a1a1a;
         color: #fff;
@@ -964,11 +1020,13 @@ input[type="radio"]:checked {
 .tab-menu ul li .skillcount {
     background: #dadcde1f
 }
-        .tab-menu ul li a.active ~ .skillcount {
-            right: -9px !important;
-            background: #0e0e0d;
-            color: #fff;
-        }
+
+.tab-menu ul li a.active ~ .skillcount {
+    right: -9px !important;
+    background: #0e0e0d;
+    color: #fff;
+}
+
 table {
     border: 1px #cccccc85 solid !important;
 }
@@ -978,20 +1036,29 @@ table {
     color: #9A9A9A !important;
     border-bottom: 0px !important;
 }
+
 .tab-main-box {
     background: #1b1a1a;
 }
 
 
-.info-text{color:#fff}
+.info-text {
+    color: #fff
+}
+
 .avatar-upload .avatar-preview {
     border: 6px solid #c5c5c542;
 }
-.tab-box label.choose-file-profile{color:#fff!important;}
-.d_active {
-    background-color: #969595!important;
-    color: #fff!important;
+
+.tab-box label.choose-file-profile {
+    color: #fff !important;
 }
+
+.d_active {
+    background-color: #969595 !important;
+    color: #fff !important;
+}
+
 .user-menu .fa-user-circle-o:before, .user-menu .fa-sign-out:before, .user-menu .fa-cog:before {
     color: #655959;
 }
@@ -1015,6 +1082,7 @@ table {
 .user-menu {
     border: 2px #969595 solid;
 }
+
 .send-btn {
     background: #fff;
     color: #000;
@@ -1023,16 +1091,19 @@ table {
     border: 1px #000 solid;
     font-weight: bold;
 }
+
 .custom-file-label::after {
     color: #fff !important;
-    background-color: #100e0e!important;
+    background-color: #100e0e !important;
 }
+
 .custom-file {
     height: calc(1.5em + .75rem + 1px) !important;
     margin-bottom: 0;
     z-index: 0;
     background: #181818 !important;
 }
+
 @media screen and (max-width: 768px) {
     .d_active {
         background-color: #1a1a1a !important;
@@ -1367,7 +1438,7 @@ table.dataTable thead .sorting:after {
 }
 
 #myForm .searchbox .input-group-btn {
-   /* border: 1px #524c4cab solid;*/
+    /* border: 1px #524c4cab solid;*/
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
 }
@@ -1461,6 +1532,7 @@ table {
     background: #f5f5f5 url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
 }
+
 .sharetr {
     background: #101010;
     padding: 5px;
@@ -1487,17 +1559,21 @@ table {
     padding: 10px !important;
     color: #9A9A9A !important;
 }
+
 .interviewDate [type="datetime-local"] {
     background-size: 3% !important;
 }
+
 [type="date"].form-control {
     background: #181818 url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
 }
+
 .dob [type="date"] {
     background: #181818 url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 4.2% !important;
 }
+
 [type="datetime-local"] {
     background: #181818 url(../img/dark-timdate.png) 94% 50% no-repeat !important;
     background-size: 5% !important;
@@ -1520,8 +1596,8 @@ table {
     border-bottom: 2px #121212 solid !important;
 }
 
-.mdc-card button.dropdown-toggle:focus #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover{
-border-bottom: 2px #121212 solid !important;
+.mdc-card button.dropdown-toggle:focus #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
+    border-bottom: 2px #121212 solid !important;
 }
 
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
@@ -1541,9 +1617,11 @@ border-bottom: 2px #121212 solid !important;
     background: #181818;
     color: #9A9A9A !important;
 }
+
 .tabCon .form-group .select-css.form-control {
-    background: #0e0a0a!important;
+    background: #0e0a0a !important;
 }
+
 .card-blue .card-header h6 {
     color: #a9a5a5 !important;
     font-weight: normal !important;
@@ -1582,12 +1660,13 @@ border-bottom: 2px #121212 solid !important;
 
 .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
     background-color: #181818 !important;
-
 }
+
 .radiobox {
     background: #181818;
 }
-    #ProctoringTable .label-type {
+
+#ProctoringTable .label-type {
     background: #181818 !important;
     color: #9A9A9A !important;
 }
@@ -1603,11 +1682,13 @@ select * {
 }
 
 .text-areadiv textarea {
-    background: #181818!important;
+    background: #181818 !important;
 }
+
 .ref-btn {
-background:#fff;
+    background: #fff;
 }
+
 .border-db {
     border-right: 1px #77737359 solid !important
 }
@@ -1655,7 +1736,6 @@ background:#fff;
 }
 
 .table-bordered th {
-  
     background: #121212;
     color: #9a9a9a;
 }
@@ -1906,6 +1986,7 @@ div.dataTables_wrapper div.dataTables_info {
 .theme-settings .ts-body {
     background: #1a1a1a;
 }
+
 .image-upload label {
     background-color: #fff;
     color: #54a5f5;
@@ -1916,6 +1997,7 @@ div.dataTables_wrapper div.dataTables_info {
     margin: 5px 5px;
     border: 1px #000 solid;
 }
+
 .chat {
     background: #000000 !important;
 }

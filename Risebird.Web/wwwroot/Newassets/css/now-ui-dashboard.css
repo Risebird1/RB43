@@ -1,5 +1,7 @@
 /* CSS Document */
 
+/* CSS Document */
+
 /*!
 
  =========================================================
@@ -2312,10 +2314,12 @@ body {
     -ms-transition: all 300ms ease 0s;
     transition: all 300ms ease 0s;
 }
+
 .sidebar .nav .fa-home:before {
     content: "\f015";
     font-size: 21px !important;
 }
+
 .sidebar .nav .fa-cogs:before {
     content: "\f085";
     font-size: 17px !important;
@@ -2325,55 +2329,69 @@ body {
     content: "\f1c8";
     font-size: 17px !important;
 }
+
 .sidebar .nav .fa-chart-line:before {
     content: "\f201";
     font-size: 17px !important;
 }
+
 .sidebar .nav .fa-user-o:before {
     content: "\f2c0";
     font-size: 16px;
 }
+
 .sidebar .nav .fa-calendar-check-o:before {
     content: "\f274";
     font-size: 17px;
 }
+
 .sidebar .nav .fa-th-list:before {
     content: "\f00b";
     font-size: 17px;
 }
+
 .sidebar .nav .fa-users:before {
     content: "\f0c0";
     font-size: 17px;
 }
+
 .sidebar .nav .fa-user-cog:before {
     content: "\f4fe";
-    font-size: 17px;color:#fff;
+    font-size: 17px;
+    color: #fff;
 }
+
 .sidebar .nav .fa-envelope:before {
     content: "\f0e0";
     font-size: 17px;
 }
+
 .sidebar .nav .fa-calendar-alt:before {
     content: "\f073";
     font-size: 16px;
 }
+
 .sidebar .nav .fa-handshake-o:before {
     content: "\f2b5";
     font-size: 18px;
 }
+
 .sidebar .nav .fa-user-circle:before {
     content: "\f2bd";
     font-size: 18px;
 }
+
 .sidebar .nav .fa-user-plus:before {
     content: "\f234";
     font-size: 18px;
 }
+
 .sidebar .nav .fa-user-tie:before {
     content: "\f508";
     color: #fff;
     font-size: 17px;
 }
+
 .sidebar .nav a i {
     font-family: FontAwesome;
     color: #fff;
@@ -3124,7 +3142,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
         background-color: #ffbc50;
     }
 
-  
+
 
     .alert.alert-primary {
         background-color: #fa764b;
@@ -3907,13 +3925,14 @@ Created using IcoMoon - icomoon.io
     min-height: .01%;
     padding-bottom: 10px;
 }
+
     .table-responsive .table {
         margin-bottom: 0rem;
     }
 
-    #myCallModal {
-        z-index: 1000;
-    }
+#myCallModal {
+    z-index: 1000;
+}
 
 
 
@@ -6807,8 +6826,8 @@ Created using IcoMoon - icomoon.io
         display: block;
         padding: 0 0 0 0px;
     }
-    
-        .sidebar .nav .caret, .off-canvas-sidebar .nav .caret {
+
+    .sidebar .nav .caret, .off-canvas-sidebar .nav .caret {
         top: 14px;
         position: absolute;
         right: 10px;
@@ -6931,6 +6950,7 @@ Created using IcoMoon - icomoon.io
         font-size: 10.5px;
         text-align: left;
         white-space: nowrap;
+        padding-left: 55px;
     }
 
     .sidebar .nav i,
@@ -7298,6 +7318,7 @@ input.theatre-btn:focus {
         min-height: .01%;
         /*padding-bottom: 10px;*/
     }
+
     .sidebar-mini .sidebar .sidebar-wrapper > .nav [data-toggle="collapse"] ~ div > ul > li > a .sidebar-normal, .sidebar-mini .sidebar .sidebar-wrapper .user .info [data-toggle="collapse"] ~ div > ul > li > a .sidebar-normal, .sidebar-mini .sidebar .sidebar-wrapper .user .info > a > span, .sidebar-mini .sidebar .sidebar-wrapper > .nav li > a p {
         opacity: 1 !important;
     }
@@ -7419,12 +7440,13 @@ input.theatre-btn:focus {
             transform: translate3d(-25px, 0, 0);
             opacity: 0;
         }
+
         .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:before, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:before {
-            opacity: 1;
+            /*     opacity: 1;*/
         }
 
         .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label:before, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label:before {
-            opacity:0;
+            opacity: 0;
         }
 
         .sidebar-mini .sidebar:hover {
@@ -7470,7 +7492,7 @@ input.theatre-btn:focus {
                     opacity: 1;
                 }
 
-                .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label:before, .sidebar:hover .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label:before {
+                .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label:before /*, .sidebar:hover .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label:before*/ {
                     -webkit-transform: translate3d(0px, 0, 0);
                     -moz-transform: translate3d(0px, 0, 0);
                     -o-transform: translate3d(0px, 0, 0);
@@ -9468,14 +9490,13 @@ Copyright (c) 2015 Daniel Eden
 }
 
 .ps:hover > .ps__rail-y,
-
 .ps--focus > .ps__rail-y,
-
 .ps--scrolling-x > .ps__rail-y {
     opacity: 0.6;
 }
-    .ps:hover > .ps__rail-x, .ps--focus > .ps__rail-x, .ps--scrolling-x > .ps__rail-x{
-    display:none;
+
+.ps:hover > .ps__rail-x, .ps--focus > .ps__rail-x, .ps--scrolling-x > .ps__rail-x {
+    display: none;
 }
 
 .ps .ps__rail-x:hover,
@@ -11382,7 +11403,7 @@ div.dataTables_wrapper div.dataTables_filter {
         font-weight: normal;
         white-space: nowrap;
         text-align: left;
-        position:relative;
+        position: relative;
     }
 
     div.dataTables_wrapper div.dataTables_filter input {
@@ -11528,7 +11549,7 @@ div.dataTables_scrollFoot table {
 
     .table-responsive {
         width: 100%;
-       /* margin-bottom: 15px;*/
+        /* margin-bottom: 15px;*/
         overflow-y: hidden;
         -ms-overflow-style: -ms-autohiding-scrollbar;
         /*border: 1px solid #ddd;*/

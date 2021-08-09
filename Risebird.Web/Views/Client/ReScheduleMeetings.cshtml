@@ -29,7 +29,6 @@
 </script>
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=1234" />
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
 
@@ -171,8 +170,7 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div id="notschedule_table" data-intro="<span style='font-size:16px;'>Overview the summary of Not Scheduled Meeting details:</span><hr class='btop' />1. Jd Title<br/> 2. Candidate Details (Name, Email, Skill Channel Id) <br/> 3. Resume <br/>4. Client HR  <br/>5. Click on Send Invite button to Send Invite &  Call button to Call the Candidate.<br/><a href='/Candidate/CandidateTimeline' class='btn btn-primary ntschnext-btn'>NEXT</a>" data-position="top">
+                            <div id="notschedule_table" data-intro="<span style='font-size:16px;'>Overview the summary of ReScheduled Meeting details:</span><hr class='btop' />1. Jd Title<br/> 2. Candidate Details (Name, Email, Skill Channel Id) <br/> 3. Resume <br/>4. Client HR  <br/>5. Click on Schedule Meeting button to schedule meeting & Call button to Call the Candidate.<br/><a href='/CommonPool/Index' class='btn btn-primary ntschnext-btn'>NEXT</a>" data-position="top">
                                 <div class="dataloading">
                                     <div class="toolbar">
                                         <div id="tableID">
@@ -205,12 +203,7 @@
                                                                     </tr>
                                                                 </tfoot>
                                                                 <tbody>
-                                                                    @if (Model.Count() == 0)
-                                                                    {
-                                                                        <tr>
-                                                                            <td colspan="5" class="text-center">No data available in table</td>
-                                                                        </tr>
-                                                                    }
+
                                                                     @foreach (var item in Model)
                                                                     {
                                                                         <tr data-changes="1">
@@ -640,6 +633,23 @@
         modal.style.display = "none";
     }
 </script>
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
+{
+    @if (HttpContextAccessor.HttpContext.Session.GetString("NReschedule") != null)
+    {
+
+    }
+    else
+    {
+        <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="~/Newassets/js/chardinjs.js"></script>
+        <script src="~/Newassets/js/demo.js"></script>
+        HttpContextAccessor.HttpContext.Session.SetString("NReschedule", "1");
+
+    }
+
+
+}
 
 <loading></loading>
 

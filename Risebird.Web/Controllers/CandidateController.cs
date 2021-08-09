@@ -1104,7 +1104,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("GetCandidates", new { id = irfId, irfName = irfName });
             }
         }
-
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Add(Candidate model)
@@ -1208,6 +1207,14 @@ namespace Risebird.Web.Controllers
 
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
                     {
+                        if (!string.IsNullOrEmpty(model.EmailId))
+                        {
+                            model.EmailId = model.EmailId.ToLower();
+                        }
+                        if (!string.IsNullOrEmpty(model.ClientHRAttemptContact))
+                        {
+                            model.ClientHRAttemptContact = model.ClientHRAttemptContact.ToLower();
+                        }
                         if (await _irfService.UpdateCandidate(model, emailid))
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Candidate updated successfully!";
@@ -2733,6 +2740,7 @@ namespace Risebird.Web.Controllers
                     model.Profile = profileName;
 
                     return PartialView("StatusListPartial", model);
+
 
                 }
                 else
