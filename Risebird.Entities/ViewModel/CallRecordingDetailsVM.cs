@@ -20,5 +20,6 @@ namespace Risebird.Entities.ViewModel
         public string ClientName { get; set; }
         public DateTime CalledOn { get; set; }
         public string WhoCalled { get; set; }
+        public string ClientHr { get; set; }
     }
 }

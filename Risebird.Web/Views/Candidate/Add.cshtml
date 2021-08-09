@@ -82,7 +82,7 @@
 
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.AvailableFreeLancing, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.LabelFor(model => model.AvailableFreeLancing, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="margin-left:5px;" })
                                         @Html.CheckBoxFor(m => m.AvailableFreeLancing, new { @style = "position:relative;top:-24px;" })
                                         @*<div class="mdc-checkbox__background">
                                                 <svg class="mdc-checkbox__checkmark"
@@ -134,7 +134,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.AvailableFullTime, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.LabelFor(model => model.AvailableFullTime, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-left:8px;" })
                                         @Html.CheckBoxFor(m => m.AvailableFullTime, new { @style = "position:relative;top:-24px;" })
                                         @*<div class="mdc-checkbox__background">
                                                 <svg class="mdc-checkbox__checkmark"

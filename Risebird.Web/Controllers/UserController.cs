@@ -114,7 +114,10 @@ namespace Risebird.Web.Controllers
                         user.FirstName = user.FirstName.Trim();
                         user.LastName = user.LastName.Trim();
                         user.EmailId = user.EmailId.Trim();
-                        user.EmailId = user.EmailId.ToLower();
+                        if (!string.IsNullOrEmpty(user.EmailId))
+                        {
+                            user.EmailId = user.EmailId.ToLower();
+                        }
                         if (_userService.AddUser(user))
                         {
                             TempData["SuccessErrorMessageUser"] = "User is added Successfully";
@@ -199,7 +202,10 @@ namespace Risebird.Web.Controllers
                         user.FirstName = user.FirstName.Trim();
                         user.LastName = user.LastName.Trim();
                         user.EmailId = user.EmailId.Trim();
-                        user.EmailId = user.EmailId.ToLower();
+                        if (!string.IsNullOrEmpty(user.EmailId))
+                        {
+                            user.EmailId = user.EmailId.ToLower();
+                        }
                         if (_userService.UpdateUser(user))
                         {
                             TempData["SuccessErrorMessageUser"] = "User is updated Successfully";
@@ -692,7 +698,10 @@ namespace Risebird.Web.Controllers
                         interviewer.ResumeLink = uploadedFileURL;
                         List<String> selectedSkill = skills.Where(x => interviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
                         interviewer.PrimarySkill = String.Join(",", selectedSkill);
-                        interviewer.EmailId = interviewer.EmailId.Trim().ToLower();
+                        if (!string.IsNullOrEmpty(interviewer.EmailId))
+                        {
+                            interviewer.EmailId = interviewer.EmailId.Trim().ToLower();
+                        }
                         if (_userService.AddInterviewer(interviewer))
                         {
                             TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
@@ -825,7 +834,10 @@ namespace Risebird.Web.Controllers
                         }
                     }
 
-                    interviewer.EmailId = interviewer.EmailId.ToLower();
+                    if (!string.IsNullOrEmpty(interviewer.EmailId))
+                    {
+                        interviewer.EmailId = interviewer.EmailId.Trim().ToLower();
+                    }
 
                     if (_userService.UpdateInterviewer(interviewer))
                     {
@@ -1082,7 +1094,9 @@ namespace Risebird.Web.Controllers
                         qcinterviewer.ResumeLink = uploadedFileURL;
                         List<String> selectedSkill = skills.Where(x => qcinterviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
                         qcinterviewer.PrimarySkill = String.Join(",", selectedSkill);
+
                         qcinterviewer.EmailId = qcinterviewer.EmailId.ToLower();
+
                         if (_userService.AddQCInterviewer(qcinterviewer))
                         {
                             TempData["SuccessErrorMessageInterviewer"] = "QC Interviewer is added Successfully";
@@ -1185,7 +1199,10 @@ namespace Risebird.Web.Controllers
                             return View("QCInterviewerUpdate", model);
                         }
 
-                        qcInterviewer.EmailId = qcInterviewer.EmailId.ToLower();
+                        if (!string.IsNullOrEmpty(qcInterviewer.EmailId))
+                        {
+                            qcInterviewer.EmailId = qcInterviewer.EmailId.ToLower();
+                        }
 
                         if (_userService.UpdateQCInterviewer(qcInterviewer))
                         {

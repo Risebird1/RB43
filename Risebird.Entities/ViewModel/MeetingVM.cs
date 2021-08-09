@@ -263,6 +263,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Channel Owner")]
         public string ChannelOwner { get; set; }
+        public string CalendlyLink { get; set; }
     }
     public class VedioComments
     {
