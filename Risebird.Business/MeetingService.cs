@@ -555,11 +555,11 @@ namespace Risebird.Business
                     {
                         if (summary.Length > 0)
                         {
-                            summary.Append("; Interviewer changed");
+                            summary.Append("; Interviewer changed from " + meetingToUpdate.OldInterviewer + " to " + meetingToUpdate.interviewer);
                         }
                         else
                         {
-                            summary.Append("Interviewer changed");
+                            summary.Append("Interviewer changed from " + meetingToUpdate.OldInterviewer + " to " + meetingToUpdate.interviewer);
                         }
                     }
                     if (meetingToUpdate.OldIRFId != meetingToUpdate.IRFId)
@@ -974,6 +974,18 @@ namespace Risebird.Business
                 var result = _meetingRespository.UpdateComments(comments).Result;
                 if (result && comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Passed && (comments.OldQCStatus == null || comments.OldQCStatus != (int)QCStatus.Passed))
                 {
+                    //add to activity tracker
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.QCPassed;
+                    activityTrackerModel.Particulars = "QC Passed for: " + comments.candidateEmail + " dated " + comments.interviewDate.ToString();
+                    activityTrackerModel.PerformedBy = performedBy;
+
+                    activityTrackerModel.Summary = "QC Passed";
+                    //activityTrackerModel.ResourceUrl = meetingToUpdate.ResourceUrl;
+
+                    var activityUpdate = _activityTrackerRepository.AddActivity(activityTrackerModel).Result;
+
+
                     //add candidate status
                     _irfRepository.AddQCCandidateStatus(comments.InterviewId, performedBy);
 
