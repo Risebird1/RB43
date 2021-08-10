@@ -555,11 +555,26 @@ namespace Risebird.Business
                     {
                         if (summary.Length > 0)
                         {
-                            summary.Append("; Interviewer changed from " + meetingToUpdate.OldInterviewer + " to " + meetingToUpdate.interviewer);
+                            if(!string.IsNullOrEmpty(meetingToUpdate.OldInterviewer))
+                            {
+                                summary.Append("; Interviewer changed from " + meetingToUpdate.OldInterviewer + " to " + meetingToUpdate.interviewer);
+                            }
+                            else
+                            {
+                                summary.Append("; Interviewer assigned (" + meetingToUpdate.interviewer + ")");
+
+                            }
                         }
                         else
                         {
-                            summary.Append("Interviewer changed from " + meetingToUpdate.OldInterviewer + " to " + meetingToUpdate.interviewer);
+                            if (!string.IsNullOrEmpty(meetingToUpdate.OldInterviewer))
+                            {
+                                summary.Append("Interviewer assigned (" + meetingToUpdate.interviewer + ")");
+                            }
+                            else
+                            {
+                                summary.Append("Interviewer changed from " + meetingToUpdate.OldInterviewer + " to " + meetingToUpdate.interviewer);
+                            }
                         }
                     }
                     if (meetingToUpdate.OldIRFId != meetingToUpdate.IRFId)
