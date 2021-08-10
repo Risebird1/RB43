@@ -167,7 +167,10 @@ namespace Risebird.Repository
             var parameters = new DynamicParameters();
 
             if (entity.Id > 0)
+            {
                 parameters.Add("@id", entity.Id);
+                parameters.Add("@IsActive", entity.IsActive);
+            }
             //if (entity.IdProfile.HasValue)
 
             parameters.Add("@selectedProfileId", entity.IdProfile);
@@ -176,7 +179,7 @@ namespace Risebird.Repository
             parameters.Add("@userEmailId", entity.EmailId);
             parameters.Add("@userMobileNumber", entity.MobileNumber);
             parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
-            parameters.Add("@IsActive", entity.IsActive);
+
             return parameters;
         }
 

@@ -240,6 +240,7 @@
                                     </div>
                                     <div class="video-block section-padding" id="VideoList">
                                         <div id="risetube_video">
+                                            <input id="risetube_count" type="hidden" value="@Model.Count()" />
                                             <div class="row">
                                                 @foreach (var item in Model)
                                                 {
@@ -309,21 +310,21 @@
                                                                     { <span></span>}
 
 
-                                                        @if (item.MobileNumber != null && !(ViewBag.Profile == "CuratedUser"))
-                                                        {
-                                                            <span>
-                                                                <button class="call-btn" aria-label="Call">
-                                                                    <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber','@item.imid')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                </button>
-                                                            </span>
-                                                        }
-                                                        else if (@item.CostEstimate != null)
-                                                        {
-                                                            <div class="video-info nopad pull-right">
-                                                                <span>Matching Fee:</span> @if (@item.CostEstimate.Length > 10)
-                                                                {
-                                                                    <a href="#" data-tooltip="@item.CostEstimate"> <span class="expected-salari">@item.CostEstimate</span></a>
-                                                                }
+                                                                    @if (item.MobileNumber != null && !(ViewBag.Profile == "CuratedUser"))
+                                                                    {
+                                                                        <span>
+                                                                            <button class="call-btn" aria-label="Call">
+                                                                                <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber','@item.imid')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                            </button>
+                                                                        </span>
+                                                                    }
+                                                                    else if (@item.CostEstimate != null)
+                                                                    {
+                                                                        <div class="video-info nopad pull-right">
+                                                                            <span>Matching Fee:</span> @if (@item.CostEstimate.Length > 10)
+                                                                            {
+                                                                                <a href="#" data-tooltip="@item.CostEstimate"> <span class="expected-salari">@item.CostEstimate</span></a>
+                                                                            }
 
                                                                             else
                                                                             {
@@ -1474,9 +1475,12 @@
 </script>
 <script>
     $(document).ready(function () {
-        $('#risetube_video .row .col-xl-3')[0].setAttribute('data-intro', '<span style="font-size:16px;">Video showing Candidate details:</span><hr class="btop"/>1. Candidate Name <br/> 2. JD Title <br/> 3. Star button to Rate the Interviewer  <br/> 4. Call button to Call the Candidate <br/> 5.Tech Skill Score <br/> 6. Status (Selected, Borderline)');
-        $('#risetube_video .row .col-xl-3')[0].setAttribute('data-position', 'right');
+        if (parseInt($('#risetube_count').val()) > 0) {
+            $('#risetube_video .row .col-xl-3')[0].setAttribute('data-intro', '<span style="font-size:16px;">Video showing Candidate details:</span><hr class="btop"/>1. Candidate Name <br/> 2. JD Title <br/> 3. Star button to Rate the Interviewer  <br/> 4. Call button to Call the Candidate <br/> 5.Tech Skill Score <br/> 6. Status (Selected, Borderline)');
+            $('#risetube_video .row .col-xl-3')[0].setAttribute('data-position', 'right');
+        };
     });
+
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
 {

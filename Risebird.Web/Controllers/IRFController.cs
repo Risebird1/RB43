@@ -693,12 +693,12 @@ namespace Risebird.Web.Controllers
                     model.InterviewerId = IntrviewerId;
 
                 }
-                if(templateId !=null && templateId!=0)
+                if (templateId != null && templateId != 0)
                 {
                     var templateDetails = await _templateService.GetTemplateById(templateId.Value);
                     model.TemplateId = templateId.Value;
                     model.AssessmentGroupId = templateDetails.AssessmentGroupId.Value.ToString();
-                    foreach (var templateInterviewer in templateDetails.InterviewerCollection?.Where(x=>x.IsSelected))
+                    foreach (var templateInterviewer in templateDetails.InterviewerCollection?.Where(x => x.IsSelected))
                     {
                         model.InterviewerCollection.Add(new TransInterviewer { UserId = templateInterviewer.UserId.Value, InterviewerId = templateInterviewer.InterviewerId, PrimarySkill = templateInterviewer.PrimarySkill });
                         model.EmergencyInterviewerCollection.Add(new TransEmergencyInterviewer { UserId = templateInterviewer.UserId.Value, InterviewerId = templateInterviewer.InterviewerId, PrimarySkill = templateInterviewer.PrimarySkill });
@@ -706,7 +706,7 @@ namespace Risebird.Web.Controllers
                     }
                     foreach (var techSkill in templateDetails.TechSkillCollection?.Where(x => x.IsSelected))
                     {
-                        model.SkillCollection.Add(new TransSkill { LevelId = techSkill.LevelId.Value, SkillId = techSkill.SkillId.Value, Weightage = techSkill.Weightage.Value});
+                        model.SkillCollection.Add(new TransSkill { LevelId = techSkill.LevelId.Value, SkillId = techSkill.SkillId.Value, Weightage = techSkill.Weightage.Value });
                     }
                 }
                 SetAddIRFProperties(model);
@@ -2815,10 +2815,11 @@ namespace Risebird.Web.Controllers
         //}
 
 
-        public IActionResult ShowCalendly(string irfName, string calendlyLink)
+        public IActionResult ShowCalendly(string irfName, string calendlyLink, int type)
         {
             ViewBag.IRFName = irfName;
             ViewBag.CalendlyLink = calendlyLink;
+            ViewBag.Pagetype = type;
             return View();
         }
 

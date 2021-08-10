@@ -212,8 +212,8 @@ body {
     font-size: 12px !important;
     background-color: #42A5F6 !important;
     position: absolute !important;
-    bottom: 444px !important;
-    right: -280% !important;
+    bottom: 62px !important;
+    right: -48% !important;
 }
 
 .risetubenext-btn {
@@ -4872,6 +4872,7 @@ button.btn {
 .notschedulemeeting #search, .survey #search, .candidate-timeline #search, .resume #search, .unassigned-int #search {
     right: 65px;
     top: 13px;
+    z-index: 0;
 }
 
 .notschedulemeeting #trigger-update, .survey #trigger-update, .candidate-timeline #trigger-update, .resume #trigger-update, .unassigned-int #trigger-update {
@@ -4976,8 +4977,8 @@ button.btn {
     }
 
     .skillnext-btn {
-        bottom: 446px !important;
-        right: -440% !important;
+        bottom: 62px !important;
+        right: -48% !important;
     }
 
     .risetubenext-btn {
@@ -4991,7 +4992,7 @@ button.btn {
     }
 
     .ntschnext-btn {
-        bottom: 93px !important;
+        bottom: 130px !important;
         right: -655% !important;
     }
 
@@ -5088,7 +5089,10 @@ button.btn {
     .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
         width: 30%
     }
-
+    [data-id="candidatetimeline"] .allmeetingnext-btn {
+        right: -458% !important;
+        bottom: 138px !important;
+    }
     .candidate-hr .hrname {
         width: 250px !important
     }
@@ -5127,7 +5131,10 @@ button.btn {
     .selectedmeeting .candidate-details {
         width: 30%
     }
-
+    .skillnext-btn {
+        bottom: 66px !important;
+        right: -70% !important;
+    }
     .cjd {
         width: 100px;
         white-space: nowrap;

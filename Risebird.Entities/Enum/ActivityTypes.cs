@@ -21,5 +21,8 @@ namespace Risebird.Entities.Enum
 
         [Description("Update Candidate Feedback")]
         UpdateCandidateFeedback = 6,
+
+        [Description("QC Passed")]
+        QCPassed = 7
     }
 }

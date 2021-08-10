@@ -30,6 +30,8 @@
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                 @Html.HiddenFor(model => model.InterviewId)
                                 @Html.HiddenFor(model => model.OldQCStatus)
+                                @Html.HiddenFor(model => model.candidateEmail)
+                                @Html.HiddenFor(model => model.interviewDate)
                                 <div class="interviewr-cmt">
                                     <div class="row">
 
