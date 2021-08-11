@@ -41,7 +41,9 @@ namespace Risebird.Web.Controllers
         private readonly ICandidateService _candidateService;
         private IInterviewerService _interviewerService;
         private readonly INotificationHelper _notificationHelper;
-        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper)
+        private readonly ITemplateService _templateService;
+
+        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -56,6 +58,7 @@ namespace Risebird.Web.Controllers
             _candidateService = candidateService;
             _interviewerService = interviewerService;
             _notificationHelper = notificationHelper;
+            _templateService = templateService;
         }
 
 
@@ -680,7 +683,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult Add(string IntrviewerId)
+        public async Task<IActionResult> Add(string IntrviewerId, int? templateId = null)
         {
             if (HttpContext.Session.GetString("email") != null)
             {
@@ -689,6 +692,22 @@ namespace Risebird.Web.Controllers
                 {
                     model.InterviewerId = IntrviewerId;
 
+                }
+                if (templateId != null && templateId != 0)
+                {
+                    var templateDetails = await _templateService.GetTemplateById(templateId.Value);
+                    model.TemplateId = templateId.Value;
+                    model.AssessmentGroupId = templateDetails.AssessmentGroupId.Value.ToString();
+                    foreach (var templateInterviewer in templateDetails.InterviewerCollection?.Where(x => x.IsSelected))
+                    {
+                        model.InterviewerCollection.Add(new TransInterviewer { UserId = templateInterviewer.UserId.Value, InterviewerId = templateInterviewer.InterviewerId, PrimarySkill = templateInterviewer.PrimarySkill });
+                        model.EmergencyInterviewerCollection.Add(new TransEmergencyInterviewer { UserId = templateInterviewer.UserId.Value, InterviewerId = templateInterviewer.InterviewerId, PrimarySkill = templateInterviewer.PrimarySkill });
+                        model.QualityController.Add(new TransQualityController { UserId = templateInterviewer.UserId.Value, InterviewerId = templateInterviewer.InterviewerId, PrimarySkill = templateInterviewer.PrimarySkill });
+                    }
+                    foreach (var techSkill in templateDetails.TechSkillCollection?.Where(x => x.IsSelected))
+                    {
+                        model.SkillCollection.Add(new TransSkill { LevelId = techSkill.LevelId.Value, SkillId = techSkill.SkillId.Value, Weightage = techSkill.Weightage.Value });
+                    }
                 }
                 SetAddIRFProperties(model);
 
@@ -773,7 +792,16 @@ namespace Risebird.Web.Controllers
         {
             var skills = _irfRepository.GetSkills();
             var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-            var interviewers = _irfService.GetInterviewersForIRF(AssessmentsGroups.FirstOrDefault()?.id.ToString());
+            var interviewers = new List<Interviewer>();
+            if (string.IsNullOrEmpty(model.AssessmentGroupId))
+            {
+                interviewers = _irfService.GetInterviewersForIRF(AssessmentsGroups.FirstOrDefault()?.id.ToString()).ToList();
+
+            }
+            else
+            {
+                interviewers = _irfService.GetInterviewersForIRF(model.AssessmentGroupId).ToList();
+            }
             model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
             model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
             model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
@@ -2787,10 +2815,11 @@ namespace Risebird.Web.Controllers
         //}
 
 
-        public IActionResult ShowCalendly(string irfName, string calendlyLink)
+        public IActionResult ShowCalendly(string irfName, string calendlyLink, int type)
         {
             ViewBag.IRFName = irfName;
             ViewBag.CalendlyLink = calendlyLink;
+            ViewBag.Pagetype = type;
             return View();
         }
 

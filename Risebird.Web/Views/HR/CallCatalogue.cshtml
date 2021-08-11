@@ -106,7 +106,7 @@
                                                     </div>
                                                     <div class="col-md-6 col-sm-6 border-rv">
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">JD Title</label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
@@ -340,7 +340,66 @@
 </div>
 <!-- end row -->
 
+<script type="text/javascript">
 
+    $(document).ready(function () {
+            $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+              }
+
+            $("#PrimarySkill").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '100%',
+                    maxHeight: 200
+                });
+
+
+            $("#ClientHR").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+        $("#RFID").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+            $("#ClientName").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+
+    });
+    function ResetFilter() {
+        window.location.href = "/HR/ResetCallCatalogueFilter";
+    }
+
+    function ApplySessionFilter() {
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
+        var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
+        var clientName =  @Html.Raw(Json.Serialize(ClientName));
+        var rFID =  @Html.Raw(Json.Serialize(RFID));
+
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        $("#PrimarySkill").val(primarySkillsArr);
+        $("#ClientHR").val(clientHR);
+        $("#ClientName").val(clientName);
+        $("#RFID").val(rFID);
+        var form = $("#form").serialize();
+    }
+
+</script>
 <script>
     function searchResult() {
         $('#meeting').DataTable();
@@ -517,66 +576,7 @@
         else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
     });
 </script>
-<script type="text/javascript">
 
-    $(document).ready(function () {
-            $("#ResetFilter").click(function () {
-                ResetFilter();
-            })
-            if ('@filter' != "") {
-                ApplySessionFilter();
-              }
-
-            $("#PrimarySkill").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
-
-
-            $("#ClientHR").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-        $("#RFID").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-            $("#ClientName").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-
-    });
-    function ResetFilter() {
-        window.location.href = "/HR/ResetCallCatalogueFilter";
-    }
-
-    function ApplySessionFilter() {
-        var strtDte = '@strtDte';
-        var endDte = '@endDte';
-        var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
-        var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
-        var clientName =  @Html.Raw(Json.Serialize(ClientName));
-        var rFID =  @Html.Raw(Json.Serialize(RFID));
-
-        $('input[name=StartDate]').val(strtDte);
-        $('input[name=EndDate]').val(endDte);
-        $("#PrimarySkill").val(primarySkillsArr);
-        $("#ClientHR").val(clientHR);
-        $("#ClientName").val(clientName);
-        $("#RFID").val(rFID);
-        var form = $("#form").serialize();
-    }
-
-</script>
 <script>
     function closemyCallRecords() {
         var modal = document.getElementById("myCallRecords");

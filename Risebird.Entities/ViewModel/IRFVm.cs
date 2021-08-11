@@ -9,6 +9,13 @@ namespace Risebird.Entities.ViewModel
 {
     public class IRFVm
     {
+        public IRFVm()
+        {
+            InterviewerCollection = new List<TransInterviewer>();
+            EmergencyInterviewerCollection = new List<TransEmergencyInterviewer>();
+            QualityController = new List<TransQualityController>();
+            SkillCollection = new List<TransSkill>();
+        }
         public int id { get; set; }
 
         [DisplayName("Skill Channel ID")]
@@ -138,6 +145,7 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerId { get; set; }
         public bool isDuplicateEntries { get; set; }
         public string OldCompanyDetails { get; set; }
+        public int TemplateId { get; set; }
 
     }
     public class InterviewerIds

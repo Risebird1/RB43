@@ -1055,8 +1055,8 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            DateTime StartDate = DateTime.Now.AddMonths(-1);
-                            DateTime EndDate = DateTime.Now.AddDays(1);
+                            DateTime StartDate = DateTime.Now.Date;
+                            DateTime EndDate = DateTime.Now.Date.AddDays(1);
                             meetings = meetings.Where(t => t.CalledOn >= StartDate && t.CalledOn <= EndDate).ToList();
                         }
                         ViewBag.Profile = profileName;

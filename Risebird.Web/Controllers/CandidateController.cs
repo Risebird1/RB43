@@ -2671,7 +2671,7 @@ namespace Risebird.Web.Controllers
                                         var candidate = new CandidateQuickAddModel
                                         {
                                             Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
-                                            EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim(),
+                                            EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim().ToLower(),
                                             ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null)
                                                 ? workSheet.Cells[rowIterator, 3].Value.ToString()
                                                 : string.Empty,
@@ -2682,10 +2682,11 @@ namespace Risebird.Web.Controllers
                                                 ? workSheet.Cells[rowIterator, 5].Value.ToString()
                                                 : string.Empty,
                                             ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
-                                                ? workSheet.Cells[rowIterator, 6].Value.ToString()
+                                                ? workSheet.Cells[rowIterator, 6].Value.ToString().ToLower()
                                                 : string.Empty,
                                             ProfileSource = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty,
                                             IRFId = IRFId
+
                                         };
 
                                         candidateList.Add(candidate);
