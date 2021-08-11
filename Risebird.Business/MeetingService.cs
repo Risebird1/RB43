@@ -569,11 +569,11 @@ namespace Risebird.Business
                         {
                             if (!string.IsNullOrEmpty(meetingToUpdate.OldInterviewer))
                             {
-                                summary.Append("Interviewer assigned (" + meetingToUpdate.interviewer + ")");
+                                summary.Append("Interviewer changed from " + meetingToUpdate.OldInterviewer + " to " + meetingToUpdate.interviewer);
                             }
                             else
                             {
-                                summary.Append("Interviewer changed from " + meetingToUpdate.OldInterviewer + " to " + meetingToUpdate.interviewer);
+                                summary.Append("Interviewer assigned (" + meetingToUpdate.interviewer + ")");
                             }
                         }
                     }
