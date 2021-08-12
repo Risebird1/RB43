@@ -871,6 +871,7 @@ namespace Risebird.Repository
                 parameters.Add("@AltMobileNumber", interviewerProfile.AltMobileNumber);
                 parameters.Add("@ResumeLink", interviewerProfile.ResumeLink);
                 parameters.Add("@InterviewerProfileId", interviewerProfile.id);
+                parameters.Add("@Isinstaavailable", interviewerProfile.Isinstaavailable);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
