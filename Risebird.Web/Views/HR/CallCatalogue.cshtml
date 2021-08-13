@@ -257,8 +257,40 @@
                                                                         <tr>
                                                                             <td>@item.IRFId</td>
                                                                             <td>@item.CandidateName</td>
-                                                                            <td>@item.CandidateEmail</td>
-                                                                            <td>@item.JDTiltle</td>
+                                                                            
+                                                                            <td>
+                                                                                @if (item.CandidateEmail != null && item.CandidateEmail != "")
+                                                                                {
+                                                                                    @if (item.CandidateEmail.Length > 30)
+                                                                                    {
+                                                                                        <a onclick="" data-tooltip="@item.CandidateEmail"><span class="hrname">  @item.CandidateEmail</span> </a>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <a onclick=""> @item.CandidateEmail </a>
+                                                                                    }
+                                                                                }
+                                                                                else
+                                                                                {
+
+                                                                                }
+                                                                            </td>
+                                                                            <td>
+                                                                                 @if (item.JDTiltle != null && item.JDTiltle != ""){
+                                                                                     @if (item.JDTiltle.Length > 15)
+                                                                                    {
+                                                                                         <a onclick="" data-tooltip="@item.JDTiltle"><span class="skillname">  @item.JDTiltle</span> </a>
+                                                                                       }
+                                                                                      else
+                                                                                       {
+                                                                                         <a onclick=""> @item.JDTiltle </a>
+                                                                                   }
+                                                                                 }
+                                                                                 else
+                                                                                 {
+
+                                                                                 }
+                                                                                 </td>
                                                                             <td>@item.ClientName</td>
                                                                             <td>@item.CalledOn</td>
                                                                             <td>@item.WhoCalled</td>
