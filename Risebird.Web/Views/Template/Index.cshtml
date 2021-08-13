@@ -207,14 +207,14 @@
                                                                 </button>
                                                                 if (!item.IsDeleted)
                                                                 {
-                                                                    <button id="btnDelete_@item.id" class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                        <span onclick="javascript:Delete('@item.id', '@item.TemplateName');" title="Delete" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
+                                                                    <button id="btnDelete_@item.id" class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
+                                                                        <span onclick="javascript:Delete('@item.id', '@item.TemplateName');" title="Archive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
                                                                     </button>
                                                                 }
                                                                 else
                                                                 {
-                                                                    <button id="btnRestore_@item.id" class="mdc-fab app-fab--absolute unarchive-btn" aria-label="Restore">
-                                                                        <span onclick="javascript:Restore('@item.id', '@item.TemplateName');" title="Restore" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
+                                                                    <button id="btnRestore_@item.id" class="mdc-fab app-fab--absolute unarchive-btn" aria-label="UnArchive">
+                                                                        <span onclick="javascript:Restore('@item.id', '@item.TemplateName');" title="UnArchive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
                                                                     </button>
                                                                 }
                                                             }
@@ -354,7 +354,7 @@
 
         swal.fire({
             title: 'Are you sure?',
-            text: "The Template (" + templateName + ") will be deleted!",
+            text: "The Template (" + templateName + ") will be archived!",
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -372,12 +372,12 @@
 
                             }
                             else {
-                                swal.fire("Error deleting!", "Please try again", "error");
+                                swal.fire("Error archiving!", "Please try again", "error");
 
                             }
                         },
                         error: function () {
-                            swal.fire("Error deleting!", "Please try again", "error");
+                            swal.fire("Error archiving!", "Please try again", "error");
                         }
                     })
                 })
@@ -388,7 +388,7 @@
                 swal.fire({
                     title: 'Deleted!',
                     type: 'success',
-                    html: '<p>The template has been deleted.</p>',
+                    html: '<p>The template has been archived.</p>',
                     showCancelButton: false,
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'Close!',
@@ -411,7 +411,7 @@
 
         swal.fire({
             title: 'Are you sure?',
-            text: "The Template (" + templateName + ") will be restored!",
+            text: "The Template (" + templateName + ") will be Unarchived!",
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -429,12 +429,12 @@
 
                             }
                             else {
-                                swal.fire("Error restoring!", "Please try again", "error");
+                                swal.fire("Error Unarchiving!", "Please try again", "error");
 
                             }
                         },
                         error: function () {
-                            swal.fire("Error restoring!", "Please try again", "error");
+                            swal.fire("Error Unarchiving!", "Please try again", "error");
                         }
                     })
                 })
@@ -445,7 +445,7 @@
                 swal.fire({
                     title: 'Restored!',
                     type: 'success',
-                    html: '<p>The template has been restored.</p>',
+                    html: '<p>The template has been Unarchived!.</p>',
                     showCancelButton: false,
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'Close!',
