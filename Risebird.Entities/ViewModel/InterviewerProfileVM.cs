@@ -178,5 +178,7 @@ namespace Risebird.Entities.ViewModel
         public string ImageURL { get; set; }
         [Display(Name = "Image Upload")]
         public IFormFile ImageUpload { get; set; }
+        [Display(Name = "Available for Immediate Interviews(Available for interview within 30 Mins)")]
+        public bool Isinstaavailable { get; set; }
     }
 }

@@ -120,7 +120,13 @@ body {
     font-size: 12px !important;
     margin-left: 865px;
 }
-
+.availcheck {
+    float: left;
+    position: relative;
+    top: 4px;
+    width: 15px;
+    height: 15px;
+}
 .curated-score .table-responsive-sm .table > tbody > tr > td:last-child {
     padding: 12px 5px !important;
     border: 0px !important;
@@ -5089,6 +5095,7 @@ button.btn {
     .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
         width: 30%
     }
+    .tab-teaser{max-width:100%}
     [data-id="candidatetimeline"] .allmeetingnext-btn {
         right: -458% !important;
         bottom: 138px !important;
