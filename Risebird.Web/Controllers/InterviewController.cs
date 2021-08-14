@@ -5840,7 +5840,7 @@ namespace Risebird.Web.Controllers
                             }
 
                             //var path = $"http://localhost:7071/api/SpeechToTextService";
-                            var path = $"https://risebirdmicroservices.azurewebsites.net/api/SpeechToTextService";
+                            var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/SpeechToTextService";
                             var functionKey = "VFkRiakLwh93q4fzZ9xx69AvKnTSbNVKQSzIaHswCMO/CgCiiOsNNQ==";
 
                             HttpClient httpClient = new HttpClient();
