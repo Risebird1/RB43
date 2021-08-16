@@ -1,0 +1,658 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.InstaMeetingVM>
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "My Insta Interviews";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = String.Empty;
+    string endDte = String.Empty;
+    string[] InterviewSlot = new string[] { };
+    string[] CandidateName = new string[] { };
+    string[] RisebirdHR = new string[] { };
+    string[] InterviewDate = new string[] { };
+    string[] JobLevel = new string[] { };
+    //string[] InterviewDuration = new string[] { };
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("MyInstaInterviewfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<MyInterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("MyInstaInterviewfilters"));
+    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
+    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    InterviewSlot = filter.InterviewSlot != null ? filter.InterviewSlot : new string[] { };
+    CandidateName = filter.CandidateName != null ? filter.CandidateName : new string[] { };
+    RisebirdHR = filter.RisebirdHR != null ? filter.RisebirdHR : new string[] { };
+    InterviewDate = filter.InterviewDate != null ? filter.InterviewDate : new string[] { };
+    JobLevel = filter.JobLevel != null ? filter.JobLevel : new string[] { };
+
+    //InterviewDuration = filter.InterviewDuration != null ? filter.InterviewDuration : new string[] { };
+}
+<script>
+    var Header = "<div id='myinterview_1'>My Insta Interviews</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> My Insta Interviews</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div class="pull-right">
+
+
+                        <div class="pull-left">  <div id="myinterview_2">  <i type="submit" class="fa fa-file-excel-o excel-file card-title-space" style="margin-right:10px;float:right;margin-left:3px;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i></div></div>
+
+                        <div class="pull-left">
+                        </div>
+                        <div class="pull-left filtercon">
+                            <div id="myinterview_3">
+                                <a onclick="" data-tooltip="To visualize the previous date data please apply filter" data-placement="left">
+                                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-toggle="modal" data-target="#filterModal">
+                                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                        <div class="mdc-button__ripple"></div>
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="content client ">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="toolbar">
+                            <!--        Here you can write extra buttons/actions for the toolbar              -->
+                        </div>
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+                            <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+
+
+                                        <form action="@Url.Action("MyInterview","Interview")" method="post" id="form" class="myinterview_modal">
+
+                                            <div class="modal-body ">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12col-sm-12 desp-label" for="StartDate">
+                                                                Start Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="StartDate" name="StartDate" type="date" class="form-control" onblur="checkStartDate(this.value)">
+                                                            </div>
+                                                            <label class="text-danger col-md-6 col-sm-6" id="startDateCheck" style="display:none;"></label>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                End Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="EndDate" name="EndDate" type="date" class="form-control" onblur="checkEndDate(this.value)">
+                                                            </div>
+                                                            <label class="text-danger col-md-6 col-sm-6" id="endDateCheck" style="display:none;"></label>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
+                                                                Interview Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="InterviewDate" name="InterviewDate" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.RequestedDate).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null)
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Interviewer">
+                                                                Candidate Name
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.CandidateName).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
+                                                                    <button id="submitFilter" type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div>
+                                <div class="note-meeting text-left"> <b style="color:green">Note: To join the meeting click on Meeting Link and always use your Coded Name </b><b style="color:red">(@ViewBag.CodedName)</b></div>
+                                <div id="tableID" class="second">
+                                    <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+
+                                        <div class="col-sm-12 col-md-6">
+
+                                        </div>
+                                        <div class="pull-right client-ms" style="margin:0px 10px 10px 10px;">
+
+                                        </div>
+
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-12 nopad">
+                                            <div class="table-responsive">
+                                                <table id="MyInterviewList" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="border-left: 0px !important;">Date</th>
+                                                            <th id="myinterview_4">Candidate Name</th>
+                                                            <th id="myinterview_5">JD Link</th>
+                                                            <th id="myinterview_6">Resume</th>
+                                                            <th id="myinterview_7">Meeting Link</th>
+                                                            <th>Meeting Status</th>
+                                                            <th>Interview Status</th>
+                                                            <th class="disabled-sorting text-left">Actions</th>
+
+                                                        </tr>
+
+                                                    </thead>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th style="border-left: 0px !important;">Date</th>
+                                                            <th id="myinterview_4">Candidate Name</th>
+                                                            <th id="myinterview_5">JD Link</th>
+                                                            <th id="myinterview_6">Resume</th>
+                                                            <th id="myinterview_7">Meeting Link</th>
+                                                            <th>Meeting Status</th>
+                                                            <th>Interview Status</th>
+                                                            <th class="disabled-sorting text-left">Actions</th>
+                                                        </tr>
+
+                                                    </tfoot>
+                                                    <tbody id="tblbodyMyInterview">
+                                                        @foreach (var item in Model)
+                                                        {
+                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+
+                                                            <tr id=@item.id>
+                                                                <td> @item.RequestedDate </td>
+                                                                <td class="cadName">@item.CandidateName</td>
+                                                                @if (item.JDLink != null && item.JDLink != "")
+                                                                {
+                                                                    <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JD Link</a></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No JD</td>
+                                                                }
+                                                                @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                                {
+                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No Resume</td>
+                                                                }
+
+                                                                @if (item.ZoomLink != null && item.ZoomLink != "")
+                                                                {
+                                                                    <td class="cadName">
+                                                                        <a target="_blank" title="Meeting Link" href=@item.ZoomLink>Meeting Link</a>
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+                                                                <td>@item.MeetingStatusStatusDesc</td>
+                                                                <td>@item.intervieweStatusStatDesc</td>
+                                                                <td class="text-left">
+                                                                    <button id="myinterview_10" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report">
+                                                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                    </button>
+                                                                </td>
+
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- end content-->
+                    </div>
+                    <!--  end card  -->
+                </div>
+                <!-- end col-md-12 -->
+            </div>
+            <!-- end row -->
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var interviewUnassignedMinutes;
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/Interview/GetInterviewUnassignedMinutes",
+            success: function (data) {
+                interviewUnassignedMinutes = data;
+            }
+        });
+
+
+        $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+              }
+        $("#InterviewSlot").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
+        $("#CandidateName").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
+        $("#RisebirdHR").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
+        $("#InterviewDate").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+        $("#JobLevel").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
+        $('#MyInterviewList').DataTable({
+            "pagingType": "full_numbers",
+
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+
+            columnDefs: [{ type: 'date', 'targets': [0] }],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") { $("#x").hide(); }
+                    else { $("#x").show(); }
+                });
+            },
+
+
+        });
+        var table = $('#MyInterviewList').DataTable();
+
+    });
+
+    $(document).ready(function () {
+        $('#dataTables_filter').keyup(function () {
+            oTable.fnFilter($(this).val());
+
+        });
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+    function ResetFilter() {
+            window.location.href = "/InstaInterview/ResetMyInterviewFilter";
+    }
+        function ApplySessionFilter() {
+            var strtDte = '@strtDte';
+            var endDte = '@endDte';
+            var InterviewSlot = @Html.Raw(Json.Serialize(InterviewSlot));
+            var CandidateName =  @Html.Raw(Json.Serialize(CandidateName));
+            var RisebirdHR =  @Html.Raw(Json.Serialize(RisebirdHR));
+            var InterviewDate =  @Html.Raw(Json.Serialize(InterviewDate));
+            var JobLevel =  @Html.Raw(Json.Serialize(JobLevel));
+
+
+            $('input[name=StartDate]').val(strtDte);
+            $('input[name=EndDate]').val(endDte);
+            $("#InterviewSlot").val(InterviewSlot);
+            $("#CandidateName").val(CandidateName);
+            $("#RisebirdHR").val(RisebirdHR);
+            $("#InterviewDate").val(InterviewDate);
+            $("#JobLevel").val(JobLevel);
+            //$("#InterviewDuration").val(InterviewDuration);
+            var form = $("#form").serialize();
+             $.ajax({
+            type: "POST",
+            url: "/Interview/MyInterview",
+            data: form,
+                 success: function (data) {
+                 }
+                });
+    }
+</script>
+<script>
+
+</script>
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#MyInterviewList").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#MyInterviewList").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#MyInterviewList").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+<script type="text/javascript">
+    function UnAssignInterviewer(meetingId, isPenalty) {
+        var textMsg;
+        if (isPenalty) {
+            textMsg = "Unassigning at this hour will lead to a penalty. Note: Update Risebird HR, before unassigning interview."
+        }
+        else {
+            textMsg = "Unassigned interview at the last minute results in reducing your quality score.  Note: Please make sure to update Risebird HR, before unassigning interview.";
+        }
+        //var IdIRF = dataID;
+        swal.fire({
+            title: 'Are you sure?',
+            text: textMsg,
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Unassign Me!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    //var IdIRF = dataID;
+                    $.ajax({
+                        url: '/Interview/UnassignYourself?id=' + meetingId + '&isPenalty=' + isPenalty,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error unassigning!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Unassigned!',
+                    type: 'success',
+                    html: '<p>You have been unassigned.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/Interview/MyInterview";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Your were not unassigned.',
+                    'error'
+                )
+            }
+        })
+    }
+
+</script>
+
+<script>
+
+    function FilterInterviews(filterValue) {
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/GetFilteredMyInterviews",
+            data: { 'filterValue': filterValue },
+            success: function (data) {
+                if (data == '' && filterValue == 'seven') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews for the next seven days.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                if (data == '' && filterValue == 'all') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                if (data == '') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews for ' + filterValue + '.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                $('#tableID').css("margin-left", "");
+                $('#tableID').html('');
+                $('#tableID').html(data);
+
+                $('#MyInterviewList').DataTable({
+                    "pagingType": "full_numbers",
+                    "lengthMenu": [
+                        [10, 25, 50, -1],
+                        [10, 25, 50, "All"]
+                    ],
+                    responsive: true,
+                    language: {
+                        search: "_INPUT_",
+                        searchPlaceholder: "Search records",
+                    }
+
+                });
+                var table = $('#MyInterviewList').DataTable();
+
+
+
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+</script>
+<script>
+    function checkStartDate(val) {
+
+        if (val == "") {
+            document.getElementById("startDateCheck").style.display = "none";
+            document.getElementById("startDateCheck").innerHTML = "";
+            document.getElementById("submitFilter").disabled = false;
+            return;
+        }
+        var year = val.substring(0, 4);
+        var month = parseInt(val.substring(5, 7)) - 1;
+        var date = val.substring(8, 10);
+        var StartDate = new Date(year, month, date);
+
+        var endDateValue = document.getElementById("EndDate").value;
+        var yearEnd = endDateValue.substring(0, 4);
+        var monthEnd = parseInt(endDateValue.substring(5, 7)) - 1;
+        var dateEnd = endDateValue.substring(8, 10);
+        var EndDate = new Date(yearEnd, monthEnd, dateEnd);
+
+
+        if (StartDate > EndDate) {
+            document.getElementById("submitFilter").disabled = true;
+            document.getElementById("startDateCheck").style.display = "block";
+            document.getElementById("startDateCheck").innerHTML = "Start Date should be less than or equal to End Date";
+            document.getElementById("StartDate").focus();
+            return;
+        }
+        else {
+            document.getElementById("startDateCheck").style.display = "none";
+            document.getElementById("startDateCheck").innerHTML = "";
+            document.getElementById("submitFilter").disabled = false;
+
+        }
+
+    }
+
+    function checkEndDate(val) {
+
+        if (val == "") {
+            document.getElementById("endDateCheck").style.display = "none";
+            document.getElementById("endDateCheck").innerHTML = "";
+            document.getElementById("submitFilter").disabled = false;
+            return;
+        }
+        var startDateValue = document.getElementById("StartDate").value;
+        if (startDateValue == null || startDateValue == "") {
+            return;
+        }
+
+        //end Date object creation
+        var year = val.substring(0, 4);
+        var month = parseInt(val.substring(5, 7)) - 1;
+        var date = val.substring(8, 10);
+        var endDate = new Date(year, month, date);
+
+        var yearStart = startDateValue.substring(0, 4);
+        var monthStart = parseInt(startDateValue.substring(5, 7)) - 1;
+        var dateStart = startDateValue.substring(8, 10);
+        var startDate = new Date(yearStart, monthStart, dateStart);
+        if (endDate <= startDate) {
+            document.getElementById("submitFilter").disabled = true;
+            document.getElementById("endDateCheck").style.display = "block";
+            document.getElementById("endDateCheck").innerHTML = "End Date should be greater than Start Date";
+            document.getElementById("EndDate").focus();
+            return;
+        }
+        else {
+            document.getElementById("endDateCheck").style.display = "none";
+            document.getElementById("endDateCheck").innerHTML = "";
+            document.getElementById("submitFilter").disabled = false;
+            return;
+        }
+    }
+</script>
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.includes("Success")) {
+                swal.fire("Successful",'@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+
+        }
+    </script>
+}
+
