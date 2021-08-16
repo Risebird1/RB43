@@ -39,7 +39,10 @@ body {
     .clearfix:after {
         clear: both;
     }
-
+.sidebar-wrapper > .nav li > a.active-menu p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+    font-size: 0.96em;
+    font-weight: 700;
+}
 #scoreChart tspan {
     font-size: 12px;
 }
@@ -4617,7 +4620,16 @@ textarea {
     color: #2a9e2a;
     padding-top: 4px;
 }
-
+.filter-note {
+    width: 100%;
+    float: left;
+    color: #2a9e2a;
+    padding-top: 4px;
+    position: absolute;
+    right: 9%;
+    top: 20px;
+}
+}
 .mandate {
     position: relative;
     width: auto;
@@ -5707,7 +5719,7 @@ button.btn {
     .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
         font-size: 11px !important;
     }
-
+    .filter-note{right:15%}
     .tabCon .tab_drawer_heading {
         background-color: #ececec;
         color: #5a5757cc;
@@ -6061,7 +6073,16 @@ button.btn {
     #scoreChart tspan {
         font-size: 11.5px;
     }
-
+    .filter-note {
+        width: 100%!important;
+        float: left;
+        color: #2a9e2a;
+        padding-top: 4px;
+        position: absolute;
+        right: 20%!important;
+        top: 34px!important;
+        line-height: 16px;
+    }
     .note-meeting {
         left: 7px !important;
         position: absolute;
@@ -6118,7 +6139,12 @@ button.btn {
     #scoreChart tspan {
         font-size: 11px;
     }
-
+    .filter-note {
+        width: 252px;
+        right: 30%!important;
+        top: 40px!important;
+        line-height: 16px;
+    }
     h1, h2 {
         font-size: 32px;
     }
@@ -11650,7 +11676,16 @@ div.tagsinput {
         right: 27px;
         top: 11px !important;
     }
-
+    .filter-note {
+        width: 223px;
+        float: left;
+        color: #2a9e2a;
+        padding-top: 4px;
+        position: absolute;
+        right: 18%;
+        top: 15px;
+        line-height: 16px;
+    }
     .single-video {
         margin-bottom: 0px !important;
     }
