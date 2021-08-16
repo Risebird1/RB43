@@ -56,5 +56,7 @@ namespace Risebird.CommonHelper.Interface
         string AppologyNotificationToCandidate(Mail model, string candidateName);
         string ReScheduleNotificationToCandidate(Mail model, string zoomlink, string candidateName);
         string AppologyNotificationToCandidateSecond(Mail model, string candidateName);
+        string InstaClientNotification(Mail model,string RequiredSkill);
+        string InstaInterviewerNotification(Mail model,string RequiredSkill);
     }
 }

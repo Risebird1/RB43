@@ -1,0 +1,287 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.InstaMeetingVM>
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Open Insta Interviews";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Keep the Page Content Here.-->
+<script>
+    var Header = "<div id='openinterview_1'>Open Insta Interviews</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<div class="main-panel" id="main-panel">
+    <div class="mt50">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Open Insta Interviews</h4></div>
+                </div>
+
+                <div class="pull-right ">
+                    @*@Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control card-title-space", onchange = "FilterInterviews(this.value);" })*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="toolbar">
+
+                        </div>
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div id="tableID" class="second">
+                                <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                    <div class="col-sm-12 col-md-6">
+
+                                    </div>
+                                    <div class="pull-right client-ms" style="margin:0px 10px 10px 10px;">
+                                        <div id="meeting_filter" class="dataTables_filter">
+
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-sm-12 nopad">
+                                        <div class="table-responsive">
+                                            <table id="OpeninterviewList" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th id="openinterview_2">Candidate Name</th>
+                                                        <th id="openinterview_3">Resume</th>
+                                                        <th id="openinterview_4">JD Link</th>
+                                                        @if (Model.Count() == 0)
+                                                        {
+                                                            <th id="openinterview_6" class="disabled-sorting text-right">Actions</th>
+                                                        }
+                                                        else
+                                                        {
+                                                            <th class="disabled-sorting text-right">Actions</th>
+                                                        }
+                                                    </tr>
+                                                </thead>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Candidate Name</th>
+                                                        <th>Resume</th>
+                                                        <th>JD Link</th>
+                                                        <th class="disabled-sorting text-right">Actions</th>
+                                                    </tr>
+                                                </tfoot>
+                                                <tbody>
+                                                    @foreach (var item in Model)
+                                                    {
+                                                        <tr id=@item.id>
+                                                            <td> @item.RequestedDate </td>
+                                                            <td> @item.CandidateName</td>
+                                                            @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                            {
+                                                                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Resume</td>
+                                                            }
+                                                            @if (item.JDLink != null && item.JDLink != "")
+                                                            {
+                                                                <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JD Link</a></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No JD</td>
+                                                            }
+                                                            <td class="text-right">
+                                                                <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="location.href = '@Url.Action("AssignYourself", "InstaInterview", new { id = item.id,InterviewDate=item.RequestedDate})'" title="Assign Yourself"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></span></button>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+
+</div>
+
+
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.includes("Success")) {
+                swal.fire("Successful",'@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+
+        }
+
+        //window.onload = my_code();
+    </script>
+}
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#OpeninterviewList').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") { $("#x").hide(); }
+                    else { $("#x").show(); }
+                });
+            }
+
+        });
+
+        var table = $('#OpeninterviewList').DataTable();
+    });
+
+
+    function RefreshSearch() {
+        $(".dataTables_filter input").val('');
+        searchResult();
+    }
+
+    $(document).ready(function () {
+
+        $('#dataTables_filter').keyup(function () {
+            oTable.fnFilter($(this).val());
+        });
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+</script>
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#OpeninterviewList").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#OpeninterviewList").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#OpeninterviewList").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+<script>
+    function FilterInterviews(filterValue) {
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/GetFilteredOpenInterviews",
+            data: { 'filterValue': filterValue },
+            success: function (data) {
+                if (data == '' && filterValue == 'seven') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews for the next seven days.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                if (data == '' && filterValue == 'all') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                if (data == '') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews for ' + filterValue + '.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                $('#tableID').css("margin-left", "");
+                $('#tableID').html('');
+                $('#tableID').html(data);
+
+                $('#OpeninterviewList').DataTable({
+                    "pagingType": "full_numbers",
+                    "lengthMenu": [
+                        [10, 25, 50, -1],
+                        [10, 25, 50, "All"]
+                    ],
+                    responsive: true,
+                    language: {
+                        search: "_INPUT_",
+                        searchPlaceholder: "Search records",
+                    }
+
+                });
+                var table = $('#OpeninterviewList').DataTable();
+
+
+
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+</script>
+
