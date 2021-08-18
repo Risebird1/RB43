@@ -1,0 +1,154 @@
+﻿@model Risebird.Entities.ViewModel.InstaMeetingVM
+@{
+    ViewData["Title"] = "Edit Insta Interview";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var Header = "<a href='/InstaInterview/Index'>Interview Forms</a>&nbsp;/&nbsp;Edit Insta Interview";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+
+<div class="main-panel" id="main-panel">
+    <div class="content client">
+        <div class="row bg-white">
+            <div class="col-md-12">
+                <div class="mdc-card card bg-white">
+                    <div class="mdc-card-wrapper__text-section">
+                        @using (Html.BeginForm("Edit", "InstaInterview", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return (checkValidation());" }))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <div class="row">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                            </div>
+                            <div class="row instainterview">
+                                <div class="col-md-12">
+                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Edit Insta Interview</h4></div>
+                                </div>
+                                <div style="width: 100%;">&nbsp;</div>
+                                <div class="col-lg-4  col-md-4 col-sm-4 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(model => model.AssessmentGroup, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "select-css form-control", @onchange = "AssessmentGroupChanged()" })
+                                        @Html.ValidationMessageFor(model => model.AssessmentGroup, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-8  col-md-8 col-sm-8 px-1">
+                                    <div class="form-group">
+                                        @Html.Label("Assessment Group Skills", "Assessment Group Skills", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        <label class="form-control" id="txtAssessmentSkills"></label>
+                                        @Html.ValidationMessageFor(model => model.AssessmentGroup, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4  col-md-4 col-sm-4 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.CandidateName, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.CandidateName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-4  col-md-4 col-sm-4 px-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.RequiredSkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.RequiredSkill, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.RequiredSkill, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                @if (ViewBag.Profile != "Client")
+                                {
+                                    <div class="col-lg-4  col-md-4 col-sm-4 px-1">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.RequestedBy, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.RequestedBy, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.RequestedBy, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                }
+                                <div class="col-lg-4  col-md-4 col-sm-4 pr-1" id="uploadDiv">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                        <label class="text-danger" id="error_uploadDiv" style="color:red;font-size:14px"></label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4  col-md-4 col-sm-4 px-1" id="uploadDiv">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="card-footer ">
+                                <div class="row">
+
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "Index", "InstaInterview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Update Interview">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.HiddenFor(model => model.id)
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script src="~/Newassets/js/interview.js"></script>
+
+<script>
+    $(document).ready(function () {
+        AssessmentGroupChanged();
+    });
+    function AssessmentGroupChanged() {
+        var val = $("#AssessmentGroup").val();
+        $.ajax({
+            type: "GET",
+            url: "/InstaInterview/FetchAssessmentGroupSkills",
+            data: { 'id': val },
+            success: function (data) {
+                $("#txtAssessmentSkills").text(data);
+            }
+        })
+    }
+    function checkDate() {
+        var interviewDate = new Date(document.getElementById("interviewDate").value);
+        var todayDate = new Date();
+        if (todayDate.getTime() > interviewDate.getTime()) {
+            document.getElementById("error_interviewDate").innerHTML = "Interview Date time should be greater than current Date time.";
+            return false;
+        }
+        else
+            document.getElementById("error_interviewDate").innerHTML = "";
+        return true;
+    }
+    function CheckResume() {
+        if (document.getElementById("File").value == '') {
+            document.getElementById("error_uploadDiv").innerHTML = "Please upload a File.";
+            return false;
+        }
+        else {
+            document.getElementById("error_uploadDiv").innerHTML = "";
+            return true;
+        }
+    }
+
+    function checkValidation() {
+        if (CheckResume() && checkDate()) {
+            return true;
+        }
+        else { return false; }
+
+    }
+</script>

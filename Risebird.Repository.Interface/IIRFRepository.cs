@@ -148,5 +148,8 @@ namespace Risebird.Repository.Interface
         bool CheckChannelOwnerByIrfid(string IRFId, string emailid);
         Task<IEnumerable<TemplateInterviewerData>> GetInterviewersByAssessmentGroup(string assessmentGroupId);
         Task<string> GetInterviewerSkillsByUserId(int userId);
+        Task<bool> DumpCalendlyResourceURI(DataTable calendlyDt);
+        Task<IEnumerable<IRF>> GetPendingCalendlyResourceUriUpdateIRF();
+        Task<string> GetIRFCalendlyResourceUri(int irfId);
     }
 }

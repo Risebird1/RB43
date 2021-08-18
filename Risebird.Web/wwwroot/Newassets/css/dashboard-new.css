@@ -39,7 +39,10 @@ body {
     .clearfix:after {
         clear: both;
     }
-
+.sidebar-wrapper > .nav li > a.active-menu p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+    font-size: 0.96em;
+    font-weight: 700;
+}
 #scoreChart tspan {
     font-size: 12px;
 }
@@ -54,7 +57,28 @@ body {
     background-color: darkgray;
 }
 
+.fa-clock:before {
+    content: "\f017";
+    position: absolute;
+    left: 2px;
+    font-weight: 500;
+    font-size: 17px;
+}
+.nav .fa-user:before {
+    content: "\f017";
+}
+.user-icon {
+    font-weight: 500;
+    position: absolute;
+    left: 17px;
+}
 
+    .user-icon:after {
+        content: "\f007";
+        position: absolute;
+        left: -10px;
+        font-weight:normal;
+    }
 .chardinjs-tooltiptext {
     font-family: 'Architects Daughter', cursive;
     font-size: 13px;
@@ -4617,7 +4641,16 @@ textarea {
     color: #2a9e2a;
     padding-top: 4px;
 }
-
+.filter-note {
+    width: 100%;
+    float: left;
+    color: #2a9e2a;
+    padding-top: 4px;
+    position: absolute;
+    right: 9%;
+    top: 20px;
+}
+}
 .mandate {
     position: relative;
     width: auto;
@@ -4817,7 +4850,7 @@ button.btn {
     max-height: 100px !important;
 }
 
-.search-field #meeting_filter input[type=search], .search-field #meeting_filter input[type=search]:focus, #interviewersTbl_filter input[type=search], #interviewersTbl_filter input[type=search]:focus, #supportList_filter input[type=search], #supportList_filter input[type=search]:focus, #skillLevel_filter input[type=search], #skillLevel_filter input[type=search]:focus, #clientduser_filter input[type=search], #clientduser_filter input[type=search]:focus, #risebirduser_filter input[type=search], #risebirduser_filter input[type=search]:focus, .indexemp #interviewer_filter input[type=search], .indexemp #interviewer_filter input[type=search]:focus, .curatedgrp #meeting_filter input[type=search], .curatedgrp #meeting_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search].form-control, #IRFList_filter input[type=search], .candidate-timeline #candidateTable_filter input[type=search].form-control, .resume #resumeTable_filter input[type=search].form-control, .unassigned-int #meetingTable_filter input[type=search].form-control, #skill_filter input[type=search], #skill_filter input[type=search]:focus, #UserListTb_filter input[type=search], #UserListTb_filter input[type=search]:focus, #questionsTable_filter input[type=search], #questionsTable_filter input[type=search]:focus, #statusTable_filter input[type=search], #statusTable_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search], .notschedulemeeting #meeting_filter input[type=search]:focus, #profile_filter input[type=search], #profile_filter input[type=search]:focus {
+.search-field #meeting_filter input[type=search], .search-field #meeting_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #meeting_filter input[type=search],#interviewersTbl_filter input[type=search], #interviewersTbl_filter input[type=search]:focus, #supportList_filter input[type=search], #supportList_filter input[type=search]:focus, #skillLevel_filter input[type=search], #skillLevel_filter input[type=search]:focus, #clientduser_filter input[type=search], #clientduser_filter input[type=search]:focus, #risebirduser_filter input[type=search], #risebirduser_filter input[type=search]:focus, .indexemp #interviewer_filter input[type=search], .indexemp #interviewer_filter input[type=search]:focus, .curatedgrp #meeting_filter input[type=search], .curatedgrp #meeting_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search].form-control, #IRFList_filter input[type=search], .candidate-timeline #candidateTable_filter input[type=search].form-control, .resume #resumeTable_filter input[type=search].form-control, .unassigned-int #meetingTable_filter input[type=search].form-control, #skill_filter input[type=search], #skill_filter input[type=search]:focus, #UserListTb_filter input[type=search], #UserListTb_filter input[type=search]:focus, #questionsTable_filter input[type=search], #questionsTable_filter input[type=search]:focus, #statusTable_filter input[type=search], #statusTable_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search], .notschedulemeeting #meeting_filter input[type=search]:focus, #profile_filter input[type=search], #profile_filter input[type=search]:focus {
     background: #FFF !important;
     border: 1px #ccc solid !important;
     width: 256px !important;
@@ -4829,7 +4862,7 @@ button.btn {
     right: 45px;
 }
 
-#statusTable_filter #search, #interviewersTbl_filter #search, .notschedulemeeting #meeting_filter #search, #profile_filter #search {
+#statusTable_filter #search, #interviewersTbl_filter #search, .notschedulemeeting #meeting_filter #search, #profile_filter #search, #meeting_filter #search {
     right: 55px;
 }
 
@@ -4837,7 +4870,7 @@ button.btn {
     right: 20px;
 }
 
-#statusTable_filter #trigger-update, .notschedulemeeting #meeting_filter #trigger-update {
+#statusTable_filter #trigger-update, .notschedulemeeting #meeting_filter #trigger-update, #meeting_filter #trigger-update {
     right: 28px;
 }
 
@@ -5707,7 +5740,7 @@ button.btn {
     .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
         font-size: 11px !important;
     }
-
+    .filter-note{right:15%}
     .tabCon .tab_drawer_heading {
         background-color: #ececec;
         color: #5a5757cc;
@@ -6061,7 +6094,16 @@ button.btn {
     #scoreChart tspan {
         font-size: 11.5px;
     }
-
+    .filter-note {
+        width: 100%!important;
+        float: left;
+        color: #2a9e2a;
+        padding-top: 4px;
+        position: absolute;
+        right: 20%!important;
+        top: 34px!important;
+        line-height: 16px;
+    }
     .note-meeting {
         left: 7px !important;
         position: absolute;
@@ -6118,7 +6160,12 @@ button.btn {
     #scoreChart tspan {
         font-size: 11px;
     }
-
+    .filter-note {
+        width: 252px;
+        right: 30%!important;
+        top: 40px!important;
+        line-height: 16px;
+    }
     h1, h2 {
         font-size: 32px;
     }
@@ -9370,6 +9417,9 @@ button.close {
 #meeting_filter #search {
     right: 40px;
 }
+.instainterview #meeting_filter #search {
+    right: 52px;
+}
 
 .search-field #meeting_filter #search {
     right: 60px;
@@ -9378,7 +9428,36 @@ button.close {
 .search-field #meeting_filter #trigger-update {
     right: 30px;
 }
-
+.instainterview .form-group {
+    display: inline-block;
+    padding: 3px;
+    border: 2px rgba(0, 0, 0, 0.29) solid;
+    margin-bottom: 30px;
+    min-height: 56px;
+    border-radius: 4px;
+    width:100%;
+}
+    .instainterview .form-group input.form-control.text-box.single-line {
+        width: calc(100% - 10px);
+    }
+    .instainterview .form-group label {
+        /* display: block; */
+        font-size: 12px;
+        color: blue;
+        position: relative;
+        background: #fff;
+        top: -17px;
+        left: 40px;
+        width: auto;
+    }
+    .instainterview .form-group .select-css.form-control, .instainterview .form-group .form-control {
+        width: calc(100% - 10px);
+        margin: 3px 5px 5px 5px !important;
+        position: absolute;
+        top: 3px;
+        left: -1px;
+        background: #eee;
+    }
 h4 .card-title {
     margin-top: 0px;
 }
@@ -9405,7 +9484,7 @@ h4.card-title {
     border: 0px !important;
 }
 
-#dupmeeting_filter input[type=search], .dataTables_filter input[type=search], #meeting_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search] {
+#dupmeeting_filter input[type=search], .dataTables_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search] {
     border: 0px !important;
     padding: 9px 10px 9px 10px;
     width: 256px;
@@ -9940,7 +10019,7 @@ body .top-panel {
     z-index: 0 !important
 }
 
-.dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
+.dataTables_filter input[type=search]:focus,  #clientduser_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
     width: 230px;
     background-color: #fff;
     border-color: #4a93de;
@@ -11618,7 +11697,16 @@ div.tagsinput {
         right: 27px;
         top: 11px !important;
     }
-
+    .filter-note {
+        width: 223px;
+        float: left;
+        color: #2a9e2a;
+        padding-top: 4px;
+        position: absolute;
+        right: 18%;
+        top: 15px;
+        line-height: 16px;
+    }
     .single-video {
         margin-bottom: 0px !important;
     }

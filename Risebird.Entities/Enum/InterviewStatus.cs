@@ -281,4 +281,11 @@ namespace Risebird.Entities.Enum
     //    [Description("Communication")]
     //    Communication = 3
     //}
+    public enum InstaReceiveMeetingStatus
+    {
+        [Description("Processing")]
+        Processing = 0,
+        [Description("Confirmed")]
+        Confirmed = 1
+    }
 }

@@ -4383,6 +4383,91 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<bool> DumpCalendlyResourceURI(DataTable calendlyDt)
+        {
+            try
+            {
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+
+                    SqlCommand cmd = new SqlCommand("usp_DumpCalendlyResourceURI", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@SkillChannelCalendlyDetailsBulkData", SqlDbType.Structured));
+                    cmd.Parameters["@SkillChannelCalendlyDetailsBulkData"].Value = calendlyDt;
+                    
+                    con.Open();
+                    if (await cmd.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    return true;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<IEnumerable<IRF>> GetPendingCalendlyResourceUriUpdateIRF()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    
+                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetPendingCalendlyResourceUriUpdateIRF",
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<string> GetIRFCalendlyResourceUri(int irfId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfId", irfId);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetIRFCalendlyResourceUri", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
     }
 }

@@ -3848,7 +3848,7 @@ namespace Risebird.Repository
                                          Points = p == null ? c.Points : c.Points - p.Points,
                                          Comment = c.Comment
                                      }).ToList();
-                    return resultset.Where(x => x.Points > 0).ToList();
+                    return resultset.Where(x => x.Points > 0).OrderBy(x => x.Comment).ToList();
                 }
             }
             catch (SqlException ex)
