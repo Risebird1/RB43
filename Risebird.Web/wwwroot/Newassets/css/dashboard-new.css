@@ -57,7 +57,28 @@ body {
     background-color: darkgray;
 }
 
+.fa-clock:before {
+    content: "\f017";
+    position: absolute;
+    left: 2px;
+    font-weight: 500;
+    font-size: 17px;
+}
+.nav .fa-user:before {
+    content: "\f017";
+}
+.user-icon {
+    font-weight: 500;
+    position: absolute;
+    left: 17px;
+}
 
+    .user-icon:after {
+        content: "\f007";
+        position: absolute;
+        left: -10px;
+        font-weight:normal;
+    }
 .chardinjs-tooltiptext {
     font-family: 'Architects Daughter', cursive;
     font-size: 13px;

@@ -401,6 +401,7 @@
                                                                         <tr>
                                                                             <th style="border-left: 0px !important;">Candidate Name</th>
                                                                             <th>Client HR</th>
+                                                                            <th>Staffing Agency EmailId</th>
                                                                             <th>Coded Resume</th>
                                                                             <th>Type</th>
                                                                             <th>Location(Applied for)</th>
@@ -449,6 +450,18 @@
                                                                             @if (item.ClientHRAttemptContact != null && item.ClientHRAttemptContact.Length > 13)
                                                                             {
                                                                                 <td data-tooltip="@item.ClientHRAttemptContact" class="text-center"><span class="cname">@item.ClientHRAttemptContact</span> </td>
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+                                                                            }
+
+
+
+                                                                            @if (item.ProfileSource != null && item.ProfileSource.Length > 13)
+                                                                            {
+                                                                                <td data-tooltip="@item.ProfileSource" class="text-center"><span class="cname">@item.ProfileSource</span> </td>
 
                                                                             }
                                                                             else
