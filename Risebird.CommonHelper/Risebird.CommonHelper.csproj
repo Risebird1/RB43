@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Risebird.Business.Interface\Risebird.Business.Interface.csproj" />
     <ProjectReference Include="..\Risebird.CommonHelper.Interface\Risebird.CommonHelper.Interface.csproj" />
+    <ProjectReference Include="..\Risebird.Repository.Interface\Risebird.Repository.Interface.csproj" />
   </ItemGroup>
 
 </Project>
