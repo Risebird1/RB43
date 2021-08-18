@@ -213,6 +213,7 @@ namespace Risebird.Web
             services.AddScoped<ITemplateRepository, TemplateRepository>();
             services.AddScoped<IInstaInterviewService, InstaInterviewService>();
             services.AddScoped<IInstaInterviewRepository, InstaInterviewRepository>();
+            services.AddScoped<ICalendlyHelper, CalendlyHelper>();
         }
     }
     //Global level antiforgery token security to stop malicious scripts
