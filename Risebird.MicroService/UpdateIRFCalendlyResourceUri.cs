@@ -25,7 +25,7 @@ namespace Risebird.MicroService
            
         }
         [FunctionName("UpdateIRFCalendlyResourceUri")]
-        public async Task Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 */2 * * * *")]TimerInfo myTimer, ILogger log)//runs every 2 minutes
         {
             try
             {
