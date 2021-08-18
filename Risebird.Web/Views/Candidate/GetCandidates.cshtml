@@ -1488,6 +1488,7 @@
             html += '  <tr>';
             html += '   <th>Candidate Name</th>';
             html += '   <th>Client HR</th>';
+            html += '    <th>Staffing Agency Email Id</th>';
             html += '   <th>Coded Resume</th>';
             html += '     <th>Type</th>';
             html += '     <th>Location(Applied for)</th>';
@@ -1526,7 +1527,6 @@
             }
 
 
-
             if (data[i].clientHRAttemptContact != null) {
                 html += '  <td class="text-center">' + data[i].clientHRAttemptContact + '</td>';
 
@@ -1534,7 +1534,14 @@
             else {
                 html += '    <td></td>';
             }
+            if (data[i].profileSource != null && data[i].profileSource.length > 13) {
 
+                html += '    <td data-tooltip="' + data[i].profileSource + '" class="text-center"><span class="cname">' + data[i].profileSource + '</span> </td>';
+
+            }
+            else {
+                html += '<td></td>';
+            }
             if (data[i].encodedResumeLink != null && data[i].encodedResumeLink != "") {
                 html += '    <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=' + data[i].encodedResumeLink + '>Coded Resume</a> </td>';
             }
@@ -1682,13 +1689,13 @@
                 var modal = document.getElementById("myCallRecords");
                 modal.style.display = "block";
                 $("#candidate_email_pop").text(candidateEmailid);
-                
+
             }
         });
     }
     function bindCallData(data) {
         var html = '';
-       
+
         for (var i = 0; i < data.length; i++) {
             html += '<tr>';
             html += '<td>' + data[i].whoCalled + '</td>';
