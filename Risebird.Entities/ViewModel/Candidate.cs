@@ -109,7 +109,7 @@ namespace Risebird.Entities.ViewModel
         ErrorMessage = "Please Enter Correct Email Address")]
         public string ClientHRAttemptContact { get; set; }
 
-        [Display(Name = "Profile Source")]
+        [Display(Name = "Staffing Agency Email Id")]
         [Required]
         public string ProfileSource { get; set; }
         [Display(Name = "WhatsApp Number")]
