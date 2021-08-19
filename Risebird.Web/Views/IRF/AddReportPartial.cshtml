@@ -73,6 +73,7 @@
                     @*<div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="create_pdf" value="Generate PDF" onclick="getPDF()"></div>*@
                     @if (ViewBag.PageStatus == "Mainurl")
                     {
+                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;" value="Generate Insta Public Url" onclick="GeneratePublicUrl(3)"></div>
                         <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;" value="Generate Executive Public Url" onclick="GeneratePublicUrl(1)"></div>
                         <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;" value="Generate Public Url" onclick="GeneratePublicUrl(2)"></div>
                     }
@@ -199,63 +200,65 @@
                                     </div>
 
                                 </div>
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Interview Video</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
+                                @if (ViewBag.PageReport != "Insta")
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Interview Video</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
 
 
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-                                        <div class="videoConplayer">
+                                            <div class="videoConplayer">
 
-                                            @Html.HiddenFor(x => Model.VideoLink)
-                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                            {
-                                                @*if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                                @Html.HiddenFor(x => Model.VideoLink)
+                                                @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                                {
+                                                    @*if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                                        {
+                                                            <video width="320" height="240" style="width:100%" controls controlsList="nodownload">
+                                                                <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                                                                <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+
+                                                                Your browser does not support the video tag.
+                                                            </video>
+                                                        }
+
+                                                        else if (Url.Content(Model.VideoLink).Contains("manifest"))
+                                                        {
+                                                            <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
+                                                                <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+
+                                                            </video>
+                                                        }
+                                                        else
+                                                        {
+                                                            <iframe width="420" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
+
+                                                        }*@
+                                                    string appendTime;
+                                                    if (Model.ThumbnailTimeSeconds == 0)
                                                     {
-                                                        <video width="320" height="240" style="width:100%" controls controlsList="nodownload">
-                                                            <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                                            <source src=@Url.Content(Model.VideoLink) type="video/ogg">
-
-                                                            Your browser does not support the video tag.
-                                                        </video>
-                                                    }
-
-                                                    else if (Url.Content(Model.VideoLink).Contains("manifest"))
-                                                    {
-                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
-                                                            <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
-
-                                                        </video>
+                                                        appendTime = configuration["ThumbnailTimeDefault"];
                                                     }
                                                     else
                                                     {
-                                                        <iframe width="420" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
-
-                                                    }*@
-                                                string appendTime;
-                                                if (Model.ThumbnailTimeSeconds == 0)
-                                                {
-                                                    appendTime = configuration["ThumbnailTimeDefault"];
+                                                        appendTime = Model.ThumbnailTimeSeconds.ToString();
+                                                    }
+                                                    var src = Model.VideoLink + "#t=" + appendTime;
+                                                    <video width="400" controls="controls" preload="metadata" class="vjs-tech">
+                                                        <source src='@src' type="video/mp4">
+                                                    </video>
                                                 }
-                                                else
-                                                {
-                                                    appendTime = Model.ThumbnailTimeSeconds.ToString();
-                                                }
-                                                var src = Model.VideoLink + "#t=" + appendTime;
-                                                <video width="400" controls="controls" preload="metadata" class="vjs-tech">
-                                                    <source src='@src' type="video/mp4">
-                                                </video>
-                                            }
-                                        </div>
+                                            </div>
 
-                                    </div><!--end of col-md-12-->
+                                        </div><!--end of col-md-12-->
 
-                                </div>
-
+                                    </div>
+                                }
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
@@ -343,118 +346,113 @@
                                     }
                                 </div>
 
-
-                                <div class="row">
-
-
-
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Questions Discussed</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
+                                @if (ViewBag.PageReport != "Insta")
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Questions Discussed</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
 
 
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive-sm">
-                                            <table class="table table-bordered mbn" id="QuestionsTable">
-                                                <thead>
-                                                    <tr>
-
-                                                        <th class="table_heading">Questions</th>
-                                                        <th class="table_heading">SkillName</th>
-                                                        <th width="15%" class="table_heading">Rating</th>
-                                                        <th class="table_heading">Time(Min)</th>
-                                                        @*<th class="table_heading">Actions</th>*@
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @if (Model.QuestionsCollection == null || Model.QuestionsCollection.Count() == 0)
-                                                    {
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" id="QuestionsTable">
+                                                    <thead>
                                                         <tr>
-                                                            <td>
 
-                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @disabled = "disabled" })
-
-                                                                @*@Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
-                                                                    @Html.TextBox("QuestionsCollection[0].Comment", new { @class = "select-css form-control text-box single-line" })*@
-
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                            </td>
-                                                            <td>
-
-                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
-
-                                                            </td>
-
-                                                            <td>
-                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" min="1">
-
-                                                            </td>
-
-                                                            @*<td>
-                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
-                                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
-                                                                    </button>
-
-
-                                                                </td>*@
-
+                                                            <th class="table_heading">Questions</th>
+                                                            <th class="table_heading">SkillName</th>
+                                                            <th width="15%" class="table_heading">Rating</th>
+                                                            <th class="table_heading">Time(Min)</th>
+                                                            @*<th class="table_heading">Actions</th>*@
                                                         </tr>
-                                                    }
-                                                    else
-                                                    {
-                                                        for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.QuestionsCollection == null || Model.QuestionsCollection.Count() == 0)
                                                         {
-                                                            <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
+                                                            <tr>
                                                                 <td>
 
-                                                                    @*@Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "dropques select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })*@
-                                                                    @Html.TextBoxFor(m => m.QuestionsCollection[i].Comment, new { @class = "dropques select-css form-control text-box single-line", onmouseover = "dropDwnToolTips(this)" })
+                                                                    @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @disabled = "disabled" })
 
+                                                                    @*@Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                        @Html.TextBox("QuestionsCollection[0].Comment", new { @class = "select-css form-control text-box single-line" })*@
+
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @class = "form-control", @readonly = "readonly" })
+
+                                                                </td>
+                                                                <td>
+
+                                                                    @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
 
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                <td>
-
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control", @disabled = "disabled" })
-
+                                                                    <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" min="1">
 
                                                                 </td>
 
-                                                                <td>
+                                                                @*<td>
+                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
+                                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
+                                                                        </button>
 
-                                                                    @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
 
-                                                                </td>
+                                                                    </td>*@
 
                                                             </tr>
+                                                        }
+                                                        else
+                                                        {
+                                                            for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
+                                                            {
+                                                                <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
+                                                                    <td>
 
+                                                                        @*@Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "dropques select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })*@
+                                                                        @Html.TextBoxFor(m => m.QuestionsCollection[i].Comment, new { @class = "dropques select-css form-control text-box single-line", onmouseover = "dropDwnToolTips(this)" })
+
+
+                                                                    </td>
+
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+
+                                                                        @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control", @disabled = "disabled" })
+
+
+                                                                    </td>
+
+                                                                    <td>
+
+                                                                        @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
+
+                                                                    </td>
+
+                                                                </tr>
+
+
+                                                            }
 
                                                         }
 
-                                                    }
 
 
 
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!--end of col-md-12-->
 
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div><!--end of col-md-12-->
-
-                                </div>
-
+                                    </div>
+                                }
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
@@ -1344,9 +1342,10 @@
         if (index == 1) {
             urlcurrent = urlcurrent.replace("AddReport", "ExecutiveReport");
         }
-        else {
+        else if (index == 2) {
             urlcurrent = urlcurrent.replace("AddReport", "PublicAddReport");
-
+        } else {
+            urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
         }
         $("#txtvideoUrls").text(urlcurrent);
     }

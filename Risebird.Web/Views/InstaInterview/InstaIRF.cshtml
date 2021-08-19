@@ -1,0 +1,431 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.InstaMeetingVM>
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Insta Skills Channel";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = String.Empty;
+    string endDte = String.Empty;
+    string[] primarySkills = new string[] { };
+    string[] RFID = new string[] { };
+    string[] ArchiveStatus = new string[] { };
+    string[] ClientName = new string[] { };
+    string[] SubscriptionStatus = new string[] { };
+    string[] ClientRole = new string[] { };
+    string[] PrimarySkill = new string[] { };
+    string[] EndClientName = new string[] { };
+
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<IRFFilter>
+    (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters"));
+    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
+    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
+    RFID = filter.RFID != null ? filter.RFID : new string[] { };
+    ArchiveStatus = filter.ArchiveStatus != null ? filter.ArchiveStatus : new string[] { };
+    SubscriptionStatus = filter.SubscriptionStatus != null ? filter.SubscriptionStatus : new string[] { };
+    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
+    ClientRole = filter.ClientRole != null ? filter.ClientRole : new string[] { };
+    PrimarySkill = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
+    EndClientName = filter.EndClientName != null ? filter.EndClientName : new string[] { };
+}
+<script>
+    var Header = "<div id='skill_1'>Insta Skills Channel</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/irf.css?v=123456" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=123456" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
+
+
+<div class="main-panel" id="main-panel">
+
+    <!--  <div class="panel-header panel-header-sm"></div>-->
+    <div class="jumbotron">
+        <div class="pt30">
+            <div class="col-md-12 nopad" style="margin:0px;">
+                <div class="card-header bg-w clearfix">
+                    <img style="visibility:hidden" src="" data-position="right" />
+                    <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
+                    <div class="pull-left">
+                        <h4 class="card-title"></h4>
+                        <div class="mobile-view"> <h4 class="card-title">  Insta Skills Channel</h4></div>
+                    </div>
+
+                    <div class="pull-right">
+                        <div class="mc-button-area text-left">
+
+                            <div id="skill_2" data-intro='Filter based on available attributes or reset filter if applied earlier<br/><a href="/Client/AllMeetings" class="btn btn-primary skillnext-btn">NEXT</a>' data-position='left' class="pull-left" style="margin-right: 5px;">
+                                @*<button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-toggle="modal" data-target="#filterModal">
+
+                                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                        <div class="mdc-button__ripple"></div>
+                                    </button>*@
+                            </div>
+                            <div class="pull-left">
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to create insta request" onclick="location.href='@Url.Action("CreateRequest", "InstaInterview")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Create Insta Request</font></span>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="mdc-card card  bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
+
+
+                            <div class="modal   fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+
+
+
+                                        <form action="@Url.Action("Index","InstaInterview")" method="post" id="form">
+
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                Start Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                End Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.RequiredSkill).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+
+                                                            <div>
+                                                                <div class="col-md-12 col-sm-12">
+
+
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
+
+
+
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
+
+
+
+                                                                </div>
+
+                                                            </div>
+
+
+
+                                                        </div>
+                                                    </div>
+
+
+
+
+                                                </div>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- end content-->
+                            <!--  end card  -->
+                            <!-- end col-md-12 -->
+                            <!-- Start Card -->
+
+
+                            <div id="skill_card">
+                                <input id="skill_irf_count" type="hidden" value="@Model.Count()" />
+                                <div class="row">
+                                    @foreach (var item in Model)
+                                    {
+                                        <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
+                                            <div class="card-content-holder border card-blue">
+                                                <div class="card-header">
+                                                    <div class="row">
+                                                        <div class=" col-md-4 col-sm-4">
+                                                            <h6> @item.InstaRequestName</h6>
+                                                        </div>
+
+                                                        <div class="col-md-8 col-sm-8 card-header-buttons action">
+                                                            <button id="skill_17" class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                <span onclick="javascript:EditIRF('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- irf body-->
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="statusImg">
+                                                            <img id="statusImage_174" src="/img/Cards_Png/01_Green-White.png" class="img-responsive">
+                                                        </div>
+                                                        <div class="statusInfo">
+                                                            <div class="group inner list-group-item-text">
+                                                                <div class="row clearfix">
+                                                                    <div class="client-field">
+                                                                        <span> Assessment Group: </span> <span title="@item.AssessmentGroup">@item.AssessmentGroup</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div id="skill_3" class="row clearfix">
+                                                                    <div class="client-field">
+                                                                        <span>Required Skills:</span><span style="font-weight:normal">item.RequiredSkill</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row clearfix">
+                                                                    <div class="client-field">
+                                                                        <span> Requested By: </span><span>@item.RequestedBy</span>
+                                                                    </div>
+                                                                </div>
+
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="card-footer instainterview">
+                                                    <div class="row">
+
+                                                        @*<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" id="irf-card-footer">
+
+                                                                @if (@item.IRFStatus == "Active")
+                                                                {
+                                                                    <h6 style="color: green;"> @item.IRFStatus</h6>
+                                                                }
+                                                                else if (@item.IRFStatus == "Paused")
+                                                                {
+                                                                    <h6 style="color: grey;"> @item.IRFStatus</h6>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <h6 style="color: black;"> @item.IRFStatus</h6>
+
+                                                                }
+                                                            </div>*@
+
+                                                        <div class="stats-bttm-btn  col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                            @*<button id="skill_8" class="mdc-fab app-fab--absolute item1" aria-label="Insta Interviews">
+                                                                <span onclick="javascript:InstaInterview('@item.id');" title="Insta Interviews" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb( 255,255,255)" d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
+                                                            </button>*@
+
+                                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" aria-label="Insta Interviews">
+                                                                <span onclick="javascript:InstaInterview('@item.id');" title="Insta Interviews" class="mdc-fab__icon material-icons"><font class="instatxt" style="font-family:arial;"><span class="insta-icon"><i class="now-ui-icons fa fa-user user-icon fa-clock"></i></span> Insta Interviews</font></span>
+                                                            </button>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful",'@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+
+        }
+
+        //window.onload = my_code();
+    </script>
+}
+
+<script type="text/javascript">
+    function EditIRF(id) {
+        var url = '/InstaInterview/EditRequest?id=' + id;
+        window.location.href = url;
+    }
+    function InstaInterview(id) {
+        var url = '/InstaInterview/Index?id=' + id;
+        window.location.href = url;
+    }
+</script>
+<script>
+        $(document).ready(function () {
+            $("#stDateInvoice").val("");
+            $("#EndDateInvoice").val("");
+            $("#srNumberId").val("");
+            $("#poNumberId").val("");
+            $("#requestNumberId").val("");
+            $("#currencyCodeId").val("");
+            $("#projectCodeId").val("");
+            $("#discountId").val("");
+            $("#clientAddressId").val("");
+           // document.getElementById("gstCheckId").checked = false;
+            $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+            }
+
+            $("#RFID").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#ClientName").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#ArchiveStatus").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#SubscriptionStatus").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#ClientRole").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+             $("#PrimarySkill").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                 buttonWidth: '100%',
+                maxHeight: 200
+             });
+            $("#EndClientName").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+        });
+
+        function ResetFilter() {
+            window.location.href = "/IRF/ResetIRFFilter";
+        }
+        function ApplySessionFilter() {
+            var strtDte = '@strtDte';
+            var endDte = '@endDte';
+            var rFID =  @Html.Raw(Json.Serialize(RFID));
+            var clientName =  @Html.Raw(Json.Serialize(ClientName));
+            var archiveStatus =  @Html.Raw(Json.Serialize(ArchiveStatus));
+            var subscriptionStatus =  @Html.Raw(Json.Serialize(SubscriptionStatus));
+            var clientRole =  @Html.Raw(Json.Serialize(ClientRole));
+            var primarySkill= @Html.Raw(Json.Serialize(PrimarySkill));
+            var endClientName =  @Html.Raw(Json.Serialize(EndClientName));
+
+            $('input[name=StartDate]').val(strtDte);
+            $('input[name=EndDate]').val(endDte);
+            $("#RFID").val(rFID);
+            $("#ClientName").val(clientName);
+            $("#ArchiveStatus").val(archiveStatus);
+            $("#SubscriptionStatus").val(subscriptionStatus);
+            $("#ClientRole").val(clientRole);
+            $("#PrimarySkill").val(primarySkill);
+            $("#EndClientName").val(endClientName);
+
+            var form = $("#form").serialize();
+
+        }
+
+</script>
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
+
+<script>
+    $("#minimizeSidebar").click(function () {
+        $('body').removeClass('sidebar-mini');
+    });
+</script>
+
+
+
+
