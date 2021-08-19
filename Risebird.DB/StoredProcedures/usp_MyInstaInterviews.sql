@@ -16,6 +16,6 @@ AS
 BEGIN      
 declare @emailIDParam varchar(200)  
 set @emailIDParam=@emailID  
-select * from InstaInterviewMeetings where interviewer =@emailIDParam and confirmationStatus = 1                    
+select im.*,ir.*,im.id as id from InstaInterviewMeetings im join InstaRequests ir on ir.id=im.RequestId where interviewer =@emailIDParam and confirmationStatus = 1                                       
 END        
 GO

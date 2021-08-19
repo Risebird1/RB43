@@ -34,21 +34,7 @@
                                     <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Add Insta Interview</h4></div>
                                 </div>
                                 <div style="width: 100%;">&nbsp;</div>
-                                <div class="col-lg-4  col-md-4 col-sm-4 pr-1">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(model => model.AssessmentGroup, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "select-css form-control", @onchange = "AssessmentGroupChanged()" })
-                                        @Html.ValidationMessageFor(model => model.AssessmentGroup, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
-                                <div class="col-lg-8  col-md-8 col-sm-8 px-1">
-                                    <div class="form-group">
-                                        @Html.Label("Assessment Group Skills", "Assessment Group Skills", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        <label class="form-control" id="txtAssessmentSkills"></label>
-                                        @Html.ValidationMessageFor(model => model.AssessmentGroup, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
-
+                                @Html.HiddenFor(model => model.RequestId)
                                 <div class="col-lg-4  col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -56,36 +42,13 @@
                                         @Html.ValidationMessageFor(model => model.CandidateName, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
-                                <div class="col-lg-4  col-md-4 col-sm-4 px-1">
+                                <div class="col-lg-4  col-md-4 col-sm-4 px-1" id="uploadDiv">
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.RequiredSkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.RequiredSkill, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.RequiredSkill, "", new { @class = "text-danger" })
+                                        @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                        <label class="text-danger" id="error_uploadDiv" style="color:red;font-size:14px"></label>
                                     </div>
                                 </div>
-                                    @if (ViewBag.Profile != "Client")
-                                    {
-                            <div class="col-lg-4  col-md-4 col-sm-4 pr-1">
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.RequestedBy, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.RequestedBy, new { htmlAttributes = new { @class = "form-control" } })
-                                    @Html.ValidationMessageFor(model => model.RequestedBy, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-                                }
-                            <div class="col-lg-4  col-md-4 col-sm-4 px-1" id="uploadDiv">
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
-                                    <label class="text-danger" id="error_uploadDiv" style="color:red;font-size:14px"></label>
-                                </div>
-                            </div>
-                            <div class="col-lg-4  col-md-4 col-sm-4 pr-1" id="uploadDiv">
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
-                                </div>
-                            </div>
                             </div>
 
                             <div class="card-footer ">

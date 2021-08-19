@@ -1,4 +1,4 @@
-﻿using Risebird.Business.Interface;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -17,19 +17,59 @@ namespace Risebird.Business
         private readonly IInstaInterviewRepository _instaInterviewRepository;
         private readonly IMeetingRespository _meetingRespository;
         private readonly INotificationHelper _notificationHelper;
+        private readonly IIRFRepository _irfRepository;
 
-        public InstaInterviewService(IApplicationErrorLogger applicationErrorLogger, IInstaInterviewRepository instaInterviewRepository, IMeetingRespository meetingRespository, INotificationHelper notificationHelper)
+        public InstaInterviewService(IApplicationErrorLogger applicationErrorLogger, IInstaInterviewRepository instaInterviewRepository, IMeetingRespository meetingRespository, INotificationHelper notificationHelper, IIRFRepository irfRepository)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _instaInterviewRepository = instaInterviewRepository;
             _meetingRespository = meetingRespository;
             _notificationHelper = notificationHelper;
+            _irfRepository = irfRepository;
         }
-        public List<InstaMeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate, string emailId = null)
+        public IEnumerable<InstaMeetingVM> GetAllInstaRequests(string emailId, string profileName)
         {
             try
             {
-                return _instaInterviewRepository.GetAllInterviewMeetings(startDate, endDate, emailId).Result.OrderByDescending(x => x.RequestedDate).ToList();
+                var irfList = _instaInterviewRepository.GetAllInstaRequests(emailId, profileName).Result.ToList();
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public bool CreateRequest(InstaMeetingVM meeting)
+        {
+            try
+            {
+                return _instaInterviewRepository.CreateRequest(meeting).Result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public InstaMeetingVM FetchRequestById(int id)
+        {
+            try
+            {
+                var result = _instaInterviewRepository.FetchRequestById(id).Result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new InstaMeetingVM();
+            }
+        }
+        public List<InstaMeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate, int id, string emailId = null)
+        {
+            try
+            {
+                return _instaInterviewRepository.GetAllInterviewMeetings(startDate, endDate, id, emailId).Result.OrderByDescending(x => x.RequestedDate).ToList();
             }
             catch (Exception ex)
             {
@@ -43,13 +83,23 @@ namespace Risebird.Business
             {
                 if (_instaInterviewRepository.AddInstaMeeting(meeting).Result)
                 {
+                    var model = _instaInterviewRepository.FetchRequestById(meeting.RequestId);
+                    string RequiredSkill = String.Empty;
+                    var skills = _irfRepository.GetSkills();
+                    foreach (var item in model.Result.TechSkill)
+                    {
+                        if (String.IsNullOrEmpty(RequiredSkill))
+                            RequiredSkill = skills.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
+                        else
+                            RequiredSkill = RequiredSkill + "," + skills.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
+                    }
                     //Send mail to Client
                     Mail _mail = new Mail
                     {
-                        TO = meeting.RequestedBy,
+                        TO = model.Result.RequestedBy,
                         Subject = "Risebird: Insta interview request"
                     };
-                    var emailsend = _notificationHelper.InstaClientNotification(_mail, meeting.RequiredSkill);
+                    var emailsend = _notificationHelper.InstaClientNotification(_mail, RequiredSkill);
                     //meeting.RequestedBy
                     //Send mail to Interviewers
                     var Interviewers = _instaInterviewRepository.FetchInstaIntervieweByAssessmentGroup(meeting.AssessmentGroup);
@@ -161,6 +211,32 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        public async Task<InstaMeetingVM> GetInstaInteviewReport(int interviewId)
+        {
+            try
+            {
+                var interviewDetails = _instaInterviewRepository.GetInstaInteviewReport(interviewId).Result;
+                return interviewDetails;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> AddInstaInterviewReport(InstaMeetingVM reportModel, string emailId)
+        {
+            try
+            {
+                var result = await _instaInterviewRepository.AddInstaInterviewReport(reportModel);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
     }

@@ -952,6 +952,8 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "Finance")
                 {
                     var model = await _meetingService.FetchFNPaymentHistory();
+                    if (model != null)
+                        model = model.OrderByDescending(x => x.Date).ToList();
                     var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                     foreach (var item in model)
                     {

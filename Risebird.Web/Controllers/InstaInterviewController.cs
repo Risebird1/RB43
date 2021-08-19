@@ -8,6 +8,8 @@ using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
+using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +26,8 @@ namespace Risebird.Web.Controllers
         private readonly IInstaInterviewService _instaInterviewService;
         private readonly IInterviewerService _interviewerService;
         private readonly IMeetingService _meetingService;
-        public InstaInterviewController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInstaInterviewService instaInterviewService, IInterviewerService interviewerService, IMeetingService meetingService)
+        private readonly IIRFRepository _irfRepository;
+        public InstaInterviewController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInstaInterviewService instaInterviewService, IInterviewerService interviewerService, IMeetingService meetingService, IIRFRepository irfRepository)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -33,8 +36,262 @@ namespace Risebird.Web.Controllers
             _instaInterviewService = instaInterviewService;
             _interviewerService = interviewerService;
             _meetingService = meetingService;
+            _irfRepository = irfRepository;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> InstaIRF()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var model = new List<InstaMeetingVM>();
+                        var irfList = _instaInterviewService.GetAllInstaRequests(emailid, profileName);
+                        model = (List<InstaMeetingVM>)irfList;
+                        if (TempData["SuccessErrorMessage"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                            TempData.Remove("SuccessErrorMessage");
+                        }
+                        if (HttpContext.Session.GetString("InstaRequestfilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<IRFFilter>(HttpContext.Session.GetString("InstaRequestfilters"));
+                            filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = model.Select(x => x.RequiredSkill).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                            model = model.Where(c => filter.PrimarySkill.Contains(c.RequiredSkill.Split("|")[0])).ToList();
+                        }
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IActionResult> CreateRequest()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var model = new InstaMeetingVM();
+                        var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                        model.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                        var skills = _irfRepository.GetSkills();
+                        ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+                        var Skillset = skills;
+                        if (Skillset != null)
+                        {
+                            Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+                        }
+                        ViewBag.Skill = new SelectList(Skillset, "id", "Name");
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateRequest(InstaMeetingVM meeting)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        if (profileName == "Client")
+                        {
+                            meeting.RequestedBy = emailid;
+                        }
+                        if (ModelState.IsValid)
+                        {
+                            if (meeting.JDFile != null)
+                            {
+                                await _azureStorageHelper.InsertBlob(meeting.JDFile.FileName.Replace(" ", ""), "resumes", meeting.JDFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(meeting.JDFile.FileName.Replace(" ", ""));
+                                meeting.JDLink = blob.Uri.ToString();
+                            }
+                            if (_instaInterviewService.CreateRequest(meeting))
+                            {
+                                TempData["SuccessErrorMessageInterview"] = "Request Created Successfully";
+                                return RedirectToAction("InstaIRF");
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessageInterview"] = "Failed to Craete request.";
+                                return RedirectToAction("InstaIRF");
+                            }
+
+                        }
+                        else
+                        {
+                            var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                            meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                            return View("CreateRequest", meeting);
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterview"] = "Meeting addition has Failed!";
+                return RedirectToAction("Index");
+            }
+        }
+        public async Task<IActionResult> EditRequest(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var model = new InstaMeetingVM();
+                        model = _instaInterviewService.FetchRequestById(id);
+                        var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                        model.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                        var skills = _irfRepository.GetSkills();
+                        ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+                        var Skillset = skills;
+                        if (Skillset != null)
+                        {
+                            Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+                        }
+                        ViewBag.Skill = new SelectList(Skillset, "id", "Name");
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditRequest(InstaMeetingVM meeting)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        if (profileName == "Client")
+                        {
+                            meeting.RequestedBy = emailid;
+                        }
+                        if (ModelState.IsValid)
+                        {
+                            if (meeting.JDFile != null)
+                            {
+                                await _azureStorageHelper.InsertBlob(meeting.JDFile.FileName.Replace(" ", ""), "resumes", meeting.JDFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(meeting.JDFile.FileName.Replace(" ", ""));
+                                meeting.JDLink = blob.Uri.ToString();
+                            }
+                            if (_instaInterviewService.CreateRequest(meeting))
+                            {
+                                TempData["SuccessErrorMessageInterview"] = "Meeting is added Successfully";
+                                return RedirectToAction("Index");
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessageInterview"] = "Meeting addition has Failed";
+                                return RedirectToAction("Index");
+                            }
+
+                        }
+                        else
+                        {
+                            var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                            meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                            return View("Add", meeting);
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterview"] = "Meeting addition has Failed!";
+                return RedirectToAction("Index");
+            }
+        }
+        public async Task<IActionResult> Index(int id)
         {
             try
             {
@@ -58,7 +315,7 @@ namespace Risebird.Web.Controllers
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("InstaInterviewfilters"));
                             if (filter.StartDate != null && filter.EndDate != null)
                             {
-                                modelList = _instaInterviewService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), emailId);
+                                modelList = _instaInterviewService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), id, emailId);
                             }
                             modelList = modelList.Select(x =>
                             {
@@ -78,14 +335,13 @@ namespace Risebird.Web.Controllers
                             && ((filter.MeetingStatus != null && filter.MeetingStatus.Count() > 0) ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
                             && ((filter.InterviewStatus != null && filter.InterviewStatus.Count() > 0) ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
                             && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.Interviewer) : c.Interviewer == null)).ToList();
-
                         }
                         else
                         {
-
-                            modelList = _instaInterviewService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), emailId);
+                            modelList = _instaInterviewService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), id, emailId);
                             modelList = modelList.Select(x => { x.ConfirmationStatus = ((InstaReceiveMeetingStatus)Convert.ToInt32(x.ConfirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
                         }
+                        ViewBag.Requestid = id;
                         return View(modelList);
                     }
                     else
@@ -105,7 +361,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> Index(InterviewFilter filter)
+        public async Task<IActionResult> Index(int id, InterviewFilter filter)
         {
             try
             {
@@ -125,7 +381,7 @@ namespace Risebird.Web.Controllers
                         List<InstaMeetingVM> modelList = new List<InstaMeetingVM>();
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            modelList = _instaInterviewService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), emailId);
+                            modelList = _instaInterviewService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), id, emailId);
                         }
                         modelList = modelList.Select(x =>
                         {
@@ -145,7 +401,7 @@ namespace Risebird.Web.Controllers
                         && ((filter.MeetingStatus != null && filter.MeetingStatus.Count() > 0) ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
                         && ((filter.InterviewStatus != null && filter.InterviewStatus.Count() > 0) ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
                         && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.Interviewer) : c.Interviewer == null)).ToList();
-
+                        ViewBag.Requestid = id;
                         return View(modelList);
                     }
                     else
@@ -164,9 +420,8 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
         [HttpGet]
-        public async Task<IActionResult> Add()
+        public async Task<IActionResult> Add(int Requestedid)
         {
             try
             {
@@ -178,6 +433,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var model = new InstaMeetingVM();
+                        model.RequestId = Requestedid;
                         var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
                         model.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                         return View(model);
@@ -233,13 +489,6 @@ namespace Risebird.Web.Controllers
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
                                 var blob = containerRef.GetBlockBlobReference(meeting.ResumeFile.FileName.Replace(" ", ""));
                                 uploadedFileURL = blob.Uri.ToString();
-                            }
-                            if (meeting.JDFile != null)
-                            {
-                                await _azureStorageHelper.InsertBlob(meeting.JDFile.FileName.Replace(" ", ""), "resumes", meeting.JDFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(meeting.JDFile.FileName.Replace(" ", ""));
-                                meeting.JDLink = blob.Uri.ToString();
                             }
                             if (uploadedFileURL == null || uploadedFileURL == string.Empty)
                             {
@@ -523,10 +772,6 @@ namespace Risebird.Web.Controllers
                             myInterview = myInterview.Where(c => (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.RequestedDate)) : c.RequestedDate == null)
                            && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.CandidateName) : c.CandidateName == null)).ToList();
                         }
-                        if (HttpContext.Session.GetString("MyInterviewfilters") == null)
-                        {
-                            myInterview = myInterview.Where(x => x.RequestedDate.Date >= DateTime.Now.Date || (x.MeetingStatus == 0 && x.RequestedDate.Date < DateTime.Now.Date)).ToList();
-                        }
                         if (TempData["SuccessErrorMessage"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
@@ -636,6 +881,144 @@ namespace Risebird.Web.Controllers
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("MyInterview");
+            }
+        }
+        [HttpGet]
+        public IActionResult AddReport(int interviewId, int Requestedid, bool isClient = false, string actiontype = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var email = HttpContext.Session.GetString("email");
+                    email = email.Replace("\"", "");
+                    bool isAdminHR = false;
+                    bool isInterviewer = false;
+                    ViewBag.actiontype = actiontype;
+                    string profileName = HttpContext.Session.GetString("profileName");
+                    ViewBag.Profile = profileName.Replace("\"", "");
+                    if (profileName != null)
+                    {
+                        profileName = profileName.Replace("\"", "");
+                        if (profileName == "Admin" || profileName == "HR")
+                        {
+                            isAdminHR = true;
+                        }
+                        else if ((profileName == "Interviewer" || profileName == "Quality Controller"))
+                        {
+                            isInterviewer = true;
+                        }
+                    }
+                    var model = _instaInterviewService.GetInstaInteviewReport(interviewId).Result;
+                    if (model == null)
+                    {
+                        if (isAdminHR)
+                        {
+                            return RedirectToAction("Index");
+                        }
+                        else if (isInterviewer)
+                        {
+                            return RedirectToAction("MyInterview");
+                        }
+                    }
+                    var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
+                                            select new { ID = (int)s, Name = s.GetDescription() };
+                    model.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
+                    var meetingStatuses = from MeetingStatus s in Enum.GetValues(typeof(MeetingStatus))
+                                          select new { ID = (int)s, Name = s.GetDescription() };
+                    model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
+                    ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+                    ViewBag.IsClient = isClient;
+                    //model.IsInterviewer = isInterviewer;
+                    //model.PreviousMeetingStatus = model.MeetingStatus;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyInterview");
+            }
+        }
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddReport(InstaMeetingVM model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.PageStatus = "Mainurl";
+                    ViewBag.Profile = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer")
+                    {
+                        var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
+                                                select new { ID = (int)s, Name = s.GetDescription() };
+                        model.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
+                        var meetingStatuses = from MeetingStatus s in Enum.GetValues(typeof(MeetingStatus))
+                                              select new { ID = (int)s, Name = s.GetDescription() };
+                        model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
+                        ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+                        if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink == null)
+                        {
+                            ModelState.AddModelError(String.Empty, "Video file/link not found.");
+                            return View("AddReport", model);
+                        }
+                        if (model.VideoFile != null)
+                        {
+                            AzureCall _call = new AzureCall(_configuration);
+                            var resulttype = _call.CallApiUpload(model.VideoFile);
+                            resulttype = resulttype.Replace("\"", "");
+                            var uploadedvideoFileURL = resulttype;
+                            if (uploadedvideoFileURL == null)
+                            {
+                                ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                                return View("AddReport", model);
+                            }
+                            else
+                            {
+                                model.VideoLink = uploadedvideoFileURL;
+                            }
+                        }
+                        else if (model.PageVideoLink != null)
+                        {
+                            model.VideoLink = model.PageVideoLink;
+                        }
+                        if (_instaInterviewService.AddInstaInterviewReport(model, emailid).Result)
+                        {
+                            TempData["SuccessErrorMessage"] = "Report saved Successfully";
+                            return RedirectToAction("AddReport", new { interviewId = model.id, Requestedid = model.RequestId });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Report was not saved.";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Report was not saved.";
+                return RedirectToAction("Index");
             }
         }
     }

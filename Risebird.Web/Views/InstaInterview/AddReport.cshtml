@@ -1,0 +1,832 @@
+﻿@model Risebird.Entities.ViewModel.InstaMeetingVM
+@using System.Text.RegularExpressions
+@using Risebird.Entities.Enum
+@using Microsoft.Extensions.Configuration;
+@inject IConfiguration configuration
+@{
+    ViewData["Title"] = "Insta Interview Report";
+    ViewBag.PageHeader = "Insta Interview Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var meetingStatusList = new List<SelectListItem>();
+    if (ViewBag.Profile == "Admin")
+    {
+        meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
+    }
+    else
+    {
+        meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString()).ToList();
+
+    }
+}
+<link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<div class="main-panel" id="main-panel">
+
+    <div class="loader text-center">
+        <img src="~/Newassets/img/lazyload.gif" />
+    </div>
+    <div class="mt50">
+    </div>
+    <div class="content dataloading client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="interviewgenerate_pdf" value="Generate PDF" onclick="getPDF()"></div>
+            </div>
+        </div>
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <form action="/InstaInterview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
+                            @Html.AntiForgeryToken()
+                            <div class="canvas_div_pdf">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Candidate Details</h2>
+                                        </div><!--end of multiple location-->
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.RequestedDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.RequestedDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @{
+                                                if (Model.ResumeLink != null && Model.ResumeLink != "")
+                                                {
+                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.ResumeLink.ToString() class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Interview Report</h2>
+                                        </div><!--end of multiple location-->
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+
+                                            @Html.LabelFor(model => model.MeetingStatus, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            <label class="text-danger" id="meetingStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.InterviewStatus, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                            @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            <label class="text-danger" id="interviewStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Report Details</h2>
+                                        </div><!--end of multiple location-->
+                                    </div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="form-group" style="margin-bottom:0px;">
+                                                    @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 " })
+                                                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                        <div class="talktext">
+                                                            @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @maxlength = "500", @class = "form-control text-box single-line  scrollbar" }, @maxlength = "250", @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters" })
+                                                            <div id="words"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" style="margin-bottom:0px;">
+                                                    <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Interview Video</h2>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="videoConplayer">
+                                            @Html.HiddenFor(x => Model.VideoLink)
+                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                            {
+                                                var src = Model.VideoLink + "#t=120";
+                                                <video width="600" controls="controls" preload="metadata" class="vjs-tech">
+                                                    <source src='@src' type="video/mp4">
+                                                </video>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="proctor">
+
+                                    <input class="toggle-box" id="identifier-1" type="checkbox">
+                                    <label for="identifier-1">
+                                        <div class="multiple_row">
+                                            <h2>Upload Video & Thumbnail</h2>
+                                        </div>
+                                    </label>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6" style="margin-top:20px;">
+                                                <div class="card">
+                                                    <div class="mdc-card-wrapper__text-section">
+                                                        <div class="choose-file ">
+                                                            <label class="file-lable"> Upload Video File</label>
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" id="Vid2" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
+                                                                    </div>
+                                                                    <div class="mdc-radio__ripple"></div>
+                                                                </div>
+                                                            </div>
+                                                            Add a link
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
+                                                                    </div>
+                                                                    <div class="mdc-radio__ripple"></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="" style="display:none" id="linkDiv">
+                                                                @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
+                                                            </div>
+
+                                                            <div class="" id="uploadDiv">
+                                                                @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                                @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control ", @accept = ".mp4" })
+                                                                <div class="mtop-15">
+                                                                    @{
+                                                                        if (Model.VideoLink != null)
+                                                                        {
+                                                                            <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div><!--end of col-md-12-->
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Tech Skill Report</h2>
+                                        </div><!--end of multiple location-->
+                                    </div><!--end of col-md-12-->
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="table-responsive-sm">
+                                            <table class="table table-bordered mbn" id="SkillTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="10%">Required Level</th>
+                                                        <th width="40%">Skill Name</th>
+                                                        <th width="20%">Actual Level</th>
+                                                        <th width="15%">Required Weightage</th>
+                                                        <th width="15%">Actual Weightage</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.TechSkill != null)
+                                                    {
+                                                        @for (int i = 0; i < Model.TechSkill.Count(); i++)
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkill[i].Level, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkill[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DropDownListFor(m => m.TechSkill[i].ActualLevelId, (SelectList)ViewBag.LevelTech, new { @class = "select-css form-control" })
+                                                                </td>
+                                                                @Html.HiddenFor(m => m.TechSkill[i].LevelId)
+                                                                @Html.HiddenFor(m => m.TechSkill[i].SkillId)
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 " })
+                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                <div class="talktext">
+                                                    @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @id = "text", @maxlength = "500", @class = "form-control text-box single-line scrollbar" }, @style = "width:100%" })
+                                                    <div id="words"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><!--end of col-md-12-->
+                                </div>
+
+                                @Html.HiddenFor(m => m.id)
+                                @*@Html.HiddenFor(m => m.IsEdited)*@
+                                @Html.HiddenFor(m => m.RequiredSkill)
+
+                                <div class="card-footer ">
+                                    <div class="row">
+                                        <div class="col-md-12 mc-button-area">
+                                            @Html.ActionLink("Back to List", "MyInterview", "InstaInterview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="SubmitForm()">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var meetingStatus = document.getElementById('MeetingStatus').value;
+        if (meetingStatus == null || meetingStatus == '') {
+            document.getElementById('InterviewerComment').disabled = true;
+            document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status above to add comments here.";
+            document.getElementById("InterviewStatus").disabled = true;
+        }
+        else {
+            document.getElementById('InterviewerComment').disabled = false;
+            document.getElementById("interviewerComment_Error").innerHTML = "";
+
+        }
+    })
+
+</script>
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+
+
+<script>
+    function getPDF() {
+
+        var HTML_Width = $(".canvas_div_pdf").width();
+        var HTML_Height = $(".canvas_div_pdf").height();
+        var top_left_margin = 15;
+        var PDF_Width = HTML_Width + (top_left_margin * 2);
+        var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
+        var canvas_image_width = HTML_Width;
+        var canvas_image_height = HTML_Height;
+
+        var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+
+
+        html2canvas($(".canvas_div_pdf")[0], { allowTaint: false }).then(function (canvas) {
+            canvas.getContext('2d');
+
+            var imgData = canvas.toDataURL("image/png", 1.0);
+            var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+            pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+
+
+            for (var i = 1; i <= totalPDFPages; i++) {
+                pdf.addPage(PDF_Width, PDF_Height);
+                pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+            }
+            var d = new Date();
+
+            var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear();
+            pdf.save(filename + ".pdf")
+
+        });
+
+    }
+</script>
+<script>
+    function SubmitForm() {
+        //disable button
+        document.getElementById("btnUpload").disabled = true;
+        if (CheckConditions()) {
+            document.getElementById("reportForm").submit();
+        }
+        else {
+            //enable button
+            document.getElementById("btnUpload").disabled = false;
+            return;
+
+        }
+    }
+</script>
+
+<script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
+<script>
+
+
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("PageVideoLink").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("VideoFile").value = '';
+
+        }
+
+    }
+
+    function CountProctoring(value) {
+
+        if (value == "" || value == null) {
+
+            return;
+        }
+
+        var proctoringItems = $('[id^="Proctoring_"]');
+        var proctoringTotal = 0;
+        for (i = 0; i < proctoringItems.length; i++) {
+            if (proctoringItems[i].value != null && proctoringItems[i].value != "") {
+                proctoringTotal += parseInt(proctoringItems[i].value);
+            }
+        }
+
+        $("#ProctoringCount").val(proctoringTotal);
+
+
+        if (parseInt(proctoringTotal) > 0) {
+            $("#ProctoringCount").css("border-color", "red");
+        }
+        else {
+            $("#ProctoringCount").css("border-color", "#E3E3E3");
+        }
+    }
+      function switchtoquestionVedio(questiontime) {
+
+        var time = 1;
+        if (questiontime != '') {
+            time = questiontime;
+        }
+        var vid = document.getElementsByClassName("vjs-tech");
+        vid[0].currentTime = time;
+        //time should be in seconds
+    }
+
+    $(document).ready(function () {
+        var proctoringItems = $('[id^="Proctoring_"]');
+        var proctoringTotal = 0;
+        for (i = 0; i < proctoringItems.length; i++) {
+            if (proctoringItems[i].value != null && proctoringItems[i].value!="") {
+                proctoringTotal += parseInt(proctoringItems[i].value);
+            }
+        }
+        $("#ProctoringCount").val(proctoringTotal);
+        if (parseInt(proctoringTotal) > 0) {
+            $("#ProctoringCount").css("border-color", "red");
+        }
+        else {
+            $("#ProctoringCount").css("border-color", "");
+        }
+
+        //shorter/better attempt
+        var weightageItems = $('[id$="WeightageActual"]');
+        for (i = 0; i < weightageItems.length; i++) {
+            var id = weightageItems[i].id;
+            var match = id.match(/\d+/g);
+            var digit = match[0];
+
+            var index = weightageItems[i].id.indexOf(digit);
+            var skillName = weightageItems[i].id.substring(0, index);
+            var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
+            var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
+            if (reqLevel <= actLevel) {
+                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+                $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
+                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
+            }
+            else {
+                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+                var adjustedReqWeightage = Math.pow(0.5, (reqLevel - actLevel)) * (reqWeight);
+                $("#" + skillName + digit + "__WeightageActual").val(adjustedReqWeightage);
+                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
+
+            }
+
+        }
+
+
+        var items = $('[id$="WeightageActual"]');
+        var totalCount = 0;
+
+        for (i = 0; i < items.length; i++) {
+            totalCount += parseInt(items[i].value);
+        }
+        var average = totalCount / 4;
+        $("#OverallScore").val(average);
+
+        SetChart();
+    });
+
+    function AddRow() {
+
+        var $ttc = $("#QuestionsTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#QuestionsTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+        var rowCount = $('#QuestionsTable tr').length;
+
+        var finalIndex = rowCount - 1;
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#QuestionsTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        @*var options = '@Model.QuestionsListData';
+        optionsData = JSON.parse(options.replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<'));
+        $("#QuestionsCollection_" + finalIndex + "__Comment" + " option").remove();
+
+        $(optionsData).each(function () {
+            var option = $("<option />");
+
+            //Set Text part.
+            option.html(this.Item1);
+
+            //Set Value part.
+            option.val(this.Item1);
+
+            //Add the Option element to DropDownList.
+
+            $("#QuestionsCollection_" + finalIndex + "__Comment").append(option);
+        });
+        $("#QuestionsCollection_" + finalIndex + "__SkillName").val(optionsData[0].Item2);*@
+        //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
+        // Check document for changes
+        //$.validator.unobtrusive.parse(document);
+
+    }
+
+    function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
+
+        if ($(element).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Row');
+            return false;
+        }
+
+        else {
+            document.getElementById("btnUpload").disabled = false;
+
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
+            }
+            //ClientCollection_1__ClientRoleId
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    //name="ClientCollection[3].ClientUserId"
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+
+                    var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                    elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                    elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+
+
+
+                }
+
+            }
+
+        }
+
+
+
+
+    }
+
+
+    function InterviewerChanged(val, id) {
+
+        var index = id.charAt(22);
+        var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetInterviewerSkills",
+            data: { 'id': val },
+            success: function (data) {
+                $("#" + skillElementid).val(data);
+            }
+        });
+
+
+    }
+
+    function MeetingStatusChanged(value) {
+        if (value != null && value != '') {
+            document.getElementById('InterviewerComment').disabled = false;
+            document.getElementById("interviewerComment_Error").innerHTML = "";
+
+        }
+        else {
+
+            document.getElementById('InterviewerComment').value = '';
+            document.getElementById('InterviewerComment').disabled = true;
+            document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status above to add comments here.";
+
+        }
+        if (value != 2) {
+            document.getElementById("meetingStatus_Error").innerHTML = "";
+        }
+        if (value != 4) {
+            document.getElementById("InterviewStatus").value = '';
+            document.getElementById("InterviewStatus").disabled = true;
+        }
+        else {
+            document.getElementById("InterviewStatus").disabled = false;
+        }
+    }
+
+    function CheckConditions() {
+
+        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments());
+    }
+
+    function CheckInterviewerComments() {
+        var interviewStatusElem = document.getElementById("InterviewStatus");
+        if (interviewStatusElem.value == 2|| interviewStatusElem.value == 4) {
+            var comments = document.getElementById("InterviewerComment").value;
+            if (comments.length >= 250) {
+                document.getElementById("interviewerComment_Error").innerHTML = "";
+                return true;
+            }
+            else {
+                //interviewerComment_Error
+                document.getElementById("InterviewerComment").focus();
+                document.getElementById("interviewerComment_Error").innerHTML="Kindly enter a minimum of 250 characters.";
+                return false;
+            }
+        }
+        else
+            return true;
+    }
+
+    function CheckMeetingStatus() {
+        var meetingStatusElem = document.getElementById("MeetingStatus");
+        if (meetingStatusElem.value == 2 || (meetingStatusElem.value == null || meetingStatusElem.value == '')) {
+            document.getElementById("meetingStatus_Error").innerHTML = "Kindly change the Meeting Status to an appropriate value.";
+            meetingStatusElem.focus();
+            return false;
+        }
+        else {
+            document.getElementById("meetingStatus_Error").innerHTML = "";
+            return true;
+
+        }
+
+    }
+
+    function CheckInterviewStatus() {
+        var meetingStatusElem = document.getElementById("MeetingStatus");
+        if (meetingStatusElem.value == 4) {
+            var interviewStatusElem = document.getElementById("InterviewStatus");
+            if (interviewStatusElem.value == null || interviewStatusElem.value == '') {
+                document.getElementById("interviewStatus_Error").innerHTML = "Kindly change the Interview Status to an appropriate value.";
+                interviewStatusElem.focus();
+                return false;
+            }
+            else {
+                document.getElementById("interviewStatus_Error").innerHTML = '';
+            }
+
+        }
+        return true;
+    }
+
+</script>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+<script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+
+<script src="~/js/FeedbackRecorder/Record.js"></script>
+<script>
+    ; (function () {
+
+        "use strict";
+
+        var words = document.getElementById("words"),
+            input = document.getElementById("text, interviewerComment,skillComment, joinability, selectability"),
+            timeout, xhr;
+
+        if (input != null) {
+            input.addEventListener("keyup", function (e) {
+
+                if (timeout) clearTimeout(timeout);
+
+                if (!this.value.trim()) words.innerHTML = '';
+
+                timeout = setTimeout(function () {
+
+                    var test_phrase = shuffle_words(input.value);
+
+                    spell_check(test_phrase);
+
+                    timeout = null;
+
+                }, 500);
+
+            });
+        }
+
+
+        function shuffle_words(inp) {
+
+            inp = inp.replace(/\s+/g, ' ');
+
+            var arr = inp.split(" "),
+                n = arr.length;
+
+            while (n > 0) {
+                var i = Math.floor(Math.random() * n--),
+                    t = arr[n];
+                arr[n] = arr[i];
+                arr[i] = t;
+            }
+
+            return arr.join(' ');
+        }
+
+        function spell_check(text) {
+
+            if (xhr) xhr.abort();
+
+            xhr = $.ajax({
+                url: 'https://montanaflynn-spellcheck.p.mashape.com/check/',
+                headers: {
+                    'X-Mashape-Key': 'U3ogA8RAAMmshGOJkNxkTBbuYYRTp1gMAuGjsniThZuaoKIyaj',
+                    'Accept': 'application/json'
+                },
+                data: {
+                    'text': text
+                },
+                cache: false,
+                success: function (result) {
+
+                    xhr = null;
+                    suggest_words(result);
+
+                }
+            });
+
+        }
+
+        function suggest_words(obj) {
+
+            if (!obj.corrections) return;
+
+            words.innerHTML = '';
+
+            for (var key in obj.corrections) {
+
+                if (obj.corrections.hasOwnProperty(key)) {
+
+                    var div = document.createElement("div");
+                    div.className = "word";
+                    div.innerHTML = obj.corrections[key][0];
+                    div.orig = key;
+
+                    div.onmouseover = function () {
+                        var start = input.value.indexOf(this.orig);
+                        input.selectionStart = start;
+                        input.selectionEnd = start + this.orig.length;
+                    };
+
+                    div.onmouseout = function () {
+                        var len = input.value.length;
+                        input.selectionStart = len;
+                        input.selectionEnd = len;
+                    }
+
+                    div.onclick = function () {
+                        input.value = input.value.replace(this.orig, this.innerHTML);
+                        this.parentNode.removeChild(this);
+                    }
+
+                    words.appendChild(div);
+
+                }
+
+            }
+
+        }
+
+    })();
+</script>

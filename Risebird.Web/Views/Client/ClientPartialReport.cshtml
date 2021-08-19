@@ -72,6 +72,7 @@
                 @*<div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="create_pdf" value="Generate PDF" onclick="getPDF()"></div>*@
                 @if (ViewBag.PageStatus == "Mainurl")
                 {
+                    <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Insta Public URL" onclick="GeneratePublicUrl(3)"></div>
                     <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Executive Public URL" onclick="GeneratePublicUrl(1)"></div>
                     <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Public Url" onclick="GeneratePublicUrl(2)"></div>
                 }
@@ -99,15 +100,13 @@
                                             @Html.HiddenFor(m => m.CandidateEmail)
                                         </div>
                                     </div>
-                                    @if (ViewBag.PageStatus != "PublicExternal")
-                                    {
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
                                         </div>
-                                    }
+                                    </div>
                                 </div>
                                 @if (ViewBag.PageStatus != "PublicExternal")
                                 {
@@ -128,29 +127,31 @@
                                         </div>
                                     </div>
                                 }
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                            @{
-                                                if (Model.resumeLink != null && Model.resumeLink != "")
-                                                {
-                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
-                                                }
+                                        @{
+                                            if (Model.resumeLink != null && Model.resumeLink != "")
+                                            {
+                                                <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
                                             }
+                                        }
 
-                                        </div>
                                     </div>
+                                </div>
+                                @if (ViewBag.PageStatus != "PublicExternal")
+                                {
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                            @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                         </div>
                                     </div>
+                                }                               
 
-                                </div>
+                            </div>
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -162,9 +163,9 @@
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6">
                                         @*<div class="form-group">
-                    @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                    @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                </div>*@
+                                                @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            </div>*@
                                         <div class="form-group">
                                             @Html.HiddenFor(m => m.PreviousMeetingStatus)
                                             @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -262,138 +263,138 @@
 
 
                                 @*@if (ViewBag.Profile != "Interviewer")
-        {
+                                    {
 
 
-            <div class="row">
+                                        <div class="row">
 
-                <div class="col-md-6 col-sm-6">
+                                            <div class="col-md-6 col-sm-6">
 
-                    <div class="card">
+                                                <div class="card">
 
-                        <div class="mdc-card-wrapper__text-section">
-                            <div class="choose-file ">
-                                <label class="file-lable"> Upload Video File</label>
+                                                    <div class="mdc-card-wrapper__text-section">
+                                                        <div class="choose-file ">
+                                                            <label class="file-lable"> Upload Video File</label>
 
 
 
-                                <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
-                                    <div class="mdc-radio mdc-radio--touch">
-                                        <input class="mdc-radio__native-control" id="Vid2" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
-                                        <div class="mdc-radio__background">
-                                            <div class="mdc-radio__outer-circle"></div>
-                                            <div class="mdc-radio__inner-circle"></div>
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" id="Vid2" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
+                                                                    </div>
+                                                                    <div class="mdc-radio__ripple"></div>
+                                                                </div>
+                                                            </div>
+
+                                                            Add a link
+
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
+                                                                    </div>
+                                                                    <div class="mdc-radio__ripple"></div>
+                                                                </div>
+                                                            </div>
+
+
+
+
+
+
+
+                                                            <div class="" style="display:none" id="linkDiv">
+                                                                @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                                @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
+                                                            </div>
+
+                                                            <div class="" id="uploadDiv">
+                                                                @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                                @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control ", @accept = ".mp4" })
+
+
+                                                                <div class="mtop-15">
+                                                                    @{
+                                                                        if (Model.VideoLink != null)
+                                                                        {
+                                                                            <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.ThumbnailTimeSeconds, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(model => model.ThumbnailTimeSeconds, new { type = "number", @class = "form-control text-box single-line col-lg-12 col-md-12 col-sm-12 col-xs-12" })
+                                                </div>
+
+                                            </div>
                                         </div>
-                                        <div class="mdc-radio__ripple"></div>
-                                    </div>
-                                </div>
-
-                                Add a link
-
-                                <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
-                                    <div class="mdc-radio mdc-radio--touch">
-                                        <input class="mdc-radio__native-control" id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
-                                        <div class="mdc-radio__background">
-                                            <div class="mdc-radio__outer-circle"></div>
-                                            <div class="mdc-radio__inner-circle"></div>
-                                        </div>
-                                        <div class="mdc-radio__ripple"></div>
-                                    </div>
-                                </div>
-
-
-
-
-
-
-
-                                <div class="" style="display:none" id="linkDiv">
-                                    @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                    @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
-                                    @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
-                                </div>
-
-                                <div class="" id="uploadDiv">
-                                    @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                    @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control ", @accept = ".mp4" })
-
-
-                                    <div class="mtop-15">
-                                        @{
-                                            if (Model.VideoLink != null)
-                                            {
-                                                <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
-                                            }
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-md-6 col-sm-6">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.ThumbnailTimeSeconds, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                        @Html.TextBoxFor(model => model.ThumbnailTimeSeconds, new { type = "number", @class = "form-control text-box single-line col-lg-12 col-md-12 col-sm-12 col-xs-12" })
-                    </div>
-
-                </div>
-            </div>
-        }*@
+                                    }*@
 
                                 @*<div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="multiple_row">
-                    <h2>Record Feedback Audio</h2>
-                </div>
-            </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Record Feedback Audio</h2>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="row">
 
 
-                    <div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">
+                                                <div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">
 
 
-                        <div class="pull-left"> <button id="startRecButton" type="button" onclick="startRecording()">Start Recording</button><span class="record-txt">Start<br /> Recording</span></div>
-                        <div class="pull-left"> <button id="stopRecButton" type="button" onclick="stopRecording('@Model.InterviewId','@((int)CandidateTypeEnum.Candidate)')" disabled="disabled">Stop Recording</button><span class="record-txt">Stop<br /> Recording</span></div>
-                        <div class="pull-left">
-                            <div> <button id="cancelRecButton" type="button" onclick="cancelRecording()" disabled="disabled">Cancel Recording</button><span class="record-txt">Cancel<br /> Recording</span></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
-                        <div class="row">
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
-                                <p style="font-size:18px" id="recordingStatus"></p>
-                            </div>
-                        </div>
-                        <div class="row" id="recordingRow" style="display:none">
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
+                                                    <div class="pull-left"> <button id="startRecButton" type="button" onclick="startRecording()">Start Recording</button><span class="record-txt">Start<br /> Recording</span></div>
+                                                    <div class="pull-left"> <button id="stopRecButton" type="button" onclick="stopRecording('@Model.InterviewId','@((int)CandidateTypeEnum.Candidate)')" disabled="disabled">Stop Recording</button><span class="record-txt">Stop<br /> Recording</span></div>
+                                                    <div class="pull-left">
+                                                        <div> <button id="cancelRecButton" type="button" onclick="cancelRecording()" disabled="disabled">Cancel Recording</button><span class="record-txt">Cancel<br /> Recording</span></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                                                    <div class="row">
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
+                                                            <p style="font-size:18px" id="recordingStatus"></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" id="recordingRow" style="display:none">
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
 
-                                <div id="recordingsList"></div>
-                            </div>
+                                                            <div id="recordingsList"></div>
+                                                        </div>
 
-                        </div>
-                        <div class="row">
-                            <input type="text" asp-for="FeedbackAudioLink" style="display:none">
-                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <input type="text" asp-for="FeedbackAudioLink" style="display:none">
+                                                    </div>
 
-                    </div>
-
-
-
-
-
-                </div>
-
-            </div>
+                                                </div>
 
 
 
-        </div>*@
+
+
+                                            </div>
+
+                                        </div>
+
+
+
+                                    </div>*@
 
                                 <div id="playUploadedAudioOne">
                                     @if (Model.FeedbackAudioLink != null)
@@ -490,141 +491,144 @@
                                     </div>
 
                                 </div>
+                                @if (ViewBag.PageReport != "Insta")
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Interview Video</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
 
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Interview Video</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
 
-
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="videoConplayer">
-                                            @Html.HiddenFor(x => Model.VideoLink)
-                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                            {
-                                                string appendTime;
-                                                if (Model.ThumbnailTimeSeconds == 0)
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="videoConplayer">
+                                                @Html.HiddenFor(x => Model.VideoLink)
+                                                @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                                 {
-                                                    appendTime = configuration["ThumbnailTimeDefault"];
-                                                }
-                                                else
-                                                {
-                                                    appendTime = Model.ThumbnailTimeSeconds.ToString();
-                                                }
-                                                var src = Model.VideoLink + "#t=" + appendTime;
-                                                <video width="600" controls="controls" preload="metadata" class="vjs-tech">
-                                                    <source src='@src' type="video/mp4">
-                                                </video>
-                                            }
-                                        </div>
-
-
-                                    </div><!--end of col-md-12-->
-
-                                </div>
-
-
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Questions Discussed</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
-
-
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-
-
-                                        <div class="table-responsive-sm">
-                                            <table class="table table-bordered mbn" id="QuestionsTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th width="50%">Questions</th>
-                                                        <th width="20%">SkillName</th>
-                                                        <th width="10%">Rating</th>
-                                                        <th width="10%">Time(In Seconds)</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @if (Model.QuestionsCollection == null || Model.QuestionsCollection.Count() == 0)
+                                                    string appendTime;
+                                                    if (Model.ThumbnailTimeSeconds == 0)
                                                     {
-                                                        <tr>
-                                                            <td>
-                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
-
-
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
-
-                                                            </td>
-
-                                                            <td>
-                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" min="60" max="5000">
-
-
-                                                            </td>
-
-                                                        </tr>
+                                                        appendTime = configuration["ThumbnailTimeDefault"];
                                                     }
                                                     else
                                                     {
-                                                        for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
+                                                        appendTime = Model.ThumbnailTimeSeconds.ToString();
+                                                    }
+                                                    var src = Model.VideoLink + "#t=" + appendTime;
+                                                    <video width="600" controls="controls" preload="metadata" class="vjs-tech">
+                                                        <source src='@src' type="video/mp4">
+                                                    </video>
+                                                }
+                                            </div>
+
+
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+
+                                }
+                                @if (ViewBag.PageReport != "Insta")
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Questions Discussed</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" id="QuestionsTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="50%">Questions</th>
+                                                            <th width="20%">SkillName</th>
+                                                            <th width="10%">Rating</th>
+                                                            <th width="10%">Time(In Seconds)</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.QuestionsCollection == null || Model.QuestionsCollection.Count() == 0)
                                                         {
-                                                            <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
+                                                            <tr>
                                                                 <td>
+                                                                    @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
-                                                                    @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsCollection[i].Comment))
-                                                                    {
-                                                                        @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        var newList = new List<SelectListItem>();
-                                                                        newList.Add(new SelectListItem() { Value = Model.QuestionsCollection[i].Comment, Text = Model.QuestionsCollection[i].Comment });
-                                                                        @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, newList, new { @class = "select-css form-control text-box single-line", onmouseover = "dropDwnToolTips(this)" })
-
-                                                                    }
 
                                                                 </td>
                                                                 <td>
-                                                                    @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @class = "form-control", @readonly = "readonly" })
+
                                                                 </td>
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
+                                                                    @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
+
                                                                 </td>
 
                                                                 <td>
+                                                                    <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" min="60" max="5000">
 
-                                                                    @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "60", @max = "5000" } })
 
                                                                 </td>
 
                                                             </tr>
+                                                        }
+                                                        else
+                                                        {
+                                                            for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
+                                                            {
+                                                                <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
+                                                                    <td>
 
+                                                                        @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsCollection[i].Comment))
+                                                                        {
+                                                                            @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            var newList = new List<SelectListItem>();
+                                                                            newList.Add(new SelectListItem() { Value = Model.QuestionsCollection[i].Comment, Text = Model.QuestionsCollection[i].Comment });
+                                                                            @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, newList, new { @class = "select-css form-control text-box single-line", onmouseover = "dropDwnToolTips(this)" })
+
+                                                                        }
+
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
+                                                                    </td>
+
+                                                                    <td>
+
+                                                                        @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "60", @max = "5000" } })
+
+                                                                    </td>
+
+                                                                </tr>
+
+
+                                                            }
 
                                                         }
 
-                                                    }
 
 
 
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
 
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
+                                        </div><!--end of col-md-12-->
 
-                                    </div><!--end of col-md-12-->
-
-                                </div>
-
+                                    </div>
+                                }
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
@@ -686,21 +690,24 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 " })
+                                        @if (ViewBag.PageReport != "Insta")
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 " })
 
-                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                <div class="talktext">
+                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                    <div class="talktext">
 
-                                                    @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @id = "text", @class = "form-control text-box single-line scrollbar" }, @style = "width:100%" })
-                                                    <div id="words"></div>
+                                                        @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @id = "text", @class = "form-control text-box single-line scrollbar" }, @style = "width:100%" })
+                                                        <div id="words"></div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        }
 
 
 
-                                    </div><!--end of col-md-12-->
+                                        </div><!--end of col-md-12-->
 
                                 </div>
                                 @if (ViewBag.PageStatus != "PublicExternal")
@@ -1440,8 +1447,11 @@
         var urlcurrent = window.location.href;
         if (index == 1) {
             urlcurrent = urlcurrent.replace("Report", "ExecutiveReport");
-        } else {
+        } else if (index == 2) {
             urlcurrent = urlcurrent.replace("Report", "PublicReport");
+        }
+        else {
+            urlcurrent = urlcurrent.replace("Report", "InstaAddReport");
         }
         $("#txtvideoUrls").text(urlcurrent);
     }
