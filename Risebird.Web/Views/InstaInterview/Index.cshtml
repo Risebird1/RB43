@@ -68,8 +68,10 @@
                             </button>
                         </span>
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "InstaInterview")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "InstaInterview",new { Requestedid=ViewBag.Requestid})'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
                         </button>
+
+                        @Html.ActionLink("Back to List", "InstaIRF", "InstaInterview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                     </div>
                 </div>
             </div>
@@ -128,7 +130,7 @@
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            <form action="@Url.Action("Index","InstaInterview")" method="post" id="form">
+                                            <form action="@Url.Action("Index","InstaInterview",new { id=ViewBag.Requestid})" method="post" id="form">
 
                                                 <div class="modal-body">
                                                     <div class="row">
@@ -316,21 +318,21 @@
 
                                                     <tr id=@item.id>
                                                         <td class="text-center action">
-                                                            <span class="interview_7">
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                                    <span onclick="location.href = '@Url.Action("Edit", "InstaInterview", new { id = item.id})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                                </button>
-                                                            </span>
+                                                            @*<span class="interview_7">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                        <span onclick="location.href = '@Url.Action("Edit", "InstaInterview", new { id = item.id})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                                    </button>
+                                                                </span>*@
                                                             <span class="interview_9">
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                    <span onclick="location.href = '@Url.Action("AddReport", "InstaInterview", new { interviewId = item.id})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                    <span onclick="location.href = '@Url.Action("AddReport", "InstaInterview", new { interviewId = item.id,Requestedid=ViewBag.Requestid})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                                 </button>
                                                             </span>
 
                                                         </td>
                                                         <td> @item.RequestedDate </td>
                                                         <td>@item.CandidateName</td>
-                                                        <td> @item.RequiredSkill.Split("|")[0] </td>
+                                                        <td> @item.RequiredSkill </td>
                                                         <td> @item.AssessmentGroup</td>
                                                         <td>@item.Interviewer</td>
                                                         @if (item.ZoomLink != null && item.ZoomLink != "")

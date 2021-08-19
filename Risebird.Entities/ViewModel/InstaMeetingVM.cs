@@ -31,14 +31,38 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Meeting Status")]
         public int MeetingStatus { get; set; }
         public string intervieweStatusStatDesc { get; set; }
-       
         public string MeetingStatusStatusDesc { get; set; }
         public int InterviewStatus { get; set; }
+        [Display(Name = "Interview Status")]
+        public SelectList InterviewStatusList { get; set; }
+
+        [Display(Name = "Meeting Status")]
+        public SelectList MeetingStatusList { get; set; }
+
         [Display(Name = "Resume File")]
         public IFormFile ResumeFile { get; set; }
         [Display(Name = "JD File")]
         public IFormFile JDFile { get; set; }
         [Display(Name = "Assessment Group List ")]
         public SelectList AssessmentGroupList { get; set; }
+        [Display(Name = "Insta Request Name ")]
+        public string InstaRequestName { get; set; }
+        public IList<InstaTechSkill> TechSkill { get; set; }
+        public int RequestId { get; set; }
+        public string InterviewerComment { get; set; }
+        public string TechSkillComments { get; set; }
+        public string VideoLink { get; set; }
+        public string PageVideoLink { get; set; }
+        public IFormFile VideoFile { get; set; }
+    }
+    public class InstaTechSkill
+    {
+        public int id { get; set; }
+        public int InstaRequestId { get; set; }
+        public string Level { get; set; }
+        public int LevelId { get; set; }
+        public int ActualLevelId { get; set; }
+        public string SkillName { get; set; }
+        public int SkillId { get; set; }
     }
 }

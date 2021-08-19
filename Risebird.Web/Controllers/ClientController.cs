@@ -3543,6 +3543,7 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
                 ViewBag.PageStatus = "PublicExternal";
+                ViewBag.PageReport = "";
                 return PartialView("ClientPartialReport", model);
             }
             catch (Exception ex)
@@ -3826,6 +3827,41 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
+            }
+        }
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult InstaAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
+        {
+            try
+            {
+                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                if (model.QuestionsCollection == null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
+                ViewBag.IsClient = isClient;
+                ViewBag.IsClientSelected = isClientSelected;
+                model.PreviousMeetingStatus = model.MeetingStatus;
+                GetStatusList(model, irfId);
+                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (menus != null)
+                {
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                }
+                ViewBag.PageStatus = "PublicExternal";
+                ViewBag.PageReport = "Insta";
+                return PartialView("ClientPartialReport", model);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("AllMeetings");
             }
         }
     }
