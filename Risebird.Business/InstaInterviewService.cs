@@ -85,13 +85,12 @@ namespace Risebird.Business
                 {
                     var model = _instaInterviewRepository.FetchRequestById(meeting.RequestId);
                     string RequiredSkill = String.Empty;
-                    var skills = _irfRepository.GetSkills();
                     foreach (var item in model.Result.TechSkill)
                     {
                         if (String.IsNullOrEmpty(RequiredSkill))
-                            RequiredSkill = skills.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
+                            RequiredSkill = item.SkillId;
                         else
-                            RequiredSkill = RequiredSkill + "," + skills.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
+                            RequiredSkill = RequiredSkill + "," + item.SkillId;
                     }
                     //Send mail to Client
                     Mail _mail = new Mail

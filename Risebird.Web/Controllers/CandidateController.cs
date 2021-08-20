@@ -2646,7 +2646,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 4].Value = "Phone(With Country code)";
                 Sheet.Cells[1, 5].Value = "WhatsApp Number(Without Country code)";
                 Sheet.Cells[1, 6].Value = "Client HR Email ID";
-                Sheet.Cells[1, 7].Value = "Profile Source";
+                Sheet.Cells[1, 7].Value = "Staffing Agency Email ID";
 
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
 

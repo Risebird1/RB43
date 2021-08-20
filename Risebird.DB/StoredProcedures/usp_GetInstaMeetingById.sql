@@ -17,4 +17,4 @@ SELECT * FROM InstaInterviewMeetings
 WHERE id = @interviewId  
   
 End  
-  
+  GO

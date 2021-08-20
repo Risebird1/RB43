@@ -834,7 +834,9 @@ table {
 .tab-box label.choose-file-profile {
     color: rgb(51, 51, 51) !important;
 }
-
+.instainterview .form-group {
+    box-shadow: 2px 4px #96969663;
+}
 .d_active {
     background-color: #9c9c9c !important;
     color: #fff !important;

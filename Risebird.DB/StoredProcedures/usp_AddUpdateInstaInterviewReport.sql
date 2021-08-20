@@ -33,4 +33,4 @@ BEGIN
  delete from TransInstaSkills where IRFId=@IRFId  
 END  
 End  
-  
+  GO

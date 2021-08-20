@@ -95,8 +95,8 @@ namespace Risebird.Repository
                     DataTable techSkillDt = new DataTable();
                     techSkillDt.Columns.Add("IRFId", typeof(int));
                     techSkillDt.Columns.Add("LevelId", typeof(int));
-                    techSkillDt.Columns.Add("SkillId", typeof(int));
-                    techSkillDt.Columns.Add("Weightage", typeof(int));
+                    techSkillDt.Columns.Add("SkillId", typeof(string));
+                    techSkillDt.Columns.Add("ActualLevelId", typeof(int));
                     foreach (var item in meeting.TechSkill)
                     {
                         techSkillDt.Rows.Add(meeting.id, item.LevelId, item.SkillId, 0);
@@ -362,7 +362,7 @@ namespace Risebird.Repository
                     model = result.FirstOrDefault();
                 }
                 //Fetch Skills
-                var querySkill = "Select ti.*,lt.Name as Level,sk.Name as SkillName from TransInstaSkills ti join LevelTech lt on lt.id=ti.LevelId join Skill sk on sk.id=ti.SkillId Where IRFID=@id";
+                var querySkill = "Select ti.*,lt.Name as Level,ti.SkillId as SkillName from TransInstaSkills ti join LevelTech lt on lt.id=ti.LevelId Where IRFID=@id";
                 var dp = new DynamicParameters();
                 dp.Add("@id", model.RequestId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -400,17 +400,15 @@ namespace Risebird.Repository
                     var result = SqlMapper.Query<int>(con, "usp_AddUpdateInstaInterviewReport", paramx,
                                             commandType: CommandType.StoredProcedure);
                     DataTable techReportDt = new DataTable();
-                    techReportDt.Columns.Add("InterviewId", typeof(int));
-                    techReportDt.Columns.Add("RequiredLevelId", typeof(int));
-                    techReportDt.Columns.Add("SkillId", typeof(int));
+                    techReportDt.Columns.Add("IRFId", typeof(int));
+                    techReportDt.Columns.Add("LevelId", typeof(int));
+                    techReportDt.Columns.Add("SkillId", typeof(string));
                     techReportDt.Columns.Add("ActualLevelId", typeof(int));
-                    techReportDt.Columns.Add("WeightageRequired", typeof(int));
-                    techReportDt.Columns.Add("WeightageActual", typeof(int));
                     if (reportDetails.TechSkill != null)
                     {
                         foreach (var item in reportDetails.TechSkill)
                         {
-                            techReportDt.Rows.Add(reportDetails.RequestId, item.LevelId, item.SkillId, item.ActualLevelId, 0, 0);
+                            techReportDt.Rows.Add(reportDetails.RequestId, item.LevelId, item.SkillId, item.ActualLevelId);
                         }
                         SqlCommand cmdTechReport = new SqlCommand("usp_InstaTechSkillReportBulkInsert", con)
                         {
