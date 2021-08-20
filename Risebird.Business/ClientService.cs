@@ -7,6 +7,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
@@ -216,6 +217,20 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "failed";
+            }
+        }
+
+        public async Task<int> GetClientRoleByEmailId(string emailId)
+        {
+            try
+            {
+                return await _clientRepository.GetClientRoleByEmailId(emailId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
             }
         }
     }

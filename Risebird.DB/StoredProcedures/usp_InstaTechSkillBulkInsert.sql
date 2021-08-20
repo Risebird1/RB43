@@ -10,7 +10,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[usp_InstaTechSkillBulkInsert]      
 (      
-      @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY      
+      @TechSkillBulkData AS [dbo].[TransInstaTechSkill_TableType] READONLY      
 )      
 AS      
 BEGIN      
@@ -24,3 +24,4 @@ INSERT INTO [dbo].[TransInstaSkills](
       
 SELECT IRFId,LevelId,SkillId FROM @TechSkillBulkData      
 END 
+GO

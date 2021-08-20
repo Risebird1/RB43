@@ -109,8 +109,10 @@ namespace Risebird.Entities.ViewModel
         ErrorMessage = "Please Enter Correct Email Address")]
         public string ClientHRAttemptContact { get; set; }
 
-        [Display(Name = "Profile Source")]
+        [Display(Name = "Staffing Agency EmailId")]
         [Required]
+        [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
+        ErrorMessage = "Please Enter Correct Email Address")]
         public string ProfileSource { get; set; }
         [Display(Name = "WhatsApp Number")]
         public string WhatsappNumber { get; set; }

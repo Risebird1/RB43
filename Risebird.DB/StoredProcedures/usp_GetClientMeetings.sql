@@ -85,7 +85,7 @@ else if(@roleId=4)
   inner join TransClientUser tcu on IRF.id=tcu.IRFId      
   left join UserList ul on tcu.ClientUserId= ul.id      
       
-  where ul.EmailId LIKE @EmailIdParam AND ul.IsActive=1 and im.staffingAgency=@EmailIdParam      
+  where ul.EmailId LIKE @EmailIdParam AND ul.IsActive=1 and (im.staffingAgency=@EmailIdParam or ca.ProfileSource=@EmailIdParam) 
   and irf.IsDeleted=0      
   --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNowParam) as date)) or IRF.IsDeleted=0)         
       

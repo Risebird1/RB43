@@ -74,8 +74,10 @@
                     @if (ViewBag.PageStatus == "Mainurl")
                     {
                         <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;" value="Generate Insta Public Url" onclick="GeneratePublicUrl(3)"></div>
-                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;" value="Generate Executive Public Url" onclick="GeneratePublicUrl(1)"></div>
-                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;" value="Generate Public Url" onclick="GeneratePublicUrl(2)"></div>
+                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="        margin-bottom: 0px;
+        margin-right: 5px;
+" value="Generate Executive Public Url" onclick="GeneratePublicUrl(1)"></div>
+                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;margin-right:5px;" value="Generate Public Url" onclick="GeneratePublicUrl(2)"></div>
                     }
                 </div>
             </div>
@@ -89,10 +91,10 @@
                         {
                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
                             <div class="clearfix text-right">
-                                <button title="Approved For Next Round" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded report-btn">
+                                <button title="Approved For Next Round" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded report-btn" style="margin-bottom: 10px;">
                                     <span class="fa fa-thumbs-up" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Approve</font></span>
                                 </button>
-                                <button title="Final Selection Status" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="width:145px;">
+                                <button title="Final Selection Status" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="width:145px;margin-bottom:10px;">
                                     <span class="fa fa-check-circle" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)"><font style="font-size:12px; font-family: Roboto, sans-serif;"> Select</font></span>
                                 </button>
                             </div>
@@ -123,8 +125,9 @@
                                             @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
+                                   
                                 </div>
-                               
+
                                 @if (ViewBag.PageStatus != "PublicExternal")
                                 {
                                     <div class="row">
@@ -145,32 +148,31 @@
                                         </div>
                                     </div>
                                 }
-                                <div class="row">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @{
+                                            if (Model.resumeLink != null && Model.resumeLink != "")
+                                            {
+                                                <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" style="text-decoration:underline">Click here</a>
+                                            }
+                                        }
+
+                                    </div>
+                                </div>
+
+                                @if (ViewBag.PageStatus != "PublicExternal")
+                                {
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                            @{
-                                                if (Model.resumeLink != null && Model.resumeLink != "")
-                                                {
-                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" style="text-decoration:underline">Click here</a>
-                                                }
-                                            }
-
+                                            @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                         </div>
                                     </div>
-                                    @if (ViewBag.PageStatus != "PublicExternal")
-                                    {
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            </div>
-                                        </div>
-                                    }
-
-
-                                </div>
+                                }
+                            </div>
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -182,9 +184,9 @@
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6">
                                         @*<div class="form-group">
-                    @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                    @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                </div>*@
+                                                @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            </div>*@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                             @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
@@ -219,27 +221,27 @@
                                                 @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                                 {
                                                     @*if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
-                            {
-                                <video width="320" height="240" style="width:100%" controls controlsList="nodownload">
-                                    <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                    <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+                                                        {
+                                                            <video width="320" height="240" style="width:100%" controls controlsList="nodownload">
+                                                                <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                                                                <source src=@Url.Content(Model.VideoLink) type="video/ogg">
 
-                                    Your browser does not support the video tag.
-                                </video>
-                            }
+                                                                Your browser does not support the video tag.
+                                                            </video>
+                                                        }
 
-                            else if (Url.Content(Model.VideoLink).Contains("manifest"))
-                            {
-                                <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
-                                    <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+                                                        else if (Url.Content(Model.VideoLink).Contains("manifest"))
+                                                        {
+                                                            <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
+                                                                <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
 
-                                </video>
-                            }
-                            else
-                            {
-                                <iframe width="420" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
+                                                            </video>
+                                                        }
+                                                        else
+                                                        {
+                                                            <iframe width="420" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
 
-                            }*@
+                                                        }*@
                                                     string appendTime;
                                                     if (Model.ThumbnailTimeSeconds == 0)
                                                     {
@@ -379,7 +381,7 @@
                                                                     @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @disabled = "disabled" })
 
                                                                     @*@Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
-                                            @Html.TextBox("QuestionsCollection[0].Comment", new { @class = "select-css form-control text-box single-line" })*@
+                                                                        @Html.TextBox("QuestionsCollection[0].Comment", new { @class = "select-css form-control text-box single-line" })*@
 
                                                                 </td>
                                                                 <td>
@@ -388,7 +390,7 @@
                                                                 </td>
                                                                 <td>
 
-                                                                    @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
+                                                                    @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control",@disabled = "disabled" })
 
                                                                 </td>
 
@@ -398,13 +400,13 @@
                                                                 </td>
 
                                                                 @*<td>
-                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
-                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
-                                            </button>
+                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
+                                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
+                                                                        </button>
 
 
-                                        </td>*@
+                                                                    </td>*@
 
                                                             </tr>
                                                         }
@@ -516,8 +518,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-
-                                        @if (ViewBag.PageStatus != "PublicExternal")
+                                        @if (ViewBag.PageReport != "Insta")
                                         {
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -533,7 +534,6 @@
 
                                             </div>
                                         }
-
 
 
                                         </div><!--end of col-md-12-->
@@ -666,7 +666,7 @@
                                                                     </td>
 
                                                                     <td>
-                                                                        @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                        @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)",@disabled="disabled" })
 
                                                                     </td>
                                                                     <td>
@@ -745,7 +745,7 @@
                                                                     </td>
 
                                                                     <td>
-                                                                        @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                        @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)",@disabled = "disabled" })
 
                                                                     </td>
                                                                     <td>
@@ -782,12 +782,15 @@
 
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="multiple_row">
-                                                <h2>Proctoring Report | <span>Count: @Model.ProctoringCount</span></h2>
-                                            </div><!--end of multiple location-->
-                                        </div><!--end of col-md-12-->
+                                   
+                                        <div class="proctor">
+                                            <input class="toggle-box" id="identifier-1" type="checkbox">
+                                            <label for="identifier-1">
+                                                <div class="multiple_row">
+                                                    <h2>Proctoring Report | <span>Count: @Model.ProctoringCount</span></h2>
+                                                </div><!--end of multiple location-->
+                                            </label>
+                                        <!--end of col-md-12-->
 
 
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -1050,10 +1053,7 @@
             <!-- Modal content -->
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" style="font-size:20px;">Approved For Next Round</h5>
-                        <span class="close" id="approvePopUp">&times;</span>
-                    </div>
+
 
 
                     <div class="filheader">
@@ -1070,21 +1070,24 @@
 
 
                     <div class="modal-body">
-                        <div class="form-group">
+                  
+                            <div class="col-md-12">
+                            <div class="form-group">
 
-                            <label class="control-label" for="approveDropdown">Approved For Next Round</label>
-                            <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                                <label class="control-label col-md-12 col-sm-12 desp-label" for="approveDropdown">Approved For Next Round</label>
+                                <select class="form-control col-md-12 col-sm-12" id="approveDropdown" name="approveDropdown"></select>
+                            </div>
+                            <div id="approvalComments" class="form-group">
+                                <label class="control-label col-md-12 col-sm-12 desp-label">Approval Comments</label>
+                                <input type="text" name="appComments" class="no-border  col-sm-12" id="appComments">
+                            </div>
+                            <div class="">
+                                <input type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                            </div>
                         </div>
-                        <div id="approvalComments" class="form-group">
-                            <label class="control-label">Approval Comments</label>
-                            <input type="text" name="appComments" class="form-control" id="appComments">
-                        </div>
-                        <div class="">
-                            <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary pull-right" id="btnUpload" value="Save">
-                        </div>
-                    </div>
-
+                   
                 </div>
+                    </div>
 
             </div>
         </div>
