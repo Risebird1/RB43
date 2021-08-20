@@ -91,10 +91,10 @@
                         {
                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
                             <div class="clearfix text-right">
-                                <button title="Approved For Next Round" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded report-btn">
+                                <button title="Approved For Next Round" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded report-btn" style="margin-bottom: 10px;">
                                     <span class="fa fa-thumbs-up" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Approve</font></span>
                                 </button>
-                                <button title="Final Selection Status" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="width:145px;">
+                                <button title="Final Selection Status" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="width:145px;margin-bottom:10px;">
                                     <span class="fa fa-check-circle" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)"><font style="font-size:12px; font-family: Roboto, sans-serif;"> Select</font></span>
                                 </button>
                             </div>
@@ -118,15 +118,14 @@
 
                                         </div>
                                     </div>
-                                    @if (ViewBag.PageStatus != "PublicExternal")
-                                    {
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
                                         </div>
-                                    }
+                                    </div>
+                                   
                                 </div>
 
                                 @if (ViewBag.PageStatus != "PublicExternal")
@@ -149,29 +148,31 @@
                                         </div>
                                     </div>
                                 }
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                            @{
-                                                if (Model.resumeLink != null && Model.resumeLink != "")
-                                                {
-                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" style="text-decoration:underline">Click here</a>
-                                                }
+                                        @{
+                                            if (Model.resumeLink != null && Model.resumeLink != "")
+                                            {
+                                                <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" style="text-decoration:underline">Click here</a>
                                             }
+                                        }
 
-                                        </div>
                                     </div>
+                                </div>
+
+                                @if (ViewBag.PageStatus != "PublicExternal")
+                                {
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                            @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                         </div>
                                     </div>
-
-                                </div>
+                                }
+                            </div>
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -517,23 +518,25 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @if (ViewBag.PageReport != "Insta")
+                                        {
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                <div class="talktext">
+                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                    <div class="talktext">
 
-                                                    @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                        @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
 
+                                                    </div>
                                                 </div>
+
+
                                             </div>
+                                        }
 
 
-                                        </div>
-
-
-
-                                    </div><!--end of col-md-12-->
+                                        </div><!--end of col-md-12-->
 
                                 </div>
 
@@ -1050,10 +1053,7 @@
             <!-- Modal content -->
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" style="font-size:20px;">Approved For Next Round</h5>
-                        <span class="close" id="approvePopUp">&times;</span>
-                    </div>
+
 
 
                     <div class="filheader">
@@ -1070,21 +1070,24 @@
 
 
                     <div class="modal-body">
-                        <div class="form-group">
+                  
+                            <div class="col-md-12">
+                            <div class="form-group">
 
-                            <label class="control-label" for="approveDropdown">Approved For Next Round</label>
-                            <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                                <label class="control-label col-md-12 col-sm-12 desp-label" for="approveDropdown">Approved For Next Round</label>
+                                <select class="form-control col-md-12 col-sm-12" id="approveDropdown" name="approveDropdown"></select>
+                            </div>
+                            <div id="approvalComments" class="form-group">
+                                <label class="control-label col-md-12 col-sm-12 desp-label">Approval Comments</label>
+                                <input type="text" name="appComments" class="no-border  col-sm-12" id="appComments">
+                            </div>
+                            <div class="">
+                                <input type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                            </div>
                         </div>
-                        <div id="approvalComments" class="form-group">
-                            <label class="control-label">Approval Comments</label>
-                            <input type="text" name="appComments" class="form-control" id="appComments">
-                        </div>
-                        <div class="">
-                            <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary pull-right" id="btnUpload" value="Save">
-                        </div>
-                    </div>
-
+                   
                 </div>
+                    </div>
 
             </div>
         </div>
