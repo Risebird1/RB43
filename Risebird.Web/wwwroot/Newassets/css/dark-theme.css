@@ -2009,7 +2009,12 @@ div.dataTables_wrapper div.dataTables_info {
 .info .info-title {
     color: #9a9a9a !important
 }
-
+.instainterview .form-group label {
+    background: #000!important;
+}
+.instainterview .form-group {
+    box-shadow: none!important;
+}
 .single-video-right .video-card-image {
     border: 2px #524c4cab solid;
 }

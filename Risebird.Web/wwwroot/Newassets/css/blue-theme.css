@@ -65,7 +65,9 @@ td.detail-row {
 .child-section {
     background: #e5e5e5;
 }
-
+.instainterview .form-group {
+    box-shadow: 2px 4px #c2daf7;
+}
 .pagination .page-item.active > .page-link,
 .pagination .page-item.active > .page-link:focus,
 .pagination .page-item.active > .page-link:hover, .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {

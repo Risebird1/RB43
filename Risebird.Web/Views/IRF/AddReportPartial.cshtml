@@ -74,8 +74,10 @@
                     @if (ViewBag.PageStatus == "Mainurl")
                     {
                         <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;" value="Generate Insta Public Url" onclick="GeneratePublicUrl(3)"></div>
-                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;" value="Generate Executive Public Url" onclick="GeneratePublicUrl(1)"></div>
-                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;" value="Generate Public Url" onclick="GeneratePublicUrl(2)"></div>
+                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="        margin-bottom: 0px;
+        margin-right: 5px;
+" value="Generate Executive Public Url" onclick="GeneratePublicUrl(1)"></div>
+                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;margin-right:5px;" value="Generate Public Url" onclick="GeneratePublicUrl(2)"></div>
                     }
                 </div>
             </div>
@@ -387,7 +389,7 @@
                                                                 </td>
                                                                 <td>
 
-                                                                    @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
+                                                                    @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control",@disabled = "disabled" })
 
                                                                 </td>
 
@@ -661,7 +663,7 @@
                                                                     </td>
 
                                                                     <td>
-                                                                        @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                        @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)",@disabled="disabled" })
 
                                                                     </td>
                                                                     <td>
@@ -740,7 +742,7 @@
                                                                     </td>
 
                                                                     <td>
-                                                                        @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                        @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)",@disabled = "disabled" })
 
                                                                     </td>
                                                                     <td>
@@ -777,12 +779,15 @@
 
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="multiple_row">
-                                                <h2>Proctoring Report | <span>Count: @Model.ProctoringCount</span></h2>
-                                            </div><!--end of multiple location-->
-                                        </div><!--end of col-md-12-->
+                                   
+                                        <div class="proctor">
+                                            <input class="toggle-box" id="identifier-1" type="checkbox">
+                                            <label for="identifier-1">
+                                                <div class="multiple_row">
+                                                    <h2>Proctoring Report | <span>Count: @Model.ProctoringCount</span></h2>
+                                                </div><!--end of multiple location-->
+                                            </label>
+                                        <!--end of col-md-12-->
 
 
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
