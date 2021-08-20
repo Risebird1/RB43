@@ -33,7 +33,7 @@ from InstaInterviewMeetings im join InstaRequests ir on im.RequestId=ir.id
 join AssessmentGroup ag on ag.id=ir.AssessmentGroup where RequestId=@id                    
                          
 End                     
-          
+GO          
               
               
      

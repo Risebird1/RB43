@@ -63,6 +63,6 @@ namespace Risebird.Entities.ViewModel
         public int LevelId { get; set; }
         public int ActualLevelId { get; set; }
         public string SkillName { get; set; }
-        public int SkillId { get; set; }
+        public string SkillId { get; set; }
     }
 }

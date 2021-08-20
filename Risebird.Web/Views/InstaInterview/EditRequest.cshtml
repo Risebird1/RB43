@@ -84,8 +84,8 @@
                                         <table class="table table-bordered mbn" id="SkillTable">
                                             <thead>
                                                 <tr>
-                                                    <th>Skill Name</th>
                                                     <th>Level</th>
+                                                    <th>Skill Name</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -97,7 +97,7 @@
                                                             @Html.DropDownList("TechSkill[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("TechSkill[0].SkillId", (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control " })
+                                                            @Html.TextBox("TechSkill[0].SkillId", "", new { @class = "form-control " })
                                                         </td>
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
@@ -114,7 +114,7 @@
                                                                 @Html.DropDownListFor(m => m.TechSkill[i].LevelId, (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.TechSkill[i].LevelId, (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control " })
+                                                                @Html.TextBoxFor(m => m.TechSkill[i].SkillId, "", new { @class = "form-control " })
                                                             </td>
                                                             <td class="action text-center">
                                                                 <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>

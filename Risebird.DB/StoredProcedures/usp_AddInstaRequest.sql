@@ -26,3 +26,4 @@ Update InstaRequests Set JDLink=ISNULL(@JDLink,JDLink) WHERE InstaRequestName = 
 END  
 Select id from InstaRequests WHERE InstaRequestName = @InstaRequestName and AssessmentGroup=@AssessmentGroup  
 END
+GO

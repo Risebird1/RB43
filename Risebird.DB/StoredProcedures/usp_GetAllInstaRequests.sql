@@ -9,21 +9,22 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
         
-CREATE PROCEDURE [dbo].[usp_GetAllInstaRequests]         
-@EmailId varchar(200),           
-@Profile varchar(100)      
-AS          
-Begin         
-        
-IF (@Profile = 'Client')          
- BEGIN          
- Select * From InstaRequests where RequestedBy = @EmailId        
-    
- End          
-Else        
-begin        
-Select * From InstaRequests   
-    
-End        
-End
+          
+CREATE PROCEDURE [dbo].[usp_GetAllInstaRequests]           
+@EmailId varchar(200),             
+@Profile varchar(100)        
+AS            
+Begin           
+          
+IF (@Profile = 'Client')            
+ BEGIN            
+ Select ir.*,ag.AssessmentGroup From InstaRequests ir join AssessmentGroup ag on ag.id=ir.AssessmentGroup where RequestedBy = @EmailId          
+      
+ End            
+Else          
+begin          
+Select ir.*,ag.AssessmentGroup From InstaRequests ir join AssessmentGroup ag on ag.id=ir.AssessmentGroup
+      
+End          
+End  
 GO

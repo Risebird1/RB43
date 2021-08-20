@@ -4067,12 +4067,12 @@ namespace Risebird.Repository
                                              Points = p == null ? c.Points : c.Points - p.Points,
                                              Comment = c.Comment
                                          }).ToList();
-                        return resultset.ToList();
+                        return resultset.OrderBy(x => x.Comment).ToList();
                     }
                 }
                 else
                 {
-                    return _list.ToList();
+                    return _list.OrderBy(x => x.Comment).ToList();
                 }
             }
             catch (SqlException ex)
