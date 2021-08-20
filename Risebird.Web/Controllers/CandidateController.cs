@@ -37,10 +37,11 @@ namespace Risebird.Web.Controllers
         private readonly INotificationHelper _notificationHelper;
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
+        private readonly IClientService _clientService;
 
         //private static string Searchvalue;
 
-        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper)
+        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper, IClientService clientService)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -53,6 +54,7 @@ namespace Risebird.Web.Controllers
             _notificationHelper = notificationHelper;
             _whatsAppHelper = whatsAppHelper;
             _sasUrlHelper = sasUrlHelper;
+            _clientService = clientService;
         }
         public async Task<IActionResult> CandidateTimeline()
         {
@@ -64,6 +66,7 @@ namespace Risebird.Web.Controllers
             {
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                 {
+
                     var model = new List<CandidateTimelineVM>();
 
                     var candidateData = new List<CandidateTimelineData>();
@@ -286,6 +289,12 @@ namespace Risebird.Web.Controllers
                         }
 
                     }
+                    if (profileName == "Client")
+                    {
+                        var role = await _clientService.GetClientRoleByEmailId(emailid);
+                        ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
+                    }
+                    ViewBag.Profile = profileName;
                     return View(model);
 
                 }
@@ -520,6 +529,12 @@ namespace Risebird.Web.Controllers
                         model = model.Where(x => filter.ProfileSource.Contains(x.ProfileSource)).ToList();
 
                     }
+                    if (profileName == "Client")
+                    {
+                        var role = await _clientService.GetClientRoleByEmailId(emailid);
+                        ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
+                    }
+                    ViewBag.Profile = profileName;
                     return View(model);
 
                 }
@@ -771,7 +786,11 @@ namespace Risebird.Web.Controllers
                     }
 
                 }
-
+                int role = 0;
+                if (profileName == "Client")
+                {
+                    role = await _clientService.GetClientRoleByEmailId(emailid);
+                }
 
                 Sheet.Cells["A1:S1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:S1"].Style.Font.Size = 12;
@@ -787,11 +806,17 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 4].Value = "Client HR Email";
                 Sheet.Cells[1, 5].Value = "Candidated Added On/At";
                 Sheet.Cells[1, 6].Value = "Schedule Status";
-                Sheet.Cells[1, 7].Value = "Current Status";
-                Sheet.Cells[1, 8].Value = "Current Status Date";
-                Sheet.Cells[1, 9].Value = "Profile Source";
-                Sheet.Cells[1, 10].Value = "Skill Channel ID";
-                Sheet.Cells[1, 11].Value = "Phone";
+                Sheet.Cells[1, 7].Value = "Phone";
+
+                if(role != (int)ClientRoleEnum.RestrictedIRFowner)
+                {
+                    Sheet.Cells[1, 8].Value = "Current Status";
+                    Sheet.Cells[1, 9].Value = "Current Status Date";
+                    Sheet.Cells[1, 10].Value = "Profile Source";
+                    Sheet.Cells[1, 11].Value = "Skill Channel ID";
+                }
+
+                
 
 
                 int i = 2;
@@ -830,28 +855,33 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 6].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
                         }
 
-                        if (!string.IsNullOrEmpty(item.CurrentStatus))
-                        {
-                            Sheet.Cells[i, 7].Value = item.CurrentStatus;
-                            Sheet.Cells[i, 8].Value = item.CurrentStatusDate.HasValue && item.CurrentStatusDate.Value != DateTime.MinValue ? item.CurrentStatusDate.Value.ToString() : string.Empty;
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 7].Value = string.Empty;
-                            Sheet.Cells[i, 8].Value = string.Empty;
-                        }
-                        if (!string.IsNullOrEmpty(item.ProfileSource))
-                        {
-                            Sheet.Cells[i, 9].Value = item.ProfileSource;
+                        Sheet.Cells[i, 7].Value = item.Phone ?? string.Empty;
 
-                        }
-                        else
+                        if (role != (int)ClientRoleEnum.RestrictedIRFowner)
                         {
-                            Sheet.Cells[i, 9].Value = string.Empty;
-                        }
+                            if (!string.IsNullOrEmpty(item.CurrentStatus))
+                            {
+                                Sheet.Cells[i, 8].Value = item.CurrentStatus;
+                                Sheet.Cells[i, 9].Value = item.CurrentStatusDate.HasValue && item.CurrentStatusDate.Value != DateTime.MinValue ? item.CurrentStatusDate.Value.ToString() : string.Empty;
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 8].Value = string.Empty;
+                                Sheet.Cells[i, 9].Value = string.Empty;
+                            }
+                            if (!string.IsNullOrEmpty(item.ProfileSource))
+                            {
+                                Sheet.Cells[i, 10].Value = item.ProfileSource;
 
-                        Sheet.Cells[i, 10].Value = item.IRFName;
-                        Sheet.Cells[i, 11].Value = item.Phone ?? string.Empty;
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 10].Value = string.Empty;
+                            }
+
+                            Sheet.Cells[i, 11].Value = item.IRFName;
+                        }
+                        
 
                         i++;
                     }
@@ -2681,9 +2711,11 @@ namespace Risebird.Web.Controllers
                                             WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
                                                 ? workSheet.Cells[rowIterator, 5].Value.ToString()
                                                 : string.Empty,
-                                            ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
-                                                ? workSheet.Cells[rowIterator, 6].Value.ToString().ToLower()
-                                                : string.Empty,
+                                            //ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
+                                            //    ? workSheet.Cells[rowIterator, 6].Value.ToString().ToLower()
+                                            //    : string.Empty,
+                                            ClientHREmail = workSheet.Cells[rowIterator, 6].Value.ToString().ToLower(),
+                                                
                                             ProfileSource = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty,
                                             IRFId = IRFId
 

@@ -12,6 +12,7 @@ CREATE TABLE [dbo].[Function](
 			[IsLead] bit NULL,
 			[IsUnapproved] bit NULL,
 			[IsCommon] bit NULL,
+			[IsStaffingAgencyAccess] bit null,
  CONSTRAINT [PK_Function] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -50,6 +51,16 @@ BEGIN
 	BEGIN
 		ALTER TABLE [Function]
 		Add [IsCommon] bit
+	END
+
+	IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsStaffingAgencyAccess')
+      AND Object_ID = Object_ID(N'Function'))
+	BEGIN
+		ALTER TABLE [Function]
+		Add [IsStaffingAgencyAccess] bit
 	END
 
 END

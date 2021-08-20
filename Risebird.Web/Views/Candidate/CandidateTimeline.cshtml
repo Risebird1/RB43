@@ -173,37 +173,41 @@
                                                                         </select>
                                                                     </div>
                                                                 </div>
-                                                                <div class="form-group">
-                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
-                                                                        Interview Status
-                                                                    </label>
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
-                                                                            <option value="@(Risebird.Entities.Enum.InterviewStatus.Proxy.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Proxy.GetDescription())</option>
-                                                                            <option value="@(Risebird.Entities.Enum.InterviewStatus.Selected.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Selected.GetDescription())</option>
-                                                                            <option value="@(Risebird.Entities.Enum.InterviewStatus.Rejected.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Rejected.GetDescription())</option>
-                                                                            <option value="@(Risebird.Entities.Enum.InterviewStatus.BorderLine.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.BorderLine.GetDescription())</option>
-                                                                            <option value="@(Risebird.Entities.Enum.CandidateStatusOptions.QCPending.GetDescription())">@(Risebird.Entities.Enum.CandidateStatusOptions.QCPending.GetDescription())</option>
-                                                                        </select>
+                                                                @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
+                                                                {
+                                                                    <div class="form-group">
+                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
+                                                                            Interview Status
+                                                                        </label>
+                                                                        <div class="col-md-12 col-sm-12">
+                                                                            <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
+                                                                                <option value="@(Risebird.Entities.Enum.InterviewStatus.Proxy.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Proxy.GetDescription())</option>
+                                                                                <option value="@(Risebird.Entities.Enum.InterviewStatus.Selected.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Selected.GetDescription())</option>
+                                                                                <option value="@(Risebird.Entities.Enum.InterviewStatus.Rejected.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Rejected.GetDescription())</option>
+                                                                                <option value="@(Risebird.Entities.Enum.InterviewStatus.BorderLine.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.BorderLine.GetDescription())</option>
+                                                                                <option value="@(Risebird.Entities.Enum.CandidateStatusOptions.QCPending.GetDescription())">@(Risebird.Entities.Enum.CandidateStatusOptions.QCPending.GetDescription())</option>
+                                                                            </select>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
 
-                                                                <div class="form-group">
-                                                                    <label class="control-label  col-md-12 col-sm-12 desp-label" for="ProfileSource">
-                                                                        Profile Source
-                                                                    </label>
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <select id="ProfileSource" name="ProfileSource" class="form-control multiselect" multiple="multiple">
-                                                                            @foreach (var item in Model.Select(x => x.ProfileSource).Distinct().ToList())
-                                                                            {
-                                                                                @if (item != null && item != "")
+                                                                    <div class="form-group">
+                                                                        <label class="control-label  col-md-12 col-sm-12 desp-label" for="ProfileSource">
+                                                                            Profile Source
+                                                                        </label>
+                                                                        <div class="col-md-12 col-sm-12">
+                                                                            <select id="ProfileSource" name="ProfileSource" class="form-control multiselect" multiple="multiple">
+                                                                                @foreach (var item in Model.Select(x => x.ProfileSource).Distinct().ToList())
                                                                                 {
-                                                                                    <option value="@item">@item</option>
+                                                                                    @if (item != null && item != "")
+                                                                                    {
+                                                                                        <option value="@item">@item</option>
+                                                                                    }
                                                                                 }
-                                                                            }
-                                                                        </select>
+                                                                            </select>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
+                                                                }
+
 
 
 
@@ -294,9 +298,13 @@
                                                                     <th class="text-left">Client HR Email</th>
                                                                     <th id="status_5" class="text-left">Schedule Status</th>
                                                                     <th id="status_6">Meeting Status</th>
-                                                                    <th id="status_7">Interview Status</th>
-                                                                    <th id="status_8">Current Status</th>
-                                                                    <th id="status_9">Report</th>
+                                                                    @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
+                                                                    {
+                                                                        <th id="status_7">Interview Status</th>
+                                                                        <th id="status_8">Current Status</th>
+                                                                        <th id="status_9">Report</th>
+                                                                    }
+
                                                                 </tr>
                                                             </thead>
                                                             <tfoot>
@@ -307,264 +315,271 @@
                                                                     <th class="text-left">Client HR Email</th>
                                                                     <th class="text-left">Schedule Status</th>
                                                                     <th>Meeting Status</th>
-                                                                    <th>Interview Status</th>
-                                                                    <th>Current Status</th>
-                                                                    <th>Report</th>
+                                                                    @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
+                                                                    {
+                                                                        <th>Interview Status</th>
+                                                                        <th>Current Status</th>
+                                                                        <th>Report</th>
+                                                                    }
+
                                                                 </tr>
                                                             </tfoot>
                                                             <tbody id="tblbodyTimeline">
 
                                                                 @foreach (var item in Model)
                                                                 {
-                                                                    <tr>
+                                                                <tr>
 
-                                                                        @if (item.CandidateName != null && item.CandidateName != "")
-                                                                        {
-                                                                            @if (item.CandidateName.Length > 20)
-                                                                            {
-
-
-                                                                                <td class="cadName text-left pl15">
-                                                                                    <a onclick="" data-tooltip="@item.CandidateName"> @item.CandidateName</a>
-                                                                                </td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td class="text-left pl15">
-                                                                                    <a onclick=""> @item.CandidateName </a>
-                                                                                </td>
-                                                                            }
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td></td>
-                                                                        }
-
-
-
-                                                                        @if (item.CandidateEmailId != null && item.CandidateEmailId != "")
-                                                                        {
-                                                                            @if (item.CandidateEmailId.Length > 20)
-                                                                            {
-
-
-                                                                                <td class="cadEmail text-left pl15">
-                                                                                    <a onclick="" data-tooltip="@item.CandidateEmailId"> @item.CandidateEmailId</a>
-                                                                                </td>
-                                                                            }
-
-
-                                                                            else
-                                                                            {
-                                                                                <td class="cadEmail text-left pl15">
-                                                                                    @item.CandidateEmailId
-                                                                                </td>
-                                                                            }
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td></td>
-                                                                        }
-
-
-                                                                        @if (item.PrimarySkill != null && item.PrimarySkill != "")
+                                                                    @if (item.CandidateName != null && item.CandidateName != "")
+                                                                    {
+                                                                        @if (item.CandidateName.Length > 20)
                                                                         {
 
-                                                                            @if (item.PrimarySkill.Length > 15)
-                                                                            {
 
-
-                                                                                <td class="cadEmail text-left pl15">
-                                                                                    <a onclick="" data-tooltip="@item.PrimarySkill"> @item.PrimarySkill </a>
-                                                                                </td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td class="text-left pl15">
-                                                                                    <a onclick="">@item.PrimarySkill</a>
-                                                                                </td>
-                                                                            }
-
-
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td></td>
-                                                                        }
-
-
-
-
-
-
-
-                                                                        @if (item.HREmail != null && item.HREmail != "")
-                                                                        {
-
-                                                                            @if (item.HREmail.Length > 15)
-                                                                            {
-
-
-                                                                                <td class="cadEmail text-left pl15">
-                                                                                    <a onclick="" data-tooltip="@item.HREmail"> @item.HREmail</a>
-                                                                                </td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td class="text-left pl15">
-                                                                                    <a onclick="">@item.HREmail</a>
-                                                                                </td>
-                                                                            }
-
-
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td></td>
-                                                                        }
-
-
-                                                                        @*@if (item.OnboardingDetails != null)
-                                                                            {
-                                                                                <td style="padding:10px 0px;">
-                                                                                    <div class="timeline-section-tl">
-                                                                                        <div class="tl-round round1" style="background-color: #35353599;"></div>
-                                                                                        <div class="circle-wrap">
-                                                                                            <div class="circle" id="circle0" style="left: 0%;">
-                                                                                                <div class="popupSpan">
-                                                                                                    <div class="event2Bubble">
-                                                                                                        <div class="eventTime">
-                                                                                                            <div class="DayDigit">@item.OnboardingDetails.Date</div>
-                                                                                                            <div class="Day">
-                                                                                                                @item.OnboardingDetails.Day
-                                                                                                                <div class="MonthYear">@item.OnboardingDetails.StatusDate</div>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <div class="eventTitle">@item.OnboardingDetails.Status</div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }*@
-                                                                        @if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
-                                                                        {
-                                                                            <td style="padding:10px 0px;">
-                                                                                <div class="timeline-section-tl">
-                                                                                    @foreach (var status in item.ScheduleStatus)
-                                                                                    {
-                                                                                        <div class="tl-round round1" style="background-color: #35353599;"></div>
-                                                                                        <div class="circle-wrap">
-
-                                                                                            <div class="circle" id="circle0" style="left: 0%;">
-                                                                                                <div class="popupSpan">
-
-                                                                                                    <div class="event2Bubble">
-                                                                                                        <div class="eventTime">
-                                                                                                            <div class="DayDigit">@status.Date</div>
-                                                                                                            <div class="Day">
-                                                                                                                @status.Day
-                                                                                                                <div class="MonthYear">
-                                                                                                                    @status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time
-                                                                                                                </div>
-                                                                                                            </div>
-
-                                                                                                        </div>
-                                                                                                        <div class="eventTitle">@status.Status</div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    }
-
-                                                                                </div>
+                                                                            <td class="cadName text-left pl15">
+                                                                                <a onclick="" data-tooltip="@item.CandidateName"> @item.CandidateName</a>
                                                                             </td>
                                                                         }
                                                                         else
                                                                         {
-                                                                            <td></td>
+                                                                            <td class="text-left pl15">
+                                                                                <a onclick=""> @item.CandidateName </a>
+                                                                            </td>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+                                                                    }
+
+
+
+                                                                    @if (item.CandidateEmailId != null && item.CandidateEmailId != "")
+                                                                    {
+                                                                        @if (item.CandidateEmailId.Length > 20)
+                                                                        {
+
+
+                                                                            <td class="cadEmail text-left pl15">
+                                                                                <a onclick="" data-tooltip="@item.CandidateEmailId"> @item.CandidateEmailId</a>
+                                                                            </td>
                                                                         }
 
-                                                                        @if (item.MeetingStatus != null && item.MeetingStatus.Count() != 0)
+
+                                                                        else
                                                                         {
-                                                                            <td style="padding:10px 0px;">
-                                                                                <div class="timeline-section-tl">
+                                                                            <td class="cadEmail text-left pl15">
+                                                                                @item.CandidateEmailId
+                                                                            </td>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+                                                                    }
+
+
+                                                                    @if (item.PrimarySkill != null && item.PrimarySkill != "")
+                                                                    {
+
+                                                                        @if (item.PrimarySkill.Length > 15)
+                                                                        {
+
+
+                                                                            <td class="cadEmail text-left pl15">
+                                                                                <a onclick="" data-tooltip="@item.PrimarySkill"> @item.PrimarySkill </a>
+                                                                            </td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="text-left pl15">
+                                                                                <a onclick="">@item.PrimarySkill</a>
+                                                                            </td>
+                                                                        }
+
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+                                                                    }
+
+
+
+
+
+
+
+                                                                    @if (item.HREmail != null && item.HREmail != "")
+                                                                    {
+
+                                                                        @if (item.HREmail.Length > 15)
+                                                                        {
+
+
+                                                                            <td class="cadEmail text-left pl15">
+                                                                                <a onclick="" data-tooltip="@item.HREmail"> @item.HREmail</a>
+                                                                            </td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="text-left pl15">
+                                                                                <a onclick="">@item.HREmail</a>
+                                                                            </td>
+                                                                        }
+
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+                                                                    }
+
+
+                                                                    @*@if (item.OnboardingDetails != null)
+        {
+            <td style="padding:10px 0px;">
+                <div class="timeline-section-tl">
+                    <div class="tl-round round1" style="background-color: #35353599;"></div>
+                    <div class="circle-wrap">
+                        <div class="circle" id="circle0" style="left: 0%;">
+                            <div class="popupSpan">
+                                <div class="event2Bubble">
+                                    <div class="eventTime">
+                                        <div class="DayDigit">@item.OnboardingDetails.Date</div>
+                                        <div class="Day">
+                                            @item.OnboardingDetails.Day
+                                            <div class="MonthYear">@item.OnboardingDetails.StatusDate</div>
+                                        </div>
+                                    </div>
+                                    <div class="eventTitle">@item.OnboardingDetails.Status</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        }
+        else
+        {
+            <td></td>
+        }*@
+                                                                    @if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
+                                                                    {
+                                                                        <td style="padding:10px 0px;">
+                                                                            <div class="timeline-section-tl">
+                                                                                @foreach (var status in item.ScheduleStatus)
+                                                                                {
                                                                                     <div class="tl-round round1" style="background-color: #35353599;"></div>
                                                                                     <div class="circle-wrap">
-                                                                                        @foreach (var status in item.MeetingStatus)
-                                                                                        {
-                                                                                            @if (status.Status == "Scheduled")
-                                                                                            {
-                                                                                                <div class="circle schedule" id="circle0" style="left: 0%;">
-                                                                                                    <div class="popupSpan">
-                                                                                                        <div class="popupSpan">
-                                                                                                            <div class="event2Bubble">
-                                                                                                                <div class="eventTime">
-                                                                                                                    <div class="DayDigit">@status.Date</div>
-                                                                                                                    <div class="Day">
-                                                                                                                        @status.Day
-                                                                                                                        <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
-                                                                                                                    </div>
-                                                                                                                </div>
-                                                                                                                <div class="eventTitle">@status.Status</div>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            }
-                                                                                            else if (status.Status == "Completed")
-                                                                                            {
-                                                                                                <div class="circle completed" id="circle0" style="left: 0%;">
-                                                                                                    <div class="popupSpan">
-                                                                                                        <div class="popupSpan">
-                                                                                                            <div class="event2Bubble">
-                                                                                                                <div class="eventTime">
-                                                                                                                    <div class="DayDigit">@status.Date</div>
-                                                                                                                    <div class="Day">
-                                                                                                                        @status.Day
-                                                                                                                        <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
-                                                                                                                    </div>
-                                                                                                                </div>
-                                                                                                                <div class="eventTitle">@status.Status</div>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            }
-                                                                                            else
-                                                                                            {
-                                                                                                <div class="circle pending" id="circle0" style="left: 0%;">
-                                                                                                    <div class="popupSpan">
-                                                                                                        <div class="popupSpan">
-                                                                                                            <div class="event2Bubble">
-                                                                                                                <div class="eventTime">
-                                                                                                                    <div class="DayDigit">@status.Date</div>
-                                                                                                                    <div class="Day">
-                                                                                                                        @status.Day
-                                                                                                                        <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
-                                                                                                                    </div>
-                                                                                                                </div>
-                                                                                                                <div class="eventTitle">@status.Status</div>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            }
 
-                                                                                        }
+                                                                                        <div class="circle" id="circle0" style="left: 0%;">
+                                                                                            <div class="popupSpan">
+
+                                                                                                <div class="event2Bubble">
+                                                                                                    <div class="eventTime">
+                                                                                                        <div class="DayDigit">@status.Date</div>
+                                                                                                        <div class="Day">
+                                                                                                            @status.Day
+                                                                                                            <div class="MonthYear">
+                                                                                                                @status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time
+                                                                                                            </div>
+                                                                                                        </div>
+
+                                                                                                    </div>
+                                                                                                    <div class="eventTitle">@status.Status</div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
+                                                                                }
+
+                                                                            </div>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+                                                                    }
+
+                                                                    @if (item.MeetingStatus != null && item.MeetingStatus.Count() != 0)
+                                                                    {
+                                                                        <td style="padding:10px 0px;">
+                                                                            <div class="timeline-section-tl">
+                                                                                <div class="tl-round round1" style="background-color: #35353599;"></div>
+                                                                                <div class="circle-wrap">
+                                                                                    @foreach (var status in item.MeetingStatus)
+                                                                                    {
+                                                                                        @if (status.Status == "Scheduled")
+                                                                                        {
+                                                                                            <div class="circle schedule" id="circle0" style="left: 0%;">
+                                                                                                <div class="popupSpan">
+                                                                                                    <div class="popupSpan">
+                                                                                                        <div class="event2Bubble">
+                                                                                                            <div class="eventTime">
+                                                                                                                <div class="DayDigit">@status.Date</div>
+                                                                                                                <div class="Day">
+                                                                                                                    @status.Day
+                                                                                                                    <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div class="eventTitle">@status.Status</div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        }
+                                                                                        else if (status.Status == "Completed")
+                                                                                        {
+                                                                                            <div class="circle completed" id="circle0" style="left: 0%;">
+                                                                                                <div class="popupSpan">
+                                                                                                    <div class="popupSpan">
+                                                                                                        <div class="event2Bubble">
+                                                                                                            <div class="eventTime">
+                                                                                                                <div class="DayDigit">@status.Date</div>
+                                                                                                                <div class="Day">
+                                                                                                                    @status.Day
+                                                                                                                    <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div class="eventTitle">@status.Status</div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <div class="circle pending" id="circle0" style="left: 0%;">
+                                                                                                <div class="popupSpan">
+                                                                                                    <div class="popupSpan">
+                                                                                                        <div class="event2Bubble">
+                                                                                                            <div class="eventTime">
+                                                                                                                <div class="DayDigit">@status.Date</div>
+                                                                                                                <div class="Day">
+                                                                                                                    @status.Day
+                                                                                                                    <div class="MonthYear">@status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time</div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div class="eventTitle">@status.Status</div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        }
+
+                                                                                    }
                                                                                 </div>
-                                                                            </td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td></td>
-                                                                        }
+                                                                            </div>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+                                                                    }
+
+                                                                    @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
+                                                                    {
                                                                         @if (item.InterviewStatus != null && item.InterviewStatus.Count() != 0)
                                                                         {
                                                                             <td style="padding:10px 0px;">
@@ -721,8 +736,11 @@
                                                                                 <p></p>
                                                                             }
                                                                         </td>
+                                                                    }
 
-                                                                    </tr>
+
+
+                                                                </tr>
 
                                                                 }
 
